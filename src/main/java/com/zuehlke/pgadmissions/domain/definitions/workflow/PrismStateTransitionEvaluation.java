@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.Proj
 
 public enum PrismStateTransitionEvaluation {
 
+    APPLICATION_UPDATED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class),  //
     APPLICATION_COMPLETED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
     APPLICATION_CONFIRMED_APPOINTMENT_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
     APPLICATION_COMPLETED_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedStateResolver.class), //

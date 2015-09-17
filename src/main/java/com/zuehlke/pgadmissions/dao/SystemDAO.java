@@ -14,7 +14,13 @@ public class SystemDAO {
     public void clearSchema() {
         sessionFactory.getCurrentSession().createSQLQuery( //
                 "call procedure_clear_schema()") //
-        .executeUpdate();
+                .executeUpdate();
+    }
+
+    public void resetAmazon() {
+        sessionFactory.getCurrentSession().createSQLQuery( //
+                "call procedure_reset_amazon()") //
+                .executeUpdate();
     }
 
 }

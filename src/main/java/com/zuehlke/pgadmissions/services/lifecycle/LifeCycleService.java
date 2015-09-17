@@ -61,7 +61,6 @@ public class LifeCycleService {
     @PostConstruct
     public void startup() throws Exception {
         boolean doInitializeWorkflow = BooleanUtils.isTrue(initializeWorkflow);
-
         if (BooleanUtils.isTrue(dropWorkflow)) {
             systemService.dropWorkflow();
         }
@@ -82,6 +81,8 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
+        systemService.initializeAmazon();
+        
         if (BooleanUtils.isTrue(dropData)) {
             systemService.dropSystemData();
         }

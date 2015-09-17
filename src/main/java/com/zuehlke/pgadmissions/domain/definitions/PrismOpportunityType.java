@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PAID_TOC;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PROFESSIONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -13,16 +16,19 @@ import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,PrismLocalizableDefinition {
 
-    STUDY_UNDERGRADUATE(false, STUDY), //
-    STUDY_POSTGRADUATE_TAUGHT(false, STUDY), //
-    STUDY_POSTGRADUATE_RESEARCH(false, STUDY), //
-    TRAINING(false, PROFESSIONAL_DEVELOPMENT), //
-    WORK_EXPERIENCE(true, EXPERIENCE), //
-    VOLUNTEERING(true, EXPERIENCE), //
-    EMPLOYMENT(true, WORK), //
-    EMPLOYMENT_SECONDMENT(true, WORK); //
+    STUDY_UNDERGRADUATE(false, null, STUDY), //
+    STUDY_POSTGRADUATE_TAUGHT(false, null, STUDY), //
+    STUDY_POSTGRADUATE_RESEARCH(false, null, STUDY), //
+    TRAINING(false, null, PROFESSIONAL_DEVELOPMENT), //
+    WORK_EXPERIENCE(true, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC, EXPERIENCE), //
+    ON_COURSE_PLACEMENT(true, SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC, EXPERIENCE), //
+    VOLUNTEERING(true, SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC, EXPERIENCE), //
+    EMPLOYMENT(true, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC, WORK), //
+    EMPLOYMENT_SECONDMENT(true, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC, WORK); //
 
     private boolean published;
+    
+    private PrismDisplayPropertyDefinition termsAndConditions;
 
     private PrismOpportunityCategory category;
 
@@ -34,13 +40,18 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
         }
     }
 
-    private PrismOpportunityType(boolean published, PrismOpportunityCategory category) {
+    private PrismOpportunityType(boolean published, PrismDisplayPropertyDefinition termsAndConditions, PrismOpportunityCategory category) {
         this.published = published;
+        this.termsAndConditions = termsAndConditions;
         this.category = category;
     }
 
     public boolean isPublished() {
         return published;
+    }
+    
+    public PrismDisplayPropertyDefinition getTermsAndConditions() {
+        return termsAndConditions;
     }
 
     public PrismOpportunityCategory getCategory() {

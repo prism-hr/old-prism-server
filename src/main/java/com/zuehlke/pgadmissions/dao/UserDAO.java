@@ -5,7 +5,6 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -13,7 +12,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.user.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
@@ -207,13 +209,10 @@ public class UserDAO {
                         .add(Projections.property("firstName"), "firstName") //
                         .add(Projections.property("lastName"), "lastName") //
                         .add(Projections.groupProperty("email"), "email") //
-                        .add(Projections.property("primaryExternalAccount.accountImageUrl"), "accountImageUrl") //
-                        .add(Projections.property("externalAccount.accountProfileUrl"), "accountProfileUrl")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl"), "accountImageUrl") //
+                        .add(Projections.property("userAccount.linkedinProfileUrl"), "accountProfileUrl")) //
                 .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN)
-                .createAlias("userAccount.externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eq("externalAccount.accountType", PrismOauthProvider.LINKEDIN))
                 .add(Restrictions.eqProperty("id", "parentUser.id")) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.disjunction() //
@@ -483,7 +482,7 @@ public class UserDAO {
                         .add(Projections.property("user.firstName2").as("userFirstName2")) //
                         .add(Projections.property("user.firstName3").as("userFirstName3")) //
                         .add(Projections.property("user.lastName").as("userLastName")) //
-                        .add(Projections.property("primaryExternalAccount.accountImageUrl").as("userAccountImageUrl")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("userAccountImageUrl")) //
                         .add(Projections.property("userDocument.personalSummary").as("personalSummary")) //
                         .add(Projections.property("userDocument.cv.id").as("cvId")) //
                         .add(Projections.property("externalAccount.accountProfileUrl").as("linkedInProfileUrl")) //
@@ -492,7 +491,6 @@ public class UserDAO {
                         .add(Projections.avg("application.applicationRatingAverage").as("applicationRatingAverage")) //
                         .add(Projections.property("updatedTimestamp").as("updatedTimestamp")) //
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
-                .createAlias("primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("externalAccount.accountType", LINKEDIN)) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //

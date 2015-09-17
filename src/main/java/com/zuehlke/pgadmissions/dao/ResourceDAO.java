@@ -1,39 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.WordUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -41,29 +7,40 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.dto.resource.*;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.WordUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -156,7 +133,7 @@ public class ResourceDAO {
                     .add(Projections.property("user.firstName3"), "userFirstName3") //
                     .add(Projections.property("user.lastName"), "userLastName") //
                     .add(Projections.property("user.email"), "userEmail") //
-                    .add(Projections.property("primaryExternalAccount.accountImageUrl"), "userAccountImageUrl");
+                    .add(Projections.property("userAccount.linkedinImageUrl"), "userAccountImageUrl");
 
             if (!hasRedactions) {
                 projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
@@ -179,8 +156,7 @@ public class ResourceDAO {
             criteria.setProjection(projectionList) //
                     .createAlias("user", "user", JoinType.INNER_JOIN) //
                     .createAlias("state", "state", JoinType.INNER_JOIN)
-                    .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
-                    .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN);
+                    .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
 
             criteria.add(Restrictions.in("id", resourceIds));
 

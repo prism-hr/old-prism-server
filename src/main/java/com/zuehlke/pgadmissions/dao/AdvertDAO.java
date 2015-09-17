@@ -85,8 +85,8 @@ public class AdvertDAO {
                         .add(Projections.groupProperty("id").as("advertId")) //
                         .add(Projections.property("user.firstName").as("userFirstName")) //
                         .add(Projections.property("user.lastName").as("userLastName")) //
-                        .add(Projections.property("primaryExternalAccount.accountProfileUrl").as("userAccountProfileUrl")) //
-                        .add(Projections.property("primaryExternalAccount.accountImageUrl").as("userAccountImageUrl")) //
+                        .add(Projections.property("userAccount.linkedinProfileUrl").as("userAccountProfileUrl")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("userAccountImageUrl")) //
                         .add(Projections.property("institution.id").as("institutionId")) //
                         .add(Projections.property("institution.name").as("institutionName")) //
                         .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
@@ -122,7 +122,6 @@ public class AdvertDAO {
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
                 .createAlias("user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userAccount.primaryExternalAccount", "primaryExternalAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //

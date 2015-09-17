@@ -1,30 +1,30 @@
 package com.zuehlke.pgadmissions.rest.representation;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
+import java.util.List;
+
 public class OpportunityCategoryRepresentation {
 
-    private PrismOpportunityCategory opportunityCategory;
-    
+    private PrismOpportunityCategory id;
+
     private boolean published;
-    
+
     private List<OpportunityTypeRepresentation> opportunityTypes;
 
-    public OpportunityCategoryRepresentation(PrismOpportunityCategory opportunityCategory, boolean published, List<OpportunityTypeRepresentation> opportunityTypes) {
-        this.opportunityCategory = opportunityCategory;
+    public OpportunityCategoryRepresentation(PrismOpportunityCategory id, boolean published, List<OpportunityTypeRepresentation> opportunityTypes) {
+        this.id = id;
         this.published = published;
         this.opportunityTypes = opportunityTypes;
     }
 
-    public PrismOpportunityCategory getOpportunityCategory() {
-        return opportunityCategory;
+    public PrismOpportunityCategory getId() {
+        return id;
     }
 
-    public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
-        this.opportunityCategory = opportunityCategory;
+    public void setId(PrismOpportunityCategory id) {
+        this.id = id;
     }
 
     public boolean isPublished() {
@@ -34,7 +34,7 @@ public class OpportunityCategoryRepresentation {
     public void setPublished(boolean published) {
         this.published = published;
     }
-    
+
     public List<OpportunityTypeRepresentation> getOpportunityTypes() {
         return opportunityTypes;
     }
@@ -45,21 +45,21 @@ public class OpportunityCategoryRepresentation {
 
     public static class OpportunityTypeRepresentation {
 
-        private PrismOpportunityType opportunityType;
+        private PrismOpportunityType id;
 
         private boolean published;
 
-        public OpportunityTypeRepresentation(PrismOpportunityType opportunityType, boolean published) {
-            this.opportunityType = opportunityType;
+        public OpportunityTypeRepresentation(PrismOpportunityType id, boolean published) {
+            this.id = id;
             this.published = published;
         }
 
-        public PrismOpportunityType getOpportunityType() {
-            return opportunityType;
+        public PrismOpportunityType getId() {
+            return id;
         }
 
-        public void setOpportunityType(PrismOpportunityType opportunityType) {
-            this.opportunityType = opportunityType;
+        public void setId(PrismOpportunityType id) {
+            this.id = id;
         }
 
         public boolean isPublished() {

@@ -13,7 +13,8 @@ public class SystemDAO {
 
     public void clearSchema() {
         sessionFactory.getCurrentSession().createSQLQuery( //
-                "call procedure_clear_schema()");
+                "call procedure_clear_schema()") //
+        .executeUpdate();
     }
 
 }

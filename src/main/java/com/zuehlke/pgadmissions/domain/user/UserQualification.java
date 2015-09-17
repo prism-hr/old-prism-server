@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 
 @Entity
-@Table(name = "UserAccount_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
+@Table(name = "user_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
 public class UserQualification extends UserAdvertRelationSection implements ProfileQualification<UserAccount> {
 
     @Id

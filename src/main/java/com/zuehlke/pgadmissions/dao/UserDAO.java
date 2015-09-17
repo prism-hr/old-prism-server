@@ -458,10 +458,7 @@ public class UserDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
-                        Restrictions.disjunction() //
-                                .add(Restrictions.isNull("action.partnershipState")) //
-                                .add(Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState"))) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getSystemActivityNotificationLastSentConstraint(lastNotifiedBaseline)) //

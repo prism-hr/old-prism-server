@@ -1,29 +1,18 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyJoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.OrderBy;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
+import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import javax.persistence.*;
+import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
@@ -41,10 +30,6 @@ public class UserAccount
     private String password;
 
     @OneToOne
-    @JoinColumn(name = "user_account_external_id", unique = true)
-    private UserAccountExternal primaryExternalAccount;
-
-    @OneToOne
     @JoinColumn(name = "portrait_image_id")
     private Document portraitImage;
 
@@ -54,6 +39,15 @@ public class UserAccount
     @Column(name = "temporary_password_expiry_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
+
+    @Column(name = "linkedin_id")
+    private String linkedinId;
+
+    @Column(name = "linkedin_profile_id")
+    private String linkedinProfileUrl;
+
+    @Column(name = "linkedin_image_id")
+    private String linkedinImageUrl;
 
     @Column(name = "send_application_recommendation_notification", nullable = false)
     private Boolean sendApplicationRecommendationNotification;
@@ -106,9 +100,6 @@ public class UserAccount
     @MapKeyJoinColumn(name = "scope_id")
     private Map<Scope, ResourceListFilter> filters = Maps.newHashMap();
 
-    @OneToMany(mappedBy = "userAccount")
-    private Set<UserAccountExternal> externalAccounts = Sets.newHashSet();
-
     @Override
     public Integer getId() {
         return id;
@@ -135,14 +126,6 @@ public class UserAccount
         this.password = password;
     }
 
-    public UserAccountExternal getPrimaryExternalAccount() {
-        return primaryExternalAccount;
-    }
-
-    public void setPrimaryExternalAccount(UserAccountExternal externalAccount) {
-        this.primaryExternalAccount = externalAccount;
-    }
-
     public Document getPortraitImage() {
         return portraitImage;
     }
@@ -165,6 +148,30 @@ public class UserAccount
 
     public void setTemporaryPasswordExpiryTimestamp(DateTime temporaryPasswordExpiryTimestamp) {
         this.temporaryPasswordExpiryTimestamp = temporaryPasswordExpiryTimestamp;
+    }
+
+    public String getLinkedinId() {
+        return linkedinId;
+    }
+
+    public void setLinkedinId(String linkedinId) {
+        this.linkedinId = linkedinId;
+    }
+
+    public String getLinkedinProfileUrl() {
+        return linkedinProfileUrl;
+    }
+
+    public void setLinkedinProfileUrl(String linkedinProfileUrl) {
+        this.linkedinProfileUrl = linkedinProfileUrl;
+    }
+
+    public String getLinkedinImageUrl() {
+        return linkedinImageUrl;
+    }
+
+    public void setLinkedinImageUrl(String linkedinImageUrl) {
+        this.linkedinImageUrl = linkedinImageUrl;
     }
 
     public Boolean getSendApplicationRecommendationNotification() {
@@ -253,10 +260,6 @@ public class UserAccount
 
     public Map<Scope, ResourceListFilter> getFilters() {
         return filters;
-    }
-
-    public Set<UserAccountExternal> getExternalAccounts() {
-        return externalAccounts;
     }
 
     public UserAccount withPassword(String password) {

@@ -103,11 +103,11 @@ public class UserAccountService {
 
         switch (oauthAssociationType) {
         case ASSOCIATE_CURRENT_USER:
-            return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition, oauthLoginDTO.getShareProfile());
+            return oauthAssociateUser(userService.getCurrentUser(), oauthProvider, oauthUserDefinition);
         case ASSOCIATE_NEW_USER:
             return oauthAssociateNewUser(oauthProvider, oauthUserDefinition, session);
         case ASSOCIATE_SPECIFIED_USER:
-            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition, oauthLoginDTO.getShareProfile());
+            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthProvider, oauthUserDefinition);
         case AUTHENTICATE:
             return oauthAuthenticate(oauthProvider, oauthUserDefinition);
         default:
@@ -133,7 +133,7 @@ public class UserAccountService {
 
         if (registrationDTO.getPassword() == null) {
             OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
-            getOrCreateUserAccount(user, oauthUserDefinition, enableAccount, registrationDTO.getShareProfile());
+            getOrCreateUserAccount(user, oauthUserDefinition, enableAccount);
         } else {
             getOrCreateUserAccount(user, registrationDTO.getPassword(), enableAccount, registrationDTO.getShareProfile());
         }
@@ -176,16 +176,16 @@ public class UserAccountService {
         userAccount.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
     }
 
+    public void shareUserProfile(Integer userId, Boolean shareProfile) {
+        getCurrentUserAccount(userId).setShared(shareProfile);
+    }
+    
     public UserAccount getCurrentUserAccount(Integer userId) {
         User user = userService.getCurrentUser();
         if (user.getId().equals(userId)) {
             return user.getUserAccount();
         }
         throw new BadCredentialsException("Unauthorized access attempt");
-    }
-
-    public void shareUserProfile(Integer userId, Boolean shareProfile) {
-        getCurrentUserAccount(userId).setShared(shareProfile);
     }
 
     private OauthUserDefinition getOauthUserDefinition(PrismOauthProvider oauthProvider, OauthLoginDTO oauthLoginDTO, HttpSession session) {
@@ -264,13 +264,13 @@ public class UserAccountService {
                 .withAccountImageUrl(profile.getProfileImageUrl());
     }
 
-    private User oauthAssociateUser(User user, PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition, boolean shareProfile) {
+    private User oauthAssociateUser(User user, PrismOauthProvider oauthProvider, OauthUserDefinition oauthUserDefinition) {
         Preconditions.checkNotNull(user);
         User oauthUser = userService.getByExternalAccountId(oauthProvider, oauthUserDefinition.getExternalId());
 
         if (oauthUser == null) {
             oauthUser = user;
-            getOrCreateUserAccount(oauthUser, oauthUserDefinition, true, shareProfile);
+            getOrCreateUserAccount(oauthUser, oauthUserDefinition, true);
         } else if (!user.getId().equals(oauthUser.getId())) {
             throw new AccessDeniedException("Account associated with another user.");
         }
@@ -301,17 +301,17 @@ public class UserAccountService {
     }
 
     private void getOrCreateUserAccount(User user, String password, boolean enableAccount, boolean shareProfile) {
-        getOrCreateUserAccount(user, null, password, enableAccount, shareProfile);
+        getOrCreateUserAccount(user, null, password, enableAccount);
     }
 
-    private void getOrCreateUserAccount(User user, OauthUserDefinition oauthUserDefinition, boolean enableAccount, boolean shareProfile) {
-        getOrCreateUserAccount(user, oauthUserDefinition, null, enableAccount, shareProfile);
+    private void getOrCreateUserAccount(User user, OauthUserDefinition oauthUserDefinition, boolean enableAccount) {
+        getOrCreateUserAccount(user, oauthUserDefinition, null, enableAccount);
     }
 
-    private void getOrCreateUserAccount(User user, OauthUserDefinition oauthUserDefinition, String password, boolean enableAccount, boolean shareProfile) {
+    private void getOrCreateUserAccount(User user, OauthUserDefinition oauthUserDefinition, String password, boolean enableAccount) {
         UserAccount userAccount = user.getUserAccount();
         if (userAccount == null) {
-            userAccount = createUserAccount(user, password, enableAccount, shareProfile);
+            userAccount = createUserAccount(user, password, enableAccount);
         } else {
             userAccount.setEnabled(enableAccount);
         }
@@ -321,11 +321,11 @@ public class UserAccountService {
         }
     }
 
-    private UserAccount createUserAccount(User user, String password, boolean enableAccount, boolean shareProfile) {
+    private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
         DateTime baseline = DateTime.now();
         String encryptedPassword = password != null ? PrismEncryptionUtils.getMD5(password) : null;
         UserAccount userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withUpdatedTimestamp(baseline)
-                .withEnabled(enableAccount).withShared(shareProfile);
+                .withEnabled(enableAccount).withShared(false);
         entityService.save(userAccount);
         user.setUserAccount(userAccount);
         return userAccount.withSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));

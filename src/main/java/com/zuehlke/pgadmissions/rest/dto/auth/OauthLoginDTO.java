@@ -18,8 +18,6 @@ public class OauthLoginDTO {
     private String oauthToken;
 
     private String oauthVerifier;
-    
-    private Boolean shareProfile;
 
     public String getClientId() {
         return clientId;
@@ -77,12 +75,4 @@ public class OauthLoginDTO {
         this.oauthVerifier = oauthVerifier;
     }
 
-    public Boolean getShareProfile() {
-        return shareProfile;
-    }
-
-    public void setShareProfile(Boolean shareProfile) {
-        this.shareProfile = shareProfile;
-    }
-    
 }

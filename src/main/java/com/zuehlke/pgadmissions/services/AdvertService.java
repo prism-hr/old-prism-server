@@ -5,18 +5,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONT
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -68,7 +63,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -121,9 +115,6 @@ public class AdvertService {
 
     @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private RoleService roleService;
 
     @Inject
     private StateService stateService;
@@ -405,31 +396,6 @@ public class AdvertService {
         return advertDAO.getAdvertTargetResources(advert, resourceScope, selected);
     }
 
-    public List<Integer> getAdvertsUserIdentifiedFor(User user) {
-        return advertDAO.getAdvertsUserIdentifiedFor(user);
-    }
-
-    public void verifyTargetAdvertUser(Advert value, User valueUser) {
-        advertDAO.verifyAdvertTargetUser(value, valueUser);
-    }
-
-    public void recordPartnershipStateTransition(Resource resource, Comment comment) {
-        if (comment.isPartnershipStateTransitionComment()) {
-            PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
-
-            User user = comment.getUser();
-            Advert advert = resource.getAdvert();
-            PrismScope resourceScope = resource.getResourceScope();
-
-            Set<Integer> advertTargets = Sets.newHashSet();
-            for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
-                advertTargets.addAll(advertDAO.getAdvertTargetsUserCanEndorseFor(advert, user, resourceScope, partnerScope));
-            }
-
-            advertDAO.endorseForAdvertTargets(advertTargets, partnershipTransitionState);
-        }
-    }
-
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
         PrismAdvertContext context = query.getContext();
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
@@ -516,12 +482,6 @@ public class AdvertService {
         if (targetUserDTO != null) {
             targetUser = userService.requestUser(targetUserDTO, targetResource, PrismRole.getViewerRole(targetResource));
             transientTarget.setValueUser(targetUser);
-        }
-
-        if (targetUser != null && roleService.getVerifiedRoles(targetUser, targetResource).isEmpty()) {
-            transientTarget.setPartnershipState(ENDORSEMENT_PENDING_IDENTIFICATION);
-        } else {
-            transientTarget.setPartnershipState(ENDORSEMENT_PENDING);
         }
 
         AdvertTargetAdvert persistentTarget = entityService.getDuplicateEntity(transientTarget);

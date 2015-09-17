@@ -15,7 +15,6 @@ import javax.persistence.Table;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 
 @Entity
 @Table(name = "action")
@@ -48,14 +47,6 @@ public class Action extends WorkflowDefinition {
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
 
-    @Column(name = "partnership_state")
-    @Enumerated(EnumType.STRING)
-    private PrismPartnershipState partnershipState;
-
-    @Column(name = "partnership_transition_state")
-    @Enumerated(EnumType.STRING)
-    private PrismPartnershipState partnershipTransitionState;
-    
     @ManyToOne
     @JoinColumn(name = "fallback_action_id")
     private Action fallbackAction;
@@ -144,22 +135,6 @@ public class Action extends WorkflowDefinition {
     public void setScope(Scope scope) {
         this.scope = scope;
     }
-    
-    public PrismPartnershipState getPartnershipState() {
-        return partnershipState;
-    }
-
-    public void setPartnershipState(PrismPartnershipState partnershipState) {
-        this.partnershipState = partnershipState;
-    }
-
-    public PrismPartnershipState getPartnershipTransitionState() {
-        return partnershipTransitionState;
-    }
-
-    public void setPartnershipTransitionState(PrismPartnershipState partnershipTransitionState) {
-        this.partnershipTransitionState = partnershipTransitionState;
-    }
 
     public Scope getCreationScope() {
         return creationScope;
@@ -225,16 +200,6 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
-    public Action withPartnershipState(PrismPartnershipState partnershipState) {
-        this.partnershipState = partnershipState;
-        return this;
-    }
-
-    public Action withPartnershipTransitionState(PrismPartnershipState partnershipTransitionState) {
-        this.partnershipTransitionState = partnershipTransitionState;
-        return this;
-    }
-    
     public Action withScope(Scope scope) {
         this.scope = scope;
         return this;

@@ -169,7 +169,7 @@ public class StaticDataService {
         Map<String, Object> staticData = Maps.newHashMap();
 
         for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
-                PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class }) {
+                PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class, PrismFilterEntity.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -226,7 +226,8 @@ public class StaticDataService {
         staticData.put("opportunityCategories",
                 asList(PrismOpportunityCategory.values()).stream()
                         .map(oc -> new OpportunityCategoryRepresentation(oc, oc.isPublished(),
-                                getOpportunityTypes(oc).stream().map(ot -> new OpportunityTypeRepresentation(ot, ot.isPublished())).collect(Collectors.toList())))
+                                getOpportunityTypes(oc).stream().map(ot -> new OpportunityTypeRepresentation(ot, ot.isPublished(), ot.getTermsAndConditions()))
+                                        .collect(Collectors.toList())))
                         .collect(Collectors.toList()));
         return staticData;
     }

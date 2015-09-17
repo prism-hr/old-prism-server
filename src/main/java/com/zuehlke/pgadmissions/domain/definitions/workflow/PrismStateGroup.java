@@ -1,20 +1,14 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismStateGroup implements PrismLocalizableDefinition {
 
     APPLICATION_UNSUBMITTED(APPLICATION), //
     APPLICATION_VALIDATION(APPLICATION), //
-    APPLICATION_VERIFICATION(APPLICATION), 
     APPLICATION_REFERENCE(APPLICATION), //
     APPLICATION_REVIEW(APPLICATION), //
     APPLICATION_INTERVIEW(APPLICATION), //

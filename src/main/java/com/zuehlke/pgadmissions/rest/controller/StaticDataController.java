@@ -28,7 +28,7 @@ public class StaticDataController {
         staticData.putAll(staticDataService.getStates());
         staticData.putAll(staticDataService.getStateGroups());
         staticData.putAll(staticDataService.getRoles());
-        staticData.putAll(staticDataService.getInstitutionDomiciles());
+        staticData.putAll(staticDataService.getDomiciles());
         staticData.putAll(staticDataService.getPerformanceIndicatorGroups());
         staticData.putAll(staticDataService.getSimpleProperties());
         staticData.putAll(staticDataService.getFilterProperties());

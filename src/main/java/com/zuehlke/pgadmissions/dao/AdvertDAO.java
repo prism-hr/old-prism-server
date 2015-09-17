@@ -529,8 +529,7 @@ public class AdvertDAO {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.like("advert.name", keyword, MatchMode.ANYWHERE)) //
                     .add(Restrictions.like("advert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("theme.value", keyword, MatchMode.ANYWHERE))); //
+                    .add(Restrictions.like("advert.description", keyword, MatchMode.ANYWHERE))); //
         }
     }
 

@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
 
 public class ApplicationReportListRowDTO {
 
@@ -38,10 +37,6 @@ public class ApplicationReportListRowDTO {
     private String studyOption;
 
     private String referralSource;
-
-    private String primaryTheme;
-
-    private String secondaryTheme;
 
     private String studyLocation;
 
@@ -77,268 +72,252 @@ public class ApplicationReportListRowDTO {
 
     private PrismOfferType confirmedOfferType;
 
-    public final Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public final String getName() {
+    public String getName() {
         return name;
     }
 
-    public final void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public final String getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public final void setEmail(String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public final String getNationality() {
+    public String getNationality() {
         return nationality;
     }
 
-    public final void setNationality(String nationality) {
+    public void setNationality(String nationality) {
         this.nationality = nationality;
     }
 
-    public final String getResidence() {
+    public String getResidence() {
         return residence;
     }
 
-    public final void setResidence(String residence) {
+    public void setResidence(String residence) {
         this.residence = residence;
     }
 
-    public final String getCountryOfBirth() {
+    public String getCountryOfBirth() {
         return countryOfBirth;
     }
 
-    public final void setCountryOfBirth(String countryOfBirth) {
+    public void setCountryOfBirth(String countryOfBirth) {
         this.countryOfBirth = countryOfBirth;
     }
 
-    public final LocalDate getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public final void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public final String getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public final void setGender(String gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public final String getInstitution() {
+    public String getInstitution() {
         return institution;
     }
 
-    public final void setInstitution(String institution) {
+    public void setInstitution(String institution) {
         this.institution = institution;
     }
 
-    public final String getDepartment() {
+    public String getDepartment() {
         return department;
     }
 
-    public final void setDepartment(String department) {
+    public void setDepartment(String department) {
         this.department = department;
     }
 
-    public final String getProgram() {
+    public String getProgram() {
         return program;
     }
 
-    public final void setProgram(String program) {
+    public void setProgram(String program) {
         this.program = program;
     }
 
-    public final String getProject() {
+    public String getProject() {
         return project;
     }
 
-    public final void setProject(String project) {
+    public void setProject(String project) {
         this.project = project;
     }
 
-    public final String getStudyOption() {
+    public String getStudyOption() {
         return studyOption;
     }
 
-    public final void setStudyOption(String studyOption) {
+    public void setStudyOption(String studyOption) {
         this.studyOption = studyOption;
     }
 
-    public final String getReferralSource() {
+    public String getReferralSource() {
         return referralSource;
     }
 
-    public final void setReferralSource(String referralSource) {
+    public void setReferralSource(String referralSource) {
         this.referralSource = referralSource;
     }
 
-    public final String getPrimaryTheme() {
-        return primaryTheme;
-    }
-
-    public final void setPrimaryTheme(String primaryTheme) {
-        this.primaryTheme = primaryTheme;
-    }
-
-    public final String getSecondaryTheme() {
-        return secondaryTheme;
-    }
-
-    public final void setSecondaryTheme(String secondaryTheme) {
-        this.secondaryTheme = secondaryTheme;
-    }
-
-    public final String getStudyLocation() {
+    public String getStudyLocation() {
         return studyLocation;
     }
 
-    public final void setStudyLocation(String studyLocation) {
+    public void setStudyLocation(String studyLocation) {
         this.studyLocation = studyLocation;
     }
 
-    public final String getStudyDivision() {
+    public String getStudyDivision() {
         return studyDivision;
     }
 
-    public final void setStudyDivision(String studyDivision) {
+    public void setStudyDivision(String studyDivision) {
         this.studyDivision = studyDivision;
     }
 
-    public final String getStudyArea() {
+    public String getStudyArea() {
         return studyArea;
     }
 
-    public final void setStudyArea(String studyArea) {
+    public void setStudyArea(String studyArea) {
         this.studyArea = studyArea;
     }
 
-    public final String getStudyApplicationId() {
+    public String getStudyApplicationId() {
         return studyApplicationId;
     }
 
-    public final void setStudyApplicationId(String studyApplicationId) {
+    public void setStudyApplicationId(String studyApplicationId) {
         this.studyApplicationId = studyApplicationId;
     }
 
-    public final LocalDate getStudyStartDate() {
+    public LocalDate getStudyStartDate() {
         return studyStartDate;
     }
 
-    public final void setStudyStartDate(LocalDate studyStartDate) {
+    public void setStudyStartDate(LocalDate studyStartDate) {
         this.studyStartDate = studyStartDate;
     }
 
-    public final DateTime getCreatedDate() {
+    public DateTime getCreatedDate() {
         return createdDate;
     }
 
-    public final void setCreatedDate(DateTime createdDate) {
+    public void setCreatedDate(DateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public final LocalDate getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public final void setClosingDate(LocalDate closingDate) {
+    public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
     }
 
-    public final DateTime getSubmittedDate() {
+    public DateTime getSubmittedDate() {
         return submittedDate;
     }
 
-    public final void setSubmittedDate(DateTime submittedDate) {
+    public void setSubmittedDate(DateTime submittedDate) {
         this.submittedDate = submittedDate;
     }
 
-    public final DateTime getUpdatedDate() {
+    public DateTime getUpdatedDate() {
         return updatedDate;
     }
 
-    public final void setUpdatedDate(DateTime updatedDate) {
+    public void setUpdatedDate(DateTime updatedDate) {
         this.updatedDate = updatedDate;
     }
 
-    public final Integer getRatingCount() {
+    public Integer getRatingCount() {
         return ratingCount;
     }
 
-    public final void setRatingCount(Integer ratingCount) {
+    public void setRatingCount(Integer ratingCount) {
         this.ratingCount = ratingCount;
     }
 
-    public final BigDecimal getRatingAverage() {
+    public BigDecimal getRatingAverage() {
         return ratingAverage;
     }
 
-    public final void setRatingAverage(BigDecimal ratingAverage) {
+    public void setRatingAverage(BigDecimal ratingAverage) {
         this.ratingAverage = ratingAverage;
     }
 
-    public final PrismStateGroup getState() {
+    public PrismStateGroup getState() {
         return state;
     }
 
-    public final void setState(PrismStateGroup state) {
+    public void setState(PrismStateGroup state) {
         this.state = state;
     }
 
-    public final Long getReferees() {
+    public Long getReferees() {
         return referees;
     }
 
-    public final void setReferees(Long referees) {
+    public void setReferees(Long referees) {
         this.referees = referees;
     }
 
-    public final Long getProvidedReferences() {
+    public Long getProvidedReferences() {
         return providedReferences;
     }
 
-    public final void setProvidedReferences(Long providedReferences) {
+    public void setProvidedReferences(Long providedReferences) {
         this.providedReferences = providedReferences;
     }
 
-    public final Long getDeclinedReferences() {
+    public Long getDeclinedReferences() {
         return declinedReferences;
     }
 
-    public final void setDeclinedReferences(Long declinedReferences) {
+    public void setDeclinedReferences(Long declinedReferences) {
         this.declinedReferences = declinedReferences;
     }
 
 
-    public final LocalDate getConfirmedStartDate() {
+    public LocalDate getConfirmedStartDate() {
         return confirmedStartDate;
     }
 
-    public final void setConfirmedStartDate(LocalDate confirmedStartDate) {
+    public void setConfirmedStartDate(LocalDate confirmedStartDate) {
         this.confirmedStartDate = confirmedStartDate;
     }
 
-    public final PrismOfferType getConfirmedOfferType() {
+    public PrismOfferType getConfirmedOfferType() {
         return confirmedOfferType;
     }
 
-    public final void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
+    public void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
         this.confirmedOfferType = confirmedOfferType;
     }
 
@@ -392,14 +371,6 @@ public class ApplicationReportListRowDTO {
 
     public String getReferralSourceDisplay() {
         return referralSource == null ? "" : referralSource;
-    }
-
-    public String getSecondaryThemeDisplay() {
-        return secondaryTheme == null ? "" : secondaryTheme.replace("|", ", ");
-    }
-
-    public String getPrimaryThemeDisplay() {
-        return primaryTheme == null ? "" : primaryTheme.replace("|", ", ");
     }
 
     public String getStudyLocationDisplay() {

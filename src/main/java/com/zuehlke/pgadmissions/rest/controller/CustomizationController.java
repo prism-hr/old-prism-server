@@ -1,22 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
-import org.apache.commons.lang3.BooleanUtils;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -33,12 +16,19 @@ import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
-import com.zuehlke.pgadmissions.rest.dto.WorkflowPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.utils.PrismWordUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions|systems}/{resourceId}/configuration")
@@ -81,7 +71,7 @@ public class CustomizationController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:stateDurations|workflowProperties}", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:stateDurations}", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurations(
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
@@ -91,7 +81,7 @@ public class CustomizationController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:customQuestions|workflowProperties}", params = "version", method = RequestMethod.GET)
+    @RequestMapping(value = "{configurationType:customQuestions}", params = "version", method = RequestMethod.GET)
     public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(
             @ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam Integer version) {
@@ -112,7 +102,7 @@ public class CustomizationController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:displayProperties|stateDurations|workflowProperties}", method = RequestMethod.DELETE, headers = "Restore-Type")
+    @RequestMapping(value = "{configurationType:displayProperties|stateDurations}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
                                      @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
                                      @RequestHeader(value = "Restore-Type") String restoreType) {
@@ -156,25 +146,6 @@ public class CustomizationController {
         customizationService.createOrUpdateConfiguration(configurationType, resource, opportunityType, displayPropertyConfigurationDTO);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{configurationType:workflowProperties}", method = RequestMethod.PUT)
-    public void updateWorkflowPropertyConfiguration(
-            @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
-            @Valid @RequestBody WorkflowPropertyConfigurationDTO workflowPropertyConfigurationDTO) {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationGroup(configurationType, resource, scope, opportunityType, workflowPropertyConfigurationDTO);
-    }
-
-    @PreAuthorize("permitAll")
-    @RequestMapping(value = "{configurationType:workflowProperties}/version", method = RequestMethod.GET)
-    public Integer getWorkflowPropertyConfigurationVersion(
-            @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam PrismScope targetScope) {
-        Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        return customizationService.getActiveConfigurationVersion(configurationType, resource);
-    }
-
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return RestUtils.getResourceDescriptor(resourceScope);
@@ -187,8 +158,8 @@ public class CustomizationController {
         return PrismConfiguration.valueOf(typeName);
     }
 
-    private List<DisplayPropertyConfigurationRepresentation> sparsifyDisplayPropertyConfigurations(PrismDisplayPropertyCategory category,
-                                                                                                   List<WorkflowConfigurationRepresentation> translations) {
+    private List<DisplayPropertyConfigurationRepresentation> sparsifyDisplayPropertyConfigurations(
+            PrismDisplayPropertyCategory category, List<WorkflowConfigurationRepresentation> translations) {
         Map<PrismDisplayPropertyDefinition, String> index = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation translation : translations) {
             DisplayPropertyConfigurationRepresentation translationRepresentation = (DisplayPropertyConfigurationRepresentation) translation;

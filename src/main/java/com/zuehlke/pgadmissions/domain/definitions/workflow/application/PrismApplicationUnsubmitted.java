@@ -5,19 +5,26 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_UNSUBMITTED_PENDING_COMPLETION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateUnsubmitted;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawUnsubmitted;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCompleteUnsubmitted()); //
+        stateActions.add(applicationCompleteUnsubmitted() //
+                .withTransitions(new PrismStateTransition() //
+                        .withTransitionState(PrismState.APPLICATION_UNSUBMITTED) //
+                        .withTransitionAction(APPLICATION_COMPLETE) //
+                        .withTransitionEvaluation(APPLICATION_COMPLETED_OUTCOME))); //
         stateActions.add(applicationEscalate(APPLICATION_UNSUBMITTED_PENDING_COMPLETION)); //
         stateActions.add(applicationTerminateUnsubmitted());
         stateActions.add(applicationWithdrawUnsubmitted());

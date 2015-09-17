@@ -22,11 +22,15 @@ public class ApplicationCompletedResolver implements StateTransitionResolver<App
 
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
-        LocalDate closingDate = resource.getApplication().getClosingDate();
-        if (closingDate == null || closingDate.isBefore(new LocalDate())) {
-            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_VALIDATION_PENDING_COMPLETION);
+        if (resource.getSubmittedTimestamp() == null) {
+            return stateService.getStateTransition(resource, comment.getAction(), resource.getState().getId());
+        } else {
+            LocalDate closingDate = resource.getApplication().getClosingDate();
+            if (closingDate == null || closingDate.isBefore(new LocalDate())) {
+                return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_VALIDATION_PENDING_COMPLETION);
+            }
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_VALIDATION);
         }
-        return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_VALIDATION);
     }
 
 }

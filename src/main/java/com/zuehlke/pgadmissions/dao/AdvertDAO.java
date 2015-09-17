@@ -163,7 +163,6 @@ public class AdvertDAO {
                 .createAlias(resourceReference + ".advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.categories.functions", "function", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.categories.themes", "theme", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //

@@ -259,11 +259,11 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROJECT_APPROVER),
             new PrismRoleTransition() //
-                    .withRole(PROJECT_ADMINISTRATOR) //
+                    .withRole(PROJECT_VIEWER) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(PROJECT_VIEWER), //
             new PrismRoleTransition() //
-                    .withRole(PROJECT_ADMINISTRATOR) //
+                    .withRole(PROJECT_VIEWER) //
                     .withTransitionType(DELETE) //
                     .withTransitionRole(PROJECT_VIEWER)), //
 

@@ -24,119 +24,135 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 @Table(name = "role")
 public class Role extends WorkflowDefinition implements GrantedAuthority {
 
-	private static final long serialVersionUID = 4265990408553249748L;
+    private static final long serialVersionUID = 4265990408553249748L;
 
-	@Id
-	@Enumerated(EnumType.STRING)
-	private PrismRole id;
+    @Id
+    @Enumerated(EnumType.STRING)
+    private PrismRole id;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "role_category", nullable = false)
-	private PrismRoleCategory roleCategory;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_category", nullable = false)
+    private PrismRoleCategory roleCategory;
 
-	@Column(name = "scope_creator")
-	private Boolean scopeCreator;
+    @Column(name = "directly_assignable", nullable = false)
+    private Boolean directlyAssignable;
+    
+    @Column(name = "scope_creator")
+    private Boolean scopeCreator;
 
-	@ManyToOne
-	@JoinColumn(name = "scope_id", nullable = false)
-	private Scope scope;
+    @ManyToOne
+    @JoinColumn(name = "scope_id", nullable = false)
+    private Scope scope;
 
-	@OneToMany(mappedBy = "role")
-	private Set<UserRole> userRoles = Sets.newHashSet();
+    @OneToMany(mappedBy = "role")
+    private Set<UserRole> userRoles = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "role")
-	private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
+    @OneToMany(mappedBy = "role")
+    private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
-	@OneToMany(mappedBy = "role")
-	private Set<ActionRedaction> actionRedactions = Sets.newHashSet();
+    @OneToMany(mappedBy = "role")
+    private Set<ActionRedaction> actionRedactions = Sets.newHashSet();
 
-	@Override
-	public PrismRole getId() {
-		return id;
-	}
+    @Override
+    public PrismRole getId() {
+        return id;
+    }
 
-	public void setId(PrismRole id) {
-		this.id = id;
-	}
+    public void setId(PrismRole id) {
+        this.id = id;
+    }
 
-	public PrismRoleCategory getRoleCategory() {
-		return roleCategory;
-	}
+    public PrismRoleCategory getRoleCategory() {
+        return roleCategory;
+    }
 
-	public void setRoleCategory(PrismRoleCategory roleCategory) {
-		this.roleCategory = roleCategory;
-	}
+    public void setRoleCategory(PrismRoleCategory roleCategory) {
+        this.roleCategory = roleCategory;
+    }
 
-	public Boolean getScopeCreator() {
-		return scopeCreator;
-	}
+    public Boolean getDirectlyAssignable() {
+        return directlyAssignable;
+    }
 
-	public void setScopeCreator(Boolean scopeCreator) {
-		this.scopeCreator = scopeCreator;
-	}
+    public void setDirectlyAssignable(Boolean directlyAssignable) {
+        this.directlyAssignable = directlyAssignable;
+    }
+    
+    public Boolean getScopeCreator() {
+        return scopeCreator;
+    }
 
-	@Override
-	public Scope getScope() {
-		return scope;
-	}
+    public void setScopeCreator(Boolean scopeCreator) {
+        this.scopeCreator = scopeCreator;
+    }
 
-	@Override
-	public void setScope(Scope scope) {
-		this.scope = scope;
-	}
+    @Override
+    public Scope getScope() {
+        return scope;
+    }
 
-	public Set<UserRole> getUserRoles() {
-		return userRoles;
-	}
+    @Override
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
 
-	public Set<StateActionAssignment> getStateActionAssignments() {
-		return stateActionAssignments;
-	}
+    public Set<UserRole> getUserRoles() {
+        return userRoles;
+    }
 
-	public final Set<ActionRedaction> getActionRedactions() {
-		return actionRedactions;
-	}
+    public Set<StateActionAssignment> getStateActionAssignments() {
+        return stateActionAssignments;
+    }
 
-	public Role withId(PrismRole id) {
-		this.id = id;
-		return this;
-	}
+    public final Set<ActionRedaction> getActionRedactions() {
+        return actionRedactions;
+    }
 
-	public Role withRoleCategory(PrismRoleCategory roleCategory) {
-		this.roleCategory = roleCategory;
-		return this;
-	}
+    public Role withId(PrismRole id) {
+        this.id = id;
+        return this;
+    }
 
-	public Role withScopeCreator(Boolean scopeCreator) {
-		this.scopeCreator = scopeCreator;
-		return this;
-	}
+    public Role withRoleCategory(PrismRoleCategory roleCategory) {
+        this.roleCategory = roleCategory;
+        return this;
+    }
 
-	public Role withScope(Scope scope) {
-		this.scope = scope;
-		return this;
-	}
+    public Role withDirectlyAssignable(Boolean directlyAssignable) {
+        this.directlyAssignable = directlyAssignable;
+        return this;
+    }
+    
+    public Role withScopeCreator(Boolean scopeCreator) {
+        this.scopeCreator = scopeCreator;
+        return this;
+    }
+    
+    public Role withScope(Scope scope) {
+        this.scope = scope;
+        return this;
+    }
 
-	@Override
-	public String getAuthority() {
-		return id.toString();
-	}
+    @Override
+    public String getAuthority() {
+        return id.toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(id);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (object == null) {
-			return false;
-		}
-		if (getClass() != object.getClass()) {
-			return false;
-		}
-		final Role other = (Role) object;
-		return Objects.equal(id, other.getId());
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final Role other = (Role) object;
+        return Objects.equal(id, other.getId());
+    }
 
 }

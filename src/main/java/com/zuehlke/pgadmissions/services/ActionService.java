@@ -77,9 +77,9 @@ public class ActionService {
         return entityService.getById(Action.class, id);
     }
 
-    public void validateInvokeAction(Resource resource, Action action, Comment comment) {
+    public void validateInvokeAction(Resource resource, Action action, User user, boolean declinedReponse) {
         resource = resourceService.getOperativeResource(resource, action);
-        if (checkActionExecutable(resource, action, comment.getUser(), comment.getDeclinedResponse())) {
+        if (checkActionExecutable(resource, action, user, declinedReponse)) {
             return;
         }
         throw new WorkflowPermissionException(resource, action);
@@ -132,7 +132,7 @@ public class ActionService {
     }
 
     public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) {
-        validateInvokeAction(resource, action, comment);
+        validateInvokeAction(resource, action, comment.getUser(), comment.getDeclinedResponse());
         return executeAction(resource, action, comment);
     }
 

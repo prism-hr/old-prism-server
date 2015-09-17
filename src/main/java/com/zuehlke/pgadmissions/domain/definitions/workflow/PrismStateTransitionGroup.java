@@ -4,7 +4,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_VALIDATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_ELIGIBILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
@@ -74,7 +73,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_APPOINTMENT_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_IDENTIFIED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REVIEW_OUTCOME;
@@ -114,16 +112,6 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(APPLICATION_VALIDATION_PENDING_COMPLETION) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withTransitionEvaluation(APPLICATION_COMPLETED_OUTCOME)),
-
-    APPLICATION_IDENTIFIED_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_VALIDATION) //
-                    .withTransitionAction(APPLICATION_COMPLETE_VALIDATION_STAGE) //
-                    .withTransitionEvaluation(APPLICATION_IDENTIFIED_OUTCOME), //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_VALIDATION_PENDING_COMPLETION) //
-                    .withTransitionAction(APPLICATION_COMPLETE_VALIDATION_STAGE) //
-                    .withTransitionEvaluation(APPLICATION_IDENTIFIED_OUTCOME)),
 
     APPLICATION_COMPLETE_STATE_TRANSITION( //
             new PrismStateTransition() //

@@ -8,7 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -382,6 +381,18 @@ public class AdvertService {
                 .collect(Collectors.toList());
     }
 
+    public Map<Integer, Integer> getCompetenceImportances(Advert advert) {
+        AdvertTargets targets = advert.getTargets();
+        if (targets != null) {
+            Map<Integer, Integer> importances = Maps.newHashMap();
+            targets.getCompetences().forEach(c -> {
+                importances.put(c.getValueId(), c.getImportance());
+            });
+            return importances;
+        }
+        return null;
+    }
+
     public List<Integer> getAdvertTargetAdverts(Advert advert, boolean selected) {
         return advertDAO.getAdvertTargetAdverts(advert, selected);
     }
@@ -464,36 +475,6 @@ public class AdvertService {
                 advertDAO.deleteAdvertAttributes(advert, AdvertTargetAdvert.class, newTargetValues);
             }
         }
-    }
-
-    public Set<Integer> getAdvertsUserCanIdentifyFor(Advert advert, User applicant, User user) {
-        Set<Integer> adverts = Sets.newHashSet();
-        for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
-            List<Integer> advertsPermitted = advertDAO.getAdvertsUserCanIdentifyFor(advert, applicant, user, APPLICATION, partnerScope);
-            if (!advertsPermitted.isEmpty()) {
-                if (partnerScope.equals(DEPARTMENT)) {
-                    adverts.addAll(advertDAO.getUserDeparmentInstitutionAdverts(applicant, advertsPermitted));
-                }
-                adverts.addAll(advertsPermitted);
-            }
-        }
-        return adverts;
-    }
-
-    public void identifyForAdverts(User user, Collection<Integer> adverts) {
-        advertDAO.identifyForAdverts(user, adverts);
-    }
-    
-    public Map<Integer, Integer> getCompetenceImportances(Advert advert) {
-        AdvertTargets targets = advert.getTargets();
-        if (targets != null) {
-            Map<Integer, Integer> importances = Maps.newHashMap();
-            targets.getCompetences().forEach(c -> {
-                importances.put(c.getValueId(), c.getImportance());
-            });
-            return importances;
-        }
-        return null;
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

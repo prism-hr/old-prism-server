@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.comment;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_IDENTIFICATION_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
@@ -782,10 +781,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public boolean isResourceEndorsementComment() {
         return !action.getId().getScope().equals(APPLICATION) && rating != null;
-    }
-
-    public boolean isApplicationIdentifiedComment() {
-        return action.getId().equals(APPLICATION_COMPLETE_IDENTIFICATION_STAGE);
     }
 
     public String getApplicationRatingDisplay() {

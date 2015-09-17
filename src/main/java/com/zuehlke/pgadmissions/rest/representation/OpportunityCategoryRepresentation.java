@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
@@ -49,9 +50,12 @@ public class OpportunityCategoryRepresentation {
 
         private boolean published;
 
-        public OpportunityTypeRepresentation(PrismOpportunityType id, boolean published) {
+        private PrismDisplayPropertyDefinition termsAndConditions;
+
+        public OpportunityTypeRepresentation(PrismOpportunityType id, boolean published, PrismDisplayPropertyDefinition termsAndConditions) {
             this.id = id;
             this.published = published;
+            this.termsAndConditions = termsAndConditions;
         }
 
         public PrismOpportunityType getId() {
@@ -68,6 +72,14 @@ public class OpportunityCategoryRepresentation {
 
         public void setPublished(boolean published) {
             this.published = published;
+        }
+
+        public PrismDisplayPropertyDefinition getTermsAndConditions() {
+            return termsAndConditions;
+        }
+
+        public void setTermsAndConditions(PrismDisplayPropertyDefinition termsAndConditions) {
+            this.termsAndConditions = termsAndConditions;
         }
 
     }

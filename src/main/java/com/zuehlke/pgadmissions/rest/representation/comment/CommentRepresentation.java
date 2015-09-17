@@ -55,8 +55,6 @@ public class CommentRepresentation {
 
     private String rejectionReasonSystem;
 
-    private CommentExportRepresentation export;
-
     private DateTime createdTimestamp;
 
     private List<CommentAssignedUserRepresentation> assignedUsers;
@@ -229,14 +227,6 @@ public class CommentRepresentation {
         this.rating = rating;
     }
 
-    public CommentExportRepresentation getExport() {
-        return export;
-    }
-
-    public void setExport(CommentExportRepresentation export) {
-        this.export = export;
-    }
-
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
@@ -382,11 +372,6 @@ public class CommentRepresentation {
 
     public CommentRepresentation withRejectionReasonSystem(String rejectionReasonSystem) {
         this.rejectionReasonSystem = rejectionReasonSystem;
-        return this;
-    }
-
-    public CommentRepresentation withExport(CommentExportRepresentation export) {
-        this.export = export;
         return this;
     }
 

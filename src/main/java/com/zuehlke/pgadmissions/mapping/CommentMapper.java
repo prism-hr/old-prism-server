@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
 import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
-import com.zuehlke.pgadmissions.domain.comment.CommentExport;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
 import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
@@ -36,7 +35,6 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPr
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentExportRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentOfferDetailRepresentation;
@@ -192,8 +190,7 @@ public class CommentMapper {
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withPositionDetail(getCommentPositionDetailRepresentation(comment))
                 .withOfferDetail(getCommentOfferDetailRepresentation(comment)).withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment())
                 .withApplicationReserveStatus(comment.getApplicationReserveStatus()).withRejectionReason(rejectionReason == null ? null : rejectionReason.getName())
-                .withRejectionReasonSystem(comment.getRejectionReasonSystem()).withExport(getCommentExportRepresentation(comment))
-                .withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
+                .withRejectionReasonSystem(comment.getRejectionReasonSystem()).withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }
@@ -239,12 +236,6 @@ public class CommentMapper {
         CommentOfferDetail offer = comment.getOfferDetail();
         return offer == null ? null : new CommentOfferDetailRepresentation().withPositionProvisionalStartDate(offer.getPositionProvisionalStartDate())
                 .withAppointmentConditions(offer.getAppointmentConditions());
-    }
-
-    private CommentExportRepresentation getCommentExportRepresentation(Comment comment) {
-        CommentExport export = comment.getExport();
-        return export == null ? null : new CommentExportRepresentation().withExportSucceeded(export.getExportSucceeded())
-                .withExportRequest(export.getExportRequest()).withExportException(export.getExportException()).withExportReference(export.getExportReference());
     }
 
     private List<LocalDateTime> getCommentAppointmentPreferenceRepresentations(Comment comment) {

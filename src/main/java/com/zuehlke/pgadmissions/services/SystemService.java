@@ -103,7 +103,7 @@ public class SystemService {
 
     @Value("${context.environment}")
     private String environment;
-    
+
     @Value("${application.url}")
     private String applicationUrl;
 
@@ -136,7 +136,7 @@ public class SystemService {
 
     @Inject
     private SystemDAO systemDAO;
-    
+
     @Inject
     private ActionService actionService;
 
@@ -197,7 +197,7 @@ public class SystemService {
         logger.info("Initializing display property configurations");
         initializeDisplayPropertyConfigurations(getSystem());
     }
-    
+
     @Transactional(timeout = 600)
     public void dropWorkflow() {
         if (asList("prod", "uat").contains(environment)) {
@@ -205,7 +205,7 @@ public class SystemService {
         }
         systemDAO.clearSchema();
     }
-    
+
     @Transactional(timeout = 600)
     public void initializeWorkflow() throws Exception {
         logger.info("Initializing scope definitions");
@@ -337,8 +337,7 @@ public class SystemService {
             Scope scope = scopeService.getById(prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withPartnershipState(prismAction.getPartnershipState())
-                    .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
+                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withScope(scope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 

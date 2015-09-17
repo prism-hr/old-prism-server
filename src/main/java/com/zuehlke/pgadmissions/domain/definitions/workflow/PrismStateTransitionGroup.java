@@ -221,11 +221,6 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(PROJECT_VIEW_EDIT) //
                     .withTransitionEvaluation(PROJECT_UPDATED_OUTCOME)), //
 
-    PROJECT_ENDORSE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(PROJECT_APPROVED) //
-                    .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST)), //
-
     PROGRAM_CREATE_TRANSITION( //
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_APPROVAL) //
@@ -256,11 +251,6 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(PROGRAM_VIEW_EDIT) //
                     .withTransitionEvaluation(PROGRAM_UPDATED_OUTCOME) //
                     .withPropagatedActions(PROJECT_TERMINATE)), //
-
-    PROGRAM_ENDORSE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(PROGRAM_APPROVED) //
-                    .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST)), //
 
     DEPARTMENT_CREATE_TRANSITION( //
             new PrismStateTransition() //
@@ -293,11 +283,6 @@ public enum PrismStateTransitionGroup {
                     .withTransitionEvaluation(DEPARTMENT_UPDATED_OUTCOME) //
                     .withPropagatedActions(PROGRAM_TERMINATE, PROJECT_TERMINATE)), //
 
-    DEPARTMENT_ENDORSE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(DEPARTMENT_APPROVED) //
-                    .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST)), //
-
     INSTITUTION_CREATE_TRANSITION( //
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_APPROVAL) //
@@ -327,12 +312,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_DISABLED_COMPLETED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT) //
                     .withTransitionEvaluation(INSTITUTION_UPDATED_OUTCOME) //
-                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE)),
-
-    INSTITUTION_ENDORSE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(INSTITUTION_APPROVED) //
-                    .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST));
+                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE));
 
     private PrismStateTransition[] stateTransitionTemplates;
 

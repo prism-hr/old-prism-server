@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 
@@ -45,7 +44,6 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
@@ -195,24 +193,6 @@ public class ResourceController {
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 userRolesRepresentation.getRoles());
         return userMapper.getUserRepresentationSimple(user);
-    }
-
-    @RequestMapping(value = "{resourceId}/users/request", method = RequestMethod.POST)
-    @PreAuthorize("permitAll")
-    public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody UserDTO newUser) throws Exception {
-        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-        User user = userService.requestUser(newUser, resource, getUnverifiedViewerRole(resource));
-        return userMapper.getUserRepresentationSimple(user);
-    }
-
-    @RequestMapping(value = "{resourceId}/users/{userId}/verify", method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated()")
-    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestParam Boolean verify, @ModelAttribute ResourceDescriptor resourceDescriptor)
-            throws Exception {
-        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-        User user = userService.getById(userId);
-        userService.verifyUser(userService.getCurrentUser(), resource, user, verify);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)

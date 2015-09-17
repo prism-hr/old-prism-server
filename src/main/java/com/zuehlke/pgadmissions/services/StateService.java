@@ -63,9 +63,6 @@ public class StateService {
     private ActionService actionService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private CommentService commentService;
 
     @Inject
@@ -171,7 +168,6 @@ public class StateService {
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
         resourceService.recordStateTransition(resource, comment, state, transitionState);
-        advertService.recordPartnershipStateTransition(resource, comment);
 
         resourceService.processResource(resource, comment);
         roleService.executeRoleTransitions(resource, comment, stateTransition);

@@ -2,27 +2,21 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.EMPLOYERS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.UNIVERSITIES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING_IDENTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
@@ -54,9 +48,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
@@ -442,66 +434,12 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getAdvertTargetsUserCanEndorseFor(Advert advert, User user, PrismScope scope, PrismScope partnerScope) {
-        String partnerScopeReference = partnerScope.getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass())
-                .setProjection(Projections.groupProperty("advertTarget.id")) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.INNER_JOIN)
-                .createAlias("targetAdvert." + partnerScopeReference, partnerScopeReference, JoinType.INNER_JOIN) //
-                .createAlias(partnerScopeReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
-                        Restrictions.disjunction() //
-                                .add(Restrictions.isNull("action.partnershipState")) //
-                                .add(Restrictions.eqProperty("advertTarget.partnershipState", "action.partnershipState"))) //
-                .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.in("stateAction.action.id",
-                        asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(Collectors.toList()))) //
-                .add(getResourceStateActionConstraint()) //
-                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .list();
-    }
-
-    public void endorseForAdvertTargets(Collection<Integer> advertTargets, PrismPartnershipState partnershipState) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update AdvertTargetAdvert "
-                        + "set partnershipState = :partnershipState "
-                        + "where id in (:advertTargets) "
-                        + "and selected = true") //
-                .setParameterList("advertTargets", advertTargets) //
-                .setParameter("partnershipState", partnershipState) //
-                .executeUpdate();
-    }
-
     public List<Integer> getAdvertsUserIdentifiedFor(User user) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAdvert.class) //
                 .setProjection(Projections.property("advert.id")) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("identified", true)) //
                 .list();
-    }
-
-    public void verifyAdvertTargetUser(Advert value, User valueUser) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update AdvertTargetAdvert " //
-                        + "set partnershipState = :newPartnershipState "
-                        + "where value = :value "
-                        + "and valueUser = :valueUser "
-                        + "and partnershipState = :oldPartnershipState") //
-                .setParameter("newPartnershipState", ENDORSEMENT_PENDING) //
-                .setParameter("value", value) //
-                .setParameter("valueUser", valueUser) //
-                .setParameter("oldPartnershipState", ENDORSEMENT_PENDING_IDENTIFICATION) //
-                .executeUpdate();
     }
 
     public List<Integer> getUserDeparmentInstitutionAdverts(User user, Collection<Integer> departmentAdverts) {
@@ -618,17 +556,11 @@ public class AdvertDAO {
                     .add(Restrictions.eq("advert." + scope.getLowerCamelName() + ".id", resourceId));
 
             if (actionCondition.equals(ACCEPT_APPLICATION) && newArrayList(DEPARTMENT, INSTITUTION).contains(scope)) {
-                resourcesConstraint.add(getPartnerResourceConstraint(scope, resourceId));
+                resourcesConstraint.add(Restrictions.eq("targetAdvert." + scope.getLowerCamelName() + ".id", resourceId));
             }
 
             criteria.add(resourcesConstraint);
         }
-    }
-
-    private Junction getPartnerResourceConstraint(PrismScope resourceScope, Integer resourceId) {
-        return Restrictions.conjunction() //
-                .add(Restrictions.eq("advertTarget.partnershipState", ENDORSEMENT_PROVIDED))
-                .add(Restrictions.eq("targetAdvert." + resourceScope.getLowerCamelName() + ".id", resourceId));
     }
 
     private void appendRangeConstraint(Criteria criteria, String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {

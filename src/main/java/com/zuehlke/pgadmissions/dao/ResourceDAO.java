@@ -159,9 +159,6 @@ public class ResourceDAO {
                     .add(Projections.property("primaryExternalAccount.accountImageUrl"), "userAccountImageUrl");
 
             if (!hasRedactions) {
-                if (applicationScope) {
-                    projectionList.add(Projections.property("identified"), "applicationIdentified");
-                }
                 projectionList.add(Projections.property("applicationRatingAverage"), "applicationRatingAverage");
             }
 

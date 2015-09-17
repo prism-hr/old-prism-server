@@ -67,7 +67,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAdvert;
@@ -95,16 +94,13 @@ import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
 @Transactional
 public class UserService {
 
-    private HashMultimap<Class<? extends UniqueEntity>, String> userAssignments = HashMultimap.create();
+    private final HashMultimap<Class<? extends UniqueEntity>, String> userAssignments = HashMultimap.create();
 
     @Inject
     private UserDAO userDAO;
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private ProgramService programService;
@@ -194,9 +190,7 @@ public class UserService {
 
         User newUser = getOrCreateUserWithRoles(invoker, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, asList(actualRole));
 
-        if (targetRole.equals(actualRole)) {
-            verifyAdvertTargetUser(resource, newUser);
-        } else if (targetRole != null) {
+        if (targetRole != null) {
             UserRole newUserRole = roleService.getUserRole(resource, newUser, actualRole);
             if (newUserRole.getTargetRole() == null) {
                 newUserRole.setTargetRole(roleService.getById(targetRole));
@@ -213,7 +207,6 @@ public class UserService {
             if (isTrue(verify)) {
                 Role targetRole = userRole.getTargetRole();
                 roleService.modifyUserRole(invoker, resource, user, CREATE, targetRole == null ? getViewerRole(resource) : targetRole.getId());
-                verifyAdvertTargetUser(resource, user);
             }
             entityService.delete(userRole);
         }
@@ -573,12 +566,6 @@ public class UserService {
         }
 
         return userAssignments;
-    }
-
-    private void verifyAdvertTargetUser(Resource resource, User user) {
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            advertService.verifyTargetAdvertUser(resource.getAdvert(), user);
-        }
     }
 
 }

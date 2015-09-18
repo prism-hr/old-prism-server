@@ -207,7 +207,7 @@ public class DocumentService {
             }
         }
     }
-
+    
     public void deleteAmazonDocuments(DateTime baselineTime) throws IOException, IntegrationException {
         LocalDate baselineDate = baselineTime.toLocalDate();
         System system = systemService.getSystem();

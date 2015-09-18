@@ -13,14 +13,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 
 @Component
-public class ApplicationByImportedQualificationType implements PrismResourceSummarySelector {
+public class ApplicationByEmployingResourceScope implements PrismResourceSummarySelector {
 
     @Inject
     private ApplicationService applicationService;
 
     @Override
-    public List<Integer> getPossible(PrismScope scope, Resource parent, Collection<Integer> importedEntities) {
-        return applicationService.getApplicationsByImportedQualificationType((ResourceParent) parent, importedEntities);
+    public List<Integer> getPossible(Resource resource, PrismScope entityScope, Collection<Integer> entityIds) {
+        return applicationService.getApplicationsByEmployingResourceScope((ResourceParent) resource, entityScope, entityIds);
     }
 
 }

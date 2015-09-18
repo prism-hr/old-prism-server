@@ -33,11 +33,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -193,6 +195,28 @@ public class ApplicationDAO {
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
                 .add(Restrictions.in("rejectionReason.id", importedRejectionReasons)) //
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources)) //
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationEmploymentPosition.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources)) //
                 .list();
     }
 

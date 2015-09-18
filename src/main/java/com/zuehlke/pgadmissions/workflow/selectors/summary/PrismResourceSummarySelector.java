@@ -8,6 +8,6 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public interface PrismResourceSummarySelector {
 
-    List<Integer> getPossible(PrismScope scope, Resource parent, Collection<Integer> importedEntities);
+    List<Integer> getPossible(Resource resource, PrismScope entityScope, Collection<Integer> entityIds);
 
 }

@@ -19,8 +19,8 @@ public class ApplicationByImportedRejectionReasonSelector implements PrismResour
     private ApplicationService applicationService;
 
     @Override
-    public List<Integer> getPossible(PrismScope scope, Resource parent, Collection<Integer> importedEntities) {
-        return applicationService.getApplicationsByImportedRejectionReason((ResourceParent) parent, importedEntities);
+    public List<Integer> getPossible(Resource resource, PrismScope entityScope, Collection<Integer> entityIds) {
+        return applicationService.getApplicationsByImportedRejectionReason((ResourceParent) resource, entityIds);
     }
 
 }

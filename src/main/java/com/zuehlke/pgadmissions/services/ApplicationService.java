@@ -304,6 +304,14 @@ public class ApplicationService {
         }
     }
 
+    public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+        return applicationDAO.getApplicationsByQualifyingResourceScope(parent, resourceScope, resources);
+    }
+
+    public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+        return applicationDAO.getApplicationsByEmployingResourceScope(parent, resourceScope, resources);
+    }
+
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, ImportedEntitySimple opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(PrismOpportunityType.valueOf(opportunityType.getName()).getCategory().name());

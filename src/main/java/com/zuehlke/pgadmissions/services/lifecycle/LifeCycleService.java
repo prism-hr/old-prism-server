@@ -55,7 +55,7 @@ public class LifeCycleService {
 
     @Inject
     private StaticDataService staticDataService;
-    
+
     @Inject
     private SystemService systemService;
 
@@ -68,7 +68,7 @@ public class LifeCycleService {
         if (BooleanUtils.isTrue(dropWorkflow)) {
             systemService.dropWorkflow();
         }
-        
+
         if (doInitializeWorkflow) {
             systemService.initializeWorkflow();
         }
@@ -86,7 +86,7 @@ public class LifeCycleService {
         }
 
         systemService.initializeAmazon();
-        
+
         if (BooleanUtils.isTrue(dropData)) {
             systemService.dropSystemData();
         }
@@ -94,7 +94,7 @@ public class LifeCycleService {
         if (BooleanUtils.isTrue(initializeData)) {
             systemService.initializeSystemData();
         }
-        
+
         staticDataService.getData();
 
         if (BooleanUtils.isTrue(maintain)) {

@@ -15,8 +15,11 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableMap;
@@ -94,7 +97,26 @@ public class StaticDataService {
     @Inject
     private CustomizationMapper customizationMapper;
 
-    public Map<String, Object> getActions() {
+    @Cacheable("staticData")
+    @RequestMapping(method = RequestMethod.GET)
+    public Map<String, Object> getData() {
+        Map<String, Object> staticData = Maps.newHashMap();
+        staticData.putAll(getActions());
+        staticData.putAll(getStates());
+        staticData.putAll(getRoles());
+        staticData.putAll(getPerformanceIndicatorGroups());
+        staticData.putAll(getSimpleProperties());
+        staticData.putAll(getFilterProperties());
+        staticData.putAll(getConfigurations());
+        staticData.putAll(getOpportunityCategories());
+        staticData.putAll(getActionConditions());
+        staticData.putAll(getRequiredSections());
+        staticData.putAll(getWorkflowConstraints());
+        staticData.putAll(getImportedEntities());
+        return staticData;
+    }
+
+    private Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
         List<Action> actions = entityService.list(Action.class);
         List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId()))
@@ -103,21 +125,21 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getStates() {
+    private Map<String, Object> getStates() {
         Map<String, Object> staticData = Maps.newHashMap();
         List<State> states = entityService.list(State.class);
         staticData.put("states", states.stream().map(stateMapper::getStateRepresentationSimple).collect(Collectors.toList()));
         return staticData;
     }
 
-    public Map<String, Object> getRoles() {
+    private Map<String, Object> getRoles() {
         Map<String, Object> staticData = Maps.newHashMap();
         List<Role> roles = entityService.list(Role.class);
         staticData.put("roles", roles.stream().map(r -> new RoleRepresentation(r.getId(), r.getDirectlyAssignable())).collect(toList()));
         return staticData;
     }
 
-    public Map<String, Object> getPerformanceIndicatorGroups() {
+    private Map<String, Object> getPerformanceIndicatorGroups() {
         Map<String, Object> staticData = Maps.newHashMap();
         Map<PrismPerformanceIndicator.PrismPerformanceIndicatorGroup, Object> groups = Maps.newLinkedHashMap();
         for (PrismPerformanceIndicator.PrismPerformanceIndicatorGroup group : PrismPerformanceIndicator.PrismPerformanceIndicatorGroup.values()) {
@@ -136,7 +158,7 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getSimpleProperties() {
+    private Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
@@ -153,7 +175,7 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getFilterProperties() {
+    private Map<String, Object> getFilterProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListConstraint.values().length);
@@ -169,7 +191,7 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getConfigurations() {
+    private Map<String, Object> getConfigurations() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         Map<String, Object> configurations = Maps.newHashMap();
@@ -193,7 +215,7 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getOpportunityCategories() {
+    private Map<String, Object> getOpportunityCategories() {
         Map<String, Object> staticData = Maps.newHashMap();
         staticData.put("opportunityCategories",
                 asList(PrismOpportunityCategory.values()).stream()
@@ -204,7 +226,7 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getActionConditions() {
+    private Map<String, Object> getActionConditions() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         ListMultimap<PrismScope, PrismActionCondition> actionConditionsMultimap = LinkedListMultimap.create();
@@ -217,7 +239,7 @@ public class StaticDataService {
         return staticData;
     }
 
-    public Map<String, Object> getRequiredSections() {
+    private Map<String, Object> getRequiredSections() {
         List<Object> sectionDefinitions = new LinkedList<>();
         for (PrismScopeSectionDefinition section : PrismScopeSectionDefinition.values()) {
             sectionDefinitions.add(ImmutableMap.of("id", section, "explanationDisplayProperty", section.getIncompleteExplanation()));
@@ -225,7 +247,7 @@ public class StaticDataService {
         return singletonMap("requiredSections", sectionDefinitions);
     }
 
-    public Map<String, Object> getWorkflowConstraints() {
+    private Map<String, Object> getWorkflowConstraints() {
         List<Object> constraintDefinitions = Lists.newArrayList();
         for (PrismWorkflowConstraint constraint : PrismWorkflowConstraint.values()) {
             constraintDefinitions.add(new WorkflowConstraintRepresentation().withConstraint(constraint).withMinimumPermitted(constraint.getMinimumPermitted())
@@ -235,7 +257,7 @@ public class StaticDataService {
     }
 
     @SuppressWarnings("unchecked")
-    public <U extends ImportedEntityResponseDefinition<?>, T extends ImportedEntity<?>> Map<String, Object> getImportedEntities() {
+    private <U extends ImportedEntityResponseDefinition<?>, T extends ImportedEntity<?>> Map<String, Object> getImportedEntities() {
         Map<String, Object> staticData = Maps.newHashMap();
 
         for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {

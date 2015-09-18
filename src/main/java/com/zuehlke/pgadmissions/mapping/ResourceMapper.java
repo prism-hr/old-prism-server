@@ -497,7 +497,7 @@ public class ResourceMapper {
 
             constraintsToTransform.keySet().forEach(constraint -> {
                 constraintsToTransform.putAll(constraint,
-                        applicationContext.getBean(constraint.getFilterSelector()).getPossible(APPLICATION, resource, constraintsToTransform.get(constraint)));
+                        applicationContext.getBean(constraint.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(constraint)));
             });
         }
 

@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.services.EntityService;
 
 @RestController
 @RequestMapping("/api")
-public class FileController {
+public class DocumentController {
 
     @Autowired
     private DocumentService documentService;

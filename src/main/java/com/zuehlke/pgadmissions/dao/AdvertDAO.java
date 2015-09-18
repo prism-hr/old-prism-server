@@ -189,7 +189,6 @@ public class AdvertDAO {
             appendStudyOptionConstraint(query, criteria);
         }
 
-        appendFeeConstraint(criteria, query);
         appendPayConstraint(criteria, query);
 
         if (opportunityScope) {
@@ -317,15 +316,10 @@ public class AdvertDAO {
                                 .add(Restrictions.isNotNull("projectCondition.id")) //
                                 .add(Restrictions.in("projectState.state.id", scopes.get(PROJECT))))) //
                 .add(Restrictions.lt("lastCurrencyConversionDate", baseline)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("fee.currencySpecified")) //
-                                .add(Restrictions.isNotNull("fee.currencyAtLocale")) //
-                                .add(Restrictions.neProperty("fee.currencySpecified", "fee.currencyAtLocale")))
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("pay.currencySpecified")) //
-                                .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
-                                .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale"))))
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.isNotNull("pay.currencySpecified")) //
+                        .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
+                        .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))
                 .list();
     }
 
@@ -335,9 +329,10 @@ public class AdvertDAO {
                 .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.lt("closingDate.closingDate", baseline)) //
-                        .add(Restrictions.conjunction().add(Restrictions.isNull("closingDate.id")) //
-                                .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
+                        .add(Restrictions.lt("closingDate.value", baseline)) //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("closingDate.id")) //
+                                .add(Restrictions.ge("otherClosingDate.value", baseline)))) //
                 .list();
     }
 
@@ -351,9 +346,7 @@ public class AdvertDAO {
                         .add(Restrictions.eq("project.institution", institution)) //
                         .add(Restrictions.eq("program.institution", institution)) //
                         .add(Restrictions.eq("institution.id", institution.getId()))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("fee.currencySpecified", currency)) //
-                        .add(Restrictions.eq("pay.currencySpecified", currency))) //
+                .add(Restrictions.eq("pay.currencySpecified", currency)) //
                 .list();
     }
 
@@ -523,10 +516,6 @@ public class AdvertDAO {
             }
             criteria.add(studyOptionConstraint);
         }
-    }
-
-    private void appendFeeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        appendRangeConstraint(criteria, "advert.fee.monthMinimumAtLocale", "advert.fee.monthMaximumAtLocale", queryDTO.getMinFee(), queryDTO.getMaxFee(), true);
     }
 
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

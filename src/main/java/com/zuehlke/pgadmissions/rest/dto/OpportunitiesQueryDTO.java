@@ -51,10 +51,6 @@ public class OpportunitiesQueryDTO {
 
     private List<PrismStudyOption> studyOptions;
 
-    private Integer minFee;
-
-    private Integer maxFee;
-
     private Integer minSalary;
 
     private Integer maxSalary;
@@ -177,22 +173,6 @@ public class OpportunitiesQueryDTO {
         this.studyOptions = studyOptions;
     }
 
-    public Integer getMinFee() {
-        return minFee;
-    }
-
-    public void setMinFee(Integer minFee) {
-        this.minFee = minFee;
-    }
-
-    public Integer getMaxFee() {
-        return maxFee;
-    }
-
-    public void setMaxFee(Integer maxFee) {
-        this.maxFee = maxFee;
-    }
-
     public Integer getMinSalary() {
         return minSalary;
     }
@@ -298,12 +278,8 @@ public class OpportunitiesQueryDTO {
         return resourceScope.getLowerCamelName() + "Id";
     }
 
-    public  enum OpportunitiesQueryScopeTab {
-        SCOPE_INSTITUTIONS(INSTITUTION),
-        SCOPE_DEPARTMENTS(DEPARTMENT),
-        MAIN_OPPORTUNITIES(PROGRAM, PROJECT),
-        MAIN_EMPLOYERS(INSTITUTION),
-        MAIN_DEPARTMENTS(DEPARTMENT);
+    public enum OpportunitiesQueryScopeTab {
+        SCOPE_INSTITUTIONS(INSTITUTION), SCOPE_DEPARTMENTS(DEPARTMENT), MAIN_OPPORTUNITIES(PROGRAM, PROJECT), MAIN_EMPLOYERS(INSTITUTION), MAIN_DEPARTMENTS(DEPARTMENT);
 
         private PrismScope[] scopes;
 

@@ -21,7 +21,6 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
@@ -35,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
 @Repository
@@ -286,14 +284,6 @@ public class RoleDAO {
                 .add(Restrictions.isNotNull("action.creationScope")) //
                 .add(Restrictions.eq("roleTransition.roleTransitionType", CREATE)) //
                 .add(Restrictions.eq("roleTransition.restrictToActionOwner", true)) //
-                .list();
-    }
-
-    public List<PrismRole> getActionPerformerRoles(PrismAction... actions) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
-                .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias("stateAction", "stateAction") //
-                .add(Restrictions.in("stateAction.action.id", actions)) //
                 .list();
     }
 

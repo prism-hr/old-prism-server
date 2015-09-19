@@ -19,7 +19,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
@@ -200,52 +200,54 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    // TODO: check the validity of the creation instruction
-    // TODO: skip the role creation if they already have a role
     public ResourceParent createResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
-        ResourceParent lastResource = null;
-        ResourceParent lastParentResource = null;
+        boolean validCreation = false;
+        List<PrismScope> scopes = resourceFamilyDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
+        for (List<PrismScope> creations : resourceFamilyDTO.getResourceFamilyCreation().getScopeCreationFamilies()) {
+            if (creations.containsAll(scopes)) {
+                validCreation = true;
+                break;
+            }
+        }
 
-        User creatorSpecified = null;
-        User creatorDefault = systemService.getSystem().getUser();
+        if (validCreation) {
+            ResourceParent lastResource = null;
+            ResourceParent lastParentResource = null;
+            User lastUser = systemService.getSystem().getUser();
+            for (ResourceCreationDTO resourceDTO : resourceFamilyDTO.getResources()) {
+                Integer thisId = resourceDTO.getId();
+                PrismScope thisScope = resourceDTO.getScope();
+                PrismScope lastScope = lastResource == null ? SYSTEM : lastResource.getResourceScope();
 
-        int depth = 0;
-        List<ResourceCreationDTO> resourceDTOs = resourceFamilyDTO.getResources();
-        for (ResourceCreationDTO resourceDTO : resourceDTOs) {
-            depth++;
+                if (thisId == null) {
+                    if (lastResource != null) {
+                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastResource.getId()));
+                    }
 
-            Integer thisId = resourceDTO.getId();
-            PrismScope thisScope = resourceDTO.getScope();
-            PrismScope lastScope = lastResource == null ? SYSTEM : lastResource.getResourceScope();
-
-            if (thisId == null) {
-                if (lastResource != null) {
-                    resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastResource.getId()));
+                    Action action = actionService.getById(PrismAction.valueOf(lastScope + "_CREATE_" + thisScope));
+                    lastResource = (ResourceParent) createResource(lastUser, action, resourceDTO).getResource();
+                } else {
+                    lastResource = (ResourceParent) getById(thisScope, thisId);
+                    lastUser = lastResource.getUser();
                 }
 
-                if (depth == resourceDTOs.size()) {
-                    UserDTO creatorDTO = resourceFamilyDTO.getUser();
-                    creatorSpecified = userService.getOrCreateUser(creatorDTO.getFirstName(), creatorDTO.getLastName(), creatorDTO.getEmail());
-                    creatorDefault = creatorSpecified;
-                }
-
-                Action action = actionService.getById(PrismAction.valueOf(lastScope + "_CREATE_" + thisScope));
-                lastResource = (ResourceParent) createResource(creatorDefault, action, resourceDTO).getResource();
-            } else {
-                lastResource = (ResourceParent) getById(thisScope, thisId);
-                creatorDefault = lastResource.getUser();
+                lastScope = thisScope;
+                lastParentResource = !ResourceOpportunity.class.isAssignableFrom(lastResource.getClass()) ? lastResource : lastParentResource;
             }
 
-            lastScope = thisScope;
-            lastParentResource = asList(INSTITUTION, DEPARTMENT).contains(lastScope) ? lastResource : lastParentResource;
+            UserDTO userDTO = resourceFamilyDTO.getUser();
+            User thisUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+            if (!(lastParentResource == null || thisUser == null)) {
+                if (roleService.getVerifiedRoles(thisUser, lastParentResource).isEmpty()) {
+                    Role role = roleService.getById(getUnverifiedViewerRole(lastParentResource));
+                    roleService.getOrCreateUserRole(new UserRole().withResource(lastParentResource).withUser(thisUser).withRole(role).withAssignedTimestamp(DateTime.now()));
+                }
+            }
+
+            return lastResource;
         }
 
-        if (!(lastParentResource == null && creatorSpecified == null)) {
-            Role role = roleService.getById(getUnverifiedViewerRole(lastParentResource.getResourceScope()));
-            roleService.getOrCreateUserRole(new UserRole().withResource(lastParentResource).withUser(creatorSpecified).withRole(role)).withAssignedTimestamp(DateTime.now());
-        }
-
-        return lastResource;
+        throw new UnsupportedOperationException("Invalid resource creation attempt");
     }
 
     @SuppressWarnings("unchecked")

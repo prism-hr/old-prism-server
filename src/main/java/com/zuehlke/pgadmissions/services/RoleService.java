@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
@@ -261,10 +260,6 @@ public class RoleService {
 
     public List<PrismRole> getRolesByScope(User user, PrismScope prismScope) {
         return roleDAO.getRolesByScope(user, prismScope);
-    }
-
-    public List<UserRole> getActionPerformerUserRoles(User user, PrismAction... actions) {
-        return actions == null ? Lists.newArrayList() : roleDAO.getUserRoles(user, roleDAO.getActionPerformerRoles(actions));
     }
 
     public List<PrismRole> getRolesWithRedactions(PrismScope resourceScope) {

@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
 
 // FIXME - adjust the date validation
 public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO {
@@ -17,7 +17,7 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
 
     @Valid
     @NotNull
-    private ResourceCreationDTO resource;
+    private ResourceFamilyCreationDTO resource;
 
     @NotNull
     private Integer startYear;
@@ -46,12 +46,12 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     }
 
     @Override
-    public ResourceCreationDTO getResource() {
+    public ResourceFamilyCreationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceCreationDTO resource) {
+    public void setResource(ResourceFamilyCreationDTO resource) {
         this.resource = resource;
     }
 

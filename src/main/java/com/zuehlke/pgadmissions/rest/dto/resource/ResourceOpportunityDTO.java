@@ -23,8 +23,6 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
     @Min(1)
     private Integer durationMaximum;
 
-    private Boolean requirePositionDefinition;
-
     private List<ImportedEntityDTO> studyOptions;
 
     @Override
@@ -51,16 +49,6 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
 
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
-    }
-
-    @Override
-    public Boolean getRequirePositionDefinition() {
-        return requirePositionDefinition;
-    }
-
-    @Override
-    public void setRequirePositionDefinition(Boolean requirePositionDefinition) {
-        this.requirePositionDefinition = requirePositionDefinition;
     }
 
     public List<ImportedEntityDTO> getStudyOptions() {

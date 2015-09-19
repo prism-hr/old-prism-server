@@ -24,8 +24,6 @@ public class ResourceCreationDTO {
     @NotNull
     private PrismScope scope;
 
-    private ResourceCreationDTO childResource;
-
     public Integer getId() {
         return id;
     }
@@ -40,14 +38,6 @@ public class ResourceCreationDTO {
 
     public void setScope(PrismScope scope) {
         this.scope = scope;
-    }
-
-    public ResourceCreationDTO getChildResource() {
-        return childResource;
-    }
-
-    public void setChildResource(ResourceCreationDTO childResource) {
-        this.childResource = childResource;
     }
 
     public ResourceDTO getParentResource() {

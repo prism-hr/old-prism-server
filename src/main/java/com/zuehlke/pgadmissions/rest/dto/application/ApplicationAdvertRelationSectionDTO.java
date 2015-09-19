@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto.application;
 
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
 
 public abstract class ApplicationAdvertRelationSectionDTO {
 
-    public abstract ResourceCreationDTO getResource();
+    public abstract ResourceFamilyCreationDTO getResource();
 
-    public abstract void setResource(ResourceCreationDTO resource);
+    public abstract void setResource(ResourceFamilyCreationDTO resource);
 
 }

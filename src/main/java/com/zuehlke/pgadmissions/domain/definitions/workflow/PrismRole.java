@@ -2,10 +2,8 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.EMPLOYEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -45,19 +43,15 @@ public enum PrismRole implements PrismLocalizableDefinition {
     DEPARTMENT_APPROVER(RECRUITER, DEPARTMENT, true), //
     DEPARTMENT_VIEWER(RECRUITER, DEPARTMENT, true), //
     DEPARTMENT_VIEWER_UNVERIFIED(RECRUITER, DEPARTMENT, false), //
-    DEPARTMENT_STUDENT(STUDENT, DEPARTMENT, true), //
-    DEPARTMENT_STUDENT_UNVERIFIED(STUDENT, DEPARTMENT, false), //
-    DEPARTMENT_EMPLOYEE(EMPLOYEE, DEPARTMENT, true), //
-    DEPARTMENT_EMPLOYEE_UNVERIFIED(EMPLOYEE, DEPARTMENT, false), //
+    DEPARTMENT_STUDENT(APPLICANT, DEPARTMENT, true), //
+    DEPARTMENT_STUDENT_UNVERIFIED(APPLICANT, DEPARTMENT, false), //
 
     INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, INSTITUTION, true), //
     INSTITUTION_APPROVER(RECRUITER, INSTITUTION, true), //
     INSTITUTION_VIEWER(RECRUITER, INSTITUTION, true), //
     INSTITUTION_VIEWER_UNVERIFIED(RECRUITER, INSTITUTION, false), //
-    INSTITUTION_STUDENT(STUDENT, INSTITUTION, true), //
-    INSTITUTION_STUDENT_UNVERIFIED(STUDENT, INSTITUTION, false), //
-    INSTITUTION_EMPLOYEE(EMPLOYEE, INSTITUTION, true), //
-    INSTITUTION_EMPLOYEE_UNVERIFIED(EMPLOYEE, INSTITUTION, false), //
+    INSTITUTION_STUDENT(APPLICANT, INSTITUTION, true), //
+    INSTITUTION_STUDENT_UNVERIFIED(APPLICANT, INSTITUTION, false), //
 
     SYSTEM_ADMINISTRATOR(ADMINISTRATOR, SYSTEM, true);
 
@@ -115,11 +109,9 @@ public enum PrismRole implements PrismLocalizableDefinition {
     public enum PrismRoleCategory {
 
         ADMINISTRATOR, //
-        EMPLOYEE, //
         RECRUITER, //
         APPLICANT, //
-        REFEREE, //
-        STUDENT;
+        REFEREE;
 
     }
 

@@ -19,6 +19,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
@@ -80,7 +81,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
@@ -98,11 +101,14 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
@@ -192,6 +198,54 @@ public class ResourceService {
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
         return actionService.executeUserAction(resource, action, comment);
+    }
+
+    // TODO: check the validity of the creation instruction
+    // TODO: skip the role creation if they already have a role
+    public ResourceParent createResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
+        ResourceParent lastResource = null;
+        ResourceParent lastParentResource = null;
+
+        User creatorSpecified = null;
+        User creatorDefault = systemService.getSystem().getUser();
+
+        int depth = 0;
+        List<ResourceCreationDTO> resourceDTOs = resourceFamilyDTO.getResources();
+        for (ResourceCreationDTO resourceDTO : resourceDTOs) {
+            depth++;
+
+            Integer thisId = resourceDTO.getId();
+            PrismScope thisScope = resourceDTO.getScope();
+            PrismScope lastScope = lastResource == null ? SYSTEM : lastResource.getResourceScope();
+
+            if (thisId == null) {
+                if (lastResource != null) {
+                    resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastResource.getId()));
+                }
+
+                if (depth == resourceDTOs.size()) {
+                    UserDTO creatorDTO = resourceFamilyDTO.getUser();
+                    creatorSpecified = userService.getOrCreateUser(creatorDTO.getFirstName(), creatorDTO.getLastName(), creatorDTO.getEmail());
+                    creatorDefault = creatorSpecified;
+                }
+
+                Action action = actionService.getById(PrismAction.valueOf(lastScope + "_CREATE_" + thisScope));
+                lastResource = (ResourceParent) createResource(creatorDefault, action, resourceDTO).getResource();
+            } else {
+                lastResource = (ResourceParent) getById(thisScope, thisId);
+                creatorDefault = lastResource.getUser();
+            }
+
+            lastScope = thisScope;
+            lastParentResource = asList(INSTITUTION, DEPARTMENT).contains(lastScope) ? lastResource : lastParentResource;
+        }
+
+        if (!(lastParentResource == null && creatorSpecified == null)) {
+            Role role = roleService.getById(getUnverifiedViewerRole(lastParentResource.getResourceScope()));
+            roleService.getOrCreateUserRole(new UserRole().withResource(lastParentResource).withUser(creatorSpecified).withRole(role)).withAssignedTimestamp(DateTime.now());
+        }
+
+        return lastResource;
     }
 
     @SuppressWarnings("unchecked")
@@ -747,17 +801,6 @@ public class ResourceService {
     public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
         parent.setOpportunityCategories(opportunityCategories);
         parent.getAdvert().setOpportunityCategories(opportunityCategories);
-    }
-
-    public List<ResourceCreationDTO> getResourceCreations(ResourceCreationDTO resource, List<ResourceCreationDTO> unpackedResources) {
-        unpackedResources = unpackedResources == null ? Lists.newLinkedList() : unpackedResources;
-        ResourceCreationDTO childResource = resource.getChildResource();
-        if (childResource == null) {
-            return unpackedResources;
-        } else {
-            unpackedResources.add(childResource);
-            return getResourceCreations(childResource, unpackedResources);
-        }
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {

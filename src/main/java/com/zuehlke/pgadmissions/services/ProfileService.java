@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.address.Address;
@@ -40,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
@@ -53,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
@@ -75,15 +74,11 @@ import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
 @Transactional
 public class ProfileService {
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private AddressService addressService;
@@ -105,9 +100,6 @@ public class ProfileService {
 
     @Inject
     private RoleService roleService;
-
-    @Inject
-    private SystemService systemService;
 
     @Inject
     private UserAccountService userAccountService;
@@ -643,17 +635,10 @@ public class ProfileService {
         return emptyList();
     }
 
-    // TODO - implement the resource creation loop and link to the
-    // connections infrastructure
-    // TODO - implement all of the possible scenarios (e.g. suggested user,
-    // no known department, etc)
     private void createUserAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
-        List<ResourceCreationDTO> resourceCreations = resourceService.getResourceCreations(advertRelationDTO.getResource(), null);
-        ResourceCreationDTO resourceDTO = Iterables.getLast(resourceCreations);
-        Advert newAdvert = resourceService
-                .createResource(systemService.getSystem().getUser(), actionService.getById(PrismAction.valueOf("INSTITUTION_CREATE" + resourceDTO.getScope().name())), resourceDTO)
-                .getResource().getAdvert();
+        ResourceParent resource = resourceService.createResourceFamily(advertRelationDTO.getResource());
 
+        Advert newAdvert = resource.getAdvert();
         Advert oldAdvert = advertRelation.getAdvert();
         if (oldAdvert != null && !oldAdvert.getId().equals(newAdvert.getId())) {
             userService.deleteUserAdvert(user, oldAdvert);

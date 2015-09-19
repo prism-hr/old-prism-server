@@ -15,12 +15,6 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
     public abstract void setDepartment(Department department);
 
     @Override
-    public abstract Boolean getRequirePositionDefinition();
-
-    @Override
-    public abstract void setRequirePositionDefinition(Boolean requirePositionDefinition);
-
-    @Override
     public abstract ImportedEntitySimple getOpportunityType();
 
     @Override

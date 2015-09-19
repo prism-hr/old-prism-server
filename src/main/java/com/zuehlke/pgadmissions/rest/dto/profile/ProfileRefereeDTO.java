@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
@@ -22,7 +22,7 @@ public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 
     @Valid
     @NotNull
-    private ResourceCreationDTO resource;
+    private ResourceFamilyCreationDTO resource;
 
     @NotEmpty
     @PhoneNumber
@@ -48,12 +48,12 @@ public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
     }
 
     @Override
-    public ResourceCreationDTO getResource() {
+    public ResourceFamilyCreationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceCreationDTO resource) {
+    public void setResource(ResourceFamilyCreationDTO resource) {
         this.resource = resource;
     }
 

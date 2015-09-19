@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public enum PrismResourceCreation {
+public enum PrismResourceFamilyCreation {
 
     QUALIFICATION(new PrismScopeCreationFamilies() //
             .withScopeCreationFamily(new PrismScopeCreationFamily() //
@@ -31,7 +31,7 @@ public enum PrismResourceCreation {
     
     private PrismScopeCreationFamilies scopeCreationFamilies;
 
-    private PrismResourceCreation(PrismScopeCreationFamilies scopeCreations) {
+    private PrismResourceFamilyCreation(PrismScopeCreationFamilies scopeCreations) {
         this.scopeCreationFamilies = scopeCreations;
     }
 

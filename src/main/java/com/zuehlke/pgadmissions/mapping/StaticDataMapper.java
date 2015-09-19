@@ -1,12 +1,12 @@
-package com.zuehlke.pgadmissions.services;
+package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +37,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation.PrismScopeCreationFamilies;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
@@ -50,25 +52,27 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
-import com.zuehlke.pgadmissions.mapping.ActionMapper;
-import com.zuehlke.pgadmissions.mapping.CustomizationMapper;
-import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
-import com.zuehlke.pgadmissions.mapping.StateMapper;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation.OpportunityTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.WorkflowConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceFamilyCreationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceFamilyCreationRepresentation.ResourceCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
+import com.zuehlke.pgadmissions.services.CustomizationService;
+import com.zuehlke.pgadmissions.services.EntityService;
+import com.zuehlke.pgadmissions.services.ImportedEntityService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 @Service
 @Transactional
-public class StaticDataService {
+public class StaticDataMapper {
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -113,6 +117,7 @@ public class StaticDataService {
         staticData.putAll(getRequiredSections());
         staticData.putAll(getWorkflowConstraints());
         staticData.putAll(getImportedEntities());
+        staticData.putAll(getResourceFamilyCreations());
         return staticData;
     }
 
@@ -240,7 +245,7 @@ public class StaticDataService {
     }
 
     private Map<String, Object> getRequiredSections() {
-        List<Object> sectionDefinitions = new LinkedList<>();
+        List<Object> sectionDefinitions = Lists.newLinkedList();
         for (PrismScopeSectionDefinition section : PrismScopeSectionDefinition.values()) {
             sectionDefinitions.add(ImmutableMap.of("id", section, "explanationDisplayProperty", section.getIncompleteExplanation()));
         }
@@ -267,6 +272,37 @@ public class StaticDataService {
             staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
         }
         return staticData;
+    }
+
+    private Map<String, Object> getResourceFamilyCreations() {
+        List<ResourceFamilyCreationRepresentation> representations = Lists.newLinkedList();
+        for (PrismResourceFamilyCreation resourceFamilyCreation : PrismResourceFamilyCreation.values()) {
+            ResourceFamilyCreationRepresentation representation = new ResourceFamilyCreationRepresentation(resourceFamilyCreation);
+
+            Map<PrismScope, Integer> occurrences = Maps.newHashMap();
+            Map<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newHashMap();
+            PrismScopeCreationFamilies scopeCreationFamilies = resourceFamilyCreation.getScopeCreationFamilies();
+            scopeCreationFamilies.forEach(scf -> {
+                scf.forEach(s -> {
+                    Integer frequency = occurrences.get(s);
+                    frequency = frequency == null ? 1 : (frequency + 1);
+                    occurrences.put(s, frequency);
+                    scopeRepresentations.put(s, new ResourceCreationRepresentation(s));
+                });
+            });
+
+            Integer scopeCreationfamilySize = scopeCreationFamilies.size();
+            occurrences.keySet().forEach(o -> {
+                if (occurrences.get(o).equals(scopeCreationfamilySize)) {
+                    scopeRepresentations.get(o).setRequired(true);
+                }
+            });
+
+            representation.setResourceCreations(newLinkedList(scopeRepresentations.values()));
+            representations.add(representation);
+        }
+
+        return singletonMap("resourceFamilyCreations", representations);
     }
 
 }

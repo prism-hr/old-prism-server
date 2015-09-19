@@ -83,7 +83,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
@@ -201,16 +200,7 @@ public class ResourceService {
     }
 
     public ResourceParent createResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
-        boolean validCreation = false;
-        List<PrismScope> scopes = resourceFamilyDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
-        for (List<PrismScope> creations : resourceFamilyDTO.getResourceFamilyCreation().getScopeCreationFamilies()) {
-            if (creations.containsAll(scopes)) {
-                validCreation = true;
-                break;
-            }
-        }
-
-        if (validCreation) {
+        if (validateResourceFamilyCreation(resourceFamilyDTO)) {
             ResourceParent lastResource = null;
             ResourceParent lastParentResource = null;
             User lastUser = systemService.getSystem().getUser();
@@ -237,12 +227,7 @@ public class ResourceService {
 
             UserDTO userDTO = resourceFamilyDTO.getUser();
             User thisUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-            if (!(lastParentResource == null || thisUser == null)) {
-                if (roleService.getVerifiedRoles(thisUser, lastParentResource).isEmpty()) {
-                    Role role = roleService.getById(getUnverifiedViewerRole(lastParentResource));
-                    roleService.getOrCreateUserRole(new UserRole().withResource(lastParentResource).withUser(thisUser).withRole(role).withAssignedTimestamp(DateTime.now()));
-                }
-            }
+            joinResource(lastParentResource, thisUser, PrismRole.getUnverifiedViewerRole(lastParentResource));
 
             return lastResource;
         }
@@ -930,6 +915,22 @@ public class ResourceService {
                     setOpportunityCategories(parent, opportunityCategories);
                 }
             }
+        }
+    }
+
+    private boolean validateResourceFamilyCreation(ResourceFamilyCreationDTO resourceFamilyDTO) {
+        List<PrismScope> scopes = resourceFamilyDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
+        for (List<PrismScope> creations : resourceFamilyDTO.getResourceFamilyCreation().getScopeCreationFamilies()) {
+            if (creations.containsAll(scopes)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void joinResource(ResourceParent resource, User user, PrismRole prismRole) {
+        if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
+            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(roleService.getById(prismRole)).withAssignedTimestamp(DateTime.now()));
         }
     }
 

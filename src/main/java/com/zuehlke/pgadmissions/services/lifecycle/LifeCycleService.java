@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
-import com.zuehlke.pgadmissions.services.StaticDataService;
+import com.zuehlke.pgadmissions.mapping.StaticDataMapper;
 import com.zuehlke.pgadmissions.services.SystemService;
 
 @Service
@@ -54,7 +54,7 @@ public class LifeCycleService {
     private Boolean maintain;
 
     @Inject
-    private StaticDataService staticDataService;
+    private StaticDataMapper staticDataMapper;
 
     @Inject
     private SystemService systemService;
@@ -95,7 +95,7 @@ public class LifeCycleService {
             systemService.initializeSystemData();
         }
 
-        staticDataService.getData();
+        staticDataMapper.getData();
 
         if (BooleanUtils.isTrue(maintain)) {
             executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));

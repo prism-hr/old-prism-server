@@ -50,7 +50,7 @@ public class Institution extends ResourceParent implements TargetEntity {
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
-    @Column(name = "opportunity_category")
+    @Column(name = "opportunity_category", nullable = false)
     private String opportunityCategories;
 
     @Lob
@@ -80,9 +80,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Column(name = "google_id")
     private String googleId;
-
-    @Column(name = "ucl_institution", nullable = false)
-    private Boolean uclInstitution;
 
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
@@ -247,14 +244,6 @@ public class Institution extends ResourceParent implements TargetEntity {
         this.googleId = googleId;
     }
 
-    public Boolean getUclInstitution() {
-        return uclInstitution;
-    }
-
-    public void setUclInstitution(Boolean uclInstitution) {
-        this.uclInstitution = uclInstitution;
-    }
-
     @Override
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
@@ -388,11 +377,6 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     public Institution withGoogleId(String googleId) {
         this.googleId = googleId;
-        return this;
-    }
-
-    public Institution withUclInstitution(boolean uclInstitution) {
-        this.uclInstitution = uclInstitution;
         return this;
     }
 
@@ -539,7 +523,7 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
-    }   
+    }
 
     @Override
     public EntitySignature getEntitySignature() {

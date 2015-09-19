@@ -65,7 +65,7 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @JoinColumn(name = "advert_id", nullable = false, unique = true)
     private Advert advert;
 
-    @Column(name = "opportunity_category")
+    @Column(name = "opportunity_category", nullable = false)
     private String opportunityCategories;
 
     @Lob

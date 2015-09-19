@@ -98,9 +98,6 @@ public class Project extends ResourceOpportunity {
     @Column(name = "duration_maximum")
     private Integer durationMaximum;
 
-    @Column(name = "require_position_definition", nullable = false)
-    private Boolean requirePositionDefinition;
-
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -316,17 +313,7 @@ public class Project extends ResourceOpportunity {
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
     }
-
-    @Override
-    public Boolean getRequirePositionDefinition() {
-        return requirePositionDefinition;
-    }
-
-    @Override
-    public void setRequirePositionDefinition(Boolean requirePositionDefinition) {
-        this.requirePositionDefinition = requirePositionDefinition;
-    }
-
+    
     @Override
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
@@ -559,11 +546,6 @@ public class Project extends ResourceOpportunity {
 
     public Project withDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
-        return this;
-    }
-
-    public Project withRequirePositionDefinition(Boolean requirePositionDefinition) {
-        this.requirePositionDefinition = requirePositionDefinition;
         return this;
     }
 

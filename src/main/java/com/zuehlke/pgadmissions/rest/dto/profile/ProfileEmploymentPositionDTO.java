@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.dto.profile;
 import javax.validation.constraints.NotNull;
 
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
 
 // FIXME - adjust the date validation
 public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSectionDTO {
@@ -11,7 +11,7 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     private Integer id;
 
     @NotNull
-    private ResourceCreationDTO resource;
+    private ResourceFamilyCreationDTO resource;
 
     private Integer startYear;
 
@@ -32,12 +32,12 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     }
 
     @Override
-    public ResourceCreationDTO getResource() {
+    public ResourceFamilyCreationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceCreationDTO resource) {
+    public void setResource(ResourceFamilyCreationDTO resource) {
         this.resource = resource;
     }
     

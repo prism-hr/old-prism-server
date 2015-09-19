@@ -77,7 +77,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @JoinColumn(name = "imported_opportunity_type_id")
     private ImportedEntitySimple opportunityType;
 
-    @Column(name = "opportunity_category")
+    @Column(name = "opportunity_category", nullable = false)
     private String opportunityCategories;
 
     @Column(name = "name", nullable = false)

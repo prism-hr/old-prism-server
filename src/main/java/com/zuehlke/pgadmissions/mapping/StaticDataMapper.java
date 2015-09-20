@@ -1,57 +1,16 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation;
+import com.google.common.collect.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation.PrismScopeCreationFamilies;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
+import com.zuehlke.pgadmissions.rest.representation.FilterEntityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation.OpportunityTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.WorkflowConstraintRepresentation;
@@ -67,8 +26,28 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
-
+import org.apache.commons.lang.WordUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -109,6 +88,7 @@ public class StaticDataMapper {
         staticData.putAll(getStates());
         staticData.putAll(getRoles());
         staticData.putAll(getPerformanceIndicatorGroups());
+        staticData.putAll(getReportFilterEntities());
         staticData.putAll(getSimpleProperties());
         staticData.putAll(getFilterProperties());
         staticData.putAll(getConfigurations());
@@ -161,6 +141,14 @@ public class StaticDataMapper {
         }
         staticData.put("performanceIndicatorGroups", groups);
         return staticData;
+    }
+
+    private Map<String, Object> getReportFilterEntities() {
+        List<FilterEntityRepresentation> representations = Stream.of(PrismFilterEntity.values())
+                .map(e -> new FilterEntityRepresentation().withId(e).withScope(e.getFilterScope()))
+                .collect(Collectors.toList());
+
+        return Collections.singletonMap("reportFilterEntities", representations);
     }
 
     private Map<String, Object> getSimpleProperties() {
@@ -291,9 +279,9 @@ public class StaticDataMapper {
                 });
             });
 
-            Integer scopeCreationfamilySize = scopeCreationFamilies.size();
+            Integer scopeCreationFamilySize = scopeCreationFamilies.size();
             occurrences.keySet().forEach(o -> {
-                if (occurrences.get(o).equals(scopeCreationfamilySize)) {
+                if (occurrences.get(o).equals(scopeCreationFamilySize)) {
                     scopeRepresentations.get(o).setRequired(true);
                 }
             });

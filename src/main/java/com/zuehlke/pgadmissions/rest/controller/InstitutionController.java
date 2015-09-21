@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.mapping.InstitutionMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
@@ -29,15 +29,17 @@ public class InstitutionController {
     private ProgramService programService;
 
     @Inject
+    private InstitutionMapper institutionMapper;
+
+    @Inject
     private InstitutionService institutionService;
 
     @Inject
     private ResourceMapper resourceMapper;
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<ResourceRepresentationLocation> getInstitutions(@RequestParam(required = false) Boolean activeOnly,
-            @RequestParam(required = false) String query, @RequestParam(required = false) String[] googleIds) {
-        return institutionService.getInstitutions(BooleanUtils.isTrue(activeOnly), query, googleIds);
+    public List<ResourceRepresentationLocation> getInstitutions(@RequestParam(required = false) String query, @RequestParam(required = false) String[] googleIds) {
+        return institutionMapper.getInstitutionRepresentations(query, googleIds);
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
@@ -50,11 +52,6 @@ public class InstitutionController {
     @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)
     public List<ResourceRepresentationSimple> getPrograms(@PathVariable Integer institutionId) {
         return programService.getApprovedPrograms(institutionId);
-    }
-
-    @RequestMapping(value = "/{institutionId}/similarPrograms", method = RequestMethod.GET)
-    public List<ResourceRepresentationSimple> getSimilarPrograms(@PathVariable Integer institutionId, @RequestParam String searchTerm) {
-        return programService.getSimilarPrograms(institutionId, searchTerm);
     }
 
 }

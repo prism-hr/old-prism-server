@@ -410,7 +410,7 @@ public class UserService {
         return Lists.<User>newArrayList();
     }
 
-    public void correctBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
+    public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
         HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 

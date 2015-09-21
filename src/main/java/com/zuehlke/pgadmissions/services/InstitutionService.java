@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -22,14 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.io.ByteStreams;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.dto.resource.ResourceLocationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 
 @Service
 @Transactional
@@ -56,13 +52,7 @@ public class InstitutionService {
     private AddressService geocodableLocationService;
 
     @Inject
-    private ResourceMapper resourceMapper;
-
-    @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private StateService stateService;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
@@ -101,10 +91,8 @@ public class InstitutionService {
         return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
     }
 
-    public List<ResourceRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
-        List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
-        return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream()
-                .map(resourceMapper::getResourceRepresentationLocation).collect(Collectors.toList());
+    public List<ResourceLocationDTO> getInstitutions(String query, String[] googleIds) {
+        return institutionDAO.getInstitutions(query, googleIds);
     }
 
     public String getBusinessYear(Institution institution, Integer year, Integer month) {
@@ -143,10 +131,6 @@ public class InstitutionService {
             logger.error("Could not set geocoded location for institution ID: " + institutionId, e);
         }
         return institution;
-    }
-
-    public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {
-        return institutionDAO.getInstitutionsByDepartments(departments, activeStates);
     }
 
     private void changeInstitutionCurrency(Institution institution, String newCurrency) {

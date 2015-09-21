@@ -1,17 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -55,20 +49,6 @@ public class ProgramDAO {
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("institution.id", institutionId)) //
                 .add(Restrictions.eq("resourceState.state.id", PROGRAM_APPROVED)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
-                .list();
-    }
-
-    public List<ResourceRepresentationSimple> getSimilarPrograms(Integer institutionId, String searchTerm) {
-        return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id"), "id") //
-                        .add(Projections.property("name"), "name")) //
-                .add(Restrictions.eq("institution.id", institutionId)) //
-                .add(Restrictions.not( //
-                        Restrictions.in("state.id", Arrays.asList(PROGRAM_REJECTED, PROGRAM_WITHDRAWN, PROGRAM_DISABLED_COMPLETED)))) //
-                .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE)) //
-                .addOrder(Order.desc("name")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSimple.class)) //
                 .list();
     }

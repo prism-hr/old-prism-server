@@ -1,15 +1,8 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
-import jersey.repackaged.com.google.common.collect.Sets;
-
-public class ResourceTargetDTO extends ResourceStandardDTO {
-
-    private String addressDomicileName;
+public class ResourceLocationDTO extends ResourceIdentityDTO {
 
     private String addressLine1;
 
@@ -20,26 +13,14 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
     private String addressRegion;
 
     private String addressCode;
-
+    
+    private String addressDomicileName;
+    
     private String addressGoogleId;
 
     private BigDecimal addressCoordinateLatitude;
 
     private BigDecimal addressCoordinateLongitude;
-
-    private Boolean selected;
-
-    private BigDecimal targetingDistance;
-
-    private Set<ResourceTargetDTO> departments = Sets.newTreeSet();
-
-    public String getAddressDomicileName() {
-        return addressDomicileName;
-    }
-
-    public void setAddressDomicileName(String addressDomicileName) {
-        this.addressDomicileName = addressDomicileName;
-    }
 
     public String getAddressLine1() {
         return addressLine1;
@@ -81,6 +62,14 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
         this.addressCode = addressCode;
     }
 
+    public String getAddressDomicileName() {
+        return addressDomicileName;
+    }
+
+    public void setAddressDomicileName(String addressDomicileName) {
+        this.addressDomicileName = addressDomicileName;
+    }
+    
     public String getAddressGoogleId() {
         return addressGoogleId;
     }
@@ -104,44 +93,5 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
     public void setAddressCoordinateLongitude(BigDecimal addressCoordinateLongitude) {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
     }
-
-    public Boolean getSelected() {
-        return selected;
-    }
-
-    public void setSelected(Boolean selected) {
-        this.selected = selected;
-    }
-
-    public BigDecimal getTargetingDistance() {
-        return targetingDistance;
-    }
-
-    public void setTargetingDistance(BigDecimal targetingDistance) {
-        this.targetingDistance = targetingDistance;
-    }
-
-    public Set<ResourceTargetDTO> getDepartments() {
-        return departments;
-    }
-
-    public void addDepartment(ResourceTargetDTO department) {
-        this.departments.add(department);
-    }
-
-    public ResourceTargetDTO withId(PrismScope scope, Integer id) {
-        setId(scope, id);
-        return this;
-    }
-
-    @Override
-    public ResourceTargetDTO getParentResource() {
-        return super.getParentResource(ResourceTargetDTO.class);
-    }
-
-    @Override
-    public ResourceTargetDTO getEnclosingResource(PrismScope scope) {
-        return super.getEnclosingResource(scope, ResourceTargetDTO.class);
-    }
-
+    
 }

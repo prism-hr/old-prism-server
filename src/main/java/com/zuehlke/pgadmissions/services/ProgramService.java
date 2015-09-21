@@ -33,10 +33,6 @@ public class ProgramService {
         return programDAO.getApprovedPrograms(institutionId);
     }
 
-    public List<ResourceRepresentationSimple> getSimilarPrograms(Integer institutionId, String searchTerm) {
-        return programDAO.getSimilarPrograms(institutionId, searchTerm);
-    }
-
     public List<Integer> getProjects(Integer program) {
         return programDAO.getProjects(program);
     }

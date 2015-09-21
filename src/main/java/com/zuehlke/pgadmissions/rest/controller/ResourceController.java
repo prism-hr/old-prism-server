@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -45,10 +44,10 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
@@ -126,6 +125,13 @@ public class ResourceController {
             @RequestParam PrismScope propertiesScope) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getDisplayProperties(resource, propertiesScope);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = "type=simple")
+    public List<ResourceRepresentationIdentity> getResources(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestParam PrismScope childResourceScope, @RequestParam String query) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResources((ResourceParent) resource, childResourceScope, query);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -220,12 +226,6 @@ public class ResourceController {
         return actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
 
-    @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
-    public List<ResourceChildCreationRepresentation> getAcceptingResources(@PathVariable Integer resourceId, @RequestParam PrismScope targetScope,
-            @RequestParam PrismScope stopScope, @RequestParam Optional<String> searchTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        return resourceMapper.getResourceChildCreationRepresentations(resourceDescriptor.getResourceScope(), resourceId, targetScope, stopScope, searchTerm.orElse(null));
-    }
-
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)
     public List<UserRepresentationUnverified> getBouncedOrUnverifiedUsers(
             @PathVariable Integer resourceId, UserListFilterDTO filterDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
@@ -234,10 +234,10 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
-    public void correctBouncedOrUnverifiedUser(@PathVariable Integer resourceId, @PathVariable Integer userId,
+    public void reassignBouncedOrUnverifiedUser(@PathVariable Integer resourceId, @PathVariable Integer userId,
             @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        userService.correctBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
+        userService.reassignBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
     }
 
     @ModelAttribute

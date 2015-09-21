@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
 
-public class AdvertDTO extends ResourceStandardDTO {
+public class AdvertDTO extends ResourceActivityDTO {
 
     private Integer advertId;
 

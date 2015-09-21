@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
@@ -12,7 +11,7 @@ import org.springframework.beans.BeanUtils;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public class ResourceStandardDTO implements Comparable<Object> {
+public class ResourceActivityDTO implements Comparable<Object> {
 
     private static final String idReference = "Id";
 
@@ -167,12 +166,8 @@ public class ResourceStandardDTO implements Comparable<Object> {
         return getScope().equals(INSTITUTION) ? institutionLogoImageId : null;
     }
 
-    public ResourceStandardDTO getParentResource() {
-        return getParentResource(ResourceStandardDTO.class);
-    }
-
-    public ResourceStandardDTO getEnclosingResource(PrismScope scope) {
-        return getEnclosingResource(scope, ResourceStandardDTO.class);
+    public ResourceActivityDTO getEnclosingResource(PrismScope scope) {
+        return getEnclosingResource(scope, ResourceActivityDTO.class);
     }
 
     @Override
@@ -188,13 +183,13 @@ public class ResourceStandardDTO implements Comparable<Object> {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ResourceStandardDTO other = (ResourceStandardDTO) object;
+        final ResourceActivityDTO other = (ResourceActivityDTO) object;
         return Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId());
     }
 
     @Override
     public int compareTo(Object object) {
-        ResourceStandardDTO other = (ResourceStandardDTO) object;
+        ResourceActivityDTO other = (ResourceActivityDTO) object;
         Integer scopeOrdinal = getScopeOrdinal();
         Integer otherScopeOrdinal = other.getScopeOrdinal();
 
@@ -210,11 +205,7 @@ public class ResourceStandardDTO implements Comparable<Object> {
         return scopeComparison;
     }
 
-    protected <T extends ResourceStandardDTO> T getParentResource(Class<T> returnType) {
-        return getParentResorce(getScope(), returnType);
-    }
-
-    protected <T extends ResourceStandardDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
+    protected <T extends ResourceActivityDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
         T enclosingResource = BeanUtils.instantiate(returnType);
 
         boolean cloning = false;
@@ -259,15 +250,6 @@ public class ResourceStandardDTO implements Comparable<Object> {
             }
         }
         return null;
-    }
-
-    private <T extends ResourceStandardDTO> T getParentResorce(PrismScope scope, Class<T> returnType) {
-        PrismScope parentScope = scope.getParentScope();
-        T parentResource = getEnclosingResource(parentScope, returnType);
-        if (parentResource == null && !parentScope.equals(SYSTEM)) {
-            return getParentResorce(parentScope.getParentScope(), returnType);
-        }
-        return parentResource;
     }
 
 }

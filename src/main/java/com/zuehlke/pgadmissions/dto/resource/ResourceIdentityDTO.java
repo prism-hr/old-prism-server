@@ -10,7 +10,7 @@ public class ResourceIdentityDTO {
 
     private String name;
 
-    private Integer institutionLogoImageId;
+    private Integer logoImageId;
 
     public PrismScope getScope() {
         return scope;
@@ -36,12 +36,12 @@ public class ResourceIdentityDTO {
         this.name = name;
     }
 
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
+    public Integer getLogoImageId() {
+        return logoImageId;
     }
 
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
+    public void setLogoImageId(Integer logoImageId) {
+        this.logoImageId = logoImageId;
     }
 
     public ResourceIdentityDTO withScope(PrismScope scope) {

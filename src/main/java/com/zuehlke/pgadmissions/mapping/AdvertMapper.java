@@ -38,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
@@ -54,7 +53,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
@@ -68,10 +67,8 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetail
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetsRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -120,7 +117,7 @@ public class AdvertMapper {
             PrismScope scope = advert.getScope();
             for (PrismScope advertScope : parentScopes) {
                 if (advertScope.ordinal() <= scope.ordinal()) {
-                    ResourceStandardDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
+                    ResourceActivityDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
                     if (enclosingResourceDTO != null) {
                         resources.put(advertScope, enclosingResourceDTO.getId());
                     }
@@ -216,9 +213,9 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        ResourceStandardDTO resource = null;
+        ResourceActivityDTO resource = null;
         for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
-            ResourceStandardDTO thisResource = advert.getEnclosingResource(scope);
+            ResourceActivityDTO thisResource = advert.getEnclosingResource(scope);
             if (thisResource == null) {
                 continue;
             } else if (resource == null) {
@@ -262,6 +259,7 @@ public class AdvertMapper {
         return representation;
     }
 
+    // TODO: send advert connections
     public <T extends AdvertRepresentationSimple> T getAdvertRepresentation(Advert advert, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
 
@@ -282,8 +280,6 @@ public class AdvertMapper {
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
-        representation.setTargets(getAdvertTargetsRepresentation(advert));
-
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
         return representation;
     }
@@ -363,26 +359,12 @@ public class AdvertMapper {
         return categories.stream().map(T::getValue).collect(Collectors.toList());
     }
 
-    private AdvertTargetsRepresentation getAdvertTargetsRepresentation(Advert advert) {
-        AdvertTargets targets = advertService.getAdvertTargets(advert);
-        if (targets != null) {
-            return new AdvertTargetsRepresentation().withCompetences(getAdvertCompetenceRepresentations(targets.getCompetences()))
-                    .withResources(getAdvertResourceRepresentations(advert, false)).withSelectedResources(getAdvertResourceRepresentations(advert, true));
-        }
-        return null;
-    }
-
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Collection<AdvertCompetence> competences) {
         return competences.stream().<AdvertCompetenceRepresentation> map(competence -> new AdvertCompetenceRepresentation().withName(competence.getName())
                 .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance())).collect(Collectors.toList());
     }
 
-    private List<ResourceRepresentationTarget> getAdvertResourceRepresentations(Advert advert, boolean selected) {
-        return resourceMapper.getResourceTargetingRepresentations(advert, advertService.getAdvertTargetResources(advert, INSTITUTION, selected),
-                advertService.getAdvertTargetResources(advert, DEPARTMENT, selected));
-    }
-
-    private ResourceRepresentationSimple getAdvertResourceRepresentation(ResourceStandardDTO resource) {
+    private ResourceRepresentationSimple getAdvertResourceRepresentation(ResourceActivityDTO resource) {
         PrismScope resourceScope = resource.getScope();
         ResourceRepresentationSimple resourceRepresentation = new ResourceRepresentationSimple().withScope(resourceScope).withId(resource.getId()).withName(resource.getName());
         if (resourceScope.equals(INSTITUTION)) {

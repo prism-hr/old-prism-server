@@ -26,14 +26,14 @@ public class Address extends AddressDefinition<ImportedDomicile> {
     private Integer id;
 
     @NotEmpty
-    @Column(name = "address_line_1", nullable = false)
+    @Column(name = "address_line_1")
     private String addressLine1;
 
     @Column(name = "address_line_2")
     private String addressLine2;
 
     @NotEmpty
-    @Column(name = "address_town", nullable = false)
+    @Column(name = "address_town")
     private String addressTown;
 
     @Column(name = "address_region")
@@ -43,7 +43,7 @@ public class Address extends AddressDefinition<ImportedDomicile> {
     private String addressCode;
 
     @ManyToOne
-    @JoinColumn(name = "imported_domicile_id", nullable = false)
+    @JoinColumn(name = "imported_domicile_id")
     private ImportedDomicile domicile;
 
     @Column(name = "google_id")

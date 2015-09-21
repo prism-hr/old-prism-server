@@ -20,7 +20,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
@@ -90,12 +89,10 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetListDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -166,9 +163,6 @@ public class ResourceService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private InstitutionService institutionService;
 
     @Inject
     private ResourceListFilterService resourceListFilterService;
@@ -443,7 +437,7 @@ public class ResourceService {
     public HashMultimap<PrismScope, Integer> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, SYSTEM)) {
-            for (ResourceStandardDTO resource : resourceDAO.getUserAdministratorResources(scope, user)) {
+            for (ResourceActivityDTO resource : resourceDAO.getUserAdministratorResources(scope, user)) {
                 resources.put(resource.getScope(), resource.getId());
             }
         }
@@ -656,46 +650,12 @@ public class ResourceService {
                 : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
 
-    public Set<ResourceTargetDTO> getResourceTargets(Advert advert, List<Integer> institutions, List<Integer> departments) {
-        PrismScope[] institutionScopes = new PrismScope[] { INSTITUTION };
-        List<PrismState> institutionStates = stateService.getActiveResourceStates(INSTITUTION);
-        List<Integer> targetInstitutions = advertService.getAdvertTargetResources(advert, INSTITUTION, true);
-
-        ResourceTargetListDTO targets = new ResourceTargetListDTO(advert);
-        if (isNotEmpty(institutions)) {
-            addResourceTargets(targets, resourceDAO.getResourceTargets(institutionScopes, institutions, institutionStates), targetInstitutions);
-        }
-
-        boolean hasDepartments = isNotEmpty(departments);
-        if (hasDepartments) {
-            List<Integer> departmentInstitutions = institutionService.getInstitutionsByDepartments(departments, institutionStates);
-            addResourceTargets(targets, resourceDAO.getResourceTargets(institutionScopes, departmentInstitutions, institutionStates), targetInstitutions);
-
-            List<PrismState> departmentStates = stateService.getActiveResourceStates(DEPARTMENT);
-            List<Integer> targetDepartments = advertService.getAdvertTargetResources(advert, DEPARTMENT, true);
-            addResourceTargets(targets, resourceDAO.getResourceTargets(new PrismScope[] { DEPARTMENT, INSTITUTION }, departments, departmentStates), targetDepartments);
-        }
-
-        return targets.keySet();
-    }
-
-    public ResourceStandardDTO getResourceWithParents(Resource resource, List<PrismScope> parentScopes) {
+    public ResourceActivityDTO getResourceWithParents(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         if (!resourceScope.equals(SYSTEM)) {
             return resourceDAO.getParentResources(SYSTEM, systemId, resourceScope, resource.getId(), parentScopes);
         }
         return null;
-    }
-
-    public List<ResourceTargetDTO> getResourcesWhichPermitTargeting(PrismScope resourceScope, String searchTerm) {
-        return resourceDAO.getResourcesWhichPermitTargeting(SYSTEM, systemId, resourceScope,
-                scopeService.getParentScopesDescending(resourceScope, INSTITUTION), searchTerm);
-    }
-
-    public List<ResourceChildCreationDTO> getResourcesWhichPermitChildResourceCreation(PrismScope filterScope, Integer filterResourceId, PrismScope resourceScope,
-            PrismScope creationScope, String searchTerm) {
-        return resourceDAO.getResourcesWhichPermitChildResourceCreation(filterScope, filterResourceId, resourceScope,
-                scopeService.getParentScopesDescending(resourceScope, filterScope), creationScope, searchTerm, userService.isUserLoggedIn());
     }
 
     public String generateResourceCode(Resource resource) {
@@ -711,23 +671,23 @@ public class ResourceService {
 
             userService.mergeUserAssignment(resource.getAdvert(), newUser, userProperty);
 
-            for (Comment oldComment : commentService.getResourceOwnerComments(resource)) {
-                for (String commentUserProperty : commentUserProperties) {
+            commentService.getResourceOwnerComments(resource).forEach(oldComment -> {
+                commentUserProperties.forEach(commentUserProperty -> {
                     userService.mergeUserAssignment(oldComment, newUser, commentUserProperty);
-                }
-            }
+                });
+            });
 
-            for (CommentAssignedUser oldCommentAssignedUser : commentService.getResourceOwnerCommentAssignedUsers(resource)) {
-                for (String commentAssignedUserUserProperty : commentAssignedUserUserProperties) {
-                    userService.mergeUserAssignment(oldCommentAssignedUser, newUser, commentAssignedUserUserProperty);
-                }
-            }
+            commentService.getResourceOwnerCommentAssignedUsers(resource).forEach(oldCommentAssignedUser -> {
+                commentAssignedUserUserProperties.forEach(commentAssignedUserProperty -> {
+                    userService.mergeUserAssignment(oldCommentAssignedUser, newUser, commentAssignedUserProperty);
+                });
+            });
 
-            for (Document oldDocument : documentService.getResourceOwnerDocuments(resource)) {
-                for (String documentUserProperty : documentUserProperties) {
+            documentService.getResourceOwnerDocuments(resource).forEach(oldDocument -> {
+                documentUserProperties.forEach(documentUserProperty -> {
                     userService.mergeUserAssignment(oldDocument, newUser, documentUserProperty);
-                }
-            }
+                });
+            });
         } else if (!resourceScope.equals(SYSTEM)) {
             Action action = actionService.getById(PrismAction.valueOf(resourceScope.name() + "_TERMINATE"));
             actionService.executeAction(resource, action, new Comment().withUser(systemService.getSystem().getUser()) //
@@ -789,6 +749,10 @@ public class ResourceService {
     public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
         parent.setOpportunityCategories(opportunityCategories);
         parent.getAdvert().setOpportunityCategories(opportunityCategories);
+    }
+
+    public List<ResourceIdentityDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
+        return resourceDAO.getResources(parentResource, resourceScope, query);
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {
@@ -883,17 +847,6 @@ public class ResourceService {
         }
     }
 
-    private void addResourceTargets(ResourceTargetListDTO targets, List<ResourceTargetDTO> newTargets, List<Integer> targetResources) {
-        newTargets.forEach(newTarget -> {
-            addResourceTarget(targets, newTarget, targetResources);
-        });
-    }
-
-    private void addResourceTarget(ResourceTargetListDTO targets, ResourceTargetDTO target, List<Integer> targetResources) {
-        target.setSelected(targetResources.contains(target.getId()));
-        targets.add(target);
-    }
-
     private void setResourceOpportunityType(ResourceOpportunity resourceOpportunity, ImportedEntitySimple opportunityType) {
         resourceOpportunity.setOpportunityType(opportunityType);
         resourceOpportunity.getAdvert().setOpportunityType(opportunityType);
@@ -929,7 +882,7 @@ public class ResourceService {
         return false;
     }
 
-    public void joinResource(ResourceParent resource, User user, PrismRole prismRole) {
+    private void joinResource(ResourceParent resource, User user, PrismRole prismRole) {
         if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(roleService.getById(prismRole)).withAssignedTimestamp(now()));
         }

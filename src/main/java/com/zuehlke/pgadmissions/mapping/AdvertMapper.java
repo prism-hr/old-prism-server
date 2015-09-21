@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -71,7 +72,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRe
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
 import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 
@@ -223,7 +223,7 @@ public class AdvertMapper {
                 representation.setResource(resourceRepresentation);
                 resource = thisResource;
             } else {
-                PrismReflectionUtils.setProperty(representation, scope.getLowerCamelName(), getAdvertResourceRepresentation(thisResource));
+                setProperty(representation, scope.getLowerCamelName(), getAdvertResourceRepresentation(thisResource));
             }
         }
 
@@ -259,7 +259,7 @@ public class AdvertMapper {
         return representation;
     }
 
-    // TODO: send advert connections
+    // TODO: send the connection data
     public <T extends AdvertRepresentationSimple> T getAdvertRepresentation(Advert advert, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
 

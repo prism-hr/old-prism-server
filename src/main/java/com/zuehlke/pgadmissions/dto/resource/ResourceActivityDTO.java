@@ -13,11 +13,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceActivityDTO implements Comparable<Object> {
 
-    private static final String idReference = "Id";
+    private static final String ID = "Id";
 
-    private static final String nameReference = "Name";
+    private static final String NAME = "Name";
 
-    private static final String logoImageReference = "LogoImageId";
+    private static final String LOGO_IMAGE_ID = "LogoImageId";
 
     private Integer systemId;
 
@@ -133,7 +133,7 @@ public class ResourceActivityDTO implements Comparable<Object> {
         PrismScope[] scopes = PrismScope.values();
         for (int i = (scopes.length - 1); i >= 0; i--) {
             PrismScope scope = scopes[i];
-            if (getProperty(this, scope.getLowerCamelName() + idReference) != null) {
+            if (getProperty(this, scope.getLowerCamelName() + ID) != null) {
                 return scope;
             }
         }
@@ -216,9 +216,9 @@ public class ResourceActivityDTO implements Comparable<Object> {
 
             if (cloning) {
                 String scopeReference = scope.getLowerCamelName();
-                copyProperty(this, enclosingResource, scopeReference + idReference);
-                copyProperty(this, enclosingResource, scopeReference + nameReference);
-                copyProperty(this, enclosingResource, scopeReference + logoImageReference);
+                copyProperty(this, enclosingResource, scopeReference + ID);
+                copyProperty(this, enclosingResource, scopeReference + NAME);
+                copyProperty(this, enclosingResource, scopeReference + LOGO_IMAGE_ID);
             }
         }
 
@@ -231,11 +231,11 @@ public class ResourceActivityDTO implements Comparable<Object> {
     }
 
     protected void setId(PrismScope scope, Integer id) {
-        setProperty(this, scope.getLowerCamelName() + idReference, id);
+        setProperty(this, scope.getLowerCamelName() + ID, id);
     }
 
     private Integer getId(PrismScope scope) {
-        Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + idReference);
+        Integer id = (Integer) getProperty(this, scope.getLowerCamelName() + ID);
         if (id != null) {
             return id;
         }
@@ -244,9 +244,9 @@ public class ResourceActivityDTO implements Comparable<Object> {
 
     private String getName(PrismScope scope) {
         String scopeReference = scope.getLowerCamelName();
-        if (getProperty(this, scopeReference + idReference) != null) {
-            if (hasProperty(this, scopeReference + nameReference)) {
-                return (String) getProperty(this, scopeReference + nameReference);
+        if (getProperty(this, scopeReference + ID) != null) {
+            if (hasProperty(this, scopeReference + NAME)) {
+                return (String) getProperty(this, scopeReference + NAME);
             }
         }
         return null;

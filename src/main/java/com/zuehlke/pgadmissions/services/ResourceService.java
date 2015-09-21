@@ -22,6 +22,7 @@ import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.joda.time.DateTime.now;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -200,7 +201,7 @@ public class ResourceService {
     }
 
     public ResourceParent createResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
-        if (validateResourceFamilyCreation(resourceFamilyDTO)) {
+        if (validateResourceFamily(resourceFamilyDTO)) {
             ResourceParent lastResource = null;
             ResourceParent lastParentResource = null;
             User lastUser = systemService.getSystem().getUser();
@@ -227,12 +228,12 @@ public class ResourceService {
 
             UserDTO userDTO = resourceFamilyDTO.getUser();
             User thisUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-            joinResource(lastParentResource, thisUser, PrismRole.getUnverifiedViewerRole(lastParentResource));
+            joinResource(lastParentResource, thisUser, getUnverifiedViewerRole(lastParentResource));
 
             return lastResource;
         }
 
-        throw new UnsupportedOperationException("Invalid resource creation attempt");
+        throw new UnsupportedOperationException("Invalid resource family");
     }
 
     @SuppressWarnings("unchecked")
@@ -918,7 +919,7 @@ public class ResourceService {
         }
     }
 
-    private boolean validateResourceFamilyCreation(ResourceFamilyCreationDTO resourceFamilyDTO) {
+    private boolean validateResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
         List<PrismScope> scopes = resourceFamilyDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
         for (List<PrismScope> creations : resourceFamilyDTO.getResourceFamilyCreation().getScopeCreationFamilies()) {
             if (creations.containsAll(scopes)) {
@@ -930,7 +931,7 @@ public class ResourceService {
 
     public void joinResource(ResourceParent resource, User user, PrismRole prismRole) {
         if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(roleService.getById(prismRole)).withAssignedTimestamp(DateTime.now()));
+            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(roleService.getById(prismRole)).withAssignedTimestamp(now()));
         }
     }
 

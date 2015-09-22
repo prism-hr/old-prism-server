@@ -1,13 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import javax.validation.constraints.NotNull;
-
 public class InstitutionDTO extends ResourceParentDTO {
 
-    @NotNull
     private String currency;
 
-    @NotNull
     private Integer businessYearStartMonth;
 
     public String getCurrency() {

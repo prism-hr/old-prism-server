@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
+import org.joda.time.LocalDate;
 
 public class ProfileQualificationRepresentation extends ApplicationSectionRepresentation {
 
@@ -12,13 +11,9 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     private ResourceRepresentationActivity resource;
 
-    private Integer startYear;
+    private LocalDate startDate;
 
-    private Integer startMonth;
-
-    private Integer awardYear;
-
-    private Integer awardMonth;
+    private LocalDate awardDate;
 
     private String grade;
 
@@ -42,36 +37,20 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         this.resource = resource;
     }
 
-    public Integer getStartYear() {
-        return startYear;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public Integer getStartMonth() {
-        return startMonth;
+    public LocalDate getAwardDate() {
+        return awardDate;
     }
 
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getAwardYear() {
-        return awardYear;
-    }
-
-    public void setAwardYear(Integer awardYear) {
-        this.awardYear = awardYear;
-    }
-
-    public Integer getAwardMonth() {
-        return awardMonth;
-    }
-
-    public void setAwardMonth(Integer awardMonth) {
-        this.awardMonth = awardMonth;
+    public void setAwardDate(LocalDate awardDate) {
+        this.awardDate = awardDate;
     }
 
     public String getGrade() {
@@ -108,25 +87,16 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         return this;
     }
 
-    public ProfileQualificationRepresentation withStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public ProfileQualificationRepresentation withStartDate(final LocalDate startDate) {
+        this.startDate = startDate;
         return this;
     }
 
-    public ProfileQualificationRepresentation withStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
+    public ProfileQualificationRepresentation withAwardDate(final LocalDate awardDate) {
+        this.awardDate = awardDate;
         return this;
     }
 
-    public ProfileQualificationRepresentation withAwardYear(Integer awardYear) {
-        this.awardYear = awardYear;
-        return this;
-    }
-
-    public ProfileQualificationRepresentation withAwardMonth(Integer awardMonth) {
-        this.awardMonth = awardMonth;
-        return this;
-    }
 
     public ProfileQualificationRepresentation withGrade(String grade) {
         this.grade = grade;
@@ -144,11 +114,11 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
     }
 
     public String getStartDateDisplay() {
-        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
+        return startDate != null ? "" + startDate.getMonthOfYear() + '/' + startDate.getYear() : null;
     }
 
     public String getAwardDateDisplay() {
-        return awardYear == null ? null : awardMonth.toString() + BACK_SLASH + awardYear.toString();
+        return awardDate != null ? "" + awardDate.getMonthOfYear() + '/' + awardDate.getYear() : null;
     }
 
 }

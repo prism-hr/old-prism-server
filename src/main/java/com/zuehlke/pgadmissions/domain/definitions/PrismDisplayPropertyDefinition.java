@@ -1,78 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_EMPLOYMENT_POSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_FORM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.APPLICATION_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.DEPARTMENT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.INSTITUTION_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROGRAM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.PROJECT_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACCOUNT_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_EMAIL_TEMPLATE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_FIELDS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_GENERAL_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_MANAGE_USERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_OPPORTUNITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_ENQUIRY_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_CATEGORY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_COMPETENCES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_YES_NO_UNSURE;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.*;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -768,7 +702,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_RESOURCES_SECTION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Resources Section"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_RESOURCE_SECTION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Resource Section"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_ACCOUNT_SECTION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Account Section"),
-    SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_FIELDS(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "HTML Fields"),
+    SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_CREATE_RESOURCE_FAMILY(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "HTML Fields"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_COMMON(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "HTML Common"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_ADDRESS(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Address Fields"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_HTML_RESOURCE_CONFIGURATION(SYSTEM_DISPLAY_PROPERTY_CATEGORY, "Resource Configuration Section"),
@@ -1136,7 +1070,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_RESOURCE_COLUMN_STATUS(SYSTEM_RESOURCES_SECTION, "Status"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_ACTIONS(SYSTEM_RESOURCES_SECTION, "Actions"),
     SYSTEM_RESOURCES_RESOURCE_RECENTLY_UPDATED(SYSTEM_RESOURCES_SECTION, "Recently Updated"),
-    SYSTEM_RESOURCES_RESOURCE_PARENT_UNCOMPLETED(SYSTEM_HTML_FIELDS, "Advert has incomplete sections, click the link to edit"),
+    SYSTEM_RESOURCES_RESOURCE_PARENT_UNCOMPLETED(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Advert has incomplete sections, click the link to edit"),
     SYSTEM_RESOURCES_LOAD_MORE(SYSTEM_RESOURCES_SECTION, "Load More"),
     SYSTEM_RESOURCES_SUMMARY_CREATED(SYSTEM_RESOURCES_SECTION, "Created:"),
     SYSTEM_RESOURCES_SUMMARY_AUTHOR(SYSTEM_RESOURCES_SECTION, "Author:"),
@@ -1230,41 +1164,28 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM HTML FIELDS *********************
      */
 
-    SYSTEM_HTML_FIELDS_ACTIONS_CONTROL_DOWNLOAD_AS_PDF(SYSTEM_HTML_FIELDS, "Download as PDF"),
-    SYSTEM_HTML_ASSIGN_USERS_USER_NOT_IN_LIST(SYSTEM_HTML_FIELDS, "User not in the list?"),
-    SYSTEM_HTML_DURATION_CONTROL_HOURS(SYSTEM_HTML_FIELDS, "Hours"),
-    SYSTEM_HTML_DURATION_CONTROL_MINUTES(SYSTEM_HTML_FIELDS, "Minutes"),
-    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_UNCOMPLETED(SYSTEM_HTML_FIELDS, "Incomplete"),
-    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(SYSTEM_HTML_FIELDS, "Completed"),
-    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(SYSTEM_HTML_FIELDS, "You cannot provide more than {{maxItems}} item(s)."),
-    SYSTEM_HTML_FILE_UPLOAD_PDF(SYSTEM_HTML_FIELDS, "Upload PDF"),
-    SYSTEM_HTML_FILE_UPLOAD_IMAGE(SYSTEM_HTML_FIELDS, "Upload Logo"),
-    SYSTEM_HTML_LOOKUP_USER_LABEL(SYSTEM_HTML_FIELDS, "Lookup User"),
-    SYSTEM_HTML_LOOKUP_USER_PLACEHOLDER(SYSTEM_HTML_FIELDS, "e.g. first name, last name, or email"),
-    SYSTEM_HTML_LOOKUP_USER_HINT(SYSTEM_HTML_FIELDS, "Start typing the first name, last name or email address of the user you are looking for."),
-    SYSTEM_HTML_LOOKUP_CANNOT_FIND_USER(SYSTEM_HTML_FIELDS, "Cannot Find User?"),
-    SYSTEM_HTML_LOOKUP_FIRST_NAME_LABEL(SYSTEM_HTML_FIELDS, "First Name"),
-    SYSTEM_HTML_LOOKUP_FIRST_NAME_HINT(SYSTEM_HTML_FIELDS, "Please enter the first name of the user."),
-    SYSTEM_HTML_LOOKUP_LAST_NAME_LABEL(SYSTEM_HTML_FIELDS, "Last Name"),
-    SYSTEM_HTML_LOOKUP_LAST_NAME_HINT(SYSTEM_HTML_FIELDS, "Please enter the last name of the user."),
-    SYSTEM_HTML_LOOKUP_EMAIL_LABEL(SYSTEM_HTML_FIELDS, "Email"),
-    SYSTEM_HTML_LOOKUP_EMAIL_HINT(SYSTEM_HTML_FIELDS, "Please enter user's e-mail address."),
-    SYSTEM_HTML_LOOKUP_PROGRAM_LABEL(SYSTEM_HTML_FIELDS, "Lookup Program"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_PLACEHOLDER(SYSTEM_HTML_FIELDS, "e.g. program name, organization name"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_CANNOT_FIND(SYSTEM_HTML_FIELDS, "Cannot Find Your Program?"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_DOMICILE_LABEL(SYSTEM_HTML_FIELDS, "Organization Country"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_DOMICILE_HINT(SYSTEM_HTML_FIELDS, "The country in which the organization is located."),
-    SYSTEM_HTML_LOOKUP_PROGRAM_INSTITUTION_LABEL(SYSTEM_HTML_FIELDS, "Organization Name"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_INSTITUTION_HINT(SYSTEM_HTML_FIELDS, "The name of the organization."),
-    SYSTEM_HTML_LOOKUP_PROGRAM_PROGRAM_LABEL(SYSTEM_HTML_FIELDS, "Program Name"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_PROGRAM_HINT(SYSTEM_HTML_FIELDS, "The name of the program."),
-    SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_LABEL(SYSTEM_HTML_FIELDS, "Qualification Type"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_HINT(SYSTEM_HTML_FIELDS, "Select the type of the qualification from the list. If you cannot find an appropriate type, select 'Other'."),
-    SYSTEM_HTML_LOOKUP_PROGRAM_HOMEPAGE_LABEL(SYSTEM_HTML_FIELDS, "Program Homepage"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_HOMEPAGE_HINT(SYSTEM_HTML_FIELDS, "URL of the program homepage"),
-    SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(SYSTEM_HTML_FIELDS, "Return to search"),
-    SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_LABEL(SYSTEM_HTML_FIELDS, "Weighting Sum"),
-    SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_HINT(SYSTEM_HTML_FIELDS, "Specify (between 0 and 1) the importance that you place upon this criterion"),
+    SYSTEM_HTML_CREATE_RESOURCE_FAMILY_ACTIONS_CONTROL_DOWNLOAD_AS_PDF(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Download as PDF"),
+    SYSTEM_HTML_ASSIGN_USERS_USER_NOT_IN_LIST(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "User not in the list?"),
+    SYSTEM_HTML_DURATION_CONTROL_HOURS(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Hours"),
+    SYSTEM_HTML_DURATION_CONTROL_MINUTES(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Minutes"),
+    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_UNCOMPLETED(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Incomplete"),
+    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Completed"),
+    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "You cannot provide more than {{maxItems}} item(s)."),
+    SYSTEM_HTML_FILE_UPLOAD_PDF(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Upload PDF"),
+    SYSTEM_HTML_FILE_UPLOAD_IMAGE(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Upload Logo"),
+    SYSTEM_HTML_LOOKUP_USER_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Lookup User"),
+    SYSTEM_HTML_LOOKUP_USER_PLACEHOLDER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "e.g. first name, last name, or email"),
+    SYSTEM_HTML_LOOKUP_USER_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Start typing the first name, last name or email address of the user you are looking for."),
+    SYSTEM_HTML_LOOKUP_CANNOT_FIND_USER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Cannot Find User?"),
+    SYSTEM_HTML_LOOKUP_FIRST_NAME_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "First Name"),
+    SYSTEM_HTML_LOOKUP_FIRST_NAME_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please enter the first name of the user."),
+    SYSTEM_HTML_LOOKUP_LAST_NAME_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Last Name"),
+    SYSTEM_HTML_LOOKUP_LAST_NAME_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please enter the last name of the user."),
+    SYSTEM_HTML_LOOKUP_EMAIL_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Email"),
+    SYSTEM_HTML_LOOKUP_EMAIL_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please enter user's e-mail address."),
+    SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Return to search"),
+    SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Weighting Sum"),
+    SYSTEM_HTML_RATING_WEIGHTS_CONFIGURATION_SUM_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Specify (between 0 and 1) the importance that you place upon this criterion"),
 
     /*
      * *************** SYSTEM HTML COMMON *********************
@@ -1385,6 +1306,26 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PROJECT_HINT(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "Allow users to create new positions"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PARTNER_LABEL(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "Allow partnerships"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PARTNER_HINT(SYSTEM_HTML_RESOURCE_OPPORTUNITY, "Allow third party organizations to offer positions"),
+
+
+    /*
+     * *************** SYSTEM HTML RESOURCE OPPORTUNITY *********************
+     */
+
+    SYSTEM_HTML_RESOURCE_FAMILY_INSTITUTION_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Lookup Organization"),
+    SYSTEM_HTML_RESOURCE_FAMILY_INSTITUTION_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please find your organization."),
+    SYSTEM_HTML_RESOURCE_FAMILY_INSTITUTION_PLACEHOLDER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "The name of the organization."),
+    SYSTEM_HTML_RESOURCE_FAMILY_DEPARTMENT_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Lookup Department"),
+    SYSTEM_HTML_RESOURCE_FAMILY_DEPARTMENT_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please find your department or specify new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_DEPARTMENT_PLACEHOLDER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "e.g. department name"),
+    SYSTEM_HTML_RESOURCE_FAMILY_PROGRAM_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Lookup Program"),
+    SYSTEM_HTML_RESOURCE_FAMILY_PROGRAM_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please find your program or specify new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_PROGRAM_PLACEHOLDER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "e.g. program name"),
+    SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Lookup Project"),
+    SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please find your project or specify new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_PLACEHOLDER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "e.g. project name"),
+    SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Qualification Type"),
+    SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Select the type of the qualification from the list."),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
@@ -1731,8 +1672,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 
     APPLICATION_QUALIFICATION_HEADER(APPLICATION_QUALIFICATION, "Qualifications"),
-    APPLICATION_QUALIFICATION_DESCRIPTION(
-            APPLICATION_QUALIFICATION,
+    APPLICATION_QUALIFICATION_DESCRIPTION(           APPLICATION_QUALIFICATION,
             "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     APPLICATION_QUALIFICATION_SUBHEADER(APPLICATION_QUALIFICATION, "Qualification"),
     APPLICATION_QUALIFICATION_PROVIDER_PROGRAM_LABEL(APPLICATION_QUALIFICATION, "Provider & Program"),

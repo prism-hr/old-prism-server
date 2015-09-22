@@ -1,21 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
+import java.util.List;
 
 public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
-        ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType> {
+        ResourceOpportunityDefinition<AdvertDTO, ImportedEntityDTO> {
 
     @NotNull
-    private PrismOpportunityType opportunityType;
+    private ImportedEntityDTO opportunityType;
 
     @Min(1)
     private Integer durationMinimum;
@@ -26,12 +23,12 @@ public class ResourceOpportunityDTO extends ResourceParentDivisionDTO implements
     private List<ImportedEntityDTO> studyOptions;
 
     @Override
-    public PrismOpportunityType getOpportunityType() {
+    public ImportedEntityDTO getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public void setOpportunityType(PrismOpportunityType opportunityType) {
+    public void setOpportunityType(ImportedEntityDTO opportunityType) {
         this.opportunityType = opportunityType;
     }
 

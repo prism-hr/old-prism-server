@@ -1,40 +1,74 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCreationContext;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ResourceFamilyCreationDTO {
 
     @NotNull
-    private PrismResourceFamilyCreation resourceFamilyCreation;
-    
+    private PrismResourceCreationContext creationContext;
+
     @Valid
     @NotNull
-    private List<ResourceCreationDTO> resources;
-    
+    private ResourceCreationDTO institution;
+
+    @Valid
+    private ResourceCreationDTO department;
+
+    @Valid
+    private ResourceCreationDTO program;
+
+    @Valid
+    private ResourceCreationDTO project;
+
     @Valid
     @NotNull
     private UserDTO user;
 
-    public PrismResourceFamilyCreation getResourceFamilyCreation() {
-        return resourceFamilyCreation;
+    public PrismResourceCreationContext getCreationContext() {
+        return creationContext;
     }
 
-    public void setResourceFamilyCreation(PrismResourceFamilyCreation resourceFamilyCreation) {
-        this.resourceFamilyCreation = resourceFamilyCreation;
+    public void setCreationContext(PrismResourceCreationContext creationContext) {
+        this.creationContext = creationContext;
     }
 
-    public List<ResourceCreationDTO> getResources() {
-        return resources;
+    public ResourceCreationDTO getInstitution() {
+        return institution;
     }
 
-    public void setResources(List<ResourceCreationDTO> resources) {
-        this.resources = resources;
+    public void setInstitution(ResourceCreationDTO institution) {
+        this.institution = institution;
+    }
+
+    public ResourceCreationDTO getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(ResourceCreationDTO department) {
+        this.department = department;
+    }
+
+    public ResourceCreationDTO getProgram() {
+        return program;
+    }
+
+    public void setProgram(ResourceCreationDTO program) {
+        this.program = program;
+    }
+
+    public ResourceCreationDTO getProject() {
+        return project;
+    }
+
+    public void setProject(ResourceCreationDTO project) {
+        this.project = project;
     }
 
     public UserDTO getUser() {
@@ -44,5 +78,8 @@ public class ResourceFamilyCreationDTO {
     public void setUser(UserDTO user) {
         this.user = user;
     }
-    
+
+    public List<ResourceCreationDTO> getResources() {
+        return Stream.of(institution, department, program, project).filter(r -> r != null).collect(Collectors.toList());
+    }
 }

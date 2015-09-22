@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.dto.resource;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import jersey.repackaged.com.google.common.collect.Sets;
+
 import java.math.BigDecimal;
 import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
-import jersey.repackaged.com.google.common.collect.Sets;
-
 public class ResourceTargetDTO extends ResourceStandardDTO {
+
+    private String addressDomicileId;
 
     private String addressDomicileName;
 
@@ -32,6 +33,14 @@ public class ResourceTargetDTO extends ResourceStandardDTO {
     private BigDecimal targetingDistance;
 
     private Set<ResourceTargetDTO> departments = Sets.newTreeSet();
+
+    public String getAddressDomicileId() {
+        return addressDomicileId;
+    }
+
+    public void setAddressDomicileId(String addressDomicileId) {
+        this.addressDomicileId = addressDomicileId;
+    }
 
     public String getAddressDomicileName() {
         return addressDomicileName;

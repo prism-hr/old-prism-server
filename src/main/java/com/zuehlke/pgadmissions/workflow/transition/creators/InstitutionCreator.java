@@ -34,7 +34,10 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName(), user);
 
-        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName()).withCurrency(newResource.getCurrency())
+        String currency = newResource.getCurrency();
+        currency = currency != null ? currency : "GBP"; // TODO consider deriving currency based on domicile
+
+        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName()).withCurrency(currency)
                 .withBusinessYearStartMonth(newResource.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getGoogleId());
 
         resourceService.setResourceAttributes(institution, newResource);

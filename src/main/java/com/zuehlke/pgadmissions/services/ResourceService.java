@@ -236,14 +236,13 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO, String referralEmailAddress) {
-        Resource operativeResource = null;
+        Resource operativeResource;
         ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO);
-            operativeResource = actionOutcome.getResource().getParentResource();
         } else if (commentDTO.isRequestUserAction()) {
             operativeResource = getById(commentDTO.getResource().getScope(), commentDTO.getResource().getId());
             userService.requestUser(commentDTO.getAssignedUsers().get(0).getUser(), operativeResource, getUnverifiedViewerRole(operativeResource));
@@ -252,7 +251,6 @@ public class ResourceService {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
-                operativeResource = actionOutcome.getResource();
             }
         }
 

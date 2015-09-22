@@ -1,16 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
-
-// FIXME - adjust the date validation
+@DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO {
 
     private Integer id;
@@ -20,14 +22,10 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     private ResourceFamilyCreationDTO resource;
 
     @NotNull
-    private Integer startYear;
+    @DateNotFuture
+    private LocalDate startDate;
 
-    @NotNull
-    private Integer startMonth;
-
-    private Integer awardYear;
-
-    private Integer awardMonth;
+    private LocalDate awardDate;
 
     @NotEmpty
     @Size(max = 200)
@@ -55,36 +53,20 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
         this.resource = resource;
     }
 
-    public Integer getStartYear() {
-        return startYear;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public Integer getStartMonth() {
-        return startMonth;
+    public LocalDate getAwardDate() {
+        return awardDate;
     }
 
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getAwardYear() {
-        return awardYear;
-    }
-
-    public void setAwardYear(Integer awardYear) {
-        this.awardYear = awardYear;
-    }
-
-    public Integer getAwardMonth() {
-        return awardMonth;
-    }
-
-    public void setAwardMonth(Integer awardMonth) {
-        this.awardMonth = awardMonth;
+    public void setAwardDate(LocalDate awardDate) {
+        this.awardDate = awardDate;
     }
 
     public String getGrade() {

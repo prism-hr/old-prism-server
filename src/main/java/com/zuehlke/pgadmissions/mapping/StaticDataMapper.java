@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.mapping;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.*;
 import com.zuehlke.pgadmissions.domain.definitions.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation.PrismScopeCreationFamilies;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCreationContext.PrismScopeCreationFamilies;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -39,6 +39,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -264,11 +265,11 @@ public class StaticDataMapper {
 
     private Map<String, Object> getResourceFamilyCreations() {
         List<ResourceFamilyCreationRepresentation> representations = Lists.newLinkedList();
-        for (PrismResourceFamilyCreation resourceFamilyCreation : PrismResourceFamilyCreation.values()) {
+        for (PrismResourceCreationContext resourceFamilyCreation : PrismResourceCreationContext.values()) {
             ResourceFamilyCreationRepresentation representation = new ResourceFamilyCreationRepresentation(resourceFamilyCreation);
 
             Map<PrismScope, Integer> occurrences = Maps.newHashMap();
-            Map<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newHashMap();
+            TreeMap<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newTreeMap();
             PrismScopeCreationFamilies scopeCreationFamilies = resourceFamilyCreation.getScopeCreationFamilies();
             scopeCreationFamilies.forEach(scf -> {
                 scf.forEach(s -> {

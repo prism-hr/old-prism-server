@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
 import com.zuehlke.pgadmissions.rest.representation.profile.*;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +68,7 @@ public class ProfileMapper {
         if (address != null) {
             ProfileAddressRepresentation representation = new ProfileAddressRepresentation().withCurrentAddress(
                     addressMapper.getAddressApplicationRepresentation(address.getCurrentAddress())).withContactAddress(
-                            addressMapper.getAddressApplicationRepresentation(address.getContactAddress()));
+                    addressMapper.getAddressApplicationRepresentation(address.getContactAddress()));
 
             if (address.getClass().equals(ApplicationAddress.class)) {
                 representation.setLastUpdatedTimestamp(((ApplicationAddress) address).getLastUpdatedTimestamp());
@@ -127,10 +128,11 @@ public class ProfileMapper {
 
     private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification) {
         Document document = qualification.getDocument();
+        LocalDate startDate = new LocalDate(qualification.getStartYear(), qualification.getStartMonth(), 1);
+        LocalDate awardDate = new LocalDate(qualification.getAwardYear(), qualification.getAwardMonth(), 1);
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
                 .withProgram(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()))
-                .withStartYear(qualification.getStartYear()).withStartMonth(qualification.getStartMonth())
-                .withAwardYear(qualification.getAwardYear()).withAwardMonth(qualification.getAwardMonth())
+                .withStartDate(startDate).withAwardDate(awardDate)
                 .withCompleted(qualification.getCompleted()).withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
 
         if (qualification.getClass().equals(ApplicationQualification.class)) {

@@ -1,26 +1,26 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCreationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public class ResourceFamilyCreationRepresentation {
 
-    private PrismResourceFamilyCreation resourceFamilyCreation;
-    
+    private PrismResourceCreationContext creationContext;
+
     private List<ResourceCreationRepresentation> resourceCreations;
-    
-    public ResourceFamilyCreationRepresentation(PrismResourceFamilyCreation resourceFamilyCreation) {
-        this.resourceFamilyCreation = resourceFamilyCreation;
+
+    public ResourceFamilyCreationRepresentation(PrismResourceCreationContext creationContext) {
+        this.creationContext = creationContext;
     }
 
-    public PrismResourceFamilyCreation getResourceFamilyCreation() {
-        return resourceFamilyCreation;
+    public PrismResourceCreationContext getCreationContext() {
+        return creationContext;
     }
 
-    public void setResourceFamilyCreation(PrismResourceFamilyCreation resourceFamilyCreation) {
-        this.resourceFamilyCreation = resourceFamilyCreation;
+    public void setCreationContext(PrismResourceCreationContext creationContext) {
+        this.creationContext = creationContext;
     }
 
     public List<ResourceCreationRepresentation> getResourceCreations() {
@@ -34,7 +34,7 @@ public class ResourceFamilyCreationRepresentation {
     public static class ResourceCreationRepresentation {
 
         private PrismScope resourceScope;
-        
+
         private boolean required;
 
         public ResourceCreationRepresentation(PrismScope resourceScope) {
@@ -56,7 +56,7 @@ public class ResourceFamilyCreationRepresentation {
         public void setRequired(boolean required) {
             this.required = required;
         }
-        
+
     }
-    
+
 }

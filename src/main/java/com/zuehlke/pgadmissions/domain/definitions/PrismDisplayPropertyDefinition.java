@@ -1325,7 +1325,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Please find your project or specify new one"),
     SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_PLACEHOLDER(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "e.g. project name"),
     SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_LABEL(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Qualification Type"),
-    SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Select the type of the qualification from the list."),
+    SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_HINT(SYSTEM_HTML_CREATE_RESOURCE_FAMILY, "Select the type of the qualification from the list. If you cannot find an appropriate type, select 'Other'."),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
@@ -1717,8 +1717,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_REFEREE_DESCRIPTION(APPLICATION_REFEREE,
             "Specify your referee(s) here. Should you be considered for appointment, each referee will be asked to provide a statement in support of your application."),
     APPLICATION_REFEREE_SUBHEADER(APPLICATION_REFEREE, "Referee"),
-    APPLICATION_REFEREE_POSITION_DETAILS_SUBHEADER(APPLICATION_REFEREE, "Position Details"),
-    APPLICATION_REFEREE_POSITION_EMPLOYER_LABEL(APPLICATION_REFEREE, "Postion & Employer"),
+    APPLICATION_REFEREE_POSITION_CONTACT_SUBHEADER(APPLICATION_REFEREE, "Contact Details"),
+    APPLICATION_REFEREE_POSITION_EMPLOYER_LABEL(APPLICATION_REFEREE, "Position & Employer"),
     APPLICATION_REFEREE_POSITION_EMPLOYER_HINT(APPLICATION_REFEREE, "The position that your referee holds, and the organization that employs them."),
     APPLICATION_REFEREE_PHONE_LABEL(APPLICATION_EMPLOYMENT_POSITION, "Telephone"),
     APPLICATION_REFEREE_PHONE_HINT(APPLICATION_EMPLOYMENT_POSITION, "The employer telephone number of the referee."),

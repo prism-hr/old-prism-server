@@ -1,18 +1,9 @@
 package com.zuehlke.pgadmissions.domain.user;
 
-import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "user_employment_position", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
@@ -109,14 +100,6 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
 
     public void setCurrent(Boolean current) {
         this.current = current;
-    }
-
-    public String getStartDateDisplay(String dateFormat) {
-        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
-    }
-
-    public String getEndDateDisplay(String dateFormat) {
-        return endYear == null ? null : endMonth.toString() + BACK_SLASH + endYear.toString();
     }
 
     @Override

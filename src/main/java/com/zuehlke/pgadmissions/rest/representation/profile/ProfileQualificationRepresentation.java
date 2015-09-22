@@ -82,17 +82,22 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         return this;
     }
 
+    public ProfileQualificationRepresentation withResource(final ResourceRepresentationActivity resource) {
+        this.resource = resource;
+        return this;
+    }
+
     public ProfileQualificationRepresentation withProgram(ResourceRepresentationActivity program) {
         this.resource = program;
         return this;
     }
 
-    public ProfileQualificationRepresentation withStartDate(final LocalDate startDate) {
+    public ProfileQualificationRepresentation withStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
     }
 
-    public ProfileQualificationRepresentation withAwardDate(final LocalDate awardDate) {
+    public ProfileQualificationRepresentation withAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
         return this;
     }

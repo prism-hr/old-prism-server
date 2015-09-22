@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
@@ -89,7 +90,7 @@ public class ProfileService {
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void updatePersonalDetailApplication(Integer applicationId, ProfilePersonalDetailDTO personalDetailDTO) throws Exception {
+    public void updatePersonalDetailApplication(Integer applicationId, ProfilePersonalDetailDTO personalDetailDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationPersonalDetail applicationPersonalDetail = updatePersonalDetail(application, ApplicationPersonalDetail.class, personalDetailDTO);
 
@@ -115,7 +116,7 @@ public class ProfileService {
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void updateAddressApplication(Integer applicationId, ProfileAddressDTO addressDTO) throws Exception {
+    public void updateAddressApplication(Integer applicationId, ProfileAddressDTO addressDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationAddress address = updateAddress(application, ApplicationAddress.class, addressDTO);
 
@@ -129,14 +130,14 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
-    public UserQualification updateQualificationUser(Integer userId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) throws Exception {
+    public UserQualification updateQualificationUser(Integer userId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserQualification userQualification = updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
         userAccountService.updateUserAccount(userAccount);
         return userQualification;
     }
 
-    public ApplicationQualification updateQualificationApplication(Integer applicationId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) throws Exception {
+    public ApplicationQualification updateQualificationApplication(Integer applicationId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationQualification qualification = updateQualification(application, ApplicationQualification.class, qualificationId, qualificationDTO);
 
@@ -151,33 +152,33 @@ public class ProfileService {
         return qualification;
     }
 
-    public void deleteQualificationUser(Integer userId, Integer qualificationId) throws Exception {
+    public void deleteQualificationUser(Integer userId, Integer qualificationId) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         deleteQualification(userAccount, UserQualification.class, qualificationId);
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) throws Exception {
+    public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) {
         Application application = applicationService.getById(applicationId);
         deleteQualification(application, ApplicationQualification.class, qualificationId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
-    public UserEmploymentPosition updateEmploymentPositionUser(Integer userId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
+    public UserEmploymentPosition updateEmploymentPositionUser(Integer userId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
         userAccountService.updateUserAccount(userAccount);
         return employmentPosition;
     }
 
-    public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
-            ProfileEmploymentPositionDTO employmentPositionDTO) throws Exception {
+    public ApplicationEmploymentPosition updateEmploymentPositionApplication(
+            Integer applicationId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
         UserEmploymentPosition userEmploymentPosition = entityService.getDuplicateEntity(UserEmploymentPosition.class,
-                new EntitySignature().addProperty("userAccount", userAccount).addProperty("advert", employmentPosition.getAdvert()).addProperty("startYear",
+                new EntitySignature().addProperty("association", userAccount).addProperty("advert", employmentPosition.getAdvert()).addProperty("startYear",
                         employmentPosition.getStartYear()));
         updateEmploymentPosition(userAccount, userEmploymentPosition == null ? new UserEmploymentPosition() : userEmploymentPosition, employmentPositionDTO);
         userAccountService.updateUserAccount(userAccount);
@@ -186,33 +187,33 @@ public class ProfileService {
         return employmentPosition;
     }
 
-    public void deleteEmploymentPositionUser(Integer userId, Integer employmentPositionId) throws Exception {
+    public void deleteEmploymentPositionUser(Integer userId, Integer employmentPositionId) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void deleteEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId) throws Exception {
+    public void deleteEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId) {
         Application application = applicationService.getById(applicationId);
         deleteEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public UserReferee updateRefereeUser(Integer userId, Integer refereeId, ProfileRefereeDTO refereeDTO) throws Exception {
+    public UserReferee updateRefereeUser(Integer userId, Integer refereeId, ProfileRefereeDTO refereeDTO) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserReferee userReferee = (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
         userAccountService.updateUserAccount(userAccount);
         return userReferee;
     }
 
-    public ApplicationReferee updateRefereeApplication(Integer applicationId, Integer refereeId, ProfileRefereeDTO refereeDTO) throws Exception {
+    public ApplicationReferee updateRefereeApplication(Integer applicationId, Integer refereeId, ProfileRefereeDTO refereeDTO) {
         Application application = applicationService.getById(applicationId);
         ProfileRefereeUpdateDTO referee = updateReferee(application, ApplicationReferee.class, refereeId, refereeDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
         UserReferee userReferee = entityService.getDuplicateEntity(UserReferee.class,
-                new EntitySignature().addProperty("userAccount", userAccount).addProperty("user", referee.getReferee().getUser()));
-        updateReferee(userAccount, userReferee, refereeDTO);
+                new EntitySignature().addProperty("association", userAccount).addProperty("user", referee.getReferee().getUser()));
+        updateReferee(userAccount, userReferee != null ? userReferee : new UserReferee(), refereeDTO);
         userAccountService.updateUserAccount(userAccount);
 
         List<CommentAssignedUser> assignees = referee.getAssignments();
@@ -220,26 +221,26 @@ public class ProfileService {
         return (ApplicationReferee) referee.getReferee();
     }
 
-    public void deleteRefereeUser(Integer userId, Integer refereeId) throws Exception {
+    public void deleteRefereeUser(Integer userId, Integer refereeId) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         deleteReferee(userAccount, UserReferee.class, refereeId);
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void deleteRefereeApplication(Integer applicationId, Integer refereeId) throws Exception {
+    public void deleteRefereeApplication(Integer applicationId, Integer refereeId) {
         Application application = applicationService.getById(applicationId);
         ApplicationReferee referee = deleteReferee(application, ApplicationReferee.class, refereeId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
 
-    public void updateDocumentUser(Integer userId, ProfileDocumentDTO documentDTO) throws Exception {
+    public void updateDocumentUser(Integer userId, ProfileDocumentDTO documentDTO) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserDocument document = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(document);
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) throws Exception {
+    public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationDocument document = updateDocument(application, ApplicationDocument.class, documentDTO);
         document.setCoveringLetter(documentService.getById(getDocumentId(documentDTO.getCoveringLetter()), DOCUMENT));
@@ -253,14 +254,14 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
-    public void updateAdditionalInformationUser(Integer userId, ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
+    public void updateAdditionalInformationUser(Integer userId, ProfileAdditionalInformationDTO additionalInformationDTO) {
         UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
         UserAdditionalInformation additionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(additionalInformation);
         userAccountService.updateUserAccount(userAccount);
     }
 
-    public void updateAdditionalInformationApplication(Integer applicationId, ProfileAdditionalInformationDTO additionalInformationDTO) throws Exception {
+    public void updateAdditionalInformationApplication(Integer applicationId, ProfileAdditionalInformationDTO additionalInformationDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationAdditionalInformation additionalInformation = updateAdditionalInformation(application, ApplicationAdditionalInformation.class, additionalInformationDTO);
 
@@ -390,7 +391,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(T profile, Class<U> personalDetailClass,
-            ProfilePersonalDetailDTO personalDetailDTO) {
+                                                                                                                      ProfilePersonalDetailDTO personalDetailDTO) {
         U personalDetail = (U) profile.getPersonalDetail();
         if (personalDetail == null) {
             personalDetail = instantiate(personalDetailClass);
@@ -438,7 +439,7 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> U updateQualification(T profile, Class<U> qualificationClass,
-            Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
+                                                                                                                    Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         U qualification;
         if (qualificationId == null) {
             qualification = instantiate(qualificationClass);
@@ -452,7 +453,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(T profile, U qualification,
-            ProfileQualificationDTO qualificationDTO) {
+                                                                                                                       ProfileQualificationDTO qualificationDTO) {
         createUserAdvertRelation(profile.getUser(), qualification, qualificationDTO);
 
         qualification.setStartYear(qualificationDTO.getStartDate().getYear());
@@ -474,7 +475,7 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void deleteQualification(T profile, Class<U> qualificationClass,
-            Integer qualificationId) {
+                                                                                                                       Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
         updateUserAdvertRelation(profile.getUser(), qualification.getAdvert());
         profile.getQualifications().remove(qualification);
@@ -482,7 +483,7 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> U updateEmploymentPosition(T profile, Class<U> employmentPositionClass,
-            Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
+                                                                                                                              Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         U employmentPosition;
         if (employmentPositionId == null) {
             employmentPosition = instantiate(employmentPositionClass);
@@ -495,14 +496,14 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(T profile, U employmentPosition,
-            ProfileEmploymentPositionDTO employmentPositionDTO) {
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(
+            T profile, U employmentPosition, ProfileEmploymentPositionDTO employmentPositionDTO) {
         createUserAdvertRelation(profile.getUser(), employmentPosition, employmentPositionDTO);
 
-        employmentPosition.setStartYear(employmentPositionDTO.getStartYear());
-        employmentPosition.setStartMonth(employmentPositionDTO.getStartMonth());
-        employmentPosition.setEndYear(employmentPositionDTO.getEndYear());
-        employmentPosition.setEndMonth(employmentPositionDTO.getEndMonth());
+        employmentPosition.setStartYear(employmentPositionDTO.getStartDate().getYear());
+        employmentPosition.setStartMonth(employmentPositionDTO.getStartDate().getMonthOfYear());
+        employmentPosition.setEndYear(Optional.ofNullable(employmentPositionDTO.getEndDate()).map(d -> d.getYear()).orElse(null));
+        employmentPosition.setEndMonth(Optional.ofNullable(employmentPositionDTO.getEndDate()).map(d -> d.getMonthOfYear()).orElse(null));
         employmentPosition.setCurrent(isTrue(employmentPositionDTO.getCurrent()));
 
         if (employmentPosition.getClass().equals(ApplicationEmploymentPosition.class)) {
@@ -514,8 +515,8 @@ public class ProfileService {
         }
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void deleteEmploymentPosition(T profile, Class<U> employmentPositionClass,
-            Integer employmentPositionId) {
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void deleteEmploymentPosition(
+            T profile, Class<U> employmentPositionClass, Integer employmentPositionId) {
         U employmentPosition = getProfileEmploymentPosition(employmentPositionClass, employmentPositionId);
         updateUserAdvertRelation(profile.getUser(), employmentPosition.getAdvert());
         profile.getEmploymentPositions().remove(employmentPosition);
@@ -523,7 +524,7 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> ProfileRefereeUpdateDTO updateReferee(T profile, Class<U> refereeClass,
-            Integer refereeId, ProfileRefereeDTO refereeDTO) {
+                                                                                                                              Integer refereeId, ProfileRefereeDTO refereeDTO) {
         U referee;
         if (refereeId == null) {
             referee = instantiate(refereeClass);
@@ -536,9 +537,9 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(T profile, U referee,
-            ProfileRefereeDTO refereeDTO) {
-        List<CommentAssignedUser> refereeAssignments = assignReferee(referee, refereeDTO);
+    private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(
+            T profile, U referee, ProfileRefereeDTO refereeDTO) {
+        List<CommentAssignedUser> refereeAssignments = assignReferee(profile, referee, refereeDTO);
         createUserAdvertRelation(profile.getUser(), referee, refereeDTO);
 
         referee.setPhone(refereeDTO.getPhone());
@@ -568,7 +569,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileAdditionalInformation<T>> U updateAdditionalInformation(T profile, Class<U> additionalInformationClass,
-            ProfileAdditionalInformationDTO additionalInformationDTO) {
+                                                                                                                                    ProfileAdditionalInformationDTO additionalInformationDTO) {
         U additionalInformation = (U) profile.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = instantiate(additionalInformationClass);
@@ -586,14 +587,14 @@ public class ProfileService {
         return referee;
     }
 
-    private <T extends ProfileReferee<?>> List<CommentAssignedUser> assignReferee(T referee, ProfileRefereeDTO refereeDTO) {
+    private <R extends ProfileReferee<P>, P extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> assignReferee(P profile, R referee, ProfileRefereeDTO refereeDTO) {
         User oldUser = referee.getUser();
-        UserDTO userDTO = refereeDTO.getUser();
+        UserDTO userDTO = refereeDTO.getResource().getUser();
         User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         referee.setUser(newUser);
 
         if (referee.getClass().equals(ApplicationReferee.class)) {
-            return getUserAssignmentsUpdate((Application) referee.getAssociation(), oldUser, newUser, APPLICATION_REFEREE);
+            return getUserAssignmentsUpdate((Application) profile, oldUser, newUser, APPLICATION_REFEREE);
         }
 
         return emptyList();

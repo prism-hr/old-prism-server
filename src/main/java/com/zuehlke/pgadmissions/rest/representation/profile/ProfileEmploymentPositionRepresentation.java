@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
-
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class ProfileEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 
@@ -13,13 +11,9 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
 
     private ResourceRepresentationActivity resource;
 
-    private Integer startYear;
+    private LocalDate startDate;
 
-    private Integer startMonth;
-
-    private Integer endYear;
-
-    private Integer endMonth;
+    private LocalDate endDate;
 
     private Boolean current;
 
@@ -37,38 +31,6 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
 
     public void setResource(ResourceRepresentationActivity resource) {
         this.resource = resource;
-    }
-
-    public Integer getStartYear() {
-        return startYear;
-    }
-
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
-    }
-
-    public Integer getStartMonth() {
-        return startMonth;
-    }
-
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getEndYear() {
-        return endYear;
-    }
-
-    public void setEndYear(Integer endYear) {
-        this.endYear = endYear;
-    }
-
-    public Integer getEndMonth() {
-        return endMonth;
-    }
-
-    public void setEndMonth(Integer endMonth) {
-        this.endMonth = endMonth;
     }
 
     public Boolean getCurrent() {
@@ -89,23 +51,29 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
         return this;
     }
 
-    public ProfileEmploymentPositionRepresentation withStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public ProfileEmploymentPositionRepresentation withStartDate(final LocalDate startDate) {
+        this.startDate = startDate;
         return this;
     }
 
-    public ProfileEmploymentPositionRepresentation withStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-        return this;
-    }
-
-    public ProfileEmploymentPositionRepresentation withEndYear(Integer endYear) {
-        this.endYear = endYear;
-        return this;
-    }
-
-    public ProfileEmploymentPositionRepresentation withEndMonth(Integer endMonth) {
-        this.endMonth = endMonth;
+    public ProfileEmploymentPositionRepresentation withEndDate(final LocalDate endDate) {
+        this.endDate = endDate;
         return this;
     }
 
@@ -120,11 +88,10 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
     }
 
     public String getStartDateDisplay() {
-        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
+        return startDate != null ? "" + startDate.getMonthOfYear() + '/' + startDate.getYear() : null;
     }
 
     public String getEndDateDisplay() {
-        return endYear == null ? null : endMonth.toString() + BACK_SLASH + endYear.toString();
+        return endDate != null ? "" + endDate.getMonthOfYear() + '/' + endDate.getYear() : null;
     }
-
 }

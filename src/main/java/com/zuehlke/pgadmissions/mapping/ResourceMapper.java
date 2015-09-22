@@ -1,77 +1,22 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
-import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
-import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static java.math.RoundingMode.HALF_UP;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceChildCreationDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.dto.resource.*;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
@@ -81,44 +26,43 @@ import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationE
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceChildCreationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.ResourceRepresentationTarget;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.ScopeService;
-import com.zuehlke.pgadmissions.services.StateService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismListUtils;
-
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Service
 @Transactional
@@ -388,7 +332,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
@@ -397,7 +341,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                               List<PrismRole> overridingRoles) {
         V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
 
         List<ImportedEntityResponse> studyOptions = Lists.newLinkedList();
@@ -415,7 +359,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                                           List<PrismRole> overridingRoles) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
@@ -649,7 +593,7 @@ public class ResourceMapper {
         representation.setName(resource.getName());
         representation.setLogoImage(Optional.ofNullable(logoImageId).map(id -> new DocumentRepresentation().withId(logoImageId)).orElse(null));
 
-        representation.setAddress(new AddressRepresentation().withDomicile(new ImportedDomicileResponse()
+        representation.setAddress(new AddressRepresentation().withDomicile(new ImportedDomicileResponse().withId(resource.getAddressDomicileId())
                 .withName(resource.getAddressDomicileName())).withAddressLine1(resource.getAddressLine1())
                 .withAddressLine2(resource.getAddressLine2()).withAddressTown(resource.getAddressTown())
                 .withAddressRegion(resource.getAddressRegion()).withAddressCode(resource.getAddressCode())
@@ -697,7 +641,7 @@ public class ResourceMapper {
 
     @SuppressWarnings("unchecked")
     private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationStandard(T resource, Class<V> returnType,
-            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
+                                                                                                               List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationActivity(resource, returnType);
 
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
@@ -764,7 +708,7 @@ public class ResourceMapper {
     }
 
     private boolean isResourceCreationDisabledAtLeaf(int level, int depth, Boolean isResourceUserCreation,
-            ResourceChildCreationRepresentation resourceChildCreationRepresentation) {
+                                                     ResourceChildCreationRepresentation resourceChildCreationRepresentation) {
         return isTrue(isResourceUserCreation) && level == (depth - 1) && isFalse(resourceChildCreationRepresentation.getExternalMode())
                 && isEmpty(resourceChildCreationRepresentation.getChildResources());
     }
@@ -794,7 +738,7 @@ public class ResourceMapper {
     }
 
     private <T extends ResourceIdentityDTO, V extends ResourceRepresentationIdentity> V getResourceRepresentation(PrismScope resourceScope, T resourceDTO,
-            Class<V> returnType) {
+                                                                                                                  Class<V> returnType) {
         V representation = BeanUtils.instantiate(returnType);
 
         representation.setScope(resourceScope);

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -28,8 +30,8 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @OneToOne(mappedBy = "personalDetail")
     private UserAccount association;
 
-    @ManyToOne
-    @JoinColumn(name = "gender_id")
+    @Column(name = "gender_id")
+    @Enumerated(EnumType.STRING)
     private PrismGender gender;
 
     @Column(name = "date_of_birth", nullable = false)

@@ -26,7 +26,7 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     VOLUNTEERING(EXPERIENCE, true, false, SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC), //
     EMPLOYMENT(WORK, true, false, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC); //
 
-    private PrismOpportunityCategory category;
+    private PrismOpportunityCategory opportunityCategory;
     
     private boolean published;
     
@@ -38,19 +38,19 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
 
     static {
         for (PrismOpportunityType opportunityType : PrismOpportunityType.values()) {
-            byCategory.put(opportunityType.getCategory(), opportunityType);
+            byCategory.put(opportunityType.getOpportunityCategory(), opportunityType);
         }
     }
 
     private PrismOpportunityType(PrismOpportunityCategory category, boolean published, boolean requireEndorsement, PrismDisplayPropertyDefinition termsAndConditions) {
-        this.category = category;
+        this.opportunityCategory = category;
         this.published = published;
         this.requireEndorsement = requireEndorsement;
         this.termsAndConditions = termsAndConditions;
     }
 
-    public PrismOpportunityCategory getCategory() {
-        return category;
+    public PrismOpportunityCategory getOpportunityCategory() {
+        return opportunityCategory;
     }
     
     public boolean isPublished() {

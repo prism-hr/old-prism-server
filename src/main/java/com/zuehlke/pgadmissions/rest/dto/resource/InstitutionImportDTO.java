@@ -6,9 +6,13 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
-import uk.co.alumeni.prism.api.model.imported.request.ImportedInstitutionRequest;
+import org.hibernate.validator.constraints.NotEmpty;
 
-public class InstitutionImportDTO extends ImportedInstitutionRequest {
+public class InstitutionImportDTO {
+
+    @NotEmpty
+    @Size(max = 255)
+    private String name;
 
     private List<Integer> ucasIds;
 
@@ -19,19 +23,12 @@ public class InstitutionImportDTO extends ImportedInstitutionRequest {
     @Max(10000)
     private Integer hesaId;
 
-    @Min(0)
-    private Integer studentsNumber;
-
-    public InstitutionImportDTO() {
-        return;
+    public String getName() {
+        return name;
     }
 
-    public InstitutionImportDTO(String name) {
-        super(name);
-    }
-
-    public InstitutionImportDTO(String name, String code) {
-        super(name, code);
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<Integer> getUcasIds() {
@@ -56,14 +53,6 @@ public class InstitutionImportDTO extends ImportedInstitutionRequest {
 
     public void setHesaId(Integer hesaId) {
         this.hesaId = hesaId;
-    }
-
-    public Integer getStudentsNumber() {
-        return studentsNumber;
-    }
-
-    public void setStudentsNumber(Integer studentsNumber) {
-        this.studentsNumber = studentsNumber;
     }
 
     public InstitutionImportDTO withUcasIds(final List<Integer> ucasIds) {

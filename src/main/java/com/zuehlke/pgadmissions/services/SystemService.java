@@ -192,6 +192,7 @@ public class SystemService {
         if (asList("prod", "uat").contains(environment)) {
             throw new Error("You tried to reset the " + environment + " database, destroying all data and contents. Did you really mean to do that?");
         }
+        logger.info("Destroying workflow properties");
         systemDAO.clearSchema();
     }
 

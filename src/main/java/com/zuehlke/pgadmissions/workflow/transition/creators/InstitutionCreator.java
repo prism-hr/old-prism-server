@@ -1,11 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -16,6 +10,10 @@ import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.stream.Collectors;
 
 @Component
 public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
@@ -36,7 +34,10 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         AdvertDTO advertDTO = newResource.getAdvert();
         Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName(), user);
 
-        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName()).withCurrency(newResource.getCurrency())
+        String currency = newResource.getCurrency();
+        currency = currency != null ? currency : "GBP"; // TODO consider deriving currency based on domicile
+
+        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName()).withCurrency(currency)
                 .withBusinessYearStartMonth(newResource.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getGoogleId());
 
         resourceService.setResourceAttributes(institution, newResource);

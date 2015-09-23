@@ -1,18 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import org.hibernate.validator.constraints.URL;
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.URL;
-
-import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
 public class AdvertDTO {
 
-    @NotEmpty
     @Size(max = 1000)
     private String summary;
 
@@ -24,7 +20,6 @@ public class AdvertDTO {
     @Size(max = 2048)
     private String applyHomepage;
 
-    @NotEmpty
     @PhoneNumber
     private String telephone;
 

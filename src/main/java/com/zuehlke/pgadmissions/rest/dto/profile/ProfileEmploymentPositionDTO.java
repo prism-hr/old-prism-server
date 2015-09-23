@@ -1,11 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
+import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-// FIXME - adjust the date validation
+import javax.validation.constraints.NotNull;
+
+@DateNotAfterDate(startDate = "startDate", endDate = "endDate")
 public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSectionDTO {
 
     private Integer id;
@@ -13,13 +16,11 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     @NotNull
     private ResourceFamilyCreationDTO resource;
 
-    private Integer startYear;
+    @NotNull
+    @DateNotFuture
+    private LocalDate startDate;
 
-    private Integer startMonth;
-
-    private Integer endYear;
-
-    private Integer endMonth;
+    private LocalDate endDate;
 
     private Boolean current;
 
@@ -40,37 +41,21 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     public void setResource(ResourceFamilyCreationDTO resource) {
         this.resource = resource;
     }
-    
-    public Integer getStartYear() {
-        return startYear;
+
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public Integer getStartMonth() {
-        return startMonth;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getEndYear() {
-        return endYear;
-    }
-
-    public void setEndYear(Integer endYear) {
-        this.endYear = endYear;
-    }
-
-    public Integer getEndMonth() {
-        return endMonth;
-    }
-
-    public void setEndMonth(Integer endMonth) {
-        this.endMonth = endMonth;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public Boolean getCurrent() {

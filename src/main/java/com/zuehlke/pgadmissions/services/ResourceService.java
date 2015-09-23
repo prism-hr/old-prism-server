@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.PrismScopeCreationFamily;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
@@ -192,7 +193,7 @@ public class ResourceService {
     }
 
     public ResourceParent createResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
-        if (validateResourceFamily(resourceFamilyDTO)) {
+        if (validateResourceFamilyCreation(resourceFamilyDTO)) {
             ResourceParent lastResource = null;
             ResourceParent lastParentResource = null;
             User lastUser = systemService.getSystem().getUser();
@@ -200,6 +201,8 @@ public class ResourceService {
                 Integer thisId = resourceDTO.getId();
                 PrismScope thisScope = resourceDTO.getScope();
                 PrismScope lastScope = lastResource == null ? SYSTEM : lastResource.getResourceScope();
+
+                resourceDTO.setScopeCreation(resourceFamilyDTO.getCreation());
 
                 if (thisId == null) {
                     if (lastResource != null) {
@@ -213,18 +216,17 @@ public class ResourceService {
                     lastUser = lastResource.getUser();
                 }
 
-                lastScope = thisScope;
                 lastParentResource = !ResourceOpportunity.class.isAssignableFrom(lastResource.getClass()) ? lastResource : lastParentResource;
             }
 
             UserDTO userDTO = resourceFamilyDTO.getUser();
             User thisUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-            joinResource(lastParentResource, thisUser, getUnverifiedViewerRole(lastParentResource));
+            joinResource(lastParentResource, thisUser, PrismRole.getUnverifiedViewerRole(lastParentResource));
 
             return lastResource;
         }
 
-        throw new UnsupportedOperationException("Invalid resource family");
+        throw new UnsupportedOperationException("Invalid resource creation attempt");
     }
 
     @SuppressWarnings("unchecked")
@@ -258,32 +260,24 @@ public class ResourceService {
         }
     }
 
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
-        return executeAction(user, commentDTO, null);
-    }
-
     @SuppressWarnings("unchecked")
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO, String referralEmailAddress) {
-        Resource operativeResource = null;
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO);
-            operativeResource = actionOutcome.getResource().getParentResource();
         } else if (commentDTO.isRequestUserAction()) {
-            operativeResource = getById(commentDTO.getResource().getScope(), commentDTO.getResource().getId());
+            Resource operativeResource = getById(commentDTO.getResource().getScope(), commentDTO.getResource().getId());
             userService.requestUser(commentDTO.getAssignedUsers().get(0).getUser(), operativeResource, getUnverifiedViewerRole(operativeResource));
             actionOutcome = new ActionOutcomeDTO().withTransitionAction(actionService.getViewEditAction(operativeResource)).withTransitionResource(operativeResource);
         } else {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
-                operativeResource = actionOutcome.getResource();
             }
         }
-
         return actionOutcome;
     }
 
@@ -836,10 +830,10 @@ public class ResourceService {
         }
     }
 
-    private boolean validateResourceFamily(ResourceFamilyCreationDTO resourceFamilyDTO) {
+    private boolean validateResourceFamilyCreation(ResourceFamilyCreationDTO resourceFamilyDTO) {
         List<PrismScope> scopes = resourceFamilyDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
-        for (List<PrismScope> creations : resourceFamilyDTO.getResourceFamilyCreation().getScopeCreationFamilies()) {
-            if (creations.containsAll(scopes)) {
+        for (PrismScopeCreationFamily creationFamily : resourceFamilyDTO.getCreation().getScopeCreationFamilies()) {
+            if (creationFamily.containsAll(scopes)) {
                 return true;
             }
         }

@@ -37,8 +37,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation.PrismScopeCreationFamilies;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.PrismScopeCreationFamilies;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
@@ -258,11 +258,11 @@ public class StaticDataMapper {
 
     private Map<String, Object> getResourceFamilyCreations() {
         List<ResourceFamilyCreationRepresentation> representations = Lists.newLinkedList();
-        for (PrismResourceFamilyCreation resourceFamilyCreation : PrismResourceFamilyCreation.values()) {
+        for (PrismScopeCreation resourceFamilyCreation : PrismScopeCreation.values()) {
             ResourceFamilyCreationRepresentation representation = new ResourceFamilyCreationRepresentation(resourceFamilyCreation);
 
             Map<PrismScope, Integer> occurrences = Maps.newHashMap();
-            Map<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newHashMap();
+            Map<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newLinkedHashMap();
             PrismScopeCreationFamilies scopeCreationFamilies = resourceFamilyCreation.getScopeCreationFamilies();
             scopeCreationFamilies.forEach(scf -> {
                 scf.forEach(s -> {

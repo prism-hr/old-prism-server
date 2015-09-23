@@ -1,12 +1,16 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import java.util.stream.Collectors;
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -37,10 +41,12 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
 
         Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution)
                 .withAdvert(advert).withName(advert.getName());
-
         resourceService.setResourceAttributes(department, newResource);
-        String opportunityCategories = newResource.getOpportunityCategories().stream().map(c -> c.name()).collect(Collectors.joining("|"));
-        resourceService.setOpportunityCategories(department, opportunityCategories);
+
+        List<PrismOpportunityCategory> opportunityCategories = newResource.getOpportunityCategories();
+        resourceService.setOpportunityCategories(department,
+                isEmpty(opportunityCategories) ? institution.getOpportunityCategories() : opportunityCategories.stream().map(oc -> oc.name()).collect(joining("|")));
+
         return department;
     }
 

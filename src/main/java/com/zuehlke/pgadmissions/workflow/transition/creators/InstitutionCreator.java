@@ -1,6 +1,21 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.PrismConstants.SYSTEM_CURRENCY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Component;
+
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PrismScopeCreationDefault;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
@@ -8,18 +23,18 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.PrismService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.util.stream.Collectors;
 
 @Component
 public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private PrismService prismService;
 
     @Inject
     private ResourceService resourceService;
@@ -35,14 +50,23 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName(), user);
 
         String currency = newResource.getCurrency();
-        currency = currency != null ? currency : "GBP"; // TODO consider deriving currency based on domicile
+        if (currency == null) {
+            Domicile domicile = prismService.getDomicileById(advertDTO.getAddress().getDomicile());
+            currency = domicile == null ? SYSTEM_CURRENCY : domicile.getCurrency();
+        }
+
+        PrismScopeCreationDefault creationDefault = INSTITUTION.getDefault(newResource.getScopeCreation());
+        Integer businessYearStartMonth = newResource.getBusinessYearStartMonth();
+        businessYearStartMonth = businessYearStartMonth == null ? creationDefault.getDefaultBusinessYearStartMonth().getValue() : businessYearStartMonth;
 
         Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName()).withCurrency(currency)
                 .withBusinessYearStartMonth(newResource.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getGoogleId());
-
         resourceService.setResourceAttributes(institution, newResource);
-        String opportunityCategories = newResource.getOpportunityCategories().stream().map(c -> c.toString()).collect(Collectors.joining("|"));
-        resourceService.setOpportunityCategories(institution, opportunityCategories);
+        
+        List<PrismOpportunityCategory> opportunityCategories = newResource.getOpportunityCategories();
+        opportunityCategories = isEmpty(opportunityCategories) ? asList(creationDefault.getDefaultOpportunityCategories()) : opportunityCategories;
+        resourceService.setOpportunityCategories(institution, opportunityCategories.stream().map(oc -> oc.toString()).collect(joining("|")));
+        
         return institution;
     }
 

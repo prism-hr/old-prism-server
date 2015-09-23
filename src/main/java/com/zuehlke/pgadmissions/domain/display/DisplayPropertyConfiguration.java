@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain.display;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -54,8 +52,8 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayP
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "opportunity_type_id")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id")
     private OpportunityType opportunityType;
 
     @ManyToOne

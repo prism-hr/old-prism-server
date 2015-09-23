@@ -52,8 +52,8 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "opportunity_type_id")
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id")
     private OpportunityType opportunityType;
 
     @ManyToOne

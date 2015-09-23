@@ -2,29 +2,32 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.math.BigDecimal;
 
+import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.user.User;
+
 public class UserCompetenceDTO {
 
-    public Integer user;
+    public User user;
 
-    public Integer competence;
+    public Competence competence;
 
     public Long ratingCount;
 
     public BigDecimal ratingSum;
 
-    public Integer getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Integer user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public Integer getCompetence() {
+    public Competence getCompetence() {
         return competence;
     }
 
-    public void setCompetence(Integer competence) {
+    public void setCompetence(Competence competence) {
         this.competence = competence;
     }
 

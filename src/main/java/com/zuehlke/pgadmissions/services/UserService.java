@@ -11,9 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareColumnsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareDecimalForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareIntegerForSqlInsert;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
@@ -70,11 +67,11 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
-import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -86,7 +83,6 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
-import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
 
 @Service
 @Transactional
@@ -406,7 +402,7 @@ public class UserService {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
         }
-        return Lists.<User>newArrayList();
+        return Lists.<User> newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
@@ -435,23 +431,11 @@ public class UserService {
     }
 
     public void updateUserCompetence(User user) {
-        List<String> rows = Lists.newArrayList();
-        for (UserCompetenceDTO userCompetence : userDAO.getUserCompetences(user)) {
-            List<String> columns = Lists.newLinkedList();
-            columns.add(prepareIntegerForSqlInsert(userCompetence.getUser()));
-            columns.add(prepareIntegerForSqlInsert(userCompetence.getCompetence()));
-
-            Integer ratingCount = userCompetence.getRatingCount().intValue();
-            columns.add(prepareIntegerForSqlInsert(ratingCount));
-            columns.add(prepareDecimalForSqlInsert(userCompetence.getRatingSum().divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
-
-            rows.add("(" + prepareColumnsForSqlInsert(columns) + ")");
-        }
-
-        if (!rows.isEmpty()) {
-            entityService.executeBulkInsertUpdate("user_competence", "user_id, competence_id, rating_count, rating_average",
-                    PrismQueryUtils.prepareRowsForSqlInsert(rows), "rating_count = values(rating_count), rating_average = values(rating_average)");
-        }
+        userDAO.getUserCompetences(user).forEach(uc -> {
+            Integer ratingCount = uc.getRatingCount().intValue();
+            entityService.createOrUpdate(new UserCompetence().withUser(uc.getUser()).withCompetence(uc.getCompetence()).withRatingCount(ratingCount)
+                    .withRatingAverage(uc.getRatingSum().divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -486,7 +470,7 @@ public class UserService {
         }
 
         List<UserRole> userRoles = Lists.newLinkedList();
-        for (PrismScope scope : new PrismScope[]{DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
         }
 

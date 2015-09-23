@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 public class ResourceFamilyCreationDTO {
 

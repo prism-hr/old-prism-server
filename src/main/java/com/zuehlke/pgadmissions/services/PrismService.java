@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
@@ -38,6 +40,18 @@ public class PrismService {
 
     public AgeRange getAgeRangeFromAge(Integer age) {
         return prismDAO.getAgeRange(age);
+    }
+
+    public List<AgeRange> getAgeRanges() {
+        return prismDAO.getDefinitions(AgeRange.class);
+    }
+
+    public List<OpportunityType> getOpportunityTypes() {
+        return prismDAO.getDefinitions(OpportunityType.class);
+    }
+
+    public List<Domicile> getDomiciles() {
+        return prismDAO.getDefinitions(Domicile.class);
     }
 
 }

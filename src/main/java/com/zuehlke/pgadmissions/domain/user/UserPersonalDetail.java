@@ -57,26 +57,32 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Size(max = 50)
     private String phone;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public UserAccount getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(UserAccount association) {
         this.association = association;
     }
 
+    @Override
     public PrismGender getGender() {
         return gender;
     }
 
+    @Override
     public void setGender(PrismGender gender) {
         this.gender = gender;
     }
@@ -89,42 +95,52 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
         this.dateOfBirth = dateOfBirth;
     }
 
+    @Override
     public Domicile getNationality() {
         return nationality;
     }
 
+    @Override
     public void setNationality(Domicile nationality) {
         this.nationality = nationality;
     }
 
+    @Override
     public Domicile getDomicile() {
         return domicile;
     }
 
+    @Override
     public void setDomicile(Domicile domicile) {
         this.domicile = domicile;
     }
 
+    @Override
     public Boolean getVisaRequired() {
         return visaRequired;
     }
 
+    @Override
     public void setVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
     }
 
+    @Override
     public String getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    @Override
     public String getSkype() {
         return skype;
     }
 
+    @Override
     public void setSkype(String skype) {
         this.skype = skype;
     }

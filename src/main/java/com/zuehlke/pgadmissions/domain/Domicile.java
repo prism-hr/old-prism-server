@@ -21,6 +21,9 @@ public class Domicile extends Definition<PrismDomicile> {
     @Column(name = "currency", nullable = false)
     private String currency;
 
+    @Column(name = "ordinal", nullable = false, unique = true)
+    private Integer ordinal;
+
     @Override
     public PrismDomicile getId() {
         return id;
@@ -39,13 +42,26 @@ public class Domicile extends Definition<PrismDomicile> {
         this.currency = currency;
     }
 
+    public Integer getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
+    }
+
     public Domicile withId(PrismDomicile id) {
         this.id = id;
         return this;
     }
 
-    public Domicile withCurrency(final String currency) {
+    public Domicile withCurrency(String currency) {
         this.currency = currency;
+        return this;
+    }
+
+    public Domicile withOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
         return this;
     }
 

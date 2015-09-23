@@ -38,34 +38,42 @@ public class ApplicationAddress extends ApplicationSection implements ProfileAdd
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Application getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(Application association) {
         this.association = association;
     }
 
+    @Override
     public Address getCurrentAddress() {
         return currentAddress;
     }
 
+    @Override
     public void setCurrentAddress(Address currentAddress) {
         this.currentAddress = currentAddress;
     }
 
+    @Override
     public Address getContactAddress() {
         return contactAddress;
     }
 
+    @Override
     public void setContactAddress(Address contactAddress) {
         this.contactAddress = contactAddress;
     }

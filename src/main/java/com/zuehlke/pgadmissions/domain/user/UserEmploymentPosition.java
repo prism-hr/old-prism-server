@@ -25,6 +25,10 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
     private UserAccount association;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    
+    @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
@@ -43,20 +47,34 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
     @Column(name = "current", nullable = false)
     private Boolean current;
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public UserAccount getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(UserAccount association) {
         this.association = association;
+    }
+    
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -69,42 +87,52 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
         this.advert = advert;
     }
 
+    @Override
     public Integer getStartYear() {
         return startYear;
     }
 
+    @Override
     public void setStartYear(Integer startYear) {
         this.startYear = startYear;
     }
 
+    @Override
     public Integer getStartMonth() {
         return startMonth;
     }
 
+    @Override
     public void setStartMonth(Integer startMonth) {
         this.startMonth = startMonth;
     }
 
+    @Override
     public Integer getEndYear() {
         return endYear;
     }
 
+    @Override
     public void setEndYear(Integer endYear) {
         this.endYear = endYear;
     }
 
+    @Override
     public Integer getEndMonth() {
         return endMonth;
     }
 
+    @Override
     public void setEndMonth(Integer endMonth) {
         this.endMonth = endMonth;
     }
 
+    @Override
     public Boolean getCurrent() {
         return current;
     }
 
+    @Override
     public void setCurrent(Boolean current) {
         this.current = current;
     }

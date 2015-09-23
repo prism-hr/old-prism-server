@@ -199,7 +199,7 @@ public class SystemService {
     @Transactional(timeout = 600)
     public void initializeWorkflow() throws Exception {
         logger.info("Initializing opportunity type definitions");
-        verifyDefinition(Scope.class);
+        verifyDefinition(OpportunityType.class);
         initializeOpportunityTypes();
 
         logger.info("Initializing age range definitions");
@@ -298,19 +298,21 @@ public class SystemService {
     private void initializeOpportunityTypes() throws DeduplicationException {
         for (PrismOpportunityType prismOpportunityType : PrismOpportunityType.values()) {
             entityService.createOrUpdate(new OpportunityType().withId(prismOpportunityType).withOpportunityCategory(prismOpportunityType.getOpportunityCategory())
-                    .withPublished(prismOpportunityType.isPublished()).withRequireEndorsement(prismOpportunityType.isRequireEndorsement()));
+                    .withPublished(prismOpportunityType.isPublished()).withRequireEndorsement(prismOpportunityType.isRequireEndorsement())
+                    .withOrdinal(prismOpportunityType.ordinal()));
         }
     }
 
     private void initializeAgeRanges() throws DeduplicationException {
         for (PrismAgeRange prismAgeRange : PrismAgeRange.values()) {
-            entityService.createOrUpdate(new AgeRange().withId(prismAgeRange).withLowerBound(prismAgeRange.getLowerBound()).withUpperBound(prismAgeRange.getUpperBound()));
+            entityService.createOrUpdate(new AgeRange().withId(prismAgeRange).withLowerBound(prismAgeRange.getLowerBound()).withUpperBound(prismAgeRange.getUpperBound())
+                    .withOrdinal(prismAgeRange.ordinal()));
         }
     }
 
     private void initializeDomiciles() throws DeduplicationException {
         for (PrismDomicile prismDomicile : PrismDomicile.values()) {
-            entityService.createOrUpdate(new Domicile().withId(prismDomicile).withCurrency(prismDomicile.getCurrency()));
+            entityService.createOrUpdate(new Domicile().withId(prismDomicile).withCurrency(prismDomicile.getCurrency()).withOrdinal(prismDomicile.ordinal()));
         }
     }
 

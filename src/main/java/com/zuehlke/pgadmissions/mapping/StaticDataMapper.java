@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 
@@ -35,11 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.PrismScopeCreationFamilies;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
@@ -52,14 +45,8 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.FilterEntityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresentation.OpportunityTypeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.WorkflowConstraintRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceFamilyCreationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceFamilyCreationRepresentation.ResourceCreationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
@@ -87,6 +74,15 @@ public class StaticDataMapper {
     private ActionMapper actionMapper;
 
     @Inject
+    private PrismMapper prismMapper;
+
+    @Inject
+    private ResourceMapper resourceMapper;
+
+    @Inject
+    private ScopeMapper scopeMapper;
+
+    @Inject
     private StateMapper stateMapper;
 
     @Inject
@@ -109,6 +105,8 @@ public class StaticDataMapper {
         staticData.putAll(getRequiredSections());
         staticData.putAll(getWorkflowConstraints());
         staticData.putAll(getResourceFamilyCreations());
+        staticData.putAll(getDomiciles());
+        staticData.putAll(getAgeRanges());
         return staticData;
     }
 
@@ -176,19 +174,7 @@ public class StaticDataMapper {
     }
 
     private Map<String, Object> getFilterProperties() {
-        Map<String, Object> staticData = Maps.newHashMap();
-
-        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListConstraint.values().length);
-        for (PrismResourceListConstraint filterProperty : PrismResourceListConstraint.values()) {
-            List<FilterExpressionRepresentation> filterExpressions = filterProperty.getPermittedExpressions().stream()
-                    .map(filterExpression -> new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()))
-                    .collect(Collectors.toList());
-            filters.add(new ResourceListFilterRepresentation(filterProperty, filterExpressions, filterProperty.getPropertyType(), filterProperty
-                    .getPermittedScopes()));
-        }
-
-        staticData.put("filters", filters);
-        return staticData;
+        return singletonMap("filters", resourceMapper.getResourceListFilterRepresentations());
     }
 
     private Map<String, Object> getConfigurations() {
@@ -216,14 +202,7 @@ public class StaticDataMapper {
     }
 
     private Map<String, Object> getOpportunityCategories() {
-        Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("opportunityCategories",
-                asList(PrismOpportunityCategory.values()).stream()
-                        .map(oc -> new OpportunityCategoryRepresentation(oc, oc.isPublished(),
-                                getOpportunityTypes(oc).stream().map(ot -> new OpportunityTypeRepresentation(ot, ot.isPublished(), ot.getTermsAndConditions()))
-                                        .collect(Collectors.toList())))
-                        .collect(Collectors.toList()));
-        return staticData;
+        return singletonMap("opportunityCategories", prismMapper.getOpportunityTypeRepresentations());
     }
 
     private Map<String, Object> getActionConditions() {
@@ -257,34 +236,15 @@ public class StaticDataMapper {
     }
 
     private Map<String, Object> getResourceFamilyCreations() {
-        List<ResourceFamilyCreationRepresentation> representations = Lists.newLinkedList();
-        for (PrismScopeCreation resourceFamilyCreation : PrismScopeCreation.values()) {
-            ResourceFamilyCreationRepresentation representation = new ResourceFamilyCreationRepresentation(resourceFamilyCreation);
+        return singletonMap("resourceFamilyCreations", scopeMapper.getResourceFamilyCreationRepresentations());
+    }
 
-            Map<PrismScope, Integer> occurrences = Maps.newHashMap();
-            Map<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newLinkedHashMap();
-            PrismScopeCreationFamilies scopeCreationFamilies = resourceFamilyCreation.getScopeCreationFamilies();
-            scopeCreationFamilies.forEach(scf -> {
-                scf.forEach(s -> {
-                    Integer frequency = occurrences.get(s);
-                    frequency = frequency == null ? 1 : (frequency + 1);
-                    occurrences.put(s, frequency);
-                    scopeRepresentations.put(s, new ResourceCreationRepresentation(s));
-                });
-            });
+    private Map<String, Object> getAgeRanges() {
+        return singletonMap("ageRanges", prismMapper.getAgeRangeRepresentations());
+    }
 
-            Integer scopeCreationFamilySize = scopeCreationFamilies.size();
-            occurrences.keySet().forEach(o -> {
-                if (occurrences.get(o).equals(scopeCreationFamilySize)) {
-                    scopeRepresentations.get(o).setRequired(true);
-                }
-            });
-
-            representation.setResourceCreations(newLinkedList(scopeRepresentations.values()));
-            representations.add(representation);
-        }
-
-        return singletonMap("resourceFamilyCreations", representations);
+    private Map<String, Object> getDomiciles() {
+        return singletonMap("domiciles", prismMapper.getDomicileRepresentations());
     }
 
 }

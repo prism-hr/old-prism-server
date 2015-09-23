@@ -279,3 +279,7 @@ alter table user_personal_detail
 
 drop table imported_entity
 ;
+
+alter table age_range
+	modify column lower_bound int(2) unsigned
+;

@@ -18,7 +18,7 @@ public class AgeRange extends Definition<PrismAgeRange> {
     @Enumerated(EnumType.STRING)
     private PrismAgeRange id;
 
-    @Column(name = "lower_bound", nullable = false, unique = true)
+    @Column(name = "lower_bound", unique = true)
     private Integer lowerBound;
 
     @Column(name = "upper_bound", unique = true)

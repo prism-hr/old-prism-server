@@ -1,25 +1,25 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCreationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import java.util.List;
 
 public class ResourceFamilyCreationRepresentation {
 
-    private PrismResourceCreationContext creationContext;
+    private PrismScopeCreation creationContext;
 
     private List<ResourceCreationRepresentation> resourceCreations;
 
-    public ResourceFamilyCreationRepresentation(PrismResourceCreationContext creationContext) {
+    public ResourceFamilyCreationRepresentation(PrismScopeCreation creationContext) {
         this.creationContext = creationContext;
     }
 
-    public PrismResourceCreationContext getCreationContext() {
+    public PrismScopeCreation getCreationContext() {
         return creationContext;
     }
 
-    public void setCreationContext(PrismResourceCreationContext creationContext) {
+    public void setCreationContext(PrismScopeCreation creationContext) {
         this.creationContext = creationContext;
     }
 

@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
-import java.time.Month;
 import java.util.LinkedList;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public enum PrismResourceCreationContext {
+public enum PrismScopeCreation {
 
     QUALIFICATION(new PrismScopeCreationFamilies()
             .withScopeCreationFamily(new PrismScopeCreationFamily()
@@ -18,43 +20,23 @@ public enum PrismResourceCreationContext {
                     .withScope(INSTITUTION)
                     .withScope(DEPARTMENT)
                     .withScope(PROGRAM)
-                    .withScope(PROJECT)),
-            Month.OCTOBER,
-            PrismOpportunityCategory.STUDY),
+                    .withScope(PROJECT))), //
     UNIVERSITY(new PrismScopeCreationFamilies()
             .withScopeCreationFamily(new PrismScopeCreationFamily()
                     .withScope(INSTITUTION)
-                    .withScope(DEPARTMENT)),
-            Month.OCTOBER,
-            PrismOpportunityCategory.STUDY),
+                    .withScope(DEPARTMENT))), //
     EMPLOYER(new PrismScopeCreationFamilies()
             .withScopeCreationFamily(new PrismScopeCreationFamily()
-                    .withScope(INSTITUTION)),
-            Month.APRIL,
-            PrismOpportunityCategory.EXPERIENCE, PrismOpportunityCategory.WORK);
+                    .withScope(INSTITUTION)));
 
     private PrismScopeCreationFamilies scopeCreationFamilies;
 
-    private Month defaultBusinessYearStartMonth;
-
-    private PrismOpportunityCategory[] categories;
-
-    PrismResourceCreationContext(PrismScopeCreationFamilies scopeCreations, Month defaultBusinessYearStartMonth, PrismOpportunityCategory... categories) {
+    PrismScopeCreation(PrismScopeCreationFamilies scopeCreations) {
         this.scopeCreationFamilies = scopeCreations;
-        this.defaultBusinessYearStartMonth = defaultBusinessYearStartMonth;
-        this.categories = categories;
     }
 
     public PrismScopeCreationFamilies getScopeCreationFamilies() {
         return scopeCreationFamilies;
-    }
-
-    public Month getDefaultBusinessYearStartMonth() {
-        return defaultBusinessYearStartMonth;
-    }
-
-    public PrismOpportunityCategory[] getCategories() {
-        return categories;
     }
 
     public static class PrismScopeCreationFamilies extends LinkedList<PrismScopeCreationFamily> {
@@ -72,8 +54,8 @@ public enum PrismResourceCreationContext {
 
         private static final long serialVersionUID = -6696268838881348249L;
 
-        public PrismScopeCreationFamily withScope(PrismScope scopeCreation) {
-            super.add(scopeCreation);
+        public PrismScopeCreationFamily withScope(PrismScope scope) {
+            super.add(scope);
             return this;
         }
 

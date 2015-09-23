@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceCreationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 import javax.validation.Valid;
@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 public class ResourceFamilyCreationDTO {
 
     @NotNull
-    private PrismResourceCreationContext creationContext;
+    private PrismScopeCreation creation;
 
     @Valid
     @NotNull
@@ -31,12 +31,12 @@ public class ResourceFamilyCreationDTO {
     @NotNull
     private UserDTO user;
 
-    public PrismResourceCreationContext getCreationContext() {
-        return creationContext;
+    public PrismScopeCreation getCreation() {
+        return creation;
     }
 
-    public void setCreationContext(PrismResourceCreationContext creationContext) {
-        this.creationContext = creationContext;
+    public void setCreation(PrismScopeCreation creation) {
+        this.creation = creation;
     }
 
     public ResourceCreationDTO getInstitution() {

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -153,11 +154,17 @@ public class ProfileMapper {
 
     private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification) {
         Document document = qualification.getDocument();
+
+        Integer startYear = qualification.getStartYear();
+        LocalDate startDate = startYear == null ? null : new LocalDate(startYear, qualification.getStartMonth(), 1);
+
+        Integer awardYear = qualification.getAwardYear();
+        LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
+
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
-                .withProgram(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()))
-                .withStartYear(qualification.getStartYear()).withStartMonth(qualification.getStartMonth())
-                .withAwardYear(qualification.getAwardYear()).withAwardMonth(qualification.getAwardMonth())
-                .withCompleted(qualification.getCompleted()).withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
+                .withResource(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()))
+                .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
+                .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
 
         if (qualification.getClass().equals(ApplicationQualification.class)) {
             representation.setLastUpdatedTimestamp(((ApplicationQualification) qualification).getLastUpdatedTimestamp());
@@ -167,9 +174,14 @@ public class ProfileMapper {
     }
 
     private <T extends ProfileEmploymentPosition<?>> ProfileEmploymentPositionRepresentation getApplicationEmploymentPositionRepresentation(T employmentPosition) {
-        ProfileEmploymentPositionRepresentation representation = new ProfileEmploymentPositionRepresentation().withStartYear(employmentPosition.getStartYear())
-                .withStartMonth(employmentPosition.getStartMonth()).withEndYear(employmentPosition.getEndYear())
-                .withEndMonth(employmentPosition.getEndMonth()).withCurrent(employmentPosition.getCurrent());
+        Integer startYear = employmentPosition.getStartYear();
+        LocalDate startDate = startYear == null ? null : new LocalDate(startYear, employmentPosition.getStartMonth(), 1);
+
+        Integer endYear = employmentPosition.getEndYear();
+        LocalDate endDate = endYear == null ? null : new LocalDate(endYear, employmentPosition.getEndMonth(), 1);
+
+        ProfileEmploymentPositionRepresentation representation = new ProfileEmploymentPositionRepresentation()
+                .withResource(resourceMapper.getResourceRepresentationActivity(employmentPosition.getAdvert().getResource())).withStartDate(startDate).withEndDate(endDate);
 
         if (employmentPosition.getClass().equals(ApplicationEmploymentPosition.class)) {
             representation.setLastUpdatedTimestamp(((ApplicationEmploymentPosition) employmentPosition).getLastUpdatedTimestamp());

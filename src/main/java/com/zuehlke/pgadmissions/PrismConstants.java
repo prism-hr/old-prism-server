@@ -46,4 +46,6 @@ public class PrismConstants {
 
     public static final Integer CONFIDENCE_HIGH = 3;
 
+    public static final String SYSTEM_CURRENCY = "GBP";
+
 }

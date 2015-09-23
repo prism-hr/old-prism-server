@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
-import org.hibernate.validator.constraints.NotEmpty;
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
+
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 

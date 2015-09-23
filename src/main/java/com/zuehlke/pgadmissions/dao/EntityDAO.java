@@ -103,7 +103,7 @@ public class EntityDAO {
     public void flush() {
         sessionFactory.getCurrentSession().flush();
     }
-    
+
     public void clear() {
         sessionFactory.getCurrentSession().clear();
     }
@@ -120,21 +120,6 @@ public class EntityDAO {
 
     public void evict(Object entity) {
         sessionFactory.getCurrentSession().evict(entity);
-    }
-
-    public void executeBulkInsert(String table, String columns, String inserts) {
-        sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ") "
-                        + "values " + inserts)
-                .executeUpdate();
-    }
-
-    public void executeBulkInsertUpdate(String table, String columns, String inserts, String updates) {
-        sessionFactory.getCurrentSession().createSQLQuery(
-                "insert into " + table + " (" + columns + ")\n"
-                        + "values\n" + inserts + " "
-                        + "\non duplicate key update " + updates)
-                .executeUpdate();
     }
 
 }

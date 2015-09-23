@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 
 public class ProfileEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 

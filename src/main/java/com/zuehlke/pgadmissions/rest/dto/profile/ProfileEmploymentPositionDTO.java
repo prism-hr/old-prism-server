@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
+import javax.validation.constraints.NotNull;
+
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
-import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
-
-import javax.validation.constraints.NotNull;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "endDate")
 public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSectionDTO {

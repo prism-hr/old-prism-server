@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
 @Entity
-@Table(name = "opportunityType")
+@Table(name = "opportunity_type")
 public class OpportunityType extends Definition<PrismOpportunityType> {
 
     @Id

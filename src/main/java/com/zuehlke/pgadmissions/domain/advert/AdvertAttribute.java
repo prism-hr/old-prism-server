@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 
-public abstract class AdvertAttribute <T> implements UniqueEntity {
+public abstract class AdvertAttribute<T> implements UniqueEntity {
 
     public abstract Integer getId();
 

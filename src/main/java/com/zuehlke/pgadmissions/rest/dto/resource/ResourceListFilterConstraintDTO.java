@@ -9,7 +9,6 @@ import org.joda.time.LocalDate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -31,8 +30,6 @@ public class ResourceListFilterConstraintDTO {
     private LocalDate valueDateClose;
 
     private PrismStateGroup valueStateGroup;
-
-    private PrismApplicationReserveStatus valueReserveStatus;
 
     private BigDecimal valueDecimalStart;
 
@@ -98,20 +95,12 @@ public class ResourceListFilterConstraintDTO {
         return valueStateGroup;
     }
 
-    public PrismApplicationReserveStatus getValueReserveStatus() {
-        return valueReserveStatus;
-    }
-
-    public void setValueReserveStatus(PrismApplicationReserveStatus valueReserveStatus) {
-        this.valueReserveStatus = valueReserveStatus;
-    }
-
     public DateTime computeValueDateTimeStart() {
         return valueDateStart == null ? null : valueDateStart.toDateTimeAtStartOfDay();
     }
 
     public DateTime computeValueDateTimeClose() {
-        return valueDateClose == null ? null :  valueDateClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
+        return valueDateClose == null ? null : valueDateClose.plusDays(1).toDateTimeAtStartOfDay().minusSeconds(1);
     }
 
     public void setValueStateGroup(PrismStateGroup valueStateGroup) {
@@ -185,8 +174,7 @@ public class ResourceListFilterConstraintDTO {
     }
 
     public Object[] getValues() {
-        Collection<Object> filterValues = Lists.<Object>newArrayList(valueString, valueDateStart, valueDateClose, valueStateGroup, valueReserveStatus,
-                valueDecimalStart, valueDecimalClose);
+        Collection<Object> filterValues = Lists.<Object> newArrayList(valueString, valueDateStart, valueDateClose, valueStateGroup, valueDecimalStart, valueDecimalClose);
         return (Object[]) Collections2.filter(filterValues, Predicates.notNull()).toArray();
     }
 

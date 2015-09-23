@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 
 @Service
@@ -62,7 +62,7 @@ public class DepartmentService {
     }
 
     public ActionOutcomeDTO inviteDepartment(DepartmentInvitationDTO departmentInvitationDTO) {
-        ResourceParentDivisionDTO departmentDTO = departmentInvitationDTO.getDepartment();
+        ResourceParentDTO departmentDTO = departmentInvitationDTO.getDepartment();
 
         List<PrismOpportunityCategory> opportunityCategories = Lists.newArrayList();
         Institution institution = institutionService.getById(departmentDTO.getParentResource().getId());

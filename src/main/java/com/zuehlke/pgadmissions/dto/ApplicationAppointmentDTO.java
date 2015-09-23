@@ -4,8 +4,6 @@ import java.util.TimeZone;
 
 import org.joda.time.LocalDateTime;
 
-import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
-
 public class ApplicationAppointmentDTO extends ResourceActivityDTO {
 
     private String applicationCode;

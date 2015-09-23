@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
@@ -196,11 +195,6 @@ public class CommentService {
             CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
             comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
         }
-    }
-
-    public void appendRejectionReason(Comment comment, CommentDTO commentDTO) {
-        ImportedEntitySimple rejectionReason = entityService.getById(ImportedEntitySimple.class, commentDTO.getRejectionReason());
-        comment.setRejectionReason(rejectionReason);
     }
 
     public void appendCommentProperties(Comment comment, CommentDTO commentDTO) {

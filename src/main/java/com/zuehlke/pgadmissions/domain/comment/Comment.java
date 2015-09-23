@@ -60,12 +60,11 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -169,15 +168,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     private Boolean recruiterAcceptAppointment;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "application_reserve_status")
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "application_imported_rejection_reason_id")
-    private ImportedEntitySimple rejectionReason;
-
-    @Column(name = "application_rejection_reason_system")
-    private String rejectionReasonSystem;
+    @Column(name = "application_rejection_reason")
+    private PrismRejectionReason rejectionReason;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -417,28 +409,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
-    }
-
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
-        this.applicationReserveStatus = applicationReserveRating;
-    }
-
-    public ImportedEntitySimple getRejectionReason() {
+    public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(ImportedEntitySimple rejectionReason) {
+    public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-    public String getRejectionReasonSystem() {
-        return rejectionReasonSystem;
-    }
-
-    public void setRejectionReasonSystem(String rejectionReasonSystem) {
-        this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -595,8 +571,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withApplicationReserveStatus(final PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
+    public Comment withRejectionReason(PrismRejectionReason rejectionReason) {
+        this.rejectionReason = rejectionReason;
         return this;
     }
 
@@ -771,10 +747,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
                 .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
     }
 
-    public boolean isApplicationReserveStatusComment() {
-        return applicationReserveStatus != null;
-    }
-
     public boolean isResourceEndorsementComment() {
         return !action.getId().getScope().equals(APPLICATION) && rating != null;
     }
@@ -785,10 +757,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public String getUserDisplay() {
         return user == null ? null : user.getFullName();
-    }
-
-    public String getRejectionReasonDisplay() {
-        return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
     }
 
     public String getCreatedTimestampDisplay(String dateFormat) {

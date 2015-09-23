@@ -6,7 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -49,11 +49,7 @@ public class CommentRepresentation {
 
     private Boolean recruiterAcceptAppointment;
 
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
-    private String rejectionReason;
-
-    private String rejectionReasonSystem;
+    private PrismRejectionReason rejectionReason;
 
     private DateTime createdTimestamp;
 
@@ -195,28 +191,12 @@ public class CommentRepresentation {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
-    }
-
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
-    }
-
-    public String getRejectionReason() {
+    public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(String rejectionReason) {
+    public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-    public String getRejectionReasonSystem() {
-        return rejectionReasonSystem;
-    }
-
-    public void setRejectionReasonSystem(String rejectionReasonSystem) {
-        this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
     public BigDecimal getRating() {
@@ -360,18 +340,8 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
-        return this;
-    }
-
-    public CommentRepresentation withRejectionReason(String rejectionReason) {
+    public CommentRepresentation withRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-        return this;
-    }
-
-    public CommentRepresentation withRejectionReasonSystem(String rejectionReasonSystem) {
-        this.rejectionReasonSystem = rejectionReasonSystem;
         return this;
     }
 

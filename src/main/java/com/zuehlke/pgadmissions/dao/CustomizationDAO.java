@@ -126,7 +126,7 @@ public class CustomizationDAO {
                         + getOpportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
                 .setParameter("definitionId", definitionId);
-        applyLocalizationConstraintsRestoreDefault(opportunityType, query);
+        applyLocalizationConstraints(opportunityType, query);
         query.executeUpdate();
     }
 
@@ -139,7 +139,7 @@ public class CustomizationDAO {
                         + getOpportunityTypeCriterionUpdate(opportunityType)) //
                 .setParameter("resource", resource) //
                 .setParameter("scope", scope);
-        applyLocalizationConstraintsRestoreDefault(opportunityType, query);
+        applyLocalizationConstraints(opportunityType, query);
         query.executeUpdate();
     }
 
@@ -151,13 +151,12 @@ public class CustomizationDAO {
         String definitionCriterion = "where definition.id" + " = :definitionId ";
 
         String opportunityTypeCriterion = getOpportunityTypeCriterionUpdate(opportunityType);
-
         Query query = getRestoreGlobalConfigurationFilter(resourceScope, updateOperation, definitionCriterion, opportunityTypeCriterion);
 
         query.setParameter(resourceScope.getLowerCamelName(), resource) //
                 .setParameter("definitionId", definitionId);
 
-        applyLocalizationConstraintsRestoreGlobal(opportunityType, query);
+        applyLocalizationConstraints(opportunityType, query);
         query.executeUpdate();
     }
 
@@ -174,7 +173,7 @@ public class CustomizationDAO {
         query.setParameter(resourceScope.getLowerCamelName(), resource) //
                 .setParameter("scope", scope);
 
-        applyLocalizationConstraintsRestoreGlobal(opportunityType, query);
+        applyLocalizationConstraints(opportunityType, query);
         query.executeUpdate();
     }
 
@@ -218,19 +217,25 @@ public class CustomizationDAO {
                 .add(Restrictions.eq("project", resource.getProject()));
     }
 
-    private Criterion getOpportunityTypeCriterionSelect(PrismScope scope, PrismOpportunityType opportunityType) {
-        return scope.ordinal() < PROGRAM.ordinal() ? Restrictions.isNull("opportunityType") : opportunityType == null ? Restrictions.eq("opportunityType",
-                getSystemOpportunityType()) : Restrictions.in("opportunityType", Arrays.asList(opportunityType, getSystemOpportunityType()));
+    private Criterion getOpportunityTypeCriterionSelect(PrismScope scope, PrismOpportunityType prismOpportunityType) {
+        if (scope.ordinal() < PROGRAM.ordinal()) {
+            return Restrictions.isNull("opportunityType");
+        } else if (prismOpportunityType == null) {
+            return Restrictions.eq("opportunityType.id", getSystemOpportunityType());
+        }
+        return Restrictions.in("opportunityType.id", Arrays.asList(prismOpportunityType, getSystemOpportunityType()));
     }
 
-    private String getOpportunityTypeCriterionUpdate(PrismOpportunityType opportunityType) {
-        return opportunityType == null ? "and opportunityType is null " : //
-                "and (program is not null and " //
-                        + "opportunityType is null " //
-                        + "or opportunityType = :opportunityType) " //
-                        + "or (project is not null and " //
-                        + "opportunityType is null " //
-                        + "or opportunityType = :opportunityType) ";
+    private String getOpportunityTypeCriterionUpdate(PrismOpportunityType prismOpportunityType) {
+        if (prismOpportunityType == null) {
+            return "and opportunityType is null ";
+        }
+        return "and (program is not null and " //
+                + "opportunityType is null " //
+                + "or opportunityType.id = :opportunityType) " //
+                + "or (project is not null and " //
+                + "opportunityType is null " //
+                + "or opportunityType.id = :opportunityType) ";
     }
 
     private void addActiveVersionCriterion(PrismConfiguration configurationType, Criteria criteria) {
@@ -250,21 +255,13 @@ public class CustomizationDAO {
                 + "where scope.id = :scope) ";
     }
 
-    private void applyLocalizationConstraintsRestoreDefault(PrismOpportunityType opportunityType, Query query) {
+    private void applyLocalizationConstraints(PrismOpportunityType opportunityType, Query query) {
         if (opportunityType != null) {
             query.setParameter("opportunityType", opportunityType);
         }
     }
 
-    private void applyLocalizationConstraintsRestoreGlobal(PrismOpportunityType opportunityType, Query query) {
-        applyLocalizationConstraintsRestoreDefault(opportunityType, query);
-        if (opportunityType != null) {
-            query.setParameter("opportunityTypeName", opportunityType.name());
-        }
-    }
-
-    private Query getRestoreGlobalConfigurationFilter(PrismScope resourceScope, String updateOperation, String definitionCriterion,
-            String opportunityTypeCriterion) throws Error {
+    private Query getRestoreGlobalConfigurationFilter(PrismScope resourceScope, String updateOperation, String definitionCriterion, String opportunityTypeCriterion) throws Error {
         Query query;
         if (resourceScope == SYSTEM) {
             query = sessionFactory.getCurrentSession().createQuery( //
@@ -302,17 +299,11 @@ public class CustomizationDAO {
                 + "or program in (" //
                 + "from Program " //
                 + "where system = :system " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + "or project in (" //
                 + "from Project " //
                 + "where system = :system " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + opportunityTypeCriterion + ")";
     }
 
@@ -323,17 +314,11 @@ public class CustomizationDAO {
                 + "or program in (" //
                 + "from Program " //
                 + "where institution = :institution " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + "or project in (" //
                 + "from Project " //
                 + "where institution = :institution " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + opportunityTypeCriterion + ")";
     }
 
@@ -341,16 +326,10 @@ public class CustomizationDAO {
         return "and (program in (" //
                 + "from Program " //
                 + "where institution = :department " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + "or project in (" //
                 + "from Project " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + opportunityTypeCriterion + ")";
     }
 
@@ -358,10 +337,7 @@ public class CustomizationDAO {
         return "and (project in (" //
                 + "from Project " //
                 + "where program = :program " //
-                + "and opportunityType in (" //
-                + "from ImportedEntitySimple " //
-                + "where type = 'IMPORTED_OPPORTUNITY_TYPE' " //
-                + "and code like :opportunityTypeName)) "
+                + "and opportunityType.id = :opportunityType) "
                 + opportunityTypeCriterion + ")";
     }
 

@@ -6,25 +6,39 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 
 public class ProfileAdditionalInformationRepresentation extends ApplicationSectionRepresentation {
 
-    private String convictionsText;
+    private String requirements;
 
-    public String getConvictionsText() {
-        return convictionsText;
+    private String convictions;
+
+    public String getRequirements() {
+        return requirements;
     }
 
-    public void setConvictionsText(String convictionsText) {
-        this.convictionsText = convictionsText;
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
     }
 
-    public ProfileAdditionalInformationRepresentation withConvictionsText(String convictionsText) {
-        this.convictionsText = convictionsText;
+    public String getConvictions() {
+        return convictions;
+    }
+
+    public void setConvictions(String convictions) {
+        this.convictions = convictions;
+    }
+
+    public ProfileAdditionalInformationRepresentation withRequirements(String requirements) {
+        this.requirements = requirements;
         return this;
     }
-    
+
+    public ProfileAdditionalInformationRepresentation withConvictions(String convictions) {
+        this.convictions = convictions;
+        return this;
+    }
+
     public ProfileAdditionalInformationRepresentation withLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         setLastUpdatedTimestamp(lastUpdatedTimestamp);
         return this;
     }
-    
 
 }

@@ -87,8 +87,7 @@ public class PropertyLoader {
     private void localize(Resource resource) {
         this.resource = resource;
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
-            this.opportunityType = PrismOpportunityType.valueOf(resourceOpportunity.getOpportunityType().getName());
+            this.opportunityType = ((ResourceOpportunity) resource).getOpportunityType().getId();
         }
     }
 

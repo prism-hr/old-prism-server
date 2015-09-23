@@ -6,7 +6,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.rest.dto.EntityDTO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailDTO {
 
@@ -15,7 +15,7 @@ public class ApplicationProgramDetailDTO {
     private PrismOpportunityCategory opportunityCategory;
 
     @NotNull
-    private EntityDTO studyOption;
+    private PrismStudyOption studyOption;
 
     @NotNull
     private LocalDate startDate;
@@ -36,11 +36,11 @@ public class ApplicationProgramDetailDTO {
         this.opportunityCategory = opportunityCategory;
     }
 
-    public EntityDTO getStudyOption() {
+    public PrismStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(EntityDTO studyOption) {
+    public void setStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 

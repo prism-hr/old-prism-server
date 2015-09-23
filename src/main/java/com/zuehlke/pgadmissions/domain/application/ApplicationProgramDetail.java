@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,7 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 
 @Entity
 @Table(name = "application_program_detail")
@@ -28,12 +30,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
     private Application application;
 
     @ManyToOne
-    @JoinColumn(name = "imported_opportunity_type_id")
-    private ImportedEntitySimple opportunityType;
+    @JoinColumn(name = "opportunity_type_id")
+    private OpportunityType opportunityType;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_study_option_id")
-    private ImportedEntitySimple studyOption;
+    @Column(name = "study_option", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismStudyOption studyOption;
 
     @Column(name = "start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -59,19 +61,19 @@ public class ApplicationProgramDetail extends ApplicationSection {
         this.application = application;
     }
 
-    public ImportedEntitySimple getOpportunityType() {
+    public OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(ImportedEntitySimple opportunityType) {
+    public void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
-    public ImportedEntitySimple getStudyOption() {
+    public PrismStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(ImportedEntitySimple studyOption) {
+    public void setStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -98,12 +100,12 @@ public class ApplicationProgramDetail extends ApplicationSection {
         return this;
     }
 
-    public ApplicationProgramDetail withOpportunityType(ImportedEntitySimple opportunityType) {
+    public ApplicationProgramDetail withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }
 
-    public ApplicationProgramDetail withStudyOption(ImportedEntitySimple studyOption) {
+    public ApplicationProgramDetail withStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }
@@ -116,10 +118,6 @@ public class ApplicationProgramDetail extends ApplicationSection {
     public ApplicationProgramDetail withApplication(Application application) {
         this.application = application;
         return this;
-    }
-
-    public PrismStudyOption getStudyOptionDisplay() {
-        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption.getName());
     }
 
 }

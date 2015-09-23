@@ -12,18 +12,14 @@ import javax.inject.Inject;
 import javax.servlet.http.Part;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.io.Streams;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
@@ -43,7 +39,6 @@ import com.zuehlke.pgadmissions.dao.DocumentDAO;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory.PrismImageCategory;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityType;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -55,8 +50,6 @@ import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcess
 @Service
 @Transactional
 public class DocumentService {
-
-    private static Logger logger = LoggerFactory.getLogger(DocumentService.class);
 
     @Value("${context.environment}")
     private String contextEnvironment;
@@ -207,7 +200,7 @@ public class DocumentService {
             }
         }
     }
-    
+
     public void deleteAmazonDocuments(DateTime baselineTime) throws IOException, IntegrationException {
         LocalDate baselineDate = baselineTime.toLocalDate();
         System system = systemService.getSystem();
@@ -235,25 +228,6 @@ public class DocumentService {
         } catch (IOException e) {
             throw new Error(e);
         }
-    }
-
-    public S3Object getImportedDataSource(ImportedEntityType importedEntityType) {
-        String bucketName = "prism-import-data";
-        String fileName = StringUtils.uncapitalize(importedEntityType.getId().getUpperCamelName().replace("Imported", "")) + ".json";
-
-        AmazonS3 amazonClient = getAmazonClient();
-        DateTime lastImportedTimestamp = importedEntityType.getLastImportedTimestamp();
-        try {
-            ObjectMetadata importDataObjectMetadata = amazonClient.getObjectMetadata(bucketName, fileName);
-            DateTime lastModified = new DateTime(importDataObjectMetadata.getLastModified());
-            if (lastImportedTimestamp != null && lastImportedTimestamp.equals(lastModified)) {
-                return null;
-            }
-        } catch (AmazonServiceException e) {
-            logger.error("Could not import data due to missing file: " + bucketName + "/" + fileName);
-        }
-
-        return amazonClient.getObject(bucketName, fileName);
     }
 
     private void validatePdfDocument(byte[] content) {
@@ -308,7 +282,7 @@ public class DocumentService {
         }
         return null;
     }
-    
+
     private String getFileName(Part upload) {
         for (String cd : upload.getHeader("content-disposition").split(";")) {
             if (cd.trim().startsWith("filename")) {

@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +20,17 @@ import org.springframework.web.client.RestTemplate;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.dto.json.EstablishmentSearchResponseDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO;
 import com.zuehlke.pgadmissions.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
 import com.zuehlke.pgadmissions.dto.json.LocationSearchResponseDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -48,10 +51,16 @@ public class AddressService {
     private Integer googleGeocodeRequestDelayMs;
 
     @Inject
-    private ImportedEntityService importedEntityService;
+    private PrismService prismService;
+
+    @Inject
+    private SystemService systemService;
 
     @Inject
     private RestTemplate restTemplate;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public void geocodeAddress(Address address, String establishment) {
         try {
@@ -82,9 +91,17 @@ public class AddressService {
     public void geocodeAddressAsLocation(Address address, String establishment) throws Exception {
         List<String> addressTokens = Lists.reverse(address.getLocationTokens());
         addressTokens.add(establishment);
+
+        Domicile domicile = address.getDomicile();
+        PrismDomicile prismDomicile = domicile == null ? null : domicile.getId();
+        String domicileName = prismDomicile == null ? null
+                : applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(prismDomicile.getDisplayProperty());
+
         for (int i = addressTokens.size(); i >= 0; i--) {
             List<String> requestTokens = addressTokens.subList(0, i);
-            LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").skipNulls().join(Lists.reverse(requestTokens)) + ", " + address.getDomicile().getName());
+            requestTokens.add(domicileName);
+
+            LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").skipNulls().join(Lists.reverse(requestTokens)));
             if (response.getStatus().equals(OK)) {
                 List<GoogleResultDTO> results = response.getResults();
                 if (!results.isEmpty()) {
@@ -126,7 +143,7 @@ public class AddressService {
         address.setAddressTown(addressData.getAddressTown());
         address.setAddressRegion(Strings.emptyToNull(addressData.getAddressRegion()));
         address.setAddressCode(Strings.emptyToNull(addressData.getAddressCode()));
-        address.setDomicile(importedEntityService.getById(ImportedDomicile.class, addressData.getDomicile().getId()));
+        address.setDomicile(prismService.getDomicileById(addressData.getDomicile()));
         address.setGoogleId(addressData.getGoogleId());
         geocodeAddress(address, establishment);
     }

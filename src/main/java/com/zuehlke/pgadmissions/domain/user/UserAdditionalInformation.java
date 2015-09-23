@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -20,8 +21,13 @@ public class UserAdditionalInformation implements ProfileAdditionalInformation<U
     @OneToOne(mappedBy = "additionalInformation")
     private UserAccount association;
 
-    @Column(name = "convictions_text")
-    private String convictionsText;
+    @Lob
+    @Column(name = "requirements")
+    private String requirements;
+    
+    @Lob
+    @Column(name = "convictions")
+    private String convictions;
 
     public Integer getId() {
         return id;
@@ -39,12 +45,20 @@ public class UserAdditionalInformation implements ProfileAdditionalInformation<U
         this.association = application;
     }
 
-    public String getConvictionsText() {
-        return convictionsText;
+    public String getRequirements() {
+        return requirements;
     }
 
-    public void setConvictionsText(String convictionsText) {
-        this.convictionsText = convictionsText;
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
+    }
+
+    public String getConvictions() {
+        return convictions;
+    }
+
+    public void setConvictions(String convictions) {
+        this.convictions = convictions;
     }
 
 }

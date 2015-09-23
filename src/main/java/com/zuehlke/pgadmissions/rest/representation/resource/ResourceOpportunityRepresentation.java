@@ -4,16 +4,15 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
-public class ResourceOpportunityRepresentation extends ResourceParentDivisionRepresentation {
+public class ResourceOpportunityRepresentation extends ResourceParentRepresentation {
 
     private PrismOpportunityType opportunityType;
 
     private PrismOpportunityCategory opportunityCategory;
 
-    private List<ImportedEntityResponse> studyOptions;
+    private List<PrismStudyOption> studyOptions;
 
     private List<String> studyLocations;
 
@@ -37,11 +36,11 @@ public class ResourceOpportunityRepresentation extends ResourceParentDivisionRep
         this.opportunityCategory = opportunityCategory;
     }
 
-    public List<ImportedEntityResponse> getStudyOptions() {
+    public List<PrismStudyOption> getStudyOptions() {
         return studyOptions;
     }
 
-    public void setStudyOptions(List<ImportedEntityResponse> studyOptions) {
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
     }
 

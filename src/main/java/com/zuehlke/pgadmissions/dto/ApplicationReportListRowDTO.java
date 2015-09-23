@@ -5,8 +5,9 @@ import java.math.BigDecimal;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ApplicationReportListRowDTO {
@@ -17,15 +18,13 @@ public class ApplicationReportListRowDTO {
 
     private String email;
 
-    private String nationality;
-
-    private String residence;
-
-    private String countryOfBirth;
+    private PrismGender gender;
 
     private LocalDate dateOfBirth;
 
-    private String gender;
+    private PrismDomicile nationality;
+
+    private PrismDomicile domicile;
 
     private String institution;
 
@@ -35,19 +34,7 @@ public class ApplicationReportListRowDTO {
 
     private String project;
 
-    private String studyOption;
-
-    private String referralSource;
-
-    private String studyLocation;
-
-    private String studyDivision;
-
-    private String studyArea;
-
-    private String studyApplicationId;
-
-    private LocalDate studyStartDate;
+    private String applicationYear;
 
     private DateTime createdDate;
 
@@ -97,28 +84,12 @@ public class ApplicationReportListRowDTO {
         this.email = email;
     }
 
-    public String getNationality() {
-        return nationality;
+    public PrismGender getGender() {
+        return gender;
     }
 
-    public void setNationality(String nationality) {
-        this.nationality = nationality;
-    }
-
-    public String getResidence() {
-        return residence;
-    }
-
-    public void setResidence(String residence) {
-        this.residence = residence;
-    }
-
-    public String getCountryOfBirth() {
-        return countryOfBirth;
-    }
-
-    public void setCountryOfBirth(String countryOfBirth) {
-        this.countryOfBirth = countryOfBirth;
+    public void setGender(PrismGender gender) {
+        this.gender = gender;
     }
 
     public LocalDate getDateOfBirth() {
@@ -129,12 +100,20 @@ public class ApplicationReportListRowDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public String getGender() {
-        return gender;
+    public PrismDomicile getNationality() {
+        return nationality;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setNationality(PrismDomicile nationality) {
+        this.nationality = nationality;
+    }
+
+    public PrismDomicile getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(PrismDomicile domicile) {
+        this.domicile = domicile;
     }
 
     public String getInstitution() {
@@ -169,60 +148,12 @@ public class ApplicationReportListRowDTO {
         this.project = project;
     }
 
-    public String getStudyOption() {
-        return studyOption;
+    public String getApplicationYear() {
+        return applicationYear;
     }
 
-    public void setStudyOption(String studyOption) {
-        this.studyOption = studyOption;
-    }
-
-    public String getReferralSource() {
-        return referralSource;
-    }
-
-    public void setReferralSource(String referralSource) {
-        this.referralSource = referralSource;
-    }
-
-    public String getStudyLocation() {
-        return studyLocation;
-    }
-
-    public void setStudyLocation(String studyLocation) {
-        this.studyLocation = studyLocation;
-    }
-
-    public String getStudyDivision() {
-        return studyDivision;
-    }
-
-    public void setStudyDivision(String studyDivision) {
-        this.studyDivision = studyDivision;
-    }
-
-    public String getStudyArea() {
-        return studyArea;
-    }
-
-    public void setStudyArea(String studyArea) {
-        this.studyArea = studyArea;
-    }
-
-    public String getStudyApplicationId() {
-        return studyApplicationId;
-    }
-
-    public void setStudyApplicationId(String studyApplicationId) {
-        this.studyApplicationId = studyApplicationId;
-    }
-
-    public LocalDate getStudyStartDate() {
-        return studyStartDate;
-    }
-
-    public void setStudyStartDate(LocalDate studyStartDate) {
-        this.studyStartDate = studyStartDate;
+    public void setApplicationYear(String applicationYear) {
+        this.applicationYear = applicationYear;
     }
 
     public DateTime getCreatedDate() {
@@ -305,7 +236,6 @@ public class ApplicationReportListRowDTO {
         this.declinedReferences = declinedReferences;
     }
 
-
     public LocalDate getConfirmedStartDate() {
         return confirmedStartDate;
     }
@@ -334,24 +264,20 @@ public class ApplicationReportListRowDTO {
         return email == null ? "" : email;
     }
 
-    public String getNationalityDisplay() {
-        return nationality == null ? "" : nationality;
-    }
-
-    public String getResidenceDisplay() {
-        return residence == null ? "" : residence;
-    }
-
-    public String getCountryOfBirthDisplay() {
-        return countryOfBirth == null ? "" : countryOfBirth;
+    public PrismGender getGenderDisplay() {
+        return gender;
     }
 
     public String getDateOfBirthDisplay(String dateFormat) {
         return dateOfBirth == null ? "" : dateOfBirth.toString(dateFormat);
     }
 
-    public String getGenderDisplay() {
-        return gender == null ? "" : gender;
+    public PrismDomicile getNationalityDisplay() {
+        return nationality;
+    }
+
+    public PrismDomicile getDomicileDisplay() {
+        return domicile;
     }
 
     public String getInstitutionDisplay() {
@@ -370,28 +296,8 @@ public class ApplicationReportListRowDTO {
         return project == null ? "" : project;
     }
 
-    public String getReferralSourceDisplay() {
-        return referralSource == null ? "" : referralSource;
-    }
-
-    public String getStudyLocationDisplay() {
-        return studyLocation == null ? "" : studyLocation;
-    }
-
-    public String getStudyDivisionDisplay() {
-        return studyDivision == null ? "" : studyDivision;
-    }
-
-    public String getStudyAreaDisplay() {
-        return studyArea == null ? "" : studyArea;
-    }
-
-    public String getStudyApplicationIdDisplay() {
-        return studyApplicationId == null ? "" : studyApplicationId;
-    }
-
-    public String getStudyStartDateDisplay(String dateFormat) {
-        return studyStartDate == null ? "" : studyStartDate.toString(dateFormat);
+    public String getApplicationYearDisplay() {
+        return applicationYear == null ? "" : applicationYear;
     }
 
     public String getCreatedDateDisplay(String dateFormat) {
@@ -435,10 +341,6 @@ public class ApplicationReportListRowDTO {
         return declinedReferences == null ? "" : declinedReferences.toString();
     }
 
-    public PrismStudyOption getStudyOptionDisplay() {
-        return studyOption == null ? null : PrismStudyOption.valueOf(studyOption);
-    }
-
     public PrismOfferType getConfirmedOfferTypeDisplay() {
         return confirmedOfferType == null ? null : confirmedOfferType;
     }
@@ -448,7 +350,7 @@ public class ApplicationReportListRowDTO {
     }
 
     public PrismStateGroup getStateDisplay() {
-        return state == null ? null : state;
+        return state;
     }
 
     public String getRefereesDisplay() {

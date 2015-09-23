@@ -45,7 +45,7 @@ public class InstitutionController {
     @RequestMapping(method = RequestMethod.GET, params = "googleId")
     @ResponseBody
     public ResourceRepresentationSimple getInstitution(String googleId) {
-        Institution institution = institutionService.getActivatedInstitutionByGoogleId(googleId);
+        Institution institution = institutionService.getInstitutionByGoogleId(googleId);
         return institution == null ? null : resourceMapper.getResourceRepresentationSimple(institution);
     }
 

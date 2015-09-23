@@ -32,7 +32,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
@@ -149,10 +148,6 @@ public class Application extends Resource implements
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "application_reserve_status")
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate completionDate;
@@ -165,8 +160,8 @@ public class Application extends Resource implements
     @Enumerated(EnumType.STRING)
     private PrismOfferType confirmedOfferType;
 
-    @Column(name = "retain")
-    private Boolean retain;
+    @Column(name = "shared")
+    private Boolean shared;
 
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -471,14 +466,6 @@ public class Application extends Resource implements
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
-    }
-
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
-        this.applicationReserveStatus = applicationReserveRating;
-    }
-
     public LocalDate getCompletionDate() {
         return completionDate;
     }
@@ -503,12 +490,12 @@ public class Application extends Resource implements
         this.confirmedOfferType = confirmedOfferType;
     }
 
-    public Boolean getRetain() {
-        return retain;
+    public Boolean getShared() {
+        return shared;
     }
 
-    public void setRetain(Boolean retain) {
-        this.retain = retain;
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 
     public Set<ApplicationQualification> getQualifications() {
@@ -646,7 +633,7 @@ public class Application extends Resource implements
     public PrismOpportunityType getOpportunityType() {
         Resource resourceParent = getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(resourceParent.getClass())) {
-            return PrismOpportunityType.valueOf(((ResourceOpportunity) resourceParent).getOpportunityType().getName());
+            return ((ResourceOpportunity) resourceParent).getOpportunityType().getId();
         }
         return null;
     }

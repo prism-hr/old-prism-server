@@ -18,15 +18,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_START_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_EMPLOYMENT_POSITION_SUBHEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_HEADER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_GENDER_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_TITLE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL;
@@ -58,6 +56,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_FIRST_NAME_3;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LAST_NAME;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM;
@@ -67,7 +66,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_YES;
 import static com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize.MEDIUM;
 import static com.zuehlke.pgadmissions.utils.PrismStringUtils.getBigDecimalAsString;
-import static com.zuehlke.pgadmissions.utils.PrismStringUtils.getImportedEntityAsString;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -106,6 +104,8 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -126,8 +126,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -221,43 +219,28 @@ public class ApplicationDownloadBuilder {
             throws Exception {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_HEADER));
 
-        ProfilePersonalDetailRepresentation personalDetail = application.getPersonalDetail();
-        boolean personalDetailNull = personalDetail == null;
-
-        if (personalDetailNull) {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_TITLE_LABEL),
-                    getImportedEntityAsString(personalDetail.getTitle()), body);
-        }
-
         UserRepresentationSimple applicationCreator = application.getUser();
-
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_FIRST_NAME), applicationCreator.getFirstName(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_FIRST_NAME_2), applicationCreator.getFirstName2(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_FIRST_NAME_3), applicationCreator.getFirstName3(), body);
-        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_HTML_GENERAL_FIELD_LAST_NAME_LABEL), applicationCreator.getLastName(),
-                body);
+        applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_LAST_NAME), applicationCreator.getLastName(), body);
         applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_EMAIL), applicationCreator.getEmail(), body);
 
-        if (personalDetailNull) {
+        ProfilePersonalDetailRepresentation personalDetail = application.getPersonalDetail();
+        if (personalDetail != null) {
             applicationDownloadBuilderHelper
                     .addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_TELEPHONE_LABEL), personalDetail.getPhone(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL), personalDetail.getSkype(), body);
 
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_GENDER_LABEL),
-                    getImportedEntityAsString(personalDetail.getGender()), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(
-                    propertyLoader.loadLazy(PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL), personalDetail.getDateOfBirth()
-                            .toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)),
-                    body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL),
-                    getImportedEntityAsString(personalDetail.getDomicile()), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(
-                    propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL), getImportedEntityAsString(personalDetail.getNationality()), body);
+                    propertyLoader.loadLazy(personalDetail.getGender().getDisplayProperty()), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL),
+                    personalDetail.getDateOfBirth().toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)), body);
 
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL),
-                    getImportedEntityAsString(personalDetail.getEthnicity()), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL),
-                    getImportedEntityAsString(personalDetail.getDisability()), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL),
+                    propertyLoader.loadLazy(personalDetail.getNationality().getDisplayProperty()), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL),
+                    propertyLoader.loadLazy(personalDetail.getDomicile().getDisplayProperty()), body);
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
@@ -273,17 +256,22 @@ public class ApplicationDownloadBuilder {
             AddressRepresentation currentAddress = address.getCurrentAddress();
             if (currentAddress != null) {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_ADDRESS_CURRENT_HEADER),
-                        address == null ? null : currentAddress.getLocationString(), body);
+                        address == null ? null : getAddressDisplayString(currentAddress), body);
             }
 
             AddressRepresentation contactAddress = address.getContactAddress();
             if (contactAddress != null) {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_ADDRESS_CONTACT_HEADER),
-                        address == null ? null : contactAddress.getLocationString(), body);
+                        address == null ? null : getAddressDisplayString(contactAddress), body);
             }
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
+    }
+
+    private String getAddressDisplayString(AddressRepresentation address) {
+        PrismDomicile domicile = address.getDomicile();
+        return domicile == null ? address.getLocationString() : address.getLocationString() + ", " + propertyLoader.loadLazy(domicile.getDisplayProperty());
     }
 
     private void addQualificationSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
@@ -418,7 +406,7 @@ public class ApplicationDownloadBuilder {
             PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_ADDITIONAL_INFORMATION_HEADER));
 
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_ADDITIONAL_INFORMATION_CONVICTION_LABEL),
-                    additionalInformation.getConvictionsText(), body);
+                    additionalInformation.getConvictions(), body);
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
@@ -504,9 +492,9 @@ public class ApplicationDownloadBuilder {
 
         ApplicationProgramDetailRepresentation programDetail = application.getProgramDetail();
         if (programDetail != null) {
-            ImportedEntityResponse studyOption = programDetail.getStudyOption();
+            PrismStudyOption studyOption = programDetail.getStudyOption();
             applicationDownloadBuilderHelper.addContentRow(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL),
-                    studyOption == null ? null : studyOption.getName(), fontSize, table);
+                    studyOption == null ? null : propertyLoader.loadLazy(studyOption.getDisplayProperty()), fontSize, table);
         }
     }
 

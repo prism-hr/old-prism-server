@@ -3,24 +3,19 @@ package com.zuehlke.pgadmissions.rest.representation.profile;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
-
-import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepresentation {
 
-    private ImportedEntityResponse title;
-
-    private ImportedEntityResponse gender;
+    private PrismGender gender;
 
     private LocalDate dateOfBirth;
 
-    private ImportedEntityResponse ageRange;
+    private PrismDomicile nationality;
 
-    private ImportedDomicileResponse nationality;
-
-    private ImportedDomicileResponse domicile;
+    private PrismDomicile domicile;
 
     private Boolean visaRequired;
 
@@ -28,23 +23,11 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
 
     private String phone;
 
-    private ImportedEntityResponse ethnicity;
-
-    private ImportedEntityResponse disability;
-
-    public ImportedEntityResponse getTitle() {
-        return title;
-    }
-
-    public void setTitle(ImportedEntityResponse title) {
-        this.title = title;
-    }
-
-    public ImportedEntityResponse getGender() {
+    public PrismGender getGender() {
         return gender;
     }
 
-    public void setGender(ImportedEntityResponse gender) {
+    public void setGender(PrismGender gender) {
         this.gender = gender;
     }
 
@@ -56,27 +39,19 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedEntityResponse getAgeRange() {
-        return ageRange;
-    }
-
-    public void setAgeRange(ImportedEntityResponse ageRange) {
-        this.ageRange = ageRange;
-    }
-
-    public ImportedDomicileResponse getNationality() {
+    public PrismDomicile getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedDomicileResponse nationality) {
+    public void setNationality(PrismDomicile nationality) {
         this.nationality = nationality;
     }
 
-    public ImportedDomicileResponse getDomicile() {
+    public PrismDomicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedDomicileResponse domicile) {
+    public void setDomicile(PrismDomicile domicile) {
         this.domicile = domicile;
     }
 
@@ -104,28 +79,7 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         this.phone = phone;
     }
 
-    public ImportedEntityResponse getEthnicity() {
-        return ethnicity;
-    }
-
-    public void setEthnicity(ImportedEntityResponse ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntityResponse getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntityResponse disability) {
-        this.disability = disability;
-    }
-
-    public ProfilePersonalDetailRepresentation withTitle(ImportedEntityResponse title) {
-        this.title = title;
-        return this;
-    }
-
-    public ProfilePersonalDetailRepresentation withGender(ImportedEntityResponse gender) {
+    public ProfilePersonalDetailRepresentation withGender(PrismGender gender) {
         this.gender = gender;
         return this;
     }
@@ -135,17 +89,12 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         return this;
     }
 
-    public ProfilePersonalDetailRepresentation withAgeRange(ImportedEntityResponse ageRange) {
-        this.ageRange = ageRange;
-        return this;
-    }
-
-    public ProfilePersonalDetailRepresentation withFirstNationality(ImportedDomicileResponse nationality) {
+    public ProfilePersonalDetailRepresentation withNationality(PrismDomicile nationality) {
         this.nationality = nationality;
         return this;
     }
 
-    public ProfilePersonalDetailRepresentation withDomicile(ImportedDomicileResponse domicile) {
+    public ProfilePersonalDetailRepresentation withDomicile(PrismDomicile domicile) {
         this.domicile = domicile;
         return this;
     }
@@ -162,16 +111,6 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
 
     public ProfilePersonalDetailRepresentation withSkype(String skype) {
         this.skype = skype;
-        return this;
-    }
-
-    public ProfilePersonalDetailRepresentation withEthnicity(ImportedEntityResponse ethnicity) {
-        this.ethnicity = ethnicity;
-        return this;
-    }
-
-    public ProfilePersonalDetailRepresentation withDisability(ImportedEntityResponse disability) {
-        this.disability = disability;
         return this;
     }
 

@@ -1,20 +1,43 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import com.zuehlke.pgadmissions.domain.application.*;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.*;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
-import com.zuehlke.pgadmissions.rest.representation.profile.*;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.UserService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
+import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
+import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
+import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
+import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional
@@ -30,9 +53,6 @@ public class ProfileMapper {
     private DocumentMapper documentMapper;
 
     @Inject
-    private ImportedEntityMapper importedEntityMapper;
-
-    @Inject
     private ResourceMapper resourceMapper;
 
     @Inject
@@ -43,18 +63,15 @@ public class ProfileMapper {
 
     public <T extends ProfilePersonalDetail<?>> ProfilePersonalDetailRepresentation getPersonalDetailRepresentation(T personalDetail) {
         if (personalDetail != null) {
-            ProfilePersonalDetailRepresentation representation = new ProfilePersonalDetailRepresentation()
-                    .withTitle(importedEntityMapper.getImportedEntityRepresentation(personalDetail.getTitle()))
-                    .withGender(importedEntityMapper.getImportedEntityRepresentation(personalDetail.getGender()))
+            Domicile nationality = personalDetail.getNationality();
+            Domicile domicile = personalDetail.getDomicile();
+
+            ProfilePersonalDetailRepresentation representation = new ProfilePersonalDetailRepresentation().withGender(personalDetail.getGender())
                     .withDateOfBirth(personalDetail.getAssociation().getUser().getUserAccount().getPersonalDetail().getDateOfBirth())
-                    .withFirstNationality(importedEntityMapper.getImportedEntityRepresentation(personalDetail.getNationality()))
-                    .withDomicile(importedEntityMapper.getImportedEntityRepresentation(personalDetail.getDomicile()))
-                    .withVisaRequired(personalDetail.getVisaRequired()).withPhone(personalDetail.getPhone()).withSkype(personalDetail.getSkype())
-                    .withEthnicity(importedEntityMapper.getImportedEntityRepresentation(personalDetail.getEthnicity()))
-                    .withDisability(importedEntityMapper.getImportedEntityRepresentation(personalDetail.getDisability()));
+                    .withNationality(nationality == null ? null : nationality.getId()).withDomicile(domicile == null ? null : domicile.getId())
+                    .withVisaRequired(personalDetail.getVisaRequired()).withPhone(personalDetail.getPhone()).withSkype(personalDetail.getSkype());
 
             if (personalDetail.getClass().equals(ApplicationPersonalDetail.class)) {
-                representation.setAgeRange(importedEntityMapper.getImportedEntityRepresentation(((ApplicationPersonalDetail) personalDetail).getAgeRange()));
                 representation.setLastUpdatedTimestamp(((ApplicationPersonalDetail) personalDetail).getLastUpdatedTimestamp());
             }
 
@@ -65,13 +82,13 @@ public class ProfileMapper {
 
     public <T extends ProfileAddress<?>> ProfileAddressRepresentation getAddressRepresentation(T address) {
         if (address != null) {
-            ProfileAddressRepresentation representation = new ProfileAddressRepresentation().withCurrentAddress(
-                    addressMapper.getAddressApplicationRepresentation(address.getCurrentAddress())).withContactAddress(
-                            addressMapper.getAddressApplicationRepresentation(address.getContactAddress()));
+            ProfileAddressRepresentation representation = new ProfileAddressRepresentation().withCurrentAddress(getAddressRepresentation(address.getCurrentAddress()))
+                    .withContactAddress(getAddressRepresentation(address.getContactAddress()));
 
             if (address.getClass().equals(ApplicationAddress.class)) {
                 representation.setLastUpdatedTimestamp(((ApplicationAddress) address).getLastUpdatedTimestamp());
             }
+
             return representation;
         }
         return null;
@@ -114,15 +131,24 @@ public class ProfileMapper {
             User user = userService.getCurrentUser();
             if (additionalInformation.getClass().equals(ApplicationAdditionalInformation.class)
                     && applicationService.isCanViewEqualOpportunitiesData(((ApplicationAdditionalInformation) additionalInformation).getAssociation(), user)) {
-                return new ProfileAdditionalInformationRepresentation().withConvictionsText(additionalInformation.getConvictionsText())
+                return new ProfileAdditionalInformationRepresentation().withRequirements(additionalInformation.getRequirements())
+                        .withConvictions(additionalInformation.getConvictions())
                         .withLastUpdatedTimestamp(((ApplicationAdditionalInformation) additionalInformation).getLastUpdatedTimestamp());
             } else if (additionalInformation.getClass().equals(UserAdditionalInformation.class) && user.equals(additionalInformation.getAssociation().getUser())) {
-                return new ProfileAdditionalInformationRepresentation().withConvictionsText(additionalInformation.getConvictionsText());
+                return new ProfileAdditionalInformationRepresentation().withRequirements(additionalInformation.getRequirements())
+                        .withConvictions(additionalInformation.getConvictions());
             }
             return null;
         }
 
         return null;
+    }
+
+    public AddressRepresentation getAddressRepresentation(Address address) {
+        AddressRepresentation representation = addressMapper.transform(address, AddressRepresentation.class);
+        Domicile domicile = address.getDomicile();
+        representation.setDomicile(domicile == null ? null : domicile.getId());
+        return representation;
     }
 
     private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification) {

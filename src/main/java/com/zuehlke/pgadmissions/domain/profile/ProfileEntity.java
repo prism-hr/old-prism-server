@@ -35,5 +35,9 @@ public interface ProfileEntity<T extends ProfilePersonalDetail<?>, U extends Pro
     Z getAdditionalInformation();
 
     void setAdditionalInformation(Z additionalInformation);
+    
+    Boolean getShared();
+    
+    void setShared(Boolean shared);
 
 }

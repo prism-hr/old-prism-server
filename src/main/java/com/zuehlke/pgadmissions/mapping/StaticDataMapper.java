@@ -31,12 +31,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceFamilyCreation;
@@ -49,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
@@ -67,11 +64,8 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
-
-import uk.co.alumeni.prism.api.model.imported.ImportedEntityResponseDefinition;
 
 @Service
 @Transactional
@@ -87,16 +81,10 @@ public class StaticDataMapper {
     private EntityService entityService;
 
     @Inject
-    private ImportedEntityService importedEntityService;
-
-    @Inject
     private InstitutionService institutionService;
 
     @Inject
     private ActionMapper actionMapper;
-
-    @Inject
-    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private StateMapper stateMapper;
@@ -120,7 +108,6 @@ public class StaticDataMapper {
         staticData.putAll(getActionConditions());
         staticData.putAll(getRequiredSections());
         staticData.putAll(getWorkflowConstraints());
-        staticData.putAll(getImportedEntities());
         staticData.putAll(getResourceFamilyCreations());
         return staticData;
     }
@@ -176,15 +163,14 @@ public class StaticDataMapper {
         Map<String, Object> staticData = Maps.newHashMap();
 
         for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
-                PrismAdvertIndustry.class, PrismApplicationReserveStatus.class, PrismDisplayPropertyCategory.class, PrismImportedEntity.class, PrismFilterEntity.class,
-                PrismStateGroup.class }) {
+                PrismAdvertIndustry.class, PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
         }
 
         staticData.put("timeZones", TimeZoneUtils.getInstance().getTimeZoneDefinitions());
-        staticData.put("currencies", institutionService.listAvailableCurrencies());
+        staticData.put("currencies", institutionService.getAvailableCurrencies());
         staticData.put("googleApiKey", googleApiKey);
         return staticData;
     }
@@ -268,19 +254,6 @@ public class StaticDataMapper {
                     .withMaximumPermitted(constraint.getMaximumPermitted()));
         }
         return singletonMap("workflowConstraints", constraintDefinitions);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <U extends ImportedEntityResponseDefinition<?>, T extends ImportedEntity<?>> Map<String, Object> getImportedEntities() {
-        Map<String, Object> staticData = Maps.newHashMap();
-
-        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-            List<T> entities = importedEntityService.getEnabledImportedEntities(prismImportedEntity);
-            List<U> entityRepresentations = entities.stream().map(entity -> (U) importedEntityMapper.getImportedEntityRepresentation(entity))
-                    .collect(Collectors.toList());
-            staticData.put(pluralize(prismImportedEntity.getLowerCamelName()), entityRepresentations);
-        }
-        return staticData;
     }
 
     private Map<String, Object> getResourceFamilyCreations() {

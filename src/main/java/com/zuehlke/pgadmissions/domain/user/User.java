@@ -24,7 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetAdvert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertConnection;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -135,8 +135,11 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "user")
     private Set<UserAdvert> userAdverts = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "valueUser")
-    private Set<AdvertTargetAdvert> advertTargetAdverts = Sets.newHashSet();
+    @OneToMany(mappedBy = "invitingUser")
+    private Set<AdvertConnection> invitedConnections = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "receivingUser")
+    private Set<AdvertConnection> receivedConnections = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserReferee> userReferees = Sets.newHashSet();
@@ -301,8 +304,12 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userAdverts;
     }
 
-    public Set<AdvertTargetAdvert> getAdvertTargetAdverts() {
-        return advertTargetAdverts;
+    public Set<AdvertConnection> getInvitedConnections() {
+        return invitedConnections;
+    }
+
+    public Set<AdvertConnection> getReceivedConnections() {
+        return receivedConnections;
     }
 
     public Set<UserReferee> getUserReferees() {

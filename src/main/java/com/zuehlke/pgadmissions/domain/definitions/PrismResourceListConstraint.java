@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilte
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.GREATER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.LESSER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.APPLICATION_RESERVE_STATUS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE_TIME;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DECIMAL;
@@ -68,9 +67,7 @@ public enum PrismResourceListConstraint {
     DEPARTMENT_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(DEPARTMENT)), //
     INSTITUTION_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
-            Arrays.asList(INSTITUTION)), //
-    RESERVE_STATUS("applicationReserveStatus", APPLICATION_RESERVE_STATUS, Arrays.asList(EQUAL, NOT_SPECIFIED), //
-            Arrays.asList(APPLICATION));
+            Arrays.asList(INSTITUTION));
     
     private String propertyName;
 

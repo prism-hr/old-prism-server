@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.valueOf;
-
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -139,7 +137,7 @@ public abstract class Resource implements UniqueEntity {
     }
 
     public PrismScope getResourceScope() {
-        return valueOf(getClass().getSimpleName().toUpperCase());
+        return PrismScope.valueOf(getClass().getSimpleName().toUpperCase());
     }
 
     public Resource getEnclosingResource(PrismScope resourceScope) {

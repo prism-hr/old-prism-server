@@ -3,22 +3,21 @@ package com.zuehlke.pgadmissions.domain.resource;
 import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
-public abstract class ResourceOpportunity extends ResourceParentDivision implements
-        ResourceOpportunityDefinition<Advert, ImportedEntitySimple> {
+public abstract class ResourceOpportunity extends ResourceParent implements ResourceOpportunityDefinition<Advert, OpportunityType> {
 
     public abstract Department getDepartment();
 
     public abstract void setDepartment(Department department);
 
     @Override
-    public abstract ImportedEntitySimple getOpportunityType();
+    public abstract OpportunityType getOpportunityType();
 
     @Override
-    public abstract void setOpportunityType(ImportedEntitySimple opportunityType);
+    public abstract void setOpportunityType(OpportunityType opportunityType);
 
     public abstract Integer getDurationMinimum();
 
@@ -28,12 +27,12 @@ public abstract class ResourceOpportunity extends ResourceParentDivision impleme
 
     public abstract void setDurationMaximum(Integer maximum);
 
-    public abstract Set<ResourceStudyOption> getInstanceGroups();
+    public abstract Set<ResourceStudyOption> getResourceStudyOptions();
 
-    public abstract void setInstanceGroups(Set<ResourceStudyOption> instanceGroups);
+    public abstract void setResourceStudyOptions(Set<ResourceStudyOption> resourceStudyOptions);
 
-    public void addStudyOption(ResourceStudyOption instanceGroup) {
-        getInstanceGroups().add(instanceGroup);
+    public void addResourceStudyOption(ResourceStudyOption resourceStudyOption) {
+        getResourceStudyOptions().add(resourceStudyOption);
     }
 
     @Override

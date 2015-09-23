@@ -40,10 +40,6 @@ public class UserAccount
     @Column(name = "password")
     private String password;
 
-    @OneToOne
-    @JoinColumn(name = "portrait_image_id")
-    private Document portraitImage;
-
     @Column(name = "temporary_password")
     private String temporaryPassword;
 
@@ -51,6 +47,9 @@ public class UserAccount
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
 
+    @Column(name = "send_application_recommendation_notification", nullable = false)
+    private Boolean sendApplicationRecommendationNotification;
+    
     @Column(name = "linkedin_id")
     private String linkedinId;
 
@@ -60,8 +59,9 @@ public class UserAccount
     @Column(name = "linkedin_image_id")
     private String linkedinImageUrl;
 
-    @Column(name = "send_application_recommendation_notification", nullable = false)
-    private Boolean sendApplicationRecommendationNotification;
+    @OneToOne
+    @JoinColumn(name = "portrait_image_id")
+    private Document portraitImage;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_personal_detail_id", unique = true)
@@ -137,14 +137,6 @@ public class UserAccount
         this.password = password;
     }
 
-    public Document getPortraitImage() {
-        return portraitImage;
-    }
-
-    public void setPortraitImage(Document portraitImage) {
-        this.portraitImage = portraitImage;
-    }
-
     public String getTemporaryPassword() {
         return temporaryPassword;
     }
@@ -159,6 +151,14 @@ public class UserAccount
 
     public void setTemporaryPasswordExpiryTimestamp(DateTime temporaryPasswordExpiryTimestamp) {
         this.temporaryPasswordExpiryTimestamp = temporaryPasswordExpiryTimestamp;
+    }
+    
+    public Boolean getSendApplicationRecommendationNotification() {
+        return sendApplicationRecommendationNotification;
+    }
+
+    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
     public String getLinkedinId() {
@@ -185,12 +185,12 @@ public class UserAccount
         this.linkedinImageUrl = linkedinImageUrl;
     }
 
-    public Boolean getSendApplicationRecommendationNotification() {
-        return sendApplicationRecommendationNotification;
+    public Document getPortraitImage() {
+        return portraitImage;
     }
 
-    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
-        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    public void setPortraitImage(Document portraitImage) {
+        this.portraitImage = portraitImage;
     }
 
     public UserPersonalDetail getPersonalDetail() {

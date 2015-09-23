@@ -13,12 +13,11 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -238,21 +237,17 @@ public class TestObjectProvider {
                 .add(Restrictions.eq("state.id", PrismState.INSTITUTION_APPROVED)).setMaxResults(1).uniqueResult();
     }
 
-    public ImportedEntitySimple getDomicile() {
-        return (ImportedEntitySimple) sessionFactory.getCurrentSession().createCriteria(ImportedEntitySimple.class).setMaxResults(1).uniqueResult();
-    }
-
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> entityClass) {
         return (T) sessionFactory.getCurrentSession().createCriteria(entityClass).setMaxResults(1).uniqueResult();
     }
 
-    public ImportedDomicile getInstitutionDomicile() {
-        return (ImportedDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class).setMaxResults(1).uniqueResult();
+    public Domicile getInstitutionDomicile() {
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class).setMaxResults(1).uniqueResult();
     }
 
-    public ImportedDomicile getAlternativeInstitutionDomicile(ImportedDomicile domicile) {
-        return (ImportedDomicile) sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class)//
+    public Domicile getAlternativeInstitutionDomicile(Domicile domicile) {
+        return (Domicile) sessionFactory.getCurrentSession().createCriteria(Domicile.class)//
                 .add(Restrictions.ne("id", domicile.getId())) //
                 .setMaxResults(1).uniqueResult();
     }
@@ -265,10 +260,6 @@ public class TestObjectProvider {
         return (State) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .add(Restrictions.eq("id", state)) //
                 .uniqueResult();
-    }
-
-    public ImportedEntitySimple getQualificationType() {
-        return (ImportedEntitySimple) sessionFactory.getCurrentSession().createCriteria(ImportedEntitySimple.class).setMaxResults(1).uniqueResult();
     }
 
 }

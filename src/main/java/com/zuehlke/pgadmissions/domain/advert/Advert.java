@@ -1,17 +1,20 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.*;
-import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAssignment;
-import com.zuehlke.pgadmissions.workflow.user.AdvertReassignmentProcessor;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -19,8 +22,24 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import javax.persistence.*;
-import java.util.Set;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
+import com.zuehlke.pgadmissions.workflow.user.AdvertReassignmentProcessor;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
@@ -55,8 +74,8 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "imported_opportunity_type_id")
-    private ImportedEntitySimple opportunityType;
+    @JoinColumn(name = "opportunity_type_id")
+    private OpportunityType opportunityType;
 
     @Column(name = "opportunity_category")
     private String opportunityCategories;
@@ -106,12 +125,17 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Embedded
     private AdvertCategories categories;
 
-    @Embedded
-    private AdvertTargets targets;
+    @OrderBy(clause = "id")
+    @OneToMany(mappedBy = "invitingAdvert")
+    private Set<AdvertConnection> invitedConnections = Sets.newHashSet();
 
     @OrderBy(clause = "id")
-    @OneToMany(mappedBy = "value")
-    private Set<AdvertTargetAdvert> targeters;
+    @OneToMany(mappedBy = "receivingAdvert")
+    private Set<AdvertConnection> receivedConnections = Sets.newHashSet();
+
+    @OrderBy(clause = "id")
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertCompetence> competences = Sets.newHashSet();
 
     @OrderBy(clause = "closing_date desc")
     @OneToMany(mappedBy = "advert")
@@ -177,11 +201,11 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.project = project;
     }
 
-    public ImportedEntitySimple getOpportunityType() {
+    public OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(ImportedEntitySimple opportunityType) {
+    public void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -297,25 +321,24 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.categories = categories;
     }
 
-    public AdvertTargets getTargets() {
-        return targets;
+    public Set<AdvertConnection> getInvitedConnections() {
+        return invitedConnections;
     }
 
-    public void setTargets(AdvertTargets targets) {
-        this.targets = targets;
+    public Set<AdvertConnection> getReceivedConnections() {
+        return receivedConnections;
     }
 
-    public Set<AdvertTargetAdvert> getTargeters() {
-        return targeters;
+    public Set<AdvertCompetence> getCompetences() {
+        return competences;
     }
 
     public Set<AdvertClosingDate> getClosingDates() {
         return closingDates;
     }
 
-    public boolean isImported() {
-        ResourceOpportunity resource = getResourceOpportunity();
-        return resource == null ? false : resource.getImportedCode() != null;
+    public Set<Application> getApplications() {
+        return applications;
     }
 
     public Advert withName(String name) {

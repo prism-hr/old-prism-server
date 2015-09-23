@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -10,14 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
 
 @Entity
-@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "imported_study_option_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "imported_study_option_id" }) })
-public class ResourceStudyOption extends ResourceOpportunityAttribute implements ResourceInstanceGroupDefinition<ImportedEntitySimple> {
+@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option_id" }),
+        @UniqueConstraint(columnNames = { "project_id", "study_option_id" }) })
+public class ResourceStudyOption extends ResourceOpportunityAttribute implements ResourceInstanceGroupDefinition<PrismStudyOption> {
 
     @Id
     @GeneratedValue
@@ -31,9 +33,9 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
     @JoinColumn(name = "project_id", insertable = false, updatable = false)
     private Project project;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "imported_study_option_id", nullable = false)
-    private ImportedEntitySimple studyOption;
+    @Column(name = "study_option", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismStudyOption studyOption;
 
     public Integer getId() {
         return id;
@@ -64,12 +66,12 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
     }
 
     @Override
-    public ImportedEntitySimple getStudyOption() {
+    public PrismStudyOption getStudyOption() {
         return studyOption;
     }
 
     @Override
-    public void setStudyOption(ImportedEntitySimple studyOption) {
+    public void setStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -78,7 +80,7 @@ public class ResourceStudyOption extends ResourceOpportunityAttribute implements
         return this;
     }
 
-    public ResourceStudyOption withStudyOption(ImportedEntitySimple studyOption) {
+    public ResourceStudyOption withStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }

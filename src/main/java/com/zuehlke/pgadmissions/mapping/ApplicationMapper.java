@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity.IMPORTED_STUDY_OPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_APPOINTMENT;
@@ -11,11 +10,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
+import static java.util.Arrays.asList;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -37,8 +36,8 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -61,12 +60,10 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ImportedEntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 import jersey.repackaged.com.google.common.collect.Maps;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
 
 @Service
 @Transactional
@@ -82,9 +79,6 @@ public class ApplicationMapper {
     private CommentService commentService;
 
     @Inject
-    private ImportedEntityMapper importedEntityMapper;
-
-    @Inject
     private ProfileMapper profileMapper;
 
     @Inject
@@ -92,9 +86,6 @@ public class ApplicationMapper {
 
     @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
 
     @Inject
     private UserMapper userMapper;
@@ -105,20 +96,16 @@ public class ApplicationMapper {
     public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles) {
         ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, ApplicationRepresentationClient.class, overridingRoles);
 
-        List<ImportedEntitySimple> studyOptions;
+        List<PrismStudyOption> studyOptions;
         Resource parent = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
             ResourceOpportunity opportunity = (ResourceOpportunity) parent;
             studyOptions = resourceService.getStudyOptions(opportunity);
         } else {
-            studyOptions = importedEntityService.getEnabledImportedEntities(IMPORTED_STUDY_OPTION);
+            studyOptions = asList(PrismStudyOption.values());
         }
 
-        List<ImportedEntityResponse> studyOptionRepresentations = studyOptions.stream()
-                .map(studyOption -> (ImportedEntityResponse) importedEntityMapper.getImportedEntityRepresentation(studyOption))
-                .collect(Collectors.toList());
-
-        representation.setPossibleStudyOptions(studyOptionRepresentations);
+        representation.setPossibleStudyOptions(studyOptions);
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
@@ -209,9 +196,8 @@ public class ApplicationMapper {
     private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         if (applicationProgramDetail != null) {
-            return new ApplicationProgramDetailRepresentation()
-                    .withStudyOption(importedEntityMapper.getImportedEntityRepresentation(applicationProgramDetail.getStudyOption()))
-                    .withStartDate(applicationProgramDetail.getStartDate()).withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
+            return new ApplicationProgramDetailRepresentation().withStudyOption(applicationProgramDetail.getStudyOption()).withStartDate(applicationProgramDetail.getStartDate())
+                    .withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
         }
         return null;
     }

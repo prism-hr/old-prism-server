@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
 public class AdvertDTO extends ResourceActivityDTO {
 
@@ -19,7 +20,7 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     private String userAccountImageUrl;
 
-    private String opportunityType;
+    private PrismOpportunityType opportunityType;
 
     private String name;
 
@@ -43,9 +44,7 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     private String addressCode;
 
-    private String addressDomicileId;
-
-    private String addressDomicileName;
+    private PrismDomicile addressDomicileId;
 
     private String addressGoogleId;
 
@@ -109,11 +108,11 @@ public class AdvertDTO extends ResourceActivityDTO {
         this.userAccountImageUrl = userAccountImageUrl;
     }
 
-    public String getOpportunityType() {
+    public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(String opportunityType) {
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -205,20 +204,12 @@ public class AdvertDTO extends ResourceActivityDTO {
         this.addressCode = addressCode;
     }
 
-    public String getAddressDomicileId() {
+    public PrismDomicile getAddressDomicileId() {
         return addressDomicileId;
     }
 
-    public void setAddressDomicileId(String addressDomicileId) {
+    public void setAddressDomicileId(PrismDomicile addressDomicileId) {
         this.addressDomicileId = addressDomicileId;
-    }
-
-    public String getAddressDomicileName() {
-        return addressDomicileName;
-    }
-
-    public void setAddressDomicileName(String addressDomicileName) {
-        this.addressDomicileName = addressDomicileName;
     }
 
     public String getAddressGoogleId() {

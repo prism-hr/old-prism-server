@@ -23,10 +23,8 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private List<ResourceConditionRepresentation> conditions;
 
-    private List<AdvertCompetenceRepresentation> competences;
-
     private PrismOpportunityType opportunityType;
-    
+
     private List<PrismOpportunityCategory> opportunityCategories;
 
     private List<PrismStudyOption> studyOptions;
@@ -79,14 +77,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setConditions(List<ResourceConditionRepresentation> conditions) {
         this.conditions = conditions;
-    }
-
-    public List<AdvertCompetenceRepresentation> getCompetences() {
-        return competences;
-    }
-
-    public void setCompetences(List<AdvertCompetenceRepresentation> competences) {
-        this.competences = competences;
     }
 
     public PrismOpportunityType getOpportunityType() {

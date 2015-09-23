@@ -7,6 +7,8 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -17,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
@@ -44,7 +46,7 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.App
 import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
-public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope> {
+public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>, PrismLocalizableDefinition {
 
     SYSTEM(PrismScopeCategory.SYSTEM, "SM", //
             new PrismScopeDefinition() //
@@ -59,7 +61,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     DEPARTMENT(PrismScopeCategory.ORGANIZATION, "DT",
             new PrismScopeDefinition() //
                     .withResourceClass(Department.class) //
-                    .withResourceDTOClass(ResourceParentDivisionDTO.class) //
+                    .withResourceDTOClass(ResourceParentDTO.class) //
                     .withActionExecutor(DepartmentExecutor.class) //
                     .withResourceCreator(DepartmentCreator.class) //
                     .withResourcePostprocessor(DepartmentPostprocessor.class)), //
@@ -265,6 +267,11 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             return this;
         }
 
+    }
+    
+    @Override
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
+        return PrismDisplayPropertyDefinition.valueOf("SYSTEM_SCOPE_" + this.name());
     }
 
 }

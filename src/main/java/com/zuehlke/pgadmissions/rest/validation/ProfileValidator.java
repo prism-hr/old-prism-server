@@ -19,14 +19,13 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -90,15 +89,15 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
             LocalDate startDate = programDetail.getStartDate();
 
             ResourceParent parentResource = application.getParentResource();
-            boolean isOpportunity = ResourceOpportunity.class.isAssignableFrom(parentResource.getClass());
-            ResourceStudyOption studyOption = resourceService.getStudyOption(parentResource, programDetail.getStudyOption());
-
-            if (isOpportunity && studyOption == null) {
-                List<ImportedEntitySimple> otherStudyOptions = resourceService.getStudyOptions((ResourceOpportunity) parentResource);
+            if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
+                List<PrismStudyOption> otherStudyOptions = resourceService.getStudyOptions((ResourceOpportunity) parentResource);
                 if (otherStudyOptions.isEmpty()) {
                     throw new PrismCannotApplyException();
                 }
-                errors.rejectValue("studyOption", "notAvailable");
+
+                if (resourceService.getResourceStudyOption((ResourceOpportunity) parentResource, programDetail.getStudyOption()) == null) {
+                    errors.rejectValue("studyOption", "notAvailable");
+                }
             } else {
                 LocalDate baseline = new LocalDate();
                 LocalDate earliestStartDate = getNextMonday(baseline.plusDays(START_DATE_EARLIEST_BUFFER));

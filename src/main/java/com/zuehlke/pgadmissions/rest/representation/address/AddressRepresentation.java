@@ -2,10 +2,9 @@ package com.zuehlke.pgadmissions.rest.representation.address;
 
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.address.AddressDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
-
-public class AddressRepresentation extends AddressDefinition<ImportedDomicileResponse> {
+public class AddressRepresentation extends AddressDefinition<PrismDomicile> {
 
     private Integer id;
 
@@ -19,7 +18,7 @@ public class AddressRepresentation extends AddressDefinition<ImportedDomicileRes
 
     private String addressCode;
 
-    private ImportedDomicileResponse domicile;
+    private PrismDomicile domicile;
 
     private String googleId;
 
@@ -73,13 +72,11 @@ public class AddressRepresentation extends AddressDefinition<ImportedDomicileRes
         this.addressCode = addressCode;
     }
 
-    @Override
-    public ImportedDomicileResponse getDomicile() {
+    public PrismDomicile getDomicile() {
         return domicile;
     }
 
-    @Override
-    public void setDomicile(ImportedDomicileResponse domicile) {
+    public void setDomicile(PrismDomicile domicile) {
         this.domicile = domicile;
     }
 
@@ -99,7 +96,7 @@ public class AddressRepresentation extends AddressDefinition<ImportedDomicileRes
         this.coordinates = coordinates;
     }
 
-    public AddressRepresentation withDomicile(ImportedDomicileResponse domicile) {
+    public AddressRepresentation withDomicile(PrismDomicile domicile) {
         this.domicile = domicile;
         return this;
     }
@@ -140,7 +137,7 @@ public class AddressRepresentation extends AddressDefinition<ImportedDomicileRes
     }
 
     public String getLocationString() {
-        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getName());
+        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode);
     }
 
 }

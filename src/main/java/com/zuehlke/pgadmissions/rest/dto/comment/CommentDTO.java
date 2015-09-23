@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -26,7 +26,7 @@ public class CommentDTO {
 
     private PrismAction action;
 
-    private Boolean applicationRetain;
+    private Boolean applicationShared;
 
     private Boolean applicationRecommend;
 
@@ -57,11 +57,9 @@ public class CommentDTO {
 
     private Boolean recruiterAcceptAppointment;
 
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
     private Boolean declinedResponse;
 
-    private Integer rejectionReason;
+    private PrismRejectionReason rejectionReason;
 
     @Valid
     private ResourceCreationDTO resource;
@@ -111,12 +109,12 @@ public class CommentDTO {
         this.action = action;
     }
 
-    public final Boolean getApplicationRetain() {
-        return applicationRetain;
+    public final Boolean getApplicationShared() {
+        return applicationShared;
     }
 
-    public final void setApplicationRetain(Boolean applicationRetain) {
-        this.applicationRetain = applicationRetain;
+    public final void setApplicationShared(Boolean applicationShared) {
+        this.applicationShared = applicationShared;
     }
 
     public final Boolean getApplicationRecommend() {
@@ -215,14 +213,6 @@ public class CommentDTO {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
-    }
-
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
-    }
-
     public Boolean getDeclinedResponse() {
         return declinedResponse;
     }
@@ -231,11 +221,11 @@ public class CommentDTO {
         this.declinedResponse = declinedResponse;
     }
 
-    public Integer getRejectionReason() {
+    public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(Integer rejectionReason) {
+    public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 

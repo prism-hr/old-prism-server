@@ -20,7 +20,7 @@ public class ApplicationPurgedResolver implements StateTransitionResolver<Applic
 
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
-        if (BooleanUtils.isTrue(resource.getApplication().getRetain())) {
+        if (BooleanUtils.isTrue(resource.getApplication().getShared())) {
             return stateService.getStateTransition(resource, comment.getAction(), PrismState.valueOf(resource.getState().getId() + "_RETAINED"));
         }
         return stateService.getStateTransition(resource, comment.getAction(), PrismState.valueOf(resource.getState().getId() + "_PURGED"));

@@ -22,13 +22,16 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERTISE_SECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_FUNCTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ADVERT_INDUSTRY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AGE_RANGE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE_SECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_COMMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DECLINE_ACTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DISPLAY_PROPERTY_CATEGORY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DOMICILE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_EXPRESSION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GENDER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_ADDRESS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_COMMON;
@@ -41,7 +44,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_RESOURCE_PARENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_TRANSLATIONS_CONFIGURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_HTML_WORKFLOW_CONFIGURATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
@@ -52,6 +54,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REFEREE_TYPE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_REPORT_INDICATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESERVE_STATUS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCES_SECTION;
@@ -61,6 +64,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_SECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_ROLE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_SCOPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION;
@@ -125,6 +129,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FIRST_NAME(SYSTEM_GLOBAL, "First Name"),
     SYSTEM_FIRST_NAME_2(SYSTEM_GLOBAL, "First Name 2"),
     SYSTEM_FIRST_NAME_3(SYSTEM_GLOBAL, "First Name 3"),
+    SYSTEM_LAST_NAME(SYSTEM_GLOBAL, "Last Name"),
     SYSTEM_EMAIL(SYSTEM_GLOBAL, "Email"),
     SYSTEM_ADDRESS(SYSTEM_GLOBAL, "Address"),
     SYSTEM_RATING(SYSTEM_GLOBAL, "Rating"),
@@ -136,7 +141,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_CREATED_DATE(SYSTEM_GLOBAL, "Created Date"),
     SYSTEM_SUBMITTED_DATE(SYSTEM_GLOBAL, "Submitted Date"),
     SYSTEM_UPDATED_DATE(SYSTEM_GLOBAL, "Updated Date"),
-    SYSTEM_ACADEMIC_YEAR(SYSTEM_GLOBAL, "Academic Year"),
+    SYSTEM_ACADEMIC_YEAR(SYSTEM_GLOBAL, "Business Year"),
     SYSTEM_STATE(SYSTEM_GLOBAL, "State"),
     SYSTEM_COMMENT_HEADER(SYSTEM_GLOBAL, "Comment"),
     SYSTEM_EMAIL_LINK_MESSAGE(SYSTEM_GLOBAL, "If you are unable to follow the links in this message, copy and paste them directly into your browser"),
@@ -164,6 +169,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NO_DIAGNOSTIC_INFORMATION(SYSTEM_GLOBAL, "Diagnostic information not available"),
     SYSTEM_EXTERNAL_HOMEPAGE(SYSTEM_GLOBAL, "External Homepage"),
     SYSTEM_ALREADY_REGISTERED(SYSTEM_GLOBAL, "Already registered with"),
+    SYSTEM_UCAS(SYSTEM_GLOBAL, "UCAS"),
+    SYSTEM_HESA(SYSTEM_GLOBAL, "HESA"), 
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -372,9 +379,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_SYSTEM_ADMINISTRATOR(SYSTEM_ROLE, "Administrator"),
 
     /*
-     * *************** SYSTEM OPPORTUNITY TYPE *********************
+     * *************** SYSTEM SCOPE *********************
      */
-
+    
+    SYSTEM_SCOPE_SYSTEM(SYSTEM_SCOPE, "System"),
+    SYSTEM_SCOPE_INSTITUTION(SYSTEM_SCOPE, "Organization"),
+    SYSTEM_SCOPE_DEPARTMENT(SYSTEM_SCOPE, "Department"),
+    SYSTEM_SCOPE_PROGRAM(SYSTEM_SCOPE, "Program"),    
+    SYSTEM_SCOPE_PROJECT(SYSTEM_SCOPE, "Project"),
+    SYSTEM_SCOPE_APPLICATION(SYSTEM_SCOPE, "Application"),    
+    
     /*
      * *************** SYSTEM OPPORTUNITY CATEGORY *********************
      */
@@ -384,6 +398,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_CATEGORY_EXPERIENCE(SYSTEM_OPPORTUNITY_CATEGORY, "Work Experience"),
     SYSTEM_OPPORTUNITY_CATEGORY_WORK(SYSTEM_OPPORTUNITY_CATEGORY, "Employment"),
 
+    /*
+     * *************** SYSTEM OPPORTUNITY TYPE *********************
+     */
+    
     SYSTEM_OPPORTUNITY_TYPE_STUDY_UNDERGRADUATE(SYSTEM_OPPORTUNITY_TYPE, "Undergraduate Study"),
     SYSTEM_OPPORTUNITY_TYPE_STUDY_POSTGRADUATE_TAUGHT(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Study"),
     SYSTEM_OPPORTUNITY_TYPE_STUDY_POSTGRADUATE_RESEARCH(SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Research"),
@@ -392,19 +410,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_ON_COURSE_PLACEMENT(SYSTEM_OPPORTUNITY_TYPE, "On Course Placement"),
     SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(SYSTEM_OPPORTUNITY_TYPE, "Volunteering"),
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(SYSTEM_OPPORTUNITY_TYPE, "Employment"),
-    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_SECONDMENT(SYSTEM_OPPORTUNITY_TYPE, "Secondment"),
 
     SYSTEM_OPPORTUNITY_TYPE_PAID_TOC(SYSTEM_OPPORTUNITY_TYPE, "In order to advertise an opportunity of this type we need you to confirm that: (a) you are happy to pay the successful applicant a minimum of the national minimum wage, or; (b) that you are committed to rewarding the successful applicant in some other fair way for their effort, for example through the granting of shares in a company. Please check to confirm. Alternatively, you can offer the opportunity as volunteering or on course placement."),
     SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC(SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type you are confirming that the successful applicant will work with you as a required component of their course of study. In order to do this, you must accept that the providing university or department has the final right of acceptance in your recruitment process.While we recommend that do you pay the successful applicant the national minimum wage, or reward them in some other fair way, you are not legally required to do so."),
-    SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC(SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type, you are accepting that you are not legally entitled to bind the successful applicant into any kind of fixed work pattern or contract for employment/delivery. Alternatively, you can offer the opportunity as work experience, employment, or secondment."),
-
-    /*
-     * *************** SYSTEM YES NO UNSURE *********************
-     */
-
-    SYSTEM_YES_NO_UNSURE_YES(SYSTEM_YES_NO_UNSURE, "Yes"),
-    SYSTEM_YES_NO_UNSURE_NO(SYSTEM_YES_NO_UNSURE, "No"),
-    SYSTEM_YES_NO_UNSURE_UNSURE(SYSTEM_YES_NO_UNSURE, "Unsure"),
+    SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC(SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type, you are accepting that you are not legally entitled to bind the successful applicant into any kind of fixed work pattern or contract for employment/delivery. Alternatively, you can offer the opportunity as work experience or employment"),
 
     /*
      * *************** SYSTEM STUDY OPTION *********************
@@ -413,6 +422,298 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STUDY_OPTION_FULL_TIME(SYSTEM_STUDY_OPTION, "Full Time"),
     SYSTEM_STUDY_OPTION_PART_TIME(SYSTEM_STUDY_OPTION, "Part Time"),
 
+    /*
+     * *************** SYSTEM AGE RANGE *********************
+     */
+    
+    SYSTEM_AGE_RANGE_FROM_0_TO_18(SYSTEM_AGE_RANGE, "0-18"),
+    SYSTEM_AGE_RANGE_FROM_19_TO_24(SYSTEM_AGE_RANGE, "19-24"),
+    SYSTEM_AGE_RANGE_FROM_25_TO_29(SYSTEM_AGE_RANGE, "25-29"),
+    SYSTEM_AGE_RANGE_FROM_30_TO_39(SYSTEM_AGE_RANGE, "30-39"),
+    SYSTEM_AGE_RANGE_FROM_40_TO_49(SYSTEM_AGE_RANGE, "40-49"),
+    SYSTEM_AGE_RANGE_FROM_50_TO_59(SYSTEM_AGE_RANGE, "50-59"),
+    SYSTEM_AGE_RANGE_FROM_60_ONWARDS(SYSTEM_AGE_RANGE, "60+"),
+    
+    /*
+     * *************** SYSTEM GENDER *********************
+     */
+    
+    SYSTEM_GENDER_FEMALE(SYSTEM_GENDER, "Female"),
+    SYSTEM_GENDER_MALE(SYSTEM_GENDER, "Male"),
+    SYSTEM_GENDER_UNDISCLOSED(SYSTEM_GENDER, "Prefer not to say"),
+
+    /*
+     * *************** SYSTEM DOMICILE *********************
+     */
+    
+    SYSTEM_DOMICILE_AD(SYSTEM_DOMICILE, "Andorra"),
+    SYSTEM_DOMICILE_AE(SYSTEM_DOMICILE, "United Arab Emirates (the)"),
+    SYSTEM_DOMICILE_AF(SYSTEM_DOMICILE, "Afghanistan"),
+    SYSTEM_DOMICILE_AG(SYSTEM_DOMICILE, "Antigua and Barbuda"),
+    SYSTEM_DOMICILE_AI(SYSTEM_DOMICILE, "French Afars and Issas"),
+    SYSTEM_DOMICILE_AL(SYSTEM_DOMICILE, "Albania"),
+    SYSTEM_DOMICILE_AM(SYSTEM_DOMICILE, "Armenia"),
+    SYSTEM_DOMICILE_AO(SYSTEM_DOMICILE, "Angola"),
+    SYSTEM_DOMICILE_AQ(SYSTEM_DOMICILE, "Antarctica"),
+    SYSTEM_DOMICILE_AR(SYSTEM_DOMICILE, "Argentina"),
+    SYSTEM_DOMICILE_AS(SYSTEM_DOMICILE, "American Samoa"),
+    SYSTEM_DOMICILE_AT(SYSTEM_DOMICILE, "Austria"),
+    SYSTEM_DOMICILE_AU(SYSTEM_DOMICILE, "Australia"),
+    SYSTEM_DOMICILE_AW(SYSTEM_DOMICILE, "Aruba"),
+    SYSTEM_DOMICILE_AX(SYSTEM_DOMICILE, "Åland Islands"),
+    SYSTEM_DOMICILE_AZ(SYSTEM_DOMICILE, "Azerbaijan"),
+    SYSTEM_DOMICILE_BA(SYSTEM_DOMICILE, "Bosnia and Herzegovina"),
+    SYSTEM_DOMICILE_BB(SYSTEM_DOMICILE, "Barbados"),
+    SYSTEM_DOMICILE_BD(SYSTEM_DOMICILE, "Bangladesh"),
+    SYSTEM_DOMICILE_BE(SYSTEM_DOMICILE, "Belgium"),
+    SYSTEM_DOMICILE_BF(SYSTEM_DOMICILE, "Burkina Faso"),
+    SYSTEM_DOMICILE_BG(SYSTEM_DOMICILE, "Bulgaria"),
+    SYSTEM_DOMICILE_BH(SYSTEM_DOMICILE, "Bahrain"),
+    SYSTEM_DOMICILE_BI(SYSTEM_DOMICILE, "Burundi"),
+    SYSTEM_DOMICILE_BJ(SYSTEM_DOMICILE, "Benin"),
+    SYSTEM_DOMICILE_BL(SYSTEM_DOMICILE, "Saint Barthélemy"),
+    SYSTEM_DOMICILE_BM(SYSTEM_DOMICILE, "Bermuda"),
+    SYSTEM_DOMICILE_BN(SYSTEM_DOMICILE, "Brunei Darussalam"),
+    SYSTEM_DOMICILE_BO(SYSTEM_DOMICILE, "Bolivia, Plurinational State of"),
+    SYSTEM_DOMICILE_BQ(SYSTEM_DOMICILE, "Bonaire, Sint Eustatius and Saba"),
+    SYSTEM_DOMICILE_BR(SYSTEM_DOMICILE, "Brazil"),
+    SYSTEM_DOMICILE_BS(SYSTEM_DOMICILE, "Bahamas (the)"),
+    SYSTEM_DOMICILE_BT(SYSTEM_DOMICILE, "Bhutan"),
+    SYSTEM_DOMICILE_BV(SYSTEM_DOMICILE, "Bouvet Island"),
+    SYSTEM_DOMICILE_BW(SYSTEM_DOMICILE, "Botswana"),
+    SYSTEM_DOMICILE_BY(SYSTEM_DOMICILE, "Belarus"),
+    SYSTEM_DOMICILE_BZ(SYSTEM_DOMICILE, "Belize"),
+    SYSTEM_DOMICILE_CA(SYSTEM_DOMICILE, "Canada"),
+    SYSTEM_DOMICILE_CC(SYSTEM_DOMICILE, "Cocos (Keeling) Islands (the)"),
+    SYSTEM_DOMICILE_CD(SYSTEM_DOMICILE, "Congo (the Democratic Republic of the)"),
+    SYSTEM_DOMICILE_CF(SYSTEM_DOMICILE, "Central African Republic (the)"),
+    SYSTEM_DOMICILE_CG(SYSTEM_DOMICILE, "Congo"),
+    SYSTEM_DOMICILE_CH(SYSTEM_DOMICILE, "Switzerland"),
+    SYSTEM_DOMICILE_CI(SYSTEM_DOMICILE, "Côte d'Ivoire"),
+    SYSTEM_DOMICILE_CK(SYSTEM_DOMICILE, "Cook Islands (the)"),
+    SYSTEM_DOMICILE_CL(SYSTEM_DOMICILE, "Chile"),
+    SYSTEM_DOMICILE_CM(SYSTEM_DOMICILE, "Cameroon"),
+    SYSTEM_DOMICILE_CN(SYSTEM_DOMICILE, "China"),
+    SYSTEM_DOMICILE_CO(SYSTEM_DOMICILE, "Colombia"),
+    SYSTEM_DOMICILE_CR(SYSTEM_DOMICILE, "Costa Rica"),
+    SYSTEM_DOMICILE_CU(SYSTEM_DOMICILE, "Cuba"),
+    SYSTEM_DOMICILE_CV(SYSTEM_DOMICILE, "Cabo Verde"),
+    SYSTEM_DOMICILE_CW(SYSTEM_DOMICILE, "Curaçao"),
+    SYSTEM_DOMICILE_CX(SYSTEM_DOMICILE, "Christmas Island"),
+    SYSTEM_DOMICILE_CY(SYSTEM_DOMICILE, "Cyprus"),
+    SYSTEM_DOMICILE_CZ(SYSTEM_DOMICILE, "Czech Republic (the)"),
+    SYSTEM_DOMICILE_DE(SYSTEM_DOMICILE, "Germany"),
+    SYSTEM_DOMICILE_DJ(SYSTEM_DOMICILE, "Djibouti"),
+    SYSTEM_DOMICILE_DK(SYSTEM_DOMICILE, "Denmark"),
+    SYSTEM_DOMICILE_DM(SYSTEM_DOMICILE, "Dominica"),
+    SYSTEM_DOMICILE_DO(SYSTEM_DOMICILE, "Dominican Republic (the)"),
+    SYSTEM_DOMICILE_DZ(SYSTEM_DOMICILE, "Algeria"),
+    SYSTEM_DOMICILE_EC(SYSTEM_DOMICILE, "Ecuador"),
+    SYSTEM_DOMICILE_EE(SYSTEM_DOMICILE, "Estonia"),
+    SYSTEM_DOMICILE_EG(SYSTEM_DOMICILE, "Egypt"),
+    SYSTEM_DOMICILE_EH(SYSTEM_DOMICILE, "Western Sahara*"),
+    SYSTEM_DOMICILE_ER(SYSTEM_DOMICILE, "Eritrea"),
+    SYSTEM_DOMICILE_ES(SYSTEM_DOMICILE, "Spain"),
+    SYSTEM_DOMICILE_ET(SYSTEM_DOMICILE, "Ethiopia"),
+    SYSTEM_DOMICILE_FI(SYSTEM_DOMICILE, "Finland"),
+    SYSTEM_DOMICILE_FJ(SYSTEM_DOMICILE, "Fiji"),
+    SYSTEM_DOMICILE_FK(SYSTEM_DOMICILE, "Falkland Islands (the) [Malvinas]"),
+    SYSTEM_DOMICILE_FM(SYSTEM_DOMICILE, "Micronesia (the Federated States of)"),
+    SYSTEM_DOMICILE_FO(SYSTEM_DOMICILE, "Faroe Islands (the)"),
+    SYSTEM_DOMICILE_FR(SYSTEM_DOMICILE, "France"),
+    SYSTEM_DOMICILE_GA(SYSTEM_DOMICILE, "Gabon"),
+    SYSTEM_DOMICILE_GB(SYSTEM_DOMICILE, "United Kingdom (the)"),
+    SYSTEM_DOMICILE_GD(SYSTEM_DOMICILE, "Grenada"),
+    SYSTEM_DOMICILE_GE(SYSTEM_DOMICILE, "Georgia"),
+    SYSTEM_DOMICILE_GF(SYSTEM_DOMICILE, "French Guiana"),
+    SYSTEM_DOMICILE_GG(SYSTEM_DOMICILE, "Guernsey"),
+    SYSTEM_DOMICILE_GH(SYSTEM_DOMICILE, "Ghana"),
+    SYSTEM_DOMICILE_GI(SYSTEM_DOMICILE, "Gibraltar"),
+    SYSTEM_DOMICILE_GL(SYSTEM_DOMICILE, "Greenland"),
+    SYSTEM_DOMICILE_GM(SYSTEM_DOMICILE, "Gambia (The)"),
+    SYSTEM_DOMICILE_GN(SYSTEM_DOMICILE, "Guinea"),
+    SYSTEM_DOMICILE_GP(SYSTEM_DOMICILE, "Guadeloupe"),
+    SYSTEM_DOMICILE_GQ(SYSTEM_DOMICILE, "Equatorial Guinea"),
+    SYSTEM_DOMICILE_GR(SYSTEM_DOMICILE, "Greece"),
+    SYSTEM_DOMICILE_GS(SYSTEM_DOMICILE, "South Georgia and the South Sandwich Islands"),
+    SYSTEM_DOMICILE_GT(SYSTEM_DOMICILE, "Guatemala"),
+    SYSTEM_DOMICILE_GU(SYSTEM_DOMICILE, "Guam"),
+    SYSTEM_DOMICILE_GW(SYSTEM_DOMICILE, "Guinea-Bissau"),
+    SYSTEM_DOMICILE_GY(SYSTEM_DOMICILE, "Guyana"),
+    SYSTEM_DOMICILE_HK(SYSTEM_DOMICILE, "Hong Kong"),
+    SYSTEM_DOMICILE_HM(SYSTEM_DOMICILE, "Heard Island and McDonald Islands"),
+    SYSTEM_DOMICILE_HN(SYSTEM_DOMICILE, "Honduras"),
+    SYSTEM_DOMICILE_HR(SYSTEM_DOMICILE, "Croatia"),
+    SYSTEM_DOMICILE_HT(SYSTEM_DOMICILE, "Haiti"),
+    SYSTEM_DOMICILE_HU(SYSTEM_DOMICILE, "Hungary"),
+    SYSTEM_DOMICILE_ID(SYSTEM_DOMICILE, "Indonesia"),
+    SYSTEM_DOMICILE_IE(SYSTEM_DOMICILE, "Ireland"),
+    SYSTEM_DOMICILE_IL(SYSTEM_DOMICILE, "Israel"),
+    SYSTEM_DOMICILE_IM(SYSTEM_DOMICILE, "Isle of Man"),
+    SYSTEM_DOMICILE_IN(SYSTEM_DOMICILE, "India"),
+    SYSTEM_DOMICILE_IO(SYSTEM_DOMICILE, "British Indian Ocean Territory (the)"),
+    SYSTEM_DOMICILE_IQ(SYSTEM_DOMICILE, "Iraq"),
+    SYSTEM_DOMICILE_IR(SYSTEM_DOMICILE, "Iran (the Islamic Republic of)"),
+    SYSTEM_DOMICILE_IS(SYSTEM_DOMICILE, "Iceland"),
+    SYSTEM_DOMICILE_IT(SYSTEM_DOMICILE, "Italy"),
+    SYSTEM_DOMICILE_JE(SYSTEM_DOMICILE, "Jersey"),
+    SYSTEM_DOMICILE_JM(SYSTEM_DOMICILE, "Jamaica"),
+    SYSTEM_DOMICILE_JO(SYSTEM_DOMICILE, "Jordan"),
+    SYSTEM_DOMICILE_JP(SYSTEM_DOMICILE, "Japan"),
+    SYSTEM_DOMICILE_KE(SYSTEM_DOMICILE, "Kenya"),
+    SYSTEM_DOMICILE_KG(SYSTEM_DOMICILE, "Kyrgyzstan"),
+    SYSTEM_DOMICILE_KH(SYSTEM_DOMICILE, "Cambodia"),
+    SYSTEM_DOMICILE_KI(SYSTEM_DOMICILE, "Kiribati"),
+    SYSTEM_DOMICILE_KM(SYSTEM_DOMICILE, "Comoros"),
+    SYSTEM_DOMICILE_KN(SYSTEM_DOMICILE, "Saint Kitts and Nevis"),
+    SYSTEM_DOMICILE_KP(SYSTEM_DOMICILE, "Korea (the Democratic People's Republic of)"),
+    SYSTEM_DOMICILE_KR(SYSTEM_DOMICILE, "Korea (the Republic of)"),
+    SYSTEM_DOMICILE_KW(SYSTEM_DOMICILE, "Kuwait"),
+    SYSTEM_DOMICILE_KY(SYSTEM_DOMICILE, "Cayman Islands (the)"),
+    SYSTEM_DOMICILE_KZ(SYSTEM_DOMICILE, "Kazakhstan"),
+    SYSTEM_DOMICILE_LA(SYSTEM_DOMICILE, "Lao People's Democratic Republic (the)"),
+    SYSTEM_DOMICILE_LB(SYSTEM_DOMICILE, "Lebanon"),
+    SYSTEM_DOMICILE_LC(SYSTEM_DOMICILE, "Saint Lucia"),
+    SYSTEM_DOMICILE_LI(SYSTEM_DOMICILE, "Liechtenstein"),
+    SYSTEM_DOMICILE_LK(SYSTEM_DOMICILE, "Sri Lanka"),
+    SYSTEM_DOMICILE_LR(SYSTEM_DOMICILE, "Liberia"),
+    SYSTEM_DOMICILE_LS(SYSTEM_DOMICILE, "Lesotho"),
+    SYSTEM_DOMICILE_LT(SYSTEM_DOMICILE, "Lithuania"),
+    SYSTEM_DOMICILE_LU(SYSTEM_DOMICILE, "Luxembourg"),
+    SYSTEM_DOMICILE_LV(SYSTEM_DOMICILE, "Latvia"),
+    SYSTEM_DOMICILE_LY(SYSTEM_DOMICILE, "Libya"),
+    SYSTEM_DOMICILE_MA(SYSTEM_DOMICILE, "Morocco"),
+    SYSTEM_DOMICILE_MC(SYSTEM_DOMICILE, "Monaco"),
+    SYSTEM_DOMICILE_MD(SYSTEM_DOMICILE, "Moldova (the Republic of)"),
+    SYSTEM_DOMICILE_ME(SYSTEM_DOMICILE, "Montenegro"),
+    SYSTEM_DOMICILE_MF(SYSTEM_DOMICILE, "Saint Martin (French part)"),
+    SYSTEM_DOMICILE_MG(SYSTEM_DOMICILE, "Madagascar"),
+    SYSTEM_DOMICILE_MH(SYSTEM_DOMICILE, "Marshall Islands (the)"),
+    SYSTEM_DOMICILE_MK(SYSTEM_DOMICILE, "Macedonia (the former Yugoslav Republic of)"),
+    SYSTEM_DOMICILE_ML(SYSTEM_DOMICILE, "Mali"),
+    SYSTEM_DOMICILE_MM(SYSTEM_DOMICILE, "Myanmar"),
+    SYSTEM_DOMICILE_MN(SYSTEM_DOMICILE, "Mongolia"),
+    SYSTEM_DOMICILE_MO(SYSTEM_DOMICILE, "Macao"),
+    SYSTEM_DOMICILE_MP(SYSTEM_DOMICILE, "Northern Mariana Islands (the)"),
+    SYSTEM_DOMICILE_MQ(SYSTEM_DOMICILE, "Martinique"),
+    SYSTEM_DOMICILE_MR(SYSTEM_DOMICILE, "Mauritania"),
+    SYSTEM_DOMICILE_MS(SYSTEM_DOMICILE, "Montserrat"),
+    SYSTEM_DOMICILE_MT(SYSTEM_DOMICILE, "Malta"),
+    SYSTEM_DOMICILE_MU(SYSTEM_DOMICILE, "Mauritius"),
+    SYSTEM_DOMICILE_MV(SYSTEM_DOMICILE, "Maldives"),
+    SYSTEM_DOMICILE_MW(SYSTEM_DOMICILE, "Malawi"),
+    SYSTEM_DOMICILE_MX(SYSTEM_DOMICILE, "Mexico"),
+    SYSTEM_DOMICILE_MY(SYSTEM_DOMICILE, "Malaysia"),
+    SYSTEM_DOMICILE_MZ(SYSTEM_DOMICILE, "Mozambique"),
+    SYSTEM_DOMICILE_NA(SYSTEM_DOMICILE, "Namibia"),
+    SYSTEM_DOMICILE_NC(SYSTEM_DOMICILE, "New Caledonia"),
+    SYSTEM_DOMICILE_NE(SYSTEM_DOMICILE, "Niger (the)"),
+    SYSTEM_DOMICILE_NF(SYSTEM_DOMICILE, "Norfolk Island"),
+    SYSTEM_DOMICILE_NG(SYSTEM_DOMICILE, "Nigeria"),
+    SYSTEM_DOMICILE_NI(SYSTEM_DOMICILE, "Nicaragua"),
+    SYSTEM_DOMICILE_NL(SYSTEM_DOMICILE, "Netherlands (the)"),
+    SYSTEM_DOMICILE_NO(SYSTEM_DOMICILE, "Norway"),
+    SYSTEM_DOMICILE_NP(SYSTEM_DOMICILE, "Nepal"),
+    SYSTEM_DOMICILE_NR(SYSTEM_DOMICILE, "Nauru"),
+    SYSTEM_DOMICILE_NU(SYSTEM_DOMICILE, "Niue"),
+    SYSTEM_DOMICILE_NZ(SYSTEM_DOMICILE, "New Zealand"),
+    SYSTEM_DOMICILE_OM(SYSTEM_DOMICILE, "Oman"),
+    SYSTEM_DOMICILE_PA(SYSTEM_DOMICILE, "Panama"),
+    SYSTEM_DOMICILE_PE(SYSTEM_DOMICILE, "Peru"),
+    SYSTEM_DOMICILE_PF(SYSTEM_DOMICILE, "French Polynesia"),
+    SYSTEM_DOMICILE_PG(SYSTEM_DOMICILE, "Papua New Guinea"),
+    SYSTEM_DOMICILE_PH(SYSTEM_DOMICILE, "Philippines (the)"),
+    SYSTEM_DOMICILE_PK(SYSTEM_DOMICILE, "Pakistan"),
+    SYSTEM_DOMICILE_PL(SYSTEM_DOMICILE, "Poland"),
+    SYSTEM_DOMICILE_PM(SYSTEM_DOMICILE, "Saint Pierre and Miquelon"),
+    SYSTEM_DOMICILE_PN(SYSTEM_DOMICILE, "Pitcairn"),
+    SYSTEM_DOMICILE_PR(SYSTEM_DOMICILE, "Puerto Rico"),
+    SYSTEM_DOMICILE_PS(SYSTEM_DOMICILE, "Palestine, State of"),
+    SYSTEM_DOMICILE_PT(SYSTEM_DOMICILE, "Portugal"),
+    SYSTEM_DOMICILE_PW(SYSTEM_DOMICILE, "Palau"),
+    SYSTEM_DOMICILE_PY(SYSTEM_DOMICILE, "Paraguay"),
+    SYSTEM_DOMICILE_QA(SYSTEM_DOMICILE, "Qatar"),
+    SYSTEM_DOMICILE_RE(SYSTEM_DOMICILE, "Réunion"),
+    SYSTEM_DOMICILE_RO(SYSTEM_DOMICILE, "Romania"),
+    SYSTEM_DOMICILE_RS(SYSTEM_DOMICILE, "Serbia"),
+    SYSTEM_DOMICILE_RU(SYSTEM_DOMICILE, "Russian Federation (the)"),
+    SYSTEM_DOMICILE_RW(SYSTEM_DOMICILE, "Rwanda"),
+    SYSTEM_DOMICILE_SA(SYSTEM_DOMICILE, "Saudi Arabia"),
+    SYSTEM_DOMICILE_SB(SYSTEM_DOMICILE, "Solomon Islands (the)"),
+    SYSTEM_DOMICILE_SC(SYSTEM_DOMICILE, "Seychelles"),
+    SYSTEM_DOMICILE_SD(SYSTEM_DOMICILE, "Sudan (the)"),
+    SYSTEM_DOMICILE_SE(SYSTEM_DOMICILE, "Sweden"),
+    SYSTEM_DOMICILE_SG(SYSTEM_DOMICILE, "Singapore"),
+    SYSTEM_DOMICILE_SH(SYSTEM_DOMICILE, "Saint Helena, Ascension and Tristan da Cunha"),
+    SYSTEM_DOMICILE_SI(SYSTEM_DOMICILE, "Slovenia"),
+    SYSTEM_DOMICILE_SJ(SYSTEM_DOMICILE, "Svalbard and Jan Mayen"),
+    SYSTEM_DOMICILE_SK(SYSTEM_DOMICILE, "Sikkim"),
+    SYSTEM_DOMICILE_SL(SYSTEM_DOMICILE, "Sierra Leone"),
+    SYSTEM_DOMICILE_SM(SYSTEM_DOMICILE, "San Marino"),
+    SYSTEM_DOMICILE_SN(SYSTEM_DOMICILE, "Senegal"),
+    SYSTEM_DOMICILE_SO(SYSTEM_DOMICILE, "Somalia"),
+    SYSTEM_DOMICILE_SR(SYSTEM_DOMICILE, "Suriname"),
+    SYSTEM_DOMICILE_SS(SYSTEM_DOMICILE, "South Sudan "),
+    SYSTEM_DOMICILE_ST(SYSTEM_DOMICILE, "Sao Tome and Principe"),
+    SYSTEM_DOMICILE_SV(SYSTEM_DOMICILE, "El Salvador"),
+    SYSTEM_DOMICILE_SX(SYSTEM_DOMICILE, "Sint Maarten (Dutch part)"),
+    SYSTEM_DOMICILE_SY(SYSTEM_DOMICILE, "Syrian Arab Republic (the)"),
+    SYSTEM_DOMICILE_SZ(SYSTEM_DOMICILE, "Swaziland"),
+    SYSTEM_DOMICILE_TC(SYSTEM_DOMICILE, "Turks and Caicos Islands (the)"),
+    SYSTEM_DOMICILE_TD(SYSTEM_DOMICILE, "Chad"),
+    SYSTEM_DOMICILE_TF(SYSTEM_DOMICILE, "French Southern Territories (the)"),
+    SYSTEM_DOMICILE_TG(SYSTEM_DOMICILE, "Togo"),
+    SYSTEM_DOMICILE_TH(SYSTEM_DOMICILE, "Thailand"),
+    SYSTEM_DOMICILE_TJ(SYSTEM_DOMICILE, "Tajikistan"),
+    SYSTEM_DOMICILE_TK(SYSTEM_DOMICILE, "Tokelau"),
+    SYSTEM_DOMICILE_TL(SYSTEM_DOMICILE, "Timor-Leste"),
+    SYSTEM_DOMICILE_TM(SYSTEM_DOMICILE, "Turkmenistan"),
+    SYSTEM_DOMICILE_TN(SYSTEM_DOMICILE, "Tunisia"),
+    SYSTEM_DOMICILE_TO(SYSTEM_DOMICILE, "Tonga"),
+    SYSTEM_DOMICILE_TR(SYSTEM_DOMICILE, "Turkey"),
+    SYSTEM_DOMICILE_TT(SYSTEM_DOMICILE, "Trinidad and Tobago"),
+    SYSTEM_DOMICILE_TV(SYSTEM_DOMICILE, "Tuvalu"),
+    SYSTEM_DOMICILE_TW(SYSTEM_DOMICILE, "Taiwan (Province of China)"),
+    SYSTEM_DOMICILE_TZ(SYSTEM_DOMICILE, "Tanzania, United Republic of"),
+    SYSTEM_DOMICILE_UA(SYSTEM_DOMICILE, "Ukraine"),
+    SYSTEM_DOMICILE_UG(SYSTEM_DOMICILE, "Uganda"),
+    SYSTEM_DOMICILE_UM(SYSTEM_DOMICILE, "United States Minor Outlying Islands (the)"),
+    SYSTEM_DOMICILE_US(SYSTEM_DOMICILE, "United States (the)"),
+    SYSTEM_DOMICILE_UY(SYSTEM_DOMICILE, "Uruguay"),
+    SYSTEM_DOMICILE_UZ(SYSTEM_DOMICILE, "Uzbekistan"),
+    SYSTEM_DOMICILE_VA(SYSTEM_DOMICILE, "Holy See (the) [Vatican City State]"),
+    SYSTEM_DOMICILE_VC(SYSTEM_DOMICILE, "Saint Vincent and the Grenadines"),
+    SYSTEM_DOMICILE_VE(SYSTEM_DOMICILE, "Venezuela, Bolivarian Republic of "),
+    SYSTEM_DOMICILE_VG(SYSTEM_DOMICILE, "Virgin Islands (British)"),
+    SYSTEM_DOMICILE_VI(SYSTEM_DOMICILE, "Virgin Islands (U.S.)"),
+    SYSTEM_DOMICILE_VN(SYSTEM_DOMICILE, "Viet Nam"),
+    SYSTEM_DOMICILE_VU(SYSTEM_DOMICILE, "Vanuatu"),
+    SYSTEM_DOMICILE_WF(SYSTEM_DOMICILE, "Wallis and Futuna"),
+    SYSTEM_DOMICILE_WS(SYSTEM_DOMICILE, "Samoa"),
+    SYSTEM_DOMICILE_YE(SYSTEM_DOMICILE, "Yemen"),
+    SYSTEM_DOMICILE_YT(SYSTEM_DOMICILE, "Mayotte"),
+    SYSTEM_DOMICILE_ZA(SYSTEM_DOMICILE, "South Africa"),
+    SYSTEM_DOMICILE_ZM(SYSTEM_DOMICILE, "Zambia"),
+    SYSTEM_DOMICILE_ZW(SYSTEM_DOMICILE, "Zimbabwe"),
+    
+    /*
+     * *************** SYSTEM REJECTION REASON *********************
+     */
+    
+    SYSTEM_REJECTION_REASON_POSITION(SYSTEM_REJECTION_REASON, "The position you applied for is no longer available."),
+    SYSTEM_REJECTION_REASON_COMPETITION(SYSTEM_REJECTION_REASON, "Although you were suitable for the position, the competition was such that we were unable to progress your application on this occasion."),
+    SYSTEM_REJECTION_REASON_APPLICATION_INFORMATION(SYSTEM_REJECTION_REASON, "We are unable to form a judgement on your suitability based upon the information that you supplied in your application."),
+    SYSTEM_REJECTION_REASON_APPLICATION_INTERVIEW_ATTENDANCE(SYSTEM_REJECTION_REASON, "You failed to present for interview as arranged."),
+    SYSTEM_REJECTION_REASON_APPLICATION_WITHDRAWAL(SYSTEM_REJECTION_REASON, "You have informed us that you no longer wish to be considered."), 
+    
+    /*
+     * *************** SYSTEM YES NO UNSURE *********************
+     */
+
+    SYSTEM_YES_NO_UNSURE_YES(SYSTEM_YES_NO_UNSURE, "Yes"),
+    SYSTEM_YES_NO_UNSURE_NO(SYSTEM_YES_NO_UNSURE, "No"),
+    SYSTEM_YES_NO_UNSURE_UNSURE(SYSTEM_YES_NO_UNSURE, "Unsure"),
+    
     /*
      * *************** SYSTEM DURATION *********************
      */
@@ -467,28 +768,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_EXPRESSION_LESSER(SYSTEM_FILTER_EXPRESSION, "Less than"),
     SYSTEM_FILTER_EXPRESSION_LESSER_NEGATED(SYSTEM_FILTER_EXPRESSION, "Not less than"),
     SYSTEM_FILTER_EXPRESSION_NOT_SPECIFIED(SYSTEM_FILTER_EXPRESSION, "Not specified"),
-
-    /*
-     * *************** SYSTEM IMPORTED ENTITY *********************
-     */
-
-    SYSTEM_ENTITY_IMPORTED_AGE_RANGE(SYSTEM_IMPORTED_ENTITY, "Age Range"),
-    SYSTEM_ENTITY_IMPORTED_COUNTRY(SYSTEM_IMPORTED_ENTITY, "Country"),
-    SYSTEM_ENTITY_IMPORTED_DISABILITY(SYSTEM_IMPORTED_ENTITY, "Disability"),
-    SYSTEM_ENTITY_IMPORTED_DOMICILE(SYSTEM_IMPORTED_ENTITY, "Domicile"),
-    SYSTEM_ENTITY_IMPORTED_ETHNICITY(SYSTEM_IMPORTED_ENTITY, "Ethnicity"),
-    SYSTEM_ENTITY_IMPORTED_NATIONALITY(SYSTEM_IMPORTED_ENTITY, "Nationality"),
-    SYSTEM_ENTITY_IMPORTED_PROGRAM(SYSTEM_IMPORTED_ENTITY, "Program"),
-    SYSTEM_ENTITY_IMPORTED_QUALIFICATION_TYPE(SYSTEM_IMPORTED_ENTITY, "Type"),
-    SYSTEM_ENTITY_IMPORTED_REFERRAL_SOURCE(SYSTEM_IMPORTED_ENTITY, "Referral Source"),
-    SYSTEM_ENTITY_IMPORTED_FUNDING_SOURCE(SYSTEM_IMPORTED_ENTITY, "Funding Source"),
-    SYSTEM_ENTITY_IMPORTED_LANGUAGE_QUALIFICATION_TYPE(SYSTEM_IMPORTED_ENTITY, "Language Qualification Type"),
-    SYSTEM_ENTITY_IMPORTED_TITLE(SYSTEM_IMPORTED_ENTITY, "Title"),
-    SYSTEM_ENTITY_IMPORTED_GENDER(SYSTEM_IMPORTED_ENTITY, "Gender"),
-    SYSTEM_ENTITY_IMPORTED_REJECTION_REASON(SYSTEM_IMPORTED_ENTITY, "Rejection Reason"),
-    SYSTEM_ENTITY_IMPORTED_STUDY_OPTION(SYSTEM_IMPORTED_ENTITY, "Mode of Engagement"),
-    SYSTEM_ENTITY_IMPORTED_OPPORTUNITY_TYPE(SYSTEM_IMPORTED_ENTITY, "Opportunity Type"),
-    SYSTEM_ENTITY_IMPORTED_INSTITUTION(SYSTEM_IMPORTED_ENTITY, "Organization"),
 
     /*
      * *************** SYSTEM ADVERT INDUSTRY *********************
@@ -1311,8 +1590,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_INSTITUTION_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The Name or your Organization."),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Department Name"),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The Name or your Department."),
-    SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Programs"),
-    SYSTEM_RESOURCE_PARENT_DEPARTMENT_IMPORTED_PROGRAMS_HINT(SYSTEM_HTML_RESOURCE_PARENT, "Link the programs that your Department offers so that we identify your students when they sign up"),
     SYSTEM_RESOURCE_PARENT_TITLE_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Title"),
     SYSTEM_RESOURCE_PARENT_TITLE_HINT(SYSTEM_HTML_RESOURCE_PARENT, "The title of your opportunity."),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_SUMMARY_LABEL(SYSTEM_HTML_RESOURCE_PARENT, "Summary"),
@@ -1587,7 +1864,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_UPDATED_CATEGORY(DEPARTMENT_COMMENT, "Updated Department categories"),
     DEPARTMENT_COMMENT_UPDATED_TARGET(PROGRAM_COMMENT, "Updated Department targets"),
     DEPARTMENT_COMMENT_UPDATED_COMPETENCE(PROGRAM_COMMENT, "Updated Department competences"),
-    DEPARTMENT_COMMENT_UPDATED_IMPORTED_PROGRAMS(PROGRAM_COMMENT, "Updated Department programs"),
     DEPARTMENT_COMMENT_UPDATED_EMAIL_LIST(DEPARTMENT_COMMENT, "Updated email lists"),
 
     /*
@@ -1680,8 +1956,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     APPLICATION_PERSONAL_DETAIL_HEADER(APPLICATION_PERSONAL_DETAIL, "Personal Details"),
     APPLICATION_PERSONAL_DETAIL_DESCRIPTION(APPLICATION_PERSONAL_DETAIL, "This section allows you to provide details about yourself."),
-    APPLICATION_PERSONAL_DETAIL_TITLE_LABEL(APPLICATION_PERSONAL_DETAIL, "Title"),
-    APPLICATION_PERSONAL_DETAIL_TITLE_HINT(APPLICATION_PERSONAL_DETAIL, "The title that you wish us to address you by."),
     APPLICATION_PERSONAL_DETAIL_GENDER_LABEL(APPLICATION_PERSONAL_DETAIL, "Gender"),
     APPLICATION_PERSONAL_DETAIL_GENDER_HINT(
             APPLICATION_PERSONAL_DETAIL,
@@ -1712,15 +1986,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PERSONAL_DETAIL_TELEPHONE_HINT(APPLICATION_PERSONAL_DETAIL, "Your contact telephone number."),
     APPLICATION_PERSONAL_DETAIL_SKYPE_LABEL(APPLICATION_PERSONAL_DETAIL, "Skype"),
     APPLICATION_PERSONAL_DETAIL_SKYPE_HINT(APPLICATION_PERSONAL_DETAIL, "Your Skype address. We may you skype to contact you."),
-    APPLICATION_PERSONAL_DETAIL_EQUAL_OPPORTUNITIES_HEADER(APPLICATION_PERSONAL_DETAIL, "Equal Opportunities"),
-    APPLICATION_PERSONAL_DETAIL_ETHNICITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Ethnicity"),
-    APPLICATION_PERSONAL_DETAIL_ETHNICITY_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Please specify your ethnic background. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
-    APPLICATION_PERSONAL_DETAIL_DISABILITY_LABEL(APPLICATION_PERSONAL_DETAIL, "Disability"),
-    APPLICATION_PERSONAL_DETAIL_DISABILITY_HINT(
-            APPLICATION_PERSONAL_DETAIL,
-            "Please let us know if you have a recognised disability. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
 
     APPLICATION_ADDRESS_HEADER(APPLICATION_ADDRESS, "Address Detail"),
     APPLICATION_ADDRESS_DESCRIPTION(APPLICATION_ADDRESS, "Your current residence and contact address(es)."),
@@ -1754,10 +2019,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_QUALIFICATION_STUDY_PERIOD_LABEL(APPLICATION_QUALIFICATION, "Study Period"),
     APPLICATION_QUALIFICATION_APPENDIX(APPLICATION_QUALIFICATION, "Qualification Transcript"),
     APPLICATION_QUALIFICATION_NO_ITEMS(APPLICATION_QUALIFICATION, "This Application doesn't contain any Qualification"),
-    APPLICATION_QUALIFICATION_EQUIVALENT_HEADER(APPLICATION_QUALIFICATION, "Equivalent Experience"),
-    APPLICATION_QUALIFICATION_EXPERIENCE_MESSAGE(
-            APPLICATION_QUALIFICATION,
-            "We consider that the applicant has experience equivalent to the typical academic entrance requirements for our program. It is therefore our recommendation that an appointment be made"),
 
     APPLICATION_EMPLOYMENT_POSITION_HEADER(APPLICATION_EMPLOYMENT_POSITION, "Employment Positions"),
     APPLICATION_EMPLOYMENT_POSITION_DESCRIPTION(APPLICATION_EMPLOYMENT_POSITION,
@@ -1802,18 +2063,25 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Your covering letter. This should describe why your are suitable for the opportunity. Please provide no more than 2 pages of A4."),
 
     APPLICATION_ADDITIONAL_INFORMATION_HEADER(APPLICATION_ADDITIONAL_INFORMATION, "Additional Information"),
+    
+    APPLICATION_ADDITIONAL_REQUIREMENT_LABEL(APPLICATION_ADDITIONAL_INFORMATION, "Special Requirements"),
+    APPLICATION_ADDITIONAL_REQUIREMENT_HINT(APPLICATION_ADDITIONAL_INFORMATION,
+            "So that we can prepare, please tell us whether you have any special requirements in relation to your ability to work or present for interview. This information will not influence the outcome of your application."),
+    
     APPLICATION_ADDITIONAL_INFORMATION_HAS_CONVICTION_LABEL(APPLICATION_ADDITIONAL_INFORMATION, "Do you have any unspent Criminal Convictions?"),
     APPLICATION_ADDITIONAL_INFORMATION_HAS_CONVICTION_HINT(APPLICATION_ADDITIONAL_INFORMATION,
             "Please tell us whether you have any unspent criminal convictions."),
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION_LABEL(APPLICATION_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions"),
     APPLICATION_ADDITIONAL_INFORMATION_CONVICTION_HINT(APPLICATION_ADDITIONAL_INFORMATION, "Provide a short summary of each of your unspent convictions."),
+    
+    
     APPLICATION_ADDITIONAL_INFORMATION_EMPTY(APPLICATION_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
     APPLICATION_FORM_FOOTER_CONFIRM_TRUE(
             APPLICATION_FORM,
             "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer of study being withdrawn.</em>"),
-    APPLICATION_FORM_FOOTER_KEEP_RECORD(APPLICATION_FORM,
-            "Keep my application on record indefinitely.<br/><em>Uncheck this if you want your application to be destroyed when we have finished processing it.</em>"),
+    APPLICATION_FORM_FOOTER_SHARE(APPLICATION_FORM,
+            "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with careers support staff in your department or university.</em>"),
     APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(APPLICATION_FORM,
             "Send me recommendations about other opportunities to apply for.<br/><em>Uncheck this if you do not want us to send you recommendations.</em>"),
     APPLICATION_FORM_GO_TO_TIMELINE(APPLICATION_FORM, "Go to Timeline"),
@@ -1916,7 +2184,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_COMMENT_DECLINED_REFEREE(APPLICATION_COMMENT, "Declined to provide a reference"),
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(APPLICATION_COMMENT, "Recommended offer conditions"),
     APPLICATION_COMMENT_POSITION_DESCRIPTION_UNEXPORTABLE(APPLICATION_COMMENT, "Refer to program administrator for position description"),
-    APPLICATION_COMMENT_REJECTION_SYSTEM(APPLICATION_COMMENT, "We are currently unable to offer you a position"),
     APPLICATION_COMMENT_DIRECTIONS(APPLICATION_COMMENT, "Directions"),
     APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information"),
     APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL(APPLICATION_COMMENT, "Updated the application details section"),

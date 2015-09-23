@@ -40,6 +40,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -51,13 +52,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -313,32 +315,26 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> T getResourceAttribute(ResourceParent resource, Class<T> attributeClass, String attributeName,
-            Object attributeValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass)
-                .add(Restrictions.disjunction().add(Restrictions.eq("project", resource.getProject()))
-                        .add(Restrictions.eq("program", resource.getProgram())))
-                .addOrder(Order.desc("project")).addOrder(Order.desc("program"))
-                .add(Restrictions.eq(attributeName, attributeValue)).setMaxResults(1).uniqueResult();
-    }
-
-    public <T> T getResourceAttributeStrict(ResourceParent resource, Class<T> attributeClass,
-            String attributeName, Object attributeValue) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq(attributeName, attributeValue)) //
+    public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {
+        return (ResourceStudyOption) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("project", resource.getProject())) //
+                        .add(Restrictions.eq("program", resource.getProgram()))) //
+                .add(Restrictions.eq("studyOption", studyOption)) //
+                .addOrder(Order.desc("project"))
+                .addOrder(Order.desc("program")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
-    public <T> List<T> getResourceAttributes(ResourceOpportunity resource, Class<T> attributeClass,
-            String attributeName, String orderAttributeName) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
+    public List<ResourceStudyOption> getResourceStudyOptions(ResourceOpportunity resource) {
+        return (List<ResourceStudyOption>) sessionFactory.getCurrentSession().createCriteria(ResourceStudyOption.class) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("project", resource.getProject())) //
                         .add(Restrictions.eq("program", resource.getProgram()))) //
                 .addOrder(Order.desc("project")) //
                 .addOrder(Order.desc("program")) //
-                .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
+                .addOrder(Order.asc("studyOption")) //
                 .list();
     }
 
@@ -346,15 +342,6 @@ public class ResourceDAO {
         return (List<ResourceCondition>) sessionFactory.getCurrentSession().createCriteria(ResourceCondition.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .addOrder(Order.asc("actionCondition")) //
-                .list();
-    }
-
-    public <T> List<T> getResourceAttributesStrict(ResourceOpportunity resource, Class<T> attributeClass,
-            String attributeName, String orderAttributeName) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(attributeClass) //
-                .createAlias(attributeName, attributeName, JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.asc(Joiner.on(".").skipNulls().join(attributeName, orderAttributeName))) //
                 .list();
     }
 

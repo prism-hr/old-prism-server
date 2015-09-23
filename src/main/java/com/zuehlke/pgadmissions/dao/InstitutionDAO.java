@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -23,15 +21,14 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.dto.resource.ResourceLocationDTO;
+import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
 @Repository
-@SuppressWarnings("unchecked")
 public class InstitutionDAO {
 
     @Inject
@@ -40,24 +37,31 @@ public class InstitutionDAO {
     @Inject
     private FreeMarkerConfig freemarkerConfig;
 
-    public Institution getUclInstitution() {
+    public Institution getInstitutionByImportedCode(String importedCode) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
-                .add(Restrictions.eq("uclInstitution", true)) //
+                .add(Restrictions.like("importedCode", importedCode, MatchMode.ANYWHERE)) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 
-    public List<String> listAvailableCurrencies() {
-        return sessionFactory.getCurrentSession().createCriteria(ImportedDomicile.class) //
+    @SuppressWarnings("unchecked")
+    public List<String> getAvailableCurrencies() {
+        return (List<String>) sessionFactory.getCurrentSession().createCriteria(Domicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
                 .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("currency")) //
                 .list();
     }
 
-    public Institution getActivatedInstitutionByGoogleId(String googleId) {
+    public Institution getInstitutionByUcasId(String ucasId) {
+        return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .add(Restrictions.eq("ucasId", ucasId)) //
+                .uniqueResult();
+    }
+
+    public Institution getInstitutionByGoogleId(String googleId) {
         return (Institution) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
                 .add(Restrictions.eq("googleId", googleId)) //
-                .add(Restrictions.eq("state.id", INSTITUTION_APPROVED)) //
                 .uniqueResult();
     }
 
@@ -86,6 +90,7 @@ public class InstitutionDAO {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public List<ResourceLocationDTO> getInstitutions(String query, String[] googleIds) {
         Disjunction searchConstraint = Restrictions.disjunction();
 
@@ -106,13 +111,12 @@ public class InstitutionDAO {
                         .add(Projections.property("address.addressTown").as("addressTown")) //
                         .add(Projections.property("address.addressRegion").as("addressRegion")) //
                         .add(Projections.property("address.addressCode").as("addressCode")) //
-                        .add(Projections.property("domicile.name").as("name")) //
+                        .add(Projections.property("address.domicile.id").as("addressDomicileId")) //
                         .add(Projections.property("address.googleId").as("addressGoogleId")) //
                         .add(Projections.property("addressCoordinates.latitude").as("addressCoordinateLatitude")) //
                         .add(Projections.property("addressCoordinates.longitude").as("addressCoordinateLongitude"))) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("address.domicile", "domicile", JoinType.LEFT_OUTER_JOIN) //
                 .add(searchConstraint) //
                 .addOrder(Order.asc("name")) //
                 .addOrder(Order.asc("id")) //

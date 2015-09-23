@@ -18,15 +18,15 @@ public class ResourceReportFilterDTO {
 
     public static class ResourceReportFilterPropertyDTO {
 
-        private Integer entityId;
+        private String entityId;
 
         private PrismFilterEntity entityType;
 
-        public Integer getEntityId() {
+        public String getEntityId() {
             return entityId;
         }
 
-        public void setEntityId(Integer entityId) {
+        public void setEntityId(String entityId) {
             this.entityId = entityId;
         }
 

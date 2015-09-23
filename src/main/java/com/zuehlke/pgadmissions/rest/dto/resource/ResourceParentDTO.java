@@ -15,6 +15,8 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
 
     @Valid
     private ResourceDTO parentResource;
+    
+    private String importedCode;
 
     @NotEmpty
     private String name;
@@ -34,6 +36,14 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     @Override
     public void setParentResource(ResourceDTO parentResource) {
         this.parentResource = parentResource;
+    }
+
+    public String getImportedCode() {
+        return importedCode;
+    }
+
+    public void setImportedCode(String importedCode) {
+        this.importedCode = importedCode;
     }
 
     @Override

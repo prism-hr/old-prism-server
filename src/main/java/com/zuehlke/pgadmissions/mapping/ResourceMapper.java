@@ -41,14 +41,12 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -56,12 +54,12 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceLocationDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceSimpleDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
@@ -105,9 +103,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismListUtils;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedDomicileResponse;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 @Service
 @Transactional
 public class ResourceMapper {
@@ -147,9 +142,6 @@ public class ResourceMapper {
 
     @Inject
     private InstitutionMapper institutionMapper;
-
-    @Inject
-    private ImportedEntityMapper importedEntityMapper;
 
     @Inject
     private RoleMapper roleMapper;
@@ -371,12 +363,12 @@ public class ResourceMapper {
             List<PrismRole> overridingRoles) {
         V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
 
-        List<ImportedEntityResponse> studyOptions = Lists.newLinkedList();
-        for (ImportedEntitySimple studyOption : resourceService.getStudyOptions(resource)) {
-            studyOptions.add(importedEntityMapper.getImportedEntityRepresentation(studyOption));
+        List<PrismStudyOption> studyOptions = Lists.newLinkedList();
+        for (PrismStudyOption studyOption : resourceService.getStudyOptions(resource)) {
+            studyOptions.add(studyOption);
         }
 
-        representation.setOpportunityType(PrismOpportunityType.valueOf(resource.getOpportunityType().getName()));
+        representation.setOpportunityType(resource.getOpportunityType().getId());
         representation.setOpportunityCategory(PrismOpportunityCategory.valueOf(resource.getOpportunityCategories()));
         representation.setStudyOptions(studyOptions);
 
@@ -456,27 +448,27 @@ public class ResourceMapper {
     public ResourceSummaryPlotDataRepresentation getResourceSummaryPlotDataRepresentation(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints) {
         ResourceSummaryPlotDataRepresentation summary = new ResourceSummaryPlotDataRepresentation();
 
-        HashMultimap<PrismFilterEntity, Integer> transformedConstraints = HashMultimap.create();
+        HashMultimap<PrismFilterEntity, String> transformedConstraints = HashMultimap.create();
         if (constraints != null) {
-            HashMultimap<PrismFilterEntity, Integer> constraintsToTransform = HashMultimap.create();
-            constraints.forEach(constraint -> {
-                PrismFilterEntity importedEntityType = constraint.getEntityType();
-                if (importedEntityType.getFilterSelector() != null) {
-                    constraintsToTransform.put(importedEntityType, constraint.getEntityId());
+            HashMultimap<PrismFilterEntity, String> constraintsToTransform = HashMultimap.create();
+            constraints.forEach(c -> {
+                PrismFilterEntity prismFilterEntity = c.getEntityType();
+                if (prismFilterEntity.getFilterSelector() == null) {
+                    transformedConstraints.put(prismFilterEntity, c.getEntityId());
+                } else {
+                    constraintsToTransform.put(prismFilterEntity, c.getEntityId());
                 }
             });
 
-            constraintsToTransform.keySet().forEach(constraint -> {
-                constraintsToTransform.putAll(constraint,
-                        applicationContext.getBean(constraint.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(constraint)));
+            constraintsToTransform.keySet().forEach(c -> {
+                transformedConstraints.putAll(c, applicationContext.getBean(c.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(c)));
             });
         }
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
-        List<ApplicationProcessingSummaryDTO> yearSummaries = getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
-        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = getApplicationProcessingSummariesByMonth(resource, constraints, transformedConstraints);
-        LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = getApplicationProcessingSummariesByWeek(resource, constraints,
-                transformedConstraints);
+        List<ApplicationProcessingSummaryDTO> yearSummaries = getApplicationProcessingSummariesByYear(resource, transformedConstraints);
+        LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> monthSummaries = getApplicationProcessingSummariesByMonth(resource, transformedConstraints);
+        LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> weekSummaries = getApplicationProcessingSummariesByWeek(resource, transformedConstraints);
 
         for (ApplicationProcessingSummaryDTO yearSummary : yearSummaries) {
             String applicationYear = yearSummary.getApplicationYear();
@@ -512,25 +504,24 @@ public class ResourceMapper {
         return summary;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(
-            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return applicationService.getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(
-            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints, transformedConstraints);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(processingSummary.getApplicationYear(), processingSummary);
         }
         return index;
     }
 
-    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(
-            ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
+    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
-        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints, transformedConstraints);
+        List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
             index.put(new ResourceProcessingMonth(processingSummary.getApplicationYear(), processingSummary.getApplicationMonth()), processingSummary);
         }
@@ -542,10 +533,6 @@ public class ResourceMapper {
                 .map(condition -> new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
                         .withInternalMode(condition.getInternalMode()).withExternalMode(condition.getExternalMode()))
                 .collect(Collectors.toList());
-    }
-
-    public List<PrismStudyOption> getResourceStudyOptionRepresentations(ResourceOpportunity resource) {
-        return resourceService.getStudyOptions(resource).stream().map(studyOption -> PrismStudyOption.valueOf(studyOption.getName())).collect(Collectors.toList());
     }
 
     public <T extends ResourceParent> ResourceRepresentationRobot getResourceRepresentationRobot(T resource) {
@@ -654,11 +641,9 @@ public class ResourceMapper {
         representation.setName(resource.getName());
         representation.setLogoImage(Optional.ofNullable(logoImageId).map(id -> new DocumentRepresentation().withId(logoImageId)).orElse(null));
 
-        representation.setAddress(new AddressRepresentation().withDomicile(new ImportedDomicileResponse()
-                .withName(resource.getAddressDomicileName())).withAddressLine1(resource.getAddressLine1())
-                .withAddressLine2(resource.getAddressLine2()).withAddressTown(resource.getAddressTown())
-                .withAddressRegion(resource.getAddressRegion()).withAddressCode(resource.getAddressCode())
-                .withGoogleId(resource.getAddressGoogleId()).withCoordinates(new AddressCoordinatesRepresentation()
+        representation.setAddress(new AddressRepresentation().withAddressLine1(resource.getAddressLine1()).withAddressLine2(resource.getAddressLine2())
+                .withAddressTown(resource.getAddressTown()).withAddressRegion(resource.getAddressRegion()).withAddressCode(resource.getAddressCode())
+                .withDomicile(resource.getAddressDomicileId()).withGoogleId(resource.getAddressGoogleId()).withCoordinates(new AddressCoordinatesRepresentation()
                         .withLatitude(decimalObjectToBigDecimal(resource.getAddressCoordinateLatitude(), GEOCODING_PRECISION))
                         .withLongitude(decimalObjectToBigDecimal(resource.getAddressCoordinateLongitude(), GEOCODING_PRECISION))));
 

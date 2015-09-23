@@ -24,8 +24,8 @@ public abstract class WorkflowDefinition implements UniqueEntity {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final WorkflowDefinition otherResource = (WorkflowDefinition) object;
-        return Objects.equal(getId(), otherResource.getId());
+        final WorkflowDefinition other = (WorkflowDefinition) object;
+        return Objects.equal(getId(), other.getId());
     }
 
     @Override

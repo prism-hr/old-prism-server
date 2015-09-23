@@ -44,12 +44,6 @@ public class LifeCycleService {
     @Value("${startup.display.initialize}")
     private Boolean initializeDisplayProperties;
 
-    @Value("${startup.import.system.data.drop}")
-    private Boolean dropData;
-
-    @Value("${startup.import.system.data}")
-    private Boolean initializeData;
-
     @Value("${maintenance.run}")
     private Boolean maintain;
 
@@ -86,15 +80,6 @@ public class LifeCycleService {
         }
 
         systemService.initializeAmazon();
-
-        if (BooleanUtils.isTrue(dropData)) {
-            systemService.dropSystemData();
-        }
-
-        if (BooleanUtils.isTrue(initializeData)) {
-            systemService.initializeSystemData();
-        }
-
         staticDataMapper.getData();
 
         if (BooleanUtils.isTrue(maintain)) {

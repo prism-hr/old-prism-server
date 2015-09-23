@@ -1,14 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 
 import uk.co.alumeni.prism.utils.validation.DatePast;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
@@ -16,24 +15,17 @@ import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 public class ProfilePersonalDetailDTO {
 
     @NotNull
-    @Valid
-    private ImportedEntityDTO title;
-
-    @NotNull
-    @Valid
-    private ImportedEntityDTO gender;
+    private PrismGender gender;
 
     @NotNull
     @DatePast
     private LocalDate dateOfBirth;
 
     @NotNull
-    @Valid
-    private ImportedDomicileDTO domicile;
+    private PrismDomicile domicile;
 
     @NotNull
-    @Valid
-    private ImportedDomicileDTO nationality;
+    private PrismDomicile nationality;
 
     @NotNull
     private Boolean visaRequired;
@@ -45,27 +37,11 @@ public class ProfilePersonalDetailDTO {
     @Size(min = 6, max = 32)
     private String skype;
 
-    @NotNull
-    @Valid
-    private ImportedEntityDTO ethnicity;
-
-    @NotNull
-    @Valid
-    private ImportedEntityDTO disability;
-
-    public ImportedEntityDTO getTitle() {
-        return title;
-    }
-
-    public void setTitle(ImportedEntityDTO title) {
-        this.title = title;
-    }
-
-    public ImportedEntityDTO getGender() {
+    public PrismGender getGender() {
         return gender;
     }
 
-    public void setGender(ImportedEntityDTO gender) {
+    public void setGender(PrismGender gender) {
         this.gender = gender;
     }
 
@@ -77,19 +53,19 @@ public class ProfilePersonalDetailDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedDomicileDTO getDomicile() {
+    public PrismDomicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedDomicileDTO domicile) {
+    public void setDomicile(PrismDomicile domicile) {
         this.domicile = domicile;
     }
 
-    public ImportedDomicileDTO getNationality() {
+    public PrismDomicile getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedDomicileDTO nationality) {
+    public void setNationality(PrismDomicile nationality) {
         this.nationality = nationality;
     }
 
@@ -115,22 +91,6 @@ public class ProfilePersonalDetailDTO {
 
     public void setSkype(String skype) {
         this.skype = skype;
-    }
-
-    public ImportedEntityDTO getEthnicity() {
-        return ethnicity;
-    }
-
-    public void setEthnicity(ImportedEntityDTO ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntityDTO getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntityDTO disability) {
-        this.disability = disability;
     }
 
 }

@@ -13,8 +13,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
 
 @Entity
@@ -29,24 +29,20 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     private UserAccount association;
 
     @ManyToOne
-    @JoinColumn(name = "imported_title_id")
-    private ImportedEntitySimple title;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_gender_id")
-    private ImportedEntitySimple gender;
+    @JoinColumn(name = "gender_id")
+    private PrismGender gender;
 
     @Column(name = "date_of_birth", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
 
     @ManyToOne
-    @JoinColumn(name = "imported_domicile_id")
-    private ImportedDomicile domicile;
+    @JoinColumn(name = "nationality_id")
+    private Domicile nationality;
 
     @ManyToOne
-    @JoinColumn(name = "imported_nationality_id")
-    private ImportedDomicile nationality;
+    @JoinColumn(name = "domicile_id")
+    private Domicile domicile;
 
     @Column(name = "visa_required")
     private Boolean visaRequired;
@@ -58,14 +54,6 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Column(name = "phone", nullable = false)
     @Size(max = 50)
     private String phone;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_ethnicity_id")
-    private ImportedEntitySimple ethnicity;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_disability_id")
-    private ImportedEntitySimple disability;
 
     public Integer getId() {
         return id;
@@ -83,19 +71,11 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
         this.association = association;
     }
 
-    public ImportedEntitySimple getTitle() {
-        return title;
-    }
-
-    public void setTitle(ImportedEntitySimple title) {
-        this.title = title;
-    }
-
-    public ImportedEntitySimple getGender() {
+    public PrismGender getGender() {
         return gender;
     }
 
-    public void setGender(ImportedEntitySimple gender) {
+    public void setGender(PrismGender gender) {
         this.gender = gender;
     }
 
@@ -107,20 +87,20 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedDomicile getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(ImportedDomicile domicile) {
-        this.domicile = domicile;
-    }
-
-    public ImportedDomicile getNationality() {
+    public Domicile getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedDomicile nationality) {
+    public void setNationality(Domicile nationality) {
         this.nationality = nationality;
+    }
+
+    public Domicile getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(Domicile domicile) {
+        this.domicile = domicile;
     }
 
     public Boolean getVisaRequired() {
@@ -145,22 +125,6 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
 
     public void setSkype(String skype) {
         this.skype = skype;
-    }
-
-    public ImportedEntitySimple getEthnicity() {
-        return ethnicity;
-    }
-
-    public void setEthnicity(ImportedEntitySimple ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntitySimple getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntitySimple disability) {
-        this.disability = disability;
     }
 
 }

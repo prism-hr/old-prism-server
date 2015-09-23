@@ -29,9 +29,9 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
@@ -83,8 +83,8 @@ public class Project extends ResourceOpportunity {
     private String advertIncompleteSection;
 
     @ManyToOne
-    @JoinColumn(name = "imported_opportunity_type_id", nullable = false)
-    private ImportedEntitySimple opportunityType;
+    @JoinColumn(name = "opportunity_type_id", nullable = false)
+    private OpportunityType opportunityType;
 
     @Column(name = "opportunity_category", nullable = false)
     private String opportunityCategories;
@@ -146,7 +146,7 @@ public class Project extends ResourceOpportunity {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
-    private Set<ResourceStudyOption> instanceGroups = Sets.newHashSet();
+    private Set<ResourceStudyOption> resourceStudyOptions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<ResourceState> resourceStates = Sets.newHashSet();
@@ -265,12 +265,12 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public ImportedEntitySimple getOpportunityType() {
+    public OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public void setOpportunityType(ImportedEntitySimple opportunityType) {
+    public void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -313,7 +313,7 @@ public class Project extends ResourceOpportunity {
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
     }
-    
+
     @Override
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
@@ -465,13 +465,13 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public Set<ResourceStudyOption> getInstanceGroups() {
-        return instanceGroups;
+    public Set<ResourceStudyOption> getResourceStudyOptions() {
+        return resourceStudyOptions;
     }
 
     @Override
-    public void setInstanceGroups(Set<ResourceStudyOption> instanceGroups) {
-        this.instanceGroups = instanceGroups;
+    public void setResourceStudyOptions(Set<ResourceStudyOption> resourceStudyOptions) {
+        this.resourceStudyOptions = resourceStudyOptions;
     }
 
     @Override
@@ -529,7 +529,7 @@ public class Project extends ResourceOpportunity {
         return this;
     }
 
-    public Project withOpportunityType(ImportedEntitySimple opportunityType) {
+    public Project withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

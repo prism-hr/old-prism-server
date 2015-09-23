@@ -40,8 +40,6 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
 import com.zuehlke.pgadmissions.domain.profile.ProfileAdvertRelationSection;
@@ -65,8 +63,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedDomicileDTO;
-import com.zuehlke.pgadmissions.rest.dto.imported.ImportedEntityDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
@@ -93,7 +89,7 @@ public class ProfileService {
     private DocumentService documentService;
 
     @Inject
-    private ImportedEntityService importedEntityService;
+    private PrismService prismService;
 
     @Inject
     private ResourceService resourceService;
@@ -134,7 +130,7 @@ public class ProfileService {
 
         LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
         userPersonalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
-        applicationPersonalDetail.setAgeRange(importedEntityService.getAgeRange(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
+        applicationPersonalDetail.setAgeRange(prismService.getAgeRangeFromAge(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
 
         userAccount.setPersonalDetail(userPersonalDetail);
         userAccountService.updateUserAccount(userAccount);
@@ -316,7 +312,6 @@ public class ProfileService {
             application.setPersonalDetail(applicationPersonalDetail);
             applicationPersonalDetail.setAssociation(application);
 
-            applicationPersonalDetail.setTitle(userPersonalDetail.getTitle());
             applicationPersonalDetail.setGender(userPersonalDetail.getGender());
 
             applicationPersonalDetail.setNationality(userPersonalDetail.getNationality());
@@ -325,9 +320,6 @@ public class ProfileService {
 
             applicationPersonalDetail.setPhone(userPersonalDetail.getPhone());
             applicationPersonalDetail.setSkype(userPersonalDetail.getSkype());
-
-            applicationPersonalDetail.setEthnicity(userPersonalDetail.getEthnicity());
-            applicationPersonalDetail.setDisability(userPersonalDetail.getDisability());
 
             applicationPersonalDetail.setLastUpdatedTimestamp(new DateTime());
         }
@@ -419,7 +411,8 @@ public class ProfileService {
             ApplicationAdditionalInformation additionalInformation = new ApplicationAdditionalInformation();
             application.setAdditionalInformation(additionalInformation);
             additionalInformation.setAssociation(application);
-            additionalInformation.setConvictionsText(userAdditionalInformation.getConvictionsText());
+            additionalInformation.setRequirements(userAdditionalInformation.getRequirements());
+            additionalInformation.setConvictions(userAdditionalInformation.getConvictions());
             additionalInformation.setLastUpdatedTimestamp(new DateTime());
         }
     }
@@ -432,18 +425,15 @@ public class ProfileService {
             personalDetail = instantiate(personalDetailClass);
         }
 
-        personalDetail.setTitle(importedEntityService.getById(ImportedEntitySimple.class, getImportedEntityId(personalDetailDTO.getTitle())));
-        personalDetail.setGender(importedEntityService.getById(ImportedEntitySimple.class, getImportedEntityId(personalDetailDTO.getGender())));
+        personalDetail.setGender(personalDetailDTO.getGender());
 
-        personalDetail.setNationality(importedEntityService.getById(ImportedDomicile.class, getImportedDomicileId(personalDetailDTO.getNationality())));
-        personalDetail.setDomicile(importedEntityService.getById(ImportedDomicile.class, getImportedDomicileId(personalDetailDTO.getDomicile())));
+        personalDetail.setNationality(prismService.getDomicileById(personalDetailDTO.getNationality()));
+        personalDetail.setDomicile(prismService.getDomicileById(personalDetailDTO.getDomicile()));
         personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
 
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
 
-        personalDetail.setEthnicity(importedEntityService.getById(ImportedEntitySimple.class, getImportedEntityId(personalDetailDTO.getEthnicity())));
-        personalDetail.setDisability(importedEntityService.getById(ImportedEntitySimple.class, getImportedEntityId(personalDetailDTO.getDisability())));
         return personalDetail;
     }
 
@@ -610,7 +600,8 @@ public class ProfileService {
             additionalInformation = instantiate(additionalInformationClass);
         }
 
-        additionalInformation.setConvictionsText(additionalInformationDTO.getConvictionsText());
+        additionalInformation.setRequirements(additionalInformationDTO.getRequirements());
+        additionalInformation.setConvictions(additionalInformationDTO.getConvictions());
         return additionalInformation;
     }
 
@@ -664,14 +655,6 @@ public class ProfileService {
 
     private <T extends ProfileReferee<?>> T getProfileReferee(Class<T> refereeClass, Integer refereeId) {
         return entityService.getById(refereeClass, refereeId);
-    }
-
-    private Integer getImportedEntityId(ImportedEntityDTO importedEntity) {
-        return importedEntity == null ? null : importedEntity.getId();
-    }
-
-    private String getImportedDomicileId(ImportedDomicileDTO importedDomicile) {
-        return importedDomicile == null ? null : importedDomicile.getId();
     }
 
     private Integer getDocumentId(DocumentDTO document) {

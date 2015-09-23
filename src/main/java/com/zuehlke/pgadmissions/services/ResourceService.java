@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceOpportunityCategoryProjection;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.FULL_TIME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
@@ -19,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
@@ -59,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -68,13 +68,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
-import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParentDivision;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
@@ -83,16 +80,17 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceIdentityDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -104,7 +102,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDT
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -144,10 +141,10 @@ public class ResourceService {
     private DocumentService documentService;
 
     @Inject
-    private ImportedEntityService importedEntityService;
+    private EntityService entityService;
 
     @Inject
-    private EntityService entityService;
+    private PrismService prismService;
 
     @Inject
     private RoleService roleService;
@@ -456,26 +453,13 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
     }
 
-    public ResourceStudyOption getStudyOption(ResourceParent resource, ImportedEntitySimple studyOption) {
-        if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
-            return resourceDAO.getResourceAttributeStrict(resource, ResourceStudyOption.class, "studyOption", studyOption);
-        }
-        return resourceDAO.getResourceAttribute(resource, ResourceStudyOption.class, "studyOption", studyOption);
+    public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {
+        return resourceDAO.getResourceStudyOption(resource, studyOption);
     }
 
-    public List<ImportedEntitySimple> getStudyOptions(ResourceOpportunity resource) {
-        if (BooleanUtils.isTrue(resource.getAdvert().isImported())) {
-            List<ImportedEntitySimple> prismStudyOptions = Lists.newLinkedList();
-            List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributesStrict(resource, ResourceStudyOption.class, "studyOption", "id");
-            for (ResourceStudyOption studyOption : studyOptions) {
-                prismStudyOptions.add(studyOption.getStudyOption());
-            }
-            return prismStudyOptions;
-        }
-
-        List<ImportedEntitySimple> filteredStudyOptions = Lists.newLinkedList();
-        List<ResourceStudyOption> studyOptions = resourceDAO.getResourceAttributes(resource, ResourceStudyOption.class,
-                "studyOption", "id");
+    public List<PrismStudyOption> getStudyOptions(ResourceOpportunity resource) {
+        List<PrismStudyOption> filteredStudyOptions = Lists.newLinkedList();
+        List<ResourceStudyOption> studyOptions = resourceDAO.getResourceStudyOptions(resource);
 
         PrismScope lastResourceScope = null;
         for (ResourceStudyOption studyOption : studyOptions) {
@@ -502,18 +486,8 @@ public class ResourceService {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
             ResourceOpportunityDTO resourceOpportunityDTO = (ResourceOpportunityDTO) resourceDTO;
-
-            Program program = resource.getProgram();
-            if (program != null && !resource.sameAs(program) && BooleanUtils.isTrue(program.getAdvert().isImported())) {
-                ImportedEntitySimple opportunityType = program.getOpportunityType();
-                setResourceOpportunityType(resourceOpportunity, opportunityType);
-            } else {
-                ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, resourceOpportunityDTO.getOpportunityType().name());
-                setResourceOpportunityType(resourceOpportunity, opportunityType);
-                List<ImportedEntitySimple> studyOptions = resourceOpportunityDTO.getStudyOptions().stream()
-                        .map(studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId())).collect(Collectors.toList());
-                setStudyOptions(resourceOpportunity, studyOptions, LocalDate.now());
-            }
+            setResourceOpportunityType(resourceOpportunity, resourceOpportunityDTO.getOpportunityType());
+            setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions(), LocalDate.now());
         }
 
         setResourceConditions(resource, resourceDTO.getConditions());
@@ -552,17 +526,17 @@ public class ResourceService {
         });
     }
 
-    public void setStudyOptions(ResourceOpportunity resource, List<ImportedEntitySimple> studyOptions, LocalDate baseline) {
+    public void setStudyOptions(ResourceOpportunity resource, List<PrismStudyOption> studyOptions, LocalDate baseline) {
         if (resource.getId() != null) {
             resourceDAO.deleteResourceStudyOptions(resource);
-            resource.getInstanceGroups().clear();
+            resource.getResourceStudyOptions().clear();
         }
 
         if (studyOptions == null) {
-            studyOptions = studyOptions == null ? newArrayList(importedEntityService.getByName(ImportedEntitySimple.class, FULL_TIME.name())) : studyOptions;
+            studyOptions = studyOptions == null ? asList(PrismStudyOption.values()) : studyOptions;
         }
 
-        resource.getInstanceGroups()
+        resource.getResourceStudyOptions()
                 .addAll(studyOptions.stream().map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption)).collect(Collectors.toList()));
     }
 
@@ -572,26 +546,15 @@ public class ResourceService {
 
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
+        resource.setOpportunityType(prismService.getOpportunityTypeById(resourceDTO.getOpportunityType()));
 
-        if (!resource.getAdvert().isImported()) {
-            ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class,
-                    resourceDTO.getOpportunityType().name());
-            resource.setOpportunityType(opportunityType);
-
-            List<ImportedEntitySimple> studyOptions = resourceDTO.getStudyOptions().stream().map(
-                    studyOptionDTO -> importedEntityService.getById(ImportedEntitySimple.class, studyOptionDTO.getId()))
-                    .collect(Collectors.toList());
-            setStudyOptions(resource, studyOptions == null ? Lists.newArrayList() : studyOptions, new LocalDate());
-        }
-    }
-
-    public <T extends ResourceParentDivision, U extends ResourceParentDivisionDTO> void updateResource(T resource, U resourceDTO) {
-        resource.setImportedCode(resourceDTO.getImportedCode());
-        updateResource(resource, (ResourceParentDTO) resourceDTO);
+        List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
+        setStudyOptions(resource, studyOptions == null ? Lists.newArrayList() : studyOptions, new LocalDate());
     }
 
     public <T extends ResourceParent, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {
         AdvertDTO advertDTO = resourceDTO.getAdvert();
+        resource.setImportedCode(resourceDTO.getImportedCode());
 
         String name = resourceDTO.getName();
         Advert advert = resource.getAdvert();
@@ -847,11 +810,12 @@ public class ResourceService {
         }
     }
 
-    private void setResourceOpportunityType(ResourceOpportunity resourceOpportunity, ImportedEntitySimple opportunityType) {
+    private void setResourceOpportunityType(ResourceOpportunity resourceOpportunity, PrismOpportunityType prismOpportunityType) {
+        OpportunityType opportunityType = prismService.getOpportunityTypeById(prismOpportunityType);
         resourceOpportunity.setOpportunityType(opportunityType);
         resourceOpportunity.getAdvert().setOpportunityType(opportunityType);
 
-        PrismOpportunityCategory opportunityCategory = PrismOpportunityType.valueOf(opportunityType.getName()).getCategory();
+        PrismOpportunityCategory opportunityCategory = opportunityType.getOpportunityCategory();
         resourceOpportunity.setOpportunityCategories(opportunityCategory.name());
 
         for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {

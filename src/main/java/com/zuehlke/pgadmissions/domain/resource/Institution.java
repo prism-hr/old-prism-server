@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -34,7 +33,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "name" }) })
-public class Institution extends ResourceParent implements TargetEntity {
+public class Institution extends ResourceParent {
 
     @Id
     @GeneratedValue
@@ -59,6 +58,9 @@ public class Institution extends ResourceParent implements TargetEntity {
 
     @Column(name = "code", unique = true)
     private String code;
+
+    @Column(name = "imported_code", unique = true)
+    private String importedCode;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
@@ -200,6 +202,16 @@ public class Institution extends ResourceParent implements TargetEntity {
     @Override
     public void setCode(String code) {
         this.code = code;
+    }
+
+    @Override
+    public String getImportedCode() {
+        return importedCode;
+    }
+
+    @Override
+    public void setImportedCode(String importedCode) {
+        this.importedCode = importedCode;
     }
 
     @Override

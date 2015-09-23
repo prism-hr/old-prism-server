@@ -14,13 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 
 @Repository
-@SuppressWarnings("unchecked")
 public class ProgramDAO {
 
     @Autowired
@@ -33,14 +31,7 @@ public class ProgramDAO {
                 .uniqueResult();
     }
 
-    public Program getProgramByImportedCode(Institution institution, String importedCode) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("studyOptions", FetchMode.JOIN) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eq("importedCode", importedCode)) //
-                .uniqueResult();
-    }
-
+    @SuppressWarnings("unchecked")
     public List<ResourceRepresentationSimple> getApprovedPrograms(Integer institutionId) {
         return (List<ResourceRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(Program.class) //
                 .setProjection(Projections.projectionList() //
@@ -53,6 +44,7 @@ public class ProgramDAO {
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Integer> getProjects(Integer program) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Project.class) //
                 .setProjection(Projections.property("id")) //
@@ -60,6 +52,7 @@ public class ProgramDAO {
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Integer> getApplications(Integer program) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.property("id")) //

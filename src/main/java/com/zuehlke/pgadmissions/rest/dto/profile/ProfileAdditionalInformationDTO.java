@@ -1,18 +1,24 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-
-import javax.validation.constraints.Size;
-
 public class ProfileAdditionalInformationDTO {
 
-    @Size(max = 400)
-    private String convictionsText;
+    private String requirements;
 
-    public String getConvictionsText() {
-        return convictionsText;
+    private String convictions;
+
+    public String getRequirements() {
+        return requirements;
     }
 
-    public void setConvictionsText(String convictionsText) {
-        this.convictionsText = convictionsText;
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
+    }
+
+    public String getConvictions() {
+        return convictions;
+    }
+
+    public void setConvictions(String convictions) {
+        this.convictions = convictions;
     }
 }

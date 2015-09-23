@@ -15,11 +15,11 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
+import com.zuehlke.pgadmissions.domain.Domicile;
 
 @Entity
 @Table(name = "address")
-public class Address extends AddressDefinition<ImportedDomicile> {
+public class Address extends AddressDefinition<Domicile> {
 
     @Id
     @GeneratedValue
@@ -43,8 +43,8 @@ public class Address extends AddressDefinition<ImportedDomicile> {
     private String addressCode;
 
     @ManyToOne
-    @JoinColumn(name = "imported_domicile_id")
-    private ImportedDomicile domicile;
+    @JoinColumn(name = "domicile_id")
+    private Domicile domicile;
 
     @Column(name = "google_id")
     private String googleId;
@@ -100,11 +100,11 @@ public class Address extends AddressDefinition<ImportedDomicile> {
         this.addressCode = addressCode;
     }
 
-    public ImportedDomicile getDomicile() {
+    public Domicile getDomicile() {
         return domicile;
     }
 
-    public void setDomicile(ImportedDomicile domicile) {
+    public void setDomicile(Domicile domicile) {
         this.domicile = domicile;
     }
 
@@ -125,7 +125,7 @@ public class Address extends AddressDefinition<ImportedDomicile> {
     }
 
     public String getLocationString() {
-        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getName());
+        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getId().name());
     }
 
     public List<String> getLocationTokens() {

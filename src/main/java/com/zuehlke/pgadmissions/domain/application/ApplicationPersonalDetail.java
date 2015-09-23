@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.application;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,9 +15,9 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedAgeRange;
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.AgeRange;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
 
 @Entity
@@ -29,25 +31,21 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     @OneToOne(mappedBy = "personalDetail")
     private Application association;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_title_id")
-    private ImportedEntitySimple title;
+    @Column(name = "gender_id")
+    @Enumerated(EnumType.STRING)
+    private PrismGender gender;
 
     @ManyToOne
-    @JoinColumn(name = "imported_gender_id")
-    private ImportedEntitySimple gender;
+    @JoinColumn(name = "age_range_id")
+    private AgeRange ageRange;
 
     @ManyToOne
-    @JoinColumn(name = "imported_age_range_id")
-    private ImportedAgeRange ageRange;
+    @JoinColumn(name = "nationality_id")
+    private Domicile nationality;
 
     @ManyToOne
-    @JoinColumn(name = "imported_domicile_id")
-    private ImportedDomicile domicile;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_nationality_id")
-    private ImportedDomicile nationality;
+    @JoinColumn(name = "domicile_id")
+    private Domicile domicile;
 
     @Column(name = "visa_required")
     private Boolean visaRequired;
@@ -60,14 +58,6 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     @Size(max = 50)
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_ethnicity_id")
-    private ImportedEntitySimple ethnicity;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_disability_id")
-    private ImportedEntitySimple disability;
-
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
@@ -75,7 +65,7 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     public Integer getId() {
         return id;
     }
-    
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -88,44 +78,36 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
         this.association = association;
     }
 
-    public ImportedEntitySimple getTitle() {
-        return title;
-    }
-
-    public void setTitle(ImportedEntitySimple title) {
-        this.title = title;
-    }
-
-    public ImportedEntitySimple getGender() {
+    public PrismGender getGender() {
         return gender;
     }
 
-    public void setGender(ImportedEntitySimple gender) {
+    public void setGender(PrismGender gender) {
         this.gender = gender;
     }
 
-    public ImportedAgeRange getAgeRange() {
+    public AgeRange getAgeRange() {
         return ageRange;
     }
 
-    public void setAgeRange(ImportedAgeRange ageRange) {
+    public void setAgeRange(AgeRange ageRange) {
         this.ageRange = ageRange;
     }
 
-    public ImportedDomicile getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(ImportedDomicile domicile) {
-        this.domicile = domicile;
-    }
-
-    public ImportedDomicile getNationality() {
+    public Domicile getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedDomicile nationality) {
+    public void setNationality(Domicile nationality) {
         this.nationality = nationality;
+    }
+
+    public Domicile getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(Domicile domicile) {
+        this.domicile = domicile;
     }
 
     public Boolean getVisaRequired() {
@@ -150,22 +132,6 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
 
     public void setSkype(String skype) {
         this.skype = skype;
-    }
-
-    public ImportedEntitySimple getEthnicity() {
-        return ethnicity;
-    }
-
-    public void setEthnicity(ImportedEntitySimple ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntitySimple getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntitySimple disability) {
-        this.disability = disability;
     }
 
     @Override

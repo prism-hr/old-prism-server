@@ -18,14 +18,8 @@ public class Domicile extends Definition<PrismDomicile> {
     @Enumerated(EnumType.STRING)
     private PrismDomicile id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Column(name = "currency", nullable = false)
     private String currency;
-
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
 
     @Override
     public PrismDomicile getId() {
@@ -50,18 +44,8 @@ public class Domicile extends Definition<PrismDomicile> {
         return this;
     }
 
-    public Domicile withName(String name) {
-        this.name = name;
-        return this;
-    }
-
     public Domicile withCurrency(final String currency) {
         this.currency = currency;
-        return this;
-    }
-
-    public Domicile withEnabled(Boolean enabled) {
-        this.enabled = enabled;
         return this;
     }
 

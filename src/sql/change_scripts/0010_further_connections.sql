@@ -261,3 +261,21 @@ alter table user_additional_information
 	add column requirements text after id,
 	change column convictions_text convictions text
 ;
+
+alter table domicile
+	drop column name,
+	drop column enabled,
+	drop index name
+;
+
+drop table imported_entity_type
+;
+
+alter table user_personal_detail
+	drop foreign key user_personal_detail_ibfk_4,
+	drop index imported_title_id,
+	drop column imported_title_id
+;
+
+drop table imported_entity
+;

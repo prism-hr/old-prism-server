@@ -33,10 +33,14 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.SystemDAO;
+import com.zuehlke.pgadmissions.domain.AgeRange;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAgeRange;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -62,6 +66,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -192,6 +197,18 @@ public class SystemService {
 
     @Transactional(timeout = 600)
     public void initializeWorkflow() throws Exception {
+        logger.info("Initializing opportunity type definitions");
+        verifyDefinition(Scope.class);
+        initializeOpportunityTypes();
+
+        logger.info("Initializing age range definitions");
+        verifyDefinition(AgeRange.class);
+        initializeAgeRanges();
+
+        logger.info("Initializing domicile definitions");
+        verifyDefinition(Domicile.class);
+        initializeDomiciles();
+
         logger.info("Initializing scope definitions");
         verifyDefinition(Scope.class);
         initializeScopes();
@@ -275,6 +292,25 @@ public class SystemService {
 
     public PropertyLoader getPropertyLoader() {
         return propertyLoader;
+    }
+
+    private void initializeOpportunityTypes() throws DeduplicationException {
+        for (PrismOpportunityType prismOpportunityType : PrismOpportunityType.values()) {
+            entityService.createOrUpdate(new OpportunityType().withId(prismOpportunityType).withOpportunityCategory(prismOpportunityType.getOpportunityCategory())
+                    .withPublished(prismOpportunityType.isPublished()).withRequireEndorsement(prismOpportunityType.isRequireEndorsement()));
+        }
+    }
+
+    private void initializeAgeRanges() throws DeduplicationException {
+        for (PrismAgeRange prismAgeRange : PrismAgeRange.values()) {
+            entityService.createOrUpdate(new AgeRange().withId(prismAgeRange).withLowerBound(prismAgeRange.getLowerBound()).withUpperBound(prismAgeRange.getUpperBound()));
+        }
+    }
+
+    private void initializeDomiciles() throws DeduplicationException {
+        for (PrismDomicile prismDomicile : PrismDomicile.values()) {
+            entityService.createOrUpdate(new Domicile().withId(prismDomicile).withCurrency(prismDomicile.getCurrency()));
+        }
     }
 
     private void initializeScopes() throws DeduplicationException {

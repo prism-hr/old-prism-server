@@ -9,6 +9,10 @@ public abstract class Definition<T extends PrismLocalizableDefinition> implement
 
     public abstract void setId(T id);
 
+    public abstract Integer getOrdinal();
+
+    public abstract void setOrdinal(Integer ordinal);
+
     @Override
     public int hashCode() {
         return Objects.hashCode(getId());

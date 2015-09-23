@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -72,6 +73,8 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
@@ -580,6 +583,17 @@ public class ResourceMapper {
         if (!actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false)) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
+    }
+
+    public List<ResourceListFilterRepresentation> getResourceListFilterRepresentations() {
+        List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListConstraint.values().length);
+        for (PrismResourceListConstraint property : PrismResourceListConstraint.values()) {
+            List<FilterExpressionRepresentation> filterExpressions = property.getPermittedExpressions().stream()
+                    .map(filterExpression -> new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()))
+                    .collect(Collectors.toList());
+            filters.add(new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes()));
+        }
+        return filters;
     }
 
     private <T extends Resource, V extends ResourceRepresentationActivity> V getResourceRepresentationActivity(T resource, Class<V> returnType) {

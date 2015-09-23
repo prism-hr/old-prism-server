@@ -283,3 +283,59 @@ drop table imported_entity
 alter table age_range
 	modify column lower_bound int(2) unsigned
 ;
+alter table age_range
+	add column ordinal int(3) unsigned not null,
+	add index (ordinal)
+;
+
+alter table domicile
+	add column ordinal int(3) unsigned not null,
+	add index (ordinal)
+;
+
+alter table opportunity_type
+	add column ordinal int(3) unsigned not null,
+	add index (ordinal)
+;
+
+alter table user_account
+	modify column enabled int(1) not null after portrait_image_id
+;
+
+alter table application_referee
+	modify column user_id int(10) unsigned after application_id,
+	modify column skype varchar(50) after phone
+;
+
+alter table user_referee
+	modify column user_id int(10) unsigned after user_account_id,
+	modify column skype varchar(50) after phone
+;
+
+alter table application_referee
+	modify column user_id int(10) unsigned not null
+;
+
+alter table application_qualification
+	add column user_id int(10) unsigned not null after application_id,
+	add index (user_id),
+	add foreign key (user_id) references user (id)
+;
+
+alter table user_qualification
+	add column user_id int(10) unsigned not null after user_account_id,
+	add index (user_id),
+	add foreign key (user_id) references user (id)
+;
+
+alter table application_employment_position
+	add column user_id int(10) unsigned not null after application_id,
+	add index (user_id),
+	add foreign key (user_id) references user (id)
+;
+
+alter table user_employment_position
+	add column user_id int(10) unsigned not null after user_account_id,
+	add index (user_id),
+	add foreign key (user_id) references user (id)
+;

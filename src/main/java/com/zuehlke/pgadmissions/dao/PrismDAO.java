@@ -2,16 +2,20 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_DOMICILE;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.AgeRange;
+import com.zuehlke.pgadmissions.domain.Definition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 
@@ -42,6 +46,13 @@ public class PrismDAO {
                 .add(Restrictions.like("value", name, MatchMode.ANYWHERE)) //
                 .add(Restrictions.eq("systemDefault", true)) //
                 .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Definition<?>> List<T> getDefinitions(Class<T> definitionClass) {
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(definitionClass) //
+                .addOrder(Order.asc("ordinal")) //
                 .uniqueResult();
     }
 

@@ -62,9 +62,6 @@ public class Application extends Resource implements
     @Column(name = "code", unique = true)
     private String code;
 
-    @Column(name = "code_legacy")
-    private String codeLegacy;
-
     @ManyToOne
     @Fetch(FetchMode.SELECT)
     @JoinColumn(name = "user_id", nullable = false)
@@ -243,14 +240,6 @@ public class Application extends Resource implements
         this.code = code;
     }
 
-    public final String getCodeLegacy() {
-        return codeLegacy;
-    }
-
-    public final void setCodeLegacy(String codeLegacy) {
-        this.codeLegacy = codeLegacy;
-    }
-
     @Override
     public User getUser() {
         return user;
@@ -311,10 +300,12 @@ public class Application extends Resource implements
         this.project = project;
     }
 
+    @Override
     public final Advert getAdvert() {
         return advert;
     }
 
+    @Override
     public final void setAdvert(Advert advert) {
         this.advert = advert;
     }
@@ -334,20 +325,67 @@ public class Application extends Resource implements
         return this;
     }
 
+    public ApplicationProgramDetail getProgramDetail() {
+        return programDetail;
+    }
+    
+    public void setProgramDetail(ApplicationProgramDetail programDetail) {
+        this.programDetail = programDetail;
+    }
+
+    @Override
+    public ApplicationPersonalDetail getPersonalDetail() {
+        return personalDetail;
+    }
+
+    @Override
+    public void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
+        this.personalDetail = personalDetail;
+    }
+    
+    @Override
     public ApplicationAddress getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(ApplicationAddress address) {
         this.address = address;
     }
+    
+    @Override
+    public Set<ApplicationQualification> getQualifications() {
+        return qualifications;
+    }
 
+    @Override
+    public Set<ApplicationEmploymentPosition> getEmploymentPositions() {
+        return employmentPositions;
+    }
+
+    @Override
+    public Set<ApplicationReferee> getReferees() {
+        return referees;
+    }
+
+    @Override
     public ApplicationDocument getDocument() {
         return document;
     }
 
+    @Override
     public void setDocument(ApplicationDocument document) {
         this.document = document;
+    }
+    
+    @Override
+    public ApplicationAdditionalInformation getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    @Override
+    public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 
     @Override
@@ -426,30 +464,6 @@ public class Application extends Resource implements
         this.closingDate = closingDate;
     }
 
-    public ApplicationPersonalDetail getPersonalDetail() {
-        return personalDetail;
-    }
-
-    public void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
-        this.personalDetail = personalDetail;
-    }
-
-    public ApplicationProgramDetail getProgramDetail() {
-        return programDetail;
-    }
-
-    public void setProgramDetail(ApplicationProgramDetail programDetail) {
-        this.programDetail = programDetail;
-    }
-
-    public ApplicationAdditionalInformation getAdditionalInformation() {
-        return additionalInformation;
-    }
-
-    public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
-        this.additionalInformation = additionalInformation;
-    }
-
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
@@ -490,24 +504,14 @@ public class Application extends Resource implements
         this.confirmedOfferType = confirmedOfferType;
     }
 
+    @Override
     public Boolean getShared() {
         return shared;
     }
 
+    @Override
     public void setShared(Boolean shared) {
         this.shared = shared;
-    }
-
-    public Set<ApplicationQualification> getQualifications() {
-        return qualifications;
-    }
-
-    public Set<ApplicationEmploymentPosition> getEmploymentPositions() {
-        return employmentPositions;
-    }
-
-    public Set<ApplicationReferee> getReferees() {
-        return referees;
     }
 
     @Override

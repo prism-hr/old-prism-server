@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismAgeRange implements PrismLocalizableDefinition {
 
-    FROM_0_TO_18(null, 18), //
+    UP_TO_18(null, 18), //
     FROM_19_TO_24(19, 24), //
     FROM_25_TO_29(25, 219), //
     FROM_30_TO_39(30, 39), //

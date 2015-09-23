@@ -30,6 +30,9 @@ public class OpportunityType extends Definition<PrismOpportunityType> {
     @Column(name = "require_endorsement", nullable = false)
     private Boolean requireEndorsement;
     
+    @Column(name = "ordinal", nullable = false, unique = true)
+    private Integer ordinal;
+    
     @Override
     public PrismOpportunityType getId() {
         return id;
@@ -64,6 +67,14 @@ public class OpportunityType extends Definition<PrismOpportunityType> {
         this.requireEndorsement = requireEndorsement;
     }
 
+    public Integer getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
+    }
+
     public OpportunityType withId(PrismOpportunityType id) {
         this.id = id;
         return this;
@@ -84,4 +95,9 @@ public class OpportunityType extends Definition<PrismOpportunityType> {
         return this;
     }
 
+    public OpportunityType withOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
+        return this;
+    }
+    
 }

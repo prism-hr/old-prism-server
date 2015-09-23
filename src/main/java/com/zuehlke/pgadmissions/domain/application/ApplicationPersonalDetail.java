@@ -62,26 +62,32 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Application getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(Application association) {
         this.association = association;
     }
 
+    @Override
     public PrismGender getGender() {
         return gender;
     }
 
+    @Override
     public void setGender(PrismGender gender) {
         this.gender = gender;
     }
@@ -94,42 +100,52 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
         this.ageRange = ageRange;
     }
 
+    @Override
     public Domicile getNationality() {
         return nationality;
     }
 
+    @Override
     public void setNationality(Domicile nationality) {
         this.nationality = nationality;
     }
 
+    @Override
     public Domicile getDomicile() {
         return domicile;
     }
 
+    @Override
     public void setDomicile(Domicile domicile) {
         this.domicile = domicile;
     }
 
+    @Override
     public Boolean getVisaRequired() {
         return visaRequired;
     }
 
+    @Override
     public void setVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
     }
 
+    @Override
     public String getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    @Override
     public String getSkype() {
         return skype;
     }
 
+    @Override
     public void setSkype(String skype) {
         this.skype = skype;
     }

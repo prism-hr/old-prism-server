@@ -17,8 +17,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
 
 @Entity
-@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "study_option_id" }) })
+@Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option" }),
+        @UniqueConstraint(columnNames = { "project_id", "study_option" }) })
 public class ResourceStudyOption extends ResourceOpportunityAttribute implements ResourceInstanceGroupDefinition<PrismStudyOption> {
 
     @Id

@@ -70,6 +70,7 @@ import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
@@ -637,7 +638,13 @@ public class ProfileService {
     }
 
     private void createUserAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
-        ResourceParent resource = resourceService.createResourceFamily(advertRelationDTO.getResource());
+        ResourceFamilyCreationDTO resourceCreationDTO = advertRelationDTO.getResource();
+        ResourceParent resource = resourceService.createResourceFamily(resourceCreationDTO);
+
+        UserDTO userConnectionDTO = resourceCreationDTO.getUser();
+        if (userConnectionDTO != null) {
+            advertRelation.setUser(userService.getUserByEmail(userConnectionDTO.getEmail()));
+        }
 
         Advert newAdvert = resource.getAdvert();
         Advert oldAdvert = advertRelation.getAdvert();

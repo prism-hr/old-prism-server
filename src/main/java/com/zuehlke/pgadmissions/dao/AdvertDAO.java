@@ -2,8 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.EMPLOYERS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.UNIVERSITIES;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
@@ -42,7 +42,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertConnection;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -420,12 +420,12 @@ public class AdvertDAO {
     }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        PrismAdvertContext context = queryDTO.getContext();
-        if (context.equals(EMPLOYERS)) {
+        PrismMotivationContext context = queryDTO.getContext();
+        if (context.equals(EMPLOYER)) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.like("advert.opportunityCategories", EXPERIENCE.name(), MatchMode.ANYWHERE)) //
                     .add(Restrictions.like("advert.opportunityCategories", WORK.name(), MatchMode.ANYWHERE)));
-        } else if (context.equals(UNIVERSITIES)) {
+        } else if (context.equals(UNIVERSITY)) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.like("advert.opportunityCategories", STUDY.name(), MatchMode.ANYWHERE)));
         }

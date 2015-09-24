@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext.APPLICANTS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -38,7 +38,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -91,12 +91,12 @@ public class AdvertMapper {
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
-        PrismAdvertContext filterContext = query.getContext();
+        PrismMotivationContext filterContext = query.getContext();
         PrismScope[] filterScopes = query.getTab() != null ? query.getTab().getScopes() : new PrismScope[0];
 
         PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
-        PrismScope[] queryScopes = filterContext.equals(APPLICANTS) ? opportunityScopes : filterScopes;
+        PrismScope[] queryScopes = filterContext.equals(APPLICANT) ? opportunityScopes : filterScopes;
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();

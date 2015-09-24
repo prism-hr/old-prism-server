@@ -4,6 +4,8 @@ import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceOpportunityCategoryProjection;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
@@ -57,6 +59,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.PrismScopeCreationFamily;
@@ -222,7 +225,7 @@ public class ResourceService {
 
             UserDTO userDTO = resourceFamilyDTO.getUser();
             User thisUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-            joinResource(lastParentResource, thisUser, PrismRole.getUnverifiedViewerRole(lastParentResource));
+            joinResource(lastParentResource, thisUser, EMPLOYER);
 
             return lastResource;
         }
@@ -716,6 +719,17 @@ public class ResourceService {
         return resourceDAO.getResources(parentResource, resourceScope, query);
     }
 
+    public void joinResource(ResourceParent resource, User user, PrismMotivationContext context) {
+        PrismRole initialRole = null;
+        boolean canViewEdit = actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false);
+        if (context.equals(APPLICANT)) {
+            initialRole = PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED"));
+        } else if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
+            initialRole = PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED"));
+        }
+        roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(roleService.getById(initialRole)).withAssignedTimestamp(now()));
+    }
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {
         return getResources(user, scope, parentScopes, filter, getResourceOpportunityCategoryProjection(), condition, ResourceOpportunityCategoryDTO.class);
     }
@@ -842,12 +856,6 @@ public class ResourceService {
             }
         }
         return false;
-    }
-
-    private void joinResource(ResourceParent resource, User user, PrismRole prismRole) {
-        if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(roleService.getById(prismRole)).withAssignedTimestamp(now()));
-        }
     }
 
 }

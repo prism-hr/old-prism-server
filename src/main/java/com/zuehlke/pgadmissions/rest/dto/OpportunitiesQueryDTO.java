@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -35,7 +35,7 @@ public class OpportunitiesQueryDTO {
     private Integer projectId;
 
     @NotNull
-    private PrismAdvertContext context;
+    private PrismMotivationContext context;
 
     private PrismOpportunityCategory opportunityCategory;
 
@@ -125,11 +125,11 @@ public class OpportunitiesQueryDTO {
         this.tab = tab;
     }
 
-    public PrismAdvertContext getContext() {
+    public PrismMotivationContext getContext() {
         return context;
     }
 
-    public void setContext(PrismAdvertContext context) {
+    public void setContext(PrismMotivationContext context) {
         this.context = context;
     }
 

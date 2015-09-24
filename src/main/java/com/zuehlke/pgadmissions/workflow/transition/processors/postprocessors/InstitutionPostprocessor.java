@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
@@ -22,7 +24,7 @@ public class InstitutionPostprocessor implements ResourceProcessor<Institution> 
     @Override
     public void process(Institution resource, Comment comment) {
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
-        if (comment.isResourceEndorsementComment()) {
+        if (comment.isRatingComment(INSTITUTION)) {
             resourceService.synchronizeResourceEndorsement(resource, comment);
         }
     }

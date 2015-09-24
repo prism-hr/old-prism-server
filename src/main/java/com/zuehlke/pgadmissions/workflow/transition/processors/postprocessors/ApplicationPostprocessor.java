@@ -74,7 +74,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             synchronizeApplicationReferees(resource, comment);
         }
 
-        if (comment.isApplicationRatingComment()) {
+        if (comment.isRatingComment(APPLICATION)) {
             synchronizeApplicationRating(resource, comment);
         }
 

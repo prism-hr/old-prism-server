@@ -87,6 +87,9 @@ public class Program extends ResourceOpportunity {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "availableDate", nullable = false)
+    private LocalDate availableDate;
+    
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
 
@@ -301,6 +304,16 @@ public class Program extends ResourceOpportunity {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+    
+    @Override
+    public LocalDate getAvailableDate() {
+        return availableDate;
+    }
+
+    @Override
+    public void setAvailableDate(LocalDate availableDate) {
+        this.availableDate = availableDate;
     }
 
     @Override

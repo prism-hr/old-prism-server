@@ -36,7 +36,7 @@ public class InstitutionMapper {
     }
 
     public List<ResourceRepresentationLocation> getInstitutionRepresentations(String query, String[] googleIds) {
-        return institutionService.getInstitutions(query, googleIds).stream().map(resourceMapper::getResourceRepresentationLocation).collect(Collectors.toList());
+        return institutionService.getInstitutions(query, googleIds).stream().map(resourceMapper::getResourceRepresentationCreation).collect(Collectors.toList());
     }
 
     private <T extends InstitutionRepresentation> T getInstitutionRepresentation(Institution institution, Class<T> returnType, List<PrismRole> overridingRoles) {

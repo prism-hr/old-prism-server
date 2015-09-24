@@ -46,9 +46,6 @@ public class State extends WorkflowDefinition {
     @Column(name = "parallelizable")
     private Boolean parallelizable;
 
-    @Column(name = "hidden")
-    private Boolean hidden;
-
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
     private Scope scope;
@@ -118,14 +115,6 @@ public class State extends WorkflowDefinition {
         this.parallelizable = parallelizable;
     }
 
-    public Boolean getHidden() {
-        return hidden;
-    }
-
-    public void setHidden(Boolean hidden) {
-        this.hidden = hidden;
-    }
-
     @Override
     public Scope getScope() {
         return scope;
@@ -190,11 +179,6 @@ public class State extends WorkflowDefinition {
 
     public State withParallelizable(Boolean parallelizable) {
         this.parallelizable = parallelizable;
-        return this;
-    }
-
-    public State withHidden(Boolean hidden) {
-        this.hidden = hidden;
         return this;
     }
 

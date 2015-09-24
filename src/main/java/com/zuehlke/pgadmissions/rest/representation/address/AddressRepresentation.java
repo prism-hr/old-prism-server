@@ -135,7 +135,7 @@ public class AddressRepresentation extends AddressDefinition<PrismDomicile> {
         this.coordinates = coordinates;
         return this;
     }
-
+    
     public String getLocationString() {
         return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode);
     }

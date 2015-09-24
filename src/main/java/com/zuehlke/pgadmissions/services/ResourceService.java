@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -88,10 +89,10 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -496,16 +497,18 @@ public class ResourceService {
             switch (resource.getResourceScope()) {
             case INSTITUTION:
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
                 break;
             case DEPARTMENT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
                 break;
             case PROJECT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(false));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
                 break;
             default:
-                throw new UnsupportedOperationException("Resource type does not have action conditions");
+                throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
             }
         }
 
@@ -538,6 +541,7 @@ public class ResourceService {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
         updateResource(resource, resourceDTO);
 
+        resource.setAvailableDate(resourceDTO.getAvailableDate());
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
         resource.setOpportunityType(prismService.getOpportunityTypeById(resourceDTO.getOpportunityType()));
@@ -708,7 +712,7 @@ public class ResourceService {
         parent.getAdvert().setOpportunityCategories(opportunityCategories);
     }
 
-    public List<ResourceIdentityDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
+    public List<ResourceSimpleDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
         return resourceDAO.getResources(parentResource, resourceScope, query);
     }
 

@@ -11,16 +11,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -64,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -609,18 +607,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return delegateUser == null ? user : delegateUser;
     }
 
-    public boolean isProgramViewEditComment() {
-        return action.getId().equals(PROGRAM_VIEW_EDIT);
-    }
-
-    public boolean isProgramRestoreComment() {
-        return action.getId().equals(PROGRAM_RESTORE);
-    }
-
-    public boolean isProjectViewEditComment() {
-        return action.getId().equals(PROJECT_VIEW_EDIT);
-    }
-
     public boolean isApplicationAssignReviewersComment() {
         return action.getId().equals(APPLICATION_ASSIGN_REVIEWERS);
     }
@@ -629,29 +615,25 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) || action.getId().equals(APPLICATION_UPLOAD_REFERENCE);
     }
 
+    public boolean isApplicationProvideReferenceDelegateComment() {
+        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) && delegateUser != null;
+    }
+
     public boolean isApplicationConfirmOfferRecommendationComment() {
         return action.getId().equals(APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
     }
 
     public boolean isApplicationCreatedComment() {
-        return Arrays.asList(PROGRAM_CREATE_APPLICATION, PROJECT_CREATE_APPLICATION).contains(action.getId());
+        return Arrays.asList(INSTITUTION_CREATE_APPLICATION, DEPARTMENT_CREATE_APPLICATION, PROJECT_CREATE_APPLICATION).contains(action.getId());
     }
 
     public boolean isApplicationSubmittedComment() {
         return action.getId().equals(APPLICATION_COMPLETE);
     }
 
-    public boolean isApplicationRatingComment() {
-        return action.getId().getScope().equals(APPLICATION) && action.getRatingAction() && rating != null;
-    }
-
     public boolean isApplicationCompletionComment() {
         return Arrays.asList(APPLICATION_CONFIRM_OFFER_RECOMMENDATION, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
                 .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
-    }
-
-    public boolean isApplicationReferenceComment() {
-        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE);
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
@@ -721,14 +703,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return !secondaryTransitionStates.isEmpty();
     }
 
-    public boolean isDelegateComment() {
-        return delegateUser != null;
-    }
-
-    public boolean isApplicationProvideReferenceDelegateComment() {
-        return isDelegateComment() && action.getId().equals(APPLICATION_PROVIDE_REFERENCE);
-    }
-
     public boolean isApplicationDelegateAdministrationComment() {
         CommentAssignedUser firstAssignee = assignedUsers.isEmpty() ? null : assignedUsers.iterator().next();
         return firstAssignee != null && firstAssignee.getRole().getId().equals(APPLICATION_ADMINISTRATOR)
@@ -747,8 +721,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
                 .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
     }
 
-    public boolean isResourceEndorsementComment() {
-        return !action.getId().getScope().equals(APPLICATION) && rating != null;
+    public boolean isRatingComment(PrismScope scope) {
+        return action.getId().getScope().equals(scope) && rating != null;
     }
 
     public String getApplicationRatingDisplay() {

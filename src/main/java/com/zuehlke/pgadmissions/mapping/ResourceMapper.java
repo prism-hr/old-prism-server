@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
-import static com.zuehlke.pgadmissions.PrismConstants.GEOCODING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -9,11 +8,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.decimalObjectToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
@@ -170,11 +170,6 @@ public class ResourceMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public List<ResourceRepresentationIdentity> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
-        return resourceService.getResources(parentResource, resourceScope, query).stream()
-                .map(r -> getResourceRepresentation(resourceScope, r, ResourceRepresentationIdentity.class)).collect(Collectors.toList());
-    }
-
     public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceIdentifier) throws Exception {
         DateTime baseline = new DateTime();
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
@@ -270,8 +265,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public ResourceRepresentationLocation getResourceRepresentationLocation(ResourceLocationDTO resource) {
-        return getResourceRepresentationLocation(resource, ResourceRepresentationLocation.class);
+    public <T extends ResourceSimpleDTO> ResourceRepresentationLocation getResourceRepresentationCreation(T resource) {
+        return getResourceRepresentationCreation(resource, ResourceRepresentationLocation.class);
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationSimple(T resource) {
@@ -375,6 +370,7 @@ public class ResourceMapper {
         representation.setOpportunityCategory(PrismOpportunityCategory.valueOf(resource.getOpportunityCategories()));
         representation.setStudyOptions(studyOptions);
 
+        representation.setAvailableDate(resource.getAvailableDate());
         representation.setDurationMinimum(resource.getDurationMinimum());
         representation.setDurationMaximum(resource.getDurationMaximum());
         return representation;
@@ -646,8 +642,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    private <T extends ResourceRepresentationLocation> T getResourceRepresentationLocation(ResourceLocationDTO resource, Class<T> returnType) {
-        T representation = BeanUtils.instantiate(returnType);
+    private <T extends ResourceSimpleDTO, U extends ResourceRepresentationLocation> U getResourceRepresentationCreation(T resource, Class<U> returnType) {
+        U representation = BeanUtils.instantiate(returnType);
 
         Integer logoImageId = resource.getLogoImageId();
         representation.setId(resource.getId());
@@ -655,11 +651,26 @@ public class ResourceMapper {
         representation.setName(resource.getName());
         representation.setLogoImage(Optional.ofNullable(logoImageId).map(id -> new DocumentRepresentation().withId(logoImageId)).orElse(null));
 
-        representation.setAddress(new AddressRepresentation().withAddressLine1(resource.getAddressLine1()).withAddressLine2(resource.getAddressLine2())
-                .withAddressTown(resource.getAddressTown()).withAddressRegion(resource.getAddressRegion()).withAddressCode(resource.getAddressCode())
-                .withDomicile(resource.getAddressDomicileId()).withGoogleId(resource.getAddressGoogleId()).withCoordinates(new AddressCoordinatesRepresentation()
-                        .withLatitude(decimalObjectToBigDecimal(resource.getAddressCoordinateLatitude(), GEOCODING_PRECISION))
-                        .withLongitude(decimalObjectToBigDecimal(resource.getAddressCoordinateLongitude(), GEOCODING_PRECISION))));
+        if (resource.getClass().equals(ResourceLocationDTO.class)) {
+            ResourceLocationDTO resourceLocation = (ResourceLocationDTO) resource;
+            AddressRepresentation addressRepresentation = new AddressRepresentation().withAddressLine1(resourceLocation.getAddressLine1())
+                    .withAddressLine2(resourceLocation.getAddressLine2())
+                    .withAddressTown(resourceLocation.getAddressTown()).withAddressRegion(resourceLocation.getAddressRegion()).withAddressCode(resourceLocation.getAddressCode())
+                    .withDomicile(resourceLocation.getAddressDomicileId()).withGoogleId(resourceLocation.getAddressGoogleId());
+
+            AddressCoordinatesRepresentation coordinatesRepresentation = null;
+            BigDecimal locationLatitude = resourceLocation.getAddressCoordinateLatitude();
+            if (locationLatitude != null) {
+                coordinatesRepresentation = new AddressCoordinatesRepresentation().withLatitude(locationLatitude).withLongitude(resourceLocation.getAddressCoordinateLongitude());
+            }
+            addressRepresentation.setCoordinates(coordinatesRepresentation);
+
+            representation.setAddress(addressRepresentation);
+        }
+
+        if (resource.getStateId().name().endsWith("_UNSUBMITTED")) {
+            representation.setCompletionAction(actionMapper.getActionRepresentation(PrismAction.valueOf(resource.getScope().name() + "_COMPLETE")));
+        }
 
         return representation;
     }

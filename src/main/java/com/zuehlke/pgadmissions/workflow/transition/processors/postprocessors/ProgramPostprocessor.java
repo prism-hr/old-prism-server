@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
@@ -17,7 +19,7 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
 
     @Inject
     private AdvertService advertService;
-    
+
     @Inject
     private ResourceService resourceService;
 
@@ -34,7 +36,7 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
         resource.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
 
-        if (comment.isResourceEndorsementComment()) {
+        if (comment.isRatingComment(PROGRAM)) {
             resourceService.synchronizeResourceEndorsement(resource, comment);
         }
     }

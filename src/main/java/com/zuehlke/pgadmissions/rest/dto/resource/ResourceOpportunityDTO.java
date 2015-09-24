@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -16,6 +18,8 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
     @NotNull
     private PrismOpportunityType opportunityType;
 
+    private LocalDate availableDate;
+
     @Min(1)
     private Integer durationMinimum;
 
@@ -23,7 +27,7 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
     private Integer durationMaximum;
 
     private List<PrismStudyOption> studyOptions;
-
+    
     @Override
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
@@ -32,6 +36,14 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
     @Override
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public LocalDate getAvailableDate() {
+        return availableDate;
+    }
+
+    public void setAvailableDate(LocalDate availableDate) {
+        this.availableDate = availableDate;
     }
 
     public Integer getDurationMinimum() {

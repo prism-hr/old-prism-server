@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -88,7 +87,6 @@ public class StaticDataMapper {
     @Inject
     private CustomizationMapper customizationMapper;
 
-    @Cacheable("staticData")
     @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getData() {
         Map<String, Object> staticData = Maps.newHashMap();

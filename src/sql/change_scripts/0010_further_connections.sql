@@ -339,3 +339,15 @@ alter table user_employment_position
 	add index (user_id),
 	add foreign key (user_id) references user (id)
 ;
+
+alter table project
+	add column available_date date after name
+;
+
+alter table program
+	add column available_date date after name
+;
+
+alter table state
+	drop column hidden
+;

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 
-public class ResourceLocationDTO extends ResourceIdentityDTO {
+public class ResourceLocationDTO extends ResourceSimpleDTO {
 
     private String addressLine1;
 

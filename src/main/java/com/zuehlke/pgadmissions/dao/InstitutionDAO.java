@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +107,7 @@ public class InstitutionDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id").as("id")) //
                         .add(Projections.property("name").as("name")) //
+                        .add(Projections.property("state.id").as("stateId")) //
                         .add(Projections.property("logoImage.id").as("logoImageId"))
                         .add(Projections.property("address.addressLine1").as("addressLine1")) //
                         .add(Projections.property("address.addressLine2").as("addressLine2")) //
@@ -118,6 +121,7 @@ public class InstitutionDAO {
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .add(searchConstraint) //
+                .add(Restrictions.ne("state.id", INSTITUTION_DISABLED_COMPLETED)) //
                 .addOrder(Order.asc("name")) //
                 .addOrder(Order.asc("id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceLocationDTO.class)) //

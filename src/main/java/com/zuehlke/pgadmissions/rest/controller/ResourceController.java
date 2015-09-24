@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.controller;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
@@ -46,8 +47,8 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationCreation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
@@ -128,10 +129,10 @@ public class ResourceController {
     }
 
     @RequestMapping(method = RequestMethod.GET, params = "type=simple")
-    public List<ResourceRepresentationIdentity> getResources(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationCreation> getResources(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope childResourceScope, @RequestParam String query) {
-        Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceMapper.getResources((ResourceParent) resource, childResourceScope, query);
+        ResourceParent resource = (ResourceParent) loadResource(resourceId, resourceDescriptor);
+        return resourceService.getResources(resource, childResourceScope, query).stream().map(resourceMapper::getResourceRepresentationCreation).collect(toList());
     }
 
     @RequestMapping(method = RequestMethod.GET)

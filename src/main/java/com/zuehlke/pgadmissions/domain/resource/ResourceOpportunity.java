@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.resource;
 
 import java.util.Set;
 
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 
@@ -18,6 +20,10 @@ public abstract class ResourceOpportunity extends ResourceParent implements Reso
 
     @Override
     public abstract void setOpportunityType(OpportunityType opportunityType);
+
+    public abstract LocalDate getAvailableDate();
+
+    public abstract void setAvailableDate(LocalDate availableDate);
 
     public abstract Integer getDurationMinimum();
 

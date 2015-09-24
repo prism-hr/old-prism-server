@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -12,7 +13,8 @@ public class PrismProjectUnsubmitted extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_COMPLETE) //
-                .withTransitions(PROJECT_CREATE_TRANSITION));
+                .withTransitions(PROJECT_CREATE_TRANSITION //
+                        .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP)));
     }
 
 }

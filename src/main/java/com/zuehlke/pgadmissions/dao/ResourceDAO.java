@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.Pri
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.valueOf;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,9 +58,9 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -506,16 +507,18 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public List<ResourceIdentityDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
-        return (List<ResourceIdentityDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+    public List<ResourceSimpleDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
+        return (List<ResourceSimpleDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("id").as("id")) //
-                        .add(Projections.property("name").as("name"))) //
+                        .add(Projections.property("name").as("name")) //
+                        .add(Projections.property("state.id").as("stateId"))) //
                 .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .add(Restrictions.like("name", query, MatchMode.ANYWHERE)) //
+                .add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
                 .addOrder(Order.asc("name")) //
                 .addOrder(Order.asc("id")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceIdentityDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //
                 .list();
     }
 

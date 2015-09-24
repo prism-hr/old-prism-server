@@ -27,7 +27,10 @@ public enum PrismScopeCreation {
                     .withScope(DEPARTMENT))), //
     EMPLOYER(new PrismScopeCreationFamilies()
             .withScopeCreationFamily(new PrismScopeCreationFamily()
-                    .withScope(INSTITUTION)));
+                    .withScope(INSTITUTION))
+            .withScopeCreationFamily(new PrismScopeCreationFamily()
+                    .withScope(INSTITUTION)
+                    .withScope(DEPARTMENT)));
 
     private PrismScopeCreationFamilies scopeCreationFamilies;
 

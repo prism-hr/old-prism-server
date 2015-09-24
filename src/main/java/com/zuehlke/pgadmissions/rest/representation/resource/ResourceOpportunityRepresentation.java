@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-
 import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+
+import java.util.List;
 
 public class ResourceOpportunityRepresentation extends ResourceParentDivisionRepresentation {
 
@@ -14,8 +13,6 @@ public class ResourceOpportunityRepresentation extends ResourceParentDivisionRep
     private PrismOpportunityCategory opportunityCategory;
 
     private List<ImportedEntityResponse> studyOptions;
-
-    private List<String> studyLocations;
 
     private Integer durationMinimum;
 
@@ -43,14 +40,6 @@ public class ResourceOpportunityRepresentation extends ResourceParentDivisionRep
 
     public void setStudyOptions(List<ImportedEntityResponse> studyOptions) {
         this.studyOptions = studyOptions;
-    }
-
-    public List<String> getStudyLocations() {
-        return studyLocations;
-    }
-
-    public void setStudyLocations(List<String> studyLocations) {
-        this.studyLocations = studyLocations;
     }
 
     public Integer getDurationMinimum() {

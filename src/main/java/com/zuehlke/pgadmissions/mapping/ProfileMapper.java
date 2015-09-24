@@ -162,6 +162,7 @@ public class ProfileMapper {
         LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
 
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
+                .withUser(userMapper.getUserRepresentationSimple(qualification.getUser()))
                 .withResource(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()))
                 .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
@@ -181,6 +182,7 @@ public class ProfileMapper {
         LocalDate endDate = endYear == null ? null : new LocalDate(endYear, employmentPosition.getEndMonth(), 1);
 
         ProfileEmploymentPositionRepresentation representation = new ProfileEmploymentPositionRepresentation()
+                .withUser(userMapper.getUserRepresentationSimple(employmentPosition.getUser()))
                 .withResource(resourceMapper.getResourceRepresentationActivity(employmentPosition.getAdvert().getResource())).withStartDate(startDate).withEndDate(endDate);
 
         if (employmentPosition.getClass().equals(ApplicationEmploymentPosition.class)) {

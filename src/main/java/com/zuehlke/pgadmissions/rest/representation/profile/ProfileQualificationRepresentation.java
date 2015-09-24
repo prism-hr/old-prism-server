@@ -5,11 +5,14 @@ import org.joda.time.LocalDate;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
+    private UserRepresentationSimple user;
+    
     private ResourceRepresentationActivity resource;
 
     private LocalDate startDate;
@@ -28,6 +31,14 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public UserRepresentationSimple getUser() {
+        return user;
+    }
+
+    public void setUser(UserRepresentationSimple user) {
+        this.user = user;
     }
 
     public ResourceRepresentationActivity getResource() {
@@ -83,6 +94,11 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         return this;
     }
 
+    public ProfileQualificationRepresentation withUser(UserRepresentationSimple user) {
+        this.user = user;
+        return this;
+    }
+    
     public ProfileQualificationRepresentation withResource(ResourceRepresentationActivity resource) {
         this.resource = resource;
         return this;

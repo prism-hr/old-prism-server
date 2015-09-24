@@ -1,28 +1,52 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.department;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_EMAIL_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_MANAGE_USERS_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_WITHDRAWN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_VIEW_EDIT_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismDepartmentWorkflow {
-
+    
+    public static PrismStateAction departmentCreateProgram() {
+        return new PrismStateAction() //
+                .withAction(DEPARTMENT_CREATE_PROGRAM) //
+                .withActionCondition(ACCEPT_DEPARTMENT) //
+                .withTransitions(PROGRAM_CREATE_TRANSITION //
+                        .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
+    }
+    
+    public static PrismStateAction departmentCreateProject() {
+        return new PrismStateAction() //
+                .withAction(DEPARTMENT_CREATE_PROJECT) //
+                .withActionCondition(ACCEPT_PROJECT) //
+                .withTransitions(PROJECT_CREATE_TRANSITION //
+                        .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP));
+    }
+    
     public static PrismStateAction departmentEmailCreatorUnnapproved() {
         return departmentEmailCreatorAbstract();
     }

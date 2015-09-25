@@ -107,8 +107,8 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                                                            @RequestParam PrismScope propertiesScope) {
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam PrismScope propertiesScope) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }

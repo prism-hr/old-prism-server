@@ -1,13 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismDisplayPropertyCategory {
 
@@ -64,24 +59,24 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_RESOURCE_COMPETENCES(SYSTEM),
     SYSTEM_RESOURCE_ADVERT(SYSTEM),
     SYSTEM_RESOURCE_FINANCIAL_DETAILS(SYSTEM),
-    INSTITUTION_COMMENT(INSTITUTION),
-    INSTITUTION_FORM(INSTITUTION),
-    DEPARTMENT_COMMENT(DEPARTMENT),
-    PROGRAM_COMMENT(PROGRAM),
-    PROJECT_COMMENT(PROJECT),
-    APPLICATION_GLOBAL(APPLICATION),
-    APPLICATION_PROGRAM_DETAIL(APPLICATION),
-    APPLICATION_PERSONAL_DETAIL(APPLICATION),
-    APPLICATION_ADDRESS(APPLICATION),
-    APPLICATION_QUALIFICATION(APPLICATION),
-    APPLICATION_EMPLOYMENT_POSITION(APPLICATION),
-    APPLICATION_REFEREE(APPLICATION),
-    APPLICATION_DOCUMENT(APPLICATION),
-    APPLICATION_ADDITIONAL_INFORMATION(APPLICATION),
-    APPLICATION_FORM(APPLICATION),
-    APPLICATION_ACTION(APPLICATION),
-    APPLICATION_COMMENT(APPLICATION),
-    APPLICATION_REPORT(APPLICATION);
+    INSTITUTION_COMMENT(SYSTEM),
+    INSTITUTION_FORM(SYSTEM),
+    DEPARTMENT_COMMENT(SYSTEM),
+    PROGRAM_COMMENT(SYSTEM),
+    PROJECT_COMMENT(SYSTEM),
+    APPLICATION_GLOBAL(SYSTEM),
+    APPLICATION_PROGRAM_DETAIL(SYSTEM),
+    APPLICATION_PERSONAL_DETAIL(SYSTEM),
+    APPLICATION_ADDRESS(SYSTEM),
+    APPLICATION_QUALIFICATION(SYSTEM),
+    APPLICATION_EMPLOYMENT_POSITION(SYSTEM),
+    APPLICATION_REFEREE(SYSTEM),
+    APPLICATION_DOCUMENT(SYSTEM),
+    APPLICATION_ADDITIONAL_INFORMATION(SYSTEM),
+    APPLICATION_FORM(SYSTEM),
+    APPLICATION_ACTION(SYSTEM),
+    APPLICATION_COMMENT(SYSTEM),
+    APPLICATION_REPORT(SYSTEM);
 
     private PrismScope scope;
 

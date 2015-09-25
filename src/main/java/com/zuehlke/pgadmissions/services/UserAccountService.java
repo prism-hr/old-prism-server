@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.social.linkedin.api.LinkedInProfile;
-import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
-import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
-import org.springframework.social.oauth1.OAuth1Operations;
-import org.springframework.social.oauth1.OAuth1Parameters;
-import org.springframework.social.oauth1.OAuthToken;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.social.twitter.connect.TwitterServiceProvider;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -29,6 +11,22 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.social.linkedin.api.LinkedInProfile;
+import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
+import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
+import org.springframework.social.oauth1.OAuth1Operations;
+import org.springframework.social.oauth1.OAuth1Parameters;
+import org.springframework.social.oauth1.OAuthToken;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.social.twitter.connect.TwitterServiceProvider;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 @Service
 @Transactional
@@ -83,7 +81,7 @@ public class UserAccountService {
 
     public User getOrCreateUserAccountExternal(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
-        OauthUserDefinition oauthUserDefinition = getOauthUserDefinition(oauthLoginDTO, session);
+        OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
 
         switch (oauthAssociationType) {
             case ASSOCIATE_CURRENT_USER:
@@ -135,21 +133,8 @@ public class UserAccountService {
         userAccount.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
     }
 
-    public void shareUserProfile(Integer userId, Boolean shareProfile) {
-        getCurrentUserAccount(userId).setShared(shareProfile);
-    }
-
-    public UserAccount getCurrentUserAccount(Integer userId) {
-        User user = userService.getCurrentUser();
-        if (user.getId().equals(userId)) {
-            return user.getUserAccount();
-        }
-        throw new BadCredentialsException("Unauthorized access attempt");
-    }
-
-    private OauthUserDefinition getOauthUserDefinition(OauthLoginDTO oauthLoginDTO, HttpSession session) {
-        OauthUserDefinition definition = getLinkedinUserDefinition(oauthLoginDTO);
-        return definition;
+    public void shareUserProfile(Boolean shareProfile) {
+        userService.getCurrentUser().getUserAccount().setShared(shareProfile);
     }
 
     private OauthUserDefinition getLinkedinUserDefinition(OauthLoginDTO oauthLoginDTO) {

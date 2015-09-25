@@ -83,8 +83,8 @@ public class ProfileService {
         fillApplicationAdditionalInformation(application, userAccount);
     }
 
-    public void updatePersonalDetailUser(Integer userId, ProfilePersonalDetailDTO personalDetailDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void updatePersonalDetailUser(ProfilePersonalDetailDTO personalDetailDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserPersonalDetail personalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
         userAccount.setPersonalDetail(personalDetail);
         userAccountService.updateUserAccount(userAccount);
@@ -109,8 +109,8 @@ public class ProfileService {
 
     }
 
-    public void updateAddressUser(Integer userId, ProfileAddressDTO addressDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void updateAddressUser(ProfileAddressDTO addressDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserAddress address = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(address);
         userAccountService.updateUserAccount(userAccount);
@@ -130,8 +130,8 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDRESS);
     }
 
-    public UserQualification updateQualificationUser(Integer userId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public UserQualification updateQualificationUser(Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserQualification userQualification = updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
         userAccountService.updateUserAccount(userAccount);
         return userQualification;
@@ -152,8 +152,8 @@ public class ProfileService {
         return qualification;
     }
 
-    public void deleteQualificationUser(Integer userId, Integer qualificationId) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void deleteQualificationUser(Integer qualificationId) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteQualification(userAccount, UserQualification.class, qualificationId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -164,8 +164,8 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
 
-    public UserEmploymentPosition updateEmploymentPositionUser(Integer userId, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public UserEmploymentPosition updateEmploymentPositionUser(Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
         userAccountService.updateUserAccount(userAccount);
         return employmentPosition;
@@ -187,8 +187,8 @@ public class ProfileService {
         return employmentPosition;
     }
 
-    public void deleteEmploymentPositionUser(Integer userId, Integer employmentPositionId) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void deleteEmploymentPositionUser(Integer employmentPositionId) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -199,8 +199,8 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
 
-    public UserReferee updateRefereeUser(Integer userId, Integer refereeId, ProfileRefereeDTO refereeDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public UserReferee updateRefereeUser(Integer refereeId, ProfileRefereeDTO refereeDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserReferee userReferee = (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
         userAccountService.updateUserAccount(userAccount);
         return userReferee;
@@ -221,8 +221,8 @@ public class ProfileService {
         return (ApplicationReferee) referee.getReferee();
     }
 
-    public void deleteRefereeUser(Integer userId, Integer refereeId) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void deleteRefereeUser(Integer refereeId) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteReferee(userAccount, UserReferee.class, refereeId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -233,8 +233,8 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
 
-    public void updateDocumentUser(Integer userId, ProfileDocumentDTO documentDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void updateDocumentUser(ProfileDocumentDTO documentDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserDocument document = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(document);
         userAccountService.updateUserAccount(userAccount);
@@ -254,8 +254,8 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_DOCUMENT);
     }
 
-    public void updateAdditionalInformationUser(Integer userId, ProfileAdditionalInformationDTO additionalInformationDTO) {
-        UserAccount userAccount = userAccountService.getCurrentUserAccount(userId);
+    public void updateAdditionalInformationUser(ProfileAdditionalInformationDTO additionalInformationDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserAdditionalInformation additionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(additionalInformation);
         userAccountService.updateUserAccount(userAccount);

@@ -24,7 +24,7 @@ public class AdvertTargetResourceDTO extends AdvertTargetDTO {
     public void setUser(UserSimpleDTO user) {
         this.user = user;
     }
-    
+
     public AdvertTargetResourceDTO withScope(PrismScope scope) {
         this.scope = scope;
         return this;
@@ -34,10 +34,10 @@ public class AdvertTargetResourceDTO extends AdvertTargetDTO {
         setId(id);
         return this;
     }
-    
+
     public AdvertTargetResourceDTO withUser(UserSimpleDTO user) {
         this.user = user;
         return this;
     }
-    
+
 }

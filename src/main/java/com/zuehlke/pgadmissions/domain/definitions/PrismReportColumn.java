@@ -1,52 +1,27 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_OFFER_TYPE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_START_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DECLINED_REFERENCES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_GENDER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDED_REFERENCES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SUBMISSION_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_AVERAGE_RATING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CLOSING_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CREATED_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ID;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NAME;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_STATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_TOTAL_RATING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_UPDATED_DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.DISPLAY_PROPERTY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.STRING;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 
 import java.util.Collections;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismReportColumnAccessorType.*;
 
 public enum PrismReportColumn {
 
     ID(SYSTEM_ID, "application.id", null, false, "id", STRING), //
     USER_NAME(SYSTEM_NAME, "user.fullName", null, false, "name", STRING), //
     USER_EMAIL(SYSTEM_EMAIL, "user.email", null, false, "email", STRING), //
-    USER_NATIONALITY(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL, "nationality.name", null, false, "nationality", STRING), //
-    USER_DOMICILE(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL, "domicile.name", null, false, "countryOfBirth", STRING), //
-    USER_DATE_OF_BIRTH(APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "personalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
-    USER_GENDER(APPLICATION_PERSONAL_DETAIL_GENDER_LABEL, "gender.name", null, false, "gender", STRING), //
+    USER_NATIONALITY(PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL, "nationality.name", null, false, "nationality", STRING), //
+    USER_DOMICILE(PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL, "domicile.name", null, false, "countryOfBirth", STRING), //
+    USER_DATE_OF_BIRTH(PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "personalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
+    USER_GENDER(PROFILE_PERSONAL_DETAIL_GENDER_LABEL, "gender.name", null, false, "gender", STRING), //
     INSTITUTION_NAME(SYSTEM_INSTITUTION, "institution.name", null, false, "institution", STRING), //
     DEPARTMENT_NAME(SYSTEM_DEPARTMENT, "department.name", null, false, "department", STRING), //
     PROGRAM_NAME(SYSTEM_PROGRAM, "program.name", null, false, "program", STRING), //
     PROJECT_NAME(SYSTEM_PROJECT, "project.name", null, false, "project", STRING), //
-    STUDY_OPTION(APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL, "studyOption.name", null, false, "studyOption", DISPLAY_PROPERTY), //
+    STUDY_OPTION(PROFILE_PROGRAM_DETAIL_STUDY_OPTION_LABEL, "studyOption.name", null, false, "studyOption", DISPLAY_PROPERTY), //
     CREATED_DATE(SYSTEM_CREATED_DATE, "application.createdTimestamp", null, false, "createdDate", DATE), //
     CLOSING_DATE(SYSTEM_CLOSING_DATE, "application.closingDate", null, false, "closingDate", DATE), //
     SUBMITTED_DATE(APPLICATION_SUBMISSION_DATE, "application.submittedTimestamp", null, false, "submittedDate", DATE), //

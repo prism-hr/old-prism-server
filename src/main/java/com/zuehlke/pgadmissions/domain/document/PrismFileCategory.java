@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.document;
 
+import com.zuehlke.pgadmissions.services.helpers.persisters.DepartmentBackgroundPersister;
 import com.zuehlke.pgadmissions.services.helpers.persisters.ImageDocumentPersister;
 import com.zuehlke.pgadmissions.services.helpers.persisters.InstitutionBackgroundPersister;
 import com.zuehlke.pgadmissions.services.helpers.persisters.InstitutionLogoPersister;
@@ -18,6 +19,7 @@ public enum PrismFileCategory {
 
         INSTITUTION_LOGO(InstitutionLogoProcessor.class, InstitutionLogoPersister.class), //
         INSTITUTION_BACKGROUND(null, InstitutionBackgroundPersister.class), //
+        DEPARTMENT_BACKGROUND(null, DepartmentBackgroundPersister.class), //
         PROGRAM_BACKGROUND(null, ProgramBackgroundPersister.class), //
         PROJECT_BACKGROUND(null, ProjectBackgroundPersister.class), //
         USER_PORTRAIT(null, UserPortraitPersister.class);

@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 
@@ -25,7 +25,7 @@ public class ResourceCreationDTO {
     @NotNull
     private PrismScope scope;
     
-    private PrismScopeCreation scopeCreation;
+    private PrismMotivationContext context;
 
     public Integer getId() {
         return id;
@@ -43,12 +43,12 @@ public class ResourceCreationDTO {
         this.scope = scope;
     }
 
-    public PrismScopeCreation getScopeCreation() {
-        return scopeCreation;
+    public PrismMotivationContext getContext() {
+        return context;
     }
 
-    public void setScopeCreation(PrismScopeCreation scopeCreation) {
-        this.scopeCreation = scopeCreation;
+    public void setScopeCreation(PrismMotivationContext context) {
+        this.context = context;
     }
 
     public ResourceDTO getParentResource() {

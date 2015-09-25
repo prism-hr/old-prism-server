@@ -3,12 +3,13 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.EMPLOYER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.UNIVERSITY;
+import static java.time.Month.APRIL;
 import static java.time.Month.OCTOBER;
 
 import java.time.Month;
@@ -19,8 +20,8 @@ import java.util.Map.Entry;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -110,7 +111,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private static Map<PrismScope, PrismScope> parentScopes = Maps.newHashMap();
 
-    private static Map<Entry<PrismScope, PrismScopeCreation>, PrismScopeCreationDefault> defaults = Maps.newHashMap();
+    private static Map<Entry<PrismScope, PrismMotivationContext>, PrismScopeCreationDefault> defaults = Maps.newHashMap();
 
     static {
         PrismScope parentScope = null;
@@ -123,9 +124,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             parentScope = scope;
         }
 
-        defaults.put(new SimpleEntry<>(INSTITUTION, QUALIFICATION), new PrismScopeCreationDefault(OCTOBER, STUDY));
+        defaults.put(new SimpleEntry<>(INSTITUTION, APPLICANT), new PrismScopeCreationDefault(OCTOBER, STUDY));
         defaults.put(new SimpleEntry<>(INSTITUTION, UNIVERSITY), new PrismScopeCreationDefault(OCTOBER, STUDY));
-        defaults.put(new SimpleEntry<>(INSTITUTION, EMPLOYER), new PrismScopeCreationDefault(OCTOBER, WORK, EXPERIENCE));
+        defaults.put(new SimpleEntry<>(INSTITUTION, EMPLOYER), new PrismScopeCreationDefault(APRIL, WORK, EXPERIENCE));
     }
 
     private PrismScope(PrismScopeCategory scopeCategory, String shortCode, PrismScopeDefinition definition) {
@@ -183,7 +184,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return parentScopes.get(this);
     }
 
-    public PrismScopeCreationDefault getDefault(PrismScopeCreation scopeCreation) {
+    public PrismScopeCreationDefault getDefault(PrismMotivationContext scopeCreation) {
         return defaults.get(new SimpleEntry<>(this, scopeCreation));
     }
 

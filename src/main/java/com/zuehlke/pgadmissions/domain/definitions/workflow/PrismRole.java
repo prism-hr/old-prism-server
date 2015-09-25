@@ -10,50 +10,50 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.asList;
 
+import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
-    APPLICATION_ADMINISTRATOR(RECRUITER, APPLICATION, false), //
-    APPLICATION_CREATOR(APPLICANT, APPLICATION, false), //
-    APPLICATION_HIRING_MANAGER(RECRUITER, APPLICATION, false), //
-    APPLICATION_INTERVIEWEE(APPLICANT, APPLICATION, false), //
-    APPLICATION_INTERVIEWER(RECRUITER, APPLICATION, false), //
-    APPLICATION_POTENTIAL_INTERVIEWEE(APPLICANT, APPLICATION, false), //
-    APPLICATION_POTENTIAL_INTERVIEWER(RECRUITER, APPLICATION, false), //
-    APPLICATION_REFEREE(REFEREE, APPLICATION, false), //
-    APPLICATION_REVIEWER(RECRUITER, APPLICATION, false), //
-    APPLICATION_VIEWER_RECRUITER(RECRUITER, APPLICATION, false), //
-    APPLICATION_VIEWER_REFEREE(REFEREE, APPLICATION, false), //
+    APPLICATION_ADMINISTRATOR(RECRUITER, false, APPLICATION), //
+    APPLICATION_CREATOR(APPLICANT, false, APPLICATION), //
+    APPLICATION_HIRING_MANAGER(RECRUITER, false, APPLICATION), //
+    APPLICATION_INTERVIEWEE(APPLICANT, false, APPLICATION), //
+    APPLICATION_INTERVIEWER(RECRUITER, false, APPLICATION), //
+    APPLICATION_POTENTIAL_INTERVIEWEE(APPLICANT, false, APPLICATION), //
+    APPLICATION_POTENTIAL_INTERVIEWER(RECRUITER, false, APPLICATION), //
+    APPLICATION_REFEREE(REFEREE, false, APPLICATION), //
+    APPLICATION_REVIEWER(RECRUITER, false, APPLICATION), //
+    APPLICATION_VIEWER_RECRUITER(RECRUITER, false, APPLICATION), //
+    APPLICATION_VIEWER_REFEREE(REFEREE, false, APPLICATION), //
 
-    PROJECT_ADMINISTRATOR(ADMINISTRATOR, PROJECT, true), //
-    PROJECT_APPROVER(RECRUITER, PROJECT, true), //
-    PROJECT_VIEWER(RECRUITER, PROJECT, true), //
+    PROJECT_ADMINISTRATOR(ADMINISTRATOR, true, PROJECT), //
+    PROJECT_APPROVER(RECRUITER, true, PROJECT), //
+    PROJECT_VIEWER(RECRUITER, true, PROJECT), //
 
-    PROGRAM_ADMINISTRATOR(ADMINISTRATOR, PROGRAM, true), //
-    PROGRAM_APPROVER(RECRUITER, PROGRAM, true), //
-    PROGRAM_VIEWER(RECRUITER, PROGRAM, true), //
+    PROGRAM_ADMINISTRATOR(ADMINISTRATOR, true, PROGRAM), //
+    PROGRAM_APPROVER(RECRUITER, true, PROGRAM), //
+    PROGRAM_VIEWER(RECRUITER, true, PROGRAM), //
 
-    DEPARTMENT_ADMINISTRATOR(ADMINISTRATOR, DEPARTMENT, true), //
-    DEPARTMENT_APPROVER(RECRUITER, DEPARTMENT, true), //
-    DEPARTMENT_VIEWER(RECRUITER, DEPARTMENT, true), //
-    DEPARTMENT_VIEWER_UNVERIFIED(RECRUITER, DEPARTMENT, false), //
-    DEPARTMENT_STUDENT(APPLICANT, DEPARTMENT, true), //
-    DEPARTMENT_STUDENT_UNVERIFIED(APPLICANT, DEPARTMENT, false), //
+    DEPARTMENT_ADMINISTRATOR(ADMINISTRATOR, true, DEPARTMENT), //
+    DEPARTMENT_APPROVER(RECRUITER, true, DEPARTMENT), //
+    DEPARTMENT_VIEWER(RECRUITER, true, DEPARTMENT), //
+    DEPARTMENT_VIEWER_UNVERIFIED(RECRUITER, false, DEPARTMENT), //
+    DEPARTMENT_STUDENT(APPLICANT, true, DEPARTMENT), //
+    DEPARTMENT_STUDENT_UNVERIFIED(APPLICANT, false, DEPARTMENT), //
 
-    INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, INSTITUTION, true), //
-    INSTITUTION_APPROVER(RECRUITER, INSTITUTION, true), //
-    INSTITUTION_VIEWER(RECRUITER, INSTITUTION, true), //
-    INSTITUTION_VIEWER_UNVERIFIED(RECRUITER, INSTITUTION, false), //
-    INSTITUTION_STUDENT(APPLICANT, INSTITUTION, true), //
-    INSTITUTION_STUDENT_UNVERIFIED(APPLICANT, INSTITUTION, false), //
+    INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, true, INSTITUTION), //
+    INSTITUTION_APPROVER(RECRUITER, true, INSTITUTION), //
+    INSTITUTION_VIEWER(RECRUITER, true, INSTITUTION), //
+    INSTITUTION_VIEWER_UNVERIFIED(RECRUITER, false, INSTITUTION), //
+    INSTITUTION_STUDENT(APPLICANT, true, INSTITUTION), //
+    INSTITUTION_STUDENT_UNVERIFIED(APPLICANT, true, INSTITUTION), //
 
-    SYSTEM_ADMINISTRATOR(ADMINISTRATOR, SYSTEM, true);
+    SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM);
 
     private PrismRoleCategory roleCategory;
 
@@ -61,7 +61,17 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     private PrismScope scope;
 
-    private PrismRole(PrismRoleCategory roleCategory, PrismScope scope, boolean directlyAssignable) {
+    private static HashMultimap<PrismScope, PrismRole> unverifiedRoles = HashMultimap.create();
+
+    static {
+        for (PrismRole role : PrismRole.values()) {
+            if (role.name().contains("UNVERIFIED")) {
+                unverifiedRoles.put(role.getScope(), role);
+            }
+        }
+    }
+
+    private PrismRole(PrismRoleCategory roleCategory, boolean directlyAssignable, PrismScope scope) {
         this.roleCategory = roleCategory;
         this.directlyAssignable = directlyAssignable;
         this.scope = scope;
@@ -78,27 +88,9 @@ public enum PrismRole implements PrismLocalizableDefinition {
     public PrismScope getScope() {
         return scope;
     }
-
-    public static PrismRole getAdministratorRole(Resource resource) {
-        return valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR");
-    }
-
-    public static PrismRole getViewerRole(Resource resource) {
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            return valueOf(resource.getResourceScope().name() + "_VIEWER");
-        }
-        return null;
-    }
-
-    public static PrismRole getUnverifiedViewerRole(Resource resource) {
-        return getUnverifiedViewerRole(resource.getResourceScope());
-    }
-
-    public static PrismRole getUnverifiedViewerRole(PrismScope resourceScope) {
-        if (asList(DEPARTMENT, INSTITUTION).contains(resourceScope)) {
-            return valueOf(resourceScope.name() + "_VIEWER_UNVERIFIED");
-        }
-        return null;
+    
+    public static Set<PrismRole> getUnverifiedRoles(PrismScope scope) {
+        return unverifiedRoles.get(scope);
     }
 
     @Override

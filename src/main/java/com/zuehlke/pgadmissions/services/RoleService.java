@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleC
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -68,9 +66,6 @@ public class RoleService {
     private ScopeService scopeService;
 
     @Inject
-    private StateService stateService;
-
-    @Inject
     private ApplicationContext applicationContext;
 
     public Role getById(PrismRole roleId) {
@@ -93,25 +88,7 @@ public class RoleService {
         return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
     }
 
-    public Role getUnverifiedRole(Resource resource) {
-        return getById(getUnverifiedViewerRole(resource));
-    }
-
-    public void modifyUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
-        if (roles.length > 0) {
-            PrismRole firstRole = roles[0];
-            if (firstRole.equals(getUnverifiedViewerRole(resource)) && getVerifiedRoles(user, (ResourceParent) resource).isEmpty()) {
-                List<PrismState> activeStates = stateService.getActiveResourceStates(resource.getResourceScope());
-                if (containsAny(resource.getResourceStates().stream().map(rs -> rs.getState().getId()).collect(Collectors.toList()), activeStates)) {
-                    getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(getById(firstRole))).withAssignedTimestamp(new DateTime());
-                }
-            } else {
-                modifyUserRole(invoker, resource, user, transitionType, roles);
-            }
-        }
-    }
-
-    public void modifyUserRole(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
+    public void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         Action action = actionService.getViewEditAction(resource);
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
 
@@ -124,6 +101,19 @@ public class RoleService {
 
         actionService.executeUserAction(resource, action, comment);
         notificationService.sendInvitationNotifications(comment);
+    }
+
+    public void verifyUserRoles(User invoker, Resource resource, User user, Boolean verify) {
+        getUnverifiedRoles(resource.getResourceScope()).forEach(r -> {
+            UserRole userRole = getUserRole(resource, user, getById(r));
+            if (userRole != null) {
+                if (isTrue(verify)) {
+                    updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(r.name().replace("_UNVERIFIED", "")));
+                } else if (actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), user, false)) {
+                    entityService.delete(userRole);
+                }
+            }
+        });
     }
 
     public void setResourceOwner(Resource resource, User user) {
@@ -208,7 +198,7 @@ public class RoleService {
 
     public void deleteUserRoles(User invoker, Resource resource, User user) {
         List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
-        modifyUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
+        updateUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
     public PrismScope getPermissionScope(User user) {

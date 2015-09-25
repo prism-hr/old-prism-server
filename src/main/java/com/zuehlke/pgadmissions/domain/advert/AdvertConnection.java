@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.workflow.user.AdvertConnectionReassignmentProces
 
 @Entity
 @Table(name = "advert_connection", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "inviting_user_id", "inviting_advert_id", "receiving_user_id", "receiving_advert_id" }) })
+        @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_user_id" }) })
 public class AdvertConnection implements UniqueEntity, UserAssignment<AdvertConnectionReassignmentProcessor> {
 
     @Id
@@ -24,20 +24,24 @@ public class AdvertConnection implements UniqueEntity, UserAssignment<AdvertConn
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "inviting_user_id", nullable = false)
-    private User invitingUser;
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
 
     @ManyToOne
-    @JoinColumn(name = "inviting_advert_id", nullable = false)
-    private Advert invitingAdvert;
+    @JoinColumn(name = "advert_user_id")
+    private User advertUser;
 
     @ManyToOne
-    @JoinColumn(name = "receiving_user_id")
-    private User receivingUser;
+    @JoinColumn(name = "target_advert_id", nullable = false)
+    private Advert targetAdvert;
 
     @ManyToOne
-    @JoinColumn(name = "receiving_advert_id")
-    private Advert receivingAdvert;
+    @JoinColumn(name = "target_advert_user_id")
+    private User targetAdvertUser;
+    
+    @ManyToOne
+    @JoinColumn(name = "accepting_user_id")
+    private User acceptingUser;
 
     @Column(name = "accepted", nullable = false)
     private Boolean accepted;
@@ -50,36 +54,44 @@ public class AdvertConnection implements UniqueEntity, UserAssignment<AdvertConn
         this.id = id;
     }
 
-    public User getInvitingUser() {
-        return invitingUser;
+    public Advert getAdvert() {
+        return advert;
     }
 
-    public void setInvitingUser(User invitingUser) {
-        this.invitingUser = invitingUser;
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
-    public Advert getInvitingAdvert() {
-        return invitingAdvert;
+    public User getAdvertUser() {
+        return advertUser;
     }
 
-    public void setInvitingAdvert(Advert invitingAdvert) {
-        this.invitingAdvert = invitingAdvert;
+    public void setAdvertUser(User advertUser) {
+        this.advertUser = advertUser;
     }
 
-    public User getReceivingUser() {
-        return receivingUser;
+    public Advert getTargetAdvert() {
+        return targetAdvert;
     }
 
-    public void setReceivingUser(User receivingUser) {
-        this.receivingUser = receivingUser;
+    public void setTargetAdvert(Advert targetAdvert) {
+        this.targetAdvert = targetAdvert;
     }
 
-    public Advert getReceivingAdvert() {
-        return receivingAdvert;
+    public User getTargetAdvertUser() {
+        return targetAdvertUser;
     }
 
-    public void setReceivingAdvert(Advert receivingAdvert) {
-        this.receivingAdvert = receivingAdvert;
+    public void setTargetAdvertUser(User targetAdvertUser) {
+        this.targetAdvertUser = targetAdvertUser;
+    }
+
+    public User getAcceptingUser() {
+        return acceptingUser;
+    }
+
+    public void setAcceptingUser(User acceptingUser) {
+        this.acceptingUser = acceptingUser;
     }
 
     public Boolean getAccepted() {
@@ -89,27 +101,32 @@ public class AdvertConnection implements UniqueEntity, UserAssignment<AdvertConn
     public void setAccepted(Boolean accepted) {
         this.accepted = accepted;
     }
-
-    public AdvertConnection withInvitingUser(User invitingUser) {
-        this.invitingUser = invitingUser;
+    
+    public AdvertConnection withAdvert(Advert advert) {
+        this.advert = advert;
         return this;
     }
 
-    public AdvertConnection withInvitingAdvert(Advert invitingAdvert) {
-        this.invitingAdvert = invitingAdvert;
+    public AdvertConnection withAdvertUser(User advertUser) {
+        this.advertUser = advertUser;
+        return this;
+    }
+    
+    public AdvertConnection withTargetAdvert(Advert targetAdvert) {
+        this.targetAdvert = targetAdvert;
         return this;
     }
 
-    public AdvertConnection withReceivingUser(User receivingUser) {
-        this.receivingUser = receivingUser;
+    public AdvertConnection withTargetAdvertUser(User targetAdvertUser) {
+        this.targetAdvertUser = targetAdvertUser;
         return this;
     }
 
-    public AdvertConnection withReceivingAdvert(Advert receivingAdvert) {
-        this.receivingAdvert = receivingAdvert;
+    public AdvertConnection withAcceptingUser(User acceptingUser) {
+        this.acceptingUser = acceptingUser;
         return this;
     }
-
+    
     public AdvertConnection withAccepted(Boolean accepted) {
         this.accepted = accepted;
         return this;
@@ -127,8 +144,8 @@ public class AdvertConnection implements UniqueEntity, UserAssignment<AdvertConn
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("invitingUser", invitingUser).addProperty("invitingAdvert", invitingAdvert).addProperty("receivingUser", receivingUser)
-                .addProperty("receivingAdvert", receivingAdvert);
+        return new EntitySignature().addProperty("advert", advert).addProperty("advertUser", advertUser) //
+                .addProperty("targetAdvert", targetAdvert).addProperty("targetAdvertUser", targetAdvertUser);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 
 import javax.validation.Valid;
@@ -14,7 +15,7 @@ public class DepartmentInvitationDTO {
     private ResourceParentDivisionDTO department;
 
     @Valid
-    private UserSimpleDTO departmentUser;
+    private UserDTO departmentUser;
 
     public Integer getAdvertId() {
         return advertId;
@@ -32,7 +33,7 @@ public class DepartmentInvitationDTO {
         this.department = department;
     }
 
-    public UserSimpleDTO getDepartmentUser() {
+    public UserDTO getDepartmentUser() {
         return departmentUser;
     }
 

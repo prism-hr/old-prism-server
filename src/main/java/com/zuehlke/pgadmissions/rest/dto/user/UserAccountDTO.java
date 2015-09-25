@@ -1,24 +1,29 @@
 package com.zuehlke.pgadmissions.rest.dto.user;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 public class UserAccountDTO {
 
-    private String email;
+    @NotNull
+    private Boolean sendApplicationRecommendationNotification;
 
+    @Size(min = 8, max = 15)
     private String password;
 
-    public final String getEmail() {
-        return email;
+    public Boolean getSendApplicationRecommendationNotification() {
+        return sendApplicationRecommendationNotification;
     }
 
-    public final void setEmail(String email) {
-        this.email = email;
+    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
-    public final String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    public final void setPassword(String password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 

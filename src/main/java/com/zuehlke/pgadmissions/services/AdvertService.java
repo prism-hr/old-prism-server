@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.*;
-import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -449,7 +449,7 @@ public class AdvertService {
         AdvertTargetAdvert transientTarget = new AdvertTargetAdvert().withAdvert(advert).withValue(targetResource.getAdvert()).withSelected(selected);
 
         User targetUser = null;
-        UserSimpleDTO targetUserDTO = targetDTO.getUser();
+        UserDTO targetUserDTO = targetDTO.getUser();
         if (targetUserDTO != null) {
             targetUser = userService.requestUser(targetUserDTO, targetResource, PrismRole.getViewerRole(targetResource));
             transientTarget.setValueUser(targetUser);

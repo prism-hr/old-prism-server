@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
@@ -65,7 +66,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
 import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
@@ -241,17 +241,13 @@ public class UserService {
         user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
         user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
         user.setEmail(userDTO.getEmail());
+    }
 
-        UserAccount userAccount = user.getUserAccount();
+    public void updateUserAccount(UserAccountDTO userAccountDTO) {
+        UserAccount userAccount = getCurrentUser().getUserAccount();
+        userAccount.setSendApplicationRecommendationNotification(userAccountDTO.getSendApplicationRecommendationNotification());
 
-        Integer portraitDocumentId = userDTO.getPortraitDocument();
-        if (portraitDocumentId != null) {
-            userAccount.setPortraitImage(documentService.getById(userDTO.getPortraitDocument(), IMAGE));
-        }
-
-        userAccount.setSendApplicationRecommendationNotification(userDTO.getSendApplicationRecommendationNotification());
-
-        String password = userDTO.getPassword();
+        String password = userAccountDTO.getPassword();
         if (password != null) {
             userAccount.setPassword(PrismEncryptionUtils.getMD5(password));
             userAccount.setTemporaryPassword(null);

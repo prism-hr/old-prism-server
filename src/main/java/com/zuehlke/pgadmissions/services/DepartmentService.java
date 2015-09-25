@@ -1,19 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.DepartmentDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -26,7 +12,19 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.DepartmentInvitationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 
 @Service
 @Transactional
@@ -78,7 +76,7 @@ public class DepartmentService {
         departmentDTO.setOpportunityCategories(opportunityCategories);
 
         Department department = null;
-        UserSimpleDTO departmentUser = null;
+        UserDTO departmentUser = null;
         ActionOutcomeDTO outcome = null;
         if (institution != null) {
             outcome = resourceService.createResource(institution.getUser(), actionService.getById(INSTITUTION_CREATE_DEPARTMENT), departmentDTO);

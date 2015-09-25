@@ -390,8 +390,10 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(T profile, Class<U> personalDetailClass,
-                                                                                                                      ProfilePersonalDetailDTO personalDetailDTO) {
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(
+            T profile, Class<U> personalDetailClass, ProfilePersonalDetailDTO personalDetailDTO) {
+        userService.updateUser(personalDetailDTO.getUser());
+
         U personalDetail = (U) profile.getPersonalDetail();
         if (personalDetail == null) {
             personalDetail = instantiate(personalDetailClass);

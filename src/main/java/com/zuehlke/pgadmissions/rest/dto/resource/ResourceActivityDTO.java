@@ -7,13 +7,7 @@ import java.util.stream.Stream;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-
-public class ResourceFamilyCreationDTO {
-
-    @NotNull
-    private PrismScopeCreation creation;
+public class ResourceActivityDTO {
 
     @Valid
     @NotNull
@@ -27,18 +21,6 @@ public class ResourceFamilyCreationDTO {
 
     @Valid
     private ResourceCreationDTO project;
-
-    @Valid
-    @NotNull
-    private UserDTO user;
-
-    public PrismScopeCreation getCreation() {
-        return creation;
-    }
-
-    public void setCreation(PrismScopeCreation creation) {
-        this.creation = creation;
-    }
 
     public ResourceCreationDTO getInstitution() {
         return institution;
@@ -72,15 +54,8 @@ public class ResourceFamilyCreationDTO {
         this.project = project;
     }
 
-    public UserDTO getUser() {
-        return user;
-    }
-
-    public void setUser(UserDTO user) {
-        this.user = user;
-    }
-
     public List<ResourceCreationDTO> getResources() {
         return Stream.of(institution, department, program, project).filter(r -> r != null).collect(Collectors.toList());
     }
+
 }

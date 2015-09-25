@@ -19,20 +19,19 @@ public class PrismListUtils {
         processRowDescriptors(entities, null, null, summaries);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Set<Integer> onlyAsPartnerEntityIds,
-            Map<String, Integer> summaries) {
+    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Set<Integer> onlyAsPartnerEntityIds, Map<String, Integer> summaries) {
         boolean processOnlyAsPartner = false;
         entityIds = entityIds == null ? Sets.newHashSet() : entityIds;
         onlyAsPartnerEntityIds = onlyAsPartnerEntityIds == null ? Sets.newHashSet() : onlyAsPartnerEntityIds;
         for (T entity : entities) {
             Integer entityId = entity.getId();
             entityIds.add(entityId);
-            
+
             processOnlyAsPartner = !processOnlyAsPartner ? entity.getClass().equals(ResourceOpportunityCategoryDTO.class) : processOnlyAsPartner;
             if (processOnlyAsPartner && isTrue(((ResourceOpportunityCategoryDTO) entity).getOnlyAsPartner())) {
                 onlyAsPartnerEntityIds.add(entityId);
             }
-            
+
             String opportunityCategories = entity.getOpportunityCategories();
             if (opportunityCategories != null) {
                 for (String opportunityCategory : entity.getOpportunityCategories().split("\\|")) {

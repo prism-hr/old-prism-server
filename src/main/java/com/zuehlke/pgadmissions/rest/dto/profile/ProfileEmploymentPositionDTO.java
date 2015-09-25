@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
 
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
@@ -16,7 +16,7 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     private Integer id;
 
     @NotNull
-    private ResourceFamilyCreationDTO resource;
+    private ResourceRelationInvitationDTO resource;
 
     @NotNull
     @DateNotFuture
@@ -35,12 +35,12 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     }
 
     @Override
-    public ResourceFamilyCreationDTO getResource() {
+    public ResourceRelationInvitationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceFamilyCreationDTO resource) {
+    public void setResource(ResourceRelationInvitationDTO resource) {
         this.resource = resource;
     }
 

@@ -5,7 +5,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementAction
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
@@ -301,7 +301,8 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq(resourceScope.getLowerCamelName(), resource))
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.ne("role.id", getUnverifiedViewerRole(resource))) //
+                .add(Restrictions.not( //
+                        Restrictions.in("role.id", getUnverifiedRoles(resourceScope)))) //
                 .list();
     }
 

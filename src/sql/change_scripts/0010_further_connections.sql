@@ -351,3 +351,10 @@ alter table program
 alter table state
 	drop column hidden
 ;
+
+alter table user_role
+	drop foreign key user_role_ibfk_10,
+	drop index target_role_id,
+	drop column target_role_id
+;
+

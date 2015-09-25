@@ -55,7 +55,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
             currency = domicile == null ? SYSTEM_CURRENCY : domicile.getCurrency();
         }
 
-        PrismScopeCreationDefault creationDefault = INSTITUTION.getDefault(newResource.getScopeCreation());
+        PrismScopeCreationDefault creationDefault = INSTITUTION.getDefault(newResource.getContext());
         Integer businessYearStartMonth = newResource.getBusinessYearStartMonth();
         businessYearStartMonth = businessYearStartMonth == null ? creationDefault.getDefaultBusinessYearStartMonth().getValue() : businessYearStartMonth;
 

@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LIN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
@@ -381,7 +382,7 @@ public class UserDAO {
                 .setProjection(Projections.property("user")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("role.id", PrismRole.getUnverifiedViewerRole(resourceScope)));
+                .add(Restrictions.in("role.id", getUnverifiedRoles(resourceScope)));
 
         if (resources == null) {
             criteria.add(Restrictions.isNotNull(resourceReference));

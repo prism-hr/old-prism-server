@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedViewerRole;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getViewerRole;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -15,7 +13,6 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.WordUtils.capitalize;
 
 import java.lang.reflect.Field;
@@ -70,7 +67,6 @@ import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
@@ -78,7 +74,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -173,42 +168,9 @@ public class UserService {
         }
     }
 
-    public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
-        PrismRole actualRole;
-        User invoker = resource.getParentResource().getUser();
-        if ((getCurrentUser().equals(invoker) && actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), invoker, false))) {
-            actualRole = targetRole == null ? getViewerRole(resource) : targetRole;
-        } else {
-            actualRole = getUnverifiedViewerRole(resource);
-        }
-
-        User newUser = getOrCreateUserWithRoles(invoker, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, asList(actualRole));
-
-        if (targetRole != null) {
-            UserRole newUserRole = roleService.getUserRole(resource, newUser, actualRole);
-            if (newUserRole.getTargetRole() == null) {
-                newUserRole.setTargetRole(roleService.getById(targetRole));
-            }
-        }
-
-        return newUser;
-    }
-
-    public void verifyUser(User invoker, Resource resource, User user, Boolean verify) {
-        Role role = roleService.getUnverifiedRole(resource);
-        if (role != null) {
-            UserRole userRole = roleService.getUserRole(resource, user, role);
-            if (isTrue(verify)) {
-                Role targetRole = userRole.getTargetRole();
-                roleService.modifyUserRole(invoker, resource, user, CREATE, targetRole == null ? getViewerRole(resource) : targetRole.getId());
-            }
-            entityService.delete(userRole);
-        }
-    }
-
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.modifyUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
+        roleService.updateUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
 

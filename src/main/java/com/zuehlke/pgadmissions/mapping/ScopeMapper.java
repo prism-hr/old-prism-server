@@ -18,15 +18,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeCreation.PrismScopeCreationFamilies;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.PrismScopeRelations;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ResourceActionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceFamilyCreationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceFamilyCreationRepresentation.ResourceCreationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationRepresentation.ResourceRelationComponentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -48,20 +48,20 @@ public class ScopeMapper {
     @Inject
     private ScopeService scopeService;
 
-    public List<ResourceFamilyCreationRepresentation> getResourceFamilyCreationRepresentations() {
-        List<ResourceFamilyCreationRepresentation> representations = Lists.newLinkedList();
-        for (PrismScopeCreation resourceFamilyCreation : PrismScopeCreation.values()) {
-            ResourceFamilyCreationRepresentation representation = new ResourceFamilyCreationRepresentation(resourceFamilyCreation);
+    public List<ResourceRelationRepresentation> getResourceFamilyCreationRepresentations() {
+        List<ResourceRelationRepresentation> representations = Lists.newLinkedList();
+        for (PrismMotivationContext resourceFamilyCreation : PrismMotivationContext.values()) {
+            ResourceRelationRepresentation representation = new ResourceRelationRepresentation(resourceFamilyCreation);
 
             Map<PrismScope, Integer> occurrences = Maps.newHashMap();
-            Map<PrismScope, ResourceCreationRepresentation> scopeRepresentations = Maps.newLinkedHashMap();
-            PrismScopeCreationFamilies scopeCreationFamilies = resourceFamilyCreation.getScopeCreationFamilies();
+            Map<PrismScope, ResourceRelationComponentRepresentation> scopeRepresentations = Maps.newLinkedHashMap();
+            PrismScopeRelations scopeCreationFamilies = resourceFamilyCreation.getPermittedRelations();
             scopeCreationFamilies.forEach(scf -> {
                 scf.forEach(s -> {
                     Integer frequency = occurrences.get(s);
                     frequency = frequency == null ? 1 : (frequency + 1);
                     occurrences.put(s, frequency);
-                    scopeRepresentations.put(s, new ResourceCreationRepresentation(s));
+                    scopeRepresentations.put(s, new ResourceRelationComponentRepresentation(s));
                 });
             });
 
@@ -72,7 +72,7 @@ public class ScopeMapper {
                 }
             });
 
-            representation.setResourceCreations(newLinkedList(scopeRepresentations.values()));
+            representation.setResourceRelations(newLinkedList(scopeRepresentations.values()));
             representations.add(representation);
         }
         return representations;

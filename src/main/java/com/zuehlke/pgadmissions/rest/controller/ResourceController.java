@@ -27,6 +27,7 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -44,6 +45,7 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
@@ -179,7 +181,7 @@ public class ResourceController {
         PrismRole role = body.get("role");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.modifyUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
+        roleService.updateUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
@@ -188,7 +190,7 @@ public class ResourceController {
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
-        roleService.modifyUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
+        roleService.updateUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
@@ -204,7 +206,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
-    public void removeUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public void deleteUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.deleteUserRoles(userService.getCurrentUser(), resource, user);
@@ -216,6 +218,23 @@ public class ResourceController {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/join/{context}", method = RequestMethod.POST)
+    @PreAuthorize("permitAll")
+    public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @PathVariable PrismJoinResourceContext context,
+            @RequestBody UserDTO user, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        return userMapper.getUserRepresentationSimple(resourceService.joinResource((ResourceParent) resource, user, context));
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}/verify", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestParam Boolean verify, @ModelAttribute ResourceDescriptor resourceDescriptor)
+            throws Exception {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+        roleService.verifyUserRoles(userService.getCurrentUser(), resource, user, verify);
     }
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)

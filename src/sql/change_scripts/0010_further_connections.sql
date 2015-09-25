@@ -358,3 +358,31 @@ alter table user_role
 	drop column target_role_id
 ;
 
+alter table advert_connection
+	drop foreign key advert_connection_ibfk_1,
+	drop foreign key advert_connection_ibfk_2,
+	drop foreign key advert_connection_ibfk_3,
+	drop foreign key advert_connection_ibfk_4,	
+	change column inviting_advert_id advert_id int(10) unsigned not null after id,
+	change column inviting_user_id advert_user_id int(10) unsigned after advert_id,
+	change column receiving_advert_id target_advert_id int(10) unsigned not null,
+	change column receiving_user_id target_advert_user_id int(10) unsigned after target_advert_id,
+	drop index inviting_user_id,
+	drop index inviting_advert_id,
+	drop index receiving_user_id,
+	drop index receiving_advert_id,
+	drop index inviting_user_id_2,
+	drop index receiving_user_id_2,
+	add unique index (advert_id, advert_user_id, target_advert_id, target_advert_user_id),
+	add index (advert_id, accepted),
+	add index (advert_user_id, accepted),
+	add index (target_advert_id, accepted),
+	add index (target_advert_user_id, accepted),
+	add foreign key (advert_id) references advert (id),
+	add foreign key (advert_user_id) references user (id),
+	add foreign key (target_advert_id) references advert (id),
+	add foreign key (target_advert_user_id) references user (id),
+	add column accepting_user_id int(10) unsigned not null after target_advert_user_id,
+	add index (accepting_user_id, accepted),
+	add foreign key (accepting_user_id) references user (id)
+;

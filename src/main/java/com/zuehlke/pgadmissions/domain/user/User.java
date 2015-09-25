@@ -135,12 +135,15 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "user")
     private Set<UserAdvert> userAdverts = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "invitingUser")
-    private Set<AdvertConnection> invitedConnections = Sets.newHashSet();
+    @OneToMany(mappedBy = "advertUser")
+    private Set<AdvertConnection> advertConnections = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "receivingUser")
-    private Set<AdvertConnection> receivedConnections = Sets.newHashSet();
+    @OneToMany(mappedBy = "advertTargetUser")
+    private Set<AdvertConnection> advertTargetConnections = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "acceptingUser")
+    private Set<AdvertConnection> advertAcceptingConnections = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "user")
     private Set<UserReferee> userReferees = Sets.newHashSet();
 
@@ -304,12 +307,16 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userAdverts;
     }
 
-    public Set<AdvertConnection> getInvitedConnections() {
-        return invitedConnections;
+    public Set<AdvertConnection> getAdvertConnections() {
+        return advertConnections;
     }
 
-    public Set<AdvertConnection> getReceivedConnections() {
-        return receivedConnections;
+    public Set<AdvertConnection> getAdvertTargetConnections() {
+        return advertTargetConnections;
+    }
+
+    public Set<AdvertConnection> getAdvertAcceptingConnections() {
+        return advertAcceptingConnections;
     }
 
     public Set<UserReferee> getUserReferees() {

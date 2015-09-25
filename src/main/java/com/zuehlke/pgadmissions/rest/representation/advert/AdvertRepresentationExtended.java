@@ -17,6 +17,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private ResourceRepresentationSimple department;
 
+    // FIXME - make something that sends contract duration
     private ResourceRepresentationSimple program;
 
     private ResourceRepresentationSimple resource;

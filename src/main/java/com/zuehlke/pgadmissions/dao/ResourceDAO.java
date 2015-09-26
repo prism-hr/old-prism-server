@@ -83,11 +83,9 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId,
-            PrismScope propagatedScope, PrismAction actionId) {
+    public List<Integer> getResourcesToPropagate(PrismScope propagatingScope, Integer propagatingId, PrismScope propagatedScope, PrismAction actionId) {
         String propagatedAlias = propagatedScope.getLowerCamelName();
-        String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias
-                : propagatedAlias + "s";
+        String propagatedReference = propagatingScope.ordinal() > propagatedScope.ordinal() ? propagatedAlias : propagatedAlias + "s";
 
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(propagatingScope.getResourceClass()) //
                 .setProjection(Projections.property(propagatedAlias + ".id")) //

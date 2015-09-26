@@ -165,6 +165,9 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
 
+    @Column(name = "application_applicant_accept_appointment")
+    private Boolean applicantAcceptAppointment;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "application_rejection_reason")
     private PrismRejectionReason rejectionReason;
@@ -407,6 +410,14 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
+    public Boolean getApplicantAcceptAppointment() {
+        return applicantAcceptAppointment;
+    }
+
+    public void setApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
+    }
+
     public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
@@ -569,6 +580,11 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
+    public Comment withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
+        return this;
+    }
+    
     public Comment withRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
         return this;

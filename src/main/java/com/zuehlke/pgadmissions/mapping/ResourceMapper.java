@@ -79,6 +79,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListReprese
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
@@ -269,8 +270,16 @@ public class ResourceMapper {
         return getResourceRepresentationCreation(resource, ResourceRepresentationLocation.class);
     }
 
-    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationSimple(T resource) {
-        return getResourceRepresentationSimple(resource, ResourceRepresentationExtended.class);
+    public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
+        return getResourceRepresentationSimple(resource, ResourceRepresentationSimple.class);
+    }
+
+    public <T extends ResourceOpportunity> ResourceOpportunityRepresentationSimple getResourceOpportunityRepresentationSimple(T resource) {
+        ResourceOpportunityRepresentationSimple representation = getResourceRepresentationSimple(resource, ResourceOpportunityRepresentationSimple.class);
+        representation.setAvailableDate(resource.getAvailableDate());
+        representation.setDurationMinimum(resource.getDurationMinimum());
+        representation.setDurationMaximum(resource.getDurationMaximum());
+        return representation;
     }
 
     public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {

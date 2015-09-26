@@ -386,3 +386,7 @@ alter table advert_connection
 	add index (accepting_user_id, accepted),
 	add foreign key (accepting_user_id) references user (id)
 ;
+
+alter table comment
+	add column application_applicant_accept_appointment int(1) unsigned after application_recruiter_accept_appointment
+;

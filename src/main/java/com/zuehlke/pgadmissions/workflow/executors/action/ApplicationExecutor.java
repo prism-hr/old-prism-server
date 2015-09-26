@@ -75,7 +75,8 @@ public class ApplicationExecutor implements ActionExecutor {
                 .withAction(action).withTransitionState(transitionState).withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationIdentified(commentDTO.getApplicationIdentified())
                 .withApplicationEligible(commentDTO.getApplicationEligible()).withApplicationInterested(commentDTO.getApplicationInterested())
-                .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment()).withRejectionReason(commentDTO.getRejectionReason());
+                .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment()).withApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment())
+                .withRejectionReason(commentDTO.getRejectionReason());
 
         CommentPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
         if (positionDetailDTO != null) {

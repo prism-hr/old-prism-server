@@ -93,8 +93,14 @@ public class AdvertDAO {
                         .add(Projections.property("department.name").as("departmentName")) //
                         .add(Projections.property("program.id").as("programId")) //
                         .add(Projections.property("program.name").as("programName")) //
+                        .add(Projections.property("program.availableDate").as("programAvailableDate")) //
+                        .add(Projections.property("program.durationMinimum").as("programDurationMinimum")) //
+                        .add(Projections.property("program.durationMaximum").as("programDurationMaximum")) //
                         .add(Projections.property("project.id").as("projectId")) //
                         .add(Projections.property("project.name").as("projectName")) //
+                        .add(Projections.property("project.availableDate").as("projectAvailableDate")) //
+                        .add(Projections.property("project.durationMinimum").as("projectDurationMinimum")) //
+                        .add(Projections.property("project.durationMaximum").as("projectDurationMaximum")) //
                         .add(Projections.property("opportunityType.id").as("opportunityType")) //
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.property("summary").as("summary")) //

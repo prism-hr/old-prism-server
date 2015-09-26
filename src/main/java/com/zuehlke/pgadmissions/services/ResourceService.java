@@ -431,6 +431,10 @@ public class ResourceService {
         return properties;
     }
 
+    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
+        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles);
+    }
+
     public HashMultimap<PrismScope, Integer> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, SYSTEM)) {

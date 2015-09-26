@@ -440,6 +440,16 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
+    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
+        String resourceReference = roles[0].getScope().getLowerCamelName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property(resourceReference + ".id"))
+                .add(Restrictions.isNotNull(resourceReference))
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("role.id", roles)) //
+                .list();
+    }
+
     public List<ResourceActivityDTO> getUserAdministratorResources(PrismScope resourceScope, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         PrismActionEnhancement[] administratorEnhancements = RESOURCE_ADMINISTRATOR.getActionEnhancements();

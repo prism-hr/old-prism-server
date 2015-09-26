@@ -395,3 +395,10 @@ alter table application
 	drop column confirmed_offer_type,
 	drop index confirmed_offer_type
 ;
+
+alter table comment
+	add column application_partner_accept_appointment int(1) unsigned after application_recruiter_accept_appointment
+;
+
+drop table user_advert
+;

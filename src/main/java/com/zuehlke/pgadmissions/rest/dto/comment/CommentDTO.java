@@ -54,6 +54,8 @@ public class CommentDTO {
 
     private Boolean recruiterAcceptAppointment;
 
+    private Boolean partnerAcceptAppointment;
+    
     private Boolean applicantAcceptAppointment;
     
     private Boolean declinedResponse;
@@ -212,6 +214,14 @@ public class CommentDTO {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
     
+    public Boolean getPartnerAcceptAppointment() {
+        return partnerAcceptAppointment;
+    }
+
+    public void setPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
+    }
+
     public Boolean getApplicantAcceptAppointment() {
         return applicantAcceptAppointment;
     }

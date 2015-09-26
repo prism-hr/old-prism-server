@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureRespon
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
@@ -165,6 +165,9 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
 
+    @Column(name = "application_partner_accept_appointment")
+    private Boolean partnerAcceptAppointment;
+    
     @Column(name = "application_applicant_accept_appointment")
     private Boolean applicantAcceptAppointment;
 
@@ -410,6 +413,14 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
+    public Boolean getPartnerAcceptAppointment() {
+        return partnerAcceptAppointment;
+    }
+
+    public void setPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
+    }
+
     public Boolean getApplicantAcceptAppointment() {
         return applicantAcceptAppointment;
     }
@@ -580,6 +591,11 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
+    public Comment withPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
+        return this;
+    }
+    
     public Comment withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
         this.applicantAcceptAppointment = applicantAcceptAppointment;
         return this;
@@ -636,7 +652,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     }
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId().equals(APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        return action.getId().equals(APPLICATION_CONFIRM_OFFER);
     }
 
     public boolean isApplicationCreatedComment() {
@@ -648,7 +664,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     }
 
     public boolean isApplicationCompletionComment() {
-        return Arrays.asList(APPLICATION_CONFIRM_OFFER_RECOMMENDATION, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
+        return Arrays.asList(APPLICATION_CONFIRM_OFFER, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
                 .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
     }
 

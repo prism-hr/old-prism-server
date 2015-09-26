@@ -4,8 +4,8 @@ import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_EARLIEST_BUFFER
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_APPOINTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_MANAGEMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
@@ -236,7 +236,7 @@ public class ApplicationMapper {
     }
 
     private ApplicationOfferRepresentation getApplicationOfferRecommendationRepresentation(Application application) {
-        Comment sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        Comment sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
 
         if (sourceComment != null) {
             return getApplicationOfferRecommendationRepresentation(sourceComment);
@@ -248,7 +248,7 @@ public class ApplicationMapper {
 
             User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
-                sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_APPOINTMENT, manager, sourceComment.getCreatedTimestamp());
+                sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_MANAGEMENT, manager, sourceComment.getCreatedTimestamp());
             }
 
             if (sourceComment != null) {
@@ -296,7 +296,7 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application) {
-        Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
 
         if (assignmentComment != null) {
             return Lists.newArrayList(getApplicationHiringManagerRepresentations(assignmentComment));

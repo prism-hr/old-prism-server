@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Your request to create a new ${TEMPLATE_SYSTEM_TITLE} Institution ${INSTITUTION_CODE} has been reviewed.
+    Your request to create a new ${TEMPLATE_SYSTEM_TITLE} Organization ${INSTITUTION_CODE} has been reviewed.
 </p>
 
 <p>

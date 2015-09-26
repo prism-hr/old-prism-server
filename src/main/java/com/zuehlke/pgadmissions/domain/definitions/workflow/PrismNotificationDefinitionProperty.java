@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ActionCompleteBui
 import com.zuehlke.pgadmissions.workflow.notification.property.ActionViewEditBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedManagerBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedOfferAcceptanceBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedOfferConditionBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPositionDescriptionBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationConfirmedPositionTitleBuilder;
@@ -120,6 +121,7 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_CONFIRMED_START_DATE(APPLICATION_APPROVED, true, ApplicationConfirmedStartDateBuilder.class), //
     APPLICATION_CONFIRMED_MANAGER(APPLICATION_APPROVED, true, ApplicationConfirmedManagerBuilder.class), //
     APPLICATION_CONFIRMED_OFFER_CONDITION(APPLICATION_APPROVED, true, ApplicationConfirmedOfferConditionBuilder.class), //
+    APPLICATION_CONFIRMED_OFFER_ACCEPTANCE(APPLICATION_APPROVED, true, ApplicationConfirmedOfferAcceptanceBuilder.class), //
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //
     PROJECT_TITLE(PROJECT_GLOBAL, true, ProjectTitleBuilder.class), //
     PROJECT_CODE(PROJECT_GLOBAL, true, ProjectCodeBuilder.class), //

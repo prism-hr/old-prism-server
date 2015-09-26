@@ -390,3 +390,8 @@ alter table advert_connection
 alter table comment
 	add column application_applicant_accept_appointment int(1) unsigned after application_recruiter_accept_appointment
 ;
+
+alter table application
+	drop column confirmed_offer_type,
+	drop index confirmed_offer_type
+;

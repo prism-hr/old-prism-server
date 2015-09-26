@@ -12,8 +12,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,7 +30,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -152,10 +149,6 @@ public class Application extends Resource implements
     @Column(name = "confirmed_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
-
-    @Column(name = "confirmed_offer_type")
-    @Enumerated(EnumType.STRING)
-    private PrismOfferType confirmedOfferType;
 
     @Column(name = "shared")
     private Boolean shared;
@@ -328,7 +321,7 @@ public class Application extends Resource implements
     public ApplicationProgramDetail getProgramDetail() {
         return programDetail;
     }
-    
+
     public void setProgramDetail(ApplicationProgramDetail programDetail) {
         this.programDetail = programDetail;
     }
@@ -342,7 +335,7 @@ public class Application extends Resource implements
     public void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
         this.personalDetail = personalDetail;
     }
-    
+
     @Override
     public ApplicationAddress getAddress() {
         return address;
@@ -352,7 +345,7 @@ public class Application extends Resource implements
     public void setAddress(ApplicationAddress address) {
         this.address = address;
     }
-    
+
     @Override
     public Set<ApplicationQualification> getQualifications() {
         return qualifications;
@@ -377,7 +370,7 @@ public class Application extends Resource implements
     public void setDocument(ApplicationDocument document) {
         this.document = document;
     }
-    
+
     @Override
     public ApplicationAdditionalInformation getAdditionalInformation() {
         return additionalInformation;
@@ -494,14 +487,6 @@ public class Application extends Resource implements
 
     public void setConfirmedStartDate(LocalDate confirmedStartDate) {
         this.confirmedStartDate = confirmedStartDate;
-    }
-
-    public PrismOfferType getConfirmedOfferType() {
-        return confirmedOfferType;
-    }
-
-    public void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
-        this.confirmedOfferType = confirmedOfferType;
     }
 
     @Override

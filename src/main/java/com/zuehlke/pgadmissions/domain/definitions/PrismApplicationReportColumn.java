@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReportColumnAccessorType.DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReportColumnAccessorType.DISPLAY_PROPERTY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReportColumnAccessorType.STRING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_OFFER_TYPE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_START_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DECLINED_REFERENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
@@ -57,8 +56,7 @@ public enum PrismApplicationReportColumn {
     REFEREE_COUNT(APPLICATION_REFEREES, "count(distinct referee.id)", null, false, "referees", STRING), //
     PROVIDED_REFERENCE_COUNT(APPLICATION_PROVIDED_REFERENCES, "count(distinct provideReferenceComment.id)", null, false, "providedReferences", STRING), //
     DECLINED_REFERENCE_COUNT(APPLICATION_DECLINED_REFERENCES, "count(distinct declineReferenceComment.id)", null, false, "declinedReferences", STRING), //
-    START_DATE(APPLICATION_CONFIRMED_START_DATE, "application.confirmedStartDate", null, false, "confirmedStartDate", DATE), //
-    OFFER_TYPE(APPLICATION_CONFIRMED_OFFER_TYPE, "application.confirmedOfferType", null, false, "confirmedOfferType", DISPLAY_PROPERTY);
+    START_DATE(APPLICATION_CONFIRMED_START_DATE, "application.confirmedStartDate", null, false, "confirmedStartDate", DATE);
 
     private PrismDisplayPropertyDefinition title;
 

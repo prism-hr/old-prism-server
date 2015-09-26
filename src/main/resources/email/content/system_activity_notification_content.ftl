@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Here's your regular summary of activity within ${SYSTEM_TITLE}.
+    Here's your regular summary of your activity within ${SYSTEM_TITLE}.
 </p>
 
 <p>
@@ -11,23 +11,31 @@
     <br/>
     <ul>
     	<li>N pending tasks</li>
-    	<li>N updates to applications and or adverts that you are following</li>
-    	<li>N new connection requests from colleagues and students</li>
+    	<li>N updates to applications that you are following</li>
+    	<li>N updates to opportunities that you are following</li>
+    	<li>N updates from organizations that you are following</li>
+    	<li>N requests to join organizations that you manage</li>
+    	<li>N new connection requests from organizations in your network</li>
     </ul>
 </p>
 
 <p>
-	Login to see all of your requests: 
+	Login to view your updates and interact! 
 </p>
 
 ${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
-    We also have the following current opportunities posted to your organization. Remember that you can invite 
-    partner organizations to post opportunities at any time from your dashboard.
+    The following new opportunities have also been posted within your network:
 </p>
 
 ${SYSTEM_APPLICATION_RECOMMENDATION}
+
+<p>
+	Login to browse opportunities! 
+</p>
+
+${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
 	If you do not wish to receive these messages any more, or wish to take a break, inform us by updating 

@@ -185,6 +185,11 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED_COMPLETED) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)), //
+    
+    APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(APPLICATION_APPROVED_COMPLETED) //
+                    .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)), //
 
     APPLICATION_CONFIRM_REJECTION_TRANSITION( //
             new PrismStateTransition() //

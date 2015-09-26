@@ -4,23 +4,23 @@
 
 <p>
 ${APPLICATION_CREATOR_FULL_NAME} has submitted an Application ${APPLICATION_CODE} for ${APPLICATION_OPPORTUNITY_TYPE} at
-${INSTITUTION_HOMEPAGE} in ${APPLICATION_PARENT_RESOURCE_TITLE}.
+${INSTITUTION_HOMEPAGE} in the position of ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>
     They have nominated you as one of their referees and we would very much appreciate your feedback on their
-    suitability for postgraduate research study.
+    suitability.
 </p>
 
 <p>
     <b>If you are happy to provide your feedback:</b>
     <br/>
 <ul>
-    <li>Please follow the <i>Provide Reference</i> link below to access our admissions portal.</li>
+    <li>Please follow the <i>Provide Reference</i> link below.</li>
     <li>Enter a password of your choice on the registration form, (or simply login if you have already
         registered).
     </li>
-    <li>Then follow the onscreen guidance to access a short feedback form, (or upload a document if you have
-        already prepared one).
+    <li>Then follow the onscreen guidance to access our feedback form, (you can also upload a reference letter 
+    	if you have already prepared one).
     </li>
 </ul>
 <br/>
@@ -28,7 +28,7 @@ ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PARENT_RESOURCE_TITLE}.
 <br/>
 <ul>
     <li>Simply click on the alternative, <i>Decline</i>, link to notify us of the situation. (Please be aware
-        that declining may reduce the chance of this applicant securing a place with us).
+        that declining may reduce the chance of this applicant securing a position).
     </li>
 </ul>
 <br/>
@@ -37,14 +37,8 @@ ${INSTITUTION_HOMEPAGE} in ${APPLICATION_PARENT_RESOURCE_TITLE}.
 ${ACTION_COMPLETE}
 
 <p>
-    We kindly ask our Referees to submit their feedback using our linked admissions portal, (rather than submitting
-    via other means), to keep our reminders accurate and to help us authenticate and accurately merge the feedback
-    we receive.
-</p>
-
-<p>
-    The timely collection of references is crucial for us to consider our applicants, therefore
-    we send periodic email reminders where we do not receive a response.
+    We kindly ask Referees to submit their feedback using our portal, (rather than submitting via other means), so that we 
+    can easily authenticate the references that we receive and maintain a coherent record of our recruitment.
 </p>
 
 <p>

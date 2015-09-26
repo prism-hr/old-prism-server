@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_APPOINTEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_APPOINTEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
@@ -227,17 +227,17 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(EXHUME) //
                     .withTransitionRole(APPLICATION_REFEREE)),
     
-    APPLICATION_CREATE_POTENTIAL_APPOINTEE_GROUP( //
+    APPLICATION_CREATE_APPOINTEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_CREATOR) //
                     .withTransitionType(BRANCH) //
-                    .withTransitionRole(APPLICATION_POTENTIAL_APPOINTEE)),
+                    .withTransitionRole(APPLICATION_APPOINTEE)),
     
-    APPLICATION_RETIRE_POTENTIAL_APPOINTEE_GROUP( //
+    APPLICATION_RETIRE_APPOINTEE_GROUP( //
             new PrismRoleTransition() //
-                    .withRole(APPLICATION_POTENTIAL_APPOINTEE) //
+                    .withRole(APPLICATION_APPOINTEE) //
                     .withTransitionType(RETIRE) //
-                    .withTransitionRole(APPLICATION_POTENTIAL_APPOINTEE)),
+                    .withTransitionRole(APPLICATION_APPOINTEE)),
 
     PROJECT_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //

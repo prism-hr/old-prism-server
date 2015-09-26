@@ -3,8 +3,8 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INVOKER_FULL_NAME} has invited you to register with ${TEMPLATE_SYSTEM_TITLE}, the opportunity portal. 
-    Follow the link below to create your user account and start managing opportunities. 
+    ${TEMPLATE_INVOKER_FULL_NAME} has invited you to register with ${TEMPLATE_SYSTEM_TITLE}, the marketplace for student and graduate careers! 
+    Follow the link below to create your user profile and join our community.
 </p>
 
 ${SYSTEM_USER_ACCOUNT_ACTIVATION}

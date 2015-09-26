@@ -7,7 +7,6 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 
 public class ApplicationReportListRowDTO {
@@ -57,8 +56,6 @@ public class ApplicationReportListRowDTO {
     private Long declinedReferences;
 
     private LocalDate confirmedStartDate;
-
-    private PrismOfferType confirmedOfferType;
 
     public Integer getId() {
         return id;
@@ -244,14 +241,6 @@ public class ApplicationReportListRowDTO {
         this.confirmedStartDate = confirmedStartDate;
     }
 
-    public PrismOfferType getConfirmedOfferType() {
-        return confirmedOfferType;
-    }
-
-    public void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
-        this.confirmedOfferType = confirmedOfferType;
-    }
-
     public String getIdDisplay() {
         return id == null ? "" : id.toString();
     }
@@ -339,10 +328,6 @@ public class ApplicationReportListRowDTO {
 
     public String getDeclinedReferencesDisplay() {
         return declinedReferences == null ? "" : declinedReferences.toString();
-    }
-
-    public PrismOfferType getConfirmedOfferTypeDisplay() {
-        return confirmedOfferType == null ? null : confirmedOfferType;
     }
 
     public String getConfirmedStartDateDisplay(String dateFormat) {

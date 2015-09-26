@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 import static com.zuehlke.pgadmissions.PrismConstants.CONFIDENCE_MEDIUM;
 import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
@@ -162,7 +160,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         CommentOfferDetail offerDetail = comment.getOfferDetail();
         if (offerDetail != null) {
             application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
-            application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
     }

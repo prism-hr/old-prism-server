@@ -198,6 +198,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_COMPLETE_APPROVED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_RESERVED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REJECTED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Arrangements"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_RECOMMENDATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Appointment"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
@@ -280,6 +281,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_ROLE_APPLICATION_ADMINISTRATOR(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Administrator"),
+    SYSTEM_ROLE_APPLICATION_APPOINTEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Potential Appointee"),
+    SYSTEM_ROLE_APPLICATION_POTENTIAL_APPOINTEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Appointee"),
     SYSTEM_ROLE_APPLICATION_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Creator"),
     SYSTEM_ROLE_APPLICATION_INTERVIEWEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Interviewee"),
     SYSTEM_ROLE_APPLICATION_INTERVIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Interviewer"),

@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertConnectionDTO;
@@ -66,6 +69,7 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentat
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.AdvertService;
@@ -162,21 +166,23 @@ public class AdvertMapper {
 
         ResourceParent resource = advert.getResource();
         representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
-        representation.setResource(resourceMapper.getResourceRepresentationSimple(resource));
 
         Institution institution = resource.getInstitution();
-        if (!institution.sameAs(resource)) {
-            representation.setInstitution(resourceMapper.getResourceRepresentationSimple(institution));
-        }
+        representation.setInstitution(resourceMapper.getResourceRepresentationSimple(institution));
 
         Department department = resource.getDepartment();
-        if (!(department == null || department.sameAs(resource))) {
+        if (department != null) {
             representation.setDepartment(resourceMapper.getResourceRepresentationSimple(department));
         }
 
         Program program = resource.getProgram();
-        if (!(program == null || program.sameAs(resource))) {
-            representation.setProgram(resourceMapper.getResourceRepresentationSimple(program));
+        if (program != null) {
+            representation.setProgram(resourceMapper.getResourceOpportunityRepresentationSimple(program));
+        }
+
+        Project project = resource.getProject();
+        if (project != null) {
+            representation.setProject(resourceMapper.getResourceOpportunityRepresentationSimple(project));
         }
 
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
@@ -192,8 +198,8 @@ public class AdvertMapper {
         }
 
         representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
-
         representation.setName(advert.getName());
+
         return representation;
     }
 
@@ -204,17 +210,10 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        ResourceActivityDTO resource = null;
         for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
-            ResourceActivityDTO thisResource = advert.getEnclosingResource(scope);
-            if (thisResource == null) {
-                continue;
-            } else if (resource == null) {
-                ResourceRepresentationSimple resourceRepresentation = getAdvertResourceRepresentation(thisResource);
-                representation.setResource(resourceRepresentation);
-                resource = thisResource;
-            } else {
-                setProperty(representation, scope.getLowerCamelName(), getAdvertResourceRepresentation(thisResource));
+            ResourceRepresentationSimple resource = getAdvertResourceRepresentation(advert, scope);
+            if (resource != null) {
+                setProperty(representation, scope.getLowerCamelName(), resource);
             }
         }
 
@@ -355,13 +354,31 @@ public class AdvertMapper {
                 .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance())).collect(Collectors.toList());
     }
 
-    private ResourceRepresentationSimple getAdvertResourceRepresentation(ResourceActivityDTO resource) {
-        PrismScope resourceScope = resource.getScope();
-        ResourceRepresentationSimple resourceRepresentation = new ResourceRepresentationSimple().withScope(resourceScope).withId(resource.getId()).withName(resource.getName());
-        if (resourceScope.equals(INSTITUTION)) {
-            resourceRepresentation.setLogoImage(new DocumentRepresentation().withId(resource.getLogoImage()));
+    @SuppressWarnings("unchecked")
+    private <T extends ResourceRepresentationSimple> T getAdvertResourceRepresentation(AdvertDTO advert, PrismScope scope) {
+        ResourceActivityDTO resource = advert.getEnclosingResource(scope);
+        if (resource != null) {
+            boolean isOpportunity = asList(PROGRAM, PROJECT).contains(scope);
+            Class<?> representationClass = isOpportunity ? ResourceOpportunityRepresentationSimple.class : ResourceRepresentationSimple.class;
+            T resourceRepresentation = (T) BeanUtils.instantiate(representationClass);
+
+            resourceRepresentation.setScope(scope);
+            resourceRepresentation.setId(advert.getId());
+            resourceRepresentation.setName(advert.getName());
+
+            if (isOpportunity) {
+                String scopeReference = scope.getLowerCamelName();
+                ResourceOpportunityRepresentationSimple resourceOpportunityRepresentation = (ResourceOpportunityRepresentationSimple) resourceRepresentation;
+                resourceOpportunityRepresentation.setAvailableDate((LocalDate) getProperty(advert, scopeReference + "AvailableDate"));
+                resourceOpportunityRepresentation.setDurationMinimum((Integer) getProperty(advert, scopeReference + "DurationMinimum"));
+                resourceOpportunityRepresentation.setDurationMaximum((Integer) getProperty(advert, scopeReference + "DurationMaximum"));
+            } else if (scope.equals(INSTITUTION)) {
+                resourceRepresentation.setLogoImage(new DocumentRepresentation().withId(advert.getLogoImage()));
+            }
+
+            return resourceRepresentation;
         }
-        return resourceRepresentation;
+        return null;
     }
 
 }

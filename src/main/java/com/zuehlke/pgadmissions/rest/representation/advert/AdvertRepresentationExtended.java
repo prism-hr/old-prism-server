@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -17,10 +18,9 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private ResourceRepresentationSimple department;
 
-    // FIXME - make something that sends contract duration
-    private ResourceRepresentationSimple program;
+    private ResourceOpportunityRepresentationSimple program;
 
-    private ResourceRepresentationSimple resource;
+    private ResourceOpportunityRepresentationSimple project;
 
     private List<ResourceConditionRepresentation> conditions;
 
@@ -56,20 +56,20 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.department = department;
     }
 
-    public ResourceRepresentationSimple getProgram() {
+    public ResourceOpportunityRepresentationSimple getProgram() {
         return program;
     }
 
-    public void setProgram(ResourceRepresentationSimple program) {
+    public void setProgram(ResourceOpportunityRepresentationSimple program) {
         this.program = program;
     }
 
-    public ResourceRepresentationSimple getResource() {
-        return resource;
+    public ResourceOpportunityRepresentationSimple getProject() {
+        return project;
     }
 
-    public void setResource(ResourceRepresentationSimple resource) {
-        this.resource = resource;
+    public void setProject(ResourceOpportunityRepresentationSimple project) {
+        this.project = project;
     }
 
     public List<ResourceConditionRepresentation> getConditions() {

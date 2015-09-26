@@ -20,6 +20,8 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 public enum PrismRole implements PrismLocalizableDefinition {
 
     APPLICATION_ADMINISTRATOR(RECRUITER, false, APPLICATION), //
+    APPLICATION_APPOINTEE(APPLICANT, false, APPLICATION), //
+    APPLICATION_POTENTIAL_APPOINTEE(APPLICANT, false, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, false, APPLICATION), //
     APPLICATION_HIRING_MANAGER(RECRUITER, false, APPLICATION), //
     APPLICATION_INTERVIEWEE(APPLICANT, false, APPLICATION), //

@@ -20,6 +20,18 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     private String userAccountImageUrl;
 
+    private LocalDate programAvailableDate;
+    
+    private Integer programDurationMinimum;
+    
+    private Integer programDurationMaximum;
+    
+    private LocalDate projectAvailableDate;
+    
+    private Integer projectDurationMinimum;
+    
+    private Integer projectDurationMaximum;    
+    
     private PrismOpportunityType opportunityType;
 
     private String name;
@@ -106,6 +118,54 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     public void setUserAccountImageUrl(String userAccountImageUrl) {
         this.userAccountImageUrl = userAccountImageUrl;
+    }
+
+    public LocalDate getProgramAvailableDate() {
+        return programAvailableDate;
+    }
+
+    public void setProgramAvailableDate(LocalDate programAvailableDate) {
+        this.programAvailableDate = programAvailableDate;
+    }
+
+    public Integer getProgramDurationMinimum() {
+        return programDurationMinimum;
+    }
+
+    public void setProgramDurationMinimum(Integer programDurationMinimum) {
+        this.programDurationMinimum = programDurationMinimum;
+    }
+
+    public Integer getProgramDurationMaximum() {
+        return programDurationMaximum;
+    }
+
+    public void setProgramDurationMaximum(Integer programDurationMaximum) {
+        this.programDurationMaximum = programDurationMaximum;
+    }
+
+    public LocalDate getProjectAvailableDate() {
+        return projectAvailableDate;
+    }
+
+    public void setProjectAvailableDate(LocalDate projectAvailableDate) {
+        this.projectAvailableDate = projectAvailableDate;
+    }
+
+    public Integer getProjectDurationMinimum() {
+        return projectDurationMinimum;
+    }
+
+    public void setProjectDurationMinimum(Integer projectDurationMinimum) {
+        this.projectDurationMinimum = projectDurationMinimum;
+    }
+
+    public Integer getProjectDurationMaximum() {
+        return projectDurationMaximum;
+    }
+
+    public void setProjectDurationMaximum(Integer projectDurationMaximum) {
+        this.projectDurationMaximum = projectDurationMaximum;
     }
 
     public PrismOpportunityType getOpportunityType() {

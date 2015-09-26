@@ -54,6 +54,8 @@ public class CommentDTO {
 
     private Boolean recruiterAcceptAppointment;
 
+    private Boolean applicantAcceptAppointment;
+    
     private Boolean declinedResponse;
 
     private PrismRejectionReason rejectionReason;
@@ -208,6 +210,14 @@ public class CommentDTO {
 
     public void setRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
+    }
+    
+    public Boolean getApplicantAcceptAppointment() {
+        return applicantAcceptAppointment;
+    }
+
+    public void setApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
     }
 
     public Boolean getDeclinedResponse() {

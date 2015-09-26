@@ -55,8 +55,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.dto.AdvertActionConditionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertConnectionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
@@ -339,26 +337,6 @@ public class AdvertDAO {
                 .setParameter("advert", advert) //
                 .setParameterList("newValues", newValues) //
                 .executeUpdate();
-    }
-
-    public List<Integer> getAdvertsUserIdentifiedFor(User user) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAdvert.class) //
-                .setProjection(Projections.property("advert.id")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("identified", true)) //
-                .list();
-    }
-
-    public List<Integer> getUserDeparmentInstitutionAdverts(User user, Collection<Integer> departmentAdverts) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAdvert.class) //
-                .setProjection(Projections.groupProperty("institution.advert.id")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.department", "department", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("advert.id", "department.advert.id")) //
-                .createAlias("department.institution", "institution", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.in("advert.id", departmentAdverts)) //
-                .list();
     }
 
     public List<AdvertConnectionDTO> getAdvertConnections(Advert advert, String connectionContext) {

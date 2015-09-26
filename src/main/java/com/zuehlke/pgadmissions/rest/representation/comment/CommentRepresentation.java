@@ -49,6 +49,8 @@ public class CommentRepresentation {
 
     private Boolean recruiterAcceptAppointment;
 
+    private Boolean partnerAcceptAppointment;
+    
     private Boolean applicantAcceptAppointment;
     
     private PrismRejectionReason rejectionReason;
@@ -191,6 +193,14 @@ public class CommentRepresentation {
 
     public void setRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
+    }
+    
+    public Boolean getPartnerAcceptAppointment() {
+        return partnerAcceptAppointment;
+    }
+
+    public void setPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
     }
 
     public Boolean getApplicantAcceptAppointment() {
@@ -350,6 +360,11 @@ public class CommentRepresentation {
         return this;
     }
 
+    public CommentRepresentation withPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
+        return this;
+    }
+    
     public CommentRepresentation withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
         this.applicantAcceptAppointment = applicantAcceptAppointment;
         return this;

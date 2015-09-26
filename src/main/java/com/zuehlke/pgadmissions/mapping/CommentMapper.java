@@ -187,8 +187,8 @@ public class CommentMapper {
                 .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withPositionDetail(getCommentPositionDetailRepresentation(comment))
                 .withOfferDetail(getCommentOfferDetailRepresentation(comment)).withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment())
-                .withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment()).withRejectionReason(comment.getRejectionReason())
-                .withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
+                .withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment()).withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment())
+                .withRejectionReason(comment.getRejectionReason()).withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }

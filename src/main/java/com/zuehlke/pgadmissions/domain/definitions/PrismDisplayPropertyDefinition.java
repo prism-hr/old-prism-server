@@ -196,15 +196,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_APPROVED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REJECTED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
-    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Arrangements"),
-    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_RECOMMENDATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Appointment"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Appointment"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
-    SYSTEM_ACTION_APPLICATION_CONFIRM_APPOINTMENT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Appointment"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_MANAGEMENT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Management"),
     SYSTEM_ACTION_APPLICATION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_APPLICATION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Interview Availability"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Interview Feedback"),
+    SYSTEM_ACTION_APPLICATION_PROVIDE_PARTNER_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Approval"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Reference"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_REVIEW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Review"),
     SYSTEM_ACTION_APPLICATION_REVERSE_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Reverse Rejection"),
@@ -641,6 +642,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_REJECTION_REASON_APPLICATION_INFORMATION(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "We are unable to form a judgement on your suitability based upon the information that you supplied in your application."),
     SYSTEM_REJECTION_REASON_APPLICATION_INTERVIEW_ATTENDANCE(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "You failed to present for interview as arranged."),
     SYSTEM_REJECTION_REASON_APPLICATION_WITHDRAWAL(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "You have informed us that you no longer wish to be considered."), 
+    SYSTEM_REJECTION_REASON_PARTNER(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "Your university has informed us that they cannot endorse your appointment."), 
     
     /*
      * *************** SYSTEM YES NO UNSURE *********************

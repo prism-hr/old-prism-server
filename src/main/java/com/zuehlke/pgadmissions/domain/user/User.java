@@ -132,9 +132,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "user")
     private Set<UserFeedback> userFeedbacks = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserAdvert> userAdverts = Sets.newHashSet();
-
     @OneToMany(mappedBy = "advertUser")
     private Set<AdvertConnection> advertConnections = Sets.newHashSet();
 
@@ -143,7 +140,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "acceptingUser")
     private Set<AdvertConnection> advertAcceptingConnections = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<UserReferee> userReferees = Sets.newHashSet();
 
@@ -301,10 +298,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserFeedback> getUserFeedbacks() {
         return userFeedbacks;
-    }
-
-    public Set<UserAdvert> getUserAdverts() {
-        return userAdverts;
     }
 
     public Set<AdvertConnection> getAdvertConnections() {

@@ -29,7 +29,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -507,7 +506,6 @@ public class ProfileService {
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void deleteQualification(T profile, Class<U> qualificationClass,
             Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
-        updateUserAdvertRelation(profile.getUser(), qualification.getAdvert());
         profile.getQualifications().remove(qualification);
         entityService.flush();
     }
@@ -553,7 +551,6 @@ public class ProfileService {
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void deleteEmploymentPosition(
             T profile, Class<U> employmentPositionClass, Integer employmentPositionId) {
         U employmentPosition = getProfileEmploymentPosition(employmentPositionClass, employmentPositionId);
-        updateUserAdvertRelation(profile.getUser(), employmentPosition.getAdvert());
         profile.getEmploymentPositions().remove(employmentPosition);
         entityService.flush();
     }
@@ -617,7 +614,6 @@ public class ProfileService {
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> U deleteReferee(T profile, Class<U> refereeClass, Integer refereeId) {
         U referee = getProfileReferee(refereeClass, refereeId);
-        updateUserAdvertRelation(profile.getUser(), referee.getAdvert());
         profile.getReferees().remove(referee);
         entityService.flush();
         return referee;
@@ -646,20 +642,7 @@ public class ProfileService {
             advertRelation.setUser(userService.getUserByEmail(userConnectionDTO.getEmail()));
         }
 
-        Advert newAdvert = resource.getAdvert();
-        Advert oldAdvert = advertRelation.getAdvert();
-        if (oldAdvert != null && !oldAdvert.getId().equals(newAdvert.getId())) {
-            userService.deleteUserAdvert(user, oldAdvert);
-        }
-
-        advertRelation.setAdvert(newAdvert);
-        userService.getOrCreateUserAdvert(user, advertRelation.getAdvert());
-    }
-
-    private void updateUserAdvertRelation(User user, Advert advert) {
-        if (userService.getUserAdvertRelationCount(user, advert).equals(0)) {
-            userService.deleteUserAdvert(user, advert);
-        }
+        advertRelation.setAdvert(resource.getAdvert());
     }
 
     private <T extends ProfileQualification<?>> T getProfileQualification(Class<T> qualificationClass, Integer qualificationId) {

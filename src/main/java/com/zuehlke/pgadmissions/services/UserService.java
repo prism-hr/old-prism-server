@@ -62,7 +62,6 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAdvert;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
@@ -172,14 +171,6 @@ public class UserService {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
-    }
-
-    public void getOrCreateUserAdvert(User user, Advert advert) {
-        entityService.getOrCreate(new UserAdvert().withUser(user).withAdvert(advert).withIdentified(false));
-    }
-
-    public void deleteUserAdvert(User user, Advert advert) {
-        userDAO.deleteUserAdvert(user, advert);
     }
 
     public Long getUserAdvertRelationCount(User user, Advert advert) {

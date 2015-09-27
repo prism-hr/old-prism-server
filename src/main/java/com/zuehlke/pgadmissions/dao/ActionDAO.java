@@ -49,7 +49,7 @@ public class ActionDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public Action getUserRedirectAction(Resource resource, User user) {
+    public Action getRedirectAction(Resource resource, User user) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
@@ -73,23 +73,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public Action getSystemRedirectAction(Resource resource) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
-        return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("stateAction.action")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("state", resource.getState())) //
-                .add(Restrictions.eq("action.systemInvocationOnly", true)) //
-                .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
-                .add(getResourceStateActionConstraint()) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }

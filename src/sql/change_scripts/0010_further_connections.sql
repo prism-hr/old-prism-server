@@ -402,3 +402,23 @@ alter table comment
 
 drop table user_advert
 ;
+
+alter table action
+	add column partnership_state varchar(50) after visible_action,
+	add column partnership_transition_state varchar(50) after partnership_state,
+	add index (partnership_state),
+	add index (partnership_transition_state)
+;
+
+alter table advert_connection
+	drop column accepted,
+	drop index advert_id_2,
+	drop index advert_user_id,
+	drop index target_advert_id,
+	drop index target_advert_user_id,
+	add column partnership_state varchar(50) not null,
+	add index (advert_id, partnership_state),
+	add index (advert_user_id, partnership_state),
+	add index (target_advert_id, partnership_state),
+	add index (target_advert_user_id, partnership_state)
+;

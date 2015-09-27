@@ -267,7 +267,10 @@ public class StateDAO {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("stateActions", "stateAction", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.isNull("stateAction.id")) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateAction.id")) //
+                        .add(Restrictions.isNull("stateActionAssignment.id"))) //
                 .list();
     }
 

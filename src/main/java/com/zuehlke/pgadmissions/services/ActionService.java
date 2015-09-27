@@ -43,7 +43,6 @@ import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
@@ -157,12 +156,8 @@ public class ActionService {
         return actionDAO.getViewEditAction(resource);
     }
 
-    public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
-        if (BooleanUtils.isFalse(action.getSystemInvocationOnly())) {
-            return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
-        } else {
-            return actionDAO.getSystemRedirectAction(duplicateResource);
-        }
+    public Action getRedirectAction(Resource resource, User user) {
+        return actionDAO.getRedirectAction(resource, user);
     }
 
     public List<Action> getActions() {
@@ -289,11 +284,7 @@ public class ActionService {
 
             if (duplicate != null) {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
-                    Action redirectAction = getRedirectAction(action, user, duplicate);
-                    if (redirectAction == null) {
-                        throw new WorkflowDuplicateResourceException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name() + ", signature: " + duplicate.toString());
-                    }
-                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(redirectAction);
+                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(getRedirectAction(duplicate, user));
                 } else if (!Objects.equal(resource.getId(), duplicate.getId())) {
                     throw new WorkflowPermissionException(resource, action);
                 }

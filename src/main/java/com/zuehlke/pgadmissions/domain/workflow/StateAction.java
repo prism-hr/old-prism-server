@@ -145,13 +145,13 @@ public class StateAction implements UniqueEntity {
     }
 
     @Override
-    public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("state", state).addProperty("action", action);
-    }
-    
-    @Override
     public String toString() {
         return state.getId().name() + "-" + action.getId().name();
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("state", state).addProperty("action", action);
     }
 
 }

@@ -267,7 +267,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceSimpleDTO> ResourceRepresentationLocation getResourceRepresentationCreation(T resource) {
-        return getResourceRepresentationCreation(resource, ResourceRepresentationLocation.class);
+        return getResourceRepresentationLocation(resource, ResourceRepresentationLocation.class);
     }
 
     public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
@@ -651,7 +651,7 @@ public class ResourceMapper {
         return representation;
     }
 
-    private <T extends ResourceSimpleDTO, U extends ResourceRepresentationLocation> U getResourceRepresentationCreation(T resource, Class<U> returnType) {
+    private <T extends ResourceSimpleDTO, U extends ResourceRepresentationLocation> U getResourceRepresentationLocation(T resource, Class<U> returnType) {
         U representation = BeanUtils.instantiate(returnType);
 
         Integer logoImageId = resource.getLogoImageId();

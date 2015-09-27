@@ -871,7 +871,7 @@ public class ResourceService {
                     setOpportunityCategories(parent, opportunityCategories);
                 } else {
                     Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
-                    opportunityCategoriesSplit.add(opportunityCategories);
+                    opportunityCategoriesSplit.add(opportunityCategory.name());
 
                     opportunityCategories = Joiner.on("|").join(opportunityCategoriesSplit);
                     setOpportunityCategories(parent, opportunityCategories);

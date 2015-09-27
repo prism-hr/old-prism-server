@@ -142,9 +142,9 @@ public class ResourceDAO {
                 parentScopeNames.add(parentScopeName);
             }
 
-            boolean applicationScope = scopeId.equals(APPLICATION);
+            boolean parentScope = !scopeId.equals(APPLICATION);
             projectionList.add(Projections.property("id"), scopeName + "Id");
-            if (!applicationScope) {
+            if (parentScope) {
                 projectionList.add(Projections.property("name"), scopeName + "Name");
             }
 
@@ -166,7 +166,7 @@ public class ResourceDAO {
                     .add(Projections.property("updatedTimestamp"), "updatedTimestamp") //
                     .add(Projections.property("sequenceIdentifier"), "sequenceIdentifier"); //
 
-            if (!applicationScope) {
+            if (parentScope) {
                 projectionList.add(Projections.property("advertIncompleteSection"), "advertIncompleteSection");
             }
 

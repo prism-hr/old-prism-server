@@ -59,7 +59,7 @@ import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.App
 import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
-public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>,PrismLocalizableDefinition {
+public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>, PrismLocalizableDefinition {
 
     SYSTEM(PrismScopeCategory.SYSTEM, "SM", //
             new PrismScopeDefinition() //

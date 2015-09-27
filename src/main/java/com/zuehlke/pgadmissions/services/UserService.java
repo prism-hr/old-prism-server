@@ -457,9 +457,8 @@ public class UserService {
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
-        List<Integer> institutions = resourceService.getResources(user, INSTITUTION, asList(SYSTEM)).stream().map(i -> i.getId()).collect(toList());
         List<Integer> departments = resourceService.getResources(user, DEPARTMENT, asList(INSTITUTION, SYSTEM)).stream().map(d -> d.getId()).collect(toList());
-        return userDAO.getUserProfiles(institutions, departments, filter);
+        return userDAO.getUserProfiles(departments, filter);
     }
 
     @SuppressWarnings("unchecked")

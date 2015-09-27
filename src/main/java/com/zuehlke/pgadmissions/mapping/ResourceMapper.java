@@ -230,8 +230,6 @@ public class ResourceMapper {
 
             representation.setCode(row.getCode());
             representation.setUser(userMapper.getUserRepresentationSimple(row));
-
-            representation.setApplicationIdentified(row.getApplicationIdentified());
             representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
             representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
@@ -639,7 +637,6 @@ public class ResourceMapper {
         Class<T> resourceClass = (Class<T>) resource.getClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {
             representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
-            representation.setOpportunityRatingAverage(((ResourceParent) resource).getOpportunityRatingAverage());
         }
 
         representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));

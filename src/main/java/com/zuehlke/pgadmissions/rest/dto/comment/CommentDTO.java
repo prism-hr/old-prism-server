@@ -34,11 +34,9 @@ public class CommentDTO {
 
     private BigDecimal rating;
 
-    private Boolean applicationIdentified;
+    private PrismYesNoUnsureResponse eligible;
 
-    private PrismYesNoUnsureResponse applicationEligible;
-
-    private Boolean applicationInterested;
+    private Boolean interested;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -55,9 +53,9 @@ public class CommentDTO {
     private Boolean recruiterAcceptAppointment;
 
     private Boolean partnerAcceptAppointment;
-    
+
     private Boolean applicantAcceptAppointment;
-    
+
     private Boolean declinedResponse;
 
     private PrismRejectionReason rejectionReason;
@@ -142,28 +140,20 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
+    public PrismYesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
-    public PrismYesNoUnsureResponse getApplicationEligible() {
-        return applicationEligible;
+    public Boolean getInterested() {
+        return interested;
     }
 
-    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
-    }
-
-    public Boolean getApplicationInterested() {
-        return applicationInterested;
-    }
-
-    public void setApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public BigDecimal getRating() {
@@ -213,7 +203,7 @@ public class CommentDTO {
     public void setRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
-    
+
     public Boolean getPartnerAcceptAppointment() {
         return partnerAcceptAppointment;
     }

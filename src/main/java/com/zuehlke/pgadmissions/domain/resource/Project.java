@@ -91,7 +91,7 @@ public class Project extends ResourceOpportunity {
 
     @Column(name = "name", nullable = false)
     private String name;
-    
+
     @Column(name = "available_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate availableDate;
@@ -110,12 +110,6 @@ public class Project extends ResourceOpportunity {
 
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
-
-    @Column(name = "opportunity_rating_count")
-    private Integer opportunityRatingCount;
-
-    @Column(name = "opportunity_rating_average")
-    private BigDecimal opportunityRatingAverage;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -297,7 +291,7 @@ public class Project extends ResourceOpportunity {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public LocalDate getAvailableDate() {
         return availableDate;
@@ -356,26 +350,6 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
-    }
-
-    @Override
-    public Integer getOpportunityRatingCount() {
-        return opportunityRatingCount;
-    }
-
-    @Override
-    public void setOpportunityRatingCount(Integer opportunityRatingCount) {
-        this.opportunityRatingCount = opportunityRatingCount;
-    }
-
-    @Override
-    public BigDecimal getOpportunityRatingAverage() {
-        return opportunityRatingAverage;
-    }
-
-    @Override
-    public void setOpportunityRatingAverage(BigDecimal opportunityRatingAverage) {
-        this.opportunityRatingAverage = opportunityRatingAverage;
     }
 
     @Override

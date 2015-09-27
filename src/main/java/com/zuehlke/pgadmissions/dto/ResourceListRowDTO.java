@@ -44,8 +44,6 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     private String userAccountImageUrl;
 
-    private Boolean applicationIdentified;
-    
     private BigDecimal applicationRatingAverage;
 
     private List<PrismState> secondaryStateIds;
@@ -194,14 +192,6 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     public void setUserAccountImageUrl(String creatorAccountImageUrl) {
         this.userAccountImageUrl = creatorAccountImageUrl;
-    }
-    
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
-    }
-
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
     }
 
     public BigDecimal getApplicationRatingAverage() {

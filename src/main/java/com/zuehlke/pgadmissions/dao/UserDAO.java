@@ -10,7 +10,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleConstrain
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
@@ -20,7 +19,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_STAFF_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -489,7 +487,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(List<Integer> institutions, List<Integer> departments, ProfileListFilterDTO filter) {
+    public List<ProfileListRowDTO> getUserProfiles(List<Integer> departments, ProfileListFilterDTO filter) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //
@@ -509,33 +507,17 @@ public class UserDAO {
                 .createAlias("externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("externalAccount.accountType", LINKEDIN)) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.INNER_JOIN) //
-                .createAlias("userAdvert.advert", "advert") //
+                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN,
+                        Restrictions.eq("userRole.role.id", DEPARTMENT_STUDENT)) //
                 .createAlias("qualifications", "qualification", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("qualification.advert", "qualificationAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPositions", "employmentPosition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPosition.advert", "employmentPositionAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userDocument", "userDocument", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN);
-
-        if (isNotEmpty(institutions)) {
-            criteria.add(Restrictions.in("advert.institution.id", institutions));
-        }
-
-        if (isNotEmpty(departments)) {
-            criteria.add(Restrictions.in("advert.department.id", departments));
-        }
-
-        criteria.add(Restrictions.eq("userAdvert.identified", true)) //
-                .add(Restrictions.eq("shared", true)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("advert.institution", "userRole.institution")) //
-                                .add(Restrictions.eq("userRole.role.id", INSTITUTION_STUDENT))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("advert.department", "userRole.department")) //
-                                .add(Restrictions.eq("userRole.role.id", DEPARTMENT_STUDENT))));
+                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("userRole.department.id", departments)) //
+                .add(Restrictions.eq("shared", true));
 
         String keyword = filter.getKeyword();
         if (keyword != null) {

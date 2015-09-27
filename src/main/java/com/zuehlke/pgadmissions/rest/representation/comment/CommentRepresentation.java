@@ -33,11 +33,9 @@ public class CommentRepresentation {
 
     private BigDecimal rating;
 
-    private Boolean applicationIdentified;
+    private PrismYesNoUnsureResponse eligible;
 
-    private PrismYesNoUnsureResponse applicationEligible;
-
-    private Boolean applicationInterested;
+    private Boolean interested;
 
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
@@ -131,28 +129,20 @@ public class CommentRepresentation {
         this.transitionState = transitionState;
     }
 
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
+    public PrismYesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
-    public PrismYesNoUnsureResponse getApplicationEligible() {
-        return applicationEligible;
+    public Boolean getInterested() {
+        return interested;
     }
 
-    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
-    }
-
-    public Boolean getApplicationInterested() {
-        return applicationInterested;
-    }
-
-    public void setApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
@@ -320,18 +310,13 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withApplicationIdentified(Boolean applicationIdentification) {
-        this.applicationIdentified = applicationIdentification;
+    public CommentRepresentation withEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
         return this;
     }
 
-    public CommentRepresentation withApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
-        return this;
-    }
-
-    public CommentRepresentation withApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public CommentRepresentation withInterested(Boolean interested) {
+        this.interested = interested;
         return this;
     }
 

@@ -303,8 +303,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_INSTITUTION_APPROVER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Approver"),
     SYSTEM_ROLE_INSTITUTION_VIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Viewer"),
     SYSTEM_ROLE_INSTITUTION_VIEWER_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified Viewer"),
-    SYSTEM_ROLE_INSTITUTION_STUDENT(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Student"),
-    SYSTEM_ROLE_INSTITUTION_STUDENT_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified student"),
     SYSTEM_ROLE_INSTITUTION_EMPLOYEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Employee"),
     SYSTEM_ROLE_INSTITUTION_EMPLOYEE_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified Employee"),
     SYSTEM_ROLE_PROGRAM_ADMINISTRATOR(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Administrator"),

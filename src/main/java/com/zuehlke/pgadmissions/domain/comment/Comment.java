@@ -137,18 +137,15 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
-    @Column(name = "rating")
+    @Column(name = "application_rating")
     private BigDecimal rating;
-
-    @Column(name = "application_identified")
-    private Boolean applicationIdentified;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
-    private PrismYesNoUnsureResponse applicationEligible;
+    private PrismYesNoUnsureResponse eligible;
 
     @Column(name = "application_interested")
-    private Boolean applicationInterested;
+    private Boolean interested;
 
     @Embedded
     private CommentInterviewAppointment interviewAppointment;
@@ -349,28 +346,20 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.rating = rating;
     }
 
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
+    public PrismYesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public Boolean getInterested() {
+        return interested;
     }
 
-    public PrismYesNoUnsureResponse getApplicationEligible() {
-        return applicationEligible;
+    public void setInterested(Boolean applicationInterested) {
+        this.interested = applicationInterested;
     }
 
-    public Boolean getApplicationInterested() {
-        return applicationInterested;
-    }
-
-    public void setApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
-    }
-
-    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
+    public void setEligible(PrismYesNoUnsureResponse applicationEligible) {
+        this.eligible = applicationEligible;
     }
 
     public CommentInterviewAppointment getInterviewAppointment() {
@@ -561,18 +550,13 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public Comment withEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
         return this;
     }
 
-    public Comment withApplicationEligible(PrismYesNoUnsureResponse eligible) {
-        this.applicationEligible = eligible;
-        return this;
-    }
-
-    public Comment withApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public Comment withInterested(Boolean interested) {
+        this.interested = interested;
         return this;
     }
 
@@ -632,7 +616,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     }
 
     public boolean isApplicationCreatorEligibilityUnsure() {
-        return getApplicationEligible().equals(UNSURE);
+        return getEligible().equals(UNSURE);
     }
 
     public User getActionOwner() {

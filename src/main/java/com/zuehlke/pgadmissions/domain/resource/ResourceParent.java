@@ -39,14 +39,6 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
 
-    public abstract BigDecimal getOpportunityRatingAverage();
-
-    public abstract Integer getOpportunityRatingCount();
-
-    public abstract void setOpportunityRatingCount(Integer applicationRatingCount);
-
-    public abstract void setOpportunityRatingAverage(BigDecimal applicationRatingAverage);
-
     public abstract Set<Advert> getAdverts();
 
     public void addResourceCondition(ResourceCondition resourceCondition) {

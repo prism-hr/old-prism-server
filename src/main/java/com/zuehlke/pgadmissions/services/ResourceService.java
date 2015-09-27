@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceOpportunityCategoryProjection;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
@@ -19,13 +18,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
-import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +92,6 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -688,21 +684,6 @@ public class ResourceService {
             return resourceDAO.getActiveResourceByName(resourceScope, name, stateService.getActiveResourceStates(resourceScope));
         }
         return null;
-    }
-
-    public <T extends ResourceParent> void synchronizeResourceEndorsement(T resource, Comment comment) {
-        ResourceRatingSummaryDTO ratingSummary = resourceDAO.getResourceRatingSummary(resource);
-        resource.setOpportunityRatingCount(ratingSummary.getRatingCount().intValue());
-        resource.setOpportunityRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
-
-        entityService.flush();
-
-        scopeService.getParentScopesDescending(resource.getResourceScope(), INSTITUTION).forEach(scope -> {
-            ResourceParent parent = (ResourceParent) resource.getEnclosingResource(scope);
-            ResourceRatingSummaryDTO parentRatingSummary = resourceDAO.getResourceRatingSummary(resource, parent);
-            parent.setOpportunityRatingCount(parentRatingSummary.getRatingCount().intValue());
-            parent.setOpportunityRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
-        });
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {

@@ -422,3 +422,7 @@ alter table advert_connection
 	add index (target_advert_id, partnership_state),
 	add index (target_advert_user_id, partnership_state)
 ;
+
+alter table comment
+	change column rating application_rating decimal(3, 2) unsigned
+;

@@ -745,7 +745,7 @@ public class ResourceService {
                 Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id").as("id")) //
                         .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                        .add(Projections.property("opportunityCategories").as("opportunityCategories")), //
+                        .add(Projections.property("resource.opportunityCategories").as("opportunityCategories")), //
                 conditions, ResourceOpportunityCategoryDTO.class);
     }
 

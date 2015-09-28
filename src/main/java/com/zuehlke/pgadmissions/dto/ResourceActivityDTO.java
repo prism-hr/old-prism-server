@@ -1,11 +1,15 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+
 import org.springframework.beans.BeanUtils;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.*;
+import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceActivityDTO implements Comparable<Object> {
 

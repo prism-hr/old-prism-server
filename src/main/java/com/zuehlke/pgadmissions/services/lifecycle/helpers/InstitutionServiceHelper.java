@@ -6,6 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import java.io.IOException;
@@ -180,9 +181,11 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     private boolean isNewInstitution(PropertyLoader loader, List<Integer> ucasIds, Integer hesaId) {
         String ucasPrefix = loader.loadLazy(SYSTEM_UCAS);
-        for (Integer ucasId : ucasIds) {
-            if (institutionService.getInstitutionByImportedCode(ucasPrefix + ucasId) != null) {
-                return false;
+        if (isNotEmpty(ucasIds)) {
+            for (Integer ucasId : ucasIds) {
+                if (institutionService.getInstitutionByImportedCode(ucasPrefix + ucasId) != null) {
+                    return false;
+                }
             }
         }
 

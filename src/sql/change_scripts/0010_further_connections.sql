@@ -397,7 +397,7 @@ alter table application
 ;
 
 alter table comment
-	add column application_partner_accept_appointment int(1) unsigned after application_recruiter_accept_appointment
+	add column partner_accept_appointment int(1) unsigned after application_recruiter_accept_appointment
 ;
 
 drop table user_advert
@@ -540,4 +540,8 @@ alter table advert
 alter table state
 	add column hidden int(1) unsigned after state_duration_evaluation,
 	add index (hidden)
+;
+
+alter table comment
+	change column partner_accept_appointment application_partner_accept_appointment int(1) unsigned
 ;

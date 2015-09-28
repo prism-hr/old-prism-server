@@ -60,11 +60,11 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;

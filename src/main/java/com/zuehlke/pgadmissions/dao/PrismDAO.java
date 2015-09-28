@@ -33,7 +33,6 @@ public class PrismDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.le("upperBound", age)) //
                         .add(Restrictions.isNull("upperBound"))) //
-                .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
 

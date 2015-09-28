@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
@@ -20,7 +17,6 @@ import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -32,9 +28,6 @@ public class OpportunityController {
 
     @Inject
     private AdvertMapper advertMapper;
-
-    @Inject
-    private ApplicationService applicationService;
 
     @RequestMapping(method = RequestMethod.GET)
     public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
@@ -49,12 +42,6 @@ public class OpportunityController {
             throw new ResourceNotFoundException("Advert not found");
         }
         return advertMapper.getAdvertRepresentationExtended(advert);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/{applicationId}")
-    public List<AdvertRepresentationExtended> getRecommendedAdverts(@PathVariable Integer applicationId) {
-        Application application = applicationService.getById(applicationId);
-        return advertMapper.getRecommendedAdvertRepresentations(application);
     }
 
 }

@@ -25,10 +25,10 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.ResourceStateDTO;
 import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStateDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -267,7 +267,10 @@ public class StateDAO {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("stateActions", "stateAction", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.isNull("stateAction.id")) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateAction.id")) //
+                        .add(Restrictions.isNull("stateActionAssignment.id"))) //
                 .list();
     }
 

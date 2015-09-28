@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
 @Component
@@ -18,9 +17,6 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
     @Inject
     private AdvertService advertService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Override
     public void process(Project resource, Comment comment) {
@@ -39,10 +35,6 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
         resource.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
-
-        if (comment.isResourceEndorsementComment()) {
-            resourceService.synchronizeResourceEndorsement(resource, comment);
-        }
     }
 
 }

@@ -1,5 +1,40 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.text.WordUtils.capitalize;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -12,58 +47,28 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismReportColumn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
 import com.zuehlke.pgadmissions.rest.validation.ProfileValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
-import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 
 @Service
 @Transactional
@@ -82,7 +87,7 @@ public class ApplicationService {
     private EntityService entityService;
 
     @Inject
-    private ImportedEntityService importedEntityService;
+    private PrismService prismService;
 
     @Inject
     private ProfileService profileService;
@@ -135,9 +140,9 @@ public class ApplicationService {
         DataTable dataTable = new DataTable();
 
         List<ColumnDescription> headers = Lists.newLinkedList();
-        List<PrismReportColumn> columns = Lists.newLinkedList();
+        List<PrismApplicationReportColumn> columns = Lists.newLinkedList();
         List<String> columnAccessors = Lists.newLinkedList();
-        for (PrismReportColumn column : PrismReportColumn.values()) {
+        for (PrismApplicationReportColumn column : PrismApplicationReportColumn.values()) {
             if (column.getDefinitions().isEmpty() && !(hasRedactions && column.isHasRedactions())) {
                 headers.add(new ColumnDescription(column.getAccessor(), TEXT, loader.loadLazy(column.getTitle())));
                 columns.add(column);
@@ -153,19 +158,19 @@ public class ApplicationService {
 
         for (ApplicationReportListRowDTO reportRow : reportRows) {
             TableRow row = new TableRow();
-            for (PrismReportColumn column : columns) {
+            for (PrismApplicationReportColumn column : columns) {
                 String value = null;
-                String getMethod = "get" + WordUtils.capitalize(column.getAccessor()) + "Display";
+                String getMethod = "get" + capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
                 case DATE:
-                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod, dateFormat);
+                    value = (String) invokeMethod(reportRow, getMethod, dateFormat);
                     break;
                 case DISPLAY_PROPERTY:
-                    Enum<?> index = (Enum<?>) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
-                    value = index == null ? "" : loader.loadLazy((PrismDisplayPropertyDefinition) PrismReflectionUtils.getProperty(index, "displayProperty"));
+                    PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
+                    value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
                     break;
                 case STRING:
-                    value = (String) PrismReflectionUtils.invokeMethod(reportRow, getMethod);
+                    value = (String) invokeMethod(reportRow, getMethod);
                     break;
                 }
                 row.addCell(value);
@@ -207,25 +212,22 @@ public class ApplicationService {
         return errors;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints, transformedConstraints);
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints, transformedConstraints);
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints, transformedConstraints);
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
     }
 
     public boolean isCanViewEqualOpportunitiesData(Application application, User user) {
         List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
         if (actionEnhancements.size() > 0) {
-            actionEnhancements.retainAll(Arrays.asList(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements()));
+            actionEnhancements.retainAll(asList(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements()));
             return actionEnhancements.size() > 0;
         }
         return false;
@@ -243,16 +245,8 @@ public class ApplicationService {
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
     }
 
-    public List<Integer> getApplicationsByImportedInstitution(ResourceParent parent, Collection<Integer> importedInstitutions) {
-        return applicationDAO.getApplicationsByImportedInstitution(parent, importedInstitutions);
-    }
-
-    public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
-        return applicationDAO.getApplicationsByImportedQualificationType(parent, importedQualificationTypes);
-    }
-
-    public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
-        return applicationDAO.getApplicationsByImportedRejectionReason(parent, importedRejectionReasons);
+    public List<Integer> getApplicationsByRejectionReason(ResourceParent parent, Collection<String> rejectionReasons) {
+        return applicationDAO.getApplicationsByRejectionReason(parent, rejectionReasons);
     }
 
     public List<ApplicationAppointmentDTO> getApplicationAppointments(User user) {
@@ -271,16 +265,14 @@ public class ApplicationService {
         if (prismOpportunityType == null) {
             ResourceParent parent = application.getParentResource();
             if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
-                ImportedEntitySimple opportunityType = ((ResourceOpportunity) parent).getOpportunityType();
+                OpportunityType opportunityType = ((ResourceOpportunity) parent).getOpportunityType();
                 setApplicationOpportunityType(application, programDetail, opportunityType);
             }
         } else {
-            ImportedEntitySimple opportunityType = importedEntityService.getByName(ImportedEntitySimple.class, prismOpportunityType.name());
-            setApplicationOpportunityType(application, programDetail, opportunityType);
+            setApplicationOpportunityType(application, programDetail, prismService.getOpportunityTypeById(prismOpportunityType));
         }
 
-        ImportedEntitySimple studyOption = importedEntityService.getById(ImportedEntitySimple.class, programDetailDTO.getStudyOption().getId());
-        programDetail.setStudyOption(studyOption);
+        programDetail.setStudyOption(programDetailDTO.getStudyOption());
         programDetail.setStartDate(programDetailDTO.getStartDate());
         programDetail.setLastUpdatedTimestamp(DateTime.now());
 
@@ -299,17 +291,17 @@ public class ApplicationService {
         }
     }
 
-    public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+    public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<String> resources) {
         return applicationDAO.getApplicationsByQualifyingResourceScope(parent, resourceScope, resources);
     }
 
-    public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+    public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<String> resources) {
         return applicationDAO.getApplicationsByEmployingResourceScope(parent, resourceScope, resources);
     }
 
-    private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, ImportedEntitySimple opportunityType) {
+    private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);
-        application.setOpportunityCategories(PrismOpportunityType.valueOf(opportunityType.getName()).getCategory().name());
+        application.setOpportunityCategories(opportunityType.getOpportunityCategory().name());
     }
 
 }

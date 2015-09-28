@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.selectors.summary;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -19,8 +21,8 @@ public class ApplicationByQualifyingResourceScopeSelector implements PrismResour
     private ApplicationService applicationService;
 
     @Override
-    public List<Integer> getPossible(Resource resource, PrismScope entityScope, Collection<Integer> entityIds) {
-        return applicationService.getApplicationsByQualifyingResourceScope((ResourceParent) resource, entityScope, entityIds);
+    public List<String> getPossible(Resource resource, PrismScope entityScope, Collection<String> entityIds) {
+        return applicationService.getApplicationsByQualifyingResourceScope((ResourceParent) resource, entityScope, entityIds).stream().map(a -> a.toString()).collect(toList());
     }
 
 }

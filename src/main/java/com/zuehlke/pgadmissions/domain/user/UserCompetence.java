@@ -77,6 +77,26 @@ public class UserCompetence implements UniqueEntity, UserAssignment<UserCompeten
         this.ratingAverage = ratingAverage;
     }
 
+    public UserCompetence withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public UserCompetence withCompetence(Competence competence) {
+        this.competence = competence;
+        return this;
+    }
+
+    public UserCompetence withRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
+        return this;
+    }
+
+    public UserCompetence withRatingAverage(BigDecimal ratingAverage) {
+        this.ratingAverage = ratingAverage;
+        return this;
+    }
+
     @Override
     public Class<UserCompetenceReassignmentProcessor> getUserReassignmentProcessor() {
         return UserCompetenceReassignmentProcessor.class;

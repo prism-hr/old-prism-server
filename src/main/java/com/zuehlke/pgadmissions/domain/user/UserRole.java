@@ -67,10 +67,6 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @ManyToOne
-    @JoinColumn(name = "target_role_id")
-    private Role targetRole;
-
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
@@ -157,14 +153,6 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
 
     public void setRole(Role role) {
         this.role = role;
-    }
-
-    public Role getTargetRole() {
-        return targetRole;
-    }
-
-    public void setTargetRole(Role targetRole) {
-        this.targetRole = targetRole;
     }
 
     public DateTime getAssignedTimestamp() {

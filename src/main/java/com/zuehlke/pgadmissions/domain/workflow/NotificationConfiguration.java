@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,7 +10,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -22,9 +19,9 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 
 @Entity
 @Table(name = "notification_configuration", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type_id", "notification_definition_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "notification_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "notification_definition_id" }) })
 public class NotificationConfiguration extends WorkflowConfiguration<NotificationDefinition> {
@@ -53,9 +50,9 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "opportunity_type")
-    @Enumerated(EnumType.STRING)
-    private PrismOpportunityType opportunityType;
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id")
+    private OpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "notification_definition_id", nullable = false)
@@ -92,12 +89,12 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
     }
 
     @Override
-    public final PrismOpportunityType getOpportunityType() {
+    public final OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+    public final void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -180,7 +177,7 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
         return this;
     }
 
-    public NotificationConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
+    public NotificationConfiguration withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

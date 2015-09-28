@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 
 @Entity
 @Table(name = "action")
@@ -23,7 +24,7 @@ public class Action extends WorkflowDefinition {
     @Id
     @Enumerated(EnumType.STRING)
     private PrismAction id;
-
+    
     @Column(name = "system_invocation_only", nullable = false)
     private Boolean systemInvocationOnly;
 
@@ -42,6 +43,14 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = "partnership_state")
+    private PrismPartnershipState partnershipState;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "partnership_transition_state")
+    private PrismPartnershipState partnershipTransitionState;
 
     @ManyToOne
     @JoinColumn(name = "scope_id", nullable = false)
@@ -116,6 +125,22 @@ public class Action extends WorkflowDefinition {
 
     public void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+    }
+    
+    public PrismPartnershipState getPartnershipState() {
+        return partnershipState;
+    }
+
+    public void setPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
+    }
+
+    public PrismPartnershipState getPartnershipTransitionState() {
+        return partnershipTransitionState;
+    }
+
+    public void setPartnershipTransitionState(PrismPartnershipState partnershipTransitionState) {
+        this.partnershipTransitionState = partnershipTransitionState;
     }
 
     public Action getFallbackAction() {
@@ -195,6 +220,16 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
+    public Action withPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
+        return this;
+    }
+
+    public Action withPartnershipTransitionState(PrismPartnershipState partnershipTransitionState) {
+        this.partnershipTransitionState = partnershipTransitionState;
+        return this;
+    }
+    
     public Action withFallbackAction(Action fallbackAction) {
         this.fallbackAction = fallbackAction;
         return this;

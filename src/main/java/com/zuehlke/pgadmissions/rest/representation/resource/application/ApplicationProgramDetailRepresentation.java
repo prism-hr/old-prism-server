@@ -3,19 +3,19 @@ package com.zuehlke.pgadmissions.rest.representation.resource.application;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailRepresentation extends ApplicationSectionRepresentation {
 
-    private ImportedEntityResponse studyOption;
+    private PrismStudyOption studyOption;
 
     private LocalDate startDate;
 
-    public ImportedEntityResponse getStudyOption() {
+    public PrismStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(ImportedEntityResponse studyOption) {
+    public void setStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 
@@ -27,7 +27,7 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
         this.startDate = startDate;
     }
 
-    public ApplicationProgramDetailRepresentation withStudyOption(ImportedEntityResponse studyOption) {
+    public ApplicationProgramDetailRepresentation withStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
         return this;
     }

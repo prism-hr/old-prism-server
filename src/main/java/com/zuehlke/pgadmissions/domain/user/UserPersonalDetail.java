@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -13,8 +15,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
 
 @Entity
@@ -28,25 +30,21 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @OneToOne(mappedBy = "personalDetail")
     private UserAccount association;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_title_id")
-    private ImportedEntitySimple title;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_gender_id")
-    private ImportedEntitySimple gender;
+    @Column(name = "gender_id")
+    @Enumerated(EnumType.STRING)
+    private PrismGender gender;
 
     @Column(name = "date_of_birth", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
 
     @ManyToOne
-    @JoinColumn(name = "imported_domicile_id")
-    private ImportedDomicile domicile;
+    @JoinColumn(name = "nationality_id")
+    private Domicile nationality;
 
     @ManyToOne
-    @JoinColumn(name = "imported_nationality_id")
-    private ImportedDomicile nationality;
+    @JoinColumn(name = "domicile_id")
+    private Domicile domicile;
 
     @Column(name = "visa_required")
     private Boolean visaRequired;
@@ -59,43 +57,33 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Size(max = 50)
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "imported_ethnicity_id")
-    private ImportedEntitySimple ethnicity;
-
-    @ManyToOne
-    @JoinColumn(name = "imported_disability_id")
-    private ImportedEntitySimple disability;
-
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public UserAccount getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(UserAccount association) {
         this.association = association;
     }
 
-    public ImportedEntitySimple getTitle() {
-        return title;
-    }
-
-    public void setTitle(ImportedEntitySimple title) {
-        this.title = title;
-    }
-
-    public ImportedEntitySimple getGender() {
+    @Override
+    public PrismGender getGender() {
         return gender;
     }
 
-    public void setGender(ImportedEntitySimple gender) {
+    @Override
+    public void setGender(PrismGender gender) {
         this.gender = gender;
     }
 
@@ -107,60 +95,54 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public ImportedDomicile getDomicile() {
-        return domicile;
-    }
-
-    public void setDomicile(ImportedDomicile domicile) {
-        this.domicile = domicile;
-    }
-
-    public ImportedDomicile getNationality() {
+    @Override
+    public Domicile getNationality() {
         return nationality;
     }
 
-    public void setNationality(ImportedDomicile nationality) {
+    @Override
+    public void setNationality(Domicile nationality) {
         this.nationality = nationality;
     }
 
+    @Override
+    public Domicile getDomicile() {
+        return domicile;
+    }
+
+    @Override
+    public void setDomicile(Domicile domicile) {
+        this.domicile = domicile;
+    }
+
+    @Override
     public Boolean getVisaRequired() {
         return visaRequired;
     }
 
+    @Override
     public void setVisaRequired(Boolean visaRequired) {
         this.visaRequired = visaRequired;
     }
 
+    @Override
     public String getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    @Override
     public String getSkype() {
         return skype;
     }
 
+    @Override
     public void setSkype(String skype) {
         this.skype = skype;
-    }
-
-    public ImportedEntitySimple getEthnicity() {
-        return ethnicity;
-    }
-
-    public void setEthnicity(ImportedEntitySimple ethnicity) {
-        this.ethnicity = ethnicity;
-    }
-
-    public ImportedEntitySimple getDisability() {
-        return disability;
-    }
-
-    public void setDisability(ImportedEntitySimple disability) {
-        this.disability = disability;
     }
 
 }

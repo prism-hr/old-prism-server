@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 import static com.zuehlke.pgadmissions.PrismConstants.CONFIDENCE_MEDIUM;
 import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.CONDITIONAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOfferType.UNCONDITIONAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
@@ -34,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
@@ -74,7 +72,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             synchronizeApplicationReferees(resource, comment);
         }
 
-        if (comment.isApplicationRatingComment()) {
+        if (comment.isRatingComment(APPLICATION)) {
             synchronizeApplicationRating(resource, comment);
         }
 
@@ -84,10 +82,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
         if (comment.isApplicationConfirmOfferRecommendationComment()) {
             synchronizeOfferRecommendation(resource, comment);
-        }
-
-        if (comment.isApplicationReserveStatusComment()) {
-            resource.setApplicationReserveStatus(comment.getApplicationReserveStatus());
         }
 
         if (comment.isApplicationCompletionComment()) {
@@ -166,7 +160,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         CommentOfferDetail offerDetail = comment.getOfferDetail();
         if (offerDetail != null) {
             application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
-            application.setConfirmedOfferType(offerDetail.getAppointmentConditions() == null ? UNCONDITIONAL : CONDITIONAL);
         }
         application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
     }

@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_APPOINTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_MANAGEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
@@ -45,7 +45,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                         .withRoleTransitions(APPLICATION_CREATE_ADMINISTRATOR_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_APPROVAL_PENDING_FEEDBACK) //
-                                .withTransitionAction(APPLICATION_CONFIRM_APPOINTMENT) //
+                                .withTransitionAction(APPLICATION_CONFIRM_MANAGEMENT) //
                                 .withTransitionEvaluation(APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_HIRING_MANAGER_GROUP))); //
 
@@ -80,7 +80,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 
     public static PrismStateAction applicationConfirmAppointment() {
         return new PrismStateAction() //
-                .withAction(APPLICATION_CONFIRM_APPOINTMENT) //
+                .withAction(APPLICATION_CONFIRM_MANAGEMENT) //
                 .withRaisesUrgentFlag() //
                 .withAssignments(APPLICATION_HIRING_MANAGER);
     }

@@ -4,23 +4,20 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureRespon
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_RECOMMENDATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -60,12 +57,12 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -140,18 +137,15 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
-    @Column(name = "rating")
+    @Column(name = "application_rating")
     private BigDecimal rating;
-
-    @Column(name = "application_identified")
-    private Boolean applicationIdentified;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
-    private PrismYesNoUnsureResponse applicationEligible;
+    private PrismYesNoUnsureResponse eligible;
 
     @Column(name = "application_interested")
-    private Boolean applicationInterested;
+    private Boolean interested;
 
     @Embedded
     private CommentInterviewAppointment interviewAppointment;
@@ -168,16 +162,15 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Column(name = "application_recruiter_accept_appointment")
     private Boolean recruiterAcceptAppointment;
 
+    @Column(name = "application_partner_accept_appointment")
+    private Boolean partnerAcceptAppointment;
+    
+    @Column(name = "application_applicant_accept_appointment")
+    private Boolean applicantAcceptAppointment;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "application_reserve_status")
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "application_imported_rejection_reason_id")
-    private ImportedEntitySimple rejectionReason;
-
-    @Column(name = "application_rejection_reason_system")
-    private String rejectionReasonSystem;
+    @Column(name = "application_rejection_reason")
+    private PrismRejectionReason rejectionReason;
 
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -353,28 +346,20 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.rating = rating;
     }
 
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
+    public PrismYesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public Boolean getInterested() {
+        return interested;
     }
 
-    public PrismYesNoUnsureResponse getApplicationEligible() {
-        return applicationEligible;
+    public void setInterested(Boolean applicationInterested) {
+        this.interested = applicationInterested;
     }
 
-    public Boolean getApplicationInterested() {
-        return applicationInterested;
-    }
-
-    public void setApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
-    }
-
-    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
+    public void setEligible(PrismYesNoUnsureResponse applicationEligible) {
+        this.eligible = applicationEligible;
     }
 
     public CommentInterviewAppointment getInterviewAppointment() {
@@ -417,28 +402,28 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
+    public Boolean getPartnerAcceptAppointment() {
+        return partnerAcceptAppointment;
     }
 
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
-        this.applicationReserveStatus = applicationReserveRating;
+    public void setPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
     }
 
-    public ImportedEntitySimple getRejectionReason() {
+    public Boolean getApplicantAcceptAppointment() {
+        return applicantAcceptAppointment;
+    }
+
+    public void setApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
+    }
+
+    public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(ImportedEntitySimple rejectionReason) {
+    public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-    public String getRejectionReasonSystem() {
-        return rejectionReasonSystem;
-    }
-
-    public void setRejectionReasonSystem(String rejectionReasonSystem) {
-        this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
     public Set<CommentAssignedUser> getAssignedUsers() {
@@ -565,18 +550,13 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public Comment withEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
         return this;
     }
 
-    public Comment withApplicationEligible(PrismYesNoUnsureResponse eligible) {
-        this.applicationEligible = eligible;
-        return this;
-    }
-
-    public Comment withApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public Comment withInterested(Boolean interested) {
+        this.interested = interested;
         return this;
     }
 
@@ -595,8 +575,18 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return this;
     }
 
-    public Comment withApplicationReserveStatus(final PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
+    public Comment withPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
+        return this;
+    }
+    
+    public Comment withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
+        return this;
+    }
+    
+    public Comment withRejectionReason(PrismRejectionReason rejectionReason) {
+        this.rejectionReason = rejectionReason;
         return this;
     }
 
@@ -626,23 +616,11 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     }
 
     public boolean isApplicationCreatorEligibilityUnsure() {
-        return getApplicationEligible().equals(UNSURE);
+        return getEligible().equals(UNSURE);
     }
 
     public User getActionOwner() {
         return delegateUser == null ? user : delegateUser;
-    }
-
-    public boolean isProgramViewEditComment() {
-        return action.getId().equals(PROGRAM_VIEW_EDIT);
-    }
-
-    public boolean isProgramRestoreComment() {
-        return action.getId().equals(PROGRAM_RESTORE);
-    }
-
-    public boolean isProjectViewEditComment() {
-        return action.getId().equals(PROJECT_VIEW_EDIT);
     }
 
     public boolean isApplicationAssignReviewersComment() {
@@ -653,29 +631,25 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) || action.getId().equals(APPLICATION_UPLOAD_REFERENCE);
     }
 
+    public boolean isApplicationProvideReferenceDelegateComment() {
+        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) && delegateUser != null;
+    }
+
     public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId().equals(APPLICATION_CONFIRM_OFFER_RECOMMENDATION);
+        return action.getId().equals(APPLICATION_CONFIRM_OFFER);
     }
 
     public boolean isApplicationCreatedComment() {
-        return Arrays.asList(PROGRAM_CREATE_APPLICATION, PROJECT_CREATE_APPLICATION).contains(action.getId());
+        return Arrays.asList(INSTITUTION_CREATE_APPLICATION, DEPARTMENT_CREATE_APPLICATION, PROJECT_CREATE_APPLICATION).contains(action.getId());
     }
 
     public boolean isApplicationSubmittedComment() {
         return action.getId().equals(APPLICATION_COMPLETE);
     }
 
-    public boolean isApplicationRatingComment() {
-        return action.getId().getScope().equals(APPLICATION) && action.getRatingAction() && rating != null;
-    }
-
     public boolean isApplicationCompletionComment() {
-        return Arrays.asList(APPLICATION_CONFIRM_OFFER_RECOMMENDATION, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
+        return Arrays.asList(APPLICATION_CONFIRM_OFFER, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
                 .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
-    }
-
-    public boolean isApplicationReferenceComment() {
-        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE);
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
@@ -724,6 +698,10 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         }
         return false;
     }
+    
+    public boolean isPartnershipStateTransitionComment() {
+        return action.getPartnershipState() != null;
+    }
 
     public boolean isCreateComment() {
         return action.getActionCategory().equals(CREATE_RESOURCE);
@@ -745,14 +723,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return !secondaryTransitionStates.isEmpty();
     }
 
-    public boolean isDelegateComment() {
-        return delegateUser != null;
-    }
-
-    public boolean isApplicationProvideReferenceDelegateComment() {
-        return isDelegateComment() && action.getId().equals(APPLICATION_PROVIDE_REFERENCE);
-    }
-
     public boolean isApplicationDelegateAdministrationComment() {
         CommentAssignedUser firstAssignee = assignedUsers.isEmpty() ? null : assignedUsers.iterator().next();
         return firstAssignee != null && firstAssignee.getRole().getId().equals(APPLICATION_ADMINISTRATOR)
@@ -771,12 +741,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
                 .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
     }
 
-    public boolean isApplicationReserveStatusComment() {
-        return applicationReserveStatus != null;
-    }
-
-    public boolean isResourceEndorsementComment() {
-        return !action.getId().getScope().equals(APPLICATION) && rating != null;
+    public boolean isRatingComment(PrismScope scope) {
+        return action.getId().getScope().equals(scope) && rating != null;
     }
 
     public String getApplicationRatingDisplay() {
@@ -785,10 +751,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public String getUserDisplay() {
         return user == null ? null : user.getFullName();
-    }
-
-    public String getRejectionReasonDisplay() {
-        return rejectionReason == null ? rejectionReasonSystem : rejectionReason.getName();
     }
 
     public String getCreatedTimestampDisplay(String dateFormat) {

@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -11,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
@@ -21,11 +18,11 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 
 @Entity
 @Table(name = "state_duration_configuration", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "state_duration_definition_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type_id", "state_duration_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type_id", "state_duration_definition_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type_id", "state_duration_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "state_duration_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "state_duration_definition_id" })})
+        @UniqueConstraint(columnNames = { "project_id", "state_duration_definition_id" }) })
 public class StateDurationConfiguration extends WorkflowConfiguration<StateDurationDefinition> {
 
     @Id
@@ -39,7 +36,6 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
     @ManyToOne
     @JoinColumn(name = "institution_id")
     private Institution institution;
-    
 
     @ManyToOne
     @JoinColumn(name = "department_id")
@@ -53,9 +49,9 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "opportunity_type")
-    @Enumerated(EnumType.STRING)
-    private PrismOpportunityType opportunityType;
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id")
+    private OpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "state_duration_definition_id", nullable = false)
@@ -94,12 +90,12 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
-    
+
     @Override
     public Department getDepartment() {
         return department;
     }
-    
+
     @Override
     public void setDepartment(Department department) {
         this.department = department;
@@ -126,12 +122,12 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
     }
 
     @Override
-    public final PrismOpportunityType getOpportunityType() {
+    public final OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public final void setOpportunityType(PrismOpportunityType opportunityType) {
+    public final void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -160,13 +156,13 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
     public final void setSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
     }
-    
+
     public StateDurationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
     }
 
-    public StateDurationConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
+    public StateDurationConfiguration withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }
@@ -185,5 +181,5 @@ public class StateDurationConfiguration extends WorkflowConfiguration<StateDurat
         this.systemDefault = systemDefault;
         return this;
     }
-    
+
 }

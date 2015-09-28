@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDivisionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.DepartmentService;
@@ -44,7 +44,7 @@ public class DepartmentExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        ResourceParentDivisionDTO resourceDTO = (ResourceParentDivisionDTO) commentDTO.getResource();
+        ResourceParentDTO resourceDTO = (ResourceParentDTO) commentDTO.getResource();
         Comment comment = commentService.prepareProcessResourceComment(department, user, action, commentDTO);
         resourceService.updateResource(department, resourceDTO);
 

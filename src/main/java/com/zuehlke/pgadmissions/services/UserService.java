@@ -1,41 +1,33 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.*;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
-import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
-import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
-import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
-import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
-import com.zuehlke.pgadmissions.utils.PrismQueryUtils;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.IMAGE;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.WordUtils.capitalize;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -49,30 +41,42 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.*;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang.WordUtils.capitalize;
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.domain.user.UserCompetence;
+import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
+import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Service
 @Transactional
@@ -163,55 +167,10 @@ public class UserService {
         }
     }
 
-    public User requestUser(UserDTO newUserDTO, Resource resource, PrismRole targetRole) {
-        PrismRole actualRole;
-        User invoker = resource.getParentResource().getUser();
-        if ((getCurrentUser().equals(invoker) && actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), invoker, false))) {
-            actualRole = targetRole == null ? getViewerRole(resource) : targetRole;
-        } else {
-            actualRole = getUnverifiedViewerRole(resource);
-        }
-
-        User newUser = getOrCreateUserWithRoles(invoker, newUserDTO.getFirstName(), newUserDTO.getLastName(), newUserDTO.getEmail(), resource, asList(actualRole));
-
-        if (targetRole != null) {
-            UserRole newUserRole = roleService.getUserRole(resource, newUser, actualRole);
-            if (newUserRole.getTargetRole() == null) {
-                newUserRole.setTargetRole(roleService.getById(targetRole));
-            }
-        }
-
-        return newUser;
-    }
-
-    public void verifyUser(User invoker, Resource resource, User user, Boolean verify) {
-        Role role = roleService.getUnverifiedRole(resource);
-        if (role != null) {
-            UserRole userRole = roleService.getUserRole(resource, user, role);
-            if (isTrue(verify)) {
-                Role targetRole = userRole.getTargetRole();
-                roleService.modifyUserRole(invoker, resource, user, CREATE, targetRole == null ? getViewerRole(resource) : targetRole.getId());
-            }
-            entityService.delete(userRole);
-        }
-    }
-
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.modifyUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
+        roleService.updateUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
-    }
-
-    public void getOrCreateUserAdvert(User user, Advert advert) {
-        entityService.getOrCreate(new UserAdvert().withUser(user).withAdvert(advert).withIdentified(false));
-    }
-
-    public void deleteUserAdvert(User user, Advert advert) {
-        userDAO.deleteUserAdvert(user, advert);
-    }
-
-    public Long getUserAdvertRelationCount(User user, Advert advert) {
-        return userDAO.getUserAdvertRelationCount(user, advert);
     }
 
     public Set<String> getUserProperties(Class<? extends UniqueEntity> userAssignmentClass) {
@@ -388,10 +347,10 @@ public class UserService {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
         }
-        return Lists.<User>newArrayList();
+        return Lists.<User> newArrayList();
     }
 
-    public void correctBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
+    public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
         HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 
@@ -417,23 +376,11 @@ public class UserService {
     }
 
     public void updateUserCompetence(User user) {
-        List<String> rows = Lists.newArrayList();
-        for (UserCompetenceDTO userCompetence : userDAO.getUserCompetences(user)) {
-            List<String> columns = Lists.newLinkedList();
-            columns.add(prepareIntegerForSqlInsert(userCompetence.getUser()));
-            columns.add(prepareIntegerForSqlInsert(userCompetence.getCompetence()));
-
-            Integer ratingCount = userCompetence.getRatingCount().intValue();
-            columns.add(prepareIntegerForSqlInsert(ratingCount));
-            columns.add(prepareDecimalForSqlInsert(userCompetence.getRatingSum().divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
-
-            rows.add("(" + prepareColumnsForSqlInsert(columns) + ")");
-        }
-
-        if (!rows.isEmpty()) {
-            entityService.executeBulkInsertUpdate("user_competence", "user_id, competence_id, rating_count, rating_average",
-                    PrismQueryUtils.prepareRowsForSqlInsert(rows), "rating_count = values(rating_count), rating_average = values(rating_average)");
-        }
+        userDAO.getUserCompetences(user).forEach(uc -> {
+            Integer ratingCount = uc.getRatingCount().intValue();
+            entityService.createOrUpdate(new UserCompetence().withUser(uc.getUser()).withCompetence(uc.getCompetence()).withRatingCount(ratingCount)
+                    .withRatingAverage(uc.getRatingSum().divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -468,7 +415,7 @@ public class UserService {
         }
 
         List<UserRole> userRoles = Lists.newLinkedList();
-        for (PrismScope scope : new PrismScope[]{DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
         }
 
@@ -502,9 +449,8 @@ public class UserService {
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
-        List<Integer> institutions = resourceService.getResources(user, INSTITUTION, asList(SYSTEM)).stream().map(i -> i.getId()).collect(toList());
         List<Integer> departments = resourceService.getResources(user, DEPARTMENT, asList(INSTITUTION, SYSTEM)).stream().map(d -> d.getId()).collect(toList());
-        return userDAO.getUserProfiles(institutions, departments, filter);
+        return userDAO.getUserProfiles(departments, filter);
     }
 
     @SuppressWarnings("unchecked")

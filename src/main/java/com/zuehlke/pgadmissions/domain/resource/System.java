@@ -77,6 +77,9 @@ public class System extends Resource {
 
     @Column(name = "amazon_secret_key")
     private String amazonSecretKey;
+    
+    @Column(name = "shared", nullable = false)
+    private Boolean shared;
 
     @Column(name = "last_amazon_cleanup_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
@@ -294,6 +297,16 @@ public class System extends Resource {
     public final void setAmazonSecretKey(String amazonSecretKey) {
         this.amazonSecretKey = amazonSecretKey;
     }
+    
+    @Override
+    public Boolean getShared() {
+        return shared;
+    }
+
+    @Override
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
 
     public final LocalDate getLastAmazonCleanupDate() {
         return lastAmazonCleanupDate;
@@ -369,6 +382,11 @@ public class System extends Resource {
         return this;
     }
 
+    public System withShared(Boolean shared) {
+        this.shared = shared;
+        return this;
+    }
+    
     public System withState(State state) {
         this.state = state;
         return this;

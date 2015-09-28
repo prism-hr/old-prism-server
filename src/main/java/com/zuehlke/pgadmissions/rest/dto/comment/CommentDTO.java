@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -10,10 +8,9 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
@@ -26,7 +23,7 @@ public class CommentDTO {
 
     private PrismAction action;
 
-    private Boolean applicationRetain;
+    private Boolean applicationShared;
 
     private Boolean applicationRecommend;
 
@@ -37,11 +34,9 @@ public class CommentDTO {
 
     private BigDecimal rating;
 
-    private Boolean applicationIdentified;
+    private PrismYesNoUnsureResponse eligible;
 
-    private PrismYesNoUnsureResponse applicationEligible;
-
-    private Boolean applicationInterested;
+    private Boolean interested;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -57,11 +52,13 @@ public class CommentDTO {
 
     private Boolean recruiterAcceptAppointment;
 
-    private PrismApplicationReserveStatus applicationReserveStatus;
+    private Boolean partnerAcceptAppointment;
+
+    private Boolean applicantAcceptAppointment;
 
     private Boolean declinedResponse;
 
-    private Integer rejectionReason;
+    private PrismRejectionReason rejectionReason;
 
     @Valid
     private ResourceCreationDTO resource;
@@ -111,12 +108,12 @@ public class CommentDTO {
         this.action = action;
     }
 
-    public final Boolean getApplicationRetain() {
-        return applicationRetain;
+    public final Boolean getApplicationShared() {
+        return applicationShared;
     }
 
-    public final void setApplicationRetain(Boolean applicationRetain) {
-        this.applicationRetain = applicationRetain;
+    public final void setApplicationShared(Boolean applicationShared) {
+        this.applicationShared = applicationShared;
     }
 
     public final Boolean getApplicationRecommend() {
@@ -143,28 +140,20 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
+    public PrismYesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
-    public PrismYesNoUnsureResponse getApplicationEligible() {
-        return applicationEligible;
+    public Boolean getInterested() {
+        return interested;
     }
 
-    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
-    }
-
-    public Boolean getApplicationInterested() {
-        return applicationInterested;
-    }
-
-    public void setApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public BigDecimal getRating() {
@@ -215,12 +204,20 @@ public class CommentDTO {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
 
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
+    public Boolean getPartnerAcceptAppointment() {
+        return partnerAcceptAppointment;
     }
 
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
+    public void setPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
+    }
+
+    public Boolean getApplicantAcceptAppointment() {
+        return applicantAcceptAppointment;
+    }
+
+    public void setApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
     }
 
     public Boolean getDeclinedResponse() {
@@ -231,11 +228,11 @@ public class CommentDTO {
         this.declinedResponse = declinedResponse;
     }
 
-    public Integer getRejectionReason() {
+    public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(Integer rejectionReason) {
+    public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
     }
 
@@ -301,10 +298,6 @@ public class CommentDTO {
 
     public void setDocuments(List<DocumentDTO> documents) {
         this.documents = documents;
-    }
-
-    public boolean isRequestUserAction() {
-        return isNotEmpty(assignedUsers) && assignedUsers.size() == 1 && assignedUsers.get(0).getRole().equals(PrismRole.getUnverifiedViewerRole(action.getScope()));
     }
 
 }

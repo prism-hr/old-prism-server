@@ -34,6 +34,9 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     @Column(name = "role_category", nullable = false)
     private PrismRoleCategory roleCategory;
 
+    @Column(name = "verified", nullable = false)
+    private Boolean verified;
+    
     @Column(name = "directly_assignable", nullable = false)
     private Boolean directlyAssignable;
     
@@ -68,6 +71,14 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     public void setRoleCategory(PrismRoleCategory roleCategory) {
         this.roleCategory = roleCategory;
+    }
+    
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 
     public Boolean getDirectlyAssignable() {
@@ -118,6 +129,11 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return this;
     }
 
+    public Role withVerified(Boolean verified) {
+        this.verified = verified;
+        return this;
+    }
+    
     public Role withDirectlyAssignable(Boolean directlyAssignable) {
         this.directlyAssignable = directlyAssignable;
         return this;

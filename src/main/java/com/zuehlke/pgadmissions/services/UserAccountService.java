@@ -1,16 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
-import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,8 +17,17 @@ import org.springframework.social.twitter.connect.TwitterServiceProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
+import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
+import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Service
 @Transactional

@@ -8,10 +8,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.g
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
 
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -30,15 +31,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.model.S3Object;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.SystemDAO;
+import com.zuehlke.pgadmissions.domain.AgeRange;
+import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAgeRange;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismImportedEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -58,13 +61,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityType;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -81,7 +84,6 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowConfigurationException;
-import com.zuehlke.pgadmissions.mapping.ImportedEntityMapper;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
@@ -90,9 +92,6 @@ import com.zuehlke.pgadmissions.rest.dto.WorkflowConfigurationDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 import com.zuehlke.pgadmissions.utils.PrismFileUtils;
-import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-
-import uk.co.alumeni.prism.api.model.imported.request.ImportedEntityRequest;
 
 @Service
 public class SystemService {
@@ -165,15 +164,6 @@ public class SystemService {
     private UserService userService;
 
     @Inject
-    private DocumentService documentService;
-
-    @Inject
-    private ImportedEntityService importedEntityService;
-
-    @Inject
-    private ImportedEntityMapper importedEntityMapper;
-
-    @Inject
     private ApplicationContext applicationContext;
 
     @Transactional
@@ -203,11 +193,24 @@ public class SystemService {
         if (asList("prod", "uat").contains(environment)) {
             throw new Error("You tried to reset the " + environment + " database, destroying all data and contents. Did you really mean to do that?");
         }
+        logger.info("Destroying workflow properties");
         systemDAO.clearSchema();
     }
 
     @Transactional(timeout = 600)
     public void initializeWorkflow() throws Exception {
+        logger.info("Initializing opportunity type definitions");
+        verifyDefinition(OpportunityType.class);
+        initializeOpportunityTypes();
+
+        logger.info("Initializing age range definitions");
+        verifyDefinition(AgeRange.class);
+        initializeAgeRanges();
+
+        logger.info("Initializing domicile definitions");
+        verifyDefinition(Domicile.class);
+        initializeDomiciles();
+
         logger.info("Initializing scope definitions");
         verifyDefinition(Scope.class);
         initializeScopes();
@@ -277,34 +280,6 @@ public class SystemService {
     }
 
     @Transactional
-    public void dropSystemData() {
-        importedEntityService.deleteImportedEntityTypes();
-    }
-
-    @Transactional(timeout = 600)
-    @SuppressWarnings("unchecked")
-    public <T extends ImportedEntityRequest> void initializeSystemData() {
-        for (PrismImportedEntity prismImportedEntity : PrismImportedEntity.values()) {
-            ImportedEntityType importedEntityType = entityService.getOrCreate(new ImportedEntityType().withId(prismImportedEntity));
-
-            S3Object importedDataSource = documentService.getImportedDataSource(importedEntityType);
-            if (importedDataSource != null) {
-                logger.info("Initializing system data for: " + prismImportedEntity.name());
-                try (InputStream inputStream = importedDataSource.getObjectContent()) {
-                    Class<T> requestClass = (Class<T>) prismImportedEntity.getRequestClass();
-                    List<T> representations = importedEntityMapper.getImportedEntityRepresentations(requestClass, inputStream);
-                    importedEntityService.mergeImportedEntities(prismImportedEntity, representations);
-                    importedEntityType.setLastImportedTimestamp(new DateTime(importedDataSource.getObjectMetadata().getLastModified()));
-                } catch (Exception e) {
-                    logger.error("Unable to initialize system data for: " + prismImportedEntity.name(), e);
-                }
-            } else {
-                logger.info("Skipped initializing system data for: " + prismImportedEntity.name());
-            }
-        }
-    }
-
-    @Transactional
     public AWSCredentials getAmazonCredentials() throws IntegrationException {
         System system = getSystem();
         String accessKey = system.getAmazonAccessKey();
@@ -321,18 +296,39 @@ public class SystemService {
         return propertyLoader;
     }
 
+    private void initializeOpportunityTypes() throws DeduplicationException {
+        for (PrismOpportunityType prismOpportunityType : PrismOpportunityType.values()) {
+            entityService.createOrUpdate(new OpportunityType().withId(prismOpportunityType).withOpportunityCategory(prismOpportunityType.getOpportunityCategory())
+                    .withPublished(prismOpportunityType.isPublished()).withRequireEndorsement(prismOpportunityType.isRequireEndorsement())
+                    .withOrdinal(prismOpportunityType.ordinal()));
+        }
+    }
+
+    private void initializeAgeRanges() throws DeduplicationException {
+        for (PrismAgeRange prismAgeRange : PrismAgeRange.values()) {
+            entityService.createOrUpdate(new AgeRange().withId(prismAgeRange).withLowerBound(prismAgeRange.getLowerBound()).withUpperBound(prismAgeRange.getUpperBound())
+                    .withOrdinal(prismAgeRange.ordinal()));
+        }
+    }
+
+    private void initializeDomiciles() throws DeduplicationException {
+        for (PrismDomicile prismDomicile : PrismDomicile.values()) {
+            entityService.createOrUpdate(new Domicile().withId(prismDomicile).withCurrency(prismDomicile.getCurrency()).withOrdinal(prismDomicile.ordinal()));
+        }
+    }
+
     private void initializeScopes() throws DeduplicationException {
         for (PrismScope prismScope : PrismScope.values()) {
-            entityService.createOrUpdate(
-                    new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory()).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));
+            entityService.createOrUpdate(new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory()).withShortCode(prismScope.getShortCode())
+                    .withDefaultShared(prismScope.isDefaultShared()).withOrdinal(prismScope.ordinal()));
         }
     }
 
     private void initializeRoles() throws DeduplicationException {
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = scopeService.getById(prismRole.getScope());
-            entityService.createOrUpdate(
-                    new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withDirectlyAssignable(prismRole.isDirectlyAssignable()).withScope(scope));
+            entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withVerified(false)
+                    .withDirectlyAssignable(prismRole.isDirectlyAssignable()).withScope(scope));
         }
     }
 
@@ -343,7 +339,8 @@ public class SystemService {
             Scope scope = scopeService.getById(prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
                     .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withScope(scope);
+                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withPartnershipState(prismAction.getPartnershipState())
+                    .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
@@ -420,7 +417,7 @@ public class SystemService {
 
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
-            system = new System().withId(systemId).withName(systemName).withUser(systemUser).withState(systemRunning)
+            system = new System().withId(systemId).withName(systemName).withUser(systemUser).withShared(SYSTEM.isDefaultShared()).withState(systemRunning)
                     .withCipherSalt(PrismEncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 
@@ -498,6 +495,7 @@ public class SystemService {
         stateService.setParallelizableStates();
 
         roleService.setCreatorRoles();
+        roleService.setVerifiedRoles();
 
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObsoleteNotificationConfigurations();
@@ -615,17 +613,16 @@ public class SystemService {
         }
     }
 
-    private <T extends UniqueEntity> void verifyDefinition(Class<T> workflowResourceClass) throws WorkflowConfigurationException {
+    private <T extends UniqueEntity> void verifyDefinition(Class<T> definitionClass) throws WorkflowConfigurationException {
         try {
-            List<T> entities = entityService.list(workflowResourceClass);
-            for (T entity : entities) {
-                Object id = PrismReflectionUtils.getProperty(entity, "id");
+            entityService.list(definitionClass).forEach(definition -> {
+                Object id = getProperty(definition, "id");
                 if (PrismLocalizableDefinition.class.isAssignableFrom(id.getClass())) {
                     ((PrismLocalizableDefinition) id).getDisplayProperty();
                 }
-            }
+            });
         } catch (Exception e) {
-            throw new WorkflowConfigurationException("incomplete " + workflowResourceClass.getSimpleName() + " definition", e);
+            throw new WorkflowConfigurationException("Incomplete " + definitionClass.getSimpleName() + " definition", e);
         }
     }
 

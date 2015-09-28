@@ -15,9 +15,11 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedStateResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedManagementResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferOutcome;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationIdentifiedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedPartnerApprovalResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReferenceResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationProvidedReviewResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationPurgedResolver;
@@ -38,7 +40,8 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.Proj
 public enum PrismStateTransitionEvaluation {
 
     APPLICATION_COMPLETED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
-    APPLICATION_CONFIRMED_APPOINTMENT_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
+    APPLICATION_CONFIRMED_MANAGEMENT_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
+    APPLICATION_CONFIRMED_OFFER_OUTCOME(false, APPLICATION, ApplicationConfirmedOfferOutcome.class), //
     APPLICATION_COMPLETED_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedStateResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewAvailabilityResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewFeedbackResolver.class), //
@@ -49,6 +52,7 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PROVIDED_REFERENCE_OUTCOME(false, APPLICATION, ApplicationProvidedReferenceResolver.class), //
     APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedReferenceStateResolver.class), //
     APPLICATION_PROVIDED_REVIEW_OUTCOME(false, APPLICATION, ApplicationProvidedReviewResolver.class), //
+    APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME(false, APPLICATION, ApplicationProvidedPartnerApprovalResolver.class), //
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
     APPLICATION_IDENTIFIED_OUTCOME(false, APPLICATION, ApplicationIdentifiedResolver.class), //

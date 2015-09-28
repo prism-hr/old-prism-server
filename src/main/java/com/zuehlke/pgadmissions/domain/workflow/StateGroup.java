@@ -16,73 +16,79 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 @Table(name = "state_group", uniqueConstraints = { @UniqueConstraint(columnNames = { "scope_id", "ordinal" }) })
 public class StateGroup extends WorkflowDefinition {
 
-	@Id
+    @Id
     @Enumerated(EnumType.STRING)
-	private PrismStateGroup id;
+    private PrismStateGroup id;
 
-	@Column(name = "ordinal", nullable = false)
-	private Integer ordinal;
+    @Column(name = "ordinal", nullable = false)
+    private Integer ordinal;
 
-	@Column(name = "repeatable")
-	private Boolean repeatable;
+    @Column(name = "visible")
+    private Boolean visible;
 
-	@ManyToOne
-	@JoinColumn(name = "scope_id", nullable = false)
-	private Scope scope;
+    @Column(name = "repeatable")
+    private Boolean repeatable;
 
-	@Override
-	public PrismStateGroup getId() {
-		return id;
-	}
+    @ManyToOne
+    @JoinColumn(name = "scope_id", nullable = false)
+    private Scope scope;
 
-	public void setId(PrismStateGroup id) {
-		this.id = id;
-	}
+    @Override
+    public PrismStateGroup getId() {
+        return id;
+    }
 
-	public int getOrdinal() {
-		return ordinal;
-	}
+    public void setId(PrismStateGroup id) {
+        this.id = id;
+    }
 
-	public void setOrdinal(Integer ordinal) {
-		this.ordinal = ordinal;
-	}
+    public int getOrdinal() {
+        return ordinal;
+    }
 
-	public final Boolean getRepeatable() {
-		return repeatable;
-	}
+    public void setOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
+    }
 
-	public final void setRepeatable(Boolean repeatable) {
-		this.repeatable = repeatable;
-	}
+    public Boolean getVisible() {
+        return visible;
+    }
 
-	@Override
-	public Scope getScope() {
-		return scope;
-	}
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
 
-	@Override
-	public void setScope(Scope scope) {
-		this.scope = scope;
-	}
+    public final Boolean getRepeatable() {
+        return repeatable;
+    }
 
-	public StateGroup withId(PrismStateGroup id) {
-		this.id = id;
-		return this;
-	}
+    public final void setRepeatable(Boolean repeatable) {
+        this.repeatable = repeatable;
+    }
 
-	public StateGroup withOrdinal(Integer ordinal) {
-		this.ordinal = ordinal;
-		return this;
-	}
+    @Override
+    public Scope getScope() {
+        return scope;
+    }
 
-	public StateGroup withRepeatable(Boolean repeatable) {
-		this.repeatable = repeatable;
-		return this;
-	}
+    @Override
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
 
-	public StateGroup withScope(Scope scope) {
-		this.scope = scope;
-		return this;
-	}
+    public StateGroup withId(PrismStateGroup id) {
+        this.id = id;
+        return this;
+    }
+
+    public StateGroup withOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
+        return this;
+    }
+
+    public StateGroup withScope(Scope scope) {
+        this.scope = scope;
+        return this;
+    }
 
 }

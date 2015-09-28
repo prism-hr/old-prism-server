@@ -8,11 +8,9 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.OrderBy;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 
 @Embeddable
-public class AdvertCategories implements AdvertAttributes {
+public class AdvertCategories {
 
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "value")
@@ -36,16 +34,6 @@ public class AdvertCategories implements AdvertAttributes {
 
     public void setFunctions(Set<AdvertFunction> functions) {
         this.functions = functions;
-    }
-
-    @Override
-    public void storeAttribute(AdvertAttribute<?> attribute) {
-        Class<?> valueClass = attribute.getValue().getClass();
-        if (valueClass.equals(PrismAdvertIndustry.class)) {
-            industries.add((AdvertIndustry) attribute);
-        } else if (valueClass.equals(PrismAdvertFunction.class)) {
-            functions.add((AdvertFunction) attribute);
-        }
     }
 
 }

@@ -1,9 +1,40 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleWithPartnerConstraint;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -24,31 +55,6 @@ import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.*;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -142,7 +148,7 @@ public class UserDAO {
     }
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects,
-                                                                             List<Integer> relatedApplications) {
+            List<Integer> relatedApplications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.parentUser"), "user")) //
@@ -254,13 +260,13 @@ public class UserDAO {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-                                                  HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
+            HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        appendAdministratorResourceConditions(criteria, resource, administratorResources, expandedScopes);
+        appendAdministratorConditions(criteria, resource, administratorResources, expandedScopes);
 
         if (userListFilterDTO.isInvalidOnly()) {
             criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
@@ -284,13 +290,13 @@ public class UserDAO {
     }
 
     public User getBouncedOrUnverifiedUser(Integer userId, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-                                           HashMultimap<PrismScope, PrismScope> expandedScopes) {
+            HashMultimap<PrismScope, PrismScope> expandedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        appendAdministratorResourceConditions(criteria, resource, administratorResources, expandedScopes);
+        appendAdministratorConditions(criteria, resource, administratorResources, expandedScopes);
 
         return (User) criteria.add(getUserAccountUnverifiedDisjunction()) //
                 .add(Restrictions.eq("user.id", userId)) //
@@ -298,17 +304,17 @@ public class UserDAO {
     }
 
     public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("userRole.user")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -317,11 +323,11 @@ public class UserDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleWithPartnerConstraint(resource)) //
                 .add(getEndorsementActionFilterResolution())
-                .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
@@ -331,8 +337,8 @@ public class UserDAO {
     public List<UserCompetenceDTO> getUserCompetences(User user) {
         return (List<UserCompetenceDTO>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.id"), "user") //
-                        .add(Projections.groupProperty("competence.competence.id"), "competence") //
+                        .add(Projections.groupProperty("user"), "user") //
+                        .add(Projections.groupProperty("competence.competence"), "competence") //
                         .add(Projections.countDistinct("competence.id"), "ratingCount") //
                         .add(Projections.sum("competence.rating"), "ratingSum")) //
                 .createAlias("comments", "comment", JoinType.INNER_JOIN) //
@@ -342,32 +348,13 @@ public class UserDAO {
                 .list();
     }
 
-    public void deleteUserAdvert(User user, Advert advert) {
-        sessionFactory.getCurrentSession()
-                .createQuery("delete UserAdvert " //
-                        + "where user = :user "
-                        + "and advert = :advert") //
-                .setParameter("user", user) //
-                .setParameter("advert", advert) //
-                .executeUpdate();
-    }
-
-    public Long getUserAdvertRelationCount(User user, Advert advert) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
-                .setProjection(Projections.count("id")) //
-                .createAlias("association", "application") //
-                .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.eq("application.user", user)) //
-                .uniqueResult();
-    }
-
     public List<UserRole> getUsersToVerify(PrismScope resourceScope, Collection<Integer> resources) {
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property("user")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("role.id", PrismRole.getUnverifiedViewerRole(resourceScope)));
+                .add(Restrictions.in("role.id", getUnverifiedRoles(resourceScope)));
 
         if (resources == null) {
             criteria.add(Restrictions.isNotNull(resourceReference));
@@ -383,73 +370,59 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersWithActivityForResourceScope(PrismScope resourceScope, PrismScope roleScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN);
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN);
 
         String roleScopeReference = roleScope.getLowerCamelName();
         if (!resourceScope.equals(roleScope)) {
-            criteria.createAlias(roleScopeReference, roleScopeReference, JoinType.INNER_JOIN);
+            criteria.createAlias("resource." + roleScopeReference, roleScopeReference, JoinType.INNER_JOIN) //
+                    .createAlias(roleScopeReference + ".userRoles", "userRole", JoinType.INNER_JOIN);
+        } else {
+            criteria.createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN);
         }
 
-        return (List<Integer>) criteria.createAlias(roleScopeReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+        return (List<Integer>) criteria.createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getSystemActivityNotificationLastSentConstraint(lastNotifiedBaseline)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
-                        .add(Restrictions.ge("updatedtimestamp", updateBaseline)) //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.in("userRole.role.id", APPLICATION_POTENTIAL_SUPERVISOR_GROUP.getRoles())) //
-                                .add(Restrictions.in("userRole.role.id", PROJECT_STAFF_GROUP.getRoles()))
-                                .add(Restrictions.in("userRole.role.id", PROGRAM_STAFF_GROUP.getRoles()))
-                                .add(Restrictions.in("userRole.role.id", DEPARTMENT_STAFF_GROUP.getRoles()))
-                                .add(Restrictions.eq("userRole.role.id", INSTITUTION_STAFF_GROUP.getRoles())))) //
+                .add(getResourceActiveConstraint(updateBaseline))
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .list();
     }
 
     public List<Integer> getUsersWithActivityForPartnerResourceScope(PrismScope resourceScope, PrismScope roleScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        String roleScopeReference = roleScope.getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("userRole.user.id")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.INNER_JOIN)
-                .createAlias("targetAdvert." + roleScopeReference, roleScopeReference, JoinType.INNER_JOIN) //
-                .createAlias(roleScopeReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targetAdvert." + roleScope.getLowerCamelName(), "roleResource", JoinType.INNER_JOIN) //
+                .createAlias("roleResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
+                        getEndorsementActionJoinResolution()) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(getSystemActivityNotificationLastSentConstraint(lastNotifiedBaseline)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
-                        .add(Restrictions.ge("updatedtimestamp", updateBaseline)) //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.in("userRole.role.id", DEPARTMENT_STAFF_GROUP.getRoles()))
-                                .add(Restrictions.eq("userRole.role.id", INSTITUTION_STAFF_GROUP.getRoles())))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.ne("action.scope.id", APPLICATION)) //
-                        .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"))) //
+                .add(getResourceActiveConstraint(updateBaseline)) //
+                .add(getEndorsementActionFilterResolution()) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
                 .list();
@@ -474,7 +447,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(List<Integer> institutions, List<Integer> departments, ProfileListFilterDTO filter) {
+    public List<ProfileListRowDTO> getUserProfiles(List<Integer> departments, ProfileListFilterDTO filter) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //
@@ -494,33 +467,17 @@ public class UserDAO {
                 .createAlias("externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("externalAccount.accountType", LINKEDIN)) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.INNER_JOIN) //
-                .createAlias("userAdvert.advert", "advert") //
+                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN,
+                        Restrictions.eq("userRole.role.id", DEPARTMENT_STUDENT)) //
                 .createAlias("qualifications", "qualification", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("qualification.advert", "qualificationAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPositions", "employmentPosition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPosition.advert", "employmentPositionAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userDocument", "userDocument", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN);
-
-        if (isNotEmpty(institutions)) {
-            criteria.add(Restrictions.in("advert.institution.id", institutions));
-        }
-
-        if (isNotEmpty(departments)) {
-            criteria.add(Restrictions.in("advert.department.id", departments));
-        }
-
-        criteria.add(Restrictions.eq("userAdvert.identified", true)) //
-                .add(Restrictions.eq("shared", true)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("advert.institution", "userRole.institution")) //
-                                .add(Restrictions.eq("userRole.role.id", INSTITUTION_STUDENT))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("advert.department", "userRole.department")) //
-                                .add(Restrictions.eq("userRole.role.id", DEPARTMENT_STUDENT))));
+                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("userRole.department.id", departments)) //
+                .add(Restrictions.eq("shared", true));
 
         String keyword = filter.getKeyword();
         if (keyword != null) {
@@ -556,13 +513,20 @@ public class UserDAO {
                 .add(Restrictions.ge("userNotification.lastNotifiedDate", lastNotifiedBaseline));
     }
 
-    private void appendAdministratorResourceConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-                                                       HashMultimap<PrismScope, PrismScope> expandedScopes) {
+    private static Junction getResourceActiveConstraint(DateTime updateBaseline) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.eq("role.verified", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
+                        .add(Restrictions.ge("updatedtimestamp", updateBaseline)));
+    }
+
+    private void appendAdministratorConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> resources, HashMultimap<PrismScope, PrismScope> scopes) {
         PrismScope resourceScope = resource.getResourceScope();
         String resourceReference = resourceScope.getLowerCamelName();
 
         Junction exclusionsDisjunction = Restrictions.disjunction();
-        for (PrismScope expandedScope : expandedScopes.keySet()) {
+        for (PrismScope expandedScope : scopes.keySet()) {
             Junction expandedConjunction = Restrictions.conjunction();
 
             String expandedReference = expandedScope.getLowerCamelName();
@@ -573,8 +537,8 @@ public class UserDAO {
             }
 
             Junction enclosingDisjunction = Restrictions.disjunction();
-            for (PrismScope enclosingScope : expandedScopes.get(expandedScope)) {
-                Set<Integer> enclosingResources = administratorResources.get(enclosingScope);
+            for (PrismScope enclosingScope : scopes.get(expandedScope)) {
+                Set<Integer> enclosingResources = resources.get(enclosingScope);
                 if (!enclosingResources.isEmpty()) {
 
                     if (expandedScope.equals(enclosingScope)) {

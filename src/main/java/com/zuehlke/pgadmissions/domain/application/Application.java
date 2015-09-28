@@ -12,8 +12,6 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -32,8 +30,6 @@ import org.joda.time.LocalDate;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOfferType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -62,9 +58,6 @@ public class Application extends Resource implements
 
     @Column(name = "code", unique = true)
     private String code;
-
-    @Column(name = "code_legacy")
-    private String codeLegacy;
 
     @ManyToOne
     @Fetch(FetchMode.SELECT)
@@ -149,10 +142,6 @@ public class Application extends Resource implements
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "application_reserve_status")
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
     @Column(name = "completion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate completionDate;
@@ -161,12 +150,8 @@ public class Application extends Resource implements
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
 
-    @Column(name = "confirmed_offer_type")
-    @Enumerated(EnumType.STRING)
-    private PrismOfferType confirmedOfferType;
-
-    @Column(name = "retain")
-    private Boolean retain;
+    @Column(name = "shared", nullable = false)
+    private Boolean shared;
 
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -248,14 +233,6 @@ public class Application extends Resource implements
         this.code = code;
     }
 
-    public final String getCodeLegacy() {
-        return codeLegacy;
-    }
-
-    public final void setCodeLegacy(String codeLegacy) {
-        this.codeLegacy = codeLegacy;
-    }
-
     @Override
     public User getUser() {
         return user;
@@ -316,10 +293,12 @@ public class Application extends Resource implements
         this.project = project;
     }
 
+    @Override
     public final Advert getAdvert() {
         return advert;
     }
 
+    @Override
     public final void setAdvert(Advert advert) {
         this.advert = advert;
     }
@@ -339,20 +318,67 @@ public class Application extends Resource implements
         return this;
     }
 
+    public ApplicationProgramDetail getProgramDetail() {
+        return programDetail;
+    }
+
+    public void setProgramDetail(ApplicationProgramDetail programDetail) {
+        this.programDetail = programDetail;
+    }
+
+    @Override
+    public ApplicationPersonalDetail getPersonalDetail() {
+        return personalDetail;
+    }
+
+    @Override
+    public void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
+        this.personalDetail = personalDetail;
+    }
+
+    @Override
     public ApplicationAddress getAddress() {
         return address;
     }
 
+    @Override
     public void setAddress(ApplicationAddress address) {
         this.address = address;
     }
 
+    @Override
+    public Set<ApplicationQualification> getQualifications() {
+        return qualifications;
+    }
+
+    @Override
+    public Set<ApplicationEmploymentPosition> getEmploymentPositions() {
+        return employmentPositions;
+    }
+
+    @Override
+    public Set<ApplicationReferee> getReferees() {
+        return referees;
+    }
+
+    @Override
     public ApplicationDocument getDocument() {
         return document;
     }
 
+    @Override
     public void setDocument(ApplicationDocument document) {
         this.document = document;
+    }
+
+    @Override
+    public ApplicationAdditionalInformation getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    @Override
+    public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
+        this.additionalInformation = additionalInformation;
     }
 
     @Override
@@ -431,30 +457,6 @@ public class Application extends Resource implements
         this.closingDate = closingDate;
     }
 
-    public ApplicationPersonalDetail getPersonalDetail() {
-        return personalDetail;
-    }
-
-    public void setPersonalDetail(ApplicationPersonalDetail personalDetail) {
-        this.personalDetail = personalDetail;
-    }
-
-    public ApplicationProgramDetail getProgramDetail() {
-        return programDetail;
-    }
-
-    public void setProgramDetail(ApplicationProgramDetail programDetail) {
-        this.programDetail = programDetail;
-    }
-
-    public ApplicationAdditionalInformation getAdditionalInformation() {
-        return additionalInformation;
-    }
-
-    public void setAdditionalInformation(ApplicationAdditionalInformation additionalInformation) {
-        this.additionalInformation = additionalInformation;
-    }
-
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
@@ -469,14 +471,6 @@ public class Application extends Resource implements
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
-    }
-
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
-    }
-
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveRating) {
-        this.applicationReserveStatus = applicationReserveRating;
     }
 
     public LocalDate getCompletionDate() {
@@ -495,32 +489,14 @@ public class Application extends Resource implements
         this.confirmedStartDate = confirmedStartDate;
     }
 
-    public PrismOfferType getConfirmedOfferType() {
-        return confirmedOfferType;
+    @Override
+    public Boolean getShared() {
+        return shared;
     }
 
-    public void setConfirmedOfferType(PrismOfferType confirmedOfferType) {
-        this.confirmedOfferType = confirmedOfferType;
-    }
-
-    public Boolean getRetain() {
-        return retain;
-    }
-
-    public void setRetain(Boolean retain) {
-        this.retain = retain;
-    }
-
-    public Set<ApplicationQualification> getQualifications() {
-        return qualifications;
-    }
-
-    public Set<ApplicationEmploymentPosition> getEmploymentPositions() {
-        return employmentPositions;
-    }
-
-    public Set<ApplicationReferee> getReferees() {
-        return referees;
+    @Override
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 
     @Override
@@ -646,7 +622,7 @@ public class Application extends Resource implements
     public PrismOpportunityType getOpportunityType() {
         Resource resourceParent = getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(resourceParent.getClass())) {
-            return PrismOpportunityType.valueOf(((ResourceOpportunity) resourceParent).getOpportunityType().getName());
+            return ((ResourceOpportunity) resourceParent).getOpportunityType().getId();
         }
         return null;
     }

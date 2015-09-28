@@ -7,9 +7,21 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationS
 
 public class ResourceParentRepresentation extends ResourceRepresentationExtended {
 
+    private String importedCode;
+
     private AdvertRepresentationSimple advert;
 
     private List<PrismAction> partnerActions;
+
+    @Override
+    public String getImportedCode() {
+        return importedCode;
+    }
+
+    @Override
+    public void setImportedCode(String importedCode) {
+        this.importedCode = importedCode;
+    }
 
     public AdvertRepresentationSimple getAdvert() {
         return advert;

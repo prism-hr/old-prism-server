@@ -3,11 +3,13 @@
 </h1>
 
 <p>
-    Thank you for your registration. Please follow the instructions below to start using UCL Prism. You will be asked to
-    login using the email address and password that you provided.
+    Thank you for your registration for ${TEMPLATE_SYSTEM_TITLE} the marketplace for student and graduate careers! 
+    Please follow the link below to confirm your identity. You will be asked to login using the account credentials that you provided.
 </p>
 
 ${SYSTEM_USER_ACCOUNT_ACTIVATION}
+
+Welcome to ${TEMPLATE_SYSTEM_TITLE}!
 
 <p>
     Yours sincerely,

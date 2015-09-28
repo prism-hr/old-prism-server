@@ -1,24 +1,25 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByEmployingResourceScope;
-import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByImportedRejectionReasonSelector;
 import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByQualifyingResourceScopeSelector;
+import com.zuehlke.pgadmissions.workflow.selectors.summary.ApplicationByRejectionReasonSelector;
 import com.zuehlke.pgadmissions.workflow.selectors.summary.PrismResourceSummarySelector;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismFilterEntity {
 
-    DOMICILE("application_personal_detail.imported_domicile_id"), //
-    NATIONALITY("application_personal_detail.imported_nationality_id"), //
-    AGE_RANGE("application_personal_detail.imported_age_range_id"), //
-    DISABILITY("application_personal_detail.imported_disability_id"), //
-    ETHNICITY("application_personal_detail.imported_ethnicity_id"), //
-    GENDER("application_personal_detail.imported_gender_id"), //
-    OPPORTUNITY_TYPE("application_program_detail.imported_opportunity_type_id"), //
-    REJECTION_REASON("application.id", ApplicationByImportedRejectionReasonSelector.class), //
-    STUDY_OPTION("application_program_detail.imported_study_option_id"), //
+    DOMICILE("application_personal_detail.domicile_id"), //
+    NATIONALITY("application_personal_detail.nationality_id"), //
+    AGE_RANGE("application_personal_detail.age_range_id"), //
+    GENDER("application_personal_detail.gender_id"), //
+    OPPORTUNITY_TYPE("application_program_detail.opportunity_type_id"), //
+    REJECTION_REASON("application.id", ApplicationByRejectionReasonSelector.class), //
+    STUDY_OPTION("application_program_detail.study_option_id"), //
     UNIVERSITY_INSTITUTION("application.id", INSTITUTION, ApplicationByQualifyingResourceScopeSelector.class), //
     UNIVERSITY_DEPARTMENT("application.id", DEPARTMENT, ApplicationByQualifyingResourceScopeSelector.class), //
     UNIVERSITY_PROGRAM("application.id", PROGRAM, ApplicationByQualifyingResourceScopeSelector.class), //

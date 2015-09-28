@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.TargetEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -33,7 +32,7 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "name" }) })
-public class Department extends ResourceParentDivision implements TargetEntity {
+public class Department extends ResourceParent {
 
     @Id
     @GeneratedValue
@@ -84,12 +83,9 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
-    @Column(name = "opportunity_rating_count")
-    private Integer opportunityRatingCount;
-
-    @Column(name = "opportunity_rating_average")
-    private BigDecimal opportunityRatingAverage;
-
+    @Column(name = "shared", nullable = false)
+    private Boolean shared;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -414,23 +410,13 @@ public class Department extends ResourceParentDivision implements TargetEntity {
     }
 
     @Override
-    public Integer getOpportunityRatingCount() {
-        return opportunityRatingCount;
+    public Boolean getShared() {
+        return shared;
     }
 
     @Override
-    public void setOpportunityRatingCount(Integer opportunityRatingCount) {
-        this.opportunityRatingCount = opportunityRatingCount;
-    }
-
-    @Override
-    public BigDecimal getOpportunityRatingAverage() {
-        return opportunityRatingAverage;
-    }
-
-    @Override
-    public void setOpportunityRatingAverage(BigDecimal opportunityRatingAverage) {
-        this.opportunityRatingAverage = opportunityRatingAverage;
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 
     public Department withImportedCode(String importedCode) {

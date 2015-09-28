@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertTargetsDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @RestController
@@ -48,10 +47,10 @@ public class AdvertController {
         advertService.updateCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
     }
 
-    @RequestMapping(value = "/targets", method = RequestMethod.PUT)
-    public void updateTargets(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertTargetsDTO targetsDTO) {
-        advertService.updateTargets(resourceDescriptor.getResourceScope(), resourceId, targetsDTO);
-    }
+//    @RequestMapping(value = "/targets", method = RequestMethod.PUT)
+//    public void updateTargets(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertTargetsDTO targetsDTO) {
+//        advertService.updateTargets(resourceDescriptor.getResourceScope(), resourceId, targetsDTO);
+//    }
 
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,

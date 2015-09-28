@@ -1,14 +1,18 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
+    private UserRepresentationSimple user;
+    
     private ResourceRepresentationActivity resource;
 
     private LocalDate startDate;
@@ -23,6 +27,14 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public UserRepresentationSimple getUser() {
+        return user;
+    }
+
+    public void setUser(UserRepresentationSimple user) {
+        this.user = user;
     }
 
     public ResourceRepresentationActivity getResource() {
@@ -46,6 +58,11 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
         return this;
     }
 
+    public ProfileEmploymentPositionRepresentation withUser(UserRepresentationSimple user) {
+        this.user = user;
+        return this;
+    }
+    
     public ProfileEmploymentPositionRepresentation withResource(ResourceRepresentationActivity resource) {
         this.resource = resource;
         return this;

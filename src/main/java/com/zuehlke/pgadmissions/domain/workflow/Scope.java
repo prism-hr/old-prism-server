@@ -7,13 +7,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.Definition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory;
 
 @Entity
 @Table(name = "scope")
-public class Scope implements UniqueEntity {
+public class Scope extends Definition<PrismScope> {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -26,14 +26,19 @@ public class Scope implements UniqueEntity {
 
     @Column(name = "short_code", nullable = false, unique = true)
     private String shortCode;
+    
+    @Column(name = "default_shared", nullable = false)
+    private Boolean defaultShared;
 
     @Column(name = "ordinal", nullable = false, unique = true)
     private Integer ordinal;
 
+    @Override
     public PrismScope getId() {
         return id;
     }
 
+    @Override
     public void setId(PrismScope id) {
         this.id = id;
     }
@@ -52,6 +57,14 @@ public class Scope implements UniqueEntity {
 
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
+    }
+    
+    public Boolean getDefaultShared() {
+        return defaultShared;
+    }
+
+    public void setDefaultShared(Boolean defaultShared) {
+        this.defaultShared = defaultShared;
     }
 
     public Integer getOrdinal() {
@@ -77,14 +90,14 @@ public class Scope implements UniqueEntity {
         return this;
     }
 
+    public Scope withDefaultShared(Boolean defaultShared) {
+        this.defaultShared = defaultShared;
+        return this;
+    }
+    
     public Scope withOrdinal(Integer ordinal) {
         this.ordinal = ordinal;
         return this;
-    }
-
-    @Override
-    public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("id", id);
     }
 
 }

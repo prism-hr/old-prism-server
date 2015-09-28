@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -182,15 +181,13 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentationExtended(Comment comment) {
-        ImportedEntitySimple rejectionReason = comment.getRejectionReason();
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
-                .withTransitionState(comment.getTransitionState().getId()).withRating(comment.getRating()).withApplicationIdentified(comment.getApplicationIdentified())
-                .withApplicationEligible(comment.getApplicationEligible()).withApplicationInterested(comment.getApplicationInterested())
-                .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+                .withTransitionState(comment.getTransitionState().getId()).withRating(comment.getRating()).withEligible(comment.getEligible())
+                .withInterested(comment.getInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withPositionDetail(getCommentPositionDetailRepresentation(comment))
                 .withOfferDetail(getCommentOfferDetailRepresentation(comment)).withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment())
-                .withApplicationReserveStatus(comment.getApplicationReserveStatus()).withRejectionReason(rejectionReason == null ? null : rejectionReason.getName())
-                .withRejectionReasonSystem(comment.getRejectionReasonSystem()).withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
+                .withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment()).withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment())
+                .withRejectionReason(comment.getRejectionReason()).withCompetences(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }

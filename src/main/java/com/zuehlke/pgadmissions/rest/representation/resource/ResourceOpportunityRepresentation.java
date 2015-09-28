@@ -1,31 +1,27 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import uk.co.alumeni.prism.api.model.imported.response.ImportedEntityResponse;
-
 import java.util.List;
 
-public class ResourceOpportunityRepresentation extends ResourceParentDivisionRepresentation {
+import org.joda.time.LocalDate;
 
-    private PrismOpportunityType opportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+
+public class ResourceOpportunityRepresentation extends ResourceParentRepresentation {
 
     private PrismOpportunityCategory opportunityCategory;
+    
+    private PrismOpportunityType opportunityType;
 
-    private List<ImportedEntityResponse> studyOptions;
-
+    private LocalDate availableDate;
+    
     private Integer durationMinimum;
 
     private Integer durationMaximum;
-
-    public PrismOpportunityType getOpportunityType() {
-        return opportunityType;
-    }
-
-    public void setOpportunityType(PrismOpportunityType opportunityType) {
-        this.opportunityType = opportunityType;
-    }
-
+    
+    private List<PrismStudyOption> studyOptions;
+    
     public PrismOpportunityCategory getOpportunityCategory() {
         return opportunityCategory;
     }
@@ -33,13 +29,21 @@ public class ResourceOpportunityRepresentation extends ResourceParentDivisionRep
     public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
     }
-
-    public List<ImportedEntityResponse> getStudyOptions() {
-        return studyOptions;
+    
+    public PrismOpportunityType getOpportunityType() {
+        return opportunityType;
     }
 
-    public void setStudyOptions(List<ImportedEntityResponse> studyOptions) {
-        this.studyOptions = studyOptions;
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+    }
+    
+    public LocalDate getAvailableDate() {
+        return availableDate;
+    }
+
+    public void setAvailableDate(LocalDate availableDate) {
+        this.availableDate = availableDate;
     }
 
     public Integer getDurationMinimum() {
@@ -56,6 +60,14 @@ public class ResourceOpportunityRepresentation extends ResourceParentDivisionRep
 
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
+    }
+    
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
 }

@@ -4,17 +4,9 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 
 public class ResourceSummaryPlotConstraintRepresentation {
 
-    private Integer entityId;
-
     private PrismFilterEntity entityType;
 
-    public Integer getEntityId() {
-        return entityId;
-    }
-
-    public void setEntityId(Integer id) {
-        this.entityId = id;
-    }
+    private String entityId;
 
     public PrismFilterEntity getEntityType() {
         return entityType;
@@ -24,13 +16,21 @@ public class ResourceSummaryPlotConstraintRepresentation {
         this.entityType = entityType;
     }
 
-    public ResourceSummaryPlotConstraintRepresentation withEntityId(Integer entityId) {
+    public String getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(String entityId) {
         this.entityId = entityId;
-        return this;
     }
 
     public ResourceSummaryPlotConstraintRepresentation withType(PrismFilterEntity entityType) {
         this.entityType = entityType;
+        return this;
+    }
+
+    public ResourceSummaryPlotConstraintRepresentation withEntityId(String entityId) {
+        this.entityId = entityId;
         return this;
     }
 

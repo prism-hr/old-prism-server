@@ -46,9 +46,6 @@ public class PrismResourceListConstraintBuilder {
             Class<? extends PrismResourceListFilterSelector<?>> filterValueSelector = filterProperty.getPropertyValueSelector();
             if (filterValueSelector == null) {
                 switch (filterProperty.getPropertyType()) {
-                case APPLICATION_RESERVE_STATUS:
-                    appendEnumFilter(conditions, filterPropertyName, negated, constraint.getValueReserveStatus());
-                    break;
                 case DATE:
                     appendDateFilter(conditions, filterPropertyName, filterExpression, negated, constraint.getValueDateStart(), constraint.getValueDateClose());
                     break;
@@ -75,11 +72,6 @@ public class PrismResourceListConstraintBuilder {
 
     private static void appendStringFilter(Junction conditions, String property, boolean negated, String value) {
         Criterion restriction = Restrictions.ilike(property, value, MatchMode.ANYWHERE);
-        applyOrNegateFilterCriterion(conditions, property, restriction, negated);
-    }
-
-    private static void appendEnumFilter(Junction conditions, String property, boolean negated, Enum<?> value) {
-        Criterion restriction = Restrictions.eq(property, value);
         applyOrNegateFilterCriterion(conditions, property, restriction, negated);
     }
 

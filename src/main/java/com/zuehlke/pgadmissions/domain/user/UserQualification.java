@@ -14,10 +14,11 @@ import javax.persistence.UniqueConstraint;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
+import com.zuehlke.pgadmissions.workflow.user.UserQualificationReassignmentProcessor;
 
 @Entity
 @Table(name = "user_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
-public class UserQualification extends UserAdvertRelationSection implements ProfileQualification<UserAccount> {
+public class UserQualification extends UserAdvertRelationSection implements ProfileQualification<UserAccount>, UserAssignment<UserQualificationReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -30,7 +31,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    
+
     @ManyToOne
     @JoinColumn(name = "advert_id")
     private Advert advert;
@@ -52,7 +53,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
 
     @Column(name = "completed", nullable = false)
     private Boolean completed;
-    
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "document_id", unique = true)
     private Document document;
@@ -76,7 +77,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     public void setAssociation(UserAccount association) {
         this.association = association;
     }
-    
+
     @Override
     public User getUser() {
         return user;
@@ -156,7 +157,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
-    
+
     @Override
     public Document getDocument() {
         return document;
@@ -167,6 +168,16 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
         this.document = document;
     }
 
+    @Override
+    public Class<UserQualificationReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserQualificationReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+    
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature().addProperty("startYear", startYear);

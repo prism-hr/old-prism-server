@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.workflow.user.AdvertConnectionReassignmentProces
 
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_user_id" }) })
+        @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id" }) })
 public class AdvertTarget extends AdvertAttribute implements UserAssignment<AdvertConnectionReassignmentProcessor> {
 
     @Id

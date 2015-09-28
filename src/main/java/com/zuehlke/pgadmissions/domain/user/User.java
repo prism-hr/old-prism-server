@@ -26,6 +26,8 @@ import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
@@ -106,6 +108,12 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<Advert> adverts = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
+    private Set<ApplicationQualification> applicationQualifications = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<ApplicationEmploymentPosition> applicationEmploymentPositions = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
     private Set<ApplicationReferee> applicationReferees = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
@@ -133,13 +141,19 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<UserFeedback> userFeedbacks = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advertUser")
-    private Set<AdvertTarget> advertConnections = Sets.newHashSet();
+    private Set<AdvertTarget> advertTargets = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "advertTargetUser")
-    private Set<AdvertTarget> advertTargetConnections = Sets.newHashSet();
+    @OneToMany(mappedBy = "targetAdvertUser")
+    private Set<AdvertTarget> advertTargetsTarget = Sets.newHashSet();
 
     @OneToMany(mappedBy = "acceptingUser")
-    private Set<AdvertTarget> advertAcceptingConnections = Sets.newHashSet();
+    private Set<AdvertTarget> advertTargetsAccepting = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserQualification> userQualifications = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserEmploymentPosition> userEmploymentPositions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserReferee> userReferees = Sets.newHashSet();
@@ -268,6 +282,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return adverts;
     }
 
+    public Set<ApplicationQualification> getApplicationQualifications() {
+        return applicationQualifications;
+    }
+
+    public Set<ApplicationEmploymentPosition> getApplicationEmploymentPositions() {
+        return applicationEmploymentPositions;
+    }
+
     public Set<ApplicationReferee> getApplicationReferees() {
         return applicationReferees;
     }
@@ -300,16 +322,24 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userFeedbacks;
     }
 
-    public Set<AdvertTarget> getAdvertConnections() {
-        return advertConnections;
+    public Set<AdvertTarget> getAdvertTargets() {
+        return advertTargets;
     }
 
-    public Set<AdvertTarget> getAdvertTargetConnections() {
-        return advertTargetConnections;
+    public Set<AdvertTarget> getAdvertTargetsTarget() {
+        return advertTargetsTarget;
     }
 
-    public Set<AdvertTarget> getAdvertAcceptingConnections() {
-        return advertAcceptingConnections;
+    public Set<AdvertTarget> getAdvertTargetsAccepting() {
+        return advertTargetsAccepting;
+    }
+
+    public Set<UserQualification> getUserQualifications() {
+        return userQualifications;
+    }
+
+    public Set<UserEmploymentPosition> getUserEmploymentPositions() {
+        return userEmploymentPositions;
     }
 
     public Set<UserReferee> getUserReferees() {

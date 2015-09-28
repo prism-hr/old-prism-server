@@ -15,10 +15,13 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.workflow.user.ApplicationEmploymentPositionReassignmentProcessor;
 
 @Entity
 @Table(name = "application_employment_position", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
-public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSection implements ProfileEmploymentPosition<Application> {
+public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSection
+        implements ProfileEmploymentPosition<Application>, UserAssignment<ApplicationEmploymentPositionReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -155,6 +158,16 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
+    @Override
+    public Class<ApplicationEmploymentPositionReassignmentProcessor> getUserReassignmentProcessor() {
+        return ApplicationEmploymentPositionReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+    
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature().addProperty("startYear", startYear);

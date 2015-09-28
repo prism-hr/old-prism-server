@@ -60,7 +60,7 @@ import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertConnectionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
@@ -262,7 +262,7 @@ public class AdvertMapper {
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
-        representation.setConnections(getAdvertConnectionRepresentations(advert));
+//        representation.setConnections(getAdvertTargetRepresentations(advert));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
 
@@ -336,8 +336,8 @@ public class AdvertMapper {
     }
 
     // TODO: sorting logic
-    private List<AdvertConnectionRepresentation> getAdvertConnectionRepresentations(Advert advert) {
-        List<AdvertTargetDTO> connections = advertService.getAdvertConnections(advert);
+    private List<AdvertTargetRepresentation> getAdvertTargetRepresentations(Advert advert) {
+        List<AdvertTargetDTO> connections = advertService.getAdvertTargets(advert);
         return null;
     }
 

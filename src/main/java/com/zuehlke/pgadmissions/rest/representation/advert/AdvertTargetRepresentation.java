@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class AdvertConnectionRepresentation {
+public class AdvertTargetRepresentation {
 
     private UserRepresentationSimple user;
 

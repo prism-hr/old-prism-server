@@ -330,7 +330,7 @@ public class AdvertService {
     }
 
     // TO: merge and sort
-    public List<AdvertTargetDTO> getAdvertConnections(Advert advert) {
+    public List<AdvertTargetDTO> getAdvertTargets(Advert advert) {
         return advertDAO.getAdvertTargets(advert, "inviting");
     }
 

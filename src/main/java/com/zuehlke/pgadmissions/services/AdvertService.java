@@ -25,6 +25,7 @@ import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -331,7 +332,7 @@ public class AdvertService {
 
     // TO: merge and sort
     public List<AdvertTargetDTO> getAdvertTargets(Advert advert) {
-        return advertDAO.getAdvertTargets(advert, "inviting");
+        return Collections.emptyList();
     }
 
     public Integer getBackgroundImage(Advert advert) {

@@ -262,7 +262,7 @@ public class AdvertMapper {
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
-//        representation.setConnections(getAdvertTargetRepresentations(advert));
+        representation.setConnections(getAdvertTargetRepresentations(advert));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
 

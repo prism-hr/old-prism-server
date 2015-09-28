@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services.builders.download;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DECLINED_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_REFERENCE_APPENDIX;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_SUBHEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_HEADER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RATING;
@@ -28,11 +27,9 @@ import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
-import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
-// TODO move this shit into the adapter
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class ApplicationDownloadReferenceBuilder {
@@ -40,9 +37,6 @@ public class ApplicationDownloadReferenceBuilder {
     private PropertyLoader propertyLoader;
 
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
-
-    @Inject
-    private ApplicationService applicationService;
 
     @Inject
     private DocumentService documentService;
@@ -71,11 +65,7 @@ public class ApplicationDownloadReferenceBuilder {
             CommentRepresentation referenceComment) throws Exception {
         String rowTitle = propertyLoader.loadLazy(SYSTEM_COMMENT_HEADER);
 
-        if (referenceComment == null) {
-            applicationDownloadBuilderHelper.addContentRowMedium(rowTitle,
-                    applicationService.isApproved(application.getId()) ? propertyLoader.loadLazy(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
-            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
-        } else if (referenceComment.getDeclinedResponse()) {
+        if (referenceComment.getDeclinedResponse()) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.loadLazy(APPLICATION_COMMENT_DECLINED_REFEREE), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {

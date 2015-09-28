@@ -189,7 +189,9 @@ public class ResourceService {
         Resource resource = resourceCreator.create(user, resourceDTO);
         resource.setShared(scope.getDefaultShared());
 
-        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime())
+        PrismState initialState = resourceDTO.getInitialState();
+        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
+                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
         return actionService.executeUserAction(resource, action, comment);
@@ -205,14 +207,15 @@ public class ResourceService {
                 PrismScope thisScope = resourceDTO.getScope();
                 PrismScope lastScope = lastResource == null ? SYSTEM : lastResource.getResourceScope();
 
-                resourceDTO.setScopeCreation(resourceRelationDTO.getContext());
+                resourceDTO.setContext(resourceRelationDTO.getContext());
 
                 if (thisId == null) {
+                    resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                     if (lastResource != null) {
                         resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastResource.getId()));
                     }
 
-                    Action action = actionService.getById(PrismAction.valueOf(lastScope + "_CREATE_" + thisScope));
+                    Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
                     lastResource = (ResourceParent) createResource(lastUser, action, resourceDTO).getResource();
                 } else {
                     lastResource = (ResourceParent) getById(thisScope, thisId);

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_UNSUBMITTED;
 
 import javax.inject.Inject;
 
@@ -10,7 +11,9 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.resource.Department;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -27,11 +30,16 @@ public class DepartmentCreatedResolver implements StateTransitionResolver<Depart
 
     @Override
     public StateTransition resolve(Department resource, Comment comment) {
-        User user = comment.getUser();
-        if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
-            return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), DEPARTMENT_APPROVED);
+        State initialState = comment.getTransitionState();
+        ResourceParent parentResource = (ResourceParent) resource.getParentResource();
+        if (initialState == null) {
+            User user = comment.getUser();
+            if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
+                return stateService.getStateTransition(parentResource, comment.getAction(), DEPARTMENT_APPROVED);
+            }
+            return stateService.getStateTransition(parentResource, comment.getAction(), DEPARTMENT_APPROVAL);
         }
-        return stateService.getStateTransition(resource.getParentResource(), comment.getAction(), DEPARTMENT_APPROVAL);
+        return stateService.getStateTransition(parentResource, comment.getAction(), DEPARTMENT_UNSUBMITTED);
     }
 
 }

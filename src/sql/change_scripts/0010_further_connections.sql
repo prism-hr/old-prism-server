@@ -545,3 +545,12 @@ alter table state
 alter table comment
 	change column partner_accept_appointment application_partner_accept_appointment int(1) unsigned
 ;
+
+alter table advert_target
+	modify column accepting_user_id int(10) unsigned
+;
+
+alter table advert_target
+	modify partnership_state varchar(50) not null
+;
+

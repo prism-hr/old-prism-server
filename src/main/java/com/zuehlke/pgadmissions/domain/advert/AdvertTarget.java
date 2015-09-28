@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -9,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.workflow.user.AdvertConnectionReassignmentProcessor;
@@ -42,8 +45,9 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     @JoinColumn(name = "accepting_user_id")
     private User acceptingUser;
 
-    @Column(name = "accepted", nullable = false)
-    private Boolean accepted;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "partnership_state", nullable = false)
+    private PrismPartnershipState partnershipState;
 
     @Override
     public Integer getId() {
@@ -97,12 +101,12 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
         this.acceptingUser = acceptingUser;
     }
 
-    public Boolean getAccepted() {
-        return accepted;
+    public PrismPartnershipState getPartnershipState() {
+        return partnershipState;
     }
 
-    public void setAccepted(Boolean accepted) {
-        this.accepted = accepted;
+    public void setPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
     }
 
     public AdvertTarget withAdvert(Advert advert) {
@@ -130,8 +134,8 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
         return this;
     }
 
-    public AdvertTarget withAccepted(Boolean accepted) {
-        this.accepted = accepted;
+    public AdvertTarget withPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
         return this;
     }
 

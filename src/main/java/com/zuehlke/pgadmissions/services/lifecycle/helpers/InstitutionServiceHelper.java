@@ -1,21 +1,24 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
-import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionImportDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.PrismService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import jersey.repackaged.com.google.common.base.Objects;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HESA;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_UCAS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_SPECIFIED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,21 +36,23 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.PrismService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import jersey.repackaged.com.google.common.base.Objects;
 
 @Component
 public class InstitutionServiceHelper extends PrismServiceHelperAbstract {

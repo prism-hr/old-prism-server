@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import java.util.Set;
+import com.google.common.collect.Sets;
+import org.hibernate.annotations.OrderBy;
 
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
-
-import org.hibernate.annotations.OrderBy;
-
-import com.google.common.collect.Sets;
+import java.util.Set;
 
 @Embeddable
 public class AdvertCategories {

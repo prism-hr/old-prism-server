@@ -350,7 +350,7 @@ public class AdvertMapper {
                 resourceOpportunityRepresentation.setDurationMinimum((Integer) getProperty(advert, scopeReference + "DurationMinimum"));
                 resourceOpportunityRepresentation.setDurationMaximum((Integer) getProperty(advert, scopeReference + "DurationMaximum"));
             } else if (scope.equals(INSTITUTION)) {
-                resourceRepresentation.setLogoImage(new DocumentRepresentation().withId(advert.getLogoImage()));
+                resourceRepresentation.setLogoImage(new DocumentRepresentation().withId(advert.getLogoImageId()));
             }
 
             return resourceRepresentation;

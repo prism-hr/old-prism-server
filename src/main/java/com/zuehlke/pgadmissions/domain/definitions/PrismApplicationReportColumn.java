@@ -5,10 +5,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReport
 import static com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReportColumnAccessorType.STRING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_START_DATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DECLINED_REFERENCES;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_GENDER_LABEL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_GENDER_LABEL;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDED_REFERENCES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREES;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SUBMISSION_DATE;
@@ -37,10 +37,10 @@ public enum PrismApplicationReportColumn {
     ID(SYSTEM_ID, "application.id", null, false, "id", STRING), //
     USER_NAME(SYSTEM_NAME, "user.fullName", null, false, "name", STRING), //
     USER_EMAIL(SYSTEM_EMAIL, "user.email", null, false, "email", STRING), //
-    USER_DATE_OF_BIRTH(APPLICATION_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "personalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
-    USER_GENDER(APPLICATION_PERSONAL_DETAIL_GENDER_LABEL, "personalDetail.gender.id", null, false, "gender", DISPLAY_PROPERTY), //
-    USER_NATIONALITY(APPLICATION_PERSONAL_DETAIL_NATIONALITY_LABEL, "personalDetail.nationality.id", null, false, "nationality", DISPLAY_PROPERTY), //
-    USER_DOMICILE(APPLICATION_PERSONAL_DETAIL_DOMICILE_LABEL, "personalDetail.domicile.id", null, false, "countryOfBirth", DISPLAY_PROPERTY), //
+    USER_DATE_OF_BIRTH(PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "personalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
+    USER_GENDER(PROFILE_PERSONAL_DETAIL_GENDER_LABEL, "personalDetail.gender.id", null, false, "gender", DISPLAY_PROPERTY), //
+    USER_NATIONALITY(PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL, "personalDetail.nationality.id", null, false, "nationality", DISPLAY_PROPERTY), //
+    USER_DOMICILE(PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL, "personalDetail.domicile.id", null, false, "countryOfBirth", DISPLAY_PROPERTY), //
     INSTITUTION_NAME(SYSTEM_INSTITUTION, "institution.name", null, false, "institution", STRING), //
     DEPARTMENT_NAME(SYSTEM_DEPARTMENT, "department.name", null, false, "department", STRING), //
     PROGRAM_NAME(SYSTEM_PROGRAM, "program.name", null, false, "program", STRING), //

@@ -366,6 +366,10 @@ public class ResourceService {
 
     public Comment executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
         User user = userService.getCurrentUser();
+        return executeUpdate(resource, user, messageIndex, assignees);
+    }
+
+    public Comment executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
         Action action = actionService.getViewEditAction(resource);
 
         Comment comment = new Comment().withUser(user).withAction(action)

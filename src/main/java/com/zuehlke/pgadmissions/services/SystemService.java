@@ -454,8 +454,7 @@ public class SystemService {
             for (PrismDisplayPropertyDefinition prismDisplayPropertyDefinition : PrismDisplayPropertyDefinition.values()) {
                 if (prismScope == prismDisplayPropertyDefinition.getCategory().getScope()) {
                     DisplayPropertyConfigurationDTO configurationDTO = new DisplayPropertyConfigurationDTO().withDefinitionId(prismDisplayPropertyDefinition)
-                            .withValue(
-                                    prismDisplayPropertyDefinition.getDefaultValue());
+                            .withValue(prismDisplayPropertyDefinition.getDefaultValue());
                     customizationService.createOrUpdateConfiguration(DISPLAY_PROPERTY, system,
                             prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);
                 }

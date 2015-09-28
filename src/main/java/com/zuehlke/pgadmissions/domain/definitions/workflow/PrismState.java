@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproved;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedPendingPartnerApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingCompletion;
@@ -110,9 +110,10 @@ public enum PrismState {
     APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApprovalPendingCompletion.class),
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationApproved.class),
-    APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, null),
+    APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, 
+            PrismApplicationApprovedPendingPartnerApproval.class),
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_PURGE_DURATION, null,
-            PrismApplicationApprovedCompleted.class),
+            PrismApplicationApproved.class),
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationRejected.class),
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_PURGE_DURATION, null,
             PrismApplicationRejectedCompleted.class),

@@ -79,6 +79,7 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
@@ -131,10 +132,16 @@ public class AdvertService {
     private StateService stateService;
 
     @Inject
+    private SystemService systemService;
+
+    @Inject
     private AddressService addressService;
 
     @Inject
     private AdvertMapper advertMapper;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private UserService userService;
@@ -282,7 +289,10 @@ public class AdvertService {
                 String scopePrefix = resource.getResourceScope().name();
                 Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
                 if (actionService.checkActionAvailable(resource, completeAction, user, false)) {
-                    resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
+                    System system = systemService.getSystem();
+                    User systemUser = system.getUser();
+                    resourceService.executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
+                    roleService.verifyUserRoles(systemUser, resource, user, true);
                 }
             } else if (actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), user, false)) {
 

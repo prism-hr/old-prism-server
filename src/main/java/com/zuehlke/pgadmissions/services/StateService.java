@@ -296,7 +296,26 @@ public class StateService {
     }
 
     public void setHiddenStates() {
-        List<PrismState> states = stateDAO.getHiddenStates();
+        List<PrismState> states = Lists.newArrayList();
+        getStates().forEach(state -> {
+            Set<StateAction> stateActions = state.getStateActions();
+            if (stateActions.isEmpty()) {
+                states.add(state.getId());
+            } else {
+                boolean assignments = false;
+                for (StateAction stateAction : stateActions) {
+                    if (!stateAction.getStateActionAssignments().isEmpty()) {
+                        assignments = true;
+                        break;
+                    }
+                }
+
+                if (!assignments) {
+                    states.add(state.getId());
+                }
+            }
+        });
+
         if (!states.isEmpty()) {
             stateDAO.setHiddenStates(states);
         }

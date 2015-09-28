@@ -263,17 +263,6 @@ public class StateDAO {
                 .list();
     }
 
-    public List<PrismState> getHiddenStates() {
-        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("stateActions", "stateAction", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateAction.id")) //
-                        .add(Restrictions.isNull("stateActionAssignment.id"))) //
-                .list();
-    }
-
     public void setHiddenStates(List<PrismState> states) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update State " //

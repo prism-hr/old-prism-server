@@ -47,7 +47,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_COMPLETE_INTERVIEW_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_APPROVAL_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_APPROVED_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_COMPLETE_RESERVED_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE_REJECTED_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE(getDefaultProcessApplicationActionDefinition()), //
@@ -158,7 +157,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     public boolean isVisibleAction() {
         return actionDefinition.isVisibleAction();
     }
-    
+
     public PrismPartnershipState getPartnershipState() {
         return actionDefinition.getPartnershipState();
     }
@@ -166,7 +165,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     public PrismPartnershipState getPartnershipTransitionState() {
         return actionDefinition.getPartnershipTransitionState();
     }
-    
+
     public PrismScope getScope() {
         return actionDefinition.getScope();
     }
@@ -186,9 +185,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
         private boolean declinableAction = false;
 
         private boolean visibleAction = false;
-        
+
         private PrismPartnershipState partnershipState;
-        
+
         private PrismPartnershipState partnershipTransitionState;
 
         private PrismScope scope;
@@ -265,7 +264,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
             this.partnershipTransitionState = partnershipTransitionState;
             return this;
         }
-        
+
         public PrismActionDefinition withScope(PrismScope scope) {
             this.scope = scope;
             return this;
@@ -313,14 +312,14 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return getDefaultRateApplicationActionDefinition() //
                 .withDeclinableAction();
     }
-    
+
     private static PrismActionDefinition getDefaultPartnerActionDefinition(PrismScope scope, PrismPartnershipState partnershipState,
             PrismPartnershipState partnershipTransitionState) {
         return getDefaultProcessResourceActionDefinitionVisible(scope) //
                 .withPartnershipState(partnershipState) //
                 .withPartnershipTransitionState(partnershipTransitionState);
     }
-    
+
     private static PrismActionDefinition getDefaultPartnerReviewActionDefinition(PrismScope scope, PrismPartnershipState partnershipState,
             PrismPartnershipState partnershipTransitionState) {
         return getDefaultPartnerActionDefinition(scope, partnershipState, partnershipTransitionState)

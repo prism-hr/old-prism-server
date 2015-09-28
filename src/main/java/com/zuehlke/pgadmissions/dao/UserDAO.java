@@ -314,7 +314,7 @@ public class UserDAO {
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -418,7 +418,7 @@ public class UserDAO {
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(getSystemActivityNotificationLastSentConstraint(lastNotifiedBaseline)) //
                 .add(getResourceActiveConstraint(updateBaseline)) //

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 
 import java.util.Collection;
 import java.util.List;
@@ -302,15 +303,16 @@ public class StateService {
             if (stateActions.isEmpty()) {
                 states.add(state.getId());
             } else {
-                boolean assignments = false;
+                int userActions = 0;
+                int userAssignments = 0;
                 for (StateAction stateAction : stateActions) {
-                    if (!stateAction.getStateActionAssignments().isEmpty()) {
-                        assignments = true;
-                        break;
+                    userAssignments = userAssignments + stateAction.getStateActionAssignments().size();
+                    if (isFalse(stateAction.getAction().getSystemInvocationOnly())) {
+                        userActions++;
                     }
                 }
 
-                if (!assignments) {
+                if (userActions == 0 || userAssignments == 0) {
                     states.add(state.getId());
                 }
             }

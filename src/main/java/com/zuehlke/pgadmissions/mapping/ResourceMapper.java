@@ -291,7 +291,7 @@ public class ResourceMapper {
         ResourceActivityDTO institution = resource.getEnclosingResource(INSTITUTION);
         if (institution != null) {
             representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION).withId(resource.getInstitutionId())
-                    .withLogoImage(documentMapper.getDocumentRepresentation(resource.getInstitutionLogoImageId())));
+                    .withLogoImage(documentMapper.getDocumentRepresentation(resource.getLogoImageId())));
         }
 
         return representation;
@@ -557,7 +557,7 @@ public class ResourceMapper {
                 ResourceRepresentationSimple parentRepresentation = new ResourceRepresentationSimple().withScope(parentScope).withId(parentResource.getId())
                         .withName(parentResource.getName());
                 if (parentScope.equals(INSTITUTION)) {
-                    parentRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(parentResource.getInstitutionLogoImageId()));
+                    parentRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(parentResource.getLogoImageId()));
                 }
                 representation.setParentResource(parentRepresentation);
             }

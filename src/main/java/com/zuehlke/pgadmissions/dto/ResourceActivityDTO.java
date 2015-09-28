@@ -1,15 +1,11 @@
 package com.zuehlke.pgadmissions.dto;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
-import org.springframework.beans.BeanUtils;
-
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import org.springframework.beans.BeanUtils;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.*;
 
 public class ResourceActivityDTO implements Comparable<Object> {
 
@@ -17,15 +13,13 @@ public class ResourceActivityDTO implements Comparable<Object> {
 
     private static final String NAME = "Name";
 
-    private static final String LOGO_IMAGE_ID = "LogoImageId";
-
     private Integer systemId;
 
     private Integer institutionId;
 
     private String institutionName;
 
-    private Integer institutionLogoImageId;
+    private Integer logoImageId;
 
     private Integer departmentId;
 
@@ -65,12 +59,12 @@ public class ResourceActivityDTO implements Comparable<Object> {
         this.institutionName = institutionName;
     }
 
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
+    public Integer getLogoImageId() {
+        return logoImageId;
     }
 
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
+    public void setLogoImageId(Integer logoImageId) {
+        this.logoImageId = logoImageId;
     }
 
     public Integer getDepartmentId() {
@@ -163,7 +157,7 @@ public class ResourceActivityDTO implements Comparable<Object> {
     }
 
     public Integer getLogoImage() {
-        return getScope().equals(INSTITUTION) ? institutionLogoImageId : null;
+        return getScope().equals(INSTITUTION) ? logoImageId : null;
     }
 
     public ResourceActivityDTO getEnclosingResource(PrismScope scope) {
@@ -218,7 +212,7 @@ public class ResourceActivityDTO implements Comparable<Object> {
                 String scopeReference = scope.getLowerCamelName();
                 copyProperty(this, enclosingResource, scopeReference + ID);
                 copyProperty(this, enclosingResource, scopeReference + NAME);
-                copyProperty(this, enclosingResource, scopeReference + LOGO_IMAGE_ID);
+                copyProperty(this, enclosingResource, "logoImageId");
             }
         }
 

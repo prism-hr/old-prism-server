@@ -1,15 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static java.util.stream.Collectors.joining;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -20,6 +10,14 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @Component
 public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
@@ -37,6 +35,9 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
     public Resource create(User user, ResourceParentDTO newResource) {
         Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
+        if(newResource.getAdvert() == null){
+            newResource.setAdvert(new AdvertDTO());
+        }
         AdvertDTO advertDTO = newResource.getAdvert();
         advertDTO.setGloballyVisible(DEPARTMENT.isDefaultShared());
         Advert advert = advertService.createAdvert(institution, advertDTO, newResource.getName(), user);

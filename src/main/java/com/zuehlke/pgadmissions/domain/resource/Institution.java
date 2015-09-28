@@ -94,7 +94,7 @@ public class Institution extends ResourceParent {
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -341,6 +341,11 @@ public class Institution extends ResourceParent {
 
     public Institution withParentResource(System parentResource) {
         setParentResource(parentResource);
+        return this;
+    }
+
+    public Institution withImportedCode(String importedCode) {
+        this.importedCode = importedCode;
         return this;
     }
 

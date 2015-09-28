@@ -59,14 +59,15 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         Integer businessYearStartMonth = newResource.getBusinessYearStartMonth();
         businessYearStartMonth = businessYearStartMonth == null ? creationDefault.getDefaultBusinessYearStartMonth().getValue() : businessYearStartMonth;
 
-        Institution institution = new Institution().withUser(user).withParentResource(system).withAdvert(advert).withName(advert.getName()).withCurrency(currency)
-                .withBusinessYearStartMonth(newResource.getBusinessYearStartMonth()).withGoogleId(advert.getAddress().getGoogleId());
+        Institution institution = new Institution().withParentResource(system).withImportedCode(newResource.getImportedCode()).withUser(user).withAdvert(advert)
+                .withName(advert.getName()).withCurrency(currency).withBusinessYearStartMonth(newResource.getBusinessYearStartMonth())
+                .withGoogleId(advert.getAddress().getGoogleId());
         resourceService.setResourceAttributes(institution, newResource);
-        
+
         List<PrismOpportunityCategory> opportunityCategories = newResource.getOpportunityCategories();
         opportunityCategories = isEmpty(opportunityCategories) ? asList(creationDefault.getDefaultOpportunityCategories()) : opportunityCategories;
         resourceService.setOpportunityCategories(institution, opportunityCategories.stream().map(oc -> oc.toString()).collect(joining("|")));
-        
+
         return institution;
     }
 

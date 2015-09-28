@@ -1,24 +1,21 @@
 package com.zuehlke.pgadmissions.services.lifecycle.helpers;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HESA;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_UCAS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_SPECIFIED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionImportDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.PrismService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import jersey.repackaged.com.google.common.base.Objects;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -36,23 +33,21 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.google.common.base.Joiner;
-import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
-import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionImportDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.PrismService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import jersey.repackaged.com.google.common.base.Objects;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 @Component
 public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
@@ -127,12 +122,16 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             }
             facebookPage = ObjectUtils.firstNonNull(facebookPage, new Page());
 
-            UcasInstitutionData ucasInstitutionData = null;
-            try {
-                ucasInstitutionData = getInstitutionData(institutionImport.getUcasIds().get(0));
-            } catch (Exception e) {
-                logger.error("Could not read UCAS data for institution import ID: " + institutionImport.getName(), e);
-                return;
+            UcasInstitutionData ucasInstitutionData;
+            if (institutionImport.getUcasIds() == null || institutionImport.getUcasIds().isEmpty()) {
+                ucasInstitutionData = new UcasInstitutionData();
+            } else {
+                try {
+                    ucasInstitutionData = getInstitutionData(institutionImport.getUcasIds().get(0));
+                } catch (Exception e) {
+                    logger.error("Could not read UCAS data for institution import ID: " + institutionImport.getName(), e);
+                    return;
+                }
             }
 
             AdvertDTO advertDTO = new AdvertDTO();
@@ -199,9 +198,9 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
     private String getImportedCode(PropertyLoader loader, List<Integer> ucasIds, Integer hesaId) {
         List<String> parts = newArrayList();
         String ucasPrefix = loader.loadLazy(SYSTEM_UCAS);
-        ucasIds.forEach(ucasId -> {
-            parts.add(ucasPrefix + ucasId.toString());
-        });
+        if (ucasIds != null) {
+            ucasIds.forEach(ucasId -> parts.add(ucasPrefix + ucasId.toString()));
+        }
 
         if (hesaId != null) {
             parts.add(loader.loadLazy(SYSTEM_HESA) + hesaId.toString());
@@ -282,6 +281,9 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
         private String homepage;
 
         private String summary;
+
+        public UcasInstitutionData() {
+        }
 
         public UcasInstitutionData(AddressDTO address, String telephone, String homepage, String summary) {
             this.address = address;

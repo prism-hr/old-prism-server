@@ -17,7 +17,7 @@ public class ResourceAdvertConnectionsEvaluator implements ResourceCompletenessE
 
     @Override
     public boolean evaluate(ResourceParent resource) {
-        return isEmpty(advertService.getAdvertConnections(resource.getAdvert()));
+        return isEmpty(advertService.getAdvertTargets(resource.getAdvert()));
     }
 
 }

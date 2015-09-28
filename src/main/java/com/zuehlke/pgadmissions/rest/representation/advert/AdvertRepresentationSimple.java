@@ -31,7 +31,7 @@ public class AdvertRepresentationSimple {
 
     private AdvertCategoriesRepresentation categories;
 
-    private List<AdvertConnectionRepresentation> connections;
+    private List<AdvertTargetRepresentation> connections;
 
     private List<AdvertCompetenceRepresentation> competences;
 
@@ -133,11 +133,11 @@ public class AdvertRepresentationSimple {
         this.categories = categories;
     }
 
-    public List<AdvertConnectionRepresentation> getConnections() {
+    public List<AdvertTargetRepresentation> getConnections() {
         return connections;
     }
 
-    public void setConnections(List<AdvertConnectionRepresentation> connections) {
+    public void setConnections(List<AdvertTargetRepresentation> connections) {
         this.connections = connections;
     }
 

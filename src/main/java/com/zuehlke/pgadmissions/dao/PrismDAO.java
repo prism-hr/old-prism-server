@@ -52,7 +52,7 @@ public class PrismDAO {
     public <T extends Definition<?>> List<T> getDefinitions(Class<T> definitionClass) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(definitionClass) //
                 .addOrder(Order.asc("ordinal")) //
-                .uniqueResult();
+                .list();
     }
 
 }

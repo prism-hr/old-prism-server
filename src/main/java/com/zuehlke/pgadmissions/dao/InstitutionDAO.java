@@ -50,7 +50,6 @@ public class InstitutionDAO {
     public List<String> getAvailableCurrencies() {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Domicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
-                .add(Restrictions.eq("enabled", true)) //
                 .addOrder(Order.asc("currency")) //
                 .list();
     }

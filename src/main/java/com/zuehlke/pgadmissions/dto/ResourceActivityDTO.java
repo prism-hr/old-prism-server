@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.copyProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.hasProperty;
@@ -25,7 +24,7 @@ public class ResourceActivityDTO implements Comparable<Object> {
 
     private String institutionName;
 
-    private Integer institutionLogoImageId;
+    private Integer logoImageId;
 
     private Integer departmentId;
 
@@ -65,12 +64,12 @@ public class ResourceActivityDTO implements Comparable<Object> {
         this.institutionName = institutionName;
     }
 
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
+    public Integer getLogoImageId() {
+        return logoImageId;
     }
 
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
+    public void setLogoImageId(Integer logoImageId) {
+        this.logoImageId = logoImageId;
     }
 
     public Integer getDepartmentId() {
@@ -160,10 +159,6 @@ public class ResourceActivityDTO implements Comparable<Object> {
             }
         }
         return null;
-    }
-
-    public Integer getLogoImage() {
-        return getScope().equals(INSTITUTION) ? institutionLogoImageId : null;
     }
 
     public ResourceActivityDTO getEnclosingResource(PrismScope scope) {

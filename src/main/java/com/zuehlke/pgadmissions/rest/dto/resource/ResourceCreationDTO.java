@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -26,6 +27,8 @@ public class ResourceCreationDTO {
     private PrismScope scope;
     
     private PrismMotivationContext context;
+    
+    private PrismState initialState;
 
     public Integer getId() {
         return id;
@@ -47,7 +50,15 @@ public class ResourceCreationDTO {
         return context;
     }
 
-    public void setScopeCreation(PrismMotivationContext context) {
+    public PrismState getInitialState() {
+        return initialState;
+    }
+
+    public void setInitialState(PrismState initialState) {
+        this.initialState = initialState;
+    }
+
+    public void setContext(PrismMotivationContext context) {
         this.context = context;
     }
 

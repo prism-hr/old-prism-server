@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_UCAS;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_SPECIFIED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
@@ -135,6 +136,8 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             }
 
             AdvertDTO advertDTO = new AdvertDTO();
+            advertDTO.setGloballyVisible(INSTITUTION.isDefaultShared());
+            
             InstitutionDTO institutionDTO = new InstitutionDTO();
             institutionDTO.setParentResource(new ResourceDTO().withId(system.getId()).withScope(SYSTEM));
             institutionDTO.setImportedCode(getImportedCode(loader, institutionImport.getUcasIds(), institutionImport.getHesaId()));
@@ -146,9 +149,7 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
             AddressDTO address = new AddressDTO();
             advertDTO.setAddress(address);
 
-            String summary = createSummary(facebookPage, ucasInstitutionData.getSummary());
-
-            advertDTO.setSummary(summary);
+            advertDTO.setSummary(createSummary(facebookPage, ucasInstitutionData.getSummary()));
 
             String placeholder = loader.loadLazy(SYSTEM_VALUE_NOT_SPECIFIED);
             advertDTO.setTelephone(firstNonNull(ucasInstitutionData.getTelephone(), facebookPage.getPhone(), placeholder));

@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertCompetence;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
@@ -235,12 +236,14 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-//    public void updateTargets(PrismScope resourceScope, Integer resourceId, AdvertTargetsDTO targetsDTO) {
-//        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-//        Advert advert = resource.getAdvert();
-//        updateTargets(advert, targetsDTO, true);
-//        executeUpdate(resource, "COMMENT_UPDATED_TARGET");
-//    }
+    // public void updateTargets(PrismScope resourceScope, Integer resourceId,
+    // AdvertTargetsDTO targetsDTO) {
+    // ResourceParent resource = (ResourceParent)
+    // resourceService.getById(resourceScope, resourceId);
+    // Advert advert = resource.getAdvert();
+    // updateTargets(advert, targetsDTO, true);
+    // executeUpdate(resource, "COMMENT_UPDATED_TARGET");
+    // }
 
     public void updateCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
@@ -358,74 +361,82 @@ public class AdvertService {
     }
 
     public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
-        User currentUser = userService.getCurrentUser();
+        User user = userService.getCurrentUser();
         PrismMotivationContext context = query.getContext();
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
+        HashMultimap<PrismScope, Integer> userRoleResources = resourceService.getResourcesUserHasVerifiedRolesFor(user);
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, currentUser));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, user, userRoleResources));
         }
         return adverts;
     }
 
     public void recordPartnershipStateTransition(Resource resource, Comment comment) {
         if (comment.isPartnershipStateTransitionComment()) {
-            PrismPartnershipState partnershipTransitionState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
+            PrismPartnershipState partnershipState = isTrue(comment.getDeclinedResponse()) ? ENDORSEMENT_REVOKED : comment.getAction().getPartnershipTransitionState();
 
             User user = comment.getUser();
             Advert advert = resource.getAdvert();
             PrismScope resourceScope = resource.getResourceScope();
 
-            Set<Integer> advertTargets = Sets.newHashSet();
+            Set<Advert> targetAdverts = Sets.newHashSet();
             for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
-                advertTargets.addAll(advertDAO.getAdvertsTargetsUserCanEndorseFor(advert, user, resourceScope, partnerScope));
+                targetAdverts.addAll(advertDAO.getAdvertsTargetsUserCanEndorseFor(advert, user, resourceScope, partnerScope));
             }
 
-            advertDAO.endorseForAdvertTargets(advertTargets, partnershipTransitionState);
+            targetAdverts.forEach(targetAdvert -> {
+                createOrUpdateAdvertTarget(advert, targetAdvert, partnershipState);
+            });
         }
     }
 
+    private AdvertTarget createOrUpdateAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
+        return entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withPartnershipState(partnershipState));
+    }
+
     // TODO: fix implementation
-//    public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO, boolean refreshTargets) {
-//        // AdvertTargets targets = advert.getTargets();
-//        // if (targets == null) {
-//        // targets = new AdvertTargets();
-//        // advert.setTargets(targets);
-//        // }
-//        //
-//        // User user = userService.getCurrentUser();
-//        //
-//        // List<Integer> newTargetValues = Lists.newArrayList();
-//        // Set<AdvertTarget> adverts = targets.getAdverts();
-//        // if (targetsDTO.getResources() != null) {
-//        // targetsDTO.getResources().stream().forEach(targetDTO -> {
-//        // AdvertTarget target = createAdvertTargetAdvert(user, advert,
-//        // targetDTO, false);
-//        // newTargetValues.add(target.getValueId());
-//        // adverts.add(target);
-//        // });
-//        // }
-//        //
-//        // List<AdvertTargetResourceDTO> targetValuesDTO =
-//        // targetsDTO.getSelectedResources();
-//        // if (targetValuesDTO != null) {
-//        // targetValuesDTO.stream().forEach(targetDTO -> {
-//        // AdvertTarget target = createAdvertTargetAdvert(user, advert,
-//        // targetDTO, true);
-//        // newTargetValues.add(target.getValueId());
-//        // adverts.add(target);
-//        // });
-//        // }
-//        //
-//        // if (refreshTargets) {
-//        // if (newTargetValues.isEmpty()) {
-//        // advertDAO.deleteAdvertAttributes(advert, AdvertTarget.class);
-//        // } else {
-//        // advertDAO.deleteAdvertAttributes(advert, AdvertTarget.class,
-//        // newTargetValues);
-//        // }
-//        // }
-//    }
+    // public void updateTargets(Advert advert, AdvertTargetsDTO targetsDTO,
+    // boolean refreshTargets) {
+    // // AdvertTargets targets = advert.getTargets();
+    // // if (targets == null) {
+    // // targets = new AdvertTargets();
+    // // advert.setTargets(targets);
+    // // }
+    // //
+    // // User user = userService.getCurrentUser();
+    // //
+    // // List<Integer> newTargetValues = Lists.newArrayList();
+    // // Set<AdvertTarget> adverts = targets.getAdverts();
+    // // if (targetsDTO.getResources() != null) {
+    // // targetsDTO.getResources().stream().forEach(targetDTO -> {
+    // // AdvertTarget target = createAdvertTargetAdvert(user, advert,
+    // // targetDTO, false);
+    // // newTargetValues.add(target.getValueId());
+    // // adverts.add(target);
+    // // });
+    // // }
+    // //
+    // // List<AdvertTargetResourceDTO> targetValuesDTO =
+    // // targetsDTO.getSelectedResources();
+    // // if (targetValuesDTO != null) {
+    // // targetValuesDTO.stream().forEach(targetDTO -> {
+    // // AdvertTarget target = createAdvertTargetAdvert(user, advert,
+    // // targetDTO, true);
+    // // newTargetValues.add(target.getValueId());
+    // // adverts.add(target);
+    // // });
+    // // }
+    // //
+    // // if (refreshTargets) {
+    // // if (newTargetValues.isEmpty()) {
+    // // advertDAO.deleteAdvertAttributes(advert, AdvertTarget.class);
+    // // } else {
+    // // advertDAO.deleteAdvertAttributes(advert, AdvertTarget.class,
+    // // newTargetValues);
+    // // }
+    // // }
+    // }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();

@@ -717,6 +717,15 @@ public class ResourceService {
         return user;
     }
 
+    public HashMultimap<PrismScope, Integer> getResourcesUserHasVerifiedRolesFor(User user) {
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+        roleService.getVerifiedRoles(user).forEach(r -> {
+            Resource resource = r.getResource();
+            resources.put(resource.getResourceScope(), resource.getId());
+        });
+        return resources;
+    }
+
     private void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
         Role initialRole = null;
         boolean canViewEdit = actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false);

@@ -69,10 +69,12 @@ public class UserReferee extends UserAdvertRelationSection implements ProfileRef
         this.advert = advert;
     }
 
+    @Override
     public String getSkype() {
         return skype;
     }
 
+    @Override
     public void setSkype(String skype) {
         this.skype = skype;
     }
@@ -87,10 +89,12 @@ public class UserReferee extends UserAdvertRelationSection implements ProfileRef
         this.user = user;
     }
 
+    @Override
     public String getPhone() {
         return phone;
     }
 
+    @Override
     public void setPhone(String phone) {
         this.phone = phone;
     }

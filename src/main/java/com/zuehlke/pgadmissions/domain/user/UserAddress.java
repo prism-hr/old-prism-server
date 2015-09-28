@@ -30,34 +30,42 @@ public class UserAddress implements ProfileAddress<UserAccount> {
     @JoinColumn(name = "contact_address_id", nullable = false)
     private Address contactAddress;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public UserAccount getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(UserAccount association) {
         this.association = association;
     }
 
+    @Override
     public Address getCurrentAddress() {
         return currentAddress;
     }
 
+    @Override
     public void setCurrentAddress(Address currentAddress) {
         this.currentAddress = currentAddress;
     }
 
+    @Override
     public Address getContactAddress() {
         return contactAddress;
     }
 
+    @Override
     public void setContactAddress(Address contactAddress) {
         this.contactAddress = contactAddress;
     }

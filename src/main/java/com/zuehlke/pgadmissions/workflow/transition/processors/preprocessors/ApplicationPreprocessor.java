@@ -71,7 +71,7 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
     private void setSubmissionData(Application application) {
         application.setSubmittedTimestamp(new DateTime());
         AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
-        application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getValue());
+        application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
     }
 
     private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) {

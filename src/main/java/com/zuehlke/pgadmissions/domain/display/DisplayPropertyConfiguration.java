@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain.display;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,20 +10,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 
 @Entity
 @Table(name = "display_property_configuration", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "system_id", "opportunity_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type", "display_property_definition_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "opportunity_type", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "system_id", "opportunity_type_id", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "institution_id", "opportunity_type_id", "display_property_definition_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "opportunity_type_id", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "program_id", "display_property_definition_id" }),
         @UniqueConstraint(columnNames = { "project_id", "display_property_definition_id" }) })
 public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayPropertyDefinition> {
@@ -54,9 +52,9 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayP
     @JoinColumn(name = "project_id")
     private Project project;
 
-    @Column(name = "opportunity_type")
-    @Enumerated(EnumType.STRING)
-    private PrismOpportunityType opportunityType;
+    @ManyToOne
+    @JoinColumn(name = "opportunity_type_id")
+    private OpportunityType opportunityType;
 
     @ManyToOne
     @JoinColumn(name = "display_property_definition_id", nullable = false)
@@ -128,12 +126,12 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayP
     }
 
     @Override
-    public PrismOpportunityType getOpportunityType() {
+    public OpportunityType getOpportunityType() {
         return opportunityType;
     }
 
     @Override
-    public void setOpportunityType(PrismOpportunityType opportunityType) {
+    public void setOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -170,7 +168,7 @@ public class DisplayPropertyConfiguration extends WorkflowConfiguration<DisplayP
         return this;
     }
 
-    public DisplayPropertyConfiguration withOpportunityType(PrismOpportunityType opportunityType) {
+    public DisplayPropertyConfiguration withOpportunityType(OpportunityType opportunityType) {
         this.opportunityType = opportunityType;
         return this;
     }

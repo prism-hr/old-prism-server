@@ -98,16 +98,6 @@ public class EntityService {
         entityDAO.deleteAll(classReference);
     }
 
-    public void executeBulkInsert(String table, String columns, String inserts) {
-        entityDAO.executeBulkInsert(table, columns, inserts);
-        flush();
-    }
-
-    public void executeBulkInsertUpdate(String table, String columns, String inserts, String updates) {
-        entityDAO.executeBulkInsertUpdate(table, columns, inserts, updates);
-        flush();
-    }
-
     @SuppressWarnings("unchecked")
     private <T extends UniqueEntity> T overwriteProperties(T persistentResource, T transientResource) {
         Object persistentId = PrismReflectionUtils.getProperty(persistentResource, "id");

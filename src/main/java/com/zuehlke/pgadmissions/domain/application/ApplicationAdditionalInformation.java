@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -23,35 +24,56 @@ public class ApplicationAdditionalInformation extends ApplicationSection impleme
     @OneToOne(mappedBy = "additionalInformation")
     private Application association;
 
-    @Column(name = "convictions_text")
-    private String convictionsText;
+    @Lob
+    @Column(name = "requirements")
+    private String requirements;
+
+    @Lob
+    @Column(name = "convictions")
+    private String convictions;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Application getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(Application application) {
         this.association = application;
     }
 
-    public String getConvictionsText() {
-        return convictionsText;
+    @Override
+    public String getRequirements() {
+        return requirements;
     }
 
-    public void setConvictionsText(String convictionsText) {
-        this.convictionsText = convictionsText;
+    @Override
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
+    }
+
+    @Override
+    public String getConvictions() {
+        return convictions;
+    }
+
+    @Override
+    public void setConvictions(String convictions) {
+        this.convictions = convictions;
     }
 
     @Override

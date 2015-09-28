@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 
-public class ResourceRepresentationLocation extends ResourceRepresentationSimple {
+public class ResourceRepresentationLocation extends ResourceRepresentationCreation {
 
     private AddressRepresentation address;
 

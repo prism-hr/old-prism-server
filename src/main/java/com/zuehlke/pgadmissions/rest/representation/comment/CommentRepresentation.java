@@ -6,7 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -33,11 +33,9 @@ public class CommentRepresentation {
 
     private BigDecimal rating;
 
-    private Boolean applicationIdentified;
+    private PrismYesNoUnsureResponse eligible;
 
-    private PrismYesNoUnsureResponse applicationEligible;
-
-    private Boolean applicationInterested;
+    private Boolean interested;
 
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
@@ -49,11 +47,11 @@ public class CommentRepresentation {
 
     private Boolean recruiterAcceptAppointment;
 
-    private PrismApplicationReserveStatus applicationReserveStatus;
-
-    private String rejectionReason;
-
-    private String rejectionReasonSystem;
+    private Boolean partnerAcceptAppointment;
+    
+    private Boolean applicantAcceptAppointment;
+    
+    private PrismRejectionReason rejectionReason;
 
     private DateTime createdTimestamp;
 
@@ -131,28 +129,20 @@ public class CommentRepresentation {
         this.transitionState = transitionState;
     }
 
-    public Boolean getApplicationIdentified() {
-        return applicationIdentified;
+    public PrismYesNoUnsureResponse getEligible() {
+        return eligible;
     }
 
-    public void setApplicationIdentified(Boolean applicationIdentified) {
-        this.applicationIdentified = applicationIdentified;
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
-    public PrismYesNoUnsureResponse getApplicationEligible() {
-        return applicationEligible;
+    public Boolean getInterested() {
+        return interested;
     }
 
-    public void setApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
-    }
-
-    public Boolean getApplicationInterested() {
-        return applicationInterested;
-    }
-
-    public void setApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
@@ -194,29 +184,29 @@ public class CommentRepresentation {
     public void setRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
-
-    public PrismApplicationReserveStatus getApplicationReserveStatus() {
-        return applicationReserveStatus;
+    
+    public Boolean getPartnerAcceptAppointment() {
+        return partnerAcceptAppointment;
     }
 
-    public void setApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
+    public void setPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
     }
 
-    public String getRejectionReason() {
+    public Boolean getApplicantAcceptAppointment() {
+        return applicantAcceptAppointment;
+    }
+
+    public void setApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
+    }
+
+    public PrismRejectionReason getRejectionReason() {
         return rejectionReason;
     }
 
-    public void setRejectionReason(String rejectionReason) {
+    public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-    public String getRejectionReasonSystem() {
-        return rejectionReasonSystem;
-    }
-
-    public void setRejectionReasonSystem(String rejectionReasonSystem) {
-        this.rejectionReasonSystem = rejectionReasonSystem;
     }
 
     public BigDecimal getRating() {
@@ -320,18 +310,13 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withApplicationIdentified(Boolean applicationIdentification) {
-        this.applicationIdentified = applicationIdentification;
+    public CommentRepresentation withEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
         return this;
     }
 
-    public CommentRepresentation withApplicationEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.applicationEligible = applicationEligible;
-        return this;
-    }
-
-    public CommentRepresentation withApplicationInterested(Boolean applicationInterested) {
-        this.applicationInterested = applicationInterested;
+    public CommentRepresentation withInterested(Boolean interested) {
+        this.interested = interested;
         return this;
     }
 
@@ -360,18 +345,18 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withApplicationReserveStatus(PrismApplicationReserveStatus applicationReserveStatus) {
-        this.applicationReserveStatus = applicationReserveStatus;
+    public CommentRepresentation withPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
+        this.partnerAcceptAppointment = partnerAcceptAppointment;
         return this;
     }
-
-    public CommentRepresentation withRejectionReason(String rejectionReason) {
+    
+    public CommentRepresentation withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
+        this.applicantAcceptAppointment = applicantAcceptAppointment;
+        return this;
+    }
+    
+    public CommentRepresentation withRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-        return this;
-    }
-
-    public CommentRepresentation withRejectionReasonSystem(String rejectionReasonSystem) {
-        this.rejectionReasonSystem = rejectionReasonSystem;
         return this;
     }
 

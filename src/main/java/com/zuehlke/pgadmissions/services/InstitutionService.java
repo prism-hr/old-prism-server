@@ -1,11 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -22,14 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.io.ByteStreams;
 import com.zuehlke.pgadmissions.dao.InstitutionDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.PrismFileCategory;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
-import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 
 @Service
 @Transactional
@@ -56,62 +52,14 @@ public class InstitutionService {
     private AddressService geocodableLocationService;
 
     @Inject
-    private ResourceMapper resourceMapper;
-
-    @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private StateService stateService;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
     }
 
-    public Institution getUclInstitution() {
-        return institutionDAO.getUclInstitution();
-    }
-
-    public void update(Institution institution, InstitutionDTO institutionDTO) {
-        resourceService.updateResource(institution, institutionDTO);
-        institution.setGoogleId(institution.getAdvert().getAddress().getGoogleId());
-
-        String oldCurrency = institution.getCurrency();
-        String newCurrency = institutionDTO.getCurrency();
-        if (!oldCurrency.equals(newCurrency)) {
-            changeInstitutionCurrency(institution, newCurrency);
-        }
-
-        Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
-        Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
-        if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
-            changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
-        }
-    }
-
-    public List<String> listAvailableCurrencies() {
-        return institutionDAO.listAvailableCurrencies();
-    }
-
-    public void save(Institution institution) {
-        entityService.save(institution);
-    }
-
-    public Institution getActivatedInstitutionByGoogleId(String googleId) {
-        return institutionDAO.getActivatedInstitutionByGoogleId(googleId);
-    }
-
-    public List<ResourceRepresentationLocation> getInstitutions(boolean activeOnly, String searchTerm, String[] googleIds) {
-        List<PrismState> activeStates = activeOnly ? stateService.getActiveResourceStates(INSTITUTION) : null;
-        return institutionDAO.getInstitutions(activeStates, searchTerm, googleIds).stream()
-                .map(resourceMapper::getResourceRepresentationLocation).collect(Collectors.toList());
-    }
-
-    public String getBusinessYear(Institution institution, Integer year, Integer month) {
-        Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
-        Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
-        return month == 1 ? businessYear.toString()
-                : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
+    public Institution getInstitutionByImportedCode(String importedCode) {
+        return institutionDAO.getInstitutionByImportedCode(importedCode);
     }
 
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
@@ -145,8 +93,44 @@ public class InstitutionService {
         return institution;
     }
 
-    public List<Integer> getInstitutionsByDepartments(List<Integer> departments, List<PrismState> activeStates) {
-        return institutionDAO.getInstitutionsByDepartments(departments, activeStates);
+    public void update(Institution institution, InstitutionDTO institutionDTO) {
+        resourceService.updateResource(institution, institutionDTO);
+        institution.setGoogleId(institution.getAdvert().getAddress().getGoogleId());
+
+        String oldCurrency = institution.getCurrency();
+        String newCurrency = institutionDTO.getCurrency();
+        if (!oldCurrency.equals(newCurrency)) {
+            changeInstitutionCurrency(institution, newCurrency);
+        }
+
+        Integer oldBusinessYearStartMonth = institution.getBusinessYearStartMonth();
+        Integer newBusinessYearStartMonth = institutionDTO.getBusinessYearStartMonth();
+        if (!oldBusinessYearStartMonth.equals(newBusinessYearStartMonth)) {
+            changeInstitutionBusinessYear(institution, newBusinessYearStartMonth);
+        }
+    }
+
+    public List<String> getAvailableCurrencies() {
+        return institutionDAO.getAvailableCurrencies();
+    }
+
+    public void save(Institution institution) {
+        entityService.save(institution);
+    }
+
+    public Institution getInstitutionByGoogleId(String googleId) {
+        return institutionDAO.getInstitutionByGoogleId(googleId);
+    }
+
+    public List<ResourceLocationDTO> getInstitutions(String query, String[] googleIds) {
+        return institutionDAO.getInstitutions(query, googleIds);
+    }
+
+    public String getBusinessYear(Institution institution, Integer year, Integer month) {
+        Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
+        Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
+        return month == 1 ? businessYear.toString()
+                : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
     private void changeInstitutionCurrency(Institution institution, String newCurrency) {

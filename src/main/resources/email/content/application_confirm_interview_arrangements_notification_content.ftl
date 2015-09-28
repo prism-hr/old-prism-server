@@ -4,7 +4,7 @@
 
 
 <p>
-    We can confirm the arrangements for your interview of ${APPLICATION_CREATOR_FULL_NAME} in connection with
+    We can confirm the arrangements for your interview of ${APPLICATION_CREATOR_FULL_NAME}, in connection with
     Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
 </p>
 <p>

@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.services.helpers;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HELPDESK_REPORT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_PROPERTY_ERROR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Map;
@@ -103,7 +103,7 @@ public class NotificationPropertyLoader {
 
     public String load(PrismNotificationDefinitionProperty property) throws Exception {
         String value = applicationContext.getBean(property.getBuilder()).build(this);
-        return value == null ? "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_TEMPLATE_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT)
+        return value == null ? "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT)
                 + ": " + helpdesk + "]" : value;
     }
 

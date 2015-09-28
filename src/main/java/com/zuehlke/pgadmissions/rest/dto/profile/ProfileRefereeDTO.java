@@ -1,13 +1,15 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
-import org.hibernate.validator.constraints.NotEmpty;
-import uk.co.alumeni.prism.utils.validation.PhoneNumber;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 
@@ -15,7 +17,7 @@ public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
 
     @Valid
     @NotNull
-    private ResourceFamilyCreationDTO resource;
+    private ResourceRelationInvitationDTO resource;
 
     @NotEmpty
     @PhoneNumber
@@ -33,12 +35,12 @@ public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {
     }
 
     @Override
-    public ResourceFamilyCreationDTO getResource() {
+    public ResourceRelationInvitationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceFamilyCreationDTO resource) {
+    public void setResource(ResourceRelationInvitationDTO resource) {
         this.resource = resource;
     }
 

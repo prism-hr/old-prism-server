@@ -6,13 +6,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 
 import java.util.Arrays;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-
 public abstract class WorkflowConfiguration<T> extends WorkflowResource {
 
-    public abstract PrismOpportunityType getOpportunityType();
+    public abstract OpportunityType getOpportunityType();
 
-    public abstract void setOpportunityType(PrismOpportunityType opportunityType);
+    public abstract void setOpportunityType(OpportunityType opportunityType);
 
     public abstract T getDefinition();
 

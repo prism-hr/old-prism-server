@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.PROGRAM_APPROVED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_APPROVE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programCreateProject;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWorkflow.programTerminateUnapproved;
@@ -28,6 +29,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                         .withTransitionEvaluation(PROGRAM_APPROVED_OUTCOME))); //
 
+        stateActions.add(programCreateProject());
         stateActions.add(programEmailCreatorUnnapproved()); //
         stateActions.add(programEscalateUnapproved()); //
         stateActions.add(programTerminateUnapproved());

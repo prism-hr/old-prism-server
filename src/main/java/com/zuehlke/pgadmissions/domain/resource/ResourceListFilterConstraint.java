@@ -16,17 +16,16 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReserveStatus;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
 
 @Entity
 @Table(name = "resource_list_filter_constraint", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_string"}),
-        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close"}),
-        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id"}),
-        @UniqueConstraint(columnNames = {"resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close"})})
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_string" }),
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_date_start", "value_date_close" }),
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_state_group_id" }),
+        @UniqueConstraint(columnNames = { "resource_list_filter_id", "filter_property", "filter_expression", "value_decimal_start", "value_decimal_close" }) })
 public class ResourceListFilterConstraint {
 
     @Id
@@ -65,10 +64,6 @@ public class ResourceListFilterConstraint {
     @ManyToOne
     @JoinColumn(name = "value_state_group_id")
     private StateGroup valueStateGroup;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "value_reserve_status")
-    private PrismApplicationReserveStatus valueReserveStatus;
 
     @Column(name = "value_decimal_start")
     private BigDecimal valueDecimalStart;
@@ -156,15 +151,7 @@ public class ResourceListFilterConstraint {
         this.valueStateGroup = valueStateGroup;
     }
 
-    public PrismApplicationReserveStatus getValueReserveStatus() {
-		return valueReserveStatus;
-	}
-
-	public void setValueReserveStatus(PrismApplicationReserveStatus valueReserveStatus) {
-		this.valueReserveStatus = valueReserveStatus;
-	}
-
-	public final BigDecimal getValueDecimalStart() {
+    public final BigDecimal getValueDecimalStart() {
         return valueDecimalStart;
     }
 
@@ -217,11 +204,6 @@ public class ResourceListFilterConstraint {
 
     public ResourceListFilterConstraint withValueDateClose(LocalDate valueDateClose) {
         this.valueDateClose = valueDateClose;
-        return this;
-    }
-
-    public ResourceListFilterConstraint withValueReserveStatus(PrismApplicationReserveStatus valueReserveStatus) {
-        this.valueReserveStatus = valueReserveStatus;
         return this;
     }
 

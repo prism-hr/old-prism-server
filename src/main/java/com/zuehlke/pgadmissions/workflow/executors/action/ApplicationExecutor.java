@@ -60,10 +60,10 @@ public class ApplicationExecutor implements ActionExecutor {
         if (isCompleteAction) {
             BeanPropertyBindingResult errors = applicationService.validateApplication(application);
             if (errors.hasErrors()) {
-                throw new PrismValidationException("ApplicationTemplate not completed", errors);
+                throw new PrismValidationException("Application not completed", errors);
             }
 
-            application.setRetain(commentDTO.getApplicationRetain());
+            application.setShared(commentDTO.getApplicationShared());
             user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getApplicationRecommend());
         }
 
@@ -73,9 +73,9 @@ public class ApplicationExecutor implements ActionExecutor {
 
         Comment comment = new Comment().withUser(user).withResource(application).withContent(commentDTO.getContent()).withDelegateUser(delegateUser)
                 .withAction(action).withTransitionState(transitionState).withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime())
-                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withApplicationIdentified(commentDTO.getApplicationIdentified())
-                .withApplicationEligible(commentDTO.getApplicationEligible()).withApplicationInterested(commentDTO.getApplicationInterested())
-                .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment()).withApplicationReserveStatus(commentDTO.getApplicationReserveStatus());
+                .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withEligible(commentDTO.getEligible()).withInterested(commentDTO.getInterested())
+                .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment())
+                .withApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment()).withRejectionReason(commentDTO.getRejectionReason());
 
         CommentPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
         if (positionDetailDTO != null) {
@@ -105,10 +105,6 @@ public class ApplicationExecutor implements ActionExecutor {
 
         if (commentDTO.getAppointmentPreferences() != null) {
             commentService.appendAppointmentPreferences(comment, commentDTO);
-        }
-
-        if (commentDTO.getRejectionReason() != null) {
-            commentService.appendRejectionReason(comment, commentDTO);
         }
 
         return actionService.executeUserAction(application, action, comment);

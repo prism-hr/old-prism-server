@@ -1,25 +1,21 @@
 package com.zuehlke.pgadmissions.domain.profile;
 
-import com.zuehlke.pgadmissions.domain.imported.ImportedDomicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntitySimple;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
 
 public interface ProfilePersonalDetail<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> extends ProfileSection<T> {
 
-    ImportedEntitySimple getTitle();
+    PrismGender getGender();
 
-    void setTitle(ImportedEntitySimple title);
+    void setGender(PrismGender gender);
 
-    ImportedEntitySimple getGender();
+    Domicile getDomicile();
 
-    void setGender(ImportedEntitySimple gender);
+    void setDomicile(Domicile domicile);
 
-    ImportedDomicile getDomicile();
+    Domicile getNationality();
 
-    void setDomicile(ImportedDomicile domicile);
-
-    ImportedDomicile getNationality();
-
-    void setNationality(ImportedDomicile nationality);
+    void setNationality(Domicile nationality);
 
     Boolean getVisaRequired();
 
@@ -32,13 +28,5 @@ public interface ProfilePersonalDetail<T extends ProfileEntity<?, ?, ?, ?, ?, ?,
     String getSkype();
 
     void setSkype(String skype);
-
-    ImportedEntitySimple getEthnicity();
-
-    void setEthnicity(ImportedEntitySimple ethnicity);
-
-    ImportedEntitySimple getDisability();
-
-    void setDisability(ImportedEntitySimple disability);
 
 }

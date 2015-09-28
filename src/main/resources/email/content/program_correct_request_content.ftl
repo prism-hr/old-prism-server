@@ -21,7 +21,7 @@
 ${ACTION_COMPLETE}
 
 <p>
-	We will remind you about this until you action our request or withdraw your Program.
+    Thank you in advance for your time.
 </p>
 
 <p>

@@ -1,10 +1,38 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Objects;
-import com.google.common.collect.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.ActionDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -15,27 +43,9 @@ import com.zuehlke.pgadmissions.dto.ActionCreationScopeDTO;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ActionRedactionDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowDuplicateResourceException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
-import org.apache.commons.lang.BooleanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.asList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Service
 @Transactional
@@ -146,12 +156,8 @@ public class ActionService {
         return actionDAO.getViewEditAction(resource);
     }
 
-    public Action getRedirectAction(Action action, User actionOwner, Resource duplicateResource) {
-        if (BooleanUtils.isFalse(action.getSystemInvocationOnly())) {
-            return actionDAO.getUserRedirectAction(duplicateResource, actionOwner);
-        } else {
-            return actionDAO.getSystemRedirectAction(duplicateResource);
-        }
+    public Action getRedirectAction(Resource resource, User user) {
+        return actionDAO.getRedirectAction(resource, user);
     }
 
     public List<Action> getActions() {
@@ -254,7 +260,7 @@ public class ActionService {
         boolean canExecute = true;
         Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);
         if (expectedActionEnhancements.size() > 0) {
-            canExecute = !getPermittedActionEnhancements(resource, user).stream().filter(ae -> ae.name().contains("_VIEW_")).collect(Collectors.toList()).isEmpty();
+            canExecute = !getPermittedActionEnhancements(resource, user).stream().filter(ae -> ae.name().contains("_VIEW_EDIT")).collect(Collectors.toList()).isEmpty();
         }
         return canExecute ? checkActionAvailable(resource, action, user, declinedResponse) : false;
     }
@@ -278,11 +284,7 @@ public class ActionService {
 
             if (duplicate != null) {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
-                    Action redirectAction = getRedirectAction(action, user, duplicate);
-                    if (redirectAction == null) {
-                        throw new WorkflowDuplicateResourceException("SYSTEM_DUPLICATE_" + action.getCreationScope().getId().name() + ", signature: " + duplicate.toString());
-                    }
-                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(redirectAction);
+                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(getRedirectAction(duplicate, user));
                 } else if (!Objects.equal(resource.getId(), duplicate.getId())) {
                     throw new WorkflowPermissionException(resource, action);
                 }

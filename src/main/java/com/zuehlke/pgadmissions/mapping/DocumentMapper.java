@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 @Service
 @Transactional

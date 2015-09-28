@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import static com.zuehlke.pgadmissions.PrismConstants.BACK_SLASH;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,10 +17,14 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.workflow.user.ApplicationQualificationReassignmentProcessor;
 
 @Entity
 @Table(name = "application_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
-public class ApplicationQualification extends ApplicationAdvertRelationSection implements ProfileQualification<Application> {
+public class ApplicationQualification extends ApplicationAdvertRelationSection
+        implements ProfileQualification<Application>, UserAssignment<ApplicationQualificationReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -31,6 +33,10 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection i
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application association;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "advert_id")
@@ -62,20 +68,34 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection i
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Application getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(Application association) {
         this.association = association;
+    }
+
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -88,58 +108,72 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection i
         this.advert = advert;
     }
 
+    @Override
     public Integer getStartYear() {
         return startYear;
     }
 
+    @Override
     public void setStartYear(Integer startYear) {
         this.startYear = startYear;
     }
 
+    @Override
     public Integer getStartMonth() {
         return startMonth;
     }
 
+    @Override
     public void setStartMonth(Integer startMonth) {
         this.startMonth = startMonth;
     }
 
+    @Override
     public Integer getAwardYear() {
         return awardYear;
     }
 
+    @Override
     public void setAwardYear(Integer awardYear) {
         this.awardYear = awardYear;
     }
 
+    @Override
     public Integer getAwardMonth() {
         return awardMonth;
     }
 
+    @Override
     public void setAwardMonth(Integer awardMonth) {
         this.awardMonth = awardMonth;
     }
 
+    @Override
     public String getGrade() {
         return grade;
     }
 
+    @Override
     public void setGrade(String grade) {
         this.grade = grade;
     }
 
+    @Override
     public Boolean getCompleted() {
         return completed;
     }
 
+    @Override
     public void setCompleted(Boolean completed) {
         this.completed = completed;
     }
 
+    @Override
     public Document getDocument() {
         return document;
     }
 
+    @Override
     public void setDocument(Document document) {
         this.document = document;
     }
@@ -154,14 +188,16 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection i
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
-    public String getStartDateDisplay(String dateFormat) {
-        return startYear == null ? null : startMonth.toString() + BACK_SLASH + startYear.toString();
+    @Override
+    public Class<ApplicationQualificationReassignmentProcessor> getUserReassignmentProcessor() {
+        return ApplicationQualificationReassignmentProcessor.class;
     }
 
-    public String getAwardDateDisplay(String dateFormat) {
-        return awardYear == null ? null : awardMonth.toString() + BACK_SLASH + awardYear.toString();
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
     }
-
+    
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature().addProperty("startYear", startYear);

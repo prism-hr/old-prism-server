@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+
 public class AdvertStudyOptionDTO {
 
     private Integer advertId;
 
-    private String studyOption;
+    private PrismStudyOption studyOption;
 
     public Integer getAdvertId() {
         return advertId;
@@ -14,11 +16,11 @@ public class AdvertStudyOptionDTO {
         this.advertId = advertId;
     }
 
-    public String getStudyOption() {
+    public PrismStudyOption getStudyOption() {
         return studyOption;
     }
 
-    public void setStudyOption(String studyOption) {
+    public void setStudyOption(PrismStudyOption studyOption) {
         this.studyOption = studyOption;
     }
 

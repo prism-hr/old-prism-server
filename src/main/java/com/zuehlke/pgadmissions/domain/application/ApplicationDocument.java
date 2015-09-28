@@ -41,34 +41,42 @@ public class ApplicationDocument extends ApplicationSection implements ProfileDo
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Application getAssociation() {
         return association;
     }
 
+    @Override
     public void setAssociation(Application association) {
         this.association = association;
     }
 
+    @Override
     public String getPersonalSummary() {
         return personalSummary;
     }
 
+    @Override
     public void setPersonalSummary(String personalSummary) {
         this.personalSummary = personalSummary;
     }
 
+    @Override
     public Document getCv() {
         return cv;
     }
 
+    @Override
     public void setCv(Document cv) {
         this.cv = cv;
     }

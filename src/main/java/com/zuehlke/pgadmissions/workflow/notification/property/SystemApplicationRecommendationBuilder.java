@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.notification.property;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_NO_RECOMMENDATIONS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
             return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
         }
 
-        return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS);
+        return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NOTIFICATION_NO_RECOMMENDATIONS);
     }
 
 }

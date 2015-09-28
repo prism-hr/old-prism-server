@@ -1,7 +1,28 @@
 package com.zuehlke.pgadmissions.services.builders.download;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DECLINED_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_REFERENCE_APPENDIX;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREE_SUBHEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_HEADER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RATING;
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+
+import javax.inject.Inject;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.itextpdf.text.Document;
-import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PdfDocumentBuilderException;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -10,16 +31,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigDecimal;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 // TODO move this shit into the adapter
 @Component
@@ -42,7 +53,7 @@ public class ApplicationDownloadReferenceBuilder {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
 
-            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(PROFILE_REFEREE_REFERENCE_APPENDIX));
+            PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(APPLICATION_REFEREE_REFERENCE_APPENDIX));
 
             addReferenceComment(pdfDocument, body, pdfWriter, application, commentRepresentation);
             addReferenceDocument(pdfDocument, pdfWriter, commentRepresentation);
@@ -62,13 +73,13 @@ public class ApplicationDownloadReferenceBuilder {
 
         if (referenceComment == null) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle,
-                    applicationService.isApproved(application.getId()) ? propertyLoader.loadLazy(PROFILE_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
+                    applicationService.isApproved(application.getId()) ? propertyLoader.loadLazy(APPLICATION_REFEREE_REFERENCE_COMMENT_EQUIVALENT) : null, body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else if (referenceComment.getDeclinedResponse()) {
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, propertyLoader.loadLazy(APPLICATION_COMMENT_DECLINED_REFEREE), body);
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         } else {
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_REFEREE_SUBHEADER), referenceComment.getUser().getFullName(),
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_REFEREE_SUBHEADER), referenceComment.getUser().getFullName(),
                     body);
             applicationDownloadBuilderHelper.addContentRowMedium(rowTitle, referenceComment.getContent(), body);
 

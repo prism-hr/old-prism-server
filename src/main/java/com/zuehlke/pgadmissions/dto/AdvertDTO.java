@@ -4,10 +4,11 @@ import java.math.BigDecimal;
 
 import org.joda.time.LocalDate;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.dto.resource.ResourceStandardDTO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
-public class AdvertDTO extends ResourceStandardDTO {
+public class AdvertDTO extends ResourceActivityDTO {
 
     private Integer advertId;
 
@@ -19,7 +20,19 @@ public class AdvertDTO extends ResourceStandardDTO {
 
     private String userAccountImageUrl;
 
-    private String opportunityType;
+    private LocalDate programAvailableDate;
+    
+    private Integer programDurationMinimum;
+    
+    private Integer programDurationMaximum;
+    
+    private LocalDate projectAvailableDate;
+    
+    private Integer projectDurationMinimum;
+    
+    private Integer projectDurationMaximum;    
+    
+    private PrismOpportunityType opportunityType;
 
     private String name;
 
@@ -43,9 +56,7 @@ public class AdvertDTO extends ResourceStandardDTO {
 
     private String addressCode;
 
-    private String addressDomicileId;
-
-    private String addressDomicileName;
+    private PrismDomicile addressDomicileId;
 
     private String addressGoogleId;
 
@@ -109,11 +120,59 @@ public class AdvertDTO extends ResourceStandardDTO {
         this.userAccountImageUrl = userAccountImageUrl;
     }
 
-    public String getOpportunityType() {
+    public LocalDate getProgramAvailableDate() {
+        return programAvailableDate;
+    }
+
+    public void setProgramAvailableDate(LocalDate programAvailableDate) {
+        this.programAvailableDate = programAvailableDate;
+    }
+
+    public Integer getProgramDurationMinimum() {
+        return programDurationMinimum;
+    }
+
+    public void setProgramDurationMinimum(Integer programDurationMinimum) {
+        this.programDurationMinimum = programDurationMinimum;
+    }
+
+    public Integer getProgramDurationMaximum() {
+        return programDurationMaximum;
+    }
+
+    public void setProgramDurationMaximum(Integer programDurationMaximum) {
+        this.programDurationMaximum = programDurationMaximum;
+    }
+
+    public LocalDate getProjectAvailableDate() {
+        return projectAvailableDate;
+    }
+
+    public void setProjectAvailableDate(LocalDate projectAvailableDate) {
+        this.projectAvailableDate = projectAvailableDate;
+    }
+
+    public Integer getProjectDurationMinimum() {
+        return projectDurationMinimum;
+    }
+
+    public void setProjectDurationMinimum(Integer projectDurationMinimum) {
+        this.projectDurationMinimum = projectDurationMinimum;
+    }
+
+    public Integer getProjectDurationMaximum() {
+        return projectDurationMaximum;
+    }
+
+    public void setProjectDurationMaximum(Integer projectDurationMaximum) {
+        this.projectDurationMaximum = projectDurationMaximum;
+    }
+
+    public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
 
-    public void setOpportunityType(String opportunityType) {
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
 
@@ -205,20 +264,12 @@ public class AdvertDTO extends ResourceStandardDTO {
         this.addressCode = addressCode;
     }
 
-    public String getAddressDomicileId() {
+    public PrismDomicile getAddressDomicileId() {
         return addressDomicileId;
     }
 
-    public void setAddressDomicileId(String addressDomicileId) {
+    public void setAddressDomicileId(PrismDomicile addressDomicileId) {
         this.addressDomicileId = addressDomicileId;
-    }
-
-    public String getAddressDomicileName() {
-        return addressDomicileName;
-    }
-
-    public void setAddressDomicileName(String addressDomicileName) {
-        this.addressDomicileName = addressDomicileName;
     }
 
     public String getAddressGoogleId() {

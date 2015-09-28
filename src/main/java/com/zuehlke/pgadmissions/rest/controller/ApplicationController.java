@@ -1,22 +1,34 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.joda.time.LocalDate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.*;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ProfileService;
-import org.joda.time.LocalDate;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = { "api/applications" })

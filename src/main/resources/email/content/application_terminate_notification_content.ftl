@@ -7,13 +7,13 @@
     that it was unsucessful.
 </p>
 <p>
-    The following explanation was given by our assessors: ${APPLICATION_REJECTION_REASON}
+    The following explanation was given: ${APPLICATION_REJECTION_REASON}
 </p>
 
 ${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
-    We wish you success in your search for postgraduate research study.
+    We wish you success in your ongoing search.
 </p>
 
 <p>

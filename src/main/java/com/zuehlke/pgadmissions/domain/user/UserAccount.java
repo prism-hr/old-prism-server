@@ -40,10 +40,6 @@ public class UserAccount
     @Column(name = "password")
     private String password;
 
-    @OneToOne
-    @JoinColumn(name = "portrait_image_id")
-    private Document portraitImage;
-
     @Column(name = "temporary_password")
     private String temporaryPassword;
 
@@ -51,6 +47,9 @@ public class UserAccount
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
 
+    @Column(name = "send_application_recommendation_notification", nullable = false)
+    private Boolean sendApplicationRecommendationNotification;
+    
     @Column(name = "linkedin_id")
     private String linkedinId;
 
@@ -60,8 +59,12 @@ public class UserAccount
     @Column(name = "linkedin_image_id")
     private String linkedinImageUrl;
 
-    @Column(name = "send_application_recommendation_notification", nullable = false)
-    private Boolean sendApplicationRecommendationNotification;
+    @OneToOne
+    @JoinColumn(name = "portrait_image_id")
+    private Document portraitImage;
+    
+    @Column(name = "enabled", nullable = false)
+    private Boolean enabled;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_personal_detail_id", unique = true)
@@ -93,9 +96,6 @@ public class UserAccount
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_additional_information_id", unique = true)
     private UserAdditionalInformation additionalInformation;
-
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
@@ -137,14 +137,6 @@ public class UserAccount
         this.password = password;
     }
 
-    public Document getPortraitImage() {
-        return portraitImage;
-    }
-
-    public void setPortraitImage(Document portraitImage) {
-        this.portraitImage = portraitImage;
-    }
-
     public String getTemporaryPassword() {
         return temporaryPassword;
     }
@@ -159,6 +151,14 @@ public class UserAccount
 
     public void setTemporaryPasswordExpiryTimestamp(DateTime temporaryPasswordExpiryTimestamp) {
         this.temporaryPasswordExpiryTimestamp = temporaryPasswordExpiryTimestamp;
+    }
+    
+    public Boolean getSendApplicationRecommendationNotification() {
+        return sendApplicationRecommendationNotification;
+    }
+
+    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
+        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
     public String getLinkedinId() {
@@ -185,56 +185,12 @@ public class UserAccount
         this.linkedinImageUrl = linkedinImageUrl;
     }
 
-    public Boolean getSendApplicationRecommendationNotification() {
-        return sendApplicationRecommendationNotification;
+    public Document getPortraitImage() {
+        return portraitImage;
     }
 
-    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
-        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
-    }
-
-    public UserPersonalDetail getPersonalDetail() {
-        return personalDetail;
-    }
-
-    public void setPersonalDetail(UserPersonalDetail personalDetail) {
-        this.personalDetail = personalDetail;
-    }
-
-    public UserAddress getAddress() {
-        return address;
-    }
-
-    public void setAddress(UserAddress address) {
-        this.address = address;
-    }
-
-    public Set<UserQualification> getQualifications() {
-        return qualifications;
-    }
-
-    public Set<UserEmploymentPosition> getEmploymentPositions() {
-        return employmentPositions;
-    }
-
-    public Set<UserReferee> getReferees() {
-        return referees;
-    }
-
-    public UserDocument getDocument() {
-        return document;
-    }
-
-    public void setDocument(UserDocument document) {
-        this.document = document;
-    }
-
-    public UserAdditionalInformation getAdditionalInformation() {
-        return additionalInformation;
-    }
-
-    public void setAdditionalInformation(UserAdditionalInformation additionalInformation) {
-        this.additionalInformation = additionalInformation;
+    public void setPortraitImage(Document portraitImage) {
+        this.portraitImage = portraitImage;
     }
 
     public Boolean getEnabled() {
@@ -244,11 +200,68 @@ public class UserAccount
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
+    
+    @Override
+    public UserPersonalDetail getPersonalDetail() {
+        return personalDetail;
+    }
 
+    @Override
+    public void setPersonalDetail(UserPersonalDetail personalDetail) {
+        this.personalDetail = personalDetail;
+    }
+
+    @Override
+    public UserAddress getAddress() {
+        return address;
+    }
+
+    @Override
+    public void setAddress(UserAddress address) {
+        this.address = address;
+    }
+
+    @Override
+    public Set<UserQualification> getQualifications() {
+        return qualifications;
+    }
+
+    @Override
+    public Set<UserEmploymentPosition> getEmploymentPositions() {
+        return employmentPositions;
+    }
+
+    @Override
+    public Set<UserReferee> getReferees() {
+        return referees;
+    }
+
+    @Override
+    public UserDocument getDocument() {
+        return document;
+    }
+
+    @Override
+    public void setDocument(UserDocument document) {
+        this.document = document;
+    }
+
+    @Override
+    public UserAdditionalInformation getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    @Override
+    public void setAdditionalInformation(UserAdditionalInformation additionalInformation) {
+        this.additionalInformation = additionalInformation;
+    }
+
+    @Override
     public Boolean getShared() {
         return shared;
     }
 
+    @Override
     public void setShared(Boolean shared) {
         this.shared = shared;
     }

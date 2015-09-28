@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.amazonaws.util.StringUtils.isNullOrEmpty;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -25,7 +29,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.amazonaws.util.StringUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -38,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -46,8 +50,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
-import com.zuehlke.pgadmissions.dto.resource.ResourceRatingSummaryDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 
 import freemarker.template.Template;
 
@@ -82,17 +85,10 @@ public class ApplicationDAO {
                 "select " + columns + " " //
                         + "from Application as application " + "join application.user as user " //
                         + "left join application.personalDetail as personalDetail " //
-                        + "left join personalDetail.firstNationality as nationality " //
-                        + "left join personalDetail.domicile as domicile " //
-                        + "left join personalDetail.country as country " //
-                        + "left join personalDetail.gender as gender " //
                         + "join application.institution as institution " //
                         + "join application.program as program " //
                         + "left join program.department as department " //
                         + "left join application.project as project " //
-                        + "left join application.programDetail as programDetail " //
-                        + "left join programDetail.studyOption as studyOption " //
-                        + "left join programDetail.referralSource as referralSource " //
                         + "join application.state as state " //
                         + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //
@@ -111,18 +107,16 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints, transformedConstraints,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_year.ftl")
                         .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
                         .list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints, transformedConstraints,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_month.ftl")
                         .addScalar("applicationMonth", IntegerType.INSTANCE) //
                         .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
@@ -130,9 +124,8 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            List<ResourceReportFilterPropertyDTO> constraints, HashMultimap<PrismFilterEntity, Integer> transformedConstraints) {
-        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints, transformedConstraints,
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+        return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_week.ftl")
                         .addScalar("applicationMonth", IntegerType.INSTANCE) //
                         .addScalar("applicationWeek", IntegerType.INSTANCE) //
@@ -167,56 +160,34 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByImportedInstitution(ResourceParent parent, Collection<Integer> importedInstitutions) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("program.institution.id", importedInstitutions)) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByImportedQualificationType(ResourceParent parent, Collection<Integer> importedQualificationTypes) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("association", "application", JoinType.INNER_JOIN) //
-                .createAlias("program", "program", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("program.qualificationType.id", importedQualificationTypes)) //
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByImportedRejectionReason(ResourceParent parent, Collection<Integer> importedRejectionReasons) {
+    public List<Integer> getApplicationsByRejectionReason(ResourceParent parent, Collection<String> rejectionReasons) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("rejectionReason.id", importedRejectionReasons)) //
+                .add(Restrictions.in("rejectionReason.id", rejectionReasons.stream().map(PrismRejectionReason::valueOf).collect(toList()))) //
                 .list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+    public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<String> resources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources)) //
+                .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources.stream().map(Integer::parseInt).collect(toList()))) //
                 .list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<Integer> resources) {
+    public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<String> resources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationEmploymentPosition.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
                 .createAlias("application", "application", JoinType.INNER_JOIN) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("application." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources)) //
+                .add(Restrictions.in("advert." + resourceScope.getLowerCamelName() + ".id", resources.stream().map(Integer::parseInt).collect(toList()))) //
                 .list();
     }
 
@@ -276,32 +247,20 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, List<ResourceReportFilterPropertyDTO> constraints,
-            HashMultimap<PrismFilterEntity, Integer> transformedConstraints, String templateLocation) {
+    private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> filterConstraintExpressions = Lists.newLinkedList();
-        if (constraints != null) {
-            HashMultimap<PrismFilterEntity, Integer> flattenedConstraints = HashMultimap.create();
-            for (ResourceReportFilterPropertyDTO constraint : constraints) {
-                PrismFilterEntity importedEntityType = constraint.getEntityType();
-                if (!transformedConstraints.containsKey(importedEntityType)) {
-                    flattenedConstraints.put(constraint.getEntityType(), constraint.getEntityId());
-                }
+        constraints.keySet().forEach(fe -> {
+            Set<String> constraintValues = constraints.get(fe);
+            if (CollectionUtils.isNotEmpty(constraintValues)) {
+                filterConstraintExpressions.add(fe.getFilterColumn() + " in (" + constraintValues.stream().map(cv -> "'" + cv + "'").collect(joining(", ")) + ")");
             }
+        });
 
-            for (PrismFilterEntity entity : flattenedConstraints.keySet()) {
-                String columnConstraintExpression = "(";
-                List<String> columnConstraint = Lists.newArrayList();
-                Set<Integer> queryConstraints = transformedConstraints.containsKey(entity) ? transformedConstraints.get(entity) : flattenedConstraints.get(entity);
-                columnConstraint.add(entity.getFilterColumn() + " in (" + Joiner.on(", ").join(queryConstraints) + ")");
-                filterConstraintExpressions.add(columnConstraintExpression + Joiner.on("\n\t\tand ").join(columnConstraint) + ")");
-            }
-        }
-
-        String constraintExpression = "where application." + resource.getResourceScope().getLowerCamelName() + "_id = " + resource.getId();
+        String constraintExpression = "where application." + resource.getResourceScope().getLowerCamelName() + "_id = '" + resource.getId() + "'";
         String filterConstraintExpression = Joiner.on("\n\tand ").join(filterConstraintExpressions);
-        if (!StringUtils.isNullOrEmpty(filterConstraintExpression)) {
+        if (isNullOrEmpty(filterConstraintExpression)) {
             constraintExpression = constraintExpression + "\n\tand " + filterConstraintExpression;
         }
 

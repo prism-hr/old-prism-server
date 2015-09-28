@@ -7,6 +7,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_REVIVE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApproval.departmentCompleteApproval;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEmailCreatorUnnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEscalateUnapproved;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateUnapproved;
@@ -33,6 +35,8 @@ public class PrismDepartmentApprovalPendingCorrection extends PrismWorkflowState
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
                         .withRoleTransitions(DEPARTMENT_REVIVE_ADMINISTRATOR_GROUP))); //
 
+        stateActions.add(departmentCreateProgram()); //
+        stateActions.add(departmentCreateProject()); //
         stateActions.add(departmentEmailCreatorUnnapproved()); //
         stateActions.add(departmentEscalateUnapproved()); //
         stateActions.add(departmentTerminateUnapproved()); //

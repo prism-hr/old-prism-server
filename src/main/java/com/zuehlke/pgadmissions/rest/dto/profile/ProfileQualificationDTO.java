@@ -1,16 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceFamilyCreationDTO;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
-import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
-import uk.co.alumeni.prism.utils.validation.DateNotFuture;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
+
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+
+import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO {
@@ -19,7 +21,7 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
 
     @Valid
     @NotNull
-    private ResourceFamilyCreationDTO resource;
+    private ResourceRelationInvitationDTO resource;
 
     @NotNull
     @DateNotFuture
@@ -44,12 +46,12 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     }
 
     @Override
-    public ResourceFamilyCreationDTO getResource() {
+    public ResourceRelationInvitationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceFamilyCreationDTO resource) {
+    public void setResource(ResourceRelationInvitationDTO resource) {
         this.resource = resource;
     }
 

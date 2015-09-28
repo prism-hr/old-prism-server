@@ -2,8 +2,12 @@ package com.zuehlke.pgadmissions.domain.profile;
 
 public interface ProfileAdditionalInformation<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> extends ProfileSection<T> {
 
-    String getConvictionsText();
+    String getRequirements();
 
-    void setConvictionsText(String convictionsText);
+    void setRequirements(String requirements);
+
+    String getConvictions();
+
+    void setConvictions(String requirements);
 
 }

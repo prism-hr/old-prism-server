@@ -1,45 +1,31 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 public class OpportunitiesQueryDTO {
 
-    private PrismAction actionId;
-
-    private Integer institutionId;
-
-    private Integer departmentId;
-
-    private Integer programId;
-
-    private Integer projectId;
+    @Valid
+    private ResourceDTO resource;
 
     @NotNull
-    private PrismAdvertContext context;
+    private PrismMotivationContext context;
+    
+    private PrismScope contextScope;
 
     private PrismOpportunityCategory opportunityCategory;
-
-    private OpportunitiesQueryScopeTab tab;
 
     private String keyword;
 
@@ -69,44 +55,28 @@ public class OpportunitiesQueryDTO {
 
     private String lastSequenceIdentifier;
 
-    public PrismAction getActionId() {
-        return actionId;
+    public ResourceDTO getResource() {
+        return resource;
     }
 
-    public void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
+    public void setResource(ResourceDTO resource) {
+        this.resource = resource;
     }
 
-    public Integer getInstitutionId() {
-        return institutionId;
+    public PrismMotivationContext getContext() {
+        return context;
     }
 
-    public void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
+    public void setContext(PrismMotivationContext context) {
+        this.context = context;
+    }
+    
+    public PrismScope getContextScope() {
+        return contextScope;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
-    }
-
-    public Integer getProgramId() {
-        return programId;
-    }
-
-    public void setProgramId(Integer programId) {
-        this.programId = programId;
-    }
-
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setContextScope(PrismScope contextScope) {
+        this.contextScope = contextScope;
     }
 
     public PrismOpportunityCategory getOpportunityCategory() {
@@ -115,22 +85,6 @@ public class OpportunitiesQueryDTO {
 
     public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
-    }
-
-    public OpportunitiesQueryScopeTab getTab() {
-        return tab;
-    }
-
-    public void setTab(OpportunitiesQueryScopeTab tab) {
-        this.tab = tab;
-    }
-
-    public PrismAdvertContext getContext() {
-        return context;
-    }
-
-    public void setContext(PrismAdvertContext context) {
-        this.context = context;
     }
 
     public String getKeyword() {
@@ -243,53 +197,6 @@ public class OpportunitiesQueryDTO {
 
     public void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
-    }
-
-    public boolean isNarrowed() {
-        return !(institutionId == null && departmentId == null && programId == null && projectId == null);
-    }
-
-    public Integer getResourceId() {
-        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
-            Integer resourceId = (Integer) getProperty(this, getResourceIdReference(scope));
-            if (resourceId != null) {
-                return resourceId;
-            }
-        }
-        return null;
-    }
-
-    public void setResourceId(PrismScope resourceScope, Integer resourceId) {
-        if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
-            setProperty(this, getResourceIdReference(resourceScope), resourceId);
-        }
-    }
-
-    public PrismScope getResourceScope() {
-        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
-            if (getProperty(this, scope.getLowerCamelName() + "Id") != null) {
-                return scope;
-            }
-        }
-        return null;
-    }
-
-    private String getResourceIdReference(PrismScope resourceScope) {
-        return resourceScope.getLowerCamelName() + "Id";
-    }
-
-    public enum OpportunitiesQueryScopeTab {
-        SCOPE_INSTITUTIONS(INSTITUTION), SCOPE_DEPARTMENTS(DEPARTMENT), MAIN_OPPORTUNITIES(PROGRAM, PROJECT), MAIN_EMPLOYERS(INSTITUTION), MAIN_DEPARTMENTS(DEPARTMENT);
-
-        private PrismScope[] scopes;
-
-        OpportunitiesQueryScopeTab(PrismScope... scopes) {
-            this.scopes = scopes;
-        }
-
-        public PrismScope[] getScopes() {
-            return scopes;
-        }
     }
 
 }

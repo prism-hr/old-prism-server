@@ -13,7 +13,7 @@ import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "competence")
-public class Competence implements UniqueEntity, TargetEntity {
+public class Competence implements UniqueEntity {
 
     @Id
     @GeneratedValue

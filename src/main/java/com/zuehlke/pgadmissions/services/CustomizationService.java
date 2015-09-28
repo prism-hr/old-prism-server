@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.display.DisplayPropertyConfiguration;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowConfigurationVersioned;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
@@ -39,6 +40,9 @@ public class CustomizationService {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private PrismService prismService;
 
     @Inject
     private ResourceService resourceService;
@@ -244,14 +248,14 @@ public class CustomizationService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
+    private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType prismOpportunityType,
             WorkflowConfigurationDTO workflowConfigurationDTO) {
         T definition = (T) entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
         WorkflowConfiguration<T> configuration = customizationMapper.getWorkflowConfiguration(workflowConfigurationDTO);
         configuration.setResource(resource);
-        configuration.setOpportunityType(opportunityType);
+        configuration.setOpportunityType(prismService.getOpportunityTypeById(prismOpportunityType));
         configuration.setDefinition(definition);
-        configuration.setSystemDefault(isSystemDefault((WorkflowDefinition) definition, opportunityType));
+        configuration.setSystemDefault(isSystemDefault((WorkflowDefinition) definition, prismOpportunityType));
         return configuration;
     }
 
@@ -266,11 +270,10 @@ public class CustomizationService {
             WorkflowConfiguration<?> stereotype = configurations.get(0);
 
             Resource stereotypeResource = stereotype.getResource();
-            PrismOpportunityType stereotypeOpportunityType = stereotype.getOpportunityType();
+            OpportunityType stereotypeOpportunityType = stereotype.getOpportunityType();
 
             return configurations.stream()
-                    .filter(configuration -> Objects.equal(configuration.getResource(), stereotypeResource)
-                            && Objects.equal(configuration.getOpportunityType(), stereotypeOpportunityType))
+                    .filter(c -> c.getResource().sameAs(stereotypeResource) && Objects.equal(c.getOpportunityType(), stereotypeOpportunityType))
                     .map(customizationMapper::getWorkflowConfigurationRepresentation)
                     .collect(Collectors.toList());
         }
@@ -323,8 +326,7 @@ public class CustomizationService {
 
     private PrismOpportunityType getConfiguredOpportunityType(Resource resource, PrismOpportunityType opportunityType) {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
-            return PrismOpportunityType.valueOf(resourceOpportunity.getOpportunityType().getName());
+            return ((ResourceOpportunity) resource).getOpportunityType().getId();
         }
         return opportunityType;
     }

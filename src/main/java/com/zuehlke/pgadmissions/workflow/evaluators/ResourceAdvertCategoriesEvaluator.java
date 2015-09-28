@@ -13,7 +13,7 @@ public class ResourceAdvertCategoriesEvaluator implements ResourceCompletenessEv
     @Override
     public boolean evaluate(ResourceParent resource) {
         AdvertCategories categories = resource.getAdvert().getCategories();
-        return !(categories == null || isEmpty(categories.getFunctions()) || isEmpty(categories.getIndustries()));
+        return !(categories == null || (isEmpty(categories.getFunctions()) && isEmpty(categories.getIndustries())));
     }
 
 }

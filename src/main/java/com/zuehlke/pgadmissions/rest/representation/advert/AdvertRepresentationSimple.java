@@ -31,7 +31,9 @@ public class AdvertRepresentationSimple {
 
     private AdvertCategoriesRepresentation categories;
 
-    private AdvertTargetsRepresentation targets;
+    private List<AdvertConnectionRepresentation> connections;
+
+    private List<AdvertCompetenceRepresentation> competences;
 
     private String sequenceIdentifier;
 
@@ -131,12 +133,20 @@ public class AdvertRepresentationSimple {
         this.categories = categories;
     }
 
-    public AdvertTargetsRepresentation getTargets() {
-        return targets;
+    public List<AdvertConnectionRepresentation> getConnections() {
+        return connections;
     }
 
-    public void setTargets(AdvertTargetsRepresentation targets) {
-        this.targets = targets;
+    public void setConnections(List<AdvertConnectionRepresentation> connections) {
+        this.connections = connections;
+    }
+
+    public List<AdvertCompetenceRepresentation> getCompetences() {
+        return competences;
+    }
+
+    public void setCompetences(List<AdvertCompetenceRepresentation> competences) {
+        this.competences = competences;
     }
 
     public String getSequenceIdentifier() {

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.URL;
@@ -30,9 +31,9 @@ public class AdvertDTO {
 
     @Valid
     private AdvertCategoriesDTO categories;
-
-    @Valid
-    private AdvertTargetsDTO targets;
+    
+    @NotNull
+    private Boolean globallyVisible;
 
     public String getSummary() {
         return summary;
@@ -82,12 +83,12 @@ public class AdvertDTO {
         this.categories = categories;
     }
 
-    public AdvertTargetsDTO getTargets() {
-        return targets;
+    public Boolean getGloballyVisible() {
+        return globallyVisible;
     }
 
-    public void setTargets(AdvertTargetsDTO targets) {
-        this.targets = targets;
+    public void setGloballyVisible(Boolean globallyVisible) {
+        this.globallyVisible = globallyVisible;
     }
-
+    
 }

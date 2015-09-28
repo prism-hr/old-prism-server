@@ -318,16 +318,16 @@ public class SystemService {
 
     private void initializeScopes() throws DeduplicationException {
         for (PrismScope prismScope : PrismScope.values()) {
-            entityService.createOrUpdate(
-                    new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory()).withShortCode(prismScope.getShortCode()).withOrdinal(prismScope.ordinal()));
+            entityService.createOrUpdate(new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory()).withShortCode(prismScope.getShortCode())
+                    .withDefaultShared(prismScope.isDefaultShared()).withOrdinal(prismScope.ordinal()));
         }
     }
 
     private void initializeRoles() throws DeduplicationException {
         for (PrismRole prismRole : PrismRole.values()) {
             Scope scope = scopeService.getById(prismRole.getScope());
-            entityService.createOrUpdate(
-                    new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withDirectlyAssignable(prismRole.isDirectlyAssignable()).withScope(scope));
+            entityService.createOrUpdate(new Role().withId(prismRole).withRoleCategory(prismRole.getRoleCategory()).withVerified(false)
+                    .withDirectlyAssignable(prismRole.isDirectlyAssignable()).withScope(scope));
         }
     }
 
@@ -493,6 +493,7 @@ public class SystemService {
         stateService.setParallelizableStates();
 
         roleService.setCreatorRoles();
+        roleService.setVerifiedRoles();
 
         stateService.deleteObsoleteStateDurations();
         notificationService.deleteObsoleteNotificationConfigurations();

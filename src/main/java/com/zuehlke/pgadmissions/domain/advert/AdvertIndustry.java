@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 
 @Entity
 @Table(name = "advert_industry", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "industry" }) })
-public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
+public class AdvertIndustry extends AdvertAttribute {
 
     @Id
     @GeneratedValue
@@ -27,7 +27,7 @@ public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
 
     @Column(name = "industry", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismAdvertIndustry value;
+    private PrismAdvertIndustry industry;
 
     @Override
     public Integer getId() {
@@ -49,24 +49,27 @@ public class AdvertIndustry extends AdvertAttribute<PrismAdvertIndustry> {
         this.advert = advert;
     }
 
-    @Override
-    public final PrismAdvertIndustry getValue() {
-        return value;
+    public PrismAdvertIndustry getIndustry() {
+        return industry;
     }
 
-    @Override
-    public final void setValue(PrismAdvertIndustry industry) {
-        this.value = industry;
+    public void setIndustry(PrismAdvertIndustry industry) {
+        this.industry = industry;
     }
-    
+
     public AdvertIndustry withAdvert(Advert advert) {
         this.advert = advert;
         return this;
     }
 
-    public AdvertIndustry withValue(PrismAdvertIndustry value) {
-        this.value = value;
+    public AdvertIndustry withIndustry(PrismAdvertIndustry industry) {
+        this.industry = industry;
         return this;
     }
-    
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("industry", industry);
+    }
+
 }

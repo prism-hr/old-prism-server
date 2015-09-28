@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-public class AdvertConnectionDTO {
+public class AdvertTargetDTO {
 
     private Integer userId;
 

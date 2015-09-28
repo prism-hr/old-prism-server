@@ -83,6 +83,9 @@ public class Department extends ResourceParent {
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
+    @Column(name = "shared", nullable = false)
+    private Boolean shared;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -404,6 +407,16 @@ public class Department extends ResourceParent {
     @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    @Override
+    public Boolean getShared() {
+        return shared;
+    }
+
+    @Override
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 
     public Department withImportedCode(String importedCode) {

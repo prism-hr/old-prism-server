@@ -479,7 +479,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(T profile, U qualification,
             ProfileQualificationDTO qualificationDTO) {
-        createUserAdvertRelation(profile.getUser(), qualification, qualificationDTO);
+        createAdvertRelation(profile.getUser(), qualification, qualificationDTO);
 
         qualification.setStartYear(qualificationDTO.getStartDate().getYear());
         qualification.setStartMonth(qualificationDTO.getStartDate().getMonthOfYear());
@@ -526,7 +526,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(
             T profile, U employmentPosition, ProfileEmploymentPositionDTO employmentPositionDTO) {
-        createUserAdvertRelation(profile.getUser(), employmentPosition, employmentPositionDTO);
+        createAdvertRelation(profile.getUser(), employmentPosition, employmentPositionDTO);
 
         employmentPosition.setStartYear(employmentPositionDTO.getStartDate().getYear());
         employmentPosition.setStartMonth(employmentPositionDTO.getStartDate().getMonthOfYear());
@@ -572,7 +572,7 @@ public class ProfileService {
     private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(
             T profile, U referee, ProfileRefereeDTO refereeDTO) {
         List<CommentAssignedUser> refereeAssignments = assignReferee(profile, referee, refereeDTO);
-        createUserAdvertRelation(profile.getUser(), referee, refereeDTO);
+        createAdvertRelation(profile.getUser(), referee, refereeDTO);
 
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
@@ -633,7 +633,7 @@ public class ProfileService {
         return emptyList();
     }
 
-    private void createUserAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
+    private void createAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
         ResourceRelationInvitationDTO resourceRelationDTO = advertRelationDTO.getResource();
         ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
 

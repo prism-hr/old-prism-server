@@ -50,17 +50,17 @@ public class ActionDAO {
     private SessionFactory sessionFactory;
 
     public Action getRedirectAction(Resource resource, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -69,7 +69,8 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
@@ -78,17 +79,17 @@ public class ActionDAO {
     }
 
     public Action getPermittedAction(Resource resource, Action action, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -97,6 +98,8 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
@@ -106,31 +109,30 @@ public class ActionDAO {
 
     public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Collection<Integer> resourceIds, List<PrismScope> parentScopes, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
-        String resourceIdReference = resourceReference + ".id";
-
         Junction resourceConstraint = Restrictions.disjunction() //
-                .add(Restrictions.eqProperty(resourceReference, "userRole." + resourceReference));
+                .add(Restrictions.eqProperty("resource.id", "userRole." + resourceReference + ".id"));
         parentScopes.forEach(parentScope -> {
             String parentReference = parentScope.getLowerCamelName();
-            resourceConstraint.add(Restrictions.eqProperty(resourceReference + "." + parentReference, "userRole." + parentReference));
+            resourceConstraint.add(Restrictions.eqProperty("resource." + parentReference + ".id", "userRole." + parentReference + ".id"));
         });
 
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
+                        .add(Projections.groupProperty("resource.id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState") //
                         .add(Projections.min("stateActionAssignment.externalMode"), "onlyAsPartner") //
                         .add(Projections.property("action.declinableAction"), "declinable")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -139,8 +141,9 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(Restrictions.in(resourceIdReference, resourceIds)) //
+                .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(resourceConstraint) //
@@ -149,7 +152,7 @@ public class ActionDAO {
                 .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user)) //
                 .add(getEndorsementActionFilterResolution())
-                .addOrder(Order.asc(resourceIdReference))
+                .addOrder(Order.asc("resource.id"))
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
                 .addOrder(Order.asc("action.id")) //
@@ -158,8 +161,6 @@ public class ActionDAO {
     }
 
     public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, boolean userLoggedIn, PrismScope... exclusions) {
-        String resourceReference = resourceScope.getLowerCamelName();
-
         Junction visibilityConstraint = Restrictions.disjunction() //
                 .add(Restrictions.eq("action.scope.id", PrismScope.SYSTEM));
         if (userLoggedIn) {
@@ -170,17 +171,17 @@ public class ActionDAO {
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty(resourceReference + ".id"), "resourceId") //
+                        .add(Projections.groupProperty("resource.id"), "resourceId") //
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState") //
                         .add(Projections.property("action.declinableAction"), "declinable")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
+                .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(visibilityConstraint) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
@@ -198,7 +199,6 @@ public class ActionDAO {
     public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.eq("actionCategory", CREATE_RESOURCE)) //
                 .add(Restrictions.eq("creationScope.id", creationScope)) //
                 .list();
@@ -218,17 +218,17 @@ public class ActionDAO {
     }
 
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -237,26 +237,27 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }
 
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -265,26 +266,27 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }
 
     public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -293,25 +295,26 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
     }
 
     public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, PrismAction actionId, User user) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -320,9 +323,10 @@ public class ActionDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
                 .add(getEndorsementActionFilterResolution())
                 .list();
@@ -403,15 +407,14 @@ public class ActionDAO {
     }
 
     public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action.id")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("resourceCondition.externalMode", true));
 
         if (!actionConditions.isEmpty()) {
@@ -424,25 +427,23 @@ public class ActionDAO {
     }
 
     public List<PrismActionEnhancement> getExpectedDefaultActionEnhancements(Resource resource, Action action) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.actionEnhancement"))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNotNull("stateAction.actionEnhancement"))
                 .list();
     }
 
     public List<PrismActionEnhancement> getExpectedCustomActionEnhancements(Resource resource, Action action) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (List<PrismActionEnhancement>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateActionAssignment.actionEnhancement"))
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
                 .list();

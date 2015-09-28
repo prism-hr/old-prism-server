@@ -60,6 +60,10 @@ public abstract class Resource implements UniqueEntity {
 
     public abstract Application getApplication();
 
+    public abstract Boolean getShared();
+    
+    public abstract void setShared(Boolean shared);
+    
     public abstract State getState();
 
     public abstract void setState(State state);

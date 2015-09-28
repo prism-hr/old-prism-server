@@ -24,7 +24,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertConnection;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
@@ -133,13 +133,13 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<UserFeedback> userFeedbacks = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advertUser")
-    private Set<AdvertConnection> advertConnections = Sets.newHashSet();
+    private Set<AdvertTarget> advertConnections = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advertTargetUser")
-    private Set<AdvertConnection> advertTargetConnections = Sets.newHashSet();
+    private Set<AdvertTarget> advertTargetConnections = Sets.newHashSet();
 
     @OneToMany(mappedBy = "acceptingUser")
-    private Set<AdvertConnection> advertAcceptingConnections = Sets.newHashSet();
+    private Set<AdvertTarget> advertAcceptingConnections = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserReferee> userReferees = Sets.newHashSet();
@@ -300,15 +300,15 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userFeedbacks;
     }
 
-    public Set<AdvertConnection> getAdvertConnections() {
+    public Set<AdvertTarget> getAdvertConnections() {
         return advertConnections;
     }
 
-    public Set<AdvertConnection> getAdvertTargetConnections() {
+    public Set<AdvertTarget> getAdvertTargetConnections() {
         return advertTargetConnections;
     }
 
-    public Set<AdvertConnection> getAdvertAcceptingConnections() {
+    public Set<AdvertTarget> getAdvertAcceptingConnections() {
         return advertAcceptingConnections;
     }
 

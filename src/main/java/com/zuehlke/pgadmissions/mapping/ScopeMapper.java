@@ -93,10 +93,10 @@ public class ScopeMapper {
                     .collect(Collectors.toList()), //
                     new ResourceListFilterDTO().withMatchMode(ANY).withUrgentOnly(true).withUpdateOnly(true), //
                     Projections.projectionList() //
-                            .add(Projections.groupProperty("id").as("resourceId")) //
+                            .add(Projections.groupProperty("resource.id").as("resourceId")) //
                             .add(Projections.groupProperty("stateAction.action.id").as("actionId")) //
                             .add(Projections.property("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                            .add(Projections.property("updatedTimestamp").as("updatedTimestamp")),
+                            .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")),
                     ResourceActionDTO.class);
 
             for (ResourceActionDTO resourceActionDTO : resourceActionDTOs) {

@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementAction
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
@@ -34,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 
 @Repository
@@ -47,22 +47,23 @@ public class RoleDAO {
         String resourceReference = resourceScope.getLowerCamelName();
 
         Junction resourceConstraint = Restrictions.disjunction() //
-                .add(Restrictions.eqProperty(resourceReference, "userRole." + resourceReference));
+                .add(Restrictions.eqProperty("resource.id", "userRole." + resourceReference + ".id"));
         parentScopes.forEach(parentScope -> {
             String parentReference = parentScope.getLowerCamelName();
-            resourceConstraint.add(Restrictions.eqProperty(resourceReference + "." + parentReference, "userRole." + parentReference));
+            resourceConstraint.add(Restrictions.eqProperty("resource." + parentReference + ".id", "userRole." + parentReference + ".id"));
         });
 
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN)
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -71,7 +72,8 @@ public class RoleDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -222,16 +224,14 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    public PrismScope getPermissionScopePartner(User user, PrismScope partnerScope) {
-        String partnerResourceReference = partnerScope.getLowerCamelName();
+    public PrismScope getPermissionScopePartner(User user, PrismScope scope) {
         return (PrismScope) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("scope.id")) //
-                .createAlias(partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
-                .createAlias(partnerResourceReference + ".advert", "advert", JoinType.INNER_JOIN)//
-                .createAlias(partnerResourceReference + ".resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN)//
+                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
@@ -295,14 +295,28 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<PrismRole> getVerifiedRoles() {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(StateActionAssignment.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .list();
+    }
+
+    public void setVerifiedRoles(List<PrismRole> roles) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update Role " //
+                        + "set verified = true " //
+                        + "where id in (:roles)") //
+                .setParameterList("roles", roles) //
+                .executeUpdate();
+    }
+
     public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
         PrismScope resourceScope = resource.getResourceScope();
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq(resourceScope.getLowerCamelName(), resource))
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.not( //
-                        Restrictions.in("role.id", getUnverifiedRoles(resourceScope)))) //
+                .add(Restrictions.eq("role.verified", true)) //
                 .list();
     }
 

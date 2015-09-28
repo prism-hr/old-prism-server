@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceOpportunityCategoryProjection;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -35,6 +34,7 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -84,6 +84,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
@@ -182,10 +183,11 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T resourceDTO) {
-        PrismScope creationScope = action.getCreationScope().getId();
+        Scope scope = action.getCreationScope();
 
-        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(creationScope.getResourceCreator());
+        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(scope.getId().getResourceCreator());
         Resource resource = resourceCreator.create(user, resourceDTO);
+        resource.setShared(scope.getDefaultShared());
 
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
@@ -566,6 +568,7 @@ public class ResourceService {
         resource.setName(name);
         advert.setName(name);
 
+        advert.setGloballyVisible(advertDTO.getGloballyVisible());
         advertService.updateAdvert(resource.getParentResource(), advert, advertDTO, resourceDTO.getName());
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
@@ -725,12 +728,17 @@ public class ResourceService {
         roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(initialRole).withAssignedTimestamp(now()));
     }
 
-    private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction condition) {
-        return getResources(user, scope, parentScopes, filter, getResourceOpportunityCategoryProjection(), condition, ResourceOpportunityCategoryDTO.class);
+    private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction conditions) {
+        return getResources(user, scope, parentScopes, filter, //
+                Projections.projectionList() //
+                        .add(Projections.groupProperty("resource.id").as("id")) //
+                        .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
+                        .add(Projections.property("opportunityCategories").as("opportunityCategories")), //
+                conditions, ResourceOpportunityCategoryDTO.class);
     }
 
-    private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns,
-            Junction conditions, Class<T> responseClass) {
+    private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
+            Class<T> responseClass) {
         Set<T> resources = Sets.newHashSet();
         Boolean onlyAsPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
         addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass), resources, onlyAsPartner);

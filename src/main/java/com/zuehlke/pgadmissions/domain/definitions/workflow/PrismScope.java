@@ -61,38 +61,38 @@ import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>, PrismLocalizableDefinition {
 
-    SYSTEM(PrismScopeCategory.SYSTEM, "SM", //
+    SYSTEM(PrismScopeCategory.SYSTEM, "SM", true,  //
             new PrismScopeDefinition() //
                     .withResourceClass(System.class)),
-    INSTITUTION(PrismScopeCategory.ORGANIZATION, "IN", //
+    INSTITUTION(PrismScopeCategory.ORGANIZATION, "IN", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Institution.class) //
                     .withResourceDTOClass(InstitutionDTO.class) //
                     .withActionExecutor(InstitutionExecutor.class) //
                     .withResourceCreator(InstitutionCreator.class) //
                     .withResourcePostprocessor(InstitutionPostprocessor.class)), //
-    DEPARTMENT(PrismScopeCategory.ORGANIZATION, "DT",
+    DEPARTMENT(PrismScopeCategory.ORGANIZATION, "DT", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Department.class) //
                     .withResourceDTOClass(ResourceParentDTO.class) //
                     .withActionExecutor(DepartmentExecutor.class) //
                     .withResourceCreator(DepartmentCreator.class) //
                     .withResourcePostprocessor(DepartmentPostprocessor.class)), //
-    PROGRAM(PrismScopeCategory.OPPORTUNITY, "PM",
+    PROGRAM(PrismScopeCategory.OPPORTUNITY, "PM", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Program.class) //
                     .withResourceDTOClass(ResourceOpportunityDTO.class) //
                     .withActionExecutor(ProgramExecutor.class) //
                     .withResourceCreator(ProgramCreator.class) //
                     .withResourcePostprocessor(ProgramPostprocessor.class)), //
-    PROJECT(PrismScopeCategory.OPPORTUNITY, "PT",
+    PROJECT(PrismScopeCategory.OPPORTUNITY, "PT", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Project.class) //
                     .withResourceDTOClass(ResourceOpportunityDTO.class) //
                     .withActionExecutor(ProjectExecutor.class) //
                     .withResourceCreator(ProjectCreator.class) //
                     .withResourcePostprocessor(ProjectPostprocessor.class)), //
-    APPLICATION(PrismScopeCategory.APPLICATION, "AN", //
+    APPLICATION(PrismScopeCategory.APPLICATION, "AN", false, //
             new PrismScopeDefinition() //
                     .withResourceClass(Application.class) //
                     .withResourceDTOClass(ApplicationDTO.class) //
@@ -106,6 +106,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     private PrismScopeCategory scopeCategory;
 
     private String shortCode;
+    
+    private boolean defaultShared;
 
     private PrismScopeDefinition definition;
 
@@ -129,9 +131,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         defaults.put(new SimpleEntry<>(INSTITUTION, EMPLOYER), new PrismScopeCreationDefault(APRIL, WORK, EXPERIENCE));
     }
 
-    private PrismScope(PrismScopeCategory scopeCategory, String shortCode, PrismScopeDefinition definition) {
+    private PrismScope(PrismScopeCategory scopeCategory, String shortCode, boolean defaultShared, PrismScopeDefinition definition) {
         this.scopeCategory = scopeCategory;
         this.shortCode = shortCode;
+        this.defaultShared = defaultShared;
         this.definition = definition;
     }
 
@@ -141,6 +144,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public String getShortCode() {
         return shortCode;
+    }
+
+    public boolean isDefaultShared() {
+        return defaultShared;
     }
 
     public Class<? extends Resource> getResourceClass() {

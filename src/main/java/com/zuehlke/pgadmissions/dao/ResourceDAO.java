@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -187,7 +191,7 @@ public class ResourceDAO {
                 criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
             }
 
-            return appendResourceListLimitCriterion(criteria, filter, lastSequenceIdentifier, maxRecords)
+            return appendResourceListLimitCriteria(criteria, filter, lastSequenceIdentifier, maxRecords)
                     .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
                     .list();
         }
@@ -196,15 +200,12 @@ public class ResourceDAO {
     }
 
     public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(columns) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
@@ -212,30 +213,25 @@ public class ResourceDAO {
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
+                .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(getResourceStateActionConstraint()) //
-                .add(Restrictions.isNull("state.hidden"));
+                .add(Restrictions.ne("state.hidden", true));
 
-        appendResourceListFilterCriterion(scope, criteria, conditions, filter);
+        appendResourceListFilterCriteria(scope, criteria, conditions, filter);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scopeId, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns,
+    public <T> List<T> getResources(User user, PrismScope scope, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass) {
-        String parentResourceReference = parentScope.getLowerCamelName();
-
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass()) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(columns) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
+                .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(parentResourceReference, parentResourceReference, JoinType.INNER_JOIN) //
-                .createAlias(parentResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
@@ -244,10 +240,10 @@ public class ResourceDAO {
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(getResourceStateActionConstraint()) //
-                .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .add(Restrictions.isNull("state.hidden"));
+                .add(Restrictions.eqProperty("state", "stateAction.state")) //
+                .add(Restrictions.ne("state.hidden", true));
 
-        appendResourceListFilterCriterion(scopeId, criteria, conditions, filter);
+        appendResourceListFilterCriteria(scope, criteria, conditions, filter);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -255,20 +251,15 @@ public class ResourceDAO {
 
     public <T> List<T> getPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass) {
-        String partnerResourceReference = partnerScope.getLowerCamelName();
-
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(columns) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAdverts", "userAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.INNER_JOIN,
-                        Restrictions.eq("advertTarget.selected", true)) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.INNER_JOIN)
-                .createAlias("targetAdvert." + partnerResourceReference, partnerResourceReference, JoinType.INNER_JOIN) //
-                .createAlias(partnerResourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN)
+                .createAlias("targetAdvert." + partnerScope.getLowerCamelName(), "partnerResource", JoinType.INNER_JOIN) //
+                .createAlias("partnerResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
@@ -276,15 +267,18 @@ public class ResourceDAO {
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.ne("action.scope.id", APPLICATION)) //
-                        .add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"))) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
+                        getEndorsementActionJoinResolution()) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("stateAction.state", "resourceState.state")) //
-                .add(Restrictions.isNull("state.hidden"));
+                .add(getEndorsementActionVisibilityResolution())
+                .add(Restrictions.ne("state.hidden", true));
 
-        appendResourceListFilterCriterion(scope, criteria, conditions, filter);
+        appendResourceListFilterCriteria(scope, criteria, conditions, filter);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -573,7 +567,7 @@ public class ResourceDAO {
                 .as(resourceReference + Joiner.on("").join(Arrays.asList(column.split("\\.")).stream().map(part -> WordUtils.capitalize(part)).collect(Collectors.toList())));
     }
 
-    private static void appendResourceListFilterCriterion(PrismScope scopeId, Criteria criteria, Junction conditions, ResourceListFilterDTO filter) {
+    private static void appendResourceListFilterCriteria(PrismScope scopeId, Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }
@@ -582,24 +576,19 @@ public class ResourceDAO {
             criteria.add(Restrictions.ge("updatedTimestamp", new LocalDate().minusDays(1)));
         }
 
-        if (filter.isTargetOnly()) {
-            criteria.add(Restrictions.eqProperty("userAdvert.advert", "advertTarget.value"));
-        }
-
-        if (conditions != null) {
-            criteria.add(conditions);
+        if (constraints != null) {
+            criteria.add(constraints);
         }
     }
 
-    private static Criteria appendResourceListLimitCriterion(Criteria criteria, ResourceListFilterDTO filter,
-            String lastSequenceIdentifier, Integer recordsToRetrieve) {
+    private static Criteria appendResourceListLimitCriteria(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
         PrismFilterSortOrder sortOrder = filter.getSortOrder();
 
         if (lastSequenceIdentifier != null) {
-            criteria.add(PrismFilterSortOrder.getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
+            criteria.add(getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
         }
 
-        criteria.addOrder(PrismFilterSortOrder.getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
+        criteria.addOrder(getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
 
         if (recordsToRetrieve != null) {
             criteria.setMaxResults(recordsToRetrieve);

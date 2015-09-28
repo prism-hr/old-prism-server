@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -36,12 +35,10 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -51,8 +48,8 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.dto.AdvertConnectionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -94,18 +91,17 @@ public class AdvertMapper {
         return getAdvertRepresentation(advert, AdvertRepresentationSimple.class);
     }
 
+    // FIXME - prioritise the users network
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
-        PrismMotivationContext filterContext = query.getContext();
-        PrismScope[] filterScopes = query.getTab() != null ? query.getTab().getScopes() : new PrismScope[0];
-
-        PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
-        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
-        PrismScope[] queryScopes = filterContext.equals(APPLICANT) ? opportunityScopes : filterScopes;
+        PrismScope filterScope = query.getContextScope();
+        PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<EntityOpportunityCategoryDTO> adverts = advertService.getVisibleAdverts(query, queryScopes);
+        Set<EntityOpportunityCategoryDTO> adverts = advertService.getVisibleAdverts(query, filterScopes);
         processRowDescriptors(adverts, advertIds, null, summaries);
+
+        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
@@ -123,7 +119,7 @@ public class AdvertMapper {
         });
 
         HashMultimap<Integer, PrismStudyOption> studyOptionIndex = HashMultimap.create();
-        for (PrismScope opportunityScope : opportunityScopes) {
+        for (PrismScope opportunityScope : new PrismScope[] { PROJECT, PROGRAM }) {
             Set<Integer> scopedResources = resources.get(opportunityScope);
             if (isNotEmpty(scopedResources)) {
                 HashMultimap<Integer, PrismStudyOption> studyOptions = advertService.getAdvertStudyOptions(opportunityScope, scopedResources);
@@ -326,7 +322,7 @@ public class AdvertMapper {
     }
 
     private AdvertClosingDateRepresentation getAdvertClosingDateRepresentation(AdvertClosingDate closingDate) {
-        return new AdvertClosingDateRepresentation().withId(closingDate.getId()).withClosingDate(closingDate.getValue());
+        return new AdvertClosingDateRepresentation().withId(closingDate.getId()).withClosingDate(closingDate.getClosingDate());
     }
 
     private List<AdvertClosingDateRepresentation> getAdvertClosingDateRepresentations(Advert advert) {
@@ -335,23 +331,19 @@ public class AdvertMapper {
 
     private AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
         AdvertCategories categories = advertService.getAdvertCategories(advert);
-        return categories == null ? null : new AdvertCategoriesRepresentation().withIndustries(getAdvertCategoryRepresentations(categories.getIndustries()))
-                .withFunctions(getAdvertCategoryRepresentations(categories.getFunctions()));
-    }
-
-    private <T extends AdvertAttribute<U>, U> List<U> getAdvertCategoryRepresentations(Set<T> categories) {
-        return categories.stream().map(T::getValue).collect(Collectors.toList());
+        return categories == null ? null : new AdvertCategoriesRepresentation().withIndustries(categories.getIndustries().stream().map(i -> i.getIndustry()).collect(toList()))
+                .withFunctions(categories.getFunctions().stream().map(f -> f.getFunction()).collect(toList()));
     }
 
     // TODO: sorting logic
     private List<AdvertConnectionRepresentation> getAdvertConnectionRepresentations(Advert advert) {
-        List<AdvertConnectionDTO> connections = advertService.getAdvertConnections(advert);
+        List<AdvertTargetDTO> connections = advertService.getAdvertConnections(advert);
         return null;
     }
 
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Advert advert) {
-        return advert.getCompetences().stream().<AdvertCompetenceRepresentation> map(competence -> new AdvertCompetenceRepresentation().withName(competence.getName())
-                .withDescription(competence.getValue().getDescription()).withImportance(competence.getImportance())).collect(Collectors.toList());
+        return advert.getCompetences().stream().map(competence -> new AdvertCompetenceRepresentation().withName(competence.getCompetence().getName())
+                .withDescription(competence.getCompetence().getDescription()).withImportance(competence.getImportance())).collect(toList());
     }
 
     @SuppressWarnings("unchecked")

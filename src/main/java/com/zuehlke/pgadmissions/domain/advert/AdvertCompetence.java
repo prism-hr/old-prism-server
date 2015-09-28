@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.Competence;
 
 @Entity
 @Table(name = "advert_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "competence_id" }) })
-public class AdvertCompetence extends AdvertTarget<Competence> {
+public class AdvertCompetence extends AdvertAttribute {
 
     @Id
     @GeneratedValue
@@ -25,38 +25,40 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
 
     @ManyToOne
     @JoinColumn(name = "competence_id", nullable = false)
-    private Competence value;
+    private Competence competence;
 
     @Column(name = "description")
     private String description;
-    
+
     @Column(name = "importance", nullable = false)
     private Integer importance;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
+    @Override
     public Advert getAdvert() {
         return advert;
     }
 
+    @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
     }
 
-    @Override
-    public Competence getValue() {
-        return value;
+    public Competence getCompetence() {
+        return competence;
     }
 
-    @Override
-    public void setValue(Competence competence) {
-        this.value = competence;
+    public void setCompetence(Competence competence) {
+        this.competence = competence;
     }
 
     public String getDescription() {
@@ -76,13 +78,8 @@ public class AdvertCompetence extends AdvertTarget<Competence> {
     }
 
     @Override
-    public Integer getValueId() {
-        return value.getId();
-    }
-
-    @Override
-    public String getName() {
-        return value.getName();
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("competence", competence);
     }
 
 }

@@ -67,13 +67,15 @@ public class NotificationDAO {
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId") //
                         .add(Projections.groupProperty("stateAction.action.id"), "actionId")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -86,8 +88,9 @@ public class NotificationDAO {
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("userNotification." + resourceReference, resource)) //
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
-                .add(Restrictions.eq(resourceReference, resource)) //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleConstraint(resource)) //
                 .add(getEndorsementActionFilterResolution())
                 .add(Restrictions.isNull("userNotification.id")) //
@@ -96,18 +99,19 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions) {
-        String resourceReference = resource.getResourceScope().getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourcePreviousState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id"), "userId") //
                         .add(Projections.groupProperty("notificationDefinition.id"), "notificationDefinitionId")) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userAdverts", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias(resourceReference + ".advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets.adverts", "advertTarget", JoinType.LEFT_OUTER_JOIN,
+                .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("advertTarget.value", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -116,9 +120,10 @@ public class NotificationDAO {
                 .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
-                .add(Restrictions.eq(resourceReference, resource)); //
+                .add(Restrictions.eq("resource.id", resource.getId())); //
 
         if (!exclusions.isEmpty()) {
             criteria.add(Restrictions.not( //

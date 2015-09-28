@@ -426,3 +426,113 @@ alter table advert_connection
 alter table comment
 	change column rating application_rating decimal(3, 2) unsigned
 ;
+
+rename table advert_connection to advert_target
+;
+
+alter table project
+	drop column opportunity_rating_count,
+	drop column opportunity_rating_average,
+	drop index opportunity_rating_count,
+	drop index opportunity_rating_average
+;
+
+alter table program
+	drop column opportunity_rating_count,
+	drop column opportunity_rating_average,
+	drop index opportunity_rating_count,
+	drop index opportunity_rating_average
+;
+
+alter table department
+	drop column opportunity_rating_count,
+	drop column opportunity_rating_average,
+	drop index opportunity_rating_count,
+	drop index opportunity_rating_average
+;
+
+alter table institution
+	drop column opportunity_rating_count,
+	drop column opportunity_rating_average,
+	drop index opportunity_rating_count,
+	drop index opportunity_rating_average
+;
+
+alter table role
+	add column verified int(1) unsigned not null default 1 after id,
+	add index (verified)
+;
+
+alter table role
+	modify column verified int(1) unsigned not null
+;
+
+alter table project
+	add column shared int(1) unsigned not null default 1 after application_rating_average,
+	add index (shared, sequence_identifier)
+;
+
+alter table project
+	modify column shared int(1) unsigned not null
+;
+
+alter table program
+	add column shared int(1) unsigned not null default 1 after application_rating_average,
+	add index (shared, sequence_identifier)
+;
+
+alter table program
+	modify column shared int(1) unsigned not null
+;
+
+alter table department
+	add column shared int(1) unsigned not null default 1 after application_rating_average,
+	add index (shared, sequence_identifier)
+;
+
+alter table department
+	modify column shared int(1) unsigned not null
+;
+
+alter table institution
+	add column shared int(1) unsigned not null default 1 after application_rating_average,
+	add index (shared, sequence_identifier)
+;
+
+alter table institution
+	modify column shared int(1) unsigned not null
+;
+
+alter table system
+	add column shared int(1) unsigned not null default 1 after amazon_secret_key,
+	add index (shared, sequence_identifier)
+;
+
+alter table system
+	modify column shared int(1) unsigned not null
+;
+
+alter table application	
+	modify column shared int(1) unsigned not null
+;
+
+alter table scope
+	add column default_shared int(1) unsigned not null default 1 after short_code
+;
+
+alter table scope
+	modify column default_shared int(1) unsigned not null
+;
+
+alter table role
+	modify column verified int(1) unsigned not null after role_category
+;
+
+alter table advert
+	add column globally_visible int(1) unsigned not null default 1 after last_currency_conversion_date,
+	add index (globally_visible, sequence_identifier)
+;
+
+alter table advert
+	modify column globally_visible int(1) unsigned not null
+;

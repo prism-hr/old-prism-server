@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -93,7 +94,7 @@ public class AdvertDAO {
                         .add(Projections.property("userAccount.linkedinImageUrl").as("userAccountImageUrl")) //
                         .add(Projections.property("institution.id").as("institutionId")) //
                         .add(Projections.property("institution.name").as("institutionName")) //
-                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
+                        .add(Projections.property("institution.logoImage.id").as("logoImageId")) //
                         .add(Projections.property("department.id").as("departmentId")) //
                         .add(Projections.property("department.name").as("departmentName")) //
                         .add(Projections.property("program.id").as("programId")) //
@@ -110,6 +111,7 @@ public class AdvertDAO {
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.property("summary").as("summary")) //
                         .add(Projections.property("description").as("description")) //
+                        .add(Projections.property("globallyVisible").as("globallyVisible")) //
                         .add(Projections.property("homepage").as("homepage")) //
                         .add(Projections.property("applyHomepage").as("applyHomepage")) //
                         .add(Projections.property("telephone").as("telephone")) //
@@ -173,14 +175,14 @@ public class AdvertDAO {
         ResourceDTO resource = query.getResource();
         boolean narrowedByResource = resource != null;
 
-        Set<PrismScope> roleScopes = userRoleResources.keySet();
+        Set<PrismScope> roleScopes = Sets.newHashSet(userRoleResources.keySet());
         roleScopes.add(scope);
         if (userLoggedIn || narrowedByResource) {
             for (PrismScope roleScope : roleScopes) {
                 String scopeReferenceLower = roleScope.getLowerCamelName();
 
                 String advertScopeReference = "advert" + roleScope.getUpperCamelName();
-                String advertScopeAdvertReference = advertScopeReference + "advert";
+                String advertScopeAdvertReference = advertScopeReference + "Advert";
                 String advertScopeAdvertTargetReference = advertScopeAdvertReference + "Target";
 
                 Set<Integer> resources = userRoleResources.get(scope);
@@ -192,7 +194,7 @@ public class AdvertDAO {
                 }
 
                 criteria.createAlias(advertScopeReference + ".advert", advertScopeAdvertReference, JoinType.LEFT_OUTER_JOIN)
-                        .createAlias(advertScopeAdvertReference + ".target", advertScopeAdvertTargetReference, JoinType.LEFT_OUTER_JOIN);
+                        .createAlias(advertScopeAdvertReference + ".targets", advertScopeAdvertTargetReference, JoinType.LEFT_OUTER_JOIN);
             }
         }
 
@@ -368,7 +370,7 @@ public class AdvertDAO {
                         .add(Projections.property(connectionContext + "Advert.id").as("advertId")) //
                         .add(Projections.property(connectionContext + "Institution.id").as("institutionId")) //
                         .add(Projections.property(connectionContext + "Institution.name").as("institutionName")) //
-                        .add(Projections.property(connectionContext + "Institution.logoImage.id").as("institutionLogoImageId")) //
+                        .add(Projections.property(connectionContext + "Institution.logoImage.id").as("logoImageId")) //
                         .add(Projections.property(connectionContext + "Department.id").as("departmentId")) //
                         .add(Projections.property(connectionContext + "Department.name").as("departmentName")) //
                         .add(Projections.property("accepted").as("accepted"))) //
@@ -479,7 +481,7 @@ public class AdvertDAO {
                     .add(Restrictions.eq("advert.globallyVisible", true)) //
                     .add(visibilityConstraint));
         } else {
-            criteria.add(Restrictions.eq("globallyVisible", true));
+            criteria.add(Restrictions.eq("advert.globallyVisible", true));
         }
     }
 

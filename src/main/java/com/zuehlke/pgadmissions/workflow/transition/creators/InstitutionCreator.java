@@ -1,17 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import static com.zuehlke.pgadmissions.PrismConstants.SYSTEM_CURRENCY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -26,6 +14,16 @@ import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.PrismService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.PrismConstants.SYSTEM_CURRENCY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 @Component
 public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
@@ -61,7 +59,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         businessYearStartMonth = businessYearStartMonth == null ? creationDefault.getDefaultBusinessYearStartMonth().getValue() : businessYearStartMonth;
 
         Institution institution = new Institution().withParentResource(system).withImportedCode(newResource.getImportedCode()).withUser(user).withAdvert(advert)
-                .withName(advert.getName()).withCurrency(currency).withBusinessYearStartMonth(newResource.getBusinessYearStartMonth())
+                .withName(advert.getName()).withCurrency(currency).withBusinessYearStartMonth(businessYearStartMonth)
                 .withGoogleId(advert.getAddress().getGoogleId());
         resourceService.setResourceAttributes(institution, newResource);
 

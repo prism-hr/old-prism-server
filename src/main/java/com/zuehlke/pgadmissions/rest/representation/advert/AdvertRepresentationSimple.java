@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+
+import java.util.List;
 
 public class AdvertRepresentationSimple {
 
@@ -12,6 +12,8 @@ public class AdvertRepresentationSimple {
     private String summary;
 
     private String description;
+
+    private Boolean globallyVisible;
 
     private DocumentRepresentation backgroundImage;
 
@@ -59,6 +61,14 @@ public class AdvertRepresentationSimple {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getGloballyVisible() {
+        return globallyVisible;
+    }
+
+    public void setGloballyVisible(Boolean globallyVisible) {
+        this.globallyVisible = globallyVisible;
     }
 
     public DocumentRepresentation getBackgroundImage() {

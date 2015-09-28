@@ -1,12 +1,11 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import org.joda.time.LocalDate;
+
+import java.math.BigDecimal;
 
 public class AdvertDTO extends ResourceActivityDTO {
 
@@ -21,17 +20,17 @@ public class AdvertDTO extends ResourceActivityDTO {
     private String userAccountImageUrl;
 
     private LocalDate programAvailableDate;
-    
+
     private Integer programDurationMinimum;
-    
+
     private Integer programDurationMaximum;
-    
+
     private LocalDate projectAvailableDate;
-    
+
     private Integer projectDurationMinimum;
-    
-    private Integer projectDurationMaximum;    
-    
+
+    private Integer projectDurationMaximum;
+
     private PrismOpportunityType opportunityType;
 
     private String name;
@@ -39,6 +38,8 @@ public class AdvertDTO extends ResourceActivityDTO {
     private String summary;
 
     private String description;
+
+    private Boolean globallyVisible;
 
     private String homepage;
 
@@ -198,6 +199,14 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getGloballyVisible() {
+        return globallyVisible;
+    }
+
+    public void setGloballyVisible(Boolean globallyVisible) {
+        this.globallyVisible = globallyVisible;
     }
 
     public String getHomepage() {

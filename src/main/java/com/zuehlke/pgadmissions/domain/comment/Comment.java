@@ -164,7 +164,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     @Column(name = "application_partner_accept_appointment")
     private Boolean partnerAcceptAppointment;
-    
+
     @Column(name = "application_applicant_accept_appointment")
     private Boolean applicantAcceptAppointment;
 
@@ -354,8 +354,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return interested;
     }
 
-    public void setInterested(Boolean applicationInterested) {
-        this.interested = applicationInterested;
+    public void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public void setEligible(PrismYesNoUnsureResponse applicationEligible) {
@@ -579,12 +579,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.partnerAcceptAppointment = partnerAcceptAppointment;
         return this;
     }
-    
+
     public Comment withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
         this.applicantAcceptAppointment = applicantAcceptAppointment;
         return this;
     }
-    
+
     public Comment withRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
         return this;
@@ -698,7 +698,7 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         }
         return false;
     }
-    
+
     public boolean isPartnershipStateTransitionComment() {
         return action.getPartnershipState() != null;
     }

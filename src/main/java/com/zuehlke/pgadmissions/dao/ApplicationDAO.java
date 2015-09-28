@@ -214,7 +214,7 @@ public class ApplicationDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("institution.id").as("institutionId")) //
                         .add(Projections.property("institution.name").as("institutionName")) //
-                        .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId")) //
+                        .add(Projections.property("institution.logoImage.id").as("logoImageId")) //
                         .add(Projections.property("department.id").as("departmentId")) //
                         .add(Projections.property("department.name").as("departmentName")) //
                         .add(Projections.property("program.id").as("programId")) //

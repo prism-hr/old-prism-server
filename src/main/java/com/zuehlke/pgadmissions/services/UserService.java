@@ -50,7 +50,6 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
@@ -171,10 +170,6 @@ public class UserService {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.updateUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
         return user;
-    }
-
-    public Long getUserAdvertRelationCount(User user, Advert advert) {
-        return userDAO.getUserAdvertRelationCount(user, advert);
     }
 
     public Set<String> getUserProperties(Class<? extends UniqueEntity> userAssignmentClass) {

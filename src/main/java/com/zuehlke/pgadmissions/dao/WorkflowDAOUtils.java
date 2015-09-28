@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Criterion;
@@ -26,18 +26,17 @@ public class WorkflowDAOUtils {
     }
 
     public static Junction getUserRoleWithPartnerConstraint(Resource resource) {
-        Junction constraint = Restrictions.disjunction() //
+        return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(getUserRoleConstraint(resource)) //
                         .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                .add(getPartnerUserRoleConstraint()); //
-        return constraint;
+                .add(getPartnerUserRoleConstraint()) //
+                .add(getResourceStateActionConstraint());
     }
 
     public static Junction getUserRoleWithPartnerConstraint(Resource resource, User user) {
         return Restrictions.conjunction() //
                 .add(getUserRoleWithPartnerConstraint(resource)) //
-                .add(getResourceStateActionConstraint()) //
                 .add(getUserEnabledConstraint(user));
     }
 
@@ -76,15 +75,30 @@ public class WorkflowDAOUtils {
     }
 
     public static Criterion getEndorsementActionJoinResolution() {
-        return Restrictions.eq("advertTarget.selected", true);
+        return Restrictions.eq("ownerRole.role.id", DEPARTMENT_STUDENT);
     }
 
     public static Junction getEndorsementActionFilterResolution() {
         return Restrictions.disjunction() //
-                .add(Restrictions.isNull("advertTarget.valueUser")) //
-                .add(Restrictions.eqProperty("advertTarget.valueUser", "userRole.user"))
-                .add(Restrictions.ne("action.scope.id", APPLICATION)) //
-                .add(Restrictions.eqProperty("ownerAdvert.advert", "advertTarget.value"));
+                .add(Restrictions.isNull("action.partnershipState")) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.eqProperty("action.partnershipState", "target.partnershipState")) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.isNull("target.targetAdvertUser")) //
+                                .add(Restrictions.eqProperty("target.targetAdvertUser", "userRole.user")))
+                        .add(getEndorsementActionVisibilityResolution()));
+    }
+
+    public static Junction getEndorsementActionVisibilityResolution() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.eq("scope.defaultShared", true)) //
+                        .add(Restrictions.eq("resource.shared", true))) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eqProperty("ownerDepartment.id", "targetAdvert.department.id"))
+                                .add(Restrictions.eqProperty("ownerDepartment.institution.id", "targetAdvert.institution.id")))
+                        .add(Restrictions.eq("resource.shared", true)));
     }
 
     public static ProjectionList getResourceOpportunityCategoryProjection() {

@@ -89,7 +89,7 @@ public class Program extends ResourceOpportunity {
 
     @Column(name = "availableDate", nullable = false)
     private LocalDate availableDate;
-    
+
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
 
@@ -105,6 +105,9 @@ public class Program extends ResourceOpportunity {
     @Column(name = "application_rating_average")
     private BigDecimal applicationRatingAverage;
 
+    @Column(name = "shared", nullable = false)
+    private Boolean shared;
+    
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -299,7 +302,7 @@ public class Program extends ResourceOpportunity {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public LocalDate getAvailableDate() {
         return availableDate;
@@ -358,6 +361,16 @@ public class Program extends ResourceOpportunity {
     @Override
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+    
+    @Override
+    public Boolean getShared() {
+        return shared;
+    }
+
+    @Override
+    public void setShared(Boolean shared) {
+        this.shared = shared;
     }
 
     @Override

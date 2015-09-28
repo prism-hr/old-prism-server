@@ -20,26 +20,36 @@ public enum PrismMotivationContext {
                     .withScope(INSTITUTION)
                     .withScope(DEPARTMENT)
                     .withScope(PROGRAM)
-                    .withScope(PROJECT))), //
+                    .withScope(PROJECT)),
+            PROGRAM, PROGRAM), //
     UNIVERSITY(new PrismScopeRelations()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION)
-                    .withScope(DEPARTMENT))), //
+                    .withScope(DEPARTMENT)),
+            INSTITUTION, DEPARTMENT), //
     EMPLOYER(new PrismScopeRelations()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION))
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION)
-                    .withScope(DEPARTMENT))); //
+                    .withScope(DEPARTMENT)),
+            INSTITUTION, DEPARTMENT); //
     
     private PrismScopeRelations permittedRelations;
 
-    private PrismMotivationContext(PrismScopeRelations permittedRelations) {
+    private PrismScope[] filterScopes;
+    
+    private PrismMotivationContext(PrismScopeRelations permittedRelations, PrismScope... filterScopes) {
         this.permittedRelations = permittedRelations;
+        this.filterScopes = filterScopes;
     }
 
     public PrismScopeRelations getPermittedRelations() {
         return permittedRelations;
+    }
+
+    public PrismScope[] getFilterScopes() {
+        return filterScopes;
     }
 
     public static class PrismScopeRelations extends LinkedList<PrismScopeRelation> {

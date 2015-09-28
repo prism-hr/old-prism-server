@@ -14,7 +14,7 @@ import org.joda.time.LocalDate;
 
 @Entity
 @Table(name = "advert_closing_date", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "closing_date" }) })
-public class AdvertClosingDate extends AdvertAttribute<LocalDate> {
+public class AdvertClosingDate extends AdvertAttribute {
 
     @Id
     @GeneratedValue
@@ -26,7 +26,7 @@ public class AdvertClosingDate extends AdvertAttribute<LocalDate> {
 
     @Column(name = "closing_date", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate value;
+    private LocalDate closingDate;
 
     @Override
     public Integer getId() {
@@ -48,14 +48,17 @@ public class AdvertClosingDate extends AdvertAttribute<LocalDate> {
         this.advert = advert;
     }
 
-    @Override
-    public LocalDate getValue() {
-        return value;
+    public LocalDate getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
     }
 
     @Override
-    public void setValue(LocalDate value) {
-        this.value = value;
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("closingDate", closingDate);
     }
 
 }

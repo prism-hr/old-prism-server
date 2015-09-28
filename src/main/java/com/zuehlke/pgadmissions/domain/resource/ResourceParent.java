@@ -14,7 +14,7 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
     public abstract String getImportedCode();
 
     public abstract void setImportedCode(String importedCode);
-    
+
     public abstract String getAdvertIncompleteSection();
 
     public abstract void setAdvertIncompleteSection(String advertIncompleteSection);
@@ -22,10 +22,6 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
     public abstract String getName();
 
     public abstract void setName(String name);
-
-    public abstract DateTime getUpdatedTimestampSitemap();
-
-    public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);
 
     public abstract Integer getApplicationRatingCount();
 
@@ -38,6 +34,10 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
     public abstract BigDecimal getApplicationRatingAverage();
 
     public abstract void setApplicationRatingAverage(BigDecimal applicationRatingAverage);
+
+    public abstract DateTime getUpdatedTimestampSitemap();
+
+    public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);
 
     public abstract Set<Advert> getAdverts();
 

@@ -119,6 +119,9 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastCurrencyConversionDate;
 
+    @Column(name = "globally_visible", nullable = false)
+    private Boolean globallyVisible;
+    
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -126,12 +129,8 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private AdvertCategories categories;
 
     @OrderBy(clause = "id")
-    @OneToMany(mappedBy = "invitingAdvert")
-    private Set<AdvertConnection> invitedConnections = Sets.newHashSet();
-
-    @OrderBy(clause = "id")
-    @OneToMany(mappedBy = "receivingAdvert")
-    private Set<AdvertConnection> receivedConnections = Sets.newHashSet();
+    @OneToMany(mappedBy = "advert")
+    private Set<AdvertTarget> targets = Sets.newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
@@ -305,6 +304,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.closingDate = closingDate;
     }
 
+    public Boolean getGloballyVisible() {
+        return globallyVisible;
+    }
+
+    public void setGloballyVisible(Boolean globallyVisible) {
+        this.globallyVisible = globallyVisible;
+    }
+
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -321,12 +328,8 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.categories = categories;
     }
 
-    public Set<AdvertConnection> getInvitedConnections() {
-        return invitedConnections;
-    }
-
-    public Set<AdvertConnection> getReceivedConnections() {
-        return receivedConnections;
+    public Set<AdvertTarget> getTargets() {
+        return targets;
     }
 
     public Set<AdvertCompetence> getCompetences() {
@@ -382,8 +385,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program)
-                .addProperty("project", project);
+        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program).addProperty("project", project);
     }
 
 }

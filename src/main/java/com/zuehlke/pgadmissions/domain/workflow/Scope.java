@@ -26,6 +26,9 @@ public class Scope extends Definition<PrismScope> {
 
     @Column(name = "short_code", nullable = false, unique = true)
     private String shortCode;
+    
+    @Column(name = "default_shared", nullable = false)
+    private Boolean defaultShared;
 
     @Column(name = "ordinal", nullable = false, unique = true)
     private Integer ordinal;
@@ -55,6 +58,14 @@ public class Scope extends Definition<PrismScope> {
     public void setShortCode(String shortCode) {
         this.shortCode = shortCode;
     }
+    
+    public Boolean getDefaultShared() {
+        return defaultShared;
+    }
+
+    public void setDefaultShared(Boolean defaultShared) {
+        this.defaultShared = defaultShared;
+    }
 
     public Integer getOrdinal() {
         return ordinal;
@@ -79,6 +90,11 @@ public class Scope extends Definition<PrismScope> {
         return this;
     }
 
+    public Scope withDefaultShared(Boolean defaultShared) {
+        this.defaultShared = defaultShared;
+        return this;
+    }
+    
     public Scope withOrdinal(Integer ordinal) {
         this.ordinal = ordinal;
         return this;

@@ -20,10 +20,8 @@ public class ResourceListFilterDTO {
     private String valueString;
 
     private Boolean urgentOnly;
-    
-    private Boolean updateOnly;
 
-    private Boolean targetOnly;
+    private Boolean updateOnly;
 
     private PrismAction actionId;
 
@@ -77,14 +75,6 @@ public class ResourceListFilterDTO {
         this.updateOnly = updateOnly;
     }
 
-    public Boolean getTargetOnly() {
-        return targetOnly;
-    }
-
-    public void setTargetOnly(Boolean targetOnly) {
-        this.targetOnly = targetOnly;
-    }
-
     public PrismAction getActionId() {
         return actionId;
     }
@@ -110,7 +100,7 @@ public class ResourceListFilterDTO {
         this.urgentOnly = urgentOnly;
         return this;
     }
-    
+
     public ResourceListFilterDTO withUpdateOnly(Boolean updateOnly) {
         this.updateOnly = updateOnly;
         return this;
@@ -143,13 +133,9 @@ public class ResourceListFilterDTO {
     public boolean isUrgentOnly() {
         return BooleanUtils.toBoolean(urgentOnly);
     }
-    
+
     public boolean isUpdateOnly() {
         return BooleanUtils.toBoolean(updateOnly);
-    }
-
-    public boolean isTargetOnly() {
-        return BooleanUtils.toBoolean(targetOnly);
     }
 
     public boolean hasConstraints() {

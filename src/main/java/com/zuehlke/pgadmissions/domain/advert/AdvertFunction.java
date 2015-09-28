@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 
 @Entity
 @Table(name = "advert_function", uniqueConstraints = { @UniqueConstraint(columnNames = { "advert_id", "function" }) })
-public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
+public class AdvertFunction extends AdvertAttribute {
 
     @Id
     @GeneratedValue
@@ -27,7 +27,7 @@ public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
 
     @Column(name = "function", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PrismAdvertFunction value;
+    private PrismAdvertFunction function;
 
     @Override
     public Integer getId() {
@@ -49,24 +49,27 @@ public class AdvertFunction extends AdvertAttribute<PrismAdvertFunction> {
         this.advert = advert;
     }
 
-    @Override
-    public final PrismAdvertFunction getValue() {
-        return value;
+    public PrismAdvertFunction getFunction() {
+        return function;
     }
 
-    @Override
-    public final void setValue(PrismAdvertFunction function) {
-        this.value = function;
+    public void setFunction(PrismAdvertFunction function) {
+        this.function = function;
     }
-    
+
     public AdvertFunction withAdvert(Advert advert) {
         this.advert = advert;
         return this;
     }
 
-    public AdvertFunction withValue(PrismAdvertFunction value) {
-        this.value = value;
+    public AdvertFunction withFunction(PrismAdvertFunction function) {
+        this.function = function;
         return this;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("function", function);
     }
 
 }

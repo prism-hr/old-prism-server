@@ -24,7 +24,7 @@ public class TargetingController {
 
     @RequestMapping(value = "/competences", method = GET)
     public List<CompetenceRepresentation> searchCompetences(@RequestParam String q) {
-        return advertService.searchCompetences(q);
+        return advertService.getCompetences(q);
     }
 
 }

@@ -150,7 +150,7 @@ public class Application extends Resource implements
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate confirmedStartDate;
 
-    @Column(name = "shared")
+    @Column(name = "shared", nullable = false)
     private Boolean shared;
 
     @Column(name = "submitted_timestamp")

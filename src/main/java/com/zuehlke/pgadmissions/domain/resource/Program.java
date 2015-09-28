@@ -87,7 +87,7 @@ public class Program extends ResourceOpportunity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "availableDate", nullable = false)
+    @Column(name = "available_date", nullable = false)
     private LocalDate availableDate;
 
     @Column(name = "duration_minimum")

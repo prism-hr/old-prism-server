@@ -382,6 +382,11 @@ public class System extends Resource {
         return this;
     }
 
+    public System withShared(Boolean shared) {
+        this.shared = shared;
+        return this;
+    }
+    
     public System withState(State state) {
         this.state = state;
         return this;

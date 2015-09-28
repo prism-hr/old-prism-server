@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.g
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
@@ -415,7 +416,7 @@ public class SystemService {
 
         if (system == null) {
             State systemRunning = stateService.getById(SYSTEM_RUNNING);
-            system = new System().withId(systemId).withName(systemName).withUser(systemUser).withState(systemRunning)
+            system = new System().withId(systemId).withName(systemName).withUser(systemUser).withShared(SYSTEM.isDefaultShared()).withState(systemRunning)
                     .withCipherSalt(PrismEncryptionUtils.getUUID()).withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
             entityService.save(system);
 

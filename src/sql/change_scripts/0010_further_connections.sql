@@ -536,3 +536,8 @@ alter table advert
 alter table advert
 	modify column globally_visible int(1) unsigned not null
 ;
+
+alter table state
+	add column hidden int(1) unsigned after state_duration_evaluation,
+	add index (hidden)
+;

@@ -13,11 +13,11 @@ import com.google.common.collect.Sets;
 public class AdvertCategories {
 
     @OneToMany(mappedBy = "advert")
-    @OrderBy(clause = "value")
+    @OrderBy(clause = "industry")
     private Set<AdvertIndustry> industries = Sets.newHashSet();
 
     @OneToMany(mappedBy = "advert")
-    @OrderBy(clause = "value")
+    @OrderBy(clause = "function")
     private Set<AdvertFunction> functions = Sets.newHashSet();
 
     public Set<AdvertIndustry> getIndustries() {

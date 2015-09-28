@@ -47,6 +47,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         System system = systemService.getSystem();
 
         AdvertDTO advertDTO = newResource.getAdvert();
+        advertDTO.setGloballyVisible(INSTITUTION.isDefaultShared());
         Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName(), user);
 
         String currency = newResource.getCurrency();

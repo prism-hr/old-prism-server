@@ -93,6 +93,7 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceRelationOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -197,44 +198,43 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
+    public ResourceRelationOutcomeDTO getOrCreateResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
-            ResourceParent lastResource = null;
-            ResourceParent lastParentResource = null;
+            ResourceParent resourceChild = null;
             User lastUser = systemService.getSystem().getUser();
             for (ResourceCreationDTO resourceDTO : resourceRelationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
                 PrismScope thisScope = resourceDTO.getScope();
-                PrismScope lastScope = lastResource == null ? SYSTEM : lastResource.getResourceScope();
+                PrismScope lastScope = resourceChild == null ? SYSTEM : resourceChild.getResourceScope();
 
                 resourceDTO.setContext(resourceRelationDTO.getContext());
 
                 if (thisId == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
-                    if (lastResource != null) {
-                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastResource.getId()));
+                    if (resourceChild != null) {
+                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(resourceChild.getId()));
                     }
 
                     Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
-                    lastResource = (ResourceParent) createResource(lastUser, action, resourceDTO).getResource();
+                    resourceChild = (ResourceParent) createResource(lastUser, action, resourceDTO).getResource();
                 } else {
-                    lastResource = (ResourceParent) getById(thisScope, thisId);
-                    lastUser = lastResource.getUser();
+                    resourceChild = (ResourceParent) getById(thisScope, thisId);
+                    lastUser = resourceChild.getUser();
                 }
-
-                lastParentResource = !ResourceOpportunity.class.isAssignableFrom(lastResource.getClass()) ? lastResource : lastParentResource;
             }
 
+            ResourceParent resourceParent = getFirstResourceParent(resourceChild);
             if (resourceRelationDTO.getContext().equals(APPLICANT)) {
-                joinResource(lastParentResource, userService.getCurrentUser(), STUDENT);
+                joinResource(resourceParent, userService.getCurrentUser(), STUDENT);
             }
 
+            User user = null;
             UserDTO userDTO = resourceRelationDTO.getUser();
             if (userDTO != null) {
-                joinResource(lastParentResource, userDTO, VIEWER);
+                user = joinResource(resourceParent, userDTO, VIEWER);
             }
 
-            return lastResource;
+            return new ResourceRelationOutcomeDTO(resourceChild, resourceParent, user);
         }
 
         throw new UnsupportedOperationException("Invalid resource creation attempt");
@@ -869,6 +869,13 @@ public class ResourceService {
             }
         }
         return false;
+    }
+
+    private ResourceParent getFirstResourceParent(ResourceParent resource) {
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            return getFirstResourceParent(resource);
+        }
+        return resource;
     }
 
 }

@@ -637,7 +637,7 @@ public class ProfileService {
 
     private void createAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
         ResourceRelationInvitationDTO resourceRelationDTO = advertRelationDTO.getResource();
-        ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
+        ResourceParent resource = resourceService.getOrCreateResourceRelation(resourceRelationDTO).getResourceParent();
 
         UserDTO userConnectionDTO = resourceRelationDTO.getUser();
         if (userConnectionDTO != null) {

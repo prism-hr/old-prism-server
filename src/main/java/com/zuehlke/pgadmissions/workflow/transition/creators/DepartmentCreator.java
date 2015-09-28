@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static java.util.stream.Collectors.joining;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
@@ -37,6 +38,7 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
         Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
         AdvertDTO advertDTO = newResource.getAdvert();
+        advertDTO.setGloballyVisible(DEPARTMENT.isDefaultShared());
         Advert advert = advertService.createAdvert(institution, advertDTO, newResource.getName(), user);
 
         Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution)

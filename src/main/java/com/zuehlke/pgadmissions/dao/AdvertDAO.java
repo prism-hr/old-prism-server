@@ -54,7 +54,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -387,6 +386,24 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<Advert> getAdvertsForWhichUserCanTarget(PrismScope scope, User user, PrismOpportunityCategory[] opportunityCategories, List<PrismState> activeStates) {
+        Junction categoriesConstraint = Restrictions.disjunction();
+        for (PrismOpportunityCategory opportunityCategory : opportunityCategories) {
+            categoriesConstraint.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
+        }
+
+        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("resource.advert")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("state.id", activeStates)) //
+                .add(categoriesConstraint) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .list();
+    }
+
     public List<Advert> getAdvertsTargetsUserCanEndorseFor(Advert advert, User user, PrismScope scope, PrismScope partnerScope) {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(Projections.groupProperty("target.targetAdvert")) //
@@ -418,14 +435,14 @@ public class AdvertDAO {
                 .list();
     }
 
-    public void endorseForAdvertTargets(Collection<Integer> advertTargets, PrismPartnershipState partnershipState) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update AdvertTarget "
-                        + "set partnershipState = :partnershipState "
-                        + "where id in (:advertTargets)") //
-                .setParameter("partnershipState", partnershipState) //
-                .setParameterList("advertTargets", advertTargets) //
-                .executeUpdate();
+    public AdvertTarget getAdvertTargetForAcceptance(Integer advertTargetId) {
+        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.eq("id", advertTargetId)) //
+                .add(Restrictions.not(
+                        Restrictions.conjunction() //
+                                .add(Restrictions.isNotNull("acceptingUser"))
+                                .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)))) //
+                .uniqueResult();
     }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

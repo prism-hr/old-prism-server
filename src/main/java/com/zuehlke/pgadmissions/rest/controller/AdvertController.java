@@ -47,11 +47,6 @@ public class AdvertController {
         advertService.updateCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
     }
 
-//    @RequestMapping(value = "/targets", method = RequestMethod.PUT)
-//    public void updateTargets(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertTargetsDTO targetsDTO) {
-//        advertService.updateTargets(resourceDescriptor.getResourceScope(), resourceId, targetsDTO);
-//    }
-
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {

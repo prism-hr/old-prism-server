@@ -229,6 +229,12 @@ alter table user_personal_detail
 	drop column imported_disability_id
 ;
 
+alter table user_personal_detail
+	change column imported_nationality_id nationality_id varchar(10),
+	change column imported_domicile_id domicile_id varchar(10)
+;
+
+
 alter table application
 	drop column application_reserve_status,
 	drop index application_reserve_rating

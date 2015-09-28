@@ -11,10 +11,12 @@ import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
+import com.zuehlke.pgadmissions.workflow.user.UserEmploymentPositionReassignmentProcessor;
 
 @Entity
 @Table(name = "user_employment_position", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
-public class UserEmploymentPosition extends UserAdvertRelationSection implements ProfileEmploymentPosition<UserAccount> {
+public class UserEmploymentPosition extends UserAdvertRelationSection
+        implements ProfileEmploymentPosition<UserAccount>, UserAssignment<UserEmploymentPositionReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -27,7 +29,7 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    
+
     @ManyToOne
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
@@ -66,7 +68,7 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
     public void setAssociation(UserAccount association) {
         this.association = association;
     }
-    
+
     @Override
     public User getUser() {
         return user;
@@ -135,6 +137,16 @@ public class UserEmploymentPosition extends UserAdvertRelationSection implements
     @Override
     public void setCurrent(Boolean current) {
         this.current = current;
+    }
+    
+    @Override
+    public Class<UserEmploymentPositionReassignmentProcessor> getUserReassignmentProcessor() {
+        return UserEmploymentPositionReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
     }
 
     @Override

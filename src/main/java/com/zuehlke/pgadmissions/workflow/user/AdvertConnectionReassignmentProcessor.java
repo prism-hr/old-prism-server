@@ -16,16 +16,16 @@ public class AdvertConnectionReassignmentProcessor implements PrismUserReassignm
 
     @Override
     public void reassign(User oldUser, User newUser, String userProperty) {
-        for (AdvertTarget oldAdvertConnection : oldUser.getAdvertConnections()) {
-            userService.mergeUserAssignmentStrict(oldAdvertConnection, newUser, userProperty);
+        for (AdvertTarget oldAdvertTarget : oldUser.getAdvertTargets()) {
+            userService.mergeUserAssignmentStrict(oldAdvertTarget, newUser, userProperty);
         }
 
-        for (AdvertTarget oldAdvertTargetConnection : oldUser.getAdvertTargetConnections()) {
-            userService.mergeUserAssignmentStrict(oldAdvertTargetConnection, newUser, userProperty);
+        for (AdvertTarget oldAdvertTargetTarget : oldUser.getAdvertTargetsTarget()) {
+            userService.mergeUserAssignmentStrict(oldAdvertTargetTarget, newUser, userProperty);
         }
 
-        for (AdvertTarget oldAdvertAcceptingConnection : oldUser.getAdvertAcceptingConnections()) {
-            userService.mergeUserAssignmentStrict(oldAdvertAcceptingConnection, newUser, userProperty);
+        for (AdvertTarget oldAdvertTargetAccepting : oldUser.getAdvertTargetsAccepting()) {
+            userService.mergeUserAssignmentStrict(oldAdvertTargetAccepting, newUser, userProperty);
         }
     }
 

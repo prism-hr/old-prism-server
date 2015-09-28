@@ -18,10 +18,13 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.workflow.user.ApplicationQualificationReassignmentProcessor;
 
 @Entity
 @Table(name = "application_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
-public class ApplicationQualification extends ApplicationAdvertRelationSection implements ProfileQualification<Application> {
+public class ApplicationQualification extends ApplicationAdvertRelationSection
+        implements ProfileQualification<Application>, UserAssignment<ApplicationQualificationReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -34,7 +37,7 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection i
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-    
+
     @ManyToOne
     @JoinColumn(name = "advert_id")
     private Advert advert;
@@ -185,6 +188,16 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection i
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
+    @Override
+    public Class<ApplicationQualificationReassignmentProcessor> getUserReassignmentProcessor() {
+        return ApplicationQualificationReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+    
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature().addProperty("startYear", startYear);

@@ -75,7 +75,7 @@ public class NotificationDAO {
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -111,7 +111,7 @@ public class NotificationDAO {
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinResolution()) //
-                .createAlias("ownerRoles.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //

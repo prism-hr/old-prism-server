@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.math.BigDecimal;
+
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import org.joda.time.LocalDate;
-
-import java.math.BigDecimal;
 
 public class AdvertDTO extends ResourceActivityDTO {
 

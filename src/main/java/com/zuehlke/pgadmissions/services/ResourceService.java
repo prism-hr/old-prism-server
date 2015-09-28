@@ -684,7 +684,8 @@ public class ResourceService {
 
     private void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
         Role initialRole = null;
-        boolean canViewEdit = actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false);
+        Action viewEditAction = actionService.getViewEditAction(resource);
+        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, userService.getCurrentUser(), false);
         if (context.equals(PrismJoinResourceContext.STUDENT)) {
             initialRole = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
         } else if (roleService.getVerifiedRoles(user, resource).isEmpty()) {

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
@@ -714,11 +715,15 @@ public class ResourceService {
         return user;
     }
 
-    public HashMultimap<PrismScope, Integer> getResourcesUserHasVerifiedRolesFor(User user) {
+    public HashMultimap<PrismScope, Integer> getResourcesUserHasVerifiedRolesFor(User user, PrismScope... exclusions) {
+        List<PrismScope> exclusionsList = newArrayList(exclusions);
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         roleService.getVerifiedRoles(user).forEach(r -> {
             Resource resource = r.getResource();
-            resources.put(resource.getResourceScope(), resource.getId());
+            PrismScope resourceScope = resource.getResourceScope();
+            if (!exclusionsList.contains(resourceScope)) {
+                resources.put(resourceScope, resource.getId());
+            }
         });
         return resources;
     }

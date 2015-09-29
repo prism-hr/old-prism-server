@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static java.util.Arrays.asList;
@@ -180,9 +179,6 @@ public class AdvertDAO {
         roleScopes.add(scope);
         if (userLoggedIn || narrowedByResource) {
             for (PrismScope roleScope : roleScopes) {
-                if(roleScope == APPLICATION) {
-                    continue;
-                }
                 String scopeReferenceLower = roleScope.getLowerCamelName();
 
                 String advertScopeReference = "advert" + roleScope.getUpperCamelName();

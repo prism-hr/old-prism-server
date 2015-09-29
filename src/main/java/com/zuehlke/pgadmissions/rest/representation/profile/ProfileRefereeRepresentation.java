@@ -1,17 +1,14 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileRefereeRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private UserRepresentationSimple user;
-
-    private ResourceRepresentationActivity resource;
+    private ResourceRelationInvitationRepresentation resource;
 
     private String phone;
 
@@ -27,19 +24,11 @@ public class ProfileRefereeRepresentation extends ApplicationSectionRepresentati
         this.id = id;
     }
 
-    public UserRepresentationSimple getUser() {
-        return user;
-    }
-
-    public void setUser(UserRepresentationSimple user) {
-        this.user = user;
-    }
-
-    public ResourceRepresentationActivity getResource() {
+    public ResourceRelationInvitationRepresentation getResource() {
         return resource;
     }
 
-    public void setResource(ResourceRepresentationActivity resource) {
+    public void setResource(ResourceRelationInvitationRepresentation resource) {
         this.resource = resource;
     }
 
@@ -72,12 +61,7 @@ public class ProfileRefereeRepresentation extends ApplicationSectionRepresentati
         return this;
     }
 
-    public ProfileRefereeRepresentation withUser(UserRepresentationSimple user) {
-        this.user = user;
-        return this;
-    }
-
-    public ProfileRefereeRepresentation withResource(ResourceRepresentationActivity resource) {
+    public ProfileRefereeRepresentation withResource(final ResourceRelationInvitationRepresentation resource) {
         this.resource = resource;
         return this;
     }

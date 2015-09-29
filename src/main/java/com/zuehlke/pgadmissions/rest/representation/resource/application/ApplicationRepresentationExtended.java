@@ -6,18 +6,18 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 
 public class ApplicationRepresentationExtended extends ApplicationRepresentationSimple {
 
-    private List<UserRepresentationSimple> refereesNotResponded;
+    private List<UserRepresentationSimple> refereesWithoutReference;
     
     private List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors;
     
     private ApplicationOfferRepresentation offerRecommendation;
     
-    public List<UserRepresentationSimple> getRefereesNotResponded() {
-        return refereesNotResponded;
+    public List<UserRepresentationSimple> getRefereesWithoutReference() {
+        return refereesWithoutReference;
     }
 
-    public void setRefereesNotResponded(List<UserRepresentationSimple> refereesNotResponded) {
-        this.refereesNotResponded = refereesNotResponded;
+    public void setWithoutReference(List<UserRepresentationSimple> refereesWithoutReference) {
+        this.refereesWithoutReference = refereesWithoutReference;
     }
 
     public List<ApplicationAssignedHiringManagerRepresentation> getAssignedSupervisors() {

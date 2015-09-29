@@ -125,7 +125,7 @@ public class ApplicationMapper {
 
     public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Class<T> returnType, List<PrismRole> overridingRoles) {
         T representation = getApplicationRepresentation(application, returnType, overridingRoles);
-        representation.setRefereesNotResponded(
+        representation.setWithoutReference(
                 applicationService.getApplicationRefereesNotResponded(application).stream().map(userMapper::getUserRepresentationSimple).collect(Collectors.toList()));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));

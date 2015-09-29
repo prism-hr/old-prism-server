@@ -1187,7 +1187,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_COMMON_CONFIRM_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Confirm"),
     SYSTEM_HTML_COMMON_SUBMIT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Submit"),
     SYSTEM_HTML_COMMON_ADD_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Add"),
-    SYSTEM_HTML_CREATE_RESOURCE_FAMILY_ACTIONS_CONTROL_DOWNLOAD_AS_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Download as PDF"),
+    SYSTEM_HTML_DOWNLOAD_AS_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Download as PDF"),
     SYSTEM_HTML_ASSIGN_USERS_USER_NOT_IN_LIST(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "User not in the list?"),
     SYSTEM_HTML_DURATION_CONTROL_HOURS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Hours"),
     SYSTEM_HTML_DURATION_CONTROL_MINUTES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Minutes"),

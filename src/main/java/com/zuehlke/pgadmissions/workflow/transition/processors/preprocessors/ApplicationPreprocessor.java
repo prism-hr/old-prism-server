@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.List;
@@ -17,6 +18,8 @@ import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -69,6 +72,11 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
     }
 
     private void setSubmissionData(Application application) {
+        ResourceParent parentResource = application.getParentResource();
+        if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass()) && isTrue(((ResourceOpportunity) parentResource).getOpportunityType().getRequireEndorsement())) {
+            application.setShared(true);
+        }
+        
         application.setSubmittedTimestamp(new DateTime());
         AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
         application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());

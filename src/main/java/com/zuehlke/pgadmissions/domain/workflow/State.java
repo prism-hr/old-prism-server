@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
@@ -67,6 +68,9 @@ public class State extends WorkflowDefinition {
 
     @OneToMany(mappedBy = "state")
     private Set<Institution> institutions = Sets.newHashSet();
+    
+    @OneToMany(mappedBy = "state")
+    private Set<Department> departments = Sets.newHashSet();
 
     @OneToMany(mappedBy = "state")
     private Set<Program> programs = Sets.newHashSet();
@@ -154,6 +158,10 @@ public class State extends WorkflowDefinition {
 
     public Set<Institution> getInstitutions() {
         return institutions;
+    }
+    
+    public Set<Department> getDepartments() {
+        return departments;
     }
 
     public Set<Program> getPrograms() {

@@ -162,8 +162,10 @@ public class StateDAO {
     public List<PrismState> getActiveResourceStates(PrismScope resourceScope) {
         return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("state.id")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.scope.id", resourceScope)) //
+                .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.isNotNull("action.creationScope")) //
                 .list();
     }

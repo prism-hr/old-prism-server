@@ -1,26 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors;
 
-import static com.zuehlke.pgadmissions.PrismConstants.CONFIDENCE_MEDIUM;
-import static com.zuehlke.pgadmissions.PrismConstants.DEFAULT_RATING;
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Component;
-
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -29,18 +8,30 @@ import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
 import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.EntityService;
-import com.zuehlke.pgadmissions.services.ScopeService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.PrismConstants.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static java.math.RoundingMode.HALF_UP;
 
 @Component
 public class ApplicationPostprocessor implements ResourceProcessor<Application> {
@@ -103,15 +94,17 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         applicationService.syncronizeApplicationRating(application);
         entityService.flush();
 
-        scopeService.getParentScopesDescending(APPLICATION, INSTITUTION).forEach(scope -> {
+        for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, INSTITUTION)) {
             ResourceParent parent = (ResourceParent) application.getEnclosingResource(scope);
-            ResourceRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
-            Integer ratingCount = parentRatingSummary.getRatingCount().intValue();
-            Integer ratingApplications = parentRatingSummary.getRatingResources().intValue();
-            parent.setApplicationRatingCount(ratingCount);
-            parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications), RATING_PRECISION, HALF_UP));
-            parent.setApplicationRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
-        });
+            if (parent != null) {
+                ResourceRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
+                Integer ratingCount = parentRatingSummary.getRatingCount().intValue();
+                Integer ratingApplications = parentRatingSummary.getRatingResources().intValue();
+                parent.setApplicationRatingCount(ratingCount);
+                parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications), RATING_PRECISION, HALF_UP));
+                parent.setApplicationRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));
+            }
+        }
     }
 
     private void buildAggregatedRating(Comment comment) {

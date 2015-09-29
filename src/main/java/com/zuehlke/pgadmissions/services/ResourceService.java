@@ -198,7 +198,7 @@ public class ResourceService {
         return actionService.executeUserAction(resource, action, comment);
     }
 
-    public ResourceRelationOutcomeDTO getOrCreateResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
+    public ResourceRelationOutcomeDTO createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
             ResourceParent resourceChild = null;
             User lastUser = systemService.getSystem().getUser();
@@ -237,7 +237,7 @@ public class ResourceService {
             return new ResourceRelationOutcomeDTO(resourceChild, resourceParent, user);
         }
 
-        throw new UnsupportedOperationException("Invalid resource creation attempt");
+        throw new UnsupportedOperationException("Invalid resource relation creation attempt");
     }
 
     @SuppressWarnings("unchecked")

@@ -79,7 +79,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
@@ -258,7 +257,7 @@ public class AdvertService {
 
     public void getOrCreateAdvertTargets(ResourceRelationInvitationDTO resourceRelation) {
         User user = userService.getCurrentUser();
-        ResourceRelationOutcomeDTO resourceRelationOutcomeDTO = resourceService.getOrCreateResourceRelation(resourceRelation);
+        ResourceRelationOutcomeDTO resourceRelationOutcomeDTO = resourceService.createResourceRelation(resourceRelation);
 
         Advert advert = resourceRelationOutcomeDTO.getResourceParent().getAdvert();
         User targetUser = resourceRelationOutcomeDTO.getUser();
@@ -286,13 +285,14 @@ public class AdvertService {
 
             PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
             if (user.equals(advertTarget.getAcceptingUser())) {
-                String scopePrefix = resource.getResourceScope().name();
-                Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
-                if (actionService.checkActionAvailable(resource, completeAction, user, false)) {
-                    System system = systemService.getSystem();
-                    User systemUser = system.getUser();
-                    resourceService.executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
-                    roleService.verifyUserRoles(systemUser, resource, user, true);
+                if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
+                    String scopePrefix = resource.getResourceScope().name();
+                    Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
+                    if (actionService.checkActionExecutable(resource, completeAction, user, false)) {
+                        User systemUser = systemService.getSystem().getUser();
+                        resourceService.executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
+                        roleService.verifyUserRoles(systemUser, resource, user, true);
+                    }
                 }
             } else {
                 Action viewEditAction = actionService.getViewEditAction(resource);

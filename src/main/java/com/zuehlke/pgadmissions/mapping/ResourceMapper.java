@@ -607,7 +607,7 @@ public class ResourceMapper {
         }
 
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope(), INSTITUTION);
-        ResourceActivityDTO resourceWithParents = resourceService.getResourceWithParents(resource, parentScopes);
+        ResourceActivityDTO resourceWithParents = resourceService.getResourceWithParentResources(resource, parentScopes);
 
         for (PrismScope parentScope : parentScopes) {
             ResourceActivityDTO parentResource = resourceWithParents.getEnclosingResource(parentScope);

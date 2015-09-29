@@ -240,7 +240,8 @@ public class ProfileService {
     public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationDocument document = updateDocument(application, ApplicationDocument.class, documentDTO);
-        document.setCoveringLetter(documentService.getById(getDocumentId(documentDTO.getCoveringLetter()), DOCUMENT));
+        Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(), DOCUMENT) : null;
+        document.setCoveringLetter(coveringLetter);
 
         UserAccount userAccount = application.getUser().getUserAccount();
         updateDocument(userAccount, UserDocument.class, documentDTO);
@@ -559,7 +560,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileDocument<T>> U updateDocument(
             T profile, Class<U> documentClass, ProfileDocumentDTO documentDTO) {
-        U document = (U) profile.getAddress();
+        U document = (U) profile.getDocument();
         if (document == null) {
             document = instantiate(documentClass);
         }

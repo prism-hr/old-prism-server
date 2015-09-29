@@ -100,6 +100,7 @@ public class ProfileMapper {
                 Document coveringLetter = ((ApplicationDocument) document).getCoveringLetter();
                 representation.setCoveringLetter(coveringLetter == null ? null : documentMapper.getDocumentRepresentation(coveringLetter));
                 representation.setLinkedinProfileUrl(document.getAssociation().getUser().getUserAccount().getLinkedinProfileUrl());
+                representation.setLastUpdatedTimestamp(((ApplicationDocument) document).getLastUpdatedTimestamp());
             }
 
             return representation;

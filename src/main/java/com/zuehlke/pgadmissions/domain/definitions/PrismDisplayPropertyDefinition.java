@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -928,8 +928,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Confirm Interview Arrangements Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
-            "Confirm Offer Recommendation Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
+            "Confirm Offer Acceptance Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
+            "Confirm Offer Acceptance Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Rejection Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Provide Interview Availability Notification"),

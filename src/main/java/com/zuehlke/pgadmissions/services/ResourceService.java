@@ -822,7 +822,7 @@ public class ResourceService {
 
     private ResourceParent getFirstResourceParent(ResourceParent resource) {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            return getFirstResourceParent(resource);
+            return getFirstResourceParent(resource.getParentResource());
         }
         return resource;
     }

@@ -145,7 +145,7 @@ public class ProfileMapper {
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(qualification.getUser()))
                 .withResource(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()));
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
-                .withResource(relation)
+                .withResource(relation).withGrade(qualification.getGrade())
                 .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
 

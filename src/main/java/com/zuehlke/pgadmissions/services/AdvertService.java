@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -421,7 +422,7 @@ public class AdvertService {
         PrismMotivationContext context = query.getContext();
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
-        HashMultimap<PrismScope, Integer> userRoleResources = resourceService.getResourcesUserHasVerifiedRolesFor(user);
+        HashMultimap<PrismScope, Integer> userRoleResources = resourceService.getResourcesUserHasVerifiedRolesFor(user, APPLICATION);
         for (PrismScope scope : scopes) {
             adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, user, userRoleResources));
         }

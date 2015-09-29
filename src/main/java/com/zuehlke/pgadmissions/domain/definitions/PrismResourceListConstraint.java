@@ -1,32 +1,19 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.BETWEEN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.EQUAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.GREATER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.LESSER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DATE_TIME;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.DECIMAL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.STATE_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.STRING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.LinkedHashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.workflow.selectors.filter.PrismResourceListFilterSelector;
 import com.zuehlke.pgadmissions.workflow.selectors.filter.ResourceByParentResourceSelector;
 import com.zuehlke.pgadmissions.workflow.selectors.filter.ResourceByUserAndRoleSelector;
 import com.zuehlke.pgadmissions.workflow.selectors.filter.StateByStateGroupSelector;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterPropertyType.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismResourceListConstraint {
 
@@ -68,7 +55,7 @@ public enum PrismResourceListConstraint {
             Arrays.asList(DEPARTMENT)), //
     INSTITUTION_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(INSTITUTION));
-    
+
     private String propertyName;
 
     private PrismResourceListFilterPropertyType propertyType;

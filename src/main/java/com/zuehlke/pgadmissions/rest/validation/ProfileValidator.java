@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
-import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_EARLIEST_BUFFER;
-import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_LATEST_BUFFER;
-import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
@@ -27,6 +24,8 @@ import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.exceptions.PrismCannotApplyException;
+import com.zuehlke.pgadmissions.mapping.ApplicationMapper;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
@@ -35,6 +34,9 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
 
     @Inject
     private ResourceService resourceService;
+    
+    @Inject
+    private ApplicationMapper applicationMapper;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -98,16 +100,15 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
                 if (resourceService.getResourceStudyOption((ResourceOpportunity) parentResource, programDetail.getStudyOption()) == null) {
                     errors.rejectValue("studyOption", "notAvailable");
                 }
-            } else {
-                LocalDate baseline = new LocalDate();
-                LocalDate earliestStartDate = getNextMonday(baseline.plusDays(START_DATE_EARLIEST_BUFFER));
-                LocalDate latestStartDate = getNextMonday(baseline.plusDays(START_DATE_LATEST_BUFFER));
-
-                if (startDate.isBefore(earliestStartDate)) {
-                    errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
-                } else if (startDate.isAfter(latestStartDate)) {
-                    errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
-                }
+            }
+            
+            ApplicationStartDateRepresentation startDateConstraints = applicationMapper.getApplicationStartDateRepresentation(new LocalDate());
+            LocalDate earliestStartDate = startDateConstraints.getEarliestDate();
+            LocalDate latestStartDate = startDateConstraints.getLatestDate();
+            if (startDate.isBefore(earliestStartDate)) {
+                errors.rejectValue("startDate", "notBefore", new Object[] { earliestStartDate }, null);
+            } else if (startDate.isAfter(latestStartDate)) {
+                errors.rejectValue("startDate", "notAfter", new Object[] { latestStartDate }, null);
             }
 
             errors.popNestedPath();

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_EARLIEST_BUFFER;
+import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_LATEST_BUFFER;
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.PrismConstants;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
@@ -171,7 +171,7 @@ public class ApplicationMapper {
     public ApplicationStartDateRepresentation getApplicationStartDateRepresentation(LocalDate baseline) {
         return new ApplicationStartDateRepresentation().withEarliestDate(getNextMonday(baseline.plusDays(START_DATE_EARLIEST_BUFFER)))
                 .withRecommendedDate(getNextMonday(baseline.plusMonths(START_DATE_RECOMMENDED_BUFFER)))
-                .withLatestDate(getNextMonday(baseline.plusYears(PrismConstants.START_DATE_LATEST_BUFFER)));
+                .withLatestDate(getNextMonday(baseline.plusYears(START_DATE_LATEST_BUFFER)));
     }
 
     public <T extends ApplicationRepresentationSimple> void fillApplicationProfileRepresentation(Application application, T representation, List<PrismRole> overridingRoles) {

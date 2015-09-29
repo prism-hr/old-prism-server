@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.PrismRestUtils;
+import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCategoriesDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertClosingDateDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;

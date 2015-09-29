@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
+import org.joda.time.LocalDate;
+
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
-import org.joda.time.LocalDate;
 
 public class ProfileQualificationRepresentation extends ApplicationSectionRepresentation {
 

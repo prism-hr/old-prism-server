@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.exceptions.IntegrationException;
 import com.zuehlke.pgadmissions.exceptions.PrismBadRequestException;
+import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
 import com.zuehlke.pgadmissions.services.helpers.processors.ImageDocumentProcessor;
 
 @Service
@@ -144,7 +145,9 @@ public class DocumentService {
         Resource resource = document.getResource();
         if (!user.getId().equals(document.getUser().getId())) {
             Action viewEditAction = actionService.getViewEditAction(resource);
-            actionService.validateViewEditAction(resource, viewEditAction, user);
+            if (viewEditAction == null || !actionService.checkActionAvailable(resource, viewEditAction, user, false)) {
+                throw new WorkflowPermissionException(resource, viewEditAction);
+            }
         }
     }
 

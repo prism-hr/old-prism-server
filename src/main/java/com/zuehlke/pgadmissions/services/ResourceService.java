@@ -364,25 +364,19 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public Comment executeUpdate(Resource resource, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
-        User user = userService.getCurrentUser();
-        return executeUpdate(resource, user, messageIndex, assignees);
-    }
-
-    public Comment executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
+    public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
         Action action = actionService.getViewEditAction(resource);
-
-        Comment comment = new Comment().withUser(user).withAction(action)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(resource).loadLazy(messageIndex))
-                .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-
-        for (CommentAssignedUser assignee : assignees) {
-            comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
-            entityService.evict(assignee);
+        if (action != null) {
+            Comment comment = new Comment().withUser(user).withAction(action)
+                    .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(resource).loadLazy(messageIndex))
+                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+    
+            for (CommentAssignedUser assignee : assignees) {
+                comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
+                entityService.evict(assignee);
+            }
+            actionService.executeUserAction(resource, action, comment);
         }
-
-        actionService.executeUserAction(resource, action, comment);
-        return comment;
     }
 
     public <T extends Resource> T getOperativeResource(T resource, Action action) {

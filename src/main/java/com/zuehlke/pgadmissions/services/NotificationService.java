@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -33,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserNotification;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -105,9 +105,9 @@ public class NotificationService {
         sendIndividualUpdateNotifications(resource, comment, author, exclusions, baseline);
         entityService.flush();
     }
-    
+
     public void sendSyndicatedUserNotifications() {
-        
+
     }
 
     public void sendNotification(PrismNotificationDefinition notificationTemplateId, NotificationDefinitionModelDTO modelDTO) {
@@ -193,19 +193,16 @@ public class NotificationService {
 
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, User author, Set<User> userExclusions, LocalDate baseline) {
         List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), userExclusions);
-
         if (updates.size() > 0) {
-            PrismAction transitionActionId = actionService.getViewEditAction(resource).getId();
-
-            for (UserNotificationDefinitionDTO update : updates) {
-                User user = userService.getById(update.getUserId());
-                NotificationDefinition definition = getById(update.getNotificationDefinitionId());
-
-                sendNotification(definition,
-                        new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment)
-                                .withTransitionAction(transitionActionId));
-
-                createOrUpdateUserNotification(resource, user, definition, baseline);
+            Action action = actionService.getViewEditAction(resource);
+            if (action != null) {
+                for (UserNotificationDefinitionDTO update : updates) {
+                    User user = userService.getById(update.getUserId());
+                    NotificationDefinition definition = getById(update.getNotificationDefinitionId());
+                    sendNotification(definition, new NotificationDefinitionModelDTO().withUser(user).withAuthor(author).withResource(resource).withComment(comment)
+                            .withTransitionAction(action == null ? null : action.getId()));
+                    createOrUpdateUserNotification(resource, user, definition, baseline);
+                }
             }
         }
     }

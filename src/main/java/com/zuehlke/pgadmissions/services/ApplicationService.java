@@ -281,13 +281,14 @@ public class ApplicationService {
     }
 
     public void executeUpdate(Application application, PrismDisplayPropertyDefinition message, CommentAssignedUser... assignees) {
+        User currentUser = userService.getCurrentUser();
         if (application.getState().getStateGroup().getId().equals(APPLICATION_UNSUBMITTED)) {
             Action action = actionService.getById(APPLICATION_COMPLETE);
-            if (!actionService.checkActionExecutable(application, action, userService.getCurrentUser(), false)) {
+            if (!actionService.checkActionExecutable(application, action, currentUser, false)) {
                 throw new WorkflowPermissionException(application, action);
             }
         } else {
-            resourceService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL, assignees);
+            resourceService.executeUpdate(application, currentUser, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL, assignees);
         }
     }
 

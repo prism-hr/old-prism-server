@@ -53,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
@@ -389,7 +390,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource) {
-        validateViewEditAction(resource);
+        validateActionExecutable(resource);
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -408,7 +409,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
-        validateViewEditAction((T) resource);
+        validateActionExecutable((T) resource);
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -580,8 +581,9 @@ public class ResourceMapper {
         return getResourceRepresentationActivity(resource, ResourceRepresentationActivity.class);
     }
 
-    private <T extends Resource> void validateViewEditAction(T resource) {
-        if (!actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), userService.getCurrentUser(), false)) {
+    private <T extends Resource> void validateActionExecutable(T resource) {
+        Action action = actionService.getViewEditAction(resource);
+        if (action == null || !actionService.checkActionExecutable(resource, action, userService.getCurrentUser(), false)) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
     }

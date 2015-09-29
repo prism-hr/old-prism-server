@@ -201,13 +201,6 @@ public class ActionService {
         return actionDAO.getConfigurableActions();
     }
 
-    public void validateViewEditAction(Resource resource, Action action, User invoker) {
-        if (checkActionAvailable(resource, action, invoker, false)) {
-            return;
-        }
-        throw new WorkflowPermissionException(resource, action);
-    }
-
     public void setCreationActions() {
         List<ActionCreationScopeDTO> actionCreationScopes = actionDAO.getCreationActions();
         for (ActionCreationScopeDTO actionCreationScope : actionCreationScopes) {

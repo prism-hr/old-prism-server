@@ -16,6 +16,7 @@ import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -124,6 +125,8 @@ public class ApplicationMapper {
 
     public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Class<T> returnType, List<PrismRole> overridingRoles) {
         T representation = getApplicationRepresentation(application, returnType, overridingRoles);
+        representation.setRefereesNotResponded(
+                applicationService.getApplicationRefereesNotResponded(application).stream().map(userMapper::getUserRepresentationSimple).collect(Collectors.toList()));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
         return representation;

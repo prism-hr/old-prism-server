@@ -90,17 +90,19 @@ public class RoleService {
 
     public void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
         Action action = actionService.getViewEditAction(resource);
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
+        if (action != null) {
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
 
-        Comment comment = new Comment().withAction(action).withUser(invoker)
-                .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
-                .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-        for (PrismRole role : roles) {
-            comment.addAssignedUser(user, getById(role), transitionType);
+            Comment comment = new Comment().withAction(action).withUser(invoker)
+                    .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+            for (PrismRole role : roles) {
+                comment.addAssignedUser(user, getById(role), transitionType);
+            }
+
+            actionService.executeUserAction(resource, action, comment);
+            notificationService.sendInvitationNotifications(comment);
         }
-
-        actionService.executeUserAction(resource, action, comment);
-        notificationService.sendInvitationNotifications(comment);
     }
 
     public void verifyUserRoles(User invoker, Resource resource, User user, Boolean verify) {
@@ -109,8 +111,11 @@ public class RoleService {
             if (userRole != null) {
                 if (isTrue(verify)) {
                     updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(r.name().replace("_UNVERIFIED", "")));
-                } else if (actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), user, false)) {
-                    entityService.delete(userRole);
+                } else {
+                    Action action = actionService.getViewEditAction(resource);
+                    if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+                        entityService.delete(userRole);
+                    }
                 }
             }
         });
@@ -126,7 +131,8 @@ public class RoleService {
             resource.getAdvert().setUser(user);
         }
 
-        resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
+        resourceService.executeUpdate(resource, userService.getCurrentUser(),
+                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
     }
 
     public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {

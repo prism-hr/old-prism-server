@@ -294,8 +294,11 @@ public class AdvertService {
                     resourceService.executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
                     roleService.verifyUserRoles(systemUser, resource, user, true);
                 }
-            } else if (actionService.checkActionExecutable(resource, actionService.getViewEditAction(resource), user, false)) {
-
+            } else {
+                Action viewEditAction = actionService.getViewEditAction(resource);
+                if (!(viewEditAction == null || !actionService.checkActionExecutable(resource, viewEditAction, user, false))) {
+                    
+                }
             }
         }
     }
@@ -707,8 +710,8 @@ public class AdvertService {
         return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
-    private Comment executeUpdate(ResourceParent resource, String message) {
-        return resourceService.executeUpdate(resource, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
+    private void executeUpdate(ResourceParent resource, String message) {
+        resourceService.executeUpdate(resource, userService.getCurrentUser(), PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_" + message));
     }
 
     private void updateAddress(Advert advert, AddressDTO addressDTO) {

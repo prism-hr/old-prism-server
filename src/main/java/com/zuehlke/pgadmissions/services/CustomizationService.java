@@ -48,6 +48,9 @@ public class CustomizationService {
     private ResourceService resourceService;
 
     @Inject
+    private UserService userService;
+    
+    @Inject
     private CustomizationMapper customizationMapper;
 
     public WorkflowDefinition getDefinitionById(PrismConfiguration configurationType, Enum<?> id) {
@@ -157,13 +160,13 @@ public class CustomizationService {
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
             Enum<?> definitionId) {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, opportunityType, definitionId);
-        resourceService.executeUpdate(resource,
+        resourceService.executeUpdate(resource, userService.getCurrentUser(),
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
     public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType) {
         customizationDAO.restoreGlobalConfiguration(configurationType, resource, scope, opportunityType);
-        resourceService.executeUpdate(resource,
+        resourceService.executeUpdate(resource, userService.getCurrentUser(), 
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
@@ -177,7 +180,7 @@ public class CustomizationService {
         }
 
         createConfigurationGroup(configurationType, resource, scope, opportunityType, workflowConfigurationGroupDTO);
-        resourceService.executeUpdate(resource,
+        resourceService.executeUpdate(resource, userService.getCurrentUser(), 
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
@@ -185,7 +188,7 @@ public class CustomizationService {
             Enum<?> definitionId, List<? extends WorkflowConfigurationDTO> workflowConfigurationGroupDTO) {
 
         createConfigurationGroup(configurationType, resource, opportunityType, definitionId, workflowConfigurationGroupDTO);
-        resourceService.executeUpdate(resource,
+        resourceService.executeUpdate(resource, userService.getCurrentUser(), 
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
     }
 
@@ -230,7 +233,7 @@ public class CustomizationService {
     public WorkflowConfiguration<?> createOrUpdateConfigurationUser(
             PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowConfigurationDTO workflowConfigurationDTO) {
         WorkflowConfiguration<?> configuration = createConfiguration(configurationType, resource, opportunityType, workflowConfigurationDTO);
-        resourceService.executeUpdate(resource,
+        resourceService.executeUpdate(resource, userService.getCurrentUser(), 
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
         return entityService.createOrUpdate(configuration);
     }

@@ -102,9 +102,6 @@ public class UserService {
     private EntityService entityService;
 
     @Inject
-    private DocumentService documentService;
-
-    @Inject
     private ResourceService resourceService;
 
     @Inject

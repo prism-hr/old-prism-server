@@ -45,14 +45,6 @@
             <tr>
                 <td colspan="3" height="20"></td>
             </tr>
-            <tr>
-                <td width="10">&nbsp;</td>
-                <td class="text-pad">PRiSM is now available as a commercial service. Visit our <a href="http://alumeni.co.uk/" style="color:#2ba6cb">webpage</a> to learn more.</td>
-                <td width="10">&nbsp;</td>
-            </tr>
-            <tr>
-                <td colspan="3" height="30"></td>
-            </tr>
         </table></td>
     </tr>
     <tr>

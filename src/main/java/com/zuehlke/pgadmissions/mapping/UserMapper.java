@@ -148,8 +148,7 @@ public class UserMapper {
         return representation;
     }
 
-    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution,
-                                                                                          PrismUserInstitutionIdentity identityType) {
+    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
         return new UserInstitutionIdentityRepresentation().withIdentityType(identityType).withIdentifier(
                 userService.getUserInstitutionIdentity(user, institution, identityType));
     }

@@ -26,32 +26,35 @@ public class PrismDAO {
     private SessionFactory sessionFactory;
 
     public AgeRange getAgeRange(Integer age) {
-        return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.ge("lowerBound", age)) //
-                        .add(Restrictions.isNull("lowerBound"))) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.le("upperBound", age)) //
-                        .add(Restrictions.isNull("upperBound"))) //
+        return (AgeRange) sessionFactory.getCurrentSession().createCriteria(AgeRange.class)
+                .add(Restrictions.disjunction()
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.isNull("lowerBound"))
+                                .add(Restrictions.ge("upperBound", age)))
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.le("lowerBound", age))
+                                .add(Restrictions.ge("upperBound", age)))
+                        .add(Restrictions.conjunction()
+                                .add(Restrictions.le("lowerBound", age))
+                                .add(Restrictions.isNull("upperBound"))))
                 .uniqueResult();
     }
 
     public PrismDisplayPropertyDefinition getDomicileDisplayPropertyByName(String name) {
-        return (PrismDisplayPropertyDefinition) //
-        sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class) //
-                .setProjection(Projections.property("definition.id")) //
-                .createAlias("definition", "definition", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("definition.category", SYSTEM_DOMICILE)) //
-                .add(Restrictions.like("value", name, MatchMode.ANYWHERE)) //
-                .add(Restrictions.eq("systemDefault", true)) //
-                .setMaxResults(1) //
+        return (PrismDisplayPropertyDefinition) sessionFactory.getCurrentSession().createCriteria(DisplayPropertyConfiguration.class)
+                .setProjection(Projections.property("definition.id"))
+                .createAlias("definition", "definition", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("definition.category", SYSTEM_DOMICILE))
+                .add(Restrictions.like("value", name, MatchMode.ANYWHERE))
+                .add(Restrictions.eq("systemDefault", true))
+                .setMaxResults(1)
                 .uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Definition<?>> List<T> getDefinitions(Class<T> definitionClass) {
-        return (List<T>) sessionFactory.getCurrentSession().createCriteria(definitionClass) //
-                .addOrder(Order.asc("ordinal")) //
+        return (List<T>) sessionFactory.getCurrentSession().createCriteria(definitionClass)
+                .addOrder(Order.asc("ordinal"))
                 .list();
     }
 

@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.profile.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import org.joda.time.LocalDate;
@@ -141,9 +142,10 @@ public class ProfileMapper {
         Integer awardYear = qualification.getAwardYear();
         LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
 
+        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(qualification.getUser()))
+                .withResource(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()));
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
-                .withUser(userMapper.getUserRepresentationSimple(qualification.getUser()))
-                .withResource(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()))
+                .withResource(relation)
                 .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
 
@@ -161,9 +163,11 @@ public class ProfileMapper {
         Integer endYear = employmentPosition.getEndYear();
         LocalDate endDate = endYear == null ? null : new LocalDate(endYear, employmentPosition.getEndMonth(), 1);
 
+        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(employmentPosition.getUser()))
+                .withResource(resourceMapper.getResourceRepresentationActivity(employmentPosition.getAdvert().getResource()));
         ProfileEmploymentPositionRepresentation representation = new ProfileEmploymentPositionRepresentation().withId(employmentPosition.getId())
-                .withUser(userMapper.getUserRepresentationSimple(employmentPosition.getUser()))
-                .withResource(resourceMapper.getResourceRepresentationActivity(employmentPosition.getAdvert().getResource())).withStartDate(startDate).withEndDate(endDate);
+                .withResource(relation).withCurrent(employmentPosition.getCurrent())
+                .withStartDate(startDate).withEndDate(endDate);
 
         if (employmentPosition.getClass().equals(ApplicationEmploymentPosition.class)) {
             representation.setLastUpdatedTimestamp(((ApplicationEmploymentPosition) employmentPosition).getLastUpdatedTimestamp());
@@ -173,10 +177,10 @@ public class ProfileMapper {
     }
 
     private <T extends ProfileReferee<?>> ProfileRefereeRepresentation getRefereeRepresentation(T referee) {
+        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(referee.getUser()))
+                .withResource(resourceMapper.getResourceRepresentationActivity(referee.getAdvert().getResource()));
         ProfileRefereeRepresentation representation = new ProfileRefereeRepresentation().withId(referee.getId())
-                .withUser(userMapper.getUserRepresentationSimple(referee.getUser()))
-                .withResource(resourceMapper.getResourceRepresentationActivity(referee.getAdvert().getResource()))
-                .withPhone(referee.getPhone()).withSkype(referee.getSkype());
+                .withResource(relation).withPhone(referee.getPhone()).withSkype(referee.getSkype());
 
         if (referee.getClass().equals(ApplicationReferee.class)) {
             representation.setLastUpdatedTimestamp(((ApplicationReferee) referee).getLastUpdatedTimestamp());

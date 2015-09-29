@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.RestUtils;
+import com.zuehlke.pgadmissions.rest.PrismRestUtils;
 import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
@@ -157,7 +157,7 @@ public class CustomizationController {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return RestUtils.getResourceDescriptor(resourceScope);
+        return PrismRestUtils.getResourceDescriptor(resourceScope);
     }
 
     @ModelAttribute

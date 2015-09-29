@@ -23,9 +23,9 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
 
-public class RestUtils {
+public class PrismRestUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(PrismRestUtils.class);
 
     public static ResourceDescriptor getResourceDescriptor(String resourceScope) {
         if ("applications".equals(resourceScope)) {

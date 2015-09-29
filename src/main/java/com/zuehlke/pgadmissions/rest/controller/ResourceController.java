@@ -38,8 +38,8 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.ActionMapper;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
+import com.zuehlke.pgadmissions.rest.PrismRestUtils;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
-import com.zuehlke.pgadmissions.rest.RestUtils;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -130,11 +130,12 @@ public class ResourceController {
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }
 
-    @RequestMapping(method = RequestMethod.GET, params = "type=simple")
+    @RequestMapping(value = "/{resourceId}/{childResourceScope}", method = RequestMethod.GET)
     public List<ResourceRepresentationCreation> getResources(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam PrismScope childResourceScope, @RequestParam String query) {
+            @PathVariable String childResourceScope, @RequestParam String q) {
         ResourceParent resource = (ResourceParent) loadResource(resourceId, resourceDescriptor);
-        return resourceService.getResources(resource, childResourceScope, query).stream().map(resourceMapper::getResourceRepresentationCreation).collect(toList());
+        return resourceService.getResources(resource, getResourceDescriptor(childResourceScope).getResourceScope(), q).stream()
+                .map(resourceMapper::getResourceRepresentationCreation).collect(toList());
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -261,7 +262,7 @@ public class ResourceController {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return RestUtils.getResourceDescriptor(resourceScope);
+        return PrismRestUtils.getResourceDescriptor(resourceScope);
     }
 
     private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {

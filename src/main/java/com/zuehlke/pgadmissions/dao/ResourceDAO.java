@@ -476,18 +476,17 @@ public class ResourceDAO {
         ProjectionList projections = Projections.projectionList();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
                 .setProjection(projections);
-        
+
         appendResourceProjections(resourceScope, projections, true);
         parentScopes.forEach(parentScope -> {
             appendResourceProjections(parentScope, projections, false);
         });
-        
-        
-       parentScopes.forEach(parentScope -> {
-           String parentResourceReference = parentScope.getLowerCamelName();
-           criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
-       });        
-        
+
+        parentScopes.forEach(parentScope -> {
+            String parentResourceReference = parentScope.getLowerCamelName();
+            criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
+        });
+
         return (ResourceActivityDTO) criteria.add(Restrictions.eq("id", resource.getId())) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceActivityDTO.class)) //
                 .uniqueResult();
@@ -571,9 +570,11 @@ public class ResourceDAO {
     public List<ResourceSimpleDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
         return (List<ResourceSimpleDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
+                        .add(Projections.property("state.scope.id").as("scope")) //
                         .add(Projections.property("id").as("id")) //
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.property("state.id").as("stateId"))) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .add(Restrictions.like("name", query, MatchMode.ANYWHERE)) //
                 .add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
@@ -582,15 +583,15 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //
                 .list();
     }
-    
+
     private void appendResourceProjections(PrismScope resourceScope, ProjectionList projections, boolean rootScope) {
         String resourceReference = resourceScope.getLowerCamelName();
         String accessorPrefix = rootScope ? "" : resourceReference + ".";
         projections.add(Projections.property(accessorPrefix + "id").as(resourceReference + "Id"));
-        
+
         if (asList(PROJECT, PROGRAM, DEPARTMENT, INSTITUTION).contains(resourceScope)) {
             projections.add(Projections.property(accessorPrefix + "name").as(resourceReference + "Name"));
-            
+
             if (resourceScope.equals(INSTITUTION)) {
                 projections.add(Projections.property(accessorPrefix + "logoImage.id").as("logoImageId"));
             }

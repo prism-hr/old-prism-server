@@ -4,7 +4,7 @@ public enum PrismAgeRange implements PrismLocalizableDefinition {
 
     UP_TO_18(null, 18), //
     FROM_19_TO_24(19, 24), //
-    FROM_25_TO_29(25, 219), //
+    FROM_25_TO_29(25, 29), //
     FROM_30_TO_39(30, 39), //
     FROM_40_TO_49(40, 49), //
     FROM_50_TO_59(50, 59), //

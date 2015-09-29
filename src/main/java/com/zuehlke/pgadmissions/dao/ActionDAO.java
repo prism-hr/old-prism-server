@@ -414,8 +414,10 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(Restrictions.eq("resourceCondition.externalMode", true));
+                .add(Restrictions.eq("resourceCondition.externalMode", true)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false));
 
         if (!actionConditions.isEmpty()) {
             criteria.add(Restrictions.in("resourceCondition.actionCondition", actionConditions));

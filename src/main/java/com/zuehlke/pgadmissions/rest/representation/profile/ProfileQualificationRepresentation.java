@@ -1,19 +1,15 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import org.joda.time.LocalDate;
 
 public class ProfileQualificationRepresentation extends ApplicationSectionRepresentation {
 
     private Integer id;
 
-    private UserRepresentationSimple user;
-    
-    private ResourceRepresentationActivity resource;
+    private ResourceRelationInvitationRepresentation resource;
 
     private LocalDate startDate;
 
@@ -33,19 +29,11 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         this.id = id;
     }
 
-    public UserRepresentationSimple getUser() {
-        return user;
-    }
-
-    public void setUser(UserRepresentationSimple user) {
-        this.user = user;
-    }
-
-    public ResourceRepresentationActivity getResource() {
+    public ResourceRelationInvitationRepresentation getResource() {
         return resource;
     }
 
-    public void setResource(ResourceRepresentationActivity resource) {
+    public void setResource(ResourceRelationInvitationRepresentation resource) {
         this.resource = resource;
     }
 
@@ -94,12 +82,7 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         return this;
     }
 
-    public ProfileQualificationRepresentation withUser(UserRepresentationSimple user) {
-        this.user = user;
-        return this;
-    }
-    
-    public ProfileQualificationRepresentation withResource(ResourceRepresentationActivity resource) {
+    public ProfileQualificationRepresentation withResource(ResourceRelationInvitationRepresentation resource) {
         this.resource = resource;
         return this;
     }

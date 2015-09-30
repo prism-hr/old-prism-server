@@ -478,11 +478,7 @@ public class ResourceService {
     }
 
     public List<PrismActionCondition> getActionConditions(ResourceParent resource) {
-        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
-        resourceDAO.getResourceConditions(resource).forEach(condition -> {
-            filteredActionConditions.add(condition.getActionCondition());
-        });
-        return filteredActionConditions;
+        return resourceDAO.getResourceConditions(resource).stream().map(rc -> rc.getActionCondition()).collect(toList());
     }
 
     public <T extends ResourceParent, U extends ResourceParentDTO> void setResourceAttributes(T resource, U resourceDTO) {

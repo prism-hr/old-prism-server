@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -30,6 +30,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -45,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -70,15 +72,18 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentat
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Service
 @Transactional
 public class AdvertMapper {
+
+    @Inject
+    private ActionService actionService;
 
     @Inject
     private AdvertService advertService;
@@ -122,57 +127,58 @@ public class AdvertMapper {
             index.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
         });
 
-        HashMultimap<Integer, PrismStudyOption> studyOptionIndex = HashMultimap.create();
-        for (PrismScope opportunityScope : new PrismScope[] { PROJECT, PROGRAM }) {
-            Set<Integer> scopedResources = resources.get(opportunityScope);
-            if (isNotEmpty(scopedResources)) {
-                HashMultimap<Integer, PrismStudyOption> studyOptions = advertService.getAdvertStudyOptions(opportunityScope, scopedResources);
-                studyOptions.keySet().forEach(advert -> {
-                    Set<PrismStudyOption> advertStudyOptions = studyOptions.get(advert);
-                    if (!(isEmpty(advertStudyOptions) || studyOptionIndex.containsKey(advert))) {
-                        studyOptionIndex.putAll(advert, advertStudyOptions);
-                    }
-                });
-            }
-        }
-
-        HashMultimap<Integer, ResourceConditionRepresentation> actionConditionIndex = HashMultimap.create();
-        HashMultimap<Integer, PrismAdvertIndustry> industryIndex = HashMultimap.create();
-        HashMultimap<Integer, PrismAdvertFunction> functionIndex = HashMultimap.create();
+        LinkedHashMultimap<Integer, PrismStudyOption> studyOptionIndex = LinkedHashMultimap.create();
+        LinkedHashMultimap<Integer, PrismAction> actionConditionIndex = LinkedHashMultimap.create();
+        LinkedHashMultimap<Integer, PrismAdvertIndustry> industryIndex = LinkedHashMultimap.create();
+        LinkedHashMultimap<Integer, PrismAdvertFunction> functionIndex = LinkedHashMultimap.create();
         for (PrismScope parentScope : parentScopes) {
             Set<Integer> scopedResources = resources.get(parentScope);
             if (isNotEmpty(scopedResources)) {
-                HashMultimap<Integer, ResourceConditionRepresentation> resourceConditions = advertService.getAdvertActionConditions(parentScope, scopedResources);
-                resourceConditions.keySet().forEach(advert -> {
-                    Set<ResourceConditionRepresentation> advertResourceConditions = resourceConditions.get(advert);
-                    if (!(isEmpty(advertResourceConditions) || actionConditionIndex.containsKey(advert))) {
-                        actionConditionIndex.putAll(advert, advertResourceConditions);
+                LinkedHashMultimap<Integer, PrismAction> actions = advertService.getAdvertActionConditions(parentScope, scopedResources);
+                actions.keySet().forEach(advert -> {
+                    Set<PrismAction> advertPartnerActions = actions.get(advert);
+                    if (!(isEmpty(advertPartnerActions) || actionConditionIndex.containsKey(advert))) {
+                        actionConditionIndex.putAll(advert, advertPartnerActions);
                     }
                 });
-                HashMultimap<Integer, PrismAdvertIndustry> industries = advertService.getAdvertIndustries(parentScope, scopedResources);
+                LinkedHashMultimap<Integer, PrismAdvertIndustry> industries = advertService.getAdvertIndustries(parentScope, scopedResources);
                 industries.keySet().forEach(advert -> {
                     Set<PrismAdvertIndustry> advertIndustries = industries.get(advert);
                     if (!(isEmpty(advertIndustries) || industryIndex.containsKey(advert))) {
                         industryIndex.putAll(advert, advertIndustries);
                     }
                 });
-                HashMultimap<Integer, PrismAdvertFunction> functions = advertService.getAdvertFunctions(parentScope, scopedResources);
+                LinkedHashMultimap<Integer, PrismAdvertFunction> functions = advertService.getAdvertFunctions(parentScope, scopedResources);
                 functions.keySet().forEach(advert -> {
                     Set<PrismAdvertFunction> advertFunctions = functions.get(advert);
                     if (!(isEmpty(advertFunctions) || functionIndex.containsKey(advert))) {
                         functionIndex.putAll(advert, advertFunctions);
                     }
                 });
+                if (asList(PROJECT, PROGRAM).contains(parentScope)) {
+                    LinkedHashMultimap<Integer, PrismStudyOption> studyOptions = advertService.getAdvertStudyOptions(parentScope, scopedResources);
+                    studyOptions.keySet().forEach(advert -> {
+                        Set<PrismStudyOption> advertStudyOptions = studyOptions.get(advert);
+                        if (!(isEmpty(advertStudyOptions) || studyOptionIndex.containsKey(advert))) {
+                            studyOptionIndex.putAll(advert, advertStudyOptions);
+                        }
+                    });
+                }
             }
         }
 
         List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
         index.keySet().forEach(advert -> {
             AdvertRepresentationExtended representation = index.get(advert);
-            representation.setConditions(newArrayList(actionConditionIndex.get(advert)));
-            representation.setStudyOptions(newArrayList(studyOptionIndex.get(advert)));
-            representation.setCategories(
-                    new AdvertCategoriesRepresentation().withIndustries(newArrayList(industryIndex.get(advert))).withFunctions(newArrayList(functionIndex.get(advert))));
+            representation.setPartnerActions(newLinkedList(actionConditionIndex.get(advert)));
+            representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
+
+            Set<PrismAdvertIndustry> industries = industryIndex.get(advert);
+            Set<PrismAdvertFunction> functions = functionIndex.get(advert);
+            if (isNotEmpty(industries) || isNotEmpty(functions)) {
+                representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries)).withFunctions(newLinkedList(functions)));
+            }
+
             representations.add(representation);
         });
 
@@ -216,7 +222,7 @@ public class AdvertMapper {
         }
 
         representation.setName(advert.getName());
-        representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
+        representation.setPartnerActions(actionService.getPartnerActions(advert.getResource()));
 
         AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
         Long applicationCount = applicationSummary.getApplicationCount();

@@ -63,11 +63,11 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.dto.AdvertActionConditionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertFunctionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertIndustryDTO;
+import com.zuehlke.pgadmissions.dto.AdvertPartnerActionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
@@ -247,30 +247,38 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertActionConditionDTO> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<AdvertActionConditionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+    public List<AdvertPartnerActionDTO> getAdvertPartnerActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertPartnerActionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
-                        .add(Projections.groupProperty("resourceCondition.actionCondition").as("actionCondition")) //
-                        .add(Projections.property("resourceCondition.internalMode").as("internalMode")) //
-                        .add(Projections.property("resourceCondition.externalMode").as("externalMode"))) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertActionConditionDTO.class)) //
+                        .add(Projections.groupProperty("action.id").as("actionId"))) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN)
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("resource.id", resourceIds)) //
+                .add(Restrictions.eq("resourceCondition.externalMode", true)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .addOrder(Order.desc("id")) //
+                .addOrder(Order.desc("creationScope.ordinal")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertPartnerActionDTO.class)) //
                 .list();
     }
 
     public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        String resourceReference = resourceScope.getLowerCamelName();
         return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
                         .add(Projections.groupProperty("resourceStudyOption.studyOption").as("studyOption"))) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".resourceStudyOptions", "resourceStudyOption", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStudyOptions", "resourceStudyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("resource.id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("resourceStudyOption.studyOption"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
                 .list();
     }
@@ -282,6 +290,8 @@ public class AdvertDAO {
                         .add(Projections.groupProperty("industry.industry").as("industry"))) //
                 .createAlias("categories.industries", "industry", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("industry.industry"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertIndustryDTO.class)) //
                 .list();
     }
@@ -293,6 +303,8 @@ public class AdvertDAO {
                         .add(Projections.groupProperty("function.function").as("function"))) //
                 .createAlias("categories.functions", "function", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("function.function"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertFunctionDTO.class)) //
                 .list();
     }

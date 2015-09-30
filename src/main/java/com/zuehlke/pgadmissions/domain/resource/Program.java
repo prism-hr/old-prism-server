@@ -21,6 +21,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -139,6 +140,7 @@ public class Program extends ResourceOpportunity {
     @JoinColumn(name = "program_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
+    @OrderBy(clause = "study_option")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "program_id")
     private Set<ResourceStudyOption> resourceStudyOptions = Sets.newHashSet();

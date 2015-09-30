@@ -30,11 +30,11 @@ import com.zuehlke.pgadmissions.workflow.selectors.filter.StateByStateGroupSelec
 
 public enum PrismResourceListConstraint {
 
-    USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
+    USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    CODE("code", STRING, Arrays.asList(CONTAIN), //
+    CODE("resource.code", STRING, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    NAME("name", STRING, Arrays.asList(CONTAIN), //
+    NAME("resource.name", STRING, Arrays.asList(CONTAIN), //
             Arrays.asList(PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
     INSTITUTION_NAME("institution.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT)), //
@@ -46,27 +46,27 @@ public enum PrismResourceListConstraint {
             Arrays.asList(APPLICATION)), //
     STATE_GROUP_NAME("state.id", STATE_GROUP, StateByStateGroupSelector.class, Arrays.asList(EQUAL), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    CREATED_TIMESTAMP("createdTimestamp", DATE_TIME, StateByStateGroupSelector.class, Arrays.asList(BETWEEN, GREATER, LESSER), //
+    CREATED_TIMESTAMP("resource.createdTimestamp", DATE_TIME, StateByStateGroupSelector.class, Arrays.asList(BETWEEN, GREATER, LESSER), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    SUBMITTED_TIMESTAMP("submittedTimestamp", DATE_TIME, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
+    SUBMITTED_TIMESTAMP("resource.submittedTimestamp", DATE_TIME, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    UPDATED_TIMESTAMP("updatedTimestamp", DATE_TIME, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), //
+    UPDATED_TIMESTAMP("resource.updatedTimestamp", DATE_TIME, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    DUE_DATE("dueDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), //
+    DUE_DATE("resource.dueDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER), //
             Arrays.asList(APPLICATION)), //
-    CLOSING_DATE("closingDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
+    CLOSING_DATE("resource.closingDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    CONFIRMED_START_DATE("confirmedStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
+    CONFIRMED_START_DATE("resource.confirmedStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    RATING("applicationRatingAverage", DECIMAL, Arrays.asList(BETWEEN, GREATER, LESSER, NOT_SPECIFIED), //
+    RATING("resource.applicationRatingAverage", DECIMAL, Arrays.asList(BETWEEN, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    PROJECT_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
+    PROJECT_USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(PROJECT)), //
-    PROGRAM_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
+    PROGRAM_USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(PROGRAM)), //
-    DEPARTMENT_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
+    DEPARTMENT_USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(DEPARTMENT)), //
-    INSTITUTION_USER("id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
+    INSTITUTION_USER("resource.id", STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(INSTITUTION));
 
     private String propertyName;

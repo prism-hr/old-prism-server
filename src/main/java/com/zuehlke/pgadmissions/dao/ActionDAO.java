@@ -181,6 +181,7 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(visibilityConstraint) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
@@ -188,10 +189,10 @@ public class ActionDAO {
                 .add(getResourceStateActionConstraint());
 
         for (PrismScope scope : exclusions) {
-            criteria.add(Restrictions.ne("action.creationScope.id", scope));
+            criteria.add(Restrictions.ne("creationScope.id", scope));
         }
 
-        return (List<ActionDTO>) criteria.addOrder(Order.asc("action.id")) //
+        return (List<ActionDTO>) criteria.addOrder(Order.asc("creationScope.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
     }
@@ -415,10 +416,11 @@ public class ActionDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .addOrder(Order.asc("stateAction.action.id")) //
+                .addOrder(Order.desc("creationScope.ordinal")) //
                 .list();
     }
 

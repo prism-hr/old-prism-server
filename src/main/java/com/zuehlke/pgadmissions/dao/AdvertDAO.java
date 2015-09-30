@@ -264,7 +264,7 @@ public class AdvertDAO {
                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .addOrder(Order.desc("id")) //
-                .addOrder(Order.desc("creationScope.ordinal")) //
+                .addOrder(Order.asc("creationScope.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertPartnerActionDTO.class)) //
                 .list();
     }

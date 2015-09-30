@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
@@ -431,10 +430,6 @@ public class ResourceService {
         return properties;
     }
 
-    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
-        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles);
-    }
-
     public HashMultimap<PrismScope, Integer> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, SYSTEM)) {
@@ -443,6 +438,10 @@ public class ResourceService {
             }
         }
         return resources;
+    }
+
+    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
+        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles);
     }
 
     public List<Resource> getResourcesByUser(PrismScope prismScope, User user) {
@@ -713,19 +712,6 @@ public class ResourceService {
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         joinResource(resource, user, context);
         return user;
-    }
-
-    public HashMultimap<PrismScope, Integer> getResourcesUserHasVerifiedRolesFor(User user, PrismScope... exclusions) {
-        List<PrismScope> exclusionsList = newArrayList(exclusions);
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        roleService.getVerifiedRoles(user).forEach(r -> {
-            Resource resource = r.getResource();
-            PrismScope resourceScope = resource.getResourceScope();
-            if (!exclusionsList.contains(resourceScope)) {
-                resources.put(resourceScope, resource.getId());
-            }
-        });
-        return resources;
     }
 
     private void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {

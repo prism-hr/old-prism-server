@@ -10,7 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -18,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
@@ -95,6 +96,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
@@ -298,7 +300,7 @@ public class AdvertService {
             } else {
                 Action viewEditAction = actionService.getViewEditAction(resource);
                 if (!(viewEditAction == null || !actionService.checkActionExecutable(resource, viewEditAction, user, false))) {
-                    
+
                 }
             }
         }
@@ -422,9 +424,42 @@ public class AdvertService {
         PrismMotivationContext context = query.getContext();
         Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
-        HashMultimap<PrismScope, Integer> userRoleResources = resourceService.getResourcesUserHasVerifiedRolesFor(user, APPLICATION);
+
+        Integer resourceId = null;
+        PrismScope resourceScope = null;
+        ResourceDTO resource = query.getResource();
+        if (resource != null) {
+            resourceId = resource.getId();
+            resourceScope = resource.getScope();
+        }
+
+        HashMultimap<PrismScope, Integer> possibleTargets = HashMultimap.create();
+        if (user != null) {
+            if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
+                if (resourceScope == null) {
+                    possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION));
+                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT));
+                } else if (resourceScope.equals(INSTITUTION)) {
+                    possibleTargets.put(INSTITUTION, advertDAO.getAdvertId(INSTITUTION, resourceId));
+                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT));
+                } else {
+                    possibleTargets.put(DEPARTMENT, advertDAO.getAdvertId(DEPARTMENT, resourceId));
+                }
+            } else {
+                if (resourceScope == null) {
+                    possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION, user));
+                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT, user));
+                } else if (resourceScope.equals(INSTITUTION)) {
+                    possibleTargets.putAll(INSTITUTION, asList(advertDAO.getAdvertId(INSTITUTION, resourceId, user)));
+                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
+                } else {
+                    possibleTargets.putAll(DEPARTMENT, asList(advertDAO.getAdvertId(DEPARTMENT, resourceId, user)));
+                }
+            }
+        }
+
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, user, userRoleResources));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, user, possibleTargets));
         }
         return adverts;
     }

@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static java.util.stream.Collectors.joining;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import java.util.List;
@@ -37,21 +38,22 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
     public Resource create(User user, ResourceParentDTO newResource) {
         Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
-        if(newResource.getAdvert() == null){
+        if (newResource.getAdvert() == null) {
             newResource.setAdvert(new AdvertDTO());
         }
+
         AdvertDTO advertDTO = newResource.getAdvert();
         advertDTO.setGloballyVisible(DEPARTMENT.isDefaultShared());
         Advert advert = advertService.createAdvert(institution, advertDTO, newResource.getName(), user);
 
-        Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution)
-                .withAdvert(advert).withName(advert.getName());
-        resourceService.setResourceAttributes(department, newResource);
+        Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution).withAdvert(advert)
+                .withName(advert.getName());
 
         List<PrismOpportunityCategory> opportunityCategories = newResource.getOpportunityCategories();
-        resourceService.setOpportunityCategories(department,
-                isEmpty(opportunityCategories) ? institution.getOpportunityCategories() : opportunityCategories.stream().map(oc -> oc.name()).collect(joining("|")));
+        newResource.setOpportunityCategories(isEmpty(opportunityCategories)
+                ? asList(institution.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()) : opportunityCategories);
 
+        resourceService.setResourceAttributes(department, newResource);
         return department;
     }
 

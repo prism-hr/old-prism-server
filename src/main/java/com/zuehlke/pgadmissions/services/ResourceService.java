@@ -18,6 +18,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
@@ -58,7 +59,6 @@ import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.PrismScopeRelation;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -487,6 +487,8 @@ public class ResourceService {
             ResourceOpportunityDTO resourceOpportunityDTO = (ResourceOpportunityDTO) resourceDTO;
             setResourceOpportunityType(resourceOpportunity, resourceOpportunityDTO.getOpportunityType());
             setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions(), LocalDate.now());
+        } else {
+            setResourceOpportunityCategories(resource, resourceDTO.getOpportunityCategories().stream().map(poc -> poc.name()).collect(joining("|")));
         }
 
         setResourceConditions(resource, resourceDTO.getConditions());
@@ -695,11 +697,6 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), resourceClass);
     }
 
-    public void setOpportunityCategories(ResourceParent parent, String opportunityCategories) {
-        parent.setOpportunityCategories(opportunityCategories);
-        parent.getAdvert().setOpportunityCategories(opportunityCategories);
-    }
-
     public List<ResourceSimpleDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
         return resourceDAO.getResources(parentResource, resourceScope, query);
     }
@@ -821,25 +818,32 @@ public class ResourceService {
     private void setResourceOpportunityType(ResourceOpportunity resourceOpportunity, PrismOpportunityType prismOpportunityType) {
         OpportunityType opportunityType = prismService.getOpportunityTypeById(prismOpportunityType);
         resourceOpportunity.setOpportunityType(opportunityType);
-        resourceOpportunity.getAdvert().setOpportunityType(opportunityType);
 
-        PrismOpportunityCategory opportunityCategory = opportunityType.getOpportunityCategory();
-        resourceOpportunity.setOpportunityCategories(opportunityCategory.name());
+        Advert advert = resourceOpportunity.getAdvert();
+        advert.setOpportunityType(opportunityType);
+
+        String opportunityCategory = opportunityType.getOpportunityCategory().name();
+        resourceOpportunity.setOpportunityCategories(opportunityCategory);
+        advert.setOpportunityCategories(opportunityCategory);
 
         for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             ResourceParent enclosing = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
             if (enclosing != null) {
                 String opportunityCategories = enclosing.getOpportunityCategories();
                 if (opportunityCategories == null) {
-                    opportunityCategories = opportunityCategory.name();
-                    setOpportunityCategories(enclosing, opportunityCategories);
+                    setResourceOpportunityCategories(enclosing, opportunityCategory);
                 } else {
                     Set<String> opportunityCategoriesSplit = Sets.newHashSet(opportunityCategories.split("\\|"));
-                    opportunityCategoriesSplit.add(opportunityCategory.name());
-                    setOpportunityCategories(enclosing, Joiner.on("|").join(opportunityCategoriesSplit));
+                    opportunityCategoriesSplit.add(opportunityCategory);
+                    setResourceOpportunityCategories(enclosing, Joiner.on("|").join(opportunityCategoriesSplit));
                 }
             }
         }
+    }
+
+    private void setResourceOpportunityCategories(ResourceParent resource, String opportunityCategories) {
+        resource.setOpportunityCategories(opportunityCategories);
+        resource.getAdvert().setOpportunityCategories(opportunityCategories);
     }
 
     private boolean validateResourceFamilyCreation(ResourceRelationInvitationDTO resourceRelationDTO) {

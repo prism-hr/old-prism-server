@@ -462,31 +462,16 @@ public class AdvertService {
         HashMultimap<PrismScope, Integer> possibleTargets = HashMultimap.create();
         if (user != null) {
             if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
-                if (resourceScope == null) {
-                    possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION));
-                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT));
-                } else if (resourceScope.equals(INSTITUTION)) {
-                    possibleTargets.put(INSTITUTION, advertDAO.getAdvertId(INSTITUTION, resourceId));
-                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT));
-                } else {
-                    possibleTargets.put(DEPARTMENT, advertDAO.getAdvertId(DEPARTMENT, resourceId));
-                }
+                appendSystemUserTargets(resourceScope, resourceId, possibleTargets);
             } else {
-                if (resourceScope == null) {
-                    possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION, user));
-                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT, user));
-                } else if (resourceScope.equals(INSTITUTION)) {
-                    possibleTargets.putAll(INSTITUTION, asList(advertDAO.getAdvertId(INSTITUTION, resourceId, user)));
-                    possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
-                } else {
-                    possibleTargets.putAll(DEPARTMENT, asList(advertDAO.getAdvertId(DEPARTMENT, resourceId, user)));
-                }
+                appendResourceUserTargets(user, resourceScope, resourceId, possibleTargets);
             }
         }
 
         for (PrismScope scope : scopes) {
             adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, user, possibleTargets));
         }
+
         return adverts;
     }
 
@@ -506,6 +491,30 @@ public class AdvertService {
             targetAdverts.forEach(targetAdvert -> {
                 createOrUpdateAdvertTarget(advert, targetAdvert, partnershipState);
             });
+        }
+    }
+
+    private void appendSystemUserTargets(PrismScope resourceScope, Integer resourceId, HashMultimap<PrismScope, Integer> possibleTargets) {
+        if (resourceScope == null) {
+            possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION));
+            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT));
+        } else if (resourceScope.equals(INSTITUTION)) {
+            possibleTargets.put(INSTITUTION, advertDAO.getAdvertId(INSTITUTION, resourceId));
+            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT));
+        } else {
+            possibleTargets.put(DEPARTMENT, advertDAO.getAdvertId(DEPARTMENT, resourceId));
+        }
+    }
+
+    private void appendResourceUserTargets(User user, PrismScope resourceScope, Integer resourceId, HashMultimap<PrismScope, Integer> possibleTargets) {
+        if (resourceScope == null) {
+            possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION, user));
+            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT, user));
+        } else if (resourceScope.equals(INSTITUTION)) {
+            possibleTargets.putAll(INSTITUTION, asList(advertDAO.getAdvertId(INSTITUTION, resourceId, user)));
+            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
+        } else {
+            possibleTargets.putAll(DEPARTMENT, asList(advertDAO.getAdvertId(DEPARTMENT, resourceId, user)));
         }
     }
 

@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -102,7 +103,6 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 
 @Service
 @Transactional
@@ -174,19 +174,18 @@ public class AdvertService {
         return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
 
-    public HashMultimap<Integer, ResourceConditionRepresentation> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        HashMultimap<Integer, ResourceConditionRepresentation> conditions = HashMultimap.create();
+    public LinkedHashMultimap<Integer, PrismAction> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismAction> actions = LinkedHashMultimap.create();
         if (isNotEmpty(resourceIds)) {
-            advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(condition -> {
-                conditions.put(condition.getAdvertId(), new ResourceConditionRepresentation().withActionCondition(condition.getActionCondition())
-                        .withInternalMode(condition.getInternalMode()).withExternalMode(condition.getExternalMode()));
+            advertDAO.getAdvertPartnerActions(resourceScope, resourceIds).forEach(action -> {
+                actions.put(action.getAdvertId(), action.getActionId());
             });
         }
-        return conditions;
+        return actions;
     }
 
-    public HashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        HashMultimap<Integer, PrismStudyOption> options = HashMultimap.create();
+    public LinkedHashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismStudyOption> options = LinkedHashMultimap.create();
         if (CollectionUtils.isNotEmpty(resourceIds)) {
             advertDAO.getAdvertStudyOptions(resourceScope, resourceIds).forEach(option -> {
                 options.put(option.getAdvertId(), option.getStudyOption());
@@ -195,8 +194,8 @@ public class AdvertService {
         return options;
     }
 
-    public HashMultimap<Integer, PrismAdvertIndustry> getAdvertIndustries(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        HashMultimap<Integer, PrismAdvertIndustry> industries = HashMultimap.create();
+    public LinkedHashMultimap<Integer, PrismAdvertIndustry> getAdvertIndustries(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismAdvertIndustry> industries = LinkedHashMultimap.create();
         if (CollectionUtils.isNotEmpty(resourceIds)) {
             advertDAO.getAdvertIndustries(resourceScope, resourceIds).forEach(industry -> {
                 industries.put(industry.getAdvertId(), industry.getIndustry());
@@ -205,8 +204,8 @@ public class AdvertService {
         return industries;
     }
 
-    public HashMultimap<Integer, PrismAdvertFunction> getAdvertFunctions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        HashMultimap<Integer, PrismAdvertFunction> functions = HashMultimap.create();
+    public LinkedHashMultimap<Integer, PrismAdvertFunction> getAdvertFunctions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismAdvertFunction> functions = LinkedHashMultimap.create();
         if (CollectionUtils.isNotEmpty(resourceIds)) {
             advertDAO.getAdvertFunctions(resourceScope, resourceIds).forEach(function -> {
                 functions.put(function.getAdvertId(), function.getFunction());

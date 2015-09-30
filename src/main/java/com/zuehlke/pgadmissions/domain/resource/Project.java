@@ -21,6 +21,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -113,7 +114,7 @@ public class Project extends ResourceOpportunity {
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -145,6 +146,7 @@ public class Project extends ResourceOpportunity {
     @JoinColumn(name = "project_id")
     private Set<ResourceCondition> resourceConditions = Sets.newHashSet();
 
+    @OrderBy(clause = "study_option")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_id")
     private Set<ResourceStudyOption> resourceStudyOptions = Sets.newHashSet();
@@ -354,7 +356,7 @@ public class Project extends ResourceOpportunity {
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
-    
+
     @Override
     public Boolean getShared() {
         return shared;

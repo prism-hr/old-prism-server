@@ -406,8 +406,8 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismAction> getPartnerActions(Resource resource, List<PrismActionCondition> actionConditions) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+    public List<PrismAction> getPartnerActions(Resource resource) {
+        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action.id")) //
                 .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
@@ -417,13 +417,7 @@ public class ActionDAO {
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
-
-        if (!actionConditions.isEmpty()) {
-            criteria.add(Restrictions.in("resourceCondition.actionCondition", actionConditions));
-        }
-
-        return (List<PrismAction>) criteria //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .addOrder(Order.asc("stateAction.action.id")) //
                 .list();
     }

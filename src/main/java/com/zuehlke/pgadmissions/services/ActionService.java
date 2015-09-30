@@ -245,8 +245,7 @@ public class ActionService {
     }
 
     public List<PrismAction> getPartnerActions(ResourceParent resource) {
-        List<PrismActionCondition> actionConditions = resourceService.getActionConditions(resource);
-        return !actionConditions.isEmpty() ? actionDAO.getPartnerActions(resource, actionConditions) : Lists.newArrayList();
+        return actionDAO.getPartnerActions(resource);
     }
 
     public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {

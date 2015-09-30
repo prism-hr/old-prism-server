@@ -310,14 +310,6 @@ public class RoleDAO {
                 .executeUpdate();
     }
 
-    public List<UserRole> getVerifiedRoles(User user) {
-        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.verified", true)) //
-                .list();
-    }
-
     public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
         PrismScope resourceScope = resource.getResourceScope();
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //

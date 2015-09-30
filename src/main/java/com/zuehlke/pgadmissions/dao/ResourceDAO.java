@@ -75,55 +75,6 @@ public class ResourceDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static void appendResourceListFilterCriteria(PrismScope scopeId, Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
-        if (filter.isUrgentOnly()) {
-            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-        }
-
-        if (filter.isUpdateOnly()) {
-            criteria.add(Restrictions.ge("updatedTimestamp", new LocalDate().minusDays(1)));
-        }
-
-        if (constraints != null) {
-            criteria.add(constraints);
-        }
-    }
-
-    private static Criteria appendResourceListLimitCriteria(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
-        PrismFilterSortOrder sortOrder = filter.getSortOrder();
-
-        if (lastSequenceIdentifier != null) {
-            criteria.add(getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
-        }
-
-        criteria.addOrder(getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
-
-        if (recordsToRetrieve != null) {
-            criteria.setMaxResults(recordsToRetrieve);
-        }
-
-        return criteria;
-    }
-
-    private static Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates, Junction enclosedScopeExclusion) {
-        return Restrictions.disjunction() //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.in("state.id", relatedScopeStates)) //
-                        .add(Restrictions.not(enclosedScopeExclusion)));
-    }
-
-    private static Junction getResourceActiveEnclosedScopeRestriction(Criteria criteria, HashMultimap<PrismScope, PrismState> enclosedScopes) {
-        Junction enclosedScopeExclusion = Restrictions.conjunction();
-        for (PrismScope enclosedScope : enclosedScopes.keySet()) {
-            String enclosedScopeReference = enclosedScope.getLowerCamelName();
-            criteria.createAlias(enclosedScopeReference + "s", enclosedScopeReference, JoinType.LEFT_OUTER_JOIN, //
-                    Restrictions.in(enclosedScopeReference + ".state.id", enclosedScopes.get(enclosedScope)));
-
-            enclosedScopeExclusion.add(Restrictions.isNull(enclosedScopeReference + ".id"));
-        }
-        return enclosedScopeExclusion;
-    }
-
     public List<Integer> getResourcesToEscalate(PrismScope resourceScope, PrismAction actionId, LocalDate baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -582,6 +533,55 @@ public class ResourceDAO {
                 .addOrder(Order.asc("id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //
                 .list();
+    }
+
+    private static void appendResourceListFilterCriteria(PrismScope scopeId, Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
+        if (filter.isUrgentOnly()) {
+            criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
+        }
+
+        if (filter.isUpdateOnly()) {
+            criteria.add(Restrictions.ge("updatedTimestamp", new LocalDate().minusDays(1)));
+        }
+
+        if (constraints != null) {
+            criteria.add(constraints);
+        }
+    }
+
+    private static Criteria appendResourceListLimitCriteria(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
+        PrismFilterSortOrder sortOrder = filter.getSortOrder();
+
+        if (lastSequenceIdentifier != null) {
+            criteria.add(getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
+        }
+
+        criteria.addOrder(getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
+
+        if (recordsToRetrieve != null) {
+            criteria.setMaxResults(recordsToRetrieve);
+        }
+
+        return criteria;
+    }
+
+    private static Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates, Junction enclosedScopeExclusion) {
+        return Restrictions.disjunction() //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.in("state.id", relatedScopeStates)) //
+                        .add(Restrictions.not(enclosedScopeExclusion)));
+    }
+
+    private static Junction getResourceActiveEnclosedScopeRestriction(Criteria criteria, HashMultimap<PrismScope, PrismState> enclosedScopes) {
+        Junction enclosedScopeExclusion = Restrictions.conjunction();
+        for (PrismScope enclosedScope : enclosedScopes.keySet()) {
+            String enclosedScopeReference = enclosedScope.getLowerCamelName();
+            criteria.createAlias(enclosedScopeReference + "s", enclosedScopeReference, JoinType.LEFT_OUTER_JOIN, //
+                    Restrictions.in(enclosedScopeReference + ".state.id", enclosedScopes.get(enclosedScope)));
+
+            enclosedScopeExclusion.add(Restrictions.isNull(enclosedScopeReference + ".id"));
+        }
+        return enclosedScopeExclusion;
     }
 
     private void appendResourceProjections(PrismScope resourceScope, ProjectionList projections, boolean rootScope) {

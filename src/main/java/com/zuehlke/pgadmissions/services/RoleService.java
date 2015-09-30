@@ -267,10 +267,6 @@ public class RoleService {
         roleDAO.setVerifiedRoles(roles);
     }
 
-    public List<UserRole> getVerifiedRoles(User user) {
-        return roleDAO.getVerifiedRoles(user);
-    }
-
     public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
         return roleDAO.getVerifiedRoles(user, resource);
     }

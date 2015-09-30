@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
@@ -74,6 +73,8 @@ import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+
+import jersey.repackaged.com.google.common.collect.Sets;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -197,7 +198,7 @@ public class AdvertDAO {
         boolean narrowedByTarget = currentUser != null;
 
         if (narrowedByResource || narrowedByTarget) {
-            List<PrismScope> targetScopes = Lists.newArrayList(possibleTargets.keySet());
+            Set<PrismScope> targetScopes = Sets.newHashSet(possibleTargets.keySet());
             targetScopes.add(scope);
 
             if (narrowedByResource) {

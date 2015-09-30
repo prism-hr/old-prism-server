@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
@@ -222,7 +224,7 @@ public class AdvertMapper {
 
         Long applicationRatingCount = applicationSummary.getApplicationRatingCount();
         representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
-        representation.setApplicationRatingAverage(applicationSummary.getApplicationRatingAverage());
+        representation.setApplicationRatingAverage(doubleToBigDecimal(applicationSummary.getApplicationRatingAverage(), RATING_PRECISION));
 
         return representation;
     }
@@ -271,7 +273,7 @@ public class AdvertMapper {
 
         Long applicationRatingCount = advert.getApplicationRatingCount();
         representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
-        representation.setApplicationRatingAverage(advert.getApplicationRatingAverage());
+        representation.setApplicationRatingAverage(doubleToBigDecimal(advert.getApplicationRatingAverage(), RATING_PRECISION));
 
         representation.setClosingDate(advert.getClosingDate() != null ? new AdvertClosingDateRepresentation().withClosingDate(advert.getClosingDate()) : null);
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());

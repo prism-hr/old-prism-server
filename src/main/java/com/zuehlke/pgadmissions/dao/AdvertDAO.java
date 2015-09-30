@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
@@ -176,9 +177,13 @@ public class AdvertDAO {
         boolean narrowedByTarget = currentUser != null;
 
         if (narrowedByResource || narrowedByTarget) {
-            Set<PrismScope> targetScopes = possibleTargets.keySet();
+            List<PrismScope> targetScopes = Lists.newArrayList(possibleTargets.keySet());
             targetScopes.add(scope);
-            targetScopes.add(resource.getScope());
+            
+            if (narrowedByResource) {
+                targetScopes.add(resource.getScope());
+            }
+            
             possibleTargets.keySet().forEach(targetScope -> {
                 String scopeReference = targetScope.getUpperCamelName();
                 String advertReference = scopeReference + "Advert";
@@ -438,7 +443,7 @@ public class AdvertDAO {
                 .setProjection(Projections.property("advert.id")) //
                 .list();
     }
-    
+
     public Integer getAdvertId(PrismScope resourceScope, Integer resourceId) {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("advert.id")) //
@@ -458,7 +463,7 @@ public class AdvertDAO {
                 .setProjection(Projections.groupProperty("resource.advert.id"))
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", "user"))
+                .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("role.verified", true)) //
                 .list();
     }
@@ -469,7 +474,7 @@ public class AdvertDAO {
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resourceId)) //
-                .add(Restrictions.eq("user", "user"))
+                .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("role.verified", true)) //
                 .uniqueResult();
     }
@@ -480,7 +485,7 @@ public class AdvertDAO {
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource." + parentScope.getLowerCamelName() + ".id", parentId)) //
-                .add(Restrictions.eq("user", "user"))
+                .add(Restrictions.eq("user", user))
                 .add(Restrictions.eq("role.verified", true)) //
                 .list();
     }

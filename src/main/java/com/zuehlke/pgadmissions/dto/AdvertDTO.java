@@ -79,6 +79,12 @@ public class AdvertDTO extends ResourceActivityDTO {
     private BigDecimal payYearMaximum;
 
     private LocalDate closingDate;
+    
+    private Long applicationCount;
+    
+    private Long applicationRatingCount;
+    
+    private BigDecimal applicationRatingAverage;
 
     private String sequenceIdentifier;
 
@@ -360,6 +366,30 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
+    }
+
+    public Long getApplicationCount() {
+        return applicationCount;
+    }
+
+    public void setApplicationCount(Long applicationCount) {
+        this.applicationCount = applicationCount;
+    }
+    
+    public Long getApplicationRatingCount() {
+        return applicationRatingCount;
+    }
+
+    public void setApplicationRatingCount(Long applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+    }
+
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
     public String getSequenceIdentifier() {

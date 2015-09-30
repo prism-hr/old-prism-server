@@ -68,6 +68,8 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
@@ -83,6 +85,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRelationOutcomeDTO;
@@ -163,6 +166,10 @@ public class AdvertService {
         return advertDAO.getAdvert(resourceScope, resourceId);
     }
 
+    public AdvertApplicationSummaryDTO getAdvertApplicationSummary(Advert advert) {
+        return advertDAO.getAdvertApplicationSummary(advert);
+    }
+
     public List<com.zuehlke.pgadmissions.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<Integer> advertIds) {
         return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
@@ -186,6 +193,26 @@ public class AdvertService {
             });
         }
         return options;
+    }
+
+    public HashMultimap<Integer, PrismAdvertIndustry> getAdvertIndustries(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        HashMultimap<Integer, PrismAdvertIndustry> industries = HashMultimap.create();
+        if (CollectionUtils.isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertIndustries(resourceScope, resourceIds).forEach(industry -> {
+                industries.put(industry.getAdvertId(), industry.getIndustry());
+            });
+        }
+        return industries;
+    }
+
+    public HashMultimap<Integer, PrismAdvertFunction> getAdvertFunctions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        HashMultimap<Integer, PrismAdvertFunction> functions = HashMultimap.create();
+        if (CollectionUtils.isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertFunctions(resourceScope, resourceIds).forEach(function -> {
+                functions.put(function.getAdvertId(), function.getFunction());
+            });
+        }
+        return functions;
     }
 
     public Advert createAdvert(Resource parentResource, AdvertDTO advertDTO, String resourceName, User user) {

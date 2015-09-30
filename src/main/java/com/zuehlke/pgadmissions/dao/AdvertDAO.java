@@ -204,12 +204,12 @@ public class AdvertDAO {
                 targetScopes.add(resource.getScope());
             }
 
-            possibleTargets.keySet().forEach(targetScope -> {
-                String scopeReference = targetScope.getUpperCamelName();
+            targetScopes.forEach(targetScope -> {
+                String scopeReference = targetScope.getLowerCamelName();
                 String advertReference = scopeReference + "Advert";
                 criteria.createAlias("advert." + targetScope.getLowerCamelName(), scopeReference, JoinType.LEFT_OUTER_JOIN)
                         .createAlias(scopeReference + ".advert", advertReference, JoinType.LEFT_OUTER_JOIN)
-                        .createAlias(advertReference + "targets", advertReference + "Target", JoinType.LEFT_OUTER_JOIN);
+                        .createAlias(advertReference + ".targets", advertReference + "Target", JoinType.LEFT_OUTER_JOIN);
             });
         }
 

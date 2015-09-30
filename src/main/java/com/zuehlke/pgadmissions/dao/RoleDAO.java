@@ -219,6 +219,7 @@ public class RoleDAO {
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.verified", true)) //
                 .addOrder(Order.asc("scope.ordinal")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -242,6 +243,7 @@ public class RoleDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(getPartnerUserRoleConstraint())
                 .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("role.verified", true)) //
                 .addOrder(Order.asc("scope.ordinal")) //
                 .setMaxResults(1) //
                 .uniqueResult();

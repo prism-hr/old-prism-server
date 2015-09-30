@@ -1,14 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
 public class AdvertApplicationSummaryDTO {
 
     private Long applicationCount;
 
     private Long applicationRatingCount;
 
-    private BigDecimal applicationRatingAverage;
+    private Double applicationRatingAverage;
 
     public Long getApplicationCount() {
         return applicationCount;
@@ -26,11 +24,11 @@ public class AdvertApplicationSummaryDTO {
         this.applicationRatingCount = applicationRatingCount;
     }
 
-    public BigDecimal getApplicationRatingAverage() {
+    public Double getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+    public void setApplicationRatingAverage(Double applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 

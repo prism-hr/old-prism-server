@@ -84,7 +84,7 @@ public class AdvertDTO extends ResourceActivityDTO {
     
     private Long applicationRatingCount;
     
-    private BigDecimal applicationRatingAverage;
+    private Double applicationRatingAverage;
 
     private String sequenceIdentifier;
 
@@ -384,11 +384,11 @@ public class AdvertDTO extends ResourceActivityDTO {
         this.applicationRatingCount = applicationRatingCount;
     }
 
-    public BigDecimal getApplicationRatingAverage() {
+    public Double getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+    public void setApplicationRatingAverage(Double applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 

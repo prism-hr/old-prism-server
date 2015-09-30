@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.workflow.transition.creators;
 import static com.zuehlke.pgadmissions.PrismConstants.SYSTEM_CURRENCY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import java.util.List;
@@ -63,12 +62,11 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         Institution institution = new Institution().withParentResource(system).withImportedCode(newResource.getImportedCode()).withUser(user).withAdvert(advert)
                 .withName(advert.getName()).withCurrency(currency).withBusinessYearStartMonth(businessYearStartMonth)
                 .withGoogleId(advert.getAddress().getGoogleId());
-        resourceService.setResourceAttributes(institution, newResource);
 
         List<PrismOpportunityCategory> opportunityCategories = newResource.getOpportunityCategories();
-        opportunityCategories = isEmpty(opportunityCategories) ? asList(creationDefault.getDefaultOpportunityCategories()) : opportunityCategories;
-        resourceService.setOpportunityCategories(institution, opportunityCategories.stream().map(oc -> oc.toString()).collect(joining("|")));
+        newResource.setOpportunityCategories(isEmpty(opportunityCategories) ? asList(creationDefault.getDefaultOpportunityCategories()) : opportunityCategories);
 
+        resourceService.setResourceAttributes(institution, newResource);
         return institution;
     }
 

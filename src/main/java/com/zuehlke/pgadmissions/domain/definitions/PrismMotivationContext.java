@@ -21,7 +21,7 @@ public enum PrismMotivationContext {
                     .withScope(DEPARTMENT)
                     .withScope(PROGRAM)
                     .withScope(PROJECT)),
-            PROGRAM, PROGRAM), //
+            PROGRAM, PROJECT), //
     UNIVERSITY(new PrismScopeRelations()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION)

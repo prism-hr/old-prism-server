@@ -38,6 +38,8 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -48,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
@@ -91,7 +94,6 @@ public class AdvertMapper {
         return getAdvertRepresentation(advert, AdvertRepresentationSimple.class);
     }
 
-    // FIXME - prioritise the users network
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
         PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
@@ -133,6 +135,8 @@ public class AdvertMapper {
         }
 
         HashMultimap<Integer, ResourceConditionRepresentation> actionConditionIndex = HashMultimap.create();
+        HashMultimap<Integer, PrismAdvertIndustry> industryIndex = HashMultimap.create();
+        HashMultimap<Integer, PrismAdvertFunction> functionIndex = HashMultimap.create();
         for (PrismScope parentScope : parentScopes) {
             Set<Integer> scopedResources = resources.get(parentScope);
             if (isNotEmpty(scopedResources)) {
@@ -143,14 +147,30 @@ public class AdvertMapper {
                         actionConditionIndex.putAll(advert, advertResourceConditions);
                     }
                 });
+                HashMultimap<Integer, PrismAdvertIndustry> industries = advertService.getAdvertIndustries(parentScope, scopedResources);
+                industries.keySet().forEach(advert -> {
+                    Set<PrismAdvertIndustry> advertIndustries = industries.get(advert);
+                    if (!(isEmpty(advertIndustries) || industryIndex.containsKey(advert))) {
+                        industryIndex.putAll(advert, advertIndustries);
+                    }
+                });
+                HashMultimap<Integer, PrismAdvertFunction> functions = advertService.getAdvertFunctions(parentScope, scopedResources);
+                functions.keySet().forEach(advert -> {
+                    Set<PrismAdvertFunction> advertFunctions = functions.get(advert);
+                    if (!(isEmpty(advertFunctions) || functionIndex.containsKey(advert))) {
+                        functionIndex.putAll(advert, advertFunctions);
+                    }
+                });
             }
         }
 
         List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
         index.keySet().forEach(advert -> {
             AdvertRepresentationExtended representation = index.get(advert);
-            representation.setStudyOptions(newArrayList(studyOptionIndex.get(advert)));
             representation.setConditions(newArrayList(actionConditionIndex.get(advert)));
+            representation.setStudyOptions(newArrayList(studyOptionIndex.get(advert)));
+            representation.setCategories(
+                    new AdvertCategoriesRepresentation().withIndustries(newArrayList(industryIndex.get(advert))).withFunctions(newArrayList(functionIndex.get(advert))));
             representations.add(representation);
         });
 
@@ -193,8 +213,16 @@ public class AdvertMapper {
             representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
         }
 
-        representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
         representation.setName(advert.getName());
+        representation.setConditions(resourceMapper.getResourceConditionRepresentations(resource));
+
+        AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
+        Long applicationCount = applicationSummary.getApplicationCount();
+        representation.setApplicationCount(applicationCount == null ? null : applicationCount.intValue());
+
+        Long applicationRatingCount = applicationSummary.getApplicationRatingCount();
+        representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
+        representation.setApplicationRatingAverage(applicationSummary.getApplicationRatingAverage());
 
         return representation;
     }
@@ -237,6 +265,13 @@ public class AdvertMapper {
             payRepresentation.setMaximum(byYear ? advert.getPayYearMaximum() : advert.getPayMonthMaximum());
             representation.setPay(payRepresentation);
         }
+
+        Long applicationCount = advert.getApplicationCount();
+        representation.setApplicationCount(applicationCount == null ? null : applicationCount.intValue());
+
+        Long applicationRatingCount = advert.getApplicationRatingCount();
+        representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
+        representation.setApplicationRatingAverage(advert.getApplicationRatingAverage());
 
         representation.setClosingDate(advert.getClosingDate() != null ? new AdvertClosingDateRepresentation().withClosingDate(advert.getClosingDate()) : null);
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());

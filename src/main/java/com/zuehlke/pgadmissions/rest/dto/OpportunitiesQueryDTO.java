@@ -24,6 +24,8 @@ public class OpportunitiesQueryDTO {
     private PrismMotivationContext context;
     
     private PrismScope contextScope;
+    
+    private Boolean recommended;
 
     private PrismOpportunityCategory opportunityCategory;
 
@@ -77,6 +79,14 @@ public class OpportunitiesQueryDTO {
 
     public void setContextScope(PrismScope contextScope) {
         this.contextScope = contextScope;
+    }
+
+    public Boolean getRecommended() {
+        return recommended;
+    }
+
+    public void setRecommended(Boolean recommended) {
+        this.recommended = recommended;
     }
 
     public PrismOpportunityCategory getOpportunityCategory() {

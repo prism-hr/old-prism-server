@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -22,15 +23,21 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private ResourceOpportunityRepresentationSimple project;
 
-    private List<ResourceConditionRepresentation> conditions;
-
     private PrismOpportunityType opportunityType;
 
     private List<PrismOpportunityCategory> opportunityCategories;
 
+    private String name;
+
+    private List<ResourceConditionRepresentation> conditions;
+
     private List<PrismStudyOption> studyOptions;
 
-    private String name;
+    private Integer applicationCount;
+
+    private Integer applicationRatingCount;
+
+    private BigDecimal applicationRatingAverage;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -72,14 +79,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.project = project;
     }
 
-    public List<ResourceConditionRepresentation> getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(List<ResourceConditionRepresentation> conditions) {
-        this.conditions = conditions;
-    }
-
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
@@ -96,6 +95,22 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.opportunityCategories = opportunityCategories;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<ResourceConditionRepresentation> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(List<ResourceConditionRepresentation> conditions) {
+        this.conditions = conditions;
+    }
+
     public List<PrismStudyOption> getStudyOptions() {
         return studyOptions;
     }
@@ -104,12 +119,28 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.studyOptions = studyOptions;
     }
 
-    public String getName() {
-        return name;
+    public Integer getApplicationCount() {
+        return applicationCount;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setApplicationCount(Integer applicationCount) {
+        this.applicationCount = applicationCount;
+    }
+
+    public Integer getApplicationRatingCount() {
+        return applicationRatingCount;
+    }
+
+    public void setApplicationRatingCount(Integer applicationRatingCount) {
+        this.applicationRatingCount = applicationRatingCount;
+    }
+
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
     }
 
 }

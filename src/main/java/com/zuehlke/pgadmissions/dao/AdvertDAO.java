@@ -18,6 +18,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -45,9 +46,8 @@ import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
-import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
@@ -65,7 +65,10 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.AdvertActionConditionDTO;
+import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.dto.AdvertFunctionDTO;
+import com.zuehlke.pgadmissions.dto.AdvertIndustryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
@@ -83,6 +86,18 @@ public class AdvertDAO {
         return (Advert) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass())
                 .setProjection(Projections.property("advert"))
                 .add(Restrictions.eq("id", resourceId))
+                .uniqueResult();
+    }
+
+    public AdvertApplicationSummaryDTO getAdvertApplicationSummary(Advert advert) {
+        return (AdvertApplicationSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.countDistinct("id").as("applicationCount")) //
+                        .add(Projections.sum("applicationRatingCount").as("applicationRatingCount")) //
+                        .add(Projections.avg("applicationRatingAverage").as("applicationRatingAverage"))) //
+                .add(Restrictions.eq("advert", advert)) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertApplicationSummaryDTO.class)) //
                 .uniqueResult();
     }
 
@@ -133,6 +148,9 @@ public class AdvertDAO {
                         .add(Projections.property("pay.yearMinimumAtLocale").as("payYearMinimum")) //
                         .add(Projections.property("pay.yearMaximumAtLocale").as("payYearMaximum")) //
                         .add(Projections.property("closingDate.closingDate").as("closingDate")) //
+                        .add(Projections.countDistinct("application.id").as("applicationCount")) //
+                        .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //
+                        .add(Projections.avg("application.applicationRatingAverage").as("applicationRatingAverage")) //
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
                 .createAlias("user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
@@ -140,6 +158,8 @@ public class AdvertDAO {
                 .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("applications", "application", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.isNotNull("application.submittedTimestamp")) //
                 .createAlias("opportunityType", "opportunityType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
@@ -179,11 +199,11 @@ public class AdvertDAO {
         if (narrowedByResource || narrowedByTarget) {
             List<PrismScope> targetScopes = Lists.newArrayList(possibleTargets.keySet());
             targetScopes.add(scope);
-            
+
             if (narrowedByResource) {
                 targetScopes.add(resource.getScope());
             }
-            
+
             possibleTargets.keySet().forEach(targetScope -> {
                 String scopeReference = targetScope.getUpperCamelName();
                 String advertReference = scopeReference + "Advert";
@@ -203,7 +223,7 @@ public class AdvertDAO {
         criteria.add(Restrictions.in("state.id", activeStates));
 
         appendContextConstraint(criteria, query);
-        appendVisibilityConstraint(criteria, scope, resource, narrowedByTarget, opportunityRequest, possibleTargets);
+        appendVisibilityConstraint(criteria, scope, resource, narrowedByTarget, opportunityRequest, isTrue(query.getRecommended()), possibleTargets);
 
         appendLocationConstraint(criteria, query);
         appendKeywordConstraint(query, criteria);
@@ -251,6 +271,28 @@ public class AdvertDAO {
                 .createAlias(resourceReference + ".resourceStudyOptions", "resourceStudyOption", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceReference + ".id", resourceIds)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertIndustryDTO> getAdvertIndustries(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertIndustryDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("industry.industry").as("industry"))) //
+                .createAlias("categories.industries", "industry", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertIndustryDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertFunctionDTO> getAdvertFunctions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertFunctionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("function.function").as("function"))) //
+                .createAlias("categories.functions", "function", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertFunctionDTO.class)) //
                 .list();
     }
 
@@ -313,22 +355,6 @@ public class AdvertDAO {
                         .add(Restrictions.eq("program.institution", institution)) //
                         .add(Restrictions.eq("institution.id", institution.getId()))) //
                 .add(Restrictions.eq("pay.currencySpecified", currency)) //
-                .list();
-    }
-
-    public List<PrismAdvertIndustry> getAdvertIndustries(Advert advert) {
-        return (List<PrismAdvertIndustry>) sessionFactory.getCurrentSession().createCriteria(AdvertIndustry.class) //
-                .setProjection(Projections.property("industry")) //
-                .add(Restrictions.eq("advert", advert)) //
-                .addOrder(Order.asc("industry")) //
-                .list();
-    }
-
-    public List<PrismAdvertFunction> getAdvertFunctions(Advert advert) {
-        return (List<PrismAdvertFunction>) sessionFactory.getCurrentSession().createCriteria(AdvertFunction.class) //
-                .setProjection(Projections.property("function")) //
-                .add(Restrictions.eq("advert", advert)) //
-                .addOrder(Order.asc("function")) //
                 .list();
     }
 
@@ -503,7 +529,7 @@ public class AdvertDAO {
     }
 
     private void appendVisibilityConstraint(Criteria criteria, PrismScope scope, ResourceDTO resource, boolean userLoggedIn, boolean opportunityScope,
-            HashMultimap<PrismScope, Integer> possibleTargets) {
+            boolean recommended, HashMultimap<PrismScope, Integer> possibleTargets) {
         if (userLoggedIn) {
             boolean hasTargetConstraints = false;
             Junction targetConstraints = Restrictions.disjunction();
@@ -527,10 +553,14 @@ public class AdvertDAO {
             }
 
             if (hasTargetConstraints) {
-                criteria.add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("advert.globallyVisible", true)) //
-                        .add(targetConstraints));
-            } else {
+                if (recommended) {
+                    criteria.add(targetConstraints);
+                } else {
+                    criteria.add(Restrictions.disjunction() //
+                            .add(Restrictions.eq("advert.globallyVisible", true)) //
+                            .add(targetConstraints));
+                }
+            } else if (!recommended) {
                 criteria.add(Restrictions.eq("advert.globallyVisible", true));
             }
         } else {

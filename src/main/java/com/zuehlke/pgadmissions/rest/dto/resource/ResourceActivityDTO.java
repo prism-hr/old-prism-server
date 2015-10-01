@@ -5,12 +5,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 public class ResourceActivityDTO {
 
     @Valid
-    @NotNull
     private ResourceCreationDTO institution;
 
     @Valid

@@ -422,11 +422,11 @@ public class AdvertDAO {
     public List<Advert> getAdvertsForWhichUserCanTarget(PrismScope scope, User user, PrismOpportunityCategory[] opportunityCategories, List<PrismState> activeStates) {
         Junction categoriesConstraint = Restrictions.disjunction();
         for (PrismOpportunityCategory opportunityCategory : opportunityCategories) {
-            categoriesConstraint.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
+            categoriesConstraint.add(Restrictions.like("resource.opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
         }
 
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("resource.advert")) //
+                .setProjection(Projections.groupProperty("resource.advert")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
@@ -540,6 +540,7 @@ public class AdvertDAO {
                 "update AdvertTarget "
                         + "set partnershipState = :partnershipState "
                         + "where id = :advertTargetId")
+                .setParameter("advertTargetId", advertTargetId)
                 .setParameter("partnershipState", partnershipState)
                 .executeUpdate();
     }
@@ -555,6 +556,7 @@ public class AdvertDAO {
                         + "and targetAdvertUser = :otherUser) "
                         + "or (advertUser = :otherUser "
                         + "and targetAdvertUser = :user)))")
+                .setParameter("advertTargetId", advertTargetId)
                 .setParameter("partnershipState", partnershipState)
                 .setParameter("user", user)
                 .setParameter("otherUser", otherUser)

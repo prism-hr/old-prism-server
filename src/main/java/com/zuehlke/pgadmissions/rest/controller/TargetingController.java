@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping("/api/targeting")
@@ -25,9 +26,12 @@ public class TargetingController {
     @Inject
     private AdvertService advertService;
 
+    @Inject
+    private UserService userService;
+
     @RequestMapping(value = "/target", method = POST)
     public void createTargets(@RequestBody ResourceRelationInvitationDTO resourceRelation) {
-        advertService.createAdvertTargets(resourceRelation);
+        advertService.createAdvertTargets(resourceRelation, userService.getCurrentUser());
     }
 
     @RequestMapping(value = "/target/accept", method = POST)

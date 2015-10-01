@@ -359,7 +359,7 @@ public class ResourceMapper {
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
-        representation.setPartnerActions(actionService.getPartnerActions(resource));
+        representation.setExternalConditions(actionService.getPartnerActions(resource));
         return representation;
     }
 

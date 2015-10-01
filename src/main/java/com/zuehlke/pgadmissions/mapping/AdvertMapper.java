@@ -46,7 +46,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -128,15 +128,15 @@ public class AdvertMapper {
         });
 
         LinkedHashMultimap<Integer, PrismStudyOption> studyOptionIndex = LinkedHashMultimap.create();
-        LinkedHashMultimap<Integer, PrismAction> actionConditionIndex = LinkedHashMultimap.create();
+        LinkedHashMultimap<Integer, PrismActionCondition> actionConditionIndex = LinkedHashMultimap.create();
         LinkedHashMultimap<Integer, PrismAdvertIndustry> industryIndex = LinkedHashMultimap.create();
         LinkedHashMultimap<Integer, PrismAdvertFunction> functionIndex = LinkedHashMultimap.create();
         for (PrismScope parentScope : parentScopes) {
             Set<Integer> scopedResources = resources.get(parentScope);
             if (isNotEmpty(scopedResources)) {
-                LinkedHashMultimap<Integer, PrismAction> actions = advertService.getAdvertActionConditions(parentScope, scopedResources);
-                actions.keySet().forEach(advert -> {
-                    Set<PrismAction> advertPartnerActions = actions.get(advert);
+                LinkedHashMultimap<Integer, PrismActionCondition> actionConditions = advertService.getAdvertActionConditions(parentScope, scopedResources);
+                actionConditions.keySet().forEach(advert -> {
+                    Set<PrismActionCondition> advertPartnerActions = actionConditions.get(advert);
                     if (!(isEmpty(advertPartnerActions) || actionConditionIndex.containsKey(advert))) {
                         actionConditionIndex.putAll(advert, advertPartnerActions);
                     }
@@ -170,7 +170,7 @@ public class AdvertMapper {
         List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
         index.keySet().forEach(advert -> {
             AdvertRepresentationExtended representation = index.get(advert);
-            representation.setPartnerActions(newLinkedList(actionConditionIndex.get(advert)));
+            representation.setExternalConditions(newLinkedList(actionConditionIndex.get(advert)));
             representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
 
             Set<PrismAdvertIndustry> industries = industryIndex.get(advert);
@@ -222,7 +222,7 @@ public class AdvertMapper {
         }
 
         representation.setName(advert.getName());
-        representation.setPartnerActions(actionService.getPartnerActions(advert.getResource()));
+        representation.setExternalConditions(actionService.getPartnerActions(advert.getResource()));
 
         AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
         Long applicationCount = applicationSummary.getApplicationCount();

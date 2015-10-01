@@ -6,7 +6,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -29,7 +29,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private String name;
 
-    private List<PrismAction> partnerActions;
+    private List<PrismActionCondition> externalConditions;
 
     private List<PrismStudyOption> studyOptions;
 
@@ -103,12 +103,12 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.name = name;
     }
 
-    public List<PrismAction> getPartnerActions() {
-        return partnerActions;
+    public List<PrismActionCondition> getExternalConditions() {
+        return externalConditions;
     }
 
-    public void setPartnerActions(List<PrismAction> partnerActions) {
-        this.partnerActions = partnerActions;
+    public void setExternalConditions(List<PrismActionCondition> externalConditions) {
+        this.externalConditions = externalConditions;
     }
 
     public List<PrismStudyOption> getStudyOptions() {

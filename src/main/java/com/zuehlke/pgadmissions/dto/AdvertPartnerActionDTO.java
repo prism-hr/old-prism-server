@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 
 public class AdvertPartnerActionDTO {
 
     private Integer advertId;
 
-    private PrismAction actionId;
+    private PrismActionCondition actionCondition;
 
     public Integer getAdvertId() {
         return advertId;
@@ -16,12 +16,12 @@ public class AdvertPartnerActionDTO {
         this.advertId = advertId;
     }
 
-    public PrismAction getActionId() {
-        return actionId;
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
     }
 
-    public void setActionId(PrismAction actionCondition) {
-        this.actionId = actionCondition;
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
     }
 
 }

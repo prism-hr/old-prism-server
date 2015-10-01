@@ -284,7 +284,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void getOrCreateAdvertTargets(ResourceRelationInvitationDTO resourceRelation) {
+    public void createAdvertTargets(ResourceRelationInvitationDTO resourceRelation) {
         User user = userService.getCurrentUser();
         ResourceRelationOutcomeDTO resourceRelationOutcomeDTO = resourceService.createResourceRelation(resourceRelation);
 
@@ -304,6 +304,8 @@ public class AdvertService {
                 }
             });
         }
+        
+        // TODO - send the connection request
     }
 
     public void acceptAdvertTarget(Integer advertTargetId, Boolean accept) {
@@ -325,6 +327,10 @@ public class AdvertService {
                     resourceService.activateTargetResource(acceptResource, acceptUser);
                 }
                 advertDAO.acceptAdvertTarget(advertTargetId, partnershipState);
+            }
+            
+            if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
+                // TODO - send the confirmation message
             }
         }
     }

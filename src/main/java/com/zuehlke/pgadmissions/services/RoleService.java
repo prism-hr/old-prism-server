@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
@@ -49,6 +51,9 @@ public class RoleService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private EntityService entityService;
@@ -102,6 +107,16 @@ public class RoleService {
 
             actionService.executeUserAction(resource, action, comment);
             notificationService.sendInvitationNotifications(comment);
+
+            PrismScope resourceScope = resource.getResourceScope();
+            if (Arrays.asList(INSTITUTION, DEPARTMENT).contains(resourceScope)) {
+                Advert advert = resource.getAdvert();
+                if (transitionType.equals(CREATE)) {
+                    advertService.updateAdvertTargets(user, advert);
+                } else {
+                    advertService.deleteAdvertTargets(user, advert);
+                }
+            }
         }
     }
 

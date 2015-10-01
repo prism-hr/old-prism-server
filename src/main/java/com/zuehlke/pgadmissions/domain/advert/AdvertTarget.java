@@ -42,8 +42,12 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     private User targetAdvertUser;
 
     @ManyToOne
-    @JoinColumn(name = "accepting_user_id")
-    private User acceptingUser;
+    @JoinColumn(name = "accept_advert_id", nullable = false)
+    private Advert acceptAdvert;
+
+    @ManyToOne
+    @JoinColumn(name = "accept_advert_user_id", nullable = false)
+    private User acceptAdvertUser;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "partnership_state", nullable = false)
@@ -93,12 +97,20 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
         this.targetAdvertUser = targetAdvertUser;
     }
 
-    public User getAcceptingUser() {
-        return acceptingUser;
+    public Advert getAcceptAdvert() {
+        return acceptAdvert;
     }
 
-    public void setAcceptingUser(User acceptingUser) {
-        this.acceptingUser = acceptingUser;
+    public void setAcceptAdvert(Advert acceptAdvert) {
+        this.acceptAdvert = acceptAdvert;
+    }
+
+    public User getAcceptAdvertUser() {
+        return acceptAdvertUser;
+    }
+
+    public void setAcceptAdvertUser(User acceptAdvertUser) {
+        this.acceptAdvertUser = acceptAdvertUser;
     }
 
     public PrismPartnershipState getPartnershipState() {
@@ -129,8 +141,13 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
         return this;
     }
 
-    public AdvertTarget withAcceptingUser(User acceptingUser) {
-        this.acceptingUser = acceptingUser;
+    public AdvertTarget withAcceptAdvert(Advert acceptAdvert) {
+        this.acceptAdvert = acceptAdvert;
+        return this;
+    }
+
+    public AdvertTarget withAcceptAdvertUser(User acceptAdvertUser) {
+        this.acceptAdvertUser = acceptAdvertUser;
         return this;
     }
 

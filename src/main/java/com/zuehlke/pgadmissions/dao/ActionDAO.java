@@ -78,6 +78,15 @@ public class ActionDAO {
                 .uniqueResult();
     }
 
+    public List<Action> getActions(Resource resource) {
+        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
+                .setProjection(Projections.groupProperty("stateAction.action"))
+                .createAlias("state", "state", JoinType.INNER_JOIN)
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN)
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource))
+                .list();
+    }
+
     public Action getPermittedAction(Resource resource, Action action, User user) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("stateAction.action")) //

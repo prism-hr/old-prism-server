@@ -288,8 +288,8 @@ public class AdvertService {
         User user = userService.getCurrentUser();
         ResourceRelationOutcomeDTO resourceRelationOutcomeDTO = resourceService.createResourceRelation(resourceRelation);
 
-        Advert advert = resourceRelationOutcomeDTO.getResourceParent().getAdvert();
-        User targetUser = resourceRelationOutcomeDTO.getUser();
+        Advert acceptAdvert = resourceRelationOutcomeDTO.getResourceParent().getAdvert();
+        User acceptUser = resourceRelationOutcomeDTO.getUser();
 
         PrismMotivationContext context = resourceRelation.getContext();
         PrismMotivationContext targetContext = context.equals(UNIVERSITY) ? EMPLOYER : UNIVERSITY;
@@ -298,9 +298,9 @@ public class AdvertService {
             List<PrismState> activeStates = stateService.getActiveResourceStates(scope);
             advertDAO.getAdvertsForWhichUserCanTarget(scope, user, scope.getDefault(targetContext).getDefaultOpportunityCategories(), activeStates).forEach(targetAdvert -> {
                 if (context.equals(UNIVERSITY)) {
-                    getOrCreateAdvertTarget(advert, user, targetAdvert, targetUser, targetUser);
+                    createAdvertTarget(acceptAdvert, user, targetAdvert, acceptUser, acceptAdvert, acceptUser, ENDORSEMENT_PENDING);
                 } else {
-                    getOrCreateAdvertTarget(targetAdvert, targetUser, advert, user, targetUser);
+                    createAdvertTarget(targetAdvert, acceptUser, acceptAdvert, user, acceptAdvert, acceptUser, ENDORSEMENT_PENDING);
                 }
             });
         }
@@ -310,24 +310,21 @@ public class AdvertService {
         AdvertTarget advertTarget = advertDAO.getAdvertTargetForAcceptance(advertTargetId);
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
-            ResourceParent resource = advertTarget.getAdvert().getResource();
+            ResourceParent acceptResource = advertTarget.getAcceptAdvert().getResource();
+            User acceptUser = advertTarget.getAcceptAdvertUser();
 
             PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
-            if (user.equals(advertTarget.getAcceptingUser())) {
+            if (user.equals(acceptUser)) {
                 if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
-                    String scopePrefix = resource.getResourceScope().name();
-                    Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
-                    if (actionService.checkActionExecutable(resource, completeAction, user, false)) {
-                        User systemUser = systemService.getSystem().getUser();
-                        resourceService.executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
-                        roleService.verifyUserRoles(systemUser, resource, user, true);
-                    }
+                    resourceService.activateTargetResource(acceptResource, acceptUser);
                 }
+                acceptAdvertTarget(advertTarget, partnershipState);
             } else {
-                Action viewEditAction = actionService.getViewEditAction(resource);
-                if (!(viewEditAction == null || !actionService.checkActionExecutable(resource, viewEditAction, user, false))) {
-
+                Action action = actionService.getViewEditAction(acceptResource);
+                if (!(action == null || !actionService.checkActionExecutable(acceptResource, action, user, false))) {
+                    resourceService.activateTargetResource(acceptResource, acceptUser);
                 }
+                advertDAO.acceptAdvertTarget(advertTargetId, partnershipState);
             }
         }
     }
@@ -485,13 +482,35 @@ public class AdvertService {
 
             Set<Advert> targetAdverts = Sets.newHashSet();
             for (PrismScope partnerScope : new PrismScope[] { DEPARTMENT, INSTITUTION, SYSTEM }) {
-                targetAdverts.addAll(advertDAO.getAdvertsTargetsUserCanEndorseFor(advert, user, resourceScope, partnerScope));
+                targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(advert, user, resourceScope, partnerScope));
             }
 
             targetAdverts.forEach(targetAdvert -> {
-                createOrUpdateAdvertTarget(advert, targetAdvert, partnershipState);
+                createAdvertTarget(advert, targetAdvert, partnershipState);
             });
         }
+    }
+
+    public void updateAdvertTargets(User user, Advert newAdvert) {
+        advertDAO.getAdvertTargets(user, newAdvert).forEach(advertTarget -> {
+            Advert advert = advertTarget.getAdvert();
+            Advert targetAdvert = advertTarget.getTargetAdvert();
+            Advert acceptAdvert = advertTarget.getAcceptAdvert();
+
+            User advertUser = advertTarget.getAdvertUser();
+            User targetUser = advertTarget.getTargetAdvertUser();
+
+            PrismPartnershipState partnershipState = advertTarget.getPartnershipState();
+            if (advert.getId().equals(acceptAdvert.getId())) {
+                createAdvertTarget(newAdvert, advertUser, targetAdvert, targetUser, acceptAdvert, user, partnershipState);
+            } else {
+                createAdvertTarget(advert, advertUser, newAdvert, targetUser, acceptAdvert, user, partnershipState);
+            }
+        });
+    }
+
+    public void deleteAdvertTargets(User user, Advert advert) {
+        advertDAO.deleteAdvertTargets(user, advert);
     }
 
     private void appendSystemUserTargets(PrismScope resourceScope, Integer resourceId, HashMultimap<PrismScope, Integer> possibleTargets) {
@@ -508,23 +527,35 @@ public class AdvertService {
 
     private void appendResourceUserTargets(User user, PrismScope resourceScope, Integer resourceId, HashMultimap<PrismScope, Integer> possibleTargets) {
         if (resourceScope == null) {
-            possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION, user));
-            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT, user));
+            possibleTargets.putAll(INSTITUTION, advertDAO.getUserAdvertIds(INSTITUTION, user));
+            possibleTargets.putAll(DEPARTMENT, advertDAO.getUserAdvertIds(DEPARTMENT, user));
         } else if (resourceScope.equals(INSTITUTION)) {
-            possibleTargets.putAll(INSTITUTION, asList(advertDAO.getAdvertId(INSTITUTION, resourceId, user)));
-            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
+            possibleTargets.putAll(INSTITUTION, asList(advertDAO.getUserAdvertId(INSTITUTION, resourceId, user)));
+            possibleTargets.putAll(DEPARTMENT, advertDAO.getUserAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
         } else {
-            possibleTargets.putAll(DEPARTMENT, asList(advertDAO.getAdvertId(DEPARTMENT, resourceId, user)));
+            possibleTargets.putAll(DEPARTMENT, asList(advertDAO.getUserAdvertId(DEPARTMENT, resourceId, user)));
         }
     }
 
-    private AdvertTarget createOrUpdateAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
+    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
         return entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
-    private AdvertTarget getOrCreateAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, User acceptingUser) {
-        return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert).withTargetAdvertUser(targetAdvertUser)
-                .withAcceptingUser(acceptingUser).withPartnershipState(ENDORSEMENT_PENDING));
+    private void createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
+            PrismPartnershipState partnershipState) {
+        AdvertTarget advertTarget = entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
+                .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
+        acceptAdvertTarget(advertTarget.getId(), true);
+    }
+
+    private void acceptAdvertTarget(AdvertTarget advertTarget, PrismPartnershipState partnershipState) {
+        User advertUser = advertTarget.getAdvertUser();
+        User targetUser = advertTarget.getTargetAdvertUser();
+        User acceptUser = advertTarget.getAcceptAdvertUser();
+
+        User otherUser = advertUser.equals(acceptUser) ? null : advertUser;
+        otherUser = otherUser == null ? (targetUser.equals(acceptUser) ? null : targetUser) : otherUser;
+        advertDAO.acceptAdvertTarget(targetUser, otherUser, advertTarget.getId(), partnershipState);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

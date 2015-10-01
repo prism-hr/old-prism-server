@@ -706,6 +706,17 @@ public class ResourceService {
         joinResource(resource, user, context);
         return user;
     }
+    
+    public void activateTargetResource(ResourceParent resource, User user) {
+        String scopePrefix = resource.getResourceScope().name();
+        Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
+
+        if (actionService.getActions(resource).contains(completeAction)) {
+            User systemUser = systemService.getSystem().getUser();
+            executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
+            roleService.verifyUserRoles(systemUser, resource, user, true);
+        }
+    }
 
     private void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
         Action viewEditAction = actionService.getViewEditAction(resource);

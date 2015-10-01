@@ -84,6 +84,10 @@ public class ActionService {
         throw new WorkflowPermissionException(resource, action);
     }
 
+    public List<Action> getActions(Resource resource) {
+        return actionDAO.getActions(resource);
+    }
+    
     public List<ActionDTO> getPermittedActions(Resource resource, User user) {
         PrismScope resourceScope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM);

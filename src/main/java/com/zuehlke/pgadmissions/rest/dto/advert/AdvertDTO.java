@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
 
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
@@ -30,6 +31,9 @@ public class AdvertDTO {
 
     @Valid
     private AdvertCategoriesDTO categories;
+    
+    @Valid
+    private ResourceDTO targetResource;
 
     private Boolean globallyVisible;
 
@@ -79,6 +83,14 @@ public class AdvertDTO {
 
     public void setCategories(AdvertCategoriesDTO categories) {
         this.categories = categories;
+    }
+    
+    public ResourceDTO getTargetResource() {
+        return targetResource;
+    }
+
+    public void setTargetResource(ResourceDTO targetResource) {
+        this.targetResource = targetResource;
     }
 
     public Boolean getGloballyVisible() {

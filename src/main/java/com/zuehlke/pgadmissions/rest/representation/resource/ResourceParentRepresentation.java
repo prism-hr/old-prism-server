@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 
 public class ResourceParentRepresentation extends ResourceRepresentationExtended {
@@ -11,7 +11,7 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     private AdvertRepresentationSimple advert;
 
-    private List<PrismAction> partnerActions;
+    private List<PrismActionCondition> externalConditions;
 
     @Override
     public String getImportedCode() {
@@ -31,12 +31,12 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
         this.advert = advert;
     }
 
-    public List<PrismAction> getPartnerActions() {
-        return partnerActions;
+    public List<PrismActionCondition> getExternalConditions() {
+        return externalConditions;
     }
 
-    public void setPartnerActions(List<PrismAction> partnerActions) {
-        this.partnerActions = partnerActions;
+    public void setExternalConditions(List<PrismActionCondition> externalConditions) {
+        this.externalConditions = externalConditions;
     }
 
 }

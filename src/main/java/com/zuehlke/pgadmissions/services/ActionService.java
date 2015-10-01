@@ -248,7 +248,7 @@ public class ActionService {
         return createResourceActions;
     }
 
-    public List<PrismAction> getPartnerActions(ResourceParent resource) {
+    public List<PrismActionCondition> getPartnerActions(ResourceParent resource) {
         return actionDAO.getPartnerActions(resource);
     }
 

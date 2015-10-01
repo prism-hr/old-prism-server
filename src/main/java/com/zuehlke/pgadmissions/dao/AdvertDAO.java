@@ -248,11 +248,11 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertPartnerActionDTO> getAdvertPartnerActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+    public List<AdvertPartnerActionDTO> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return (List<AdvertPartnerActionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
-                        .add(Projections.groupProperty("action.id").as("actionId"))) //
+                        .add(Projections.groupProperty("resourceCondition.actionCondition").as("actionCondition"))) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN)
                 .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //

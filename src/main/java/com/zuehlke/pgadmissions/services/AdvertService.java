@@ -75,7 +75,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -174,11 +173,11 @@ public class AdvertService {
         return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
     }
 
-    public LinkedHashMultimap<Integer, PrismAction> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        LinkedHashMultimap<Integer, PrismAction> actions = LinkedHashMultimap.create();
+    public LinkedHashMultimap<Integer, PrismActionCondition> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismActionCondition> actions = LinkedHashMultimap.create();
         if (isNotEmpty(resourceIds)) {
-            advertDAO.getAdvertPartnerActions(resourceScope, resourceIds).forEach(action -> {
-                actions.put(action.getAdvertId(), action.getActionId());
+            advertDAO.getAdvertActionConditions(resourceScope, resourceIds).forEach(action -> {
+                actions.put(action.getAdvertId(), action.getActionCondition());
             });
         }
         return actions;
@@ -304,7 +303,7 @@ public class AdvertService {
                 }
             });
         }
-        
+
         // TODO - send the connection request
     }
 
@@ -328,7 +327,7 @@ public class AdvertService {
                 }
                 advertDAO.acceptAdvertTarget(advertTargetId, partnershipState);
             }
-            
+
             if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
                 // TODO - send the confirmation message
             }

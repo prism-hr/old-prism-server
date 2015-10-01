@@ -400,8 +400,8 @@ public class AdvertMapper {
             T resourceRepresentation = (T) BeanUtils.instantiate(representationClass);
 
             resourceRepresentation.setScope(scope);
-            resourceRepresentation.setId(advert.getId());
-            resourceRepresentation.setName(advert.getName());
+            resourceRepresentation.setId(resource.getId());
+            resourceRepresentation.setName(resource.getName());
 
             if (isOpportunity) {
                 String scopeReference = scope.getLowerCamelName();

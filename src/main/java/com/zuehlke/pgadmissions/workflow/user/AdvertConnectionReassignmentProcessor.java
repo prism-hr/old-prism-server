@@ -24,7 +24,7 @@ public class AdvertConnectionReassignmentProcessor implements PrismUserReassignm
             userService.mergeUserAssignmentStrict(oldAdvertTargetTarget, newUser, userProperty);
         }
 
-        for (AdvertTarget oldAdvertTargetAccepting : oldUser.getAdvertTargetsAccepting()) {
+        for (AdvertTarget oldAdvertTargetAccepting : oldUser.getAdvertTargetsAccept()) {
             userService.mergeUserAssignmentStrict(oldAdvertTargetAccepting, newUser, userProperty);
         }
     }

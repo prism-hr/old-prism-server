@@ -146,8 +146,8 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "targetAdvertUser")
     private Set<AdvertTarget> advertTargetsTarget = Sets.newHashSet();
 
-    @OneToMany(mappedBy = "acceptingUser")
-    private Set<AdvertTarget> advertTargetsAccepting = Sets.newHashSet();
+    @OneToMany(mappedBy = "acceptAdvertUser")
+    private Set<AdvertTarget> advertTargetsAccept = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserQualification> userQualifications = Sets.newHashSet();
@@ -330,8 +330,8 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return advertTargetsTarget;
     }
 
-    public Set<AdvertTarget> getAdvertTargetsAccepting() {
-        return advertTargetsAccepting;
+    public Set<AdvertTarget> getAdvertTargetsAccept() {
+        return advertTargetsAccept;
     }
 
     public Set<UserQualification> getUserQualifications() {

@@ -30,7 +30,7 @@ public class TargetingController {
         advertService.createAdvertTargets(resourceRelation);
     }
 
-    @RequestMapping(value = "/target", method = POST)
+    @RequestMapping(value = "/target/accept", method = POST)
     public void acceptTarget(@RequestParam Integer advertTargetId, @RequestParam Boolean accept) {
         advertService.acceptAdvertTarget(advertTargetId, accept);
     }

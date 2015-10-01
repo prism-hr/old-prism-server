@@ -23,7 +23,7 @@ public class AdvertTargetController {
 
     @RequestMapping(method = RequestMethod.PUT)
     public void target(@RequestBody ResourceRelationInvitationDTO resourceRelation) {
-        advertService.getOrCreateAdvertTargets(resourceRelation);
+        advertService.createAdvertTargets(resourceRelation);
     }
 
     @RequestMapping(value = "/accept/{advertTargetId}", method = RequestMethod.PUT)

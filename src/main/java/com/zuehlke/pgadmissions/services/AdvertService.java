@@ -283,25 +283,28 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void createAdvertTargets(ResourceRelationInvitationDTO resourceRelation) {
-        User user = userService.getCurrentUser();
+    public void createAdvertTargets(ResourceRelationInvitationDTO resourceRelation, User user) {
         ResourceRelationOutcomeDTO resourceRelationOutcomeDTO = resourceService.createResourceRelation(resourceRelation);
 
+        ResourceParent resource = resourceRelationOutcomeDTO.getResourceParent();
         Advert acceptAdvert = resourceRelationOutcomeDTO.getResourceParent().getAdvert();
+        
         User acceptUser = resourceRelationOutcomeDTO.getUser();
+        acceptUser = acceptUser == null ? resource.getUser() : acceptUser;
 
         PrismMotivationContext context = resourceRelation.getContext();
         PrismMotivationContext targetContext = context.equals(UNIVERSITY) ? EMPLOYER : UNIVERSITY;
 
         for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             List<PrismState> activeStates = stateService.getActiveResourceStates(scope);
-            advertDAO.getAdvertsForWhichUserCanTarget(scope, user, scope.getDefault(targetContext).getDefaultOpportunityCategories(), activeStates).forEach(targetAdvert -> {
+            List<Advert> targetAdverts = advertDAO.getAdvertsForWhichUserCanTarget(scope, acceptUser, scope.getDefault(targetContext).getDefaultOpportunityCategories(), activeStates);
+            for (Advert targetAdvert : targetAdverts) {
                 if (context.equals(UNIVERSITY)) {
                     createAdvertTarget(acceptAdvert, user, targetAdvert, acceptUser, acceptAdvert, acceptUser, ENDORSEMENT_PENDING);
                 } else {
                     createAdvertTarget(targetAdvert, acceptUser, acceptAdvert, user, acceptAdvert, acceptUser, ENDORSEMENT_PENDING);
                 }
-            });
+            }
         }
 
         // TODO - send the connection request

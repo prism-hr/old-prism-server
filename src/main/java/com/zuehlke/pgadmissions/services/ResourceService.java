@@ -23,6 +23,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +196,15 @@ public class ResourceService {
                 .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
-        return actionService.executeUserAction(resource, action, comment);
+        ActionOutcomeDTO outcome = actionService.executeUserAction(resource, action, comment);
+        entityService.flush();
+
+        if (Arrays.asList(INSTITUTION, DEPARTMENT).contains(resource.getResourceScope())) {
+            ResourceRelationInvitationDTO resourceRelation = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
+            advertService.createAdvertTargets(resourceRelation, resource.getUser());
+        }
+
+        return outcome;
     }
 
     public ResourceRelationOutcomeDTO createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
@@ -706,7 +715,7 @@ public class ResourceService {
         joinResource(resource, user, context);
         return user;
     }
-    
+
     public void activateTargetResource(ResourceParent resource, User user) {
         String scopePrefix = resource.getResourceScope().name();
         Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));

@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
+
 public class ResourceRelationInvitationDTO {
 
     @NotNull

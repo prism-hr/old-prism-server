@@ -308,24 +308,29 @@ public class AdvertService {
 
     public boolean processAdvertTarget(Integer advertTargetId, Boolean accept) {
         boolean performed = false;
+        
         AdvertTarget advertTarget = advertDAO.getAdvertTargetForAcceptance(advertTargetId);
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
-            ResourceParent acceptResource = advertTarget.getAcceptAdvert().getResource();
-            User acceptUser = advertTarget.getAcceptAdvertUser();
-
-            PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
-            if (user.equals(acceptUser)) {
-                processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
-                performed = true;
-            } else {
-                Action action = actionService.getViewEditAction(acceptResource);
-                if (!(action == null || !actionService.checkActionExecutable(acceptResource, action, user, false))) {
+            
+            if (user != null) {
+                ResourceParent acceptResource = advertTarget.getAcceptAdvert().getResource();
+                User acceptUser = advertTarget.getAcceptAdvertUser();
+    
+                PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
+                if (user.equals(acceptUser)) {
                     processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
                     performed = true;
+                } else {
+                    Action action = actionService.getViewEditAction(acceptResource);
+                    if (!(action == null || !actionService.checkActionExecutable(acceptResource, action, user, false))) {
+                        processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
+                        performed = true;
+                    }
                 }
             }
         }
+        
         return performed;
     }
 

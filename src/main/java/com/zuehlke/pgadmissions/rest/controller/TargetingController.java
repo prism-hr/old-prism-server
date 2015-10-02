@@ -27,14 +27,14 @@ public class TargetingController {
     private AdvertService advertService;
 
     @RequestMapping(value = "/target", method = POST)
-    public void createTargets(@RequestBody ResourceConnectionInvitationDTO resourceConnection) {
+    public void createTarget(@RequestBody ResourceConnectionInvitationDTO resourceConnection) {
         ResourceDTO invitingResource = resourceConnection.getInvitingResource();
         advertService.createAdvertTarget(invitingResource.getScope(), invitingResource.getId(), resourceConnection.getReceivingResource());
     }
 
     @RequestMapping(value = "/target/accept", method = POST)
-    public void acceptTarget(@RequestParam Integer advertTargetId, @RequestParam Boolean accept) {
-        advertService.processAdvertTarget(advertTargetId, accept);
+    public void updateTarget(@RequestParam Integer advertTargetId, @RequestParam Boolean accept) {
+        advertService.updateAdvertTarget(advertTargetId, accept);
     }
 
     @RequestMapping(value = "/competences", method = GET)

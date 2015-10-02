@@ -306,10 +306,10 @@ public class AdvertService {
         }
     }
 
-    public boolean processAdvertTarget(Integer advertTargetId, Boolean accept) {
+    public boolean updateAdvertTarget(Integer advertTargetId, Boolean accept) {
         boolean performed = false;
         
-        AdvertTarget advertTarget = advertDAO.getAdvertTargetForAcceptance(advertTargetId);
+        AdvertTarget advertTarget = advertDAO.getAdvertTargetById(advertTargetId);
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
             
@@ -528,7 +528,7 @@ public class AdvertService {
             PrismPartnershipState partnershipState) {
         AdvertTarget advertTarget = entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
                 .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
-        if (!processAdvertTarget(advertTarget.getId(), true)) {
+        if (!updateAdvertTarget(advertTarget.getId(), true)) {
             // TODO - send the connection request
         }
     }

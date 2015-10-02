@@ -279,6 +279,10 @@ public class ResourceMapper {
         return representation;
     }
 
+    public ResourceRepresentationIdentity getResourceRepresentationIdentity(ResourceIdentityDTO resourceDTO) {
+        return getResourceRepresentation(resourceDTO.getScope(), resourceDTO, ResourceRepresentationIdentity.class);
+    }
+
     public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {
         return getResourceRepresentationSimple(resourceScope, resourceDTO, ResourceRepresentationSimple.class);
     }

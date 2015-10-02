@@ -445,10 +445,9 @@ public class AdvertDAO {
                 .list();
     }
 
-    public AdvertTarget getAdvertTargetForAcceptance(Integer advertTargetId) {
+    public AdvertTarget getAdvertTargetById(Integer advertTargetId) {
         return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .add(Restrictions.eq("id", advertTargetId)) //
-                .add(Restrictions.ne("partnershipState", ENDORSEMENT_REVOKED)) //
                 .uniqueResult();
     }
 

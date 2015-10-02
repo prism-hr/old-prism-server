@@ -91,6 +91,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
@@ -98,7 +99,6 @@ import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -106,6 +106,7 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -463,6 +464,10 @@ public class ResourceService {
 
     public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
+    }
+    
+    public List<ResourceIdentityDTO> getResourcesForWhichUserCanCreateResource(Resource parent, PrismScope resourceScope, PrismScope creationScope, String searchTerm) {
+        return resourceDAO.getResourcesForWhichUserCanCreateResource(userService.getCurrentUser(), parent, resourceScope, creationScope, searchTerm);
     }
 
     public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {

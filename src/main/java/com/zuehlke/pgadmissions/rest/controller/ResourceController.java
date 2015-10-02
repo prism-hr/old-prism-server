@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -51,6 +52,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListReprese
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationCreation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
@@ -136,6 +138,14 @@ public class ResourceController {
         ResourceParent resource = (ResourceParent) loadResource(resourceId, resourceDescriptor);
         return resourceService.getResources(resource, getResourceDescriptor(childResourceScope).getResourceScope(), q).stream()
                 .map(resourceMapper::getResourceRepresentationCreation).collect(toList());
+    }
+
+    @RequestMapping(value = "/{resourceId}/{resourceResponseScope}/{resourceCreationScope}", method = RequestMethod.GET)
+    public List<ResourceRepresentationIdentity> getResourceForWhichUserCanCreateResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable String resourceResponseScope, @PathVariable String resourceCreationScope, @RequestParam String q) {
+        ResourceParent parent = (ResourceParent) loadResource(resourceId, resourceDescriptor);
+        return resourceService.getResourcesForWhichUserCanCreateResource(parent, getResourceDescriptor(resourceResponseScope).getResourceScope(),
+                getResourceDescriptor(resourceCreationScope).getResourceScope(), q).stream().map(resourceMapper::getResourceRepresentationIdentity).collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.GET)

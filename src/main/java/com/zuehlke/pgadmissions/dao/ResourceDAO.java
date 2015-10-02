@@ -60,6 +60,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
@@ -450,6 +451,45 @@ public class ResourceDAO {
                 .add(Restrictions.isNotNull(resourceReference))
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.in("role.id", roles)) //
+                .list();
+    }
+
+    public List<ResourceIdentityDTO> getResourcesForWhichUserCanCreateResource(User user, Resource parent, PrismScope resourceScope, PrismScope creationScope, String searchTerm) {
+        ProjectionList projections = null;
+        if (creationScope.equals(INSTITUTION)) {
+            projections = Projections.projectionList() //
+                    .add(Projections.property("state.scope.id").as("scope")) //
+                    .add(Projections.property("resource.id").as("id")) //
+                    .add(Projections.property("resource.name").as("name")) //
+                    .add(Projections.property("resource.logoImage.id").as("logoImageId"));
+        } else {
+            projections = Projections.projectionList() //
+                    .add(Projections.property("state.scope.id").as("scope")) //
+                    .add(Projections.property("resource.id").as("id")) //
+                    .add(Projections.property("resource.name").as("name"));
+        }
+
+        return (List<ResourceIdentityDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(projections) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
+                        Restrictions.eq("stateActionAssignment.externalMode", false)) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource." + parent.getResourceScope().getLowerCamelName(), parent)) //
+                .add(Restrictions.like("resource.name", searchTerm, MatchMode.ANYWHERE)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eqProperty("state", "stateAction.state")) //
+                .add(getResourceStateActionConstraint()) //
+                .add(Restrictions.isNull("state.hidden")) //
+                .add(Restrictions.eq("action.creationScope.id", creationScope)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //
                 .list();
     }
 

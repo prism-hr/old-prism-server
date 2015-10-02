@@ -300,9 +300,9 @@ public class AdvertService {
         userTarget = userTarget == null ? resourceTarget.getUser() : userTarget;
 
         if (target.getContext().equals(EMPLOYER)) {
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
-        } else {
             createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, ENDORSEMENT_PENDING);
+        } else {
+            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
         }
     }
 
@@ -461,7 +461,7 @@ public class AdvertService {
             resourceScope = resource.getScope();
         }
 
-        HashMultimap<PrismScope, Integer> possibleTargets = HashMultimap.create();
+        Set<Integer> possibleTargets = Sets.newHashSet();
         if (user != null) {
             if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
                 appendSystemUserTargets(resourceScope, resourceId, possibleTargets);
@@ -496,27 +496,27 @@ public class AdvertService {
         }
     }
 
-    private void appendSystemUserTargets(PrismScope resourceScope, Integer resourceId, HashMultimap<PrismScope, Integer> possibleTargets) {
+    private void appendSystemUserTargets(PrismScope resourceScope, Integer resourceId, Set<Integer> possibleTargets) {
         if (resourceScope == null) {
-            possibleTargets.putAll(INSTITUTION, advertDAO.getAdvertIds(INSTITUTION));
-            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(DEPARTMENT));
+            possibleTargets.addAll(advertDAO.getAdvertIds(INSTITUTION));
+            possibleTargets.addAll(advertDAO.getAdvertIds(DEPARTMENT));
         } else if (resourceScope.equals(INSTITUTION)) {
-            possibleTargets.put(INSTITUTION, advertDAO.getAdvertId(INSTITUTION, resourceId));
-            possibleTargets.putAll(DEPARTMENT, advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT));
+            possibleTargets.add(advertDAO.getAdvertId(INSTITUTION, resourceId));
+            possibleTargets.addAll(advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT));
         } else {
-            possibleTargets.put(DEPARTMENT, advertDAO.getAdvertId(DEPARTMENT, resourceId));
+            possibleTargets.add(advertDAO.getAdvertId(DEPARTMENT, resourceId));
         }
     }
 
-    private void appendResourceUserTargets(User user, PrismScope resourceScope, Integer resourceId, HashMultimap<PrismScope, Integer> possibleTargets) {
+    private void appendResourceUserTargets(User user, PrismScope resourceScope, Integer resourceId, Set<Integer> possibleTargets) {
         if (resourceScope == null) {
-            possibleTargets.putAll(INSTITUTION, advertDAO.getUserAdvertIds(INSTITUTION, user));
-            possibleTargets.putAll(DEPARTMENT, advertDAO.getUserAdvertIds(DEPARTMENT, user));
+            possibleTargets.addAll(advertDAO.getUserAdvertIds(INSTITUTION, user));
+            possibleTargets.addAll(advertDAO.getUserAdvertIds(DEPARTMENT, user));
         } else if (resourceScope.equals(INSTITUTION)) {
-            possibleTargets.putAll(INSTITUTION, asList(advertDAO.getUserAdvertId(INSTITUTION, resourceId, user)));
-            possibleTargets.putAll(DEPARTMENT, advertDAO.getUserAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
+            possibleTargets.addAll(asList(advertDAO.getUserAdvertId(INSTITUTION, resourceId, user)));
+            possibleTargets.addAll(advertDAO.getUserAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
         } else {
-            possibleTargets.putAll(DEPARTMENT, asList(advertDAO.getUserAdvertId(DEPARTMENT, resourceId, user)));
+            possibleTargets.addAll(asList(advertDAO.getUserAdvertId(DEPARTMENT, resourceId, user)));
         }
     }
 

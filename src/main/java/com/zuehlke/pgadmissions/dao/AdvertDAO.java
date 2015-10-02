@@ -12,6 +12,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static java.util.Arrays.asList;
@@ -75,11 +77,11 @@ import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
-import jersey.repackaged.com.google.common.collect.Sets;
-
 @Repository
 @SuppressWarnings("unchecked")
 public class AdvertDAO {
+
+    private static final PrismScope[] targetScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -179,7 +181,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityCategoryDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, PrismActionCondition actionCondition,
-            OpportunitiesQueryDTO query, User currentUser, HashMultimap<PrismScope, Integer> possibleTargets) {
+            OpportunitiesQueryDTO query, User currentUser, Set<Integer> possibleTargets) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("advert.id").as("id")) //
@@ -198,21 +200,14 @@ public class AdvertDAO {
         boolean narrowedByResource = resource != null;
         boolean narrowedByTarget = currentUser != null;
 
-        if (narrowedByResource || narrowedByTarget) {
-            Set<PrismScope> targetScopes = Sets.newHashSet(possibleTargets.keySet());
-            targetScopes.add(scope);
-
-            if (narrowedByResource) {
-                targetScopes.add(resource.getScope());
-            }
-
-            targetScopes.forEach(targetScope -> {
+        if (isNotEmpty(possibleTargets) && (narrowedByResource || narrowedByTarget)) {
+            for (PrismScope targetScope : targetScopes) {
                 String scopeReference = targetScope.getLowerCamelName();
                 String advertReference = scopeReference + "Advert";
                 criteria.createAlias("advert." + targetScope.getLowerCamelName(), scopeReference, JoinType.LEFT_OUTER_JOIN)
                         .createAlias(scopeReference + ".advert", advertReference, JoinType.LEFT_OUTER_JOIN)
                         .createAlias(advertReference + ".targets", advertReference + "Target", JoinType.LEFT_OUTER_JOIN);
-            });
+            }
         }
 
         Class<? extends Resource> resourceClass = scope.getResourceClass();
@@ -532,19 +527,16 @@ public class AdvertDAO {
     }
 
     private void appendVisibilityConstraint(Criteria criteria, PrismScope scope, ResourceDTO resource, boolean userLoggedIn, boolean opportunityScope,
-            boolean recommended, HashMultimap<PrismScope, Integer> possibleTargets) {
-        if (userLoggedIn) {
+            boolean recommended, Set<Integer> possibleTargets) {
+        if (userLoggedIn && isNotEmpty(possibleTargets)) {
             boolean hasTargetConstraints = false;
             Junction targetConstraints = Restrictions.disjunction();
-            for (PrismScope targetScope : possibleTargets.keySet()) {
-                Set<Integer> targetAdverts = possibleTargets.get(targetScope);
-                if (isNotEmpty(targetAdverts)) {
-                    String targetReference = targetScope.getLowerCamelName() + "AdvertTarget";
-                    targetConstraints.add(Restrictions.conjunction()
-                            .add(Restrictions.in(targetReference + ".targetAdvert.id", targetAdverts))
-                            .add(Restrictions.ne(targetReference + ".partnershipState", ENDORSEMENT_REVOKED)));
-                    hasTargetConstraints = true;
-                }
+            for (PrismScope targetScope : targetScopes) {
+                String targetReference = targetScope.getLowerCamelName() + "AdvertTarget";
+                targetConstraints.add(Restrictions.conjunction()
+                        .add(Restrictions.in(targetReference + ".targetAdvert.id", possibleTargets))
+                        .add(Restrictions.ne(targetReference + ".partnershipState", ENDORSEMENT_REVOKED)));
+                hasTargetConstraints = true;
             }
 
             if (opportunityScope) {

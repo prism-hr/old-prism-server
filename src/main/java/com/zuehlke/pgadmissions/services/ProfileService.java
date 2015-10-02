@@ -559,7 +559,7 @@ public class ProfileService {
         profile.getEmploymentPositions().remove(employmentPosition);
         entityService.flush();
     }
-    
+
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> ProfileRefereeUpdateDTO updateReferee(T profile, Class<U> refereeClass, Integer refereeId,
             ProfileRefereeDTO refereeDTO) {
         U referee;
@@ -640,7 +640,7 @@ public class ProfileService {
 
     private void createAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
         ResourceRelationInvitationDTO resourceRelationDTO = advertRelationDTO.getResource();
-        ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO).getResourceParent();
+        ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
 
         UserDTO userConnectionDTO = resourceRelationDTO.getUser();
         if (userConnectionDTO != null) {

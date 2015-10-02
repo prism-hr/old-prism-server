@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -94,12 +93,12 @@ import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
-import com.zuehlke.pgadmissions.dto.ResourceRelationOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -199,15 +198,17 @@ public class ResourceService {
         ActionOutcomeDTO outcome = actionService.executeUserAction(resource, action, comment);
         entityService.flush();
 
-        if (Arrays.asList(INSTITUTION, DEPARTMENT).contains(resource.getResourceScope())) {
-            ResourceRelationInvitationDTO resourceRelation = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
-            advertService.createAdvertTargets(resourceRelation, resource.getUser());
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
+            if (target != null) {
+                advertService.createAdvertTarget(resource.getResourceScope(), resource.getId(), target);
+            }
         }
 
         return outcome;
     }
 
-    public ResourceRelationOutcomeDTO createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
+    public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
             ResourceParent resourceChild = null;
             User lastUser = systemService.getSystem().getUser();
@@ -237,13 +238,12 @@ public class ResourceService {
                 joinResource(resourceParent, userService.getCurrentUser(), STUDENT);
             }
 
-            User user = null;
             UserDTO userDTO = resourceRelationDTO.getUser();
             if (userDTO != null) {
-                user = joinResource(resourceParent, userDTO, VIEWER);
+                joinResource(resourceParent, userDTO, VIEWER);
             }
 
-            return new ResourceRelationOutcomeDTO(resourceChild, resourceParent, user);
+            return resourceChild;
         }
 
         throw new UnsupportedOperationException("Invalid resource relation creation attempt");
@@ -716,7 +716,7 @@ public class ResourceService {
         return user;
     }
 
-    public void activateTargetResource(ResourceParent resource, User user) {
+    public void activateResource(ResourceParent resource, User user) {
         String scopePrefix = resource.getResourceScope().name();
         Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
 

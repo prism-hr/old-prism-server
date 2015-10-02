@@ -419,24 +419,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Advert> getAdvertsForWhichUserCanTarget(PrismScope scope, User user, PrismOpportunityCategory[] opportunityCategories, List<PrismState> activeStates) {
-        Junction categoriesConstraint = Restrictions.disjunction();
-        for (PrismOpportunityCategory opportunityCategory : opportunityCategories) {
-            categoriesConstraint.add(Restrictions.like("resource.opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
-        }
-
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("resource.advert")) //
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("state.id", activeStates)) //
-                .add(categoriesConstraint) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("role.verified", true)) //
-                .list();
-    }
-
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope partnerScope) {
         return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(Projections.groupProperty("target.targetAdvert")) //
@@ -527,50 +509,13 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertTarget> getAdvertTargets(User user, Advert advert) {
-        return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .add(Restrictions.eq("acceptAdvertUser", user)) //
-                .add(Restrictions.ne("advert", advert)) //
-                .add(Restrictions.ne("targetAdvert", advert)) //
-                .list();
-    }
-
-    public void acceptAdvertTarget(Integer advertTargetId, PrismPartnershipState partnershipState) {
+    public void processAdvertTarget(Integer advertTargetId, PrismPartnershipState partnershipState) {
         sessionFactory.getCurrentSession().createQuery(
                 "update AdvertTarget "
                         + "set partnershipState = :partnershipState "
                         + "where id = :advertTargetId")
                 .setParameter("advertTargetId", advertTargetId)
                 .setParameter("partnershipState", partnershipState)
-                .executeUpdate();
-    }
-
-    public void acceptAdvertTarget(User user, User otherUser, Integer advertTargetId, PrismPartnershipState partnershipState) {
-        sessionFactory.getCurrentSession().createQuery(
-                "update AdvertTarget "
-                        + "set partnershipState = :partnershipState "
-                        + "where id = :advertTargetId "
-                        + "or (advertUser is not null "
-                        + "and targetAdvertUser is not null "
-                        + "and ((advertUser = :user "
-                        + "and targetAdvertUser = :otherUser) "
-                        + "or (advertUser = :otherUser "
-                        + "and targetAdvertUser = :user)))")
-                .setParameter("advertTargetId", advertTargetId)
-                .setParameter("partnershipState", partnershipState)
-                .setParameter("user", user)
-                .setParameter("otherUser", otherUser)
-                .executeUpdate();
-    }
-
-    public void deleteAdvertTargets(User user, Advert advert) {
-        sessionFactory.getCurrentSession().createQuery(
-                "delete AdvertTarget "
-                        + "where acceptAdvertUser = :user "
-                        + "and (advert = :advert "
-                        + "or targetAdvert = :advert)")
-                .setParameter("user", user)
-                .setParameter("advert", advert)
                 .executeUpdate();
     }
 

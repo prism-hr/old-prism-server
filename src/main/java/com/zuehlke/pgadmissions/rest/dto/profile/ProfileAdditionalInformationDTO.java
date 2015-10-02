@@ -1,9 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
+import javax.validation.constraints.Size;
+
 public class ProfileAdditionalInformationDTO {
 
+    @Size(max = 1000)
     private String requirements;
 
+    @Size(max = 1000)
     private String convictions;
 
     public String getRequirements() {

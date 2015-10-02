@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1314,7 +1314,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Opportunities"),
     SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_DEPARTMENTS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Departments"),
     SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_PARTNERS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Recruitment Partners"),
-    SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Employers"),
+    SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_EMPLOYERS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Employers"),
     SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_LOCATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Location"),
     SYSTEM_OPPORTUNITIES_ADVERT_TAB_MAIN_COMPETENCES(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Person Specification"),
 

@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConnectionInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
 @RequestMapping("/api/targeting")
@@ -26,17 +26,15 @@ public class TargetingController {
     @Inject
     private AdvertService advertService;
 
-    @Inject
-    private UserService userService;
-
     @RequestMapping(value = "/target", method = POST)
-    public void createTargets(@RequestBody ResourceRelationInvitationDTO resourceRelation) {
-        advertService.createAdvertTargets(resourceRelation, userService.getCurrentUser());
+    public void createTargets(@RequestBody ResourceConnectionInvitationDTO resourceConnection) {
+        ResourceDTO invitingResource = resourceConnection.getInvitingResource();
+        advertService.createAdvertTarget(invitingResource.getScope(), invitingResource.getId(), resourceConnection.getReceivingResource());
     }
 
     @RequestMapping(value = "/target/accept", method = POST)
     public void acceptTarget(@RequestParam Integer advertTargetId, @RequestParam Boolean accept) {
-        advertService.acceptAdvertTarget(advertTargetId, accept);
+        advertService.processAdvertTarget(advertTargetId, accept);
     }
 
     @RequestMapping(value = "/competences", method = GET)

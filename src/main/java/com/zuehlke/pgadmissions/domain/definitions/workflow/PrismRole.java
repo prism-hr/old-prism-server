@@ -11,9 +11,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import java.util.Set;
-
-import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
@@ -60,16 +57,6 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     private PrismScope scope;
 
-    private static HashMultimap<PrismScope, PrismRole> unverifiedRoles = HashMultimap.create();
-
-    static {
-        for (PrismRole role : PrismRole.values()) {
-            if (role.name().contains("UNVERIFIED")) {
-                unverifiedRoles.put(role.getScope(), role);
-            }
-        }
-    }
-
     private PrismRole(PrismRoleCategory roleCategory, boolean directlyAssignable, PrismScope scope) {
         this.roleCategory = roleCategory;
         this.directlyAssignable = directlyAssignable;
@@ -86,10 +73,6 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     public PrismScope getScope() {
         return scope;
-    }
-    
-    public static Set<PrismRole> getUnverifiedRoles(PrismScope scope) {
-        return unverifiedRoles.get(scope);
     }
 
     @Override

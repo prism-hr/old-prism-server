@@ -14,6 +14,8 @@ public class UserActivityRepresentation {
 
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
+    private List<ResourceUserActivityRepresentation> joinActivities;
+    
     private List<ConnectionActivityRepresentation> connectionActivities;
 
     public List<ResourceActivityRepresentation> getResourceActivities() {
@@ -30,6 +32,14 @@ public class UserActivityRepresentation {
 
     public void setAppointmentActivities(List<AppointmentActivityRepresentation> appointmentActivities) {
         this.appointmentActivities = appointmentActivities;
+    }
+
+    public List<ResourceUserActivityRepresentation> getJoinActivities() {
+        return joinActivities;
+    }
+
+    public void setJoinActivities(List<ResourceUserActivityRepresentation> joinActivities) {
+        this.joinActivities = joinActivities;
     }
 
     public List<ConnectionActivityRepresentation> getConnectionActivities() {
@@ -50,8 +60,8 @@ public class UserActivityRepresentation {
         return this;
     }
 
-    public UserActivityRepresentation withConnectionActivities(List<ConnectionActivityRepresentation> connectionActivities) {
-        this.connectionActivities = connectionActivities;
+    public UserActivityRepresentation withJoinActivities(List<ResourceUserActivityRepresentation> joinActivities) {
+        this.joinActivities = joinActivities;
         return this;
     }
 
@@ -187,7 +197,7 @@ public class UserActivityRepresentation {
 
     }
 
-    public static class ConnectionActivityRepresentation {
+    public static class ResourceUserActivityRepresentation {
 
         private ResourceRepresentationActivity resource;
 
@@ -209,16 +219,50 @@ public class UserActivityRepresentation {
             this.users = users;
         }
 
-        public ConnectionActivityRepresentation withResource(ResourceRepresentationActivity resource) {
+        public ResourceUserActivityRepresentation withResource(ResourceRepresentationActivity resource) {
             this.resource = resource;
             return this;
         }
 
-        public ConnectionActivityRepresentation withUsers(List<UserRepresentationSimple> users) {
+        public ResourceUserActivityRepresentation withUsers(List<UserRepresentationSimple> users) {
             this.users = users;
             return this;
         }
 
+    }
+    
+    public static class ConnectionActivityRepresentation {
+        
+        private ResourceRepresentationActivity targetResource;
+        
+        private ResourceRepresentationActivity resource;
+        
+        private UserRepresentationSimple user;
+
+        public ResourceRepresentationActivity getTargetResource() {
+            return targetResource;
+        }
+
+        public void setTargetResource(ResourceRepresentationActivity targetResource) {
+            this.targetResource = targetResource;
+        }
+
+        public ResourceRepresentationActivity getResource() {
+            return resource;
+        }
+
+        public void setResource(ResourceRepresentationActivity resource) {
+            this.resource = resource;
+        }
+
+        public UserRepresentationSimple getUser() {
+            return user;
+        }
+
+        public void setUser(UserRepresentationSimple user) {
+            this.user = user;
+        }
+        
     }
 
 }

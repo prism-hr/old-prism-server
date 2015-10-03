@@ -297,8 +297,10 @@ public class AdvertService {
         userTarget = userTarget == null ? resourceTarget.getUser() : userTarget;
 
         if (target.getContext().equals(EMPLOYER)) {
+            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, null, ENDORSEMENT_PENDING);
             createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, ENDORSEMENT_PENDING);
         } else {
+            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, null, ENDORSEMENT_PENDING);
             createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
         }
     }
@@ -526,7 +528,7 @@ public class AdvertService {
             PrismPartnershipState partnershipState) {
         AdvertTarget advertTarget = entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
                 .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
-        if (!updateAdvertTarget(advertTarget.getId(), true)) {
+        if (!(acceptAdvertUser == null && updateAdvertTarget(advertTarget.getId(), true))) {
             // TODO - send the connection request
         }
     }

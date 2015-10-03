@@ -77,6 +77,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -84,7 +85,6 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
@@ -122,9 +122,6 @@ public class AdvertService {
 
     @Inject
     private AdvertDAO advertDAO;
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private EntityService entityService;
@@ -308,29 +305,30 @@ public class AdvertService {
 
     public boolean updateAdvertTarget(Integer advertTargetId, Boolean accept) {
         boolean performed = false;
-        
+
         AdvertTarget advertTarget = advertDAO.getAdvertTargetById(advertTargetId);
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
-            
+
             if (user != null) {
                 ResourceParent acceptResource = advertTarget.getAcceptAdvert().getResource();
                 User acceptUser = advertTarget.getAcceptAdvertUser();
-    
+
                 PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
                 if (user.equals(acceptUser)) {
                     processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
                     performed = true;
                 } else {
-                    Action action = actionService.getViewEditAction(acceptResource);
-                    if (!(action == null || !actionService.checkActionExecutable(acceptResource, action, user, false))) {
+                    String acceptResourceReference = acceptResource.getResourceScope().name();
+                    if (roleService.hasUserRole(acceptResource, acceptUser, PrismRole.valueOf(acceptResourceReference + "_ADMINISTRATOR"),
+                            PrismRole.valueOf(acceptResourceReference + "_APPROVER"))) {
                         processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
                         performed = true;
                     }
                 }
             }
         }
-        
+
         return performed;
     }
 

@@ -15,7 +15,7 @@ public class UserActivityRepresentation {
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
     private List<ResourceUserActivityRepresentation> joinActivities;
-    
+
     private List<ConnectionActivityRepresentation> connectionActivities;
 
     public List<ResourceActivityRepresentation> getResourceActivities() {
@@ -230,14 +230,12 @@ public class UserActivityRepresentation {
         }
 
     }
-    
+
     public static class ConnectionActivityRepresentation {
-        
+
         private ResourceRepresentationActivity targetResource;
-        
-        private ResourceRepresentationActivity resource;
-        
-        private UserRepresentationSimple user;
+
+        private List<ConnectionRepresentation> connections;
 
         public ResourceRepresentationActivity getTargetResource() {
             return targetResource;
@@ -247,22 +245,38 @@ public class UserActivityRepresentation {
             this.targetResource = targetResource;
         }
 
-        public ResourceRepresentationActivity getResource() {
-            return resource;
+        public List<ConnectionRepresentation> getConnections() {
+            return connections;
         }
 
-        public void setResource(ResourceRepresentationActivity resource) {
-            this.resource = resource;
+        public void setConnections(List<ConnectionRepresentation> connections) {
+            this.connections = connections;
         }
 
-        public UserRepresentationSimple getUser() {
-            return user;
+        public static class ConnectionRepresentation {
+
+            private ResourceRepresentationActivity resource;
+
+            private UserRepresentationSimple user;
+
+            public ResourceRepresentationActivity getResource() {
+                return resource;
+            }
+
+            public void setResource(ResourceRepresentationActivity resource) {
+                this.resource = resource;
+            }
+
+            public UserRepresentationSimple getUser() {
+                return user;
+            }
+
+            public void setUser(UserRepresentationSimple user) {
+                this.user = user;
+            }
+
         }
 
-        public void setUser(UserRepresentationSimple user) {
-            this.user = user;
-        }
-        
     }
 
 }

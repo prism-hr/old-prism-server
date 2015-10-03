@@ -2,6 +2,28 @@ package com.zuehlke.pgadmissions.dto;
 
 public class AdvertTargetDTO {
 
+    private Integer institutionId;
+
+    private String institutionName;
+
+    private Integer logoImageId;
+
+    private Integer departmentId;
+
+    private String departmentName;
+
+    private Integer advertTargetId;
+
+    private Integer targetInstitutionId;
+
+    private String targetInstitutionName;
+
+    private Integer targetLogoImageId;
+
+    private Integer targetDepartmentId;
+
+    private String targetDepartmentName;
+
     private Integer userId;
 
     private String userFirstName;
@@ -14,25 +36,99 @@ public class AdvertTargetDTO {
 
     private String userEmail;
 
-    private String userAccountProfileUrl;
+    private String userLinkedinProfileUrl;
 
-    private String userAccountImageUrl;
+    private String userLinkedinImageUrl;
 
     private String userPortraitImageId;
 
-    private Integer advertId;
+    public Integer getInstitutionId() {
+        return institutionId;
+    }
 
-    private Integer institutionId;
+    public void setInstitutionId(Integer institutionId) {
+        this.institutionId = institutionId;
+    }
 
-    private String institutionName;
+    public String getInstitutionName() {
+        return institutionName;
+    }
 
-    private Integer institutionLogoImageId;
+    public void setInstitutionName(String institutionName) {
+        this.institutionName = institutionName;
+    }
 
-    private Integer departmentId;
+    public Integer getLogoImageId() {
+        return logoImageId;
+    }
 
-    private String departmentName;
+    public void setLogoImageId(Integer logoImageId) {
+        this.logoImageId = logoImageId;
+    }
 
-    private Boolean accepted;
+    public Integer getDepartmentId() {
+        return departmentId;
+    }
+
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public Integer getAdvertTargetId() {
+        return advertTargetId;
+    }
+
+    public void setAdvertTargetId(Integer advertTargetId) {
+        this.advertTargetId = advertTargetId;
+    }
+
+    public Integer getTargetInstitutionId() {
+        return targetInstitutionId;
+    }
+
+    public void setTargetInstitutionId(Integer targetInstitutionId) {
+        this.targetInstitutionId = targetInstitutionId;
+    }
+
+    public String getTargetInstitutionName() {
+        return targetInstitutionName;
+    }
+
+    public void setTargetInstitutionName(String targetInstitutionName) {
+        this.targetInstitutionName = targetInstitutionName;
+    }
+
+    public Integer getTargetLogoImageId() {
+        return targetLogoImageId;
+    }
+
+    public void setTargetLogoImageId(Integer targetLogoImageId) {
+        this.targetLogoImageId = targetLogoImageId;
+    }
+
+    public Integer getTargetDepartmentId() {
+        return targetDepartmentId;
+    }
+
+    public void setTargetDepartmentId(Integer targetDepartmentId) {
+        this.targetDepartmentId = targetDepartmentId;
+    }
+
+    public String getTargetDepartmentName() {
+        return targetDepartmentName;
+    }
+
+    public void setTargetDepartmentName(String targetDepartmentName) {
+        this.targetDepartmentName = targetDepartmentName;
+    }
 
     public Integer getUserId() {
         return userId;
@@ -82,20 +178,20 @@ public class AdvertTargetDTO {
         this.userEmail = userEmail;
     }
 
-    public String getUserAccountProfileUrl() {
-        return userAccountProfileUrl;
+    public String getUserLinkedinProfileUrl() {
+        return userLinkedinProfileUrl;
     }
 
-    public void setUserAccountProfileUrl(String userAccountProfileUrl) {
-        this.userAccountProfileUrl = userAccountProfileUrl;
+    public void setUserLinkedinProfileUrl(String userLinkedinProfileUrl) {
+        this.userLinkedinProfileUrl = userLinkedinProfileUrl;
     }
 
-    public String getUserAccountImageUrl() {
-        return userAccountImageUrl;
+    public String getUserLinkedinImageUrl() {
+        return userLinkedinImageUrl;
     }
 
-    public void setUserAccountImageUrl(String userAccountImageUrl) {
-        this.userAccountImageUrl = userAccountImageUrl;
+    public void setUserLinkedinImageUrl(String userLinkedinImageUrl) {
+        this.userLinkedinImageUrl = userLinkedinImageUrl;
     }
 
     public String getUserPortraitImageId() {
@@ -104,62 +200,6 @@ public class AdvertTargetDTO {
 
     public void setUserPortraitImageId(String userPortraitImageId) {
         this.userPortraitImageId = userPortraitImageId;
-    }
-
-    public Integer getAdvertId() {
-        return advertId;
-    }
-
-    public void setAdvertId(Integer advertId) {
-        this.advertId = advertId;
-    }
-
-    public Integer getInstitutionId() {
-        return institutionId;
-    }
-
-    public void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
-    }
-
-    public String getInstitutionName() {
-        return institutionName;
-    }
-
-    public void setInstitutionName(String institutionName) {
-        this.institutionName = institutionName;
-    }
-
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
-    }
-
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
-    }
-
-    public Integer getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
-    }
-
-    public String getDepartmentName() {
-        return departmentName;
-    }
-
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
-
-    public Boolean getAccepted() {
-        return accepted;
-    }
-
-    public void setAccepted(Boolean accepted) {
-        this.accepted = accepted;
     }
 
 }

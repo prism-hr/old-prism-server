@@ -3,12 +3,13 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class ResourceRepresentationActivity extends ResourceRepresentationSimple {
+public class ResourceRepresentationActivity extends ResourceRepresentationSimple implements Comparable<ResourceRepresentationActivity> {
 
     private UserRepresentationSimple user;
 
@@ -101,6 +102,20 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
 
     public String getDisplayName() {
         return Joiner.on(SPACE).skipNulls().join(asList(project, program, department, institution));
+    }
+
+    @Override
+    public int compareTo(ResourceRepresentationActivity other) {
+        int compare = compare(institution.getName(), other.getInstitution().getName());
+
+        ResourceRepresentationIdentity otherDepartment = other.getDepartment();
+        compare = compare == 0 ? compare((department == null ? null : department.getName()), (otherDepartment == null ? null : otherDepartment.getName()), true) : compare;
+
+        ResourceRepresentationIdentity otherProgram = other.getProgram();
+        compare = compare == 0 ? compare((program == null ? null : program.getName()), (otherProgram == null ? null : otherProgram.getName()), true) : compare;
+
+        ResourceRepresentationIdentity otherProject = other.getProject();
+        return compare == 0 ? compare((project == null ? null : project.getName()), (otherProject == null ? null : otherProject.getName()), true) : compare;
     }
 
 }

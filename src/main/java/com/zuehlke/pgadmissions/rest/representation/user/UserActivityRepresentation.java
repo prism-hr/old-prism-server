@@ -231,7 +231,7 @@ public class UserActivityRepresentation {
 
     }
 
-    public static class ConnectionActivityRepresentation {
+    public static class ConnectionActivityRepresentation implements Comparable<ConnectionActivityRepresentation> {
 
         private ResourceRepresentationActivity targetResource;
 
@@ -253,11 +253,26 @@ public class UserActivityRepresentation {
             this.connections = connections;
         }
 
-        public static class ConnectionRepresentation {
+        @Override
+        public int compareTo(ConnectionActivityRepresentation other) {
+            return targetResource.compareTo(other.getTargetResource());
+        }
+
+        public static class ConnectionRepresentation implements Comparable<ConnectionRepresentation> {
+
+            private Integer advertTargetId;
 
             private ResourceRepresentationActivity resource;
 
             private UserRepresentationSimple user;
+
+            public Integer getAdvertTargetId() {
+                return advertTargetId;
+            }
+
+            public void setAdvertTargetId(Integer advertTargetId) {
+                this.advertTargetId = advertTargetId;
+            }
 
             public ResourceRepresentationActivity getResource() {
                 return resource;
@@ -273,6 +288,12 @@ public class UserActivityRepresentation {
 
             public void setUser(UserRepresentationSimple user) {
                 this.user = user;
+            }
+
+            @Override
+            public int compareTo(ConnectionRepresentation other) {
+                int compare = resource.compareTo(other.getResource());
+                return compare == 0 ? user.compareTo(other.getUser()) : compare;
             }
 
         }

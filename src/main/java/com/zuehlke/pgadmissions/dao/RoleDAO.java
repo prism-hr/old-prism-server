@@ -323,4 +323,13 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<UserRole> getUnverifiedRoles(Resource resource, User user) {
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.verified", false)) //
+                .list();
+    }
+
 }

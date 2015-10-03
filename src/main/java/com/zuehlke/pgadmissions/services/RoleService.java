@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -105,12 +104,12 @@ public class RoleService {
         }
     }
 
-    public void verifyUserRoles(User invoker, Resource resource, User user, Boolean verify) {
-        getUnverifiedRoles(resource.getResourceScope()).forEach(r -> {
-            UserRole userRole = getUserRole(resource, user, getById(r));
+    public void verifyUserRoles(User user, Resource resource, User roleUser, Boolean verify) {
+        roleDAO.getUnverifiedRoles(resource, roleUser).forEach(userRole -> {
             if (userRole != null) {
                 if (isTrue(verify)) {
-                    updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(r.name().replace("_UNVERIFIED", "")));
+                    Role role = userRole.getRole();
+                    updateUserRoles(user, resource, roleUser, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
                 } else {
                     Action action = actionService.getViewEditAction(resource);
                     if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {

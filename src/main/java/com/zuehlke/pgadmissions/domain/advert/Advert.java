@@ -372,6 +372,19 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     public boolean hasConvertedPay() {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
+    
+    public boolean sameAs(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final Advert other = (Advert) object;
+        Integer id = getId();
+        Integer otherId = other.getId();
+        return id != null && otherId != null && id.equals(otherId);
+    }
 
     @Override
     public Class<AdvertReassignmentProcessor> getUserReassignmentProcessor() {

@@ -10,10 +10,10 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleWithPartn
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.getUnverifiedRoles;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -354,9 +354,10 @@ public class UserDAO {
                 .setProjection(Projections.property("user")) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("role.id", getUnverifiedRoles(resourceScope)));
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("role.verified", true));
 
-        if (resources == null) {
+        if (isEmpty(resources)) {
             criteria.add(Restrictions.isNotNull(resourceReference));
         } else {
             criteria.add(Restrictions.in(resourceReference + ".id", resources)); //

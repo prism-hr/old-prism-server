@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceUserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
@@ -198,7 +198,7 @@ public class UserMapper {
 
     public UserActivityRepresentation getUserActivityRepresentation(User user, PrismScope permissionScope) {
         return new UserActivityRepresentation().withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, permissionScope))
-                .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withConnectionActivities(getUnverifiedUserRepresentations(user));
+                .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withJoinActivities(getUnverifiedUserRepresentations(user));
     }
 
     public UserProfileRepresentation getUserProfileRepresentation() {
@@ -224,17 +224,17 @@ public class UserMapper {
         return representation;
     }
 
-    private List<ConnectionActivityRepresentation> getUnverifiedUserRepresentations(User user) {
-        Map<String, ConnectionActivityRepresentation> representations = Maps.newLinkedHashMap();
+    private List<ResourceUserActivityRepresentation> getUnverifiedUserRepresentations(User user) {
+        Map<String, ResourceUserActivityRepresentation> representations = Maps.newLinkedHashMap();
         userService.getUsersToVerify(user).forEach(userRole -> {
             Resource resource = userRole.getResource();
             String resourceCode = resource.getCode();
 
             List<UserRepresentationSimple> userRepresentations = null;
-            ConnectionActivityRepresentation representation = representations.get(resourceCode);
+            ResourceUserActivityRepresentation representation = representations.get(resourceCode);
             if (representation == null) {
                 userRepresentations = newLinkedList();
-                representation = new ConnectionActivityRepresentation().withResource(resourceMapper.getResourceRepresentationActivity(resource)).withUsers(userRepresentations);
+                representation = new ResourceUserActivityRepresentation().withResource(resourceMapper.getResourceRepresentationActivity(resource)).withUsers(userRepresentations);
                 representations.put(resourceCode, representation);
             } else {
                 userRepresentations = representation.getUsers();

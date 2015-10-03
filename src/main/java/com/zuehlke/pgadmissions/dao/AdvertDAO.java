@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -61,9 +62,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipStat
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
@@ -382,9 +385,59 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String advertReference, User user) {
-        String resourceReference = resourceScope.getLowerCamelName();
+    public List<AdvertTargetDTO> getAdvertTargets(ResourceParent resource) {
+        Department department = resource.getDepartment();
+        Institution institution = resource.getInstitution();
+        
+        Junction resourceConstraint = null;
+        if (department == null) {
+            resourceConstraint = Restrictions.conjunction() 
+                    .add(Restrictions.eq("advert.institution", institution)) //
+                    .add(Restrictions.isNull("advert.department")) //
+                    .add(Restrictions.isNull("advert.program")) //
+                    .add(Restrictions.isNull("advert.project"));
+        } else {
+            resourceConstraint = Restrictions.conjunction() 
+                    .add(Restrictions.eq("advert.institution", institution)) //
+                    .add(Restrictions.eq("advert.department", department)) //
+                    .add(Restrictions.isNull("advert.program")) //
+                    .add(Restrictions.isNull("advert.project"));
+        }
+        
         return (List<AdvertTargetDTO>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("targetInstitution.id").as("targetInstitutionId")) //
+                        .add(Projections.property("targetInstitution.name").as("targetInstitutionName")) //
+                        .add(Projections.property("targetInstitution.logoImage.id").as("targetLogoImageId")) //
+                        .add(Projections.property("targetDepartment.id").as("targetDepartmentId")) //
+                        .add(Projections.property("targetDepartment.name").as("targetDepartmentName"))
+                        .add(Projections.property("targetAdvertUser.id").as("userId")) //
+                        .add(Projections.property("targetAdvertUser.id").as("userId")) //
+                        .add(Projections.property("targetAdvertUser.firstName").as("userFirstName")) //
+                        .add(Projections.property("targetAdvertUser.firstName2").as("userFirstName2")) //
+                        .add(Projections.property("targetAdvertUser.firstName3").as("userFirstName3")) //
+                        .add(Projections.property("targetAdvertUser.lastName").as("userLastName")) //
+                        .add(Projections.property("targetAdvertUser.email").as("userEmail")) //
+                        .add(Projections.property("targetAdvertUserAccount.linkedinProfileUrl").as("userLinkedinProfileUrl")) //
+                        .add(Projections.property("targetAdvertUserAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
+                        .add(Projections.property("targetAdvertUserAccount.portraitImage.id").as("userPortraitImageId"))) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvertUser", "targetAdvertUser", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvertUser.userAccount", "targetAdvertUserAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targetAdvert.institution", "targetInstitution", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert.department", "targetDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
+                .createAlias("acceptAdvert.institution", "acceptInstitution", JoinType.INNER_JOIN)
+                .createAlias("acceptAdvert.department", "acceptDepartment", JoinType.INNER_JOIN)
+                .add(resourceConstraint) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
+                .list();
+    }
+
+    public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String advertReference, User user, boolean pendingResponse) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("acceptInstitution.id").as("institutionId")) //
                         .add(Projections.property("acceptInstitution.name").as("institutionName")) //
@@ -397,38 +450,43 @@ public class AdvertDAO {
                         .add(Projections.property("institution.logoImage.id").as("targetLogoImageId")) //
                         .add(Projections.property("department.id").as("targetDepartmentId")) //
                         .add(Projections.property("department.name").as("targetDepartmentName"))
-                        .add(Projections.property("User.id").as("userId")) //
-                        .add(Projections.property("User.id").as("userId")) //
-                        .add(Projections.property("User.firstName").as("userFirstName")) //
-                        .add(Projections.property("User.firstName2").as("userFirstName2")) //
-                        .add(Projections.property("User.firstName3").as("userFirstName3")) //
-                        .add(Projections.property("User.lastName").as("userLastName")) //
-                        .add(Projections.property("User.email").as("userEmail")) //
-                        .add(Projections.property("UserAccount.linkedinProfileUrl").as("userLinkedinProfileUrl")) //
-                        .add(Projections.property("UserAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
-                        .add(Projections.property("UserAccount.portraitImage.id").as("userPortraitImageId"))) //
+                        .add(Projections.property("advertUser.id").as("userId")) //
+                        .add(Projections.property("advertUser.id").as("userId")) //
+                        .add(Projections.property("advertUser.firstName").as("userFirstName")) //
+                        .add(Projections.property("advertUser.firstName2").as("userFirstName2")) //
+                        .add(Projections.property("advertUser.firstName3").as("userFirstName3")) //
+                        .add(Projections.property("advertUser.lastName").as("userLastName")) //
+                        .add(Projections.property("advertUser.email").as("userEmail")) //
+                        .add(Projections.property("advertUserAccount.linkedinProfileUrl").as("userLinkedinProfileUrl")) //
+                        .add(Projections.property("advertUserAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
+                        .add(Projections.property("advertUserAccount.portraitImage.id").as("userPortraitImageId"))) //
                 .createAlias(advertReference, "advert", JoinType.INNER_JOIN) //
                 .createAlias(advertReference + "User", "advertUser", JoinType.INNER_JOIN) //
                 .createAlias("advertUser.userAccount", "advertUserAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("advert.department", "department", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
-                .createAlias("acceptAdvert.institution", "acceptInstitution", JoinType.INNER_JOIN) 
+                .createAlias("acceptAdvert.institution", "acceptInstitution", JoinType.INNER_JOIN)
                 .createAlias("acceptAdvert.department", "acceptDepartment", JoinType.INNER_JOIN)
                 .createAlias("acceptAdvert." + resourceScope.getLowerCamelName(), "acceptResource", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("acceptAdvert.id", "acceptResource.advert.id"))
                 .createAlias("acceptAdvert.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.conjunction()
-                            .add(Restrictions.eq("userRole.user", user))
-                            .add(Restrictions.disjunction()
-                                    .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference + "_ADMINISTRATOR")))
-                                    .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference) + "_APPROVER"))))
+                                .add(Restrictions.eq("userRole.user", user))
+                                .add(Restrictions.disjunction()
+                                        .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference + "_ADMINISTRATOR")))
+                                        .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference) + "_APPROVER"))))
                 .add(Restrictions.disjunction()
                         .add(Restrictions.eq("acceptAdvertUser", user))
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("acceptAdvertUser"))
-                                .add(Restrictions.isNotNull("userRole.id"))))
-                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
+                                .add(Restrictions.isNotNull("userRole.id"))));
+
+        if (pendingResponse) {
+            criteria.add(Restrictions.eq("partnershipState", ENDORSEMENT_PENDING));
+        }
+
+        return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
                 .list();
     }
 

@@ -1,45 +1,25 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.*;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.UserService;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
-import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
-import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
-import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
-import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
-import com.zuehlke.pgadmissions.services.ApplicationService;
-import com.zuehlke.pgadmissions.services.UserService;
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -164,7 +144,7 @@ public class ProfileMapper {
         LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
 
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(qualification.getUser()))
-                .withResource(resourceMapper.getResourceRepresentationActivity(qualification.getAdvert().getResource()));
+                .withResource(resourceMapper.getResourceOpportunityRepresentationActivity(qualification.getAdvert().getResource()));
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
                 .withResource(relation).withGrade(qualification.getGrade())
                 .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())

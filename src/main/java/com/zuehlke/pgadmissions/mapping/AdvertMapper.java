@@ -109,7 +109,7 @@ public class AdvertMapper {
         PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
         Set<Integer> advertIds = Sets.newHashSet();
-        HashMultimap<String, Integer> summaries = HashMultimap.create();
+        Map<String, Integer> summaries = Maps.newHashMap();
         Set<EntityOpportunityCategoryDTO> adverts = advertService.getVisibleAdverts(query, filterScopes);
         processRowDescriptors(adverts, advertIds, null, summaries);
 

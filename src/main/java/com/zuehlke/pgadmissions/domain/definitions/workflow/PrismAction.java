@@ -88,7 +88,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROGRAM)), //
     PROGRAM_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
-    PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionInvisible(PROGRAM)), //
     PROGRAM_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(PROGRAM)), //
     PROGRAM_ESCALATE(getDefaultEscalateResourceActionDefinition(PROGRAM)), //
     PROGRAM_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
@@ -99,7 +99,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
-    DEPARTMENT_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
+    DEPARTMENT_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionInvisible(DEPARTMENT)), //
     DEPARTMENT_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(DEPARTMENT)), //
@@ -113,7 +113,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     INSTITUTION_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_CORRECT(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_CREATE_DEPARTMENT(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
-    INSTITUTION_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
+    INSTITUTION_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionInvisible(INSTITUTION)), //
     INSTITUTION_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(INSTITUTION)), //
@@ -286,7 +286,12 @@ public enum PrismAction implements PrismLocalizableDefinition {
     private static PrismActionDefinition getDefaultCreateResourceActionDefinitionVisible(PrismScope scope) {
         return getDefaultResourceActionDefinitionVisible(CREATE_RESOURCE, scope);
     }
-    
+
+    private static PrismActionDefinition getDefaultCreateResourceActionDefinitionInvisible(PrismScope scope) {
+        return getDefaultResourceActionDefinitionVisible(CREATE_RESOURCE, scope) //
+                .withSystemInvocationOnly();
+    }
+
     private static PrismActionDefinition getDefaultViewEditResourceActionDefinition(PrismScope scope) {
         return getDefaultResourceActionDefinition(VIEW_EDIT_RESOURCE, scope);
     }
@@ -367,7 +372,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return getDefaultResourceActionDefinition(actionCategory, scope) //
                 .withVisibleAction();
     }
-    
+
     private static PrismActionDefinition getDefaultResourceActionDefinition(PrismActionCategory actionCategory, PrismScope scope) {
         return new PrismActionDefinition() //
                 .withActionCategory(actionCategory) //

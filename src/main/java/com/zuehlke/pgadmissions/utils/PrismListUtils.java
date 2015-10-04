@@ -51,7 +51,9 @@ public class PrismListUtils {
             if (opportunityCategories != null) {
                 for (String opportunityCategory : entity.getOpportunityCategories().split("\\|")) {
                     Integer summary = summaries.get(opportunityCategory);
-                    if (!filterByOpportunityType || opportunityTypes.contains(entity.getOpportunityType())) {
+                    PrismOpportunityType opportunityType = entity.getOpportunityType();
+                    if (!filterByOpportunityType || (opportunityType != null
+                            && (opportunityType.getOpportunityCategory().name().equals(opportunityCategory) && opportunityTypes.contains(opportunityType)))) {
                         summaries.put(opportunityCategory, summary == null ? 1 : summary + 1);
                     }
                 }

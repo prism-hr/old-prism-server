@@ -1544,7 +1544,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT,
             "Specify the type of position that you are offering (e.g. permanent/fixed-term, full-time/part-time."),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Permanent"),
-    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Contract"),
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Fixed-Term/Contract"),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Minimum (Months)"),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The minimum anticipated duration of study for your opportunity."),
     SYSTEM_RESOURCE_PARENT_DURATION_MAXIMUM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Maximum (Months)"),

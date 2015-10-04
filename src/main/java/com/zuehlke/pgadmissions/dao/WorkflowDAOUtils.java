@@ -112,6 +112,7 @@ public class WorkflowDAOUtils {
     public static Junction getOpportunityCategoryConstraint(PrismOpportunityCategory opportunityCategory) {
         String opportunityCategoryName = opportunityCategory.name();
         return Restrictions.disjunction() //
+                .add(Restrictions.eq("opportunityCategories", opportunityCategoryName))
                 .add(Restrictions.like("opportunityCategories", opportunityCategoryName + "|", MatchMode.START))
                 .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName + "|", MatchMode.ANYWHERE))
                 .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName, MatchMode.END));

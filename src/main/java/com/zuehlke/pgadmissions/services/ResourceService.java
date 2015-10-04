@@ -574,7 +574,7 @@ public class ResourceService {
         resource.setAvailableDate(resourceDTO.getAvailableDate());
         resource.setDurationMinimum(resourceDTO.getDurationMinimum());
         resource.setDurationMaximum(resourceDTO.getDurationMaximum());
-        resource.setOpportunityType(prismService.getOpportunityTypeById(resourceDTO.getOpportunityType()));
+        setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
 
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
         setStudyOptions(resource, studyOptions == null ? Lists.newArrayList() : studyOptions, new LocalDate());

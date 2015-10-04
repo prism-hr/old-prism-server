@@ -4,8 +4,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -87,7 +86,7 @@ public class ActionService {
     public List<Action> getActions(Resource resource) {
         return actionDAO.getActions(resource);
     }
-    
+
     public List<ActionDTO> getPermittedActions(Resource resource, User user) {
         PrismScope resourceScope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope(), SYSTEM);
@@ -103,12 +102,11 @@ public class ActionService {
         return permittedActions;
     }
 
-    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
-        List<ActionDTO> actions = Lists.newLinkedList();
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         if (isNotEmpty(resourceIds)) {
-            return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.isUserLoggedIn(), exclusions);
+            return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds);
         }
-        return actions;
+        return Lists.newArrayList();
     }
 
     public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
@@ -119,9 +117,9 @@ public class ActionService {
         return actionDAO.getCustomActionEnhancements(resource, actionId, user);
     }
 
-    public LinkedHashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds, PrismScope... exclusions) {
+    public LinkedHashMultimap<Integer, ActionDTO> getCreateResourceActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         LinkedHashMultimap<Integer, ActionDTO> creationActions = LinkedHashMultimap.create();
-        for (ActionDTO resourceListActionDTO : getPermittedUnsecuredActions(resourceScope, resourceIds, exclusions)) {
+        for (ActionDTO resourceListActionDTO : getPermittedUnsecuredActions(resourceScope, resourceIds)) {
             creationActions.put(resourceListActionDTO.getResourceId(), resourceListActionDTO);
         }
         return creationActions;
@@ -262,9 +260,9 @@ public class ActionService {
     }
 
     public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
-        if (action.getDeclinableAction() && BooleanUtils.toBoolean(declinedResponse)) {
+        if (action.getDeclinableAction() && toBoolean(declinedResponse)) {
             return true;
-        } else if (isNotEmpty(getPermittedUnsecuredActions(resource.getResourceScope(), asList(resource.getId())))) {
+        } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isUserLoggedIn()) != null) {
             return true;
         } else if (actionDAO.getPermittedAction(resource, action, user) != null) {
             return true;

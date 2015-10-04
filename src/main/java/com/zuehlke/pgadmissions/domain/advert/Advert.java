@@ -121,7 +121,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Column(name = "globally_visible", nullable = false)
     private Boolean globallyVisible;
-    
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -131,10 +131,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertTarget> targets = Sets.newHashSet();
-    
+
     @OrderBy(clause = "id")
-    @OneToMany(mappedBy = "acceptAdvert")
-    private Set<AdvertTarget> createdTargets = Sets.newHashSet();
+    @OneToMany(mappedBy = "targetAdvert")
+    private Set<AdvertTarget> reverseTargets = Sets.newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
@@ -336,8 +336,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         return targets;
     }
 
-    
-    
+    public Set<AdvertTarget> getReverseTargets() {
+        return reverseTargets;
+    }
+
     public Set<AdvertCompetence> getCompetences() {
         return competences;
     }
@@ -378,7 +380,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     public boolean hasConvertedPay() {
         return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
-    
+
     public boolean sameAs(Object object) {
         if (object == null) {
             return false;

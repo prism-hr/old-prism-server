@@ -64,6 +64,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgram
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramRejected;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWithdrawn;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalPendingCorrection;
@@ -131,7 +132,7 @@ public enum PrismState {
     PROJECT_REJECTED(PrismStateGroup.PROJECT_REJECTED, null, null, PrismProjectRejected.class),
     PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, PrismProjectWithdrawn.class),
 
-    PROGRAM_UNSUBMITTED(PrismStateGroup.PROGRAM_UNSUBMITTED, null, null, PrismProjectUnsubmitted.class),
+    PROGRAM_UNSUBMITTED(PrismStateGroup.PROGRAM_UNSUBMITTED, null, null, PrismProgramUnsubmitted.class),
     PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, PrismProgramApproval.class),
     PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApprovalPendingCorrection.class),

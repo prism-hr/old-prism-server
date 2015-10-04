@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
@@ -65,7 +64,7 @@ public class ActionMapper {
         }
 
         if (!onlyAsPartner) {
-            List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()), APPLICATION);
+            List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()));
             for (ActionDTO publicAction : publicActions) {
                 representations.add(getActionRepresentationExtended(resource, publicAction, user));
             }

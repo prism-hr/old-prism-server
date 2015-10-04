@@ -184,7 +184,7 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T resourceDTO) {
+    public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T resourceDTO, boolean systemInvocation) {
         Scope scope = action.getCreationScope();
 
         ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(scope.getId().getResourceCreator());
@@ -195,7 +195,13 @@ public class ResourceService {
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
                 .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-        ActionOutcomeDTO outcome = actionService.executeUserAction(resource, action, comment);
+
+        ActionOutcomeDTO outcome = null;
+        if (systemInvocation) {
+            outcome = actionService.executeAction(resource, action, comment);
+        } else {
+            outcome = actionService.executeUserAction(resource, action, comment);
+        }
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
@@ -225,7 +231,7 @@ public class ResourceService {
                     }
 
                     Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
-                    resourceChild = (ResourceParent) createResource(lastUser, action, resourceDTO).getResource();
+                    resourceChild = (ResourceParent) createResource(lastUser, action, resourceDTO, true).getResource();
                 } else {
                     resourceChild = (ResourceParent) getById(thisScope, thisId);
                     lastUser = resourceChild.getUser();
@@ -286,7 +292,7 @@ public class ResourceService {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
-            actionOutcome = createResource(user, action, resourceDTO);
+            actionOutcome = createResource(user, action, resourceDTO, false);
         } else {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {

@@ -63,7 +63,7 @@ public class InstitutionService {
     }
 
     public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
-        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO);
+        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO, true);
         Institution institution = (Institution) outcome.getResource();
         Integer institutionId = institution.getId();
         if (facebookId != null) {

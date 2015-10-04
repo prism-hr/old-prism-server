@@ -8,7 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.D
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_WITHDRAW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER;
@@ -30,15 +30,15 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismDepartmentWorkflow {
-    
+
     public static PrismStateAction departmentCreateProgram() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_PROGRAM) //
-                .withActionCondition(ACCEPT_DEPARTMENT) //
+                .withActionCondition(ACCEPT_PROGRAM) //
                 .withTransitions(PROGRAM_CREATE_TRANSITION //
                         .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
     }
-    
+
     public static PrismStateAction departmentCreateProject() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_PROJECT) //
@@ -46,7 +46,7 @@ public class PrismDepartmentWorkflow {
                 .withTransitions(PROJECT_CREATE_TRANSITION //
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP));
     }
-    
+
     public static PrismStateAction departmentEmailCreatorUnnapproved() {
         return departmentEmailCreatorAbstract();
     }

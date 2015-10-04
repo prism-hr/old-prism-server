@@ -195,9 +195,7 @@ public class ResourceService {
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
                 .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-
         ActionOutcomeDTO outcome = actionService.executeUserAction(resource, action, comment);
-        entityService.flush();
 
         if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
             ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
@@ -415,7 +413,7 @@ public class ResourceService {
             LinkedHashMultimap<Integer, ActionDTO> permittedActions = actionService.getPermittedActions(scope, filteredResourceIds, user);
 
             Collection<Integer> filteredNativeOwnerResourceIds = ListUtils.removeAll(filteredResourceIds, onlyAsPartnerResourceIds);
-            LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredNativeOwnerResourceIds, APPLICATION);
+            LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredNativeOwnerResourceIds);
 
             rowIndex.keySet().forEach(resourceId -> {
                 ResourceListRowDTO row = rowIndex.get(resourceId);
@@ -465,7 +463,7 @@ public class ResourceService {
     public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
         return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
     }
-    
+
     public List<ResourceIdentityDTO> getResourcesForWhichUserCanCreateResource(Resource parent, PrismScope resourceScope, PrismScope creationScope, String searchTerm) {
         return resourceDAO.getResourcesForWhichUserCanCreateResource(userService.getCurrentUser(), parent, resourceScope, creationScope, searchTerm);
     }
@@ -516,18 +514,21 @@ public class ResourceService {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
             case INSTITUTION:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
                 break;
             case DEPARTMENT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case PROGRAM:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
                 break;
             case PROJECT:
-            case PROGRAM:
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
                 break;
             default:

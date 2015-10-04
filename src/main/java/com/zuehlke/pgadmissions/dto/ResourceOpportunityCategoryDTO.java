@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO {
+public class ResourceOpportunityCategoryDTO extends EntityOpportunityFilterDTO {
 
     private Boolean raisesUrgentFlag;
 

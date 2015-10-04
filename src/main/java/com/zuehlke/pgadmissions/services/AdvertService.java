@@ -87,7 +87,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -447,10 +447,10 @@ public class AdvertService {
         return importances;
     }
 
-    public Set<EntityOpportunityCategoryDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
+    public Set<EntityOpportunityFilterDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
         User user = userService.getCurrentUser();
         PrismMotivationContext context = query.getContext();
-        Set<EntityOpportunityCategoryDTO> adverts = Sets.newHashSet();
+        Set<EntityOpportunityFilterDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
 
         Integer resourceId = null;

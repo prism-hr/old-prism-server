@@ -57,7 +57,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -110,8 +110,8 @@ public class AdvertMapper {
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<EntityOpportunityCategoryDTO> adverts = advertService.getVisibleAdverts(query, filterScopes);
-        processRowDescriptors(adverts, advertIds, null, summaries);
+        Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(query, filterScopes);
+        processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
 
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 

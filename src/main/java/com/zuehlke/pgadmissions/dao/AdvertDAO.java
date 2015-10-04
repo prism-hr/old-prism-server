@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
@@ -193,7 +194,7 @@ public class AdvertDAO {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("advert.id").as("id")) //
                 .add(Projections.property("resource.opportunityCategories").as("opportunityCategories"));
-      
+
         if (scope.getScopeCategory().equals(OPPORTUNITY)) {
             projections.add(Projections.property("resource.opportunityType.id").as("opportunityType"));
         }
@@ -708,7 +709,7 @@ public class AdvertDAO {
         } else {
             PrismOpportunityCategory opportunityCategory = queryDTO.getOpportunityCategory();
             if (opportunityCategory != null) {
-                criteria.add(Restrictions.like("advert.opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
+                criteria.add(getOpportunityCategoryConstraint(opportunityCategory));
             }
         }
     }

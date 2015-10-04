@@ -10,6 +10,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -106,6 +107,14 @@ public class WorkflowDAOUtils {
                 .add(Projections.groupProperty("id").as("id")) //
                 .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
                 .add(Projections.property("opportunityCategories").as("opportunityCategories"));
+    }
+
+    public static Junction getOpportunityCategoryConstraint(PrismOpportunityCategory opportunityCategory) {
+        String opportunityCategoryName = opportunityCategory.name();
+        return Restrictions.disjunction() //
+                .add(Restrictions.like("opportunityCategories", opportunityCategoryName + "|", MatchMode.START))
+                .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName + "|", MatchMode.ANYWHERE))
+                .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName, MatchMode.END));
     }
 
 }

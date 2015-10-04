@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
@@ -186,7 +187,7 @@ public class ResourceDAO {
 
             PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
             if (opportunityCategory != null) {
-                criteria.add(Restrictions.like("opportunityCategories", opportunityCategory.name(), MatchMode.ANYWHERE));
+                criteria.add(getOpportunityCategoryConstraint(opportunityCategory));
             }
 
             return appendResourceListLimitCriteria(criteria, filter, lastSequenceIdentifier, maxRecords)

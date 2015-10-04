@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.List;
@@ -9,18 +10,32 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 
 public class PrismListUtils {
 
-    public static <T extends EntityOpportunityCategoryDTO> void processRowSummaries(Set<T> entities, Map<String, Integer> summaries) {
+    public static <T extends EntityOpportunityFilterDTO> void processRowSummaries(Set<T> entities, Map<String, Integer> summaries) {
         processRowDescriptors(entities, null, null, summaries);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Set<Integer> onlyAsPartnerEntityIds, Map<String, Integer> summaries) {
+    public static <T extends EntityOpportunityFilterDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Set<Integer> onlyAsPartnerEntityIds,
+            Map<String, Integer> summaries) {
+        processRowDescriptors(entities, entityIds, onlyAsPartnerEntityIds, summaries, null);
+    }
+
+    public static <T extends EntityOpportunityFilterDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Map<String, Integer> summaries,
+            List<PrismOpportunityType> opportunityTypes) {
+        processRowDescriptors(entities, entityIds, null, summaries, opportunityTypes);
+    }
+
+    public static <T extends EntityOpportunityFilterDTO> void processRowDescriptors(Set<T> entities, Set<Integer> entityIds, Set<Integer> onlyAsPartnerEntityIds,
+            Map<String, Integer> summaries, List<PrismOpportunityType> opportunityTypes) {
         boolean processOnlyAsPartner = false;
+        boolean filterByOpportunityType = isNotEmpty(opportunityTypes);
+
         entityIds = entityIds == null ? Sets.newHashSet() : entityIds;
         onlyAsPartnerEntityIds = onlyAsPartnerEntityIds == null ? Sets.newHashSet() : onlyAsPartnerEntityIds;
         for (T entity : entities) {
@@ -36,7 +51,9 @@ public class PrismListUtils {
             if (opportunityCategories != null) {
                 for (String opportunityCategory : entity.getOpportunityCategories().split("\\|")) {
                     Integer summary = summaries.get(opportunityCategory);
-                    summaries.put(opportunityCategory, summary == null ? 1 : summary + 1);
+                    if (!filterByOpportunityType || opportunityTypes.contains(entity.getOpportunityType())) {
+                        summaries.put(opportunityCategory, summary == null ? 1 : summary + 1);
+                    }
                 }
             }
         }

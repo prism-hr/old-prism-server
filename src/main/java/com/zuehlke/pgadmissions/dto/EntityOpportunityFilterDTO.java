@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.dto;
 
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
-public class EntityOpportunityCategoryDTO {
+public class EntityOpportunityFilterDTO {
 
     private Integer id;
 
     private String opportunityCategories;
+
+    private PrismOpportunityType opportunityType;
 
     public Integer getId() {
         return id;
@@ -24,6 +27,14 @@ public class EntityOpportunityCategoryDTO {
         this.opportunityCategories = opportunityCategories;
     }
 
+    public PrismOpportunityType getOpportunityType() {
+        return opportunityType;
+    }
+
+    public void setOpportunityType(PrismOpportunityType opportunityType) {
+        this.opportunityType = opportunityType;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
@@ -37,7 +48,7 @@ public class EntityOpportunityCategoryDTO {
         if (getClass() != object.getClass()) {
             return false;
         }
-        EntityOpportunityCategoryDTO other = (EntityOpportunityCategoryDTO) object;
+        EntityOpportunityFilterDTO other = (EntityOpportunityFilterDTO) object;
         return id.equals(other.getId());
     }
 

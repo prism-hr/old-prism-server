@@ -17,6 +17,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -35,6 +36,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -77,7 +79,7 @@ import com.zuehlke.pgadmissions.dto.AdvertIndustryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertPartnerActionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
@@ -173,6 +175,8 @@ public class AdvertDAO {
                 .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("id", adverts));
 
+        appendOpportunityTypeConstraint(criteria, query);
+
         String lastSequenceIdentifier = query.getLastSequenceIdentifier();
         if (lastSequenceIdentifier != null) {
             criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
@@ -184,12 +188,18 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<EntityOpportunityCategoryDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, PrismActionCondition actionCondition,
+    public List<EntityOpportunityFilterDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, PrismActionCondition actionCondition,
             OpportunitiesQueryDTO query, User currentUser, Set<Integer> possibleTargets) {
+        ProjectionList projections = Projections.projectionList() //
+                .add(Projections.groupProperty("advert.id").as("id")) //
+                .add(Projections.property("resource.opportunityCategories").as("opportunityCategories"));
+      
+        if (scope.getScopeCategory().equals(OPPORTUNITY)) {
+            projections.add(Projections.property("resource.opportunityType.id").as("opportunityType"));
+        }
+
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("advert.id").as("id")) //
-                        .add(Projections.property("resource.opportunityCategories").as("opportunityCategories"))) //
+                .setProjection(projections) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
@@ -232,7 +242,6 @@ public class AdvertDAO {
         appendIndustryConstraint(criteria, query);
         appendFunctionConstraint(criteria, query);
 
-        appendOpportunityTypeConstraint(criteria, scope, query);
         if (opportunityRequest) {
             appendStudyOptionConstraint(query, criteria);
         }
@@ -243,7 +252,7 @@ public class AdvertDAO {
             appendDurationConstraint(criteria, query);
         }
 
-        return criteria.setResultTransformer(Transformers.aliasToBean(EntityOpportunityCategoryDTO.class))
+        return criteria.setResultTransformer(Transformers.aliasToBean(EntityOpportunityFilterDTO.class))
                 .list();
     }
 
@@ -388,22 +397,22 @@ public class AdvertDAO {
     public List<AdvertTargetDTO> getAdvertTargets(ResourceParent resource) {
         Department department = resource.getDepartment();
         Institution institution = resource.getInstitution();
-        
+
         Junction resourceConstraint = null;
         if (department == null) {
-            resourceConstraint = Restrictions.conjunction() 
+            resourceConstraint = Restrictions.conjunction()
                     .add(Restrictions.eq("advert.institution", institution)) //
                     .add(Restrictions.isNull("advert.department")) //
                     .add(Restrictions.isNull("advert.program")) //
                     .add(Restrictions.isNull("advert.project"));
         } else {
-            resourceConstraint = Restrictions.conjunction() 
+            resourceConstraint = Restrictions.conjunction()
                     .add(Restrictions.eq("advert.institution", institution)) //
                     .add(Restrictions.eq("advert.department", department)) //
                     .add(Restrictions.isNull("advert.program")) //
                     .add(Restrictions.isNull("advert.project"));
         }
-        
+
         return (List<AdvertTargetDTO>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("targetInstitution.id").as("targetInstitutionId")) //
@@ -678,9 +687,9 @@ public class AdvertDAO {
         }
     }
 
-    private void appendOpportunityTypeConstraint(Criteria criteria, PrismScope scope, OpportunitiesQueryDTO queryDTO) {
-        if (ResourceOpportunity.class.isAssignableFrom(scope.getResourceClass())) {
-            Collection<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
+    private void appendOpportunityTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+        List<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
+        if (isNotEmpty(opportunityTypes)) {
             if (opportunityTypes == null) {
                 PrismOpportunityCategory opportunityCategory = queryDTO.getOpportunityCategory();
                 if (opportunityCategory != null) {

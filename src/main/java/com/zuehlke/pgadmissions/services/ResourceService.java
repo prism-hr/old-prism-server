@@ -474,8 +474,7 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingEnclosingResourceName(enclosingResourceScope, searchTerm);
     }
 
-    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope scope, PrismScope creationScope,
-            String searchTerm) {
+    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope scope, PrismScope creationScope, String searchTerm) {
         User user = userService.getCurrentUser();
         ResourceListFilterDTO filter = new ResourceListFilterDTO();
         Set<ResourceChildCreationDTO> resources = Sets.newTreeSet();
@@ -497,7 +496,7 @@ public class ResourceService {
 
                     resource.setId((Integer) getProperty(row, scopeReference + "Id"));
                     resource.setName((String) getProperty(row, scopeReference + "Name"));
-                    
+
                     if (actionScope.equals(INSTITUTION)) {
                         resource.setLogoImageId(row.getLogoImageId());
                     }

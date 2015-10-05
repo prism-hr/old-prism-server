@@ -8,8 +8,13 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 
 public class ResourceListFilterDTO {
+
+    private Resource enclosingResource;
+    
+    private PrismAction action;
 
     private PrismOpportunityCategory opportunityCategory;
 
@@ -26,6 +31,22 @@ public class ResourceListFilterDTO {
     private PrismAction actionId;
 
     private List<ResourceListFilterConstraintDTO> constraints;
+    
+    public Resource getEnclosingResource() {
+        return enclosingResource;
+    }
+
+    public void setEnclosingResource(Resource enclosingResource) {
+        this.enclosingResource = enclosingResource;
+    }
+
+    public PrismAction getAction() {
+        return action;
+    }
+
+    public void setAction(PrismAction action) {
+        this.action = action;
+    }
 
     public PrismOpportunityCategory getOpportunityCategory() {
         return opportunityCategory;
@@ -89,6 +110,16 @@ public class ResourceListFilterDTO {
 
     public void setConstraints(List<ResourceListFilterConstraintDTO> constraints) {
         this.constraints = constraints;
+    }
+
+    public ResourceListFilterDTO withEnclosingResource(Resource enclosingResource) {
+        this.enclosingResource = enclosingResource;
+        return this;
+    }
+    
+    public ResourceListFilterDTO withAction(PrismAction action) {
+        this.action = action;
+        return this;
     }
 
     public ResourceListFilterDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {

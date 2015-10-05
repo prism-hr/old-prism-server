@@ -6,6 +6,6 @@ public enum PrismResourceListFilterPropertyType {
     STATE_GROUP,
     DATE,
     DATE_TIME,
-    DECIMAL
+    DECIMAL;
 
 }

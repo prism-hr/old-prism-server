@@ -143,8 +143,8 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/{resourceResponseScope}/{resourceCreationScope}", method = RequestMethod.GET)
     public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable String resourceResponseScope, @PathVariable String resourceCreationScope, @RequestParam String q) {
-        ResourceParent parent = (ResourceParent) loadResource(resourceId, resourceDescriptor);
-        return resourceService.getResourcesForWhichUserCanCreateResource(parent, getResourceDescriptor(resourceResponseScope).getResourceScope(),
+        ResourceParent enclosingResource = (ResourceParent) loadResource(resourceId, resourceDescriptor);
+        return resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, getResourceDescriptor(resourceResponseScope).getResourceScope(),
                 getResourceDescriptor(resourceCreationScope).getResourceScope(), q).stream().map(resourceMapper::getResourceRepresentationIdentity).collect(Collectors.toList());
     }
 

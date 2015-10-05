@@ -411,7 +411,7 @@ public class UserService {
         }
 
         List<UserRole> userRoles = Lists.newLinkedList();
-        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+        for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
         }
 

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+
 public class UserRepresentationSimple extends UserRepresentation {
 
     private Integer id;
@@ -14,7 +16,7 @@ public class UserRepresentationSimple extends UserRepresentation {
 
     private String accountImageUrl;
 
-    private Integer portraitImageId;
+    private DocumentRepresentation portraitImage;
 
     public Integer getId() {
         return id;
@@ -64,12 +66,17 @@ public class UserRepresentationSimple extends UserRepresentation {
         this.accountImageUrl = accountImageUrl;
     }
 
-    public Integer getPortraitImageId() {
-        return portraitImageId;
+    public DocumentRepresentation getPortraitImage() {
+        return portraitImage;
     }
 
-    public void setPortraitImageId(Integer portraitImageId) {
-        this.portraitImageId = portraitImageId;
+    public void setPortraitImage(DocumentRepresentation portraitImage) {
+        this.portraitImage = portraitImage;
+    }
+
+    public UserRepresentationSimple withId(Integer id) {
+        setId(id);
+        return this;
     }
 
     public UserRepresentationSimple withFirstName(String firstName) {
@@ -97,4 +104,9 @@ public class UserRepresentationSimple extends UserRepresentation {
         return this;
     }
 
+    public UserRepresentationSimple withPortraitImage(DocumentRepresentation portraitImage) {
+        this.portraitImage = portraitImage;
+        return this;
+    }
+    
 }

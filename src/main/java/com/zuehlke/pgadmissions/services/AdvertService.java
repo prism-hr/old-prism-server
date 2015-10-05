@@ -33,7 +33,6 @@ import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -417,9 +416,18 @@ public class AdvertService {
         return categories;
     }
 
-    // TO: merge and sort
-    public List<AdvertTargetDTO> getAdvertTargets(Advert advert) {
-        return Collections.emptyList();
+    public List<AdvertTargetDTO> getAdvertTargets(ResourceParent resource) {
+        return advertDAO.getAdvertTargets(resource);
+    }
+
+    public List<AdvertTargetDTO> getAdvertTargets(User user, boolean pendingResponse) {
+        List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
+        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
+                advertTargets.addAll(advertDAO.getAdvertTargets(resourceScope, advertReference, user, pendingResponse));
+            }
+        }
+        return advertTargets;
     }
 
     public Integer getBackgroundImage(Advert advert) {

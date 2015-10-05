@@ -65,6 +65,11 @@ public class UserActivityRepresentation {
         return this;
     }
 
+    public UserActivityRepresentation withConnectionActivities(List<ConnectionActivityRepresentation> connectionActivities) {
+        this.connectionActivities = connectionActivities;
+        return this;
+    }
+
     public static class ResourceActivityRepresentation {
 
         private PrismScope scope;
@@ -233,16 +238,16 @@ public class UserActivityRepresentation {
 
     public static class ConnectionActivityRepresentation implements Comparable<ConnectionActivityRepresentation> {
 
-        private ResourceRepresentationActivity targetResource;
+        private ResourceRepresentationActivity acceptResource;
 
         private List<ConnectionRepresentation> connections;
 
-        public ResourceRepresentationActivity getTargetResource() {
-            return targetResource;
+        public ResourceRepresentationActivity getAcceptResource() {
+            return acceptResource;
         }
 
-        public void setTargetResource(ResourceRepresentationActivity targetResource) {
-            this.targetResource = targetResource;
+        public void setAcceptResource(ResourceRepresentationActivity acceptResource) {
+            this.acceptResource = acceptResource;
         }
 
         public List<ConnectionRepresentation> getConnections() {
@@ -253,9 +258,14 @@ public class UserActivityRepresentation {
             this.connections = connections;
         }
 
+        public ConnectionActivityRepresentation withAcceptResource(ResourceRepresentationActivity targetResource) {
+            this.acceptResource = targetResource;
+            return this;
+        }
+
         @Override
         public int compareTo(ConnectionActivityRepresentation other) {
-            return targetResource.compareTo(other.getTargetResource());
+            return acceptResource.compareTo(other.getAcceptResource());
         }
 
         public static class ConnectionRepresentation implements Comparable<ConnectionRepresentation> {
@@ -288,6 +298,21 @@ public class UserActivityRepresentation {
 
             public void setUser(UserRepresentationSimple user) {
                 this.user = user;
+            }
+
+            public ConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
+                this.advertTargetId = advertTargetId;
+                return this;
+            }
+
+            public ConnectionRepresentation withResource(ResourceRepresentationActivity resource) {
+                this.resource = resource;
+                return this;
+            }
+
+            public ConnectionRepresentation withUser(UserRepresentationSimple user) {
+                this.user = user;
+                return this;
             }
 
             @Override

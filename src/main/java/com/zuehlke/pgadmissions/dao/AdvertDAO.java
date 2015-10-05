@@ -424,8 +424,6 @@ public class AdvertDAO {
                         .add(Projections.property("targetAdvertUser.id").as("userId")) //
                         .add(Projections.property("targetAdvertUser.id").as("userId")) //
                         .add(Projections.property("targetAdvertUser.firstName").as("userFirstName")) //
-                        .add(Projections.property("targetAdvertUser.firstName2").as("userFirstName2")) //
-                        .add(Projections.property("targetAdvertUser.firstName3").as("userFirstName3")) //
                         .add(Projections.property("targetAdvertUser.lastName").as("userLastName")) //
                         .add(Projections.property("targetAdvertUser.email").as("userEmail")) //
                         .add(Projections.property("targetAdvertUserAccount.linkedinProfileUrl").as("userLinkedinProfileUrl")) //
@@ -449,47 +447,42 @@ public class AdvertDAO {
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("acceptInstitution.id").as("institutionId")) //
-                        .add(Projections.property("acceptInstitution.name").as("institutionName")) //
-                        .add(Projections.property("acceptInstitution.logoImage.id").as("logoImageId")) //
-                        .add(Projections.property("acceptDepartment.id").as("departmentId")) //
-                        .add(Projections.property("acceptDepartment.name").as("departmentName"))
+                        .add(Projections.property("institution.id").as("institutionId")) //
+                        .add(Projections.property("institution.name").as("institutionName")) //
+                        .add(Projections.property("institution.logoImage.id").as("logoImageId")) //
+                        .add(Projections.property("department.id").as("departmentId")) //
+                        .add(Projections.property("department.name").as("departmentName"))
                         .add(Projections.property("id").as("advertTargetId")) //
-                        .add(Projections.property("institution.id").as("targetInstitutionId")) //
-                        .add(Projections.property("institution.name").as("targetInstitutionName")) //
-                        .add(Projections.property("institution.logoImage.id").as("targetLogoImageId")) //
-                        .add(Projections.property("department.id").as("targetDepartmentId")) //
-                        .add(Projections.property("department.name").as("targetDepartmentName"))
-                        .add(Projections.property("advertUser.id").as("userId")) //
-                        .add(Projections.property("advertUser.id").as("userId")) //
-                        .add(Projections.property("advertUser.firstName").as("userFirstName")) //
-                        .add(Projections.property("advertUser.firstName2").as("userFirstName2")) //
-                        .add(Projections.property("advertUser.firstName3").as("userFirstName3")) //
-                        .add(Projections.property("advertUser.lastName").as("userLastName")) //
-                        .add(Projections.property("advertUser.email").as("userEmail")) //
-                        .add(Projections.property("advertUserAccount.linkedinProfileUrl").as("userLinkedinProfileUrl")) //
-                        .add(Projections.property("advertUserAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
-                        .add(Projections.property("advertUserAccount.portraitImage.id").as("userPortraitImageId"))) //
-                .createAlias(advertReference, "advert", JoinType.INNER_JOIN) //
-                .createAlias(advertReference + "User", "advertUser", JoinType.INNER_JOIN) //
-                .createAlias("advertUser.userAccount", "advertUserAccount", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("advert.department", "department", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
-                .createAlias("acceptAdvert.institution", "acceptInstitution", JoinType.INNER_JOIN)
-                .createAlias("acceptAdvert.department", "acceptDepartment", JoinType.INNER_JOIN)
-                .createAlias("acceptAdvert." + resourceScope.getLowerCamelName(), "acceptResource", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("acceptAdvert.id", "acceptResource.advert.id"))
-                .createAlias("acceptAdvert.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN,
+                        .add(Projections.property("otherInstitution.id").as("otherInstitutionId")) //
+                        .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
+                        .add(Projections.property("otherInstitution.logoImage.id").as("otherLogoImageId")) //
+                        .add(Projections.property("otherDepartment.id").as("otherDepartmentId")) //
+                        .add(Projections.property("otherDepartment.name").as("otherDepartmentName"))
+                        .add(Projections.property("otherAdvertUser.id").as("otherUserId")) //
+                        .add(Projections.property("otherUser.firstName").as("otherUserFirstName")) //
+                        .add(Projections.property("otherUser.lastName").as("otherUserLastName")) //
+                        .add(Projections.property("othertUser.email").as("otherUserEmail")) //
+                        .add(Projections.property("otherUserAccount.linkedinProfileUrl").as("otherUserLinkedinProfileUrl")) //
+                        .add(Projections.property("otherUserAccount.linkedinImageUrl").as("otherUserLinkedinImageUrl")) //
+                        .add(Projections.property("otherUserAccount.portraitImage.id").as("otherUserPortraitImageId"))) //
+                .createAlias(advertReference, "otherAdvert", JoinType.INNER_JOIN) //
+                .createAlias("otherAdvert.institution", "otherInstitution", JoinType.INNER_JOIN) //
+                .createAlias("otherAdvert.department", "otherDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias(advertReference + "User", "otherUser", JoinType.INNER_JOIN) //
+                .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.institution", "institution", JoinType.INNER_JOIN)
+                .createAlias("advert.department", "department", JoinType.INNER_JOIN)
+                .createAlias("advert." + resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("advert.id", "resource.advert.id"))
+                .createAlias("advert.userRoles", "userRole", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.conjunction()
                                 .add(Restrictions.eq("userRole.user", user))
-                                .add(Restrictions.disjunction()
-                                        .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference + "_ADMINISTRATOR")))
-                                        .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference) + "_APPROVER"))))
+                                .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReference + "_ADMINISTRATOR"))))
                 .add(Restrictions.disjunction()
-                        .add(Restrictions.eq("acceptAdvertUser", user))
+                        .add(Restrictions.eq("acceptUser", user))
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNull("acceptAdvertUser"))
+                                .add(Restrictions.isNull("acceptUser"))
                                 .add(Restrictions.isNotNull("userRole.id"))));
 
         if (pendingResponse) {

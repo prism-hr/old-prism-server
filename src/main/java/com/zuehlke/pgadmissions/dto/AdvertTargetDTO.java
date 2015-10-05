@@ -14,33 +14,29 @@ public class AdvertTargetDTO {
 
     private Integer advertTargetId;
 
-    private Integer targetInstitutionId;
+    private Integer otherInstitutionId;
 
-    private String targetInstitutionName;
+    private String otherInstitutionName;
 
-    private Integer targetLogoImageId;
+    private Integer otherLogoImageId;
 
-    private Integer targetDepartmentId;
+    private Integer otherDepartmentId;
 
-    private String targetDepartmentName;
+    private String otherDepartmentName;
 
-    private Integer userId;
+    private Integer otherUserId;
 
-    private String userFirstName;
+    private String otherUserFirstName;
 
-    private String userFirstName2;
+    private String otherUserLastName;
 
-    private String userFirstName3;
+    private String otherUserEmail;
 
-    private String userLastName;
+    private String otherUserLinkedinProfileUrl;
 
-    private String userEmail;
+    private String otherUserLinkedinImageUrl;
 
-    private String userLinkedinProfileUrl;
-
-    private String userLinkedinImageUrl;
-
-    private String userPortraitImageId;
+    private Integer otherUserPortraitImageId;
 
     public Integer getInstitutionId() {
         return institutionId;
@@ -90,116 +86,100 @@ public class AdvertTargetDTO {
         this.advertTargetId = advertTargetId;
     }
 
-    public Integer getTargetInstitutionId() {
-        return targetInstitutionId;
+    public Integer getOtherInstitutionId() {
+        return otherInstitutionId;
     }
 
-    public void setTargetInstitutionId(Integer targetInstitutionId) {
-        this.targetInstitutionId = targetInstitutionId;
+    public void setOtherInstitutionId(Integer otherInstitutionId) {
+        this.otherInstitutionId = otherInstitutionId;
     }
 
-    public String getTargetInstitutionName() {
-        return targetInstitutionName;
+    public String getOtherInstitutionName() {
+        return otherInstitutionName;
     }
 
-    public void setTargetInstitutionName(String targetInstitutionName) {
-        this.targetInstitutionName = targetInstitutionName;
+    public void setOtherInstitutionName(String otherInstitutionName) {
+        this.otherInstitutionName = otherInstitutionName;
     }
 
-    public Integer getTargetLogoImageId() {
-        return targetLogoImageId;
+    public Integer getOtherLogoImageId() {
+        return otherLogoImageId;
     }
 
-    public void setTargetLogoImageId(Integer targetLogoImageId) {
-        this.targetLogoImageId = targetLogoImageId;
+    public void setOtherLogoImageId(Integer otherLogoImageId) {
+        this.otherLogoImageId = otherLogoImageId;
     }
 
-    public Integer getTargetDepartmentId() {
-        return targetDepartmentId;
+    public Integer getOtherDepartmentId() {
+        return otherDepartmentId;
     }
 
-    public void setTargetDepartmentId(Integer targetDepartmentId) {
-        this.targetDepartmentId = targetDepartmentId;
+    public void setOtherDepartmentId(Integer otherDepartmentId) {
+        this.otherDepartmentId = otherDepartmentId;
     }
 
-    public String getTargetDepartmentName() {
-        return targetDepartmentName;
+    public String getOtherDepartmentName() {
+        return otherDepartmentName;
     }
 
-    public void setTargetDepartmentName(String targetDepartmentName) {
-        this.targetDepartmentName = targetDepartmentName;
+    public void setOtherDepartmentName(String otherDepartmentName) {
+        this.otherDepartmentName = otherDepartmentName;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getOtherUserId() {
+        return otherUserId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setOtherUserId(Integer otherUserId) {
+        this.otherUserId = otherUserId;
     }
 
-    public String getUserFirstName() {
-        return userFirstName;
+    public String getOtherUserFirstName() {
+        return otherUserFirstName;
     }
 
-    public void setUserFirstName(String userFirstName) {
-        this.userFirstName = userFirstName;
+    public void setOtherUserFirstName(String otherUserFirstName) {
+        this.otherUserFirstName = otherUserFirstName;
     }
 
-    public String getUserFirstName2() {
-        return userFirstName2;
+    public String getOtherUserLastName() {
+        return otherUserLastName;
     }
 
-    public void setUserFirstName2(String userFirstName2) {
-        this.userFirstName2 = userFirstName2;
+    public void setOtherUserLastName(String otherUserLastName) {
+        this.otherUserLastName = otherUserLastName;
     }
 
-    public String getUserFirstName3() {
-        return userFirstName3;
+    public String getOtherUserEmail() {
+        return otherUserEmail;
     }
 
-    public void setUserFirstName3(String userFirstName3) {
-        this.userFirstName3 = userFirstName3;
+    public void setOtherUserEmail(String otherUserEmail) {
+        this.otherUserEmail = otherUserEmail;
     }
 
-    public String getUserLastName() {
-        return userLastName;
+    public String getOtherUserLinkedinProfileUrl() {
+        return otherUserLinkedinProfileUrl;
     }
 
-    public void setUserLastName(String userLastName) {
-        this.userLastName = userLastName;
+    public void setOtherUserLinkedinProfileUrl(String otherUserLinkedinProfileUrl) {
+        this.otherUserLinkedinProfileUrl = otherUserLinkedinProfileUrl;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getOtherUserLinkedinImageUrl() {
+        return otherUserLinkedinImageUrl;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setOtherUserLinkedinImageUrl(String otherUserLinkedinImageUrl) {
+        this.otherUserLinkedinImageUrl = otherUserLinkedinImageUrl;
     }
 
-    public String getUserLinkedinProfileUrl() {
-        return userLinkedinProfileUrl;
+    public Integer getOtherUserPortraitImageId() {
+        return otherUserPortraitImageId;
     }
 
-    public void setUserLinkedinProfileUrl(String userLinkedinProfileUrl) {
-        this.userLinkedinProfileUrl = userLinkedinProfileUrl;
-    }
-
-    public String getUserLinkedinImageUrl() {
-        return userLinkedinImageUrl;
-    }
-
-    public void setUserLinkedinImageUrl(String userLinkedinImageUrl) {
-        this.userLinkedinImageUrl = userLinkedinImageUrl;
-    }
-
-    public String getUserPortraitImageId() {
-        return userPortraitImageId;
-    }
-
-    public void setUserPortraitImageId(String userPortraitImageId) {
-        this.userPortraitImageId = userPortraitImageId;
+    public void setOtherUserPortraitImageId(Integer otherUserPortraitImageId) {
+        this.otherUserPortraitImageId = otherUserPortraitImageId;
     }
 
 }

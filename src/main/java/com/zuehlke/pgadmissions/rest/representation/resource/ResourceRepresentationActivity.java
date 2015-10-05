@@ -7,6 +7,7 @@ import static java.util.Arrays.asList;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -103,6 +104,24 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
 
     public String getDisplayName() {
         return Joiner.on(SPACE).skipNulls().join(asList(project, program, department, institution));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(institution, department, project, program);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceRepresentationActivity other = (ResourceRepresentationActivity) object;
+        return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment()) && Objects.equal(program, other.getProgram())
+                && Objects.equal(project, other.getProject());
     }
 
     @Override

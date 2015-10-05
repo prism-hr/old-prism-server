@@ -56,7 +56,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -312,7 +311,7 @@ public class AdvertMapper {
         representation.setConnections(getAdvertTargetRepresentations(advert));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setExternalConditions(actionService.getExternalConditions(advert.getResource()));
-        
+
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
         return representation;
     }
@@ -385,7 +384,6 @@ public class AdvertMapper {
 
     // TODO: sorting logic
     private List<AdvertTargetRepresentation> getAdvertTargetRepresentations(Advert advert) {
-        List<AdvertTargetDTO> connections = advertService.getAdvertTargets(advert);
         return null;
     }
 

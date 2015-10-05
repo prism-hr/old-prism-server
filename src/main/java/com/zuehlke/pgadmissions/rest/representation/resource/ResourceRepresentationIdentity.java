@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import static org.apache.commons.lang3.ObjectUtils.compare;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
@@ -60,6 +61,23 @@ public class ResourceRepresentationIdentity implements Comparable<ResourceRepres
     public ResourceRepresentationIdentity withName(String name) {
         this.name = name;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(scope, id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceRepresentationSimple other = (ResourceRepresentationSimple) object;
+        return Objects.equal(scope, other.getScope()) && Objects.equal(id, other.getId());
     }
 
     @Override

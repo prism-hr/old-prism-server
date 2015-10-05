@@ -15,9 +15,10 @@ public class ResourceAdvertConnectionsEvaluator implements ResourceCompletenessE
     @Inject
     private AdvertService advertService;
 
+    // TODO: call the actual query
     @Override
     public boolean evaluate(ResourceParent resource) {
-        return isEmpty(advertService.getAdvertTargets(resource.getAdvert()));
+        return isEmpty(null);
     }
 
 }

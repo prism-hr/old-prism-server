@@ -424,7 +424,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionCondition> getPartnerActions(Resource resource) {
+    public List<PrismActionCondition> getExternalConditions(Resource resource) {
         return (List<PrismActionCondition>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("resourceCondition.actionCondition")) //
                 .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //

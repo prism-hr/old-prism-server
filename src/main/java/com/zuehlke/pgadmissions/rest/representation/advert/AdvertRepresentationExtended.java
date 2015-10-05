@@ -6,7 +6,6 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -28,8 +27,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private List<PrismOpportunityCategory> opportunityCategories;
 
     private String name;
-
-    private List<PrismActionCondition> externalConditions;
 
     private List<PrismStudyOption> studyOptions;
 
@@ -101,14 +98,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<PrismActionCondition> getExternalConditions() {
-        return externalConditions;
-    }
-
-    public void setExternalConditions(List<PrismActionCondition> externalConditions) {
-        this.externalConditions = externalConditions;
     }
 
     public List<PrismStudyOption> getStudyOptions() {

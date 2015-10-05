@@ -246,8 +246,8 @@ public class ActionService {
         return createResourceActions;
     }
 
-    public List<PrismActionCondition> getPartnerActions(ResourceParent resource) {
-        return actionDAO.getPartnerActions(resource);
+    public List<PrismActionCondition> getExternalConditions(ResourceParent resource) {
+        return actionDAO.getExternalConditions(resource);
     }
 
     public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {

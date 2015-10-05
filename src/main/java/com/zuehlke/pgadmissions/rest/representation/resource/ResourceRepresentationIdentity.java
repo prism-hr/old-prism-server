@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
-public class ResourceRepresentationIdentity {
+public class ResourceRepresentationIdentity implements Comparable<ResourceRepresentationIdentity> {
 
     private PrismScope scope;
 
@@ -58,6 +60,12 @@ public class ResourceRepresentationIdentity {
     public ResourceRepresentationIdentity withName(String name) {
         this.name = name;
         return this;
+    }
+
+    @Override
+    public int compareTo(ResourceRepresentationIdentity other) {
+        int compare = compare(other.getScope().ordinal(), scope.ordinal());
+        return compare == 0 ? compare(name, other.getName()) : compare;
     }
 
 }

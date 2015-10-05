@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -56,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
@@ -82,6 +84,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunity
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationChildCreation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
@@ -171,7 +174,7 @@ public class ResourceMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceIdentifier) throws Exception {
+    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceId) throws Exception {
         DateTime baseline = new DateTime();
         List<ResourceListRowRepresentation> representations = Lists.newArrayList();
 
@@ -184,7 +187,7 @@ public class ResourceMapper {
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
 
-        resourceService.getResourceList(user, scope, parentScopes, filter, sequenceIdentifier, resourceIds, onlyAsPartnerResourceIds).forEach(row -> {
+        resourceService.getResourceList(user, scope, parentScopes, filter, RESOURCE_LIST_PAGE_ROW_COUNT, sequenceId, resourceIds, onlyAsPartnerResourceIds, true).forEach(row -> {
             ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
             representation.setScope(scope);
             representation.setId(row.getResourceId());
@@ -280,8 +283,10 @@ public class ResourceMapper {
         return representation;
     }
 
-    public ResourceRepresentationIdentity getResourceRepresentationIdentity(ResourceIdentityDTO resourceDTO) {
-        return getResourceRepresentation(resourceDTO.getScope(), resourceDTO, ResourceRepresentationIdentity.class);
+    public ResourceRepresentationIdentity getResourceRepresentationChildCreation(ResourceChildCreationDTO resourceDTO) {
+        ResourceRepresentationChildCreation representation = getResourceRepresentation(resourceDTO.getScope(), resourceDTO, ResourceRepresentationChildCreation.class);
+        representation.setCreateDirectly(resourceDTO.getCreateDirectly());
+        return representation;
     }
 
     public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {
@@ -360,7 +365,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType,
-                                                                                                                List<PrismRole> overridingRoles) {
+            List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
@@ -368,7 +373,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType,
-                                                                                                                               List<PrismRole> overridingRoles) {
+            List<PrismRole> overridingRoles) {
         V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
 
         List<PrismStudyOption> studyOptions = Lists.newLinkedList();
@@ -387,7 +392,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
-                                                                                                                                           List<PrismRole> overridingRoles) {
+            List<PrismRole> overridingRoles) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
@@ -518,7 +523,7 @@ public class ResourceMapper {
     }
 
     public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-                                                                                                                HashMultimap<PrismFilterEntity, String> constraints) {
+            HashMultimap<PrismFilterEntity, String> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -528,7 +533,7 @@ public class ResourceMapper {
     }
 
     public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-                                                                                                                                HashMultimap<PrismFilterEntity, String> constraints) {
+            HashMultimap<PrismFilterEntity, String> constraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -638,7 +643,7 @@ public class ResourceMapper {
 
     @SuppressWarnings("unchecked")
     private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationActivity(T resource, Class<V> returnType,
-                                                                                                               List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
+            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationActivity(resource, returnType);
 
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();

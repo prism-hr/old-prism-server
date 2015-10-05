@@ -3,13 +3,14 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.ObjectUtils.compare;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
-public class ResourceRepresentationActivity extends ResourceRepresentationSimple implements Comparable<ResourceRepresentationActivity> {
+public class ResourceRepresentationActivity extends ResourceRepresentationSimple {
 
     private UserRepresentationSimple user;
 
@@ -105,17 +106,15 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
     }
 
     @Override
-    public int compareTo(ResourceRepresentationActivity other) {
-        int compare = compare(institution.getName(), other.getInstitution().getName());
-
-        ResourceRepresentationIdentity otherDepartment = other.getDepartment();
-        compare = compare == 0 ? compare((department == null ? null : department.getName()), (otherDepartment == null ? null : otherDepartment.getName()), true) : compare;
-
-        ResourceRepresentationIdentity otherProgram = other.getProgram();
-        compare = compare == 0 ? compare((program == null ? null : program.getName()), (otherProgram == null ? null : otherProgram.getName()), true) : compare;
-
-        ResourceRepresentationIdentity otherProject = other.getProject();
-        return compare == 0 ? compare((project == null ? null : project.getName()), (otherProject == null ? null : otherProject.getName()), true) : compare;
+    public int compareTo(ResourceRepresentationIdentity other) {
+        if (ResourceRepresentationActivity.class.isAssignableFrom(other.getClass())) {
+            ResourceRepresentationActivity otherActivity = (ResourceRepresentationActivity) other;
+            int compare = institution.compareTo(otherActivity.getInstitution());
+            compare = compare == 0 ? ObjectUtils.compare(department, otherActivity.getDepartment(), true) : compare;
+            compare = compare == 0 ? ObjectUtils.compare(program, otherActivity.getProgram(), true) : compare;
+            return compare == 0 ? ObjectUtils.compare(project, otherActivity.getProject(), true) : compare;
+        }
+        return super.compareTo(other);
     }
 
 }

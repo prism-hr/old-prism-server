@@ -46,7 +46,7 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     private Advert acceptAdvert;
 
     @ManyToOne
-    @JoinColumn(name = "accept_advert_user_id", nullable = false)
+    @JoinColumn(name = "accept_advert_user_id")
     private User acceptAdvertUser;
 
     @Enumerated(EnumType.STRING)

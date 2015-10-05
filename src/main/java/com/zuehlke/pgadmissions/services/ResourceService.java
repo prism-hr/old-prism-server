@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
@@ -577,7 +578,7 @@ public class ResourceService {
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
 
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
-        setStudyOptions(resource, studyOptions == null ? Lists.newArrayList() : studyOptions, new LocalDate());
+        setStudyOptions(resource, studyOptions == null ? newArrayList() : studyOptions, new LocalDate());
     }
 
     public <T extends ResourceParent, U extends ResourceParentDTO> void updateResource(T resource, U resourceDTO) {

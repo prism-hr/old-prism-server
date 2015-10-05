@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
 
@@ -36,6 +37,8 @@ public class AdvertRepresentationSimple {
     private List<AdvertTargetRepresentation> connections;
 
     private List<AdvertCompetenceRepresentation> competences;
+    
+    private List<PrismActionCondition> externalConditions;
 
     private String sequenceIdentifier;
 
@@ -157,6 +160,14 @@ public class AdvertRepresentationSimple {
 
     public void setCompetences(List<AdvertCompetenceRepresentation> competences) {
         this.competences = competences;
+    }
+    
+    public List<PrismActionCondition> getExternalConditions() {
+        return externalConditions;
+    }
+
+    public void setExternalConditions(List<PrismActionCondition> externalConditions) {
+        this.externalConditions = externalConditions;
     }
 
     public String getSequenceIdentifier() {

@@ -225,7 +225,6 @@ public class AdvertMapper {
         }
 
         representation.setName(advert.getName());
-        representation.setExternalConditions(actionService.getPartnerActions(advert.getResource()));
 
         AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
         Long applicationCount = applicationSummary.getApplicationCount();
@@ -312,8 +311,9 @@ public class AdvertMapper {
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
         representation.setConnections(getAdvertTargetRepresentations(advert));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
+        representation.setExternalConditions(actionService.getExternalConditions(advert.getResource()));
+        
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
-
         return representation;
     }
 

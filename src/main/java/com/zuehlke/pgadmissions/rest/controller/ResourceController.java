@@ -141,7 +141,7 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/{resourceResponseScope}/{resourceCreationScope}", method = RequestMethod.GET)
-    public List<ResourceRepresentationIdentity> getResourceForWhichUserCanCreateResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable String resourceResponseScope, @PathVariable String resourceCreationScope, @RequestParam String q) {
         ResourceParent parent = (ResourceParent) loadResource(resourceId, resourceDescriptor);
         return resourceService.getResourcesForWhichUserCanCreateResource(parent, getResourceDescriptor(resourceResponseScope).getResourceScope(),

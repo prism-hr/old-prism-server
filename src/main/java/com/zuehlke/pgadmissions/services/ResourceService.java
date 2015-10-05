@@ -21,6 +21,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSec
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static jersey.repackaged.com.google.common.collect.Sets.newTreeSet;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
@@ -468,11 +469,28 @@ public class ResourceService {
     }
 
     public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
-        return resourceDAO.getResourcesByMatchingEnclosingResources(enclosingResourceScope, searchTerm);
+        return resourceDAO.getResourcesByMatchingEnclosingResourceName(enclosingResourceScope, searchTerm);
     }
 
-    public List<ResourceIdentityDTO> getResourcesForWhichUserCanCreateResource(Resource parent, PrismScope resourceScope, PrismScope creationScope, String searchTerm) {
-        return resourceDAO.getResourcesForWhichUserCanCreateResource(userService.getCurrentUser(), parent, resourceScope, creationScope, searchTerm);
+    public List<ResourceIdentityDTO> getResourcesForWhichUserCanCreateResource(Resource enlosingResource, PrismScope responseScope, PrismScope creationScope, String searchTerm) {
+        ProjectionList projections = null;
+        if (creationScope.equals(INSTITUTION)) {
+            projections = Projections.projectionList() //
+                    .add(Projections.property("state.scope.id").as("scope")) //
+                    .add(Projections.property("resource.id").as("id")) //
+                    .add(Projections.property("resource.name").as("name")) //
+                    .add(Projections.property("resource.logoImage.id").as("logoImageId"));
+        } else {
+            projections = Projections.projectionList() //
+                    .add(Projections.property("state.scope.id").as("scope")) //
+                    .add(Projections.property("resource.id").as("id")) //
+                    .add(Projections.property("resource.name").as("name"));
+        }
+
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(responseScope, SYSTEM);
+        return newArrayList(newTreeSet(getResources(userService.getCurrentUser(), responseScope, parentScopes,
+                new ResourceListFilterDTO().withEnclosingResource(enlosingResource).withAction(PrismAction.valueOf(responseScope.name() + "_CREATE_" + creationScope.name())),
+                projections, ResourceIdentityDTO.class)));
     }
 
     public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {
@@ -715,8 +733,8 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, filter, getFilterConditions(scope, filter));
     }
 
-    public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Class<T> resourceClass) {
-        return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), resourceClass);
+    public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
+        return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
     public List<ResourceSimpleDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {

@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.dto;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public class ResourceIdentityDTO {
+public class ResourceIdentityDTO implements Comparable<ResourceIdentityDTO> {
 
     private PrismScope scope;
 
@@ -57,6 +59,12 @@ public class ResourceIdentityDTO {
     public ResourceIdentityDTO withName(String name) {
         this.name = name;
         return this;
+    }
+
+    @Override
+    public int compareTo(ResourceIdentityDTO other) {
+        int compare = compare(scope, other.getScope());
+        return compare == 0 ? compare(name, other.getName()) : compare;
     }
 
 }

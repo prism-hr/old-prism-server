@@ -61,7 +61,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
@@ -209,6 +208,7 @@ public class ResourceDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
@@ -235,6 +235,7 @@ public class ResourceDAO {
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userRole.user", user)) //
@@ -283,7 +284,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesByMatchingEnclosingResources(PrismScope parentResourceScope, String searchTerm) {
+    public List<Integer> getResourcesByMatchingEnclosingResourceName(PrismScope parentResourceScope, String searchTerm) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(parentResourceScope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
@@ -455,45 +456,6 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<ResourceIdentityDTO> getResourcesForWhichUserCanCreateResource(User user, Resource parent, PrismScope resourceScope, PrismScope creationScope, String searchTerm) {
-        ProjectionList projections = null;
-        if (creationScope.equals(INSTITUTION)) {
-            projections = Projections.projectionList() //
-                    .add(Projections.property("state.scope.id").as("scope")) //
-                    .add(Projections.property("resource.id").as("id")) //
-                    .add(Projections.property("resource.name").as("name")) //
-                    .add(Projections.property("resource.logoImage.id").as("logoImageId"));
-        } else {
-            projections = Projections.projectionList() //
-                    .add(Projections.property("state.scope.id").as("scope")) //
-                    .add(Projections.property("resource.id").as("id")) //
-                    .add(Projections.property("resource.name").as("name"));
-        }
-
-        return (List<ResourceIdentityDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projections) //
-                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("resourceCondition.internalMode", true)) //
-                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource." + parent.getResourceScope().getLowerCamelName(), parent)) //
-                .add(Restrictions.like("resource.name", searchTerm, MatchMode.ANYWHERE)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(getResourceStateActionConstraint()) //
-                .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.creationScope.id", creationScope)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //
-                .list();
-    }
-
     public List<ResourceActivityDTO> getUserAdministratorResources(PrismScope resourceScope, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         PrismActionEnhancement[] administratorEnhancements = RESOURCE_ADMINISTRATOR.getActionEnhancements();
@@ -577,6 +539,18 @@ public class ResourceDAO {
     }
 
     private static void appendResourceListFilterCriteria(PrismScope scopeId, Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
+        Resource enclosingResource = filter.getEnclosingResource();
+        if (enclosingResource != null) {
+            criteria.add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
+        }
+
+        PrismAction action = filter.getAction();
+        if (action != null) {
+            criteria.add(Restrictions.eq("stateAction.action.id", action));
+            criteria.add(Restrictions.eq("resourceCondition.internalMode", true));
+            criteria.add(Restrictions.eq("action.systemInvocationOnly", false));
+        }
+
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }

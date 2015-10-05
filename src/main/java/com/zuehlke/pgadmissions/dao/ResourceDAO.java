@@ -61,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
@@ -137,8 +138,8 @@ public class ResourceDAO {
                     projectionList.add(Projections.property(parentScopeName + ".name"), parentScopeName + "Name");
                 }
 
-                if (parentScopeId.equals(INSTITUTION)) {
-                    projectionList.add(Projections.property(parentScopeName + ".logoImage.id"), "logoImageId");
+                if (scopeId.equals(INSTITUTION)) {
+                    projectionList.add(Projections.property(scopeName + ".logoImage.id"), "logoImageId");
                 }
 
                 parentScopeNames.add(parentScopeName);
@@ -456,11 +457,11 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<ResourceActivityDTO> getUserAdministratorResources(PrismScope resourceScope, User user) {
+    public List<ResourceIdentityDTO> getUserAdministratorResources(PrismScope resourceScope, User user) {
         String resourceReference = resourceScope.getLowerCamelName();
         PrismActionEnhancement[] administratorEnhancements = RESOURCE_ADMINISTRATOR.getActionEnhancements();
 
-        return (List<ResourceActivityDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        return (List<ResourceIdentityDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty(resourceReference + ".id").as(resourceReference + "Id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -539,18 +540,6 @@ public class ResourceDAO {
     }
 
     private static void appendResourceListFilterCriteria(PrismScope scopeId, Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
-        Resource enclosingResource = filter.getEnclosingResource();
-        if (enclosingResource != null) {
-            criteria.add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
-        }
-
-        PrismAction action = filter.getAction();
-        if (action != null) {
-            criteria.add(Restrictions.eq("stateAction.action.id", action));
-            criteria.add(Restrictions.eq("resourceCondition.internalMode", true));
-            criteria.add(Restrictions.eq("action.systemInvocationOnly", false));
-        }
-
         if (filter.isUrgentOnly()) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
         }

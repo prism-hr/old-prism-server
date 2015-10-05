@@ -63,7 +63,7 @@ public class ResourceIdentityDTO implements Comparable<ResourceIdentityDTO> {
 
     @Override
     public int compareTo(ResourceIdentityDTO other) {
-        int compare = compare(scope, other.getScope());
+        int compare = compare(other.getScope().ordinal(), scope.ordinal());
         return compare == 0 ? compare(name, other.getName()) : compare;
     }
 

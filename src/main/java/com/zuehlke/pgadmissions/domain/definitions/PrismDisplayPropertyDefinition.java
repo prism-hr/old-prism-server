@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1236,9 +1236,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Thank you for your registration. To activate your account follow the activation link in our confirmation email."),
     SYSTEM_AUTHENTICATE_JUST_REGISTERED_INSTITUTION_ACTIVATION_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE,
             "Thank you for your registration. We are very pleased to have you on board. Please activate your account by following the link in our confirmation email. We will approve your organization within 24 hours. As soon as you receive our approval notification, you will be able to post opportunities and target students and graduates in PRiSM."),
-    SYSTEM_AUTHENTICATE_APPLY_TO_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Apply to {{name}}"),
-    SYSTEM_AUTHENTICATE_LOGIN_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Login"),
-    SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Add profile picture"),
+    SYSTEM_AUTHENTICATE_AUTHENTICATE_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Apply to {{name}}"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_HEADER_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "You have warnings"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_TITLE_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Your attention is required"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_CONTENT_MODAL(PrismDisplayPropertyCategory.

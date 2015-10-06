@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import static org.apache.commons.lang3.ObjectUtils.compare;
 
+import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceIdentityDTO implements Comparable<ResourceIdentityDTO> {
@@ -59,6 +60,23 @@ public class ResourceIdentityDTO implements Comparable<ResourceIdentityDTO> {
     public ResourceIdentityDTO withName(String name) {
         this.name = name;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(scope, id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceIdentityDTO other = (ResourceIdentityDTO) object;
+        return Objects.equal(scope, other.getScope()) && Objects.equal(id, other.getId());
     }
 
     @Override

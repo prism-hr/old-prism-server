@@ -11,6 +11,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 
 public class ResourceListFilterDTO {
 
+    private PrismAction actionId;
+    
+    private List<Integer> resourceIds;
+
     private PrismOpportunityCategory opportunityCategory;
 
     private PrismFilterMatchMode matchMode;
@@ -23,9 +27,23 @@ public class ResourceListFilterDTO {
 
     private Boolean updateOnly;
 
-    private PrismAction actionId;
-
     private List<ResourceListFilterConstraintDTO> constraints;
+
+    public PrismAction getActionId() {
+        return actionId;
+    }
+
+    public void setActionId(PrismAction actionId) {
+        this.actionId = actionId;
+    }
+
+    public List<Integer> getResourceIds() {
+        return resourceIds;
+    }
+
+    public void setResourceIds(List<Integer> resourceIds) {
+        this.resourceIds = resourceIds;
+    }
 
     public PrismOpportunityCategory getOpportunityCategory() {
         return opportunityCategory;
@@ -75,14 +93,6 @@ public class ResourceListFilterDTO {
         this.updateOnly = updateOnly;
     }
 
-    public PrismAction getActionId() {
-        return actionId;
-    }
-
-    public void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
-    }
-
     public final List<ResourceListFilterConstraintDTO> getConstraints() {
         return constraints;
     }
@@ -90,7 +100,17 @@ public class ResourceListFilterDTO {
     public void setConstraints(List<ResourceListFilterConstraintDTO> constraints) {
         this.constraints = constraints;
     }
+    
+    public ResourceListFilterDTO withResourceIds(List<Integer> resourceIds) {
+        this.resourceIds = resourceIds;
+        return this;
+    }    
 
+    public ResourceListFilterDTO withActionId(PrismAction actionId) {
+        this.actionId = actionId;
+        return this;
+    }    
+    
     public ResourceListFilterDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
         return this;

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mapping;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationRep
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
 
 import jersey.repackaged.com.google.common.collect.Lists;
@@ -44,6 +44,9 @@ public class ScopeMapper {
 
     @Inject
     private ResourceService resourceService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private ScopeService scopeService;
@@ -77,13 +80,12 @@ public class ScopeMapper {
         }
         return representations;
     }
-    
-    public List<ResourceActivityRepresentation> getResourceActivityRepresentation(User user, PrismScope permissionScope) {
+
+    public List<ResourceActivityRepresentation> getResourceActivityRepresentation(User user) {
         DateTime baseline = new DateTime().minusDays(1);
-        permissionScope = permissionScope.equals(SYSTEM) ? PrismScope.INSTITUTION : permissionScope;
 
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
-        List<PrismScope> visibleScopes = scopeService.getEnclosingScopesDescending(APPLICATION, permissionScope);
+        List<PrismScope> visibleScopes = scopeService.getEnclosingScopesDescending(APPLICATION, roleService.getPermissionScope(user));
         visibleScopes.forEach(scope -> {
             Set<Integer> updatedResources = Sets.newHashSet();
             Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();

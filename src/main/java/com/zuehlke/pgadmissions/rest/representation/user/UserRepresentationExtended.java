@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
@@ -18,6 +19,8 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
     private Boolean connectedWithLinkedin;
 
     private PrismRoleCategory requiredFeedbackRoleCategory;
+
+    private List<ResourceRepresentationConnection> resourcesForWhichUserCanCreateConnections;
 
     public Boolean getSendApplicationRecommendationNotification() {
         return sendApplicationRecommendationNotification;
@@ -65,6 +68,14 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     public void setRequiredFeedbackRoleCategory(PrismRoleCategory requiredFeedbackRoleCategory) {
         this.requiredFeedbackRoleCategory = requiredFeedbackRoleCategory;
+    }
+
+    public List<ResourceRepresentationConnection> getResourcesForWhichUserCanCreateConnections() {
+        return resourcesForWhichUserCanCreateConnections;
+    }
+
+    public void setResourcesForWhichUserCanCreateConnections(List<ResourceRepresentationConnection> resourcesForWhichUserCanCreateConnections) {
+        this.resourcesForWhichUserCanCreateConnections = resourcesForWhichUserCanCreateConnections;
     }
 
 }

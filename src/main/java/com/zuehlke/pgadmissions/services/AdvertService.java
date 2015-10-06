@@ -292,9 +292,8 @@ public class AdvertService {
         User userTarget = null;
         UserDTO userTargetDTO = target.getUser();
         if (userTargetDTO != null) {
-            resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
         }
-        userTarget = userTarget == null ? resourceTarget.getUser() : userTarget;
 
         if (target.getContext().equals(EMPLOYER)) {
             createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, null, ENDORSEMENT_PENDING);
@@ -420,11 +419,11 @@ public class AdvertService {
         return advertDAO.getAdvertTargets(resource);
     }
 
-    public List<AdvertTargetDTO> getAdvertTargets(User user, boolean pendingResponse) {
+    public List<AdvertTargetDTO> getAdvertTargets(User user, boolean pending) {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(advertDAO.getAdvertTargets(resourceScope, advertReference, user, pendingResponse));
+                advertTargets.addAll(advertDAO.getAdvertTargets(resourceScope, advertReference, user, pending));
             }
         }
         return advertTargets;

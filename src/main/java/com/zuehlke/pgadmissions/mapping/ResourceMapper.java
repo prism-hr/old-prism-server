@@ -58,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
@@ -86,6 +87,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepre
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationChildCreation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
@@ -182,8 +184,8 @@ public class ResourceMapper {
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
         Set<Integer> resourceIds = Sets.newHashSet();
-        Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
+        Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
         processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
 
@@ -594,13 +596,6 @@ public class ResourceMapper {
         return getResourceRepresentationActivity(resource, ResourceOpportunityRepresentationActivity.class);
     }
 
-    private <T extends Resource> void validateActionExecutable(T resource) {
-        Action action = actionService.getViewEditAction(resource);
-        if (action == null || !actionService.checkActionExecutable(resource, action, userService.getCurrentUser(), false)) {
-            throw new PrismForbiddenException("User cannot view or edit the given resource");
-        }
-    }
-
     public List<ResourceListFilterRepresentation> getResourceListFilterRepresentations() {
         List<ResourceListFilterRepresentation> filters = Lists.newArrayListWithCapacity(PrismResourceListConstraint.values().length);
         for (PrismResourceListConstraint property : PrismResourceListConstraint.values()) {
@@ -610,6 +605,35 @@ public class ResourceMapper {
             filters.add(new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes()));
         }
         return filters;
+    }
+
+    public ResourceRepresentationActivity getResourceRepresentationActivity(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+            String departmentName) {
+        ResourceRepresentationActivity resourceRepresentation = new ResourceRepresentationActivity().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+                .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
+
+        if (departmentId != null) {
+            resourceRepresentation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId).withName(departmentName));
+        }
+
+        return resourceRepresentation;
+    }
+
+    public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
+        Integer departmentId = resource.getDepartmentId();
+        Integer institutionId = resource.getInstitutionId();
+        PrismScope scope = departmentId == null ? INSTITUTION : DEPARTMENT;
+        ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withScope(scope).withId(scope.equals(INSTITUTION) ? institutionId : departmentId)
+                .withLogoImage(documentMapper.getDocumentRepresentation(resource.getInstitutionLogoImageId())).withInstitutionName(resource.getInstitutionName())
+                .withDepartmentName(resource.getDepartmentName());
+        return representation;
+    }
+
+    private <T extends Resource> void validateActionExecutable(T resource) {
+        Action action = actionService.getViewEditAction(resource);
+        if (action == null || !actionService.checkActionExecutable(resource, action, userService.getCurrentUser(), false)) {
+            throw new PrismForbiddenException("User cannot view or edit the given resource");
+        }
     }
 
     private <T extends Resource, V extends ResourceRepresentationActivity> V getResourceRepresentationActivity(T resource, Class<V> returnType) {

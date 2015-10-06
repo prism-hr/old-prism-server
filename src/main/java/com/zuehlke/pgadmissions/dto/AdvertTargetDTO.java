@@ -2,15 +2,15 @@ package com.zuehlke.pgadmissions.dto;
 
 public class AdvertTargetDTO {
 
-    private Integer institutionId;
+    private Integer acceptInstitutionId;
 
-    private String institutionName;
+    private String acceptInstitutionName;
 
-    private Integer logoImageId;
+    private Integer acceptInstitutionLogoImageId;
 
-    private Integer departmentId;
+    private Integer acceptDepartmentId;
 
-    private String departmentName;
+    private String acceptDepartmentName;
 
     private Integer advertTargetId;
 
@@ -18,7 +18,7 @@ public class AdvertTargetDTO {
 
     private String otherInstitutionName;
 
-    private Integer otherLogoImageId;
+    private Integer otherInstitutionLogoImageId;
 
     private Integer otherDepartmentId;
 
@@ -38,44 +38,44 @@ public class AdvertTargetDTO {
 
     private Integer otherUserPortraitImageId;
 
-    public Integer getInstitutionId() {
-        return institutionId;
+    public Integer getAcceptInstitutionId() {
+        return acceptInstitutionId;
     }
 
-    public void setInstitutionId(Integer institutionId) {
-        this.institutionId = institutionId;
+    public void setAcceptInstitutionId(Integer acceptInstitutionId) {
+        this.acceptInstitutionId = acceptInstitutionId;
     }
 
-    public String getInstitutionName() {
-        return institutionName;
+    public String getAcceptInstitutionName() {
+        return acceptInstitutionName;
     }
 
-    public void setInstitutionName(String institutionName) {
-        this.institutionName = institutionName;
+    public void setAcceptInstitutionName(String acceptInstitutionName) {
+        this.acceptInstitutionName = acceptInstitutionName;
     }
 
-    public Integer getLogoImageId() {
-        return logoImageId;
+    public Integer getAcceptInstitutionLogoImageId() {
+        return acceptInstitutionLogoImageId;
     }
 
-    public void setLogoImageId(Integer logoImageId) {
-        this.logoImageId = logoImageId;
+    public void setAcceptInstitutionLogoImageId(Integer acceptInstitutionLogoImageId) {
+        this.acceptInstitutionLogoImageId = acceptInstitutionLogoImageId;
     }
 
-    public Integer getDepartmentId() {
-        return departmentId;
+    public Integer getAcceptDepartmentId() {
+        return acceptDepartmentId;
     }
 
-    public void setDepartmentId(Integer departmentId) {
-        this.departmentId = departmentId;
+    public void setAcceptDepartmentId(Integer acceptDepartmentId) {
+        this.acceptDepartmentId = acceptDepartmentId;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public String getAcceptDepartmentName() {
+        return acceptDepartmentName;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setAcceptDepartmentName(String acceptDepartmentName) {
+        this.acceptDepartmentName = acceptDepartmentName;
     }
 
     public Integer getAdvertTargetId() {
@@ -102,12 +102,12 @@ public class AdvertTargetDTO {
         this.otherInstitutionName = otherInstitutionName;
     }
 
-    public Integer getOtherLogoImageId() {
-        return otherLogoImageId;
+    public Integer getOtherInstitutionLogoImageId() {
+        return otherInstitutionLogoImageId;
     }
 
-    public void setOtherLogoImageId(Integer otherLogoImageId) {
-        this.otherLogoImageId = otherLogoImageId;
+    public void setOtherInstitutionLogoImageId(Integer otherInstitutionLogoImageId) {
+        this.otherInstitutionLogoImageId = otherInstitutionLogoImageId;
     }
 
     public Integer getOtherDepartmentId() {

@@ -136,18 +136,16 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/{childResourceScope}", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public List<ResourceRepresentationCreation> getResources(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationCreation> getResources(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable String childResourceScope, @RequestParam String q) {
-        ResourceParent resource = (ResourceParent) loadResource(resourceId, resourceDescriptor);
+        Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getResources(resource, getResourceDescriptor(childResourceScope).getResourceScope(), q).stream()
                 .map(resourceMapper::getResourceRepresentationCreation).collect(toList());
     }
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope, @RequestParam Optional<String> q) {
         Resource enclosingResource = loadResource(resourceId, resourceDescriptor);
         List<ResourceChildCreationDTO> resources = resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, q.orElse(null));

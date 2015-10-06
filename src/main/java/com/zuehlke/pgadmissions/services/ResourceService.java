@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
@@ -98,6 +99,7 @@ import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
@@ -458,8 +460,18 @@ public class ResourceService {
         return resources;
     }
 
-    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
-        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles);
+    public List<Integer> getResourcesIdForWhichUserHasRoles(User user, PrismRole... roles) {
+        return resourceDAO.getResourceIdsForWhichUserHasRoles(user, roles);
+    }
+
+    public List<ResourceConnectionDTO> getResourcesForWhichUserCanMakeConnections(User user, String searchTerm) {
+        Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
+        for (PrismScope resourceScope : new PrismScope[] {INSTITUTION, DEPARTMENT}) {
+            resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> {
+                resources.add(resource);
+            });    
+        }
+        return newLinkedList(resources);
     }
 
     public List<Resource> getResourcesByUser(PrismScope prismScope, User user) {
@@ -476,17 +488,19 @@ public class ResourceService {
 
     public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope scope, PrismScope creationScope, String searchTerm) {
         User user = userService.getCurrentUser();
-        ResourceListFilterDTO filter = new ResourceListFilterDTO();
-        Set<ResourceChildCreationDTO> resources = Sets.newTreeSet();
 
         String scopeReference = scope.getLowerCamelName();
+        Set<ResourceChildCreationDTO> resources = Sets.newTreeSet();
+        ResourceListFilterDTO filter = new ResourceListFilterDTO()
+                .withResourceIds(isNullOrEmpty(searchTerm) ? null : resourceDAO.getResourceIds(enclosingResource, scope, searchTerm));
+
         for (PrismScope actionScope : scopeService.getEnclosingScopesDescending(creationScope, scope)) {
             if (!actionScope.equals(creationScope)) {
                 List<PrismScope> parentScopes = scopeService.getParentScopesDescending(actionScope, SYSTEM);
 
                 Set<Integer> resourceIds = Sets.newHashSet();
-                Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
                 Map<String, Integer> summaries = Maps.newHashMap();
+                Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
                 Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, actionScope, parentScopes, filter);
                 processRowDescriptors(scopedResources, resourceIds, onlyAsPartnerResourceIds, summaries);
 
@@ -761,8 +775,8 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
-    public List<ResourceSimpleDTO> getResources(ResourceParent parentResource, PrismScope resourceScope, String query) {
-        return resourceDAO.getResources(parentResource, resourceScope, query);
+    public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, String query) {
+        return resourceDAO.getResources(enclosingResource, resourceScope, query);
     }
 
     public User joinResource(ResourceParent resource, UserDTO userDTO, PrismJoinResourceContext context) {

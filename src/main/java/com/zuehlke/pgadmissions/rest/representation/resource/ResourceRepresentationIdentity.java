@@ -76,7 +76,7 @@ public class ResourceRepresentationIdentity implements Comparable<ResourceRepres
         if (getClass() != object.getClass()) {
             return false;
         }
-        ResourceRepresentationSimple other = (ResourceRepresentationSimple) object;
+        ResourceRepresentationIdentity other = (ResourceRepresentationIdentity) object;
         return Objects.equal(scope, other.getScope()) && Objects.equal(id, other.getId());
     }
 

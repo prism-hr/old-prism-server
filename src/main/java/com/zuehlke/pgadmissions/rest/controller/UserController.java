@@ -47,7 +47,9 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -189,9 +191,21 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/activity", method = RequestMethod.GET, params = "permissionScope")
-    public UserActivityRepresentation getActivitySummary(@RequestParam PrismScope permissionScope) {
-        return userMapper.getUserActivityRepresentation(userService.getCurrentUser(), permissionScope);
+    @RequestMapping(value = "/activity", method = RequestMethod.GET)
+    public UserActivityRepresentation getActivitySummary() {
+        return userMapper.getUserActivityRepresentation(userService.getCurrentUser());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/connection", method = RequestMethod.GET)
+    public List<ConnectionActivityRepresentation> getConnectionRepresentations() {
+        return userMapper.getUserConnectionRepresentations(userService.getCurrentUser(), false);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/connection/resource", method = RequestMethod.GET, params = "q")
+    public List<ResourceRepresentationConnection> getConnectionRepresentations(@RequestParam(required = false) String q) {
+        return userMapper.getUserConnectionResourceRepresentations(userService.getCurrentUser(), q);
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -22,9 +22,9 @@ public class OpportunitiesQueryDTO {
 
     @NotNull
     private PrismMotivationContext context;
-    
+
     private PrismScope contextScope;
-    
+
     private Boolean recommended;
 
     private PrismOpportunityCategory opportunityCategory;
@@ -72,7 +72,7 @@ public class OpportunitiesQueryDTO {
     public void setContext(PrismMotivationContext context) {
         this.context = context;
     }
-    
+
     public PrismScope getContextScope() {
         return contextScope;
     }

@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -20,8 +20,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Opportunity"),
     SYSTEM_PROMOTED_BY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Promoted by"),
     SYSTEM_OPPORTUNITIES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Opportunities"),
-    SYSTEM_EMPLOYERS(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Employers"),
-    SYSTEM_UNIVERSITIES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Universities"),
+    SYSTEM_EMPLOYERS(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "I'm an Employer"),
+    SYSTEM_APPLICANT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "I'm an Applicant"),
+    SYSTEM_UNIVERSITIES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "I'm a University"),
     SYSTEM_DEADLINE(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Deadline"),
     SYSTEM_DEADLINES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Deadlines"),
     SYSTEM_SYSTEM(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "System"),
@@ -1235,9 +1236,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "Thank you for your registration. To activate your account follow the activation link in our confirmation email."),
     SYSTEM_AUTHENTICATE_JUST_REGISTERED_INSTITUTION_ACTIVATION_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE,
             "Thank you for your registration. We are very pleased to have you on board. Please activate your account by following the link in our confirmation email. We will approve your organization within 24 hours. As soon as you receive our approval notification, you will be able to post opportunities and target students and graduates in PRiSM."),
-    SYSTEM_AUTHENTICATE_APPLY_TO_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Apply to {{name}}"),
-    SYSTEM_AUTHENTICATE_LOGIN_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Login"),
-    SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Add profile picture"),
+    SYSTEM_AUTHENTICATE_AUTHENTICATE_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Apply to {{name}}"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_HEADER_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "You have warnings"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_TITLE_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Your attention is required"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_CONTENT_MODAL(PrismDisplayPropertyCategory.
@@ -1274,7 +1273,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_FILTER_COURSE_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Availability"),
     SYSTEM_OPPORTUNITIES_FILTER_DURATION_MONTHLY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Monthly"),
     SYSTEM_OPPORTUNITIES_FILTER_DURATION_ANNUAL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Annual"),
-    SYSTEM_OPPORTUNITIES_FILTER_FEE_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Fee Level"),
     SYSTEM_OPPORTUNITIES_FILTER_SALARY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Salary Level"),
     SYSTEM_OPPORTUNITIES_FILTER_SALARY_STIPEND(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Salary Level"),
     SYSTEM_OPPORTUNITIES_FILTER_DURATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Duration"),
@@ -1298,8 +1296,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_READ_LESS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Read Less"),
     SYSTEM_OPPORTUNITIES_ENQUIRE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Enquiries"),
     SYSTEM_OPPORTUNITIES_ENQUIRE_QUESTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Ask a Question"),
-    SYSTEM_OPPORTUNITIES_ENQUIRE_FORWARD_CV(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Interested in Joining us?"),
-    SYSTEM_OPPORTUNITIES_ENQUIRE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Considering Work Experience?"),
+    SYSTEM_OPPORTUNITIES_ENQUIRE_FORWARD_CV(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Forward CV"),
+    SYSTEM_OPPORTUNITIES_ENQUIRE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Employment"),
+    SYSTEM_OPPORTUNITIES_ENQUIRE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Work Experience"),
     SYSTEM_OPPORTUNITIES_ENQUIRE_SUBMIT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Submit"),
     SYSTEM_OPPORTUNITIES_APPLY_NOW(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Apply Now"),
     SYSTEM_OPPORTUNITIES_NOT_ACCEPTING_APPLICATIONS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Not accepting applications at the current time."),

@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+
+import java.util.List;
 
 public class AdvertRepresentationSimple {
 
@@ -26,7 +26,7 @@ public class AdvertRepresentationSimple {
 
     private AddressRepresentation address;
 
-    private AdvertFinancialDetailRepresentation pay;
+    private AdvertFinancialDetailRepresentation financialDetails;
 
     private AdvertClosingDateRepresentation closingDate;
 
@@ -37,7 +37,7 @@ public class AdvertRepresentationSimple {
     private List<AdvertTargetRepresentation> connections;
 
     private List<AdvertCompetenceRepresentation> competences;
-    
+
     private List<PrismActionCondition> externalConditions;
 
     private String sequenceIdentifier;
@@ -114,12 +114,12 @@ public class AdvertRepresentationSimple {
         this.address = address;
     }
 
-    public AdvertFinancialDetailRepresentation getPay() {
-        return pay;
+    public AdvertFinancialDetailRepresentation getFinancialDetails() {
+        return financialDetails;
     }
 
-    public void setPay(AdvertFinancialDetailRepresentation pay) {
-        this.pay = pay;
+    public void setFinancialDetails(AdvertFinancialDetailRepresentation financialDetails) {
+        this.financialDetails = financialDetails;
     }
 
     public AdvertClosingDateRepresentation getClosingDate() {
@@ -161,7 +161,7 @@ public class AdvertRepresentationSimple {
     public void setCompetences(List<AdvertCompetenceRepresentation> competences) {
         this.competences = competences;
     }
-    
+
     public List<PrismActionCondition> getExternalConditions() {
         return externalConditions;
     }

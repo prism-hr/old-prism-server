@@ -445,14 +445,13 @@ public class AdvertDAO {
     }
 
     public <T extends AdvertTargetDTO> List<T> getAdvertTargetsReceived(Class<T> responseClass, PrismScope resourceScope, String advertReference, User user, boolean pending) {
-        String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = getAdvertTargetCriteria(responseClass, advertReference)
                 .createAlias("acceptAdvert." + resourceScope.getLowerCamelName(), "acceptResource", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("acceptAdvert.id", "acceptResource.advert.id"))
                 .createAlias("acceptResource.userRoles", "acceptUserRole", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.conjunction()
                                 .add(Restrictions.eq("acceptUserRole.user", user))
-                                .add(Restrictions.eq("acceptUserRole.role.id", PrismRole.valueOf(resourceReference + "_ADMINISTRATOR"))))
+                                .add(Restrictions.eq("acceptUserRole.role.id", PrismRole.valueOf(resourceScope + "_ADMINISTRATOR"))))
                 .add(Restrictions.disjunction()
                         .add(Restrictions.eq("acceptUser.id", user.getId()))
                         .add(Restrictions.isNotNull("acceptUserRole.id")));

@@ -10,7 +10,7 @@ public class ResourceConnectionDTO implements Comparable<ResourceConnectionDTO> 
 
     private String institutionName;
 
-    private Integer institutionLogoImageId;
+    private Integer logoImageId;
 
     private Integer departmentId;
 
@@ -32,12 +32,12 @@ public class ResourceConnectionDTO implements Comparable<ResourceConnectionDTO> 
         this.institutionName = institutionName;
     }
 
-    public Integer getInstitutionLogoImageId() {
-        return institutionLogoImageId;
+    public Integer getLogoImageId() {
+        return logoImageId;
     }
 
-    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
-        this.institutionLogoImageId = institutionLogoImageId;
+    public void setLogoImageId(Integer logoImageId) {
+        this.logoImageId = logoImageId;
     }
 
     public Integer getDepartmentId() {

@@ -1,16 +1,9 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+
 public class AdvertTargetDTO {
-
-    private Integer acceptInstitutionId;
-
-    private String acceptInstitutionName;
-
-    private Integer acceptInstitutionLogoImageId;
-
-    private Integer acceptDepartmentId;
-
-    private String acceptDepartmentName;
 
     private Integer advertTargetId;
 
@@ -38,45 +31,9 @@ public class AdvertTargetDTO {
 
     private Integer otherUserPortraitImageId;
 
-    public Integer getAcceptInstitutionId() {
-        return acceptInstitutionId;
-    }
-
-    public void setAcceptInstitutionId(Integer acceptInstitutionId) {
-        this.acceptInstitutionId = acceptInstitutionId;
-    }
-
-    public String getAcceptInstitutionName() {
-        return acceptInstitutionName;
-    }
-
-    public void setAcceptInstitutionName(String acceptInstitutionName) {
-        this.acceptInstitutionName = acceptInstitutionName;
-    }
-
-    public Integer getAcceptInstitutionLogoImageId() {
-        return acceptInstitutionLogoImageId;
-    }
-
-    public void setAcceptInstitutionLogoImageId(Integer acceptInstitutionLogoImageId) {
-        this.acceptInstitutionLogoImageId = acceptInstitutionLogoImageId;
-    }
-
-    public Integer getAcceptDepartmentId() {
-        return acceptDepartmentId;
-    }
-
-    public void setAcceptDepartmentId(Integer acceptDepartmentId) {
-        this.acceptDepartmentId = acceptDepartmentId;
-    }
-
-    public String getAcceptDepartmentName() {
-        return acceptDepartmentName;
-    }
-
-    public void setAcceptDepartmentName(String acceptDepartmentName) {
-        this.acceptDepartmentName = acceptDepartmentName;
-    }
+    private PrismPartnershipState partnershipState;
+    
+    private Boolean canAccept;
 
     public Integer getAdvertTargetId() {
         return advertTargetId;
@@ -180,6 +137,39 @@ public class AdvertTargetDTO {
 
     public void setOtherUserPortraitImageId(Integer otherUserPortraitImageId) {
         this.otherUserPortraitImageId = otherUserPortraitImageId;
+    }
+
+    public PrismPartnershipState getPartnershipState() {
+        return partnershipState;
+    }
+
+    public void setPartnershipState(PrismPartnershipState partnershipState) {
+        this.partnershipState = partnershipState;
+    }
+
+    public Boolean getCanAccept() {
+        return canAccept;
+    }
+
+    public void setCanAccept(Boolean canAccept) {
+        this.canAccept = canAccept;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(advertTargetId);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        AdvertTargetDTO other = (AdvertTargetDTO) object;
+        return Objects.equal(advertTargetId, other.getAdvertTargetId());
     }
 
 }

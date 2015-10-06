@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.stream.Collectors.toList;
+import static jersey.repackaged.com.google.common.collect.Sets.newTreeSet;
+
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +53,14 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation.ConnectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
 import com.zuehlke.pgadmissions.rest.validation.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProfileService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
@@ -73,6 +78,9 @@ public class UserController {
 
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private EntityService entityService;
@@ -198,13 +206,13 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/connection", method = RequestMethod.GET)
-    public List<ConnectionActivityRepresentation> getConnectionRepresentations() {
-        return userMapper.getUserConnectionRepresentations(userService.getCurrentUser(), false);
+    public List<ConnectionRepresentation> getConnectionRepresentations() {
+        return newLinkedList(newTreeSet(advertService.getAdvertTargets(userService.getCurrentUser()).stream().map(userMapper::getUserConnectionRepresentation).collect(toList())));
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/connection/resource", method = RequestMethod.GET, params = "q")
-    public List<ResourceRepresentationConnection> getConnectionRepresentations(@RequestParam(required = false) String q) {
+    public List<ResourceRepresentationConnection> getConnectionResourceRepresentations(@RequestParam(required = false) String q) {
         return userMapper.getUserConnectionResourceRepresentations(userService.getCurrentUser(), q);
     }
 

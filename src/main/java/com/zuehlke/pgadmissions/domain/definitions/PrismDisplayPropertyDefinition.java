@@ -1274,7 +1274,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_FILTER_COURSE_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Availability"),
     SYSTEM_OPPORTUNITIES_FILTER_DURATION_MONTHLY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Monthly"),
     SYSTEM_OPPORTUNITIES_FILTER_DURATION_ANNUAL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Annual"),
-    SYSTEM_OPPORTUNITIES_FILTER_FEE_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Fee Level"),
     SYSTEM_OPPORTUNITIES_FILTER_SALARY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Salary Level"),
     SYSTEM_OPPORTUNITIES_FILTER_SALARY_STIPEND(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Salary Level"),
     SYSTEM_OPPORTUNITIES_FILTER_DURATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Duration"),

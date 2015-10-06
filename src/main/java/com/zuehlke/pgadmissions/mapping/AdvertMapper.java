@@ -272,7 +272,7 @@ public class AdvertMapper {
             boolean byYear = payInterval.equals(YEAR);
             payRepresentation.setMinimum(byYear ? advert.getPayYearMinimum() : advert.getPayMonthMinimum());
             payRepresentation.setMaximum(byYear ? advert.getPayYearMaximum() : advert.getPayMonthMaximum());
-            representation.setPay(payRepresentation);
+            representation.setFinancialDetails(payRepresentation);
         }
 
         Long applicationCount = advert.getApplicationCount();
@@ -302,7 +302,7 @@ public class AdvertMapper {
 
         representation.setTelephone(advert.getTelephone());
         representation.setAddress(getAdvertAddressRepresentation(advert));
-        representation.setPay(getAdvertFinancialDetailRepresentation(advert));
+        representation.setFinancialDetails(getAdvertFinancialDetailRepresentation(advert));
 
         representation.setClosingDate(getAdvertClosingDateRepresentation(advert));
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));

@@ -193,17 +193,6 @@ public class RoleDAO {
                 .executeUpdate();
     }
 
-    public void deleteUserRoles(Resource resource, User user) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete UserRole " //
-                        + "where :resourceReference = :resource " //
-                        + "and user = :user") //
-                .setParameter("resourceReference", resource.getResourceScope().getLowerCamelName()) //
-                .setParameter("resource", resource) //
-                .setParameter("user", user) //
-                .executeUpdate();
-    }
-
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.groupProperty("transitionRole.id")) //

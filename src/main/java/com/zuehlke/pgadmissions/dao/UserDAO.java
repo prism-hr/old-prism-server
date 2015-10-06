@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.*;
@@ -57,15 +56,6 @@ public class UserDAO {
     public User getUserByActivationCode(String activationCode) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.eq("activationCode", activationCode)) //
-                .uniqueResult();
-    }
-
-    public User getAuthenticatedUser(String email, String password) {
-        return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("email", email)) //
-                .add(Restrictions.eq("userAccount.password", PrismEncryptionUtils.getMD5(password))) //
-                .add(Restrictions.eq("enabled", true)) //
                 .uniqueResult();
     }
 
@@ -177,16 +167,6 @@ public class UserDAO {
                 .setParameter("user", linkIntoUser) //
                 .setParameter("linkIntoUserParentUser", linkIntoUser.getParentUser()) //
                 .setParameter("linkFromUserParentUser", linkFromUser.getParentUser()) //
-                .executeUpdate();
-    }
-
-    public void switchParentUser(User oldParentUser, User newParentUser) {
-        sessionFactory.getCurrentSession()
-                .createQuery("update User " //
-                        + "set parentUser = :newParentUser " //
-                        + "where parentUser = :oldParentUser") //
-                .setParameter("newParentUser", newParentUser) //
-                .setParameter("oldParentUser", oldParentUser) //
                 .executeUpdate();
     }
 
@@ -509,7 +489,7 @@ public class UserDAO {
                 .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
-                        .add(Restrictions.ge("updatedtimestamp", updateBaseline)));
+                        .add(Restrictions.ge("updatedTimestamp", updateBaseline)));
     }
 
     private void appendAdministratorConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> resources, HashMultimap<PrismScope, PrismScope> scopes) {

@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-
-import java.util.List;
-
-import org.hibernate.FetchMode;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.resource.Program;
+import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -13,23 +12,15 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 
 @Repository
 public class ProgramDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public Program getProgramByCode(String code) {
-        return (Program) sessionFactory.getCurrentSession().createCriteria(Program.class) //
-                .setFetchMode("studyOptions", FetchMode.JOIN) //
-                .add(Restrictions.eq("code", code)) //
-                .uniqueResult();
-    }
 
     @SuppressWarnings("unchecked")
     public List<ResourceRepresentationSimple> getApprovedPrograms(Integer institutionId) {

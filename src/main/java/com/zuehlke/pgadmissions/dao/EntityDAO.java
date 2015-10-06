@@ -1,19 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.UniqueEntity;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -31,12 +30,6 @@ public class EntityDAO {
     public <T> T getByProperty(Class<T> klass, String propertyName, Object propertyValue) {
         return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
                 .add(Restrictions.eq(propertyName, propertyValue)) //
-                .uniqueResult();
-    }
-
-    public <T> T getByPropertyNotNull(Class<T> klass, String propertyName) {
-        return (T) sessionFactory.getCurrentSession().createCriteria(klass) //
-                .add(Restrictions.isNotNull(propertyName)) //
                 .uniqueResult();
     }
 

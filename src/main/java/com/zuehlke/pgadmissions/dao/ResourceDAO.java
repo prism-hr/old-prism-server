@@ -190,7 +190,7 @@ public class ResourceDAO {
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriteria(scope, criteria, conditions, filter);
+        appendResourceListFilterCriteria(criteria, conditions, filter);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -217,7 +217,7 @@ public class ResourceDAO {
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriteria(scope, criteria, conditions, filter);
+        appendResourceListFilterCriteria(criteria, conditions, filter);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -252,7 +252,7 @@ public class ResourceDAO {
                 .add(getEndorsementActionVisibilityResolution())
                 .add(Restrictions.isNull("state.hidden"));
 
-        appendResourceListFilterCriteria(scope, criteria, conditions, filter);
+        appendResourceListFilterCriteria(criteria, conditions, filter);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -535,7 +535,7 @@ public class ResourceDAO {
 
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope, String query) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("resourceid")) //
+                .setProjection(Projections.property("resource.id")) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN)
                 .createAlias("resource.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
@@ -562,7 +562,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    private static void appendResourceListFilterCriteria(PrismScope scopeId, Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
+    private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));

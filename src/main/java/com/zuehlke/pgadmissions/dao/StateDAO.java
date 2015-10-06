@@ -1,8 +1,18 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Collection;
-import java.util.List;
-
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
+import com.zuehlke.pgadmissions.domain.workflow.*;
+import com.zuehlke.pgadmissions.dto.ResourceStateDTO;
+import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
+import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -13,23 +23,8 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
-import com.zuehlke.pgadmissions.dto.ResourceStateDTO;
-import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
-import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
-import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import java.util.Collection;
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -167,12 +162,12 @@ public class StateDAO {
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.scope.id", resourceScope)) //
                 .add(Restrictions.isNull("state.hidden"));
-        
+
         if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
             criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceScope.name() + "_APPROVAL")));
             criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceScope.name() + "_APPROVAL_PENDING_CORRECTION")));
         }
-        
+
         return (List<PrismState>) criteria.add(Restrictions.isNotNull("action.creationScope")) //
                 .list();
     }
@@ -224,15 +219,6 @@ public class StateDAO {
                 .addOrder(Order.asc(resourceIdReference)) //
                 .addOrder(Order.asc("state.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceStateDTO.class)) //
-                .list();
-    }
-
-    public List<PrismStateGroup> getSecondaryResourceStateGroups(PrismScope resourceScope, Integer resourceId) {
-        return (List<PrismStateGroup>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("state.stateGroup.id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
-                .add(Restrictions.eq("primaryState", false)) //
                 .list();
     }
 

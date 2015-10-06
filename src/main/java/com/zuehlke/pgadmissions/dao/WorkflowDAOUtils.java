@@ -1,18 +1,15 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
-
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 
 public class WorkflowDAOUtils {
 
@@ -100,13 +97,6 @@ public class WorkflowDAOUtils {
                                 .add(Restrictions.eqProperty("ownerDepartment.id", "targetAdvert.department.id"))
                                 .add(Restrictions.eqProperty("ownerDepartment.institution.id", "targetAdvert.institution.id")))
                         .add(Restrictions.eq("resource.shared", true)));
-    }
-
-    public static ProjectionList getResourceOpportunityCategoryProjection() {
-        return Projections.projectionList() //
-                .add(Projections.groupProperty("id").as("id")) //
-                .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                .add(Projections.property("opportunityCategories").as("opportunityCategories"));
     }
 
     public static Junction getOpportunityCategoryConstraint(PrismOpportunityCategory opportunityCategory) {

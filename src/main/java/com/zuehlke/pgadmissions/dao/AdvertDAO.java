@@ -773,7 +773,7 @@ public class AdvertDAO {
                 .add(Projections.property("acceptInstitution.name").as("acceptInstitutionName")) //
                 .add(Projections.property("acceptInstitution.logoImage.id").as("acceptLogoImageId")) //
                 .add(Projections.property("acceptDepartment.id").as("acceptDepartmentId")) //
-                .add(Projections.property("acceptDepartment.name").as("accceptDepartmentName"));
+                .add(Projections.property("acceptDepartment.name").as("acceptDepartmentName"));
     }
 
     private ProjectionList getAdvertTargetProjection() {
@@ -787,9 +787,9 @@ public class AdvertDAO {
                 .add(Projections.property("otherAdvertUser.id").as("otherAdvertUserId")) //
                 .add(Projections.property("otherUser.firstName").as("otherAdvertUserFirstName")) //
                 .add(Projections.property("otherUser.lastName").as("otherAdvertUserLastName")) //
-                .add(Projections.property("othertUser.email").as("otherAdvertUserEmail")) //
+                .add(Projections.property("otherUser.email").as("otherAdvertUserEmail")) //
                 .add(Projections.property("otherAdvertUserAccount.linkedinProfileUrl").as("otherUserLinkedinProfileUrl")) //
-                .add(Projections.property("otherAdvertserAccount.linkedinImageUrl").as("otherUserLinkedinImageUrl")) //
+                .add(Projections.property("otherAdvertUserAccount.linkedinImageUrl").as("otherUserLinkedinImageUrl")) //
                 .add(Projections.property("otherAdvertUserAccount.portraitImage.id").as("otherUserPortraitImageId")) //
                 .add(Projections.property("partnershipState").as("partnershipState"));
     }

@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
+import com.zuehlke.pgadmissions.dto.AdvertTargetExtendedDTO;
 import com.zuehlke.pgadmissions.dto.ProfileEntityDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
@@ -244,9 +245,9 @@ public class UserMapper {
     public List<ConnectionActivityRepresentation> getUserConnectionRepresentations(User user, boolean pending) {
         Map<ResourceRepresentationActivity, ConnectionActivityRepresentation> representationIndex = Maps.newHashMap();
         TreeMultimap<ConnectionActivityRepresentation, ConnectionRepresentation> representationFilter = TreeMultimap.create();
-        for (AdvertTargetDTO advertTarget : advertService.getAdvertTargets(user, pending)) {
+        for (AdvertTargetExtendedDTO advertTarget : advertService.getAdvertTargetsReceived(AdvertTargetExtendedDTO.class, user, pending)) {
             ResourceRepresentationActivity acceptResourceRepresentation = getUserConnectionRepresentation(advertTarget.getAcceptInstitutionId(),
-                    advertTarget.getAcceptInstitutionName(), advertTarget.getAcceptInstitutionLogoImageId(), advertTarget.getAcceptDepartmentId(),
+                    advertTarget.getAcceptInstitutionName(), advertTarget.getAcceptLogoImageId(), advertTarget.getAcceptDepartmentId(),
                     advertTarget.getAcceptDepartmentName());
 
             ConnectionActivityRepresentation representation = representationIndex.get(acceptResourceRepresentation);
@@ -255,19 +256,7 @@ public class UserMapper {
                 representationIndex.put(acceptResourceRepresentation, representation);
             }
 
-            ConnectionRepresentation connectionRepresentation = new ConnectionRepresentation().withAdvertTargetId(advertTarget.getAdvertTargetId())
-                    .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
-                            advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()));
-
-            Integer otherUserId = advertTarget.getOtherUserId();
-            if (otherUserId != null) {
-                connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
-                        .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
-                        .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
-                        .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
-            }
-
-            representationFilter.put(representation, connectionRepresentation);
+            representationFilter.put(representation, getUserConnectionRepresentation(advertTarget));
         }
 
         List<ConnectionActivityRepresentation> representations = Lists.newLinkedList();
@@ -277,6 +266,23 @@ public class UserMapper {
         });
 
         return representations;
+    }
+
+    public ConnectionRepresentation getUserConnectionRepresentation(AdvertTargetDTO advertTarget) {
+        ConnectionRepresentation connectionRepresentation = new ConnectionRepresentation().withAdvertTargetId(advertTarget.getAdvertTargetId())
+                .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
+                        advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
+                .withCanAccept(BooleanUtils.isTrue(advertTarget.getCanAccept()));
+
+        Integer otherUserId = advertTarget.getOtherUserId();
+        if (otherUserId != null) {
+            connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
+                    .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
+                    .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
+                    .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
+        }
+
+        return connectionRepresentation;
     }
 
     public List<ResourceRepresentationConnection> getUserConnectionResourceRepresentations(User user, String searchTerm) {

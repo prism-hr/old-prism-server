@@ -275,6 +275,8 @@ public class UserActivityRepresentation {
             private ResourceRepresentationActivity resource;
 
             private UserRepresentationSimple user;
+            
+            private Boolean canAccept;
 
             public Integer getAdvertTargetId() {
                 return advertTargetId;
@@ -300,6 +302,14 @@ public class UserActivityRepresentation {
                 this.user = user;
             }
 
+            public Boolean getCanAccept() {
+                return canAccept;
+            }
+
+            public void setCanAccept(Boolean canAccept) {
+                this.canAccept = canAccept;
+            }
+            
             public ConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
                 this.advertTargetId = advertTargetId;
                 return this;
@@ -312,6 +322,11 @@ public class UserActivityRepresentation {
 
             public ConnectionRepresentation withUser(UserRepresentationSimple user) {
                 this.user = user;
+                return this;
+            }
+            
+            public ConnectionRepresentation withCanAccept(Boolean canAccept) {
+                this.canAccept = canAccept;
                 return this;
             }
 

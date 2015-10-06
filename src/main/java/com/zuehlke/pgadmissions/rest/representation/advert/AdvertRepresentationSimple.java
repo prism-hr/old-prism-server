@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
-
-import java.util.List;
 
 public class AdvertRepresentationSimple {
 

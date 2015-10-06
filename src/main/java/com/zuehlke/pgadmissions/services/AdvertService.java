@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -87,6 +89,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
+import com.zuehlke.pgadmissions.dto.AdvertTargetExtendedDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
@@ -415,17 +418,38 @@ public class AdvertService {
         return categories;
     }
 
-    public List<AdvertTargetDTO> getAdvertTargets(ResourceParent resource) {
+    public List<AdvertTargetExtendedDTO> getAdvertTargets(ResourceParent resource) {
         return advertDAO.getAdvertTargets(resource);
     }
 
-    public List<AdvertTargetDTO> getAdvertTargets(User user, boolean pending) {
-        List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
+    public List<AdvertTargetDTO> getAdvertTargets(User user) {
+        Set<AdvertTargetDTO> advertTargets = newHashSet(getAdvertTargetsReceived(AdvertTargetDTO.class, user, false));
+        advertTargets.addAll(getAdvertTargetsRequested(AdvertTargetDTO.class, user, advertTargets.stream().map(at -> at.getAdvertTargetId()).collect(toList())));
+        return newArrayList(advertTargets);
+    }
+
+    public <T extends AdvertTargetDTO> List<T> getAdvertTargetsReceived(Class<T> responseClass, User user, boolean pending) {
+        List<T> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(advertDAO.getAdvertTargets(resourceScope, advertReference, user, pending));
+                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(responseClass, resourceScope, advertReference, user, pending));
             }
         }
+        return advertTargets;
+    }
+
+    public <T extends AdvertTargetDTO> List<T> getAdvertTargetsRequested(Class<T> responseClass, User user, List<Integer> exclusions) {
+        List<T> advertTargets = Lists.newArrayList();
+        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
+                advertTargets.addAll(advertDAO.getAdvertTargetsRequested(responseClass, resourceScope, advertReference, user, exclusions));
+            }
+        }
+
+        advertTargets.forEach(advertTarget -> {
+            advertTarget.setCanAccept(true);
+        });
+
         return advertTargets;
     }
 

@@ -624,7 +624,7 @@ public class ResourceMapper {
         Integer institutionId = resource.getInstitutionId();
         PrismScope scope = departmentId == null ? INSTITUTION : DEPARTMENT;
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withScope(scope).withId(scope.equals(INSTITUTION) ? institutionId : departmentId)
-                .withLogoImage(documentMapper.getDocumentRepresentation(resource.getInstitutionLogoImageId())).withInstitutionName(resource.getInstitutionName())
+                .withLogoImage(documentMapper.getDocumentRepresentation(resource.getLogoImageId())).withInstitutionName(resource.getInstitutionName())
                 .withDepartmentName(resource.getDepartmentName());
         return representation;
     }

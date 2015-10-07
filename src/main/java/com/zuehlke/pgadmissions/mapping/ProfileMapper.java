@@ -143,8 +143,13 @@ public class ProfileMapper {
         Integer awardYear = qualification.getAwardYear();
         LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
 
-        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(qualification.getUser()))
+        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
                 .withResource(resourceMapper.getResourceOpportunityRepresentationActivity(qualification.getAdvert().getResource()));
+
+        if (qualification.getUser() != null) {
+            relation.setUser(userMapper.getUserRepresentationSimple(qualification.getUser()));
+        }
+
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
                 .withResource(relation).withGrade(qualification.getGrade())
                 .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
@@ -166,7 +171,7 @@ public class ProfileMapper {
 
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationActivity(employmentPosition.getAdvert().getResource()));
-        if(employmentPosition.getUser() != null) {
+        if (employmentPosition.getUser() != null) {
             relation.setUser(userMapper.getUserRepresentationSimple(employmentPosition.getUser()));
         }
 
@@ -182,8 +187,13 @@ public class ProfileMapper {
     }
 
     private <T extends ProfileReferee<?>> ProfileRefereeRepresentation getRefereeRepresentation(T referee) {
-        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation().withUser(userMapper.getUserRepresentationSimple(referee.getUser()))
+        ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationActivity(referee.getAdvert().getResource()));
+
+        if (referee.getUser() != null) {
+            relation.setUser(userMapper.getUserRepresentationSimple(referee.getUser()));
+        }
+
         ProfileRefereeRepresentation representation = new ProfileRefereeRepresentation().withId(referee.getId())
                 .withResource(relation).withPhone(referee.getPhone()).withSkype(referee.getSkype());
 

@@ -1,5 +1,24 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static java.math.RoundingMode.HALF_UP;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
@@ -14,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserFeedback;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.dto.AdvertTargetExtendedDTO;
 import com.zuehlke.pgadmissions.dto.ProfileEntityDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
@@ -23,29 +41,23 @@ import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepres
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.*;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation.ConnectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceUserActivityRepresentation;
-import com.zuehlke.pgadmissions.services.*;
+import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
+import com.zuehlke.pgadmissions.services.UserFeedbackService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Map;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static java.math.RoundingMode.HALF_UP;
 
 @Service
 @Transactional
@@ -204,7 +216,7 @@ public class UserMapper {
     public UserActivityRepresentation getUserActivityRepresentation(User user) {
         return new UserActivityRepresentation().withResourceActivities(scopeMapper.getResourceActivityRepresentation(user))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withJoinActivities(getUnverifiedUserRepresentations(user))
-                .withConnectionActivities(getUserConnectionRepresentations(user, true));
+                .withConnectionActivities(getUserConnectionRepresentations(advertService.getAdvertTargetsReceived(user)));
     }
 
     public UserProfileRepresentation getUserProfileRepresentation() {
@@ -229,14 +241,13 @@ public class UserMapper {
         representation.setAccountImageUrl(profileEntity.getUserAccountImageUrl());
         return representation;
     }
-
-    public List<ConnectionActivityRepresentation> getUserConnectionRepresentations(User user, boolean pending) {
+    
+    public List<ConnectionActivityRepresentation> getUserConnectionRepresentations(List<AdvertTargetDTO> advertTargets) {
         Map<ResourceRepresentationActivity, ConnectionActivityRepresentation> representationIndex = Maps.newHashMap();
         TreeMultimap<ConnectionActivityRepresentation, ConnectionRepresentation> representationFilter = TreeMultimap.create();
-        for (AdvertTargetExtendedDTO advertTarget : advertService.getAdvertTargetsReceived(AdvertTargetExtendedDTO.class, user, pending)) {
-            ResourceRepresentationActivity acceptResourceRepresentation = getUserConnectionRepresentation(advertTarget.getAcceptInstitutionId(),
-                    advertTarget.getAcceptInstitutionName(), advertTarget.getAcceptLogoImageId(), advertTarget.getAcceptDepartmentId(),
-                    advertTarget.getAcceptDepartmentName());
+        for (AdvertTargetDTO advertTarget : advertTargets) {
+            ResourceRepresentationActivity acceptResourceRepresentation = getUserConnectionRepresentation(advertTarget.getThisInstitutionId(),
+                    advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
 
             ConnectionActivityRepresentation representation = representationIndex.get(acceptResourceRepresentation);
             if (representation == null) {
@@ -244,7 +255,20 @@ public class UserMapper {
                 representationIndex.put(acceptResourceRepresentation, representation);
             }
 
-            representationFilter.put(representation, getUserConnectionRepresentation(advertTarget));
+            ConnectionRepresentation connectionRepresentation = new ConnectionRepresentation().withAdvertTargetId(advertTarget.getAdvertTargetId())
+                    .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
+                            advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
+                    .withCanAccept(BooleanUtils.isTrue(advertTarget.getCanAccept()));
+
+            Integer otherUserId = advertTarget.getOtherUserId();
+            if (otherUserId != null) {
+                connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
+                        .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
+                        .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
+                        .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
+            }
+
+            representationFilter.put(representation, connectionRepresentation);
         }
 
         List<ConnectionActivityRepresentation> representations = Lists.newLinkedList();
@@ -254,23 +278,6 @@ public class UserMapper {
         });
 
         return representations;
-    }
-
-    public ConnectionRepresentation getUserConnectionRepresentation(AdvertTargetDTO advertTarget) {
-        ConnectionRepresentation connectionRepresentation = new ConnectionRepresentation().withAdvertTargetId(advertTarget.getAdvertTargetId())
-                .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
-                        advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
-                .withCanAccept(BooleanUtils.isTrue(advertTarget.getCanAccept()));
-
-        Integer otherUserId = advertTarget.getOtherUserId();
-        if (otherUserId != null) {
-            connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
-                    .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
-                    .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
-                    .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
-        }
-
-        return connectionRepresentation;
     }
 
     public List<ResourceRepresentationConnection> getUserConnectionResourceRepresentations(User user, String searchTerm) {
@@ -283,7 +290,7 @@ public class UserMapper {
 
     private List<ResourceUserActivityRepresentation> getUnverifiedUserRepresentations(User user) {
         Map<String, ResourceUserActivityRepresentation> representations = Maps.newLinkedHashMap();
-        for(UserRole userRole : userService.getUsersToVerify(user)) {
+        for (UserRole userRole : userService.getUsersToVerify(user)) {
             Resource resource = userRole.getResource();
             String resourceCode = resource.getCode();
 

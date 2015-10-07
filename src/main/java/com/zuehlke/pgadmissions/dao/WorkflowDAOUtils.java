@@ -9,6 +9,9 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -107,6 +110,23 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.like("opportunityCategories", opportunityCategoryName + "|", MatchMode.START))
                 .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName + "|", MatchMode.ANYWHERE))
                 .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName, MatchMode.END));
+    }
+
+    public static Junction getResourceParentManageableConstraint(PrismScope resourceScope) {
+        String resourceReferenceUpper = resourceScope.name();
+        return getResourceParentManageableStateConstraint(resourceReferenceUpper)
+                .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReferenceUpper + "_ADMINISTRATOR")));
+    }
+
+    public static Junction getResourceParentManageableStateConstraint(String resourceReferenceUpper) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_UNSUBMITTED")))
+                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_DISABLED_COMPLETED")));
+    }
+
+    public static Junction getResourceParentManageableConstraint(PrismScope resourceScope, User user) {
+        return getResourceParentManageableConstraint(resourceScope)
+                .add(Restrictions.eq("userRole.user", user));
     }
 
 }

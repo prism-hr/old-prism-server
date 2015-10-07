@@ -424,7 +424,7 @@ public class AdvertService {
     public List<AdvertTargetDTO> getAdvertTargets(User user) {
         List<Integer> connectAdverts = getAdvertsForWhichUserCanManageConnections(user);
         Set<AdvertTargetDTO> advertTargets = newHashSet(getAdvertTargetsReceived(user, connectAdverts, false));
-        advertTargets.addAll(getAdvertTargetsRequested(user, connectAdverts, advertTargets.stream().map(at -> at.getAdvertTargetId()).collect(toList())));
+        advertTargets.addAll(getAdvertTargetsRequested(user, connectAdverts, advertTargets.stream().map(at -> at.getId()).collect(toList())));
         return newArrayList(advertTargets);
     }
 
@@ -522,7 +522,7 @@ public class AdvertService {
     private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
         List<Integer> connectAdverts = Lists.newArrayList();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageConnections(user, resourceScope));
+            connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageConnections(resourceScope, user));
         }
         return connectAdverts;
     }

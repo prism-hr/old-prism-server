@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.user;
 
 import static org.apache.commons.lang3.ObjectUtils.compare;
 
+import com.google.common.base.Objects;
+
 public class UserRepresentation implements Comparable<UserRepresentation> {
 
     private String firstName;
@@ -47,6 +49,23 @@ public class UserRepresentation implements Comparable<UserRepresentation> {
     public UserRepresentation withEmail(String email) {
         this.email = email;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(email);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final UserRepresentation other = (UserRepresentation) object;
+        return Objects.equal(email, other.getEmail());
     }
 
     @Override

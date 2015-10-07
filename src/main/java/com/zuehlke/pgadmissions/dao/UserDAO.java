@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.PROFILE_LIST_PAGE_ROW_COUN
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableStateConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleWithPartnerConstraint;
@@ -12,8 +13,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -49,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
+import com.zuehlke.pgadmissions.dto.UnverifiedUserDTO;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
@@ -328,24 +332,50 @@ public class UserDAO {
                 .list();
     }
 
-    public List<UserRole> getUsersToVerify(PrismScope resourceScope, Collection<Integer> resources) {
+    public List<UnverifiedUserDTO> getUsersToVerify(PrismScope resourceScope, Collection<Integer> resources) {
         String resourceReference = resourceScope.getLowerCamelName();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("role.verified", true));
 
-        if (isEmpty(resources)) {
-            criteria.add(Restrictions.isNotNull(resourceReference));
-        } else {
-            criteria.add(Restrictions.in(resourceReference + ".id", resources)); //
+        ProjectionList projections = Projections.projectionList() //
+                .add(Projections.groupProperty("institution.id").as("institutionId")) //
+                .add(Projections.property("institution.name").as("institutionName")) //
+                .add(Projections.property("institution.logoImage.id").as("logoImageId"));
+
+        boolean isDepartment = resourceScope.equals(DEPARTMENT);
+        if (isDepartment) {
+            projections.add(Projections.groupProperty("department.id").as("departmentId")) //
+                    .add(Projections.groupProperty("department.name").as("departmentName"));
         }
 
-        return criteria.addOrder(Order.asc(resourceReference + ".name")) //
-                .addOrder(Order.asc("user.lastName")) //
-                .addOrder(Order.asc("user.firstName")) //
-                .addOrder(Order.asc("id")) //
+        projections.add(Projections.groupProperty("user.id").as("userId")) //
+                .add(Projections.property("user.firstName").as("userFirstName"))
+                .add(Projections.property("user.lastName").as("userLastName")) //
+                .add(Projections.property("user.email").as("userEmail")) //
+                .add(Projections.property("userAccount.linkedinProfileUrl").as("userLinkedinProfileUrl"))
+                .add(Projections.property("userAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
+                .add(Projections.property("userAccount.portraitImage.id").as("userPortraitImageId")) //
+                .add(Projections.groupProperty("role.id").as("roleId"));
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(projections) //
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
+                .createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN);
+
+        if (isDepartment) {
+            criteria.createAlias(resourceReference + ".institution", "institution", JoinType.INNER_JOIN);
+        }
+
+        criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
+
+        criteria.add(getResourceParentManageableStateConstraint(resourceScope.name()));
+        if (isNotEmpty(resources)) {
+            criteria.add(Restrictions.in(resourceReference + ".id", resources));
+        }
+
+        return (List<UnverifiedUserDTO>) criteria //
+                .add(Restrictions.eq("role.verified", false)) //
+                .setResultTransformer(Transformers.aliasToBean(UnverifiedUserDTO.class)) //
                 .list();
     }
 

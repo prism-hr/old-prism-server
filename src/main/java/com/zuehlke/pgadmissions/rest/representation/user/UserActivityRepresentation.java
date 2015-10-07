@@ -206,7 +206,7 @@ public class UserActivityRepresentation {
 
         private ResourceRepresentationActivity resource;
 
-        private List<UserRepresentationSimple> users;
+        private List<UserRepresentationUnverified> users;
 
         public ResourceRepresentationActivity getResource() {
             return resource;
@@ -216,11 +216,11 @@ public class UserActivityRepresentation {
             this.resource = resource;
         }
 
-        public List<UserRepresentationSimple> getUsers() {
+        public List<UserRepresentationUnverified> getUsers() {
             return users;
         }
 
-        public void setUsers(List<UserRepresentationSimple> users) {
+        public void setUsers(List<UserRepresentationUnverified> users) {
             this.users = users;
         }
 
@@ -229,7 +229,7 @@ public class UserActivityRepresentation {
             return this;
         }
 
-        public ResourceUserActivityRepresentation withUsers(List<UserRepresentationSimple> users) {
+        public ResourceUserActivityRepresentation withUsers(List<UserRepresentationUnverified> users) {
             this.users = users;
             return this;
         }
@@ -275,7 +275,7 @@ public class UserActivityRepresentation {
             private ResourceRepresentationActivity resource;
 
             private UserRepresentationSimple user;
-            
+
             private Boolean canAccept;
 
             public Integer getAdvertTargetId() {
@@ -309,7 +309,7 @@ public class UserActivityRepresentation {
             public void setCanAccept(Boolean canAccept) {
                 this.canAccept = canAccept;
             }
-            
+
             public ConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
                 this.advertTargetId = advertTargetId;
                 return this;
@@ -324,7 +324,7 @@ public class UserActivityRepresentation {
                 this.user = user;
                 return this;
             }
-            
+
             public ConnectionRepresentation withCanAccept(Boolean canAccept) {
                 this.canAccept = canAccept;
                 return this;

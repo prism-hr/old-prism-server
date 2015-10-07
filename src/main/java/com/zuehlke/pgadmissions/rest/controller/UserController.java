@@ -241,7 +241,7 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/employmentPositions", method = RequestMethod.POST)
+    @RequestMapping(value = "/qualifications", method = RequestMethod.POST)
     public Map<String, Object> createQualification(@Valid @RequestBody ProfileQualificationDTO qualificationDTO) {
         UserQualification qualification = profileService.updateQualificationUser(null, qualificationDTO);
         return ImmutableMap.of("id", (Object) qualification.getId());

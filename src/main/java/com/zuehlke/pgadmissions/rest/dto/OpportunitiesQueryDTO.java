@@ -1,27 +1,21 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
-public class OpportunitiesQueryDTO {
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.List;
 
-    @Valid
-    private ResourceDTO resource;
+public class OpportunitiesQueryDTO {
 
     @NotNull
     private PrismMotivationContext context;
+
+    private PrismScope resourceScope;
+
+    private Integer resourceId;
 
     private PrismScope contextScope;
 
@@ -57,12 +51,20 @@ public class OpportunitiesQueryDTO {
 
     private String lastSequenceIdentifier;
 
-    public ResourceDTO getResource() {
-        return resource;
+    public PrismScope getResourceScope() {
+        return resourceScope;
     }
 
-    public void setResource(ResourceDTO resource) {
-        this.resource = resource;
+    public void setResourceScope(PrismScope resourceScope) {
+        this.resourceScope = resourceScope;
+    }
+
+    public Integer getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(Integer resourceId) {
+        this.resourceId = resourceId;
     }
 
     public PrismMotivationContext getContext() {
@@ -207,6 +209,13 @@ public class OpportunitiesQueryDTO {
 
     public void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
+    }
+
+    public ResourceDTO getResource() {
+        if (getResourceScope() != null && getResourceId() != null) {
+            return new ResourceDTO().withId(getResourceId()).withScope(getResourceScope());
+        }
+        return null;
     }
 
 }

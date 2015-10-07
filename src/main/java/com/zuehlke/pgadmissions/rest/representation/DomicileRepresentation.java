@@ -6,10 +6,13 @@ public class DomicileRepresentation {
 
     private PrismDomicile id;
 
+    private String name;
+
     private String currency;
-    
-    public DomicileRepresentation(PrismDomicile id, String currency) {
+
+    public DomicileRepresentation(PrismDomicile id, String name, String currency) {
         this.id = id;
+        this.name = name;
         this.currency = currency;
     }
 
@@ -19,6 +22,14 @@ public class DomicileRepresentation {
 
     public void setId(PrismDomicile id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCurrency() {

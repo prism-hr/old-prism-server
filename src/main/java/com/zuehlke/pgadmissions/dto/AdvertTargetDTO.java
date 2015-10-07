@@ -5,6 +5,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipStat
 
 public class AdvertTargetDTO {
 
+    private Integer thisInstitutionId;
+
+    private String thisInstitutionName;
+
+    private Integer thisLogoImageId;
+
+    private Integer thisDepartmentId;
+
+    private String thisDepartmentName;
+    
     private Integer advertTargetId;
 
     private Integer otherInstitutionId;
@@ -34,6 +44,46 @@ public class AdvertTargetDTO {
     private PrismPartnershipState partnershipState;
     
     private Boolean canAccept;
+    
+    public Integer getThisInstitutionId() {
+        return thisInstitutionId;
+    }
+
+    public void setThisInstitutionId(Integer thisInstitutionId) {
+        this.thisInstitutionId = thisInstitutionId;
+    }
+
+    public String getThisInstitutionName() {
+        return thisInstitutionName;
+    }
+
+    public void setThisInstitutionName(String thisInstitutionName) {
+        this.thisInstitutionName = thisInstitutionName;
+    }
+
+    public Integer getThisLogoImageId() {
+        return thisLogoImageId;
+    }
+
+    public void setThisLogoImageId(Integer thisLogoImageId) {
+        this.thisLogoImageId = thisLogoImageId;
+    }
+
+    public Integer getThisDepartmentId() {
+        return thisDepartmentId;
+    }
+
+    public void setThisDepartmentId(Integer thisDepartmentId) {
+        this.thisDepartmentId = thisDepartmentId;
+    }
+
+    public String getThisDepartmentName() {
+        return thisDepartmentName;
+    }
+
+    public void setThisDepartmentName(String thisDepartmentName) {
+        this.thisDepartmentName = thisDepartmentName;
+    }
 
     public Integer getAdvertTargetId() {
         return advertTargetId;

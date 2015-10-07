@@ -1,18 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
-import com.zuehlke.pgadmissions.domain.workflow.*;
-import com.zuehlke.pgadmissions.dto.ResourceStateDTO;
-import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
-import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
-import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
+import java.util.Collection;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -23,8 +13,23 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
-import java.util.List;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.dto.ResourceStateDTO;
+import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
+import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
+import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 
 @Repository
 @SuppressWarnings("unchecked")

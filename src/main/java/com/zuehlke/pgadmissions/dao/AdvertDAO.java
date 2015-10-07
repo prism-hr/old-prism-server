@@ -627,9 +627,15 @@ public class AdvertDAO {
             Integer resourceId = resource.getId();
             String resourceReference = resource.getResourceScope().getLowerCamelName();
 
-            criteria.add(Restrictions.disjunction()
-                    .add(Restrictions.eq("advert." + resourceReference + ".id", resourceId))
-                    .add(Restrictions.eq(resourceReference + "AdvertTarget.targetAdvert.id", resource.getAdvert().getId())));
+            Junction resourceConstraint = Restrictions.disjunction()
+                    .add(Restrictions.eq("advert." + resourceReference + ".id", resourceId));
+
+            Integer resourceAdvertId = resource.getAdvert().getId();
+            for (PrismScope targetScope : targetScopes) {
+                resourceConstraint.add(Restrictions.eq(targetScope.getLowerCamelName() + "AdvertTarget.targetAdvert.id", resourceAdvertId));
+            }
+
+            criteria.add(resourceConstraint);
         }
     }
 

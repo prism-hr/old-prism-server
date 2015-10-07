@@ -19,9 +19,11 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.PrismService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
@@ -31,6 +33,9 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private DocumentService documentService;
 
     @Inject
     private PrismService prismService;
@@ -62,6 +67,11 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
         Institution institution = new Institution().withParentResource(system).withImportedCode(newResource.getImportedCode()).withUser(user).withAdvert(advert)
                 .withName(advert.getName()).withCurrency(currency).withBusinessYearStartMonth(businessYearStartMonth)
                 .withGoogleId(advert.getAddress().getGoogleId());
+
+        DocumentDTO logoImageDTO = newResource.getLogoImage();
+        if (logoImageDTO != null) {
+            institution.setLogoImage(documentService.getById(logoImageDTO.getId()));
+        }
 
         List<PrismOpportunityCategory> opportunityCategories = newResource.getOpportunityCategories();
         newResource.setOpportunityCategories(isEmpty(opportunityCategories) ? asList(creationDefault.getDefaultOpportunityCategories()) : opportunityCategories);

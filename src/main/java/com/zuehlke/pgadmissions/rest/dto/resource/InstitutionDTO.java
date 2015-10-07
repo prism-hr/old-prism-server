@@ -1,10 +1,22 @@
 package com.zuehlke.pgadmissions.rest.dto.resource;
 
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+
 public class InstitutionDTO extends ResourceParentDTO {
 
+    private DocumentDTO logoImage;
+    
     private String currency;
 
     private Integer businessYearStartMonth;
+    
+    public DocumentDTO getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(DocumentDTO logoImage) {
+        this.logoImage = logoImage;
+    }
 
     public String getCurrency() {
         return currency;

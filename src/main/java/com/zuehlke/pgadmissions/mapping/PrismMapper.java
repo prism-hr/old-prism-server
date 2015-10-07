@@ -1,5 +1,18 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.rest.representation.AgeRangeRepresentation;
@@ -9,17 +22,6 @@ import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresent
 import com.zuehlke.pgadmissions.services.PrismService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional

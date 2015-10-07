@@ -466,10 +466,10 @@ public class ResourceService {
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanMakeConnections(User user, String searchTerm) {
         Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
-        for (PrismScope resourceScope : new PrismScope[] {INSTITUTION, DEPARTMENT}) {
+        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> {
                 resources.add(resource);
-            });    
+            });
         }
         return newLinkedList(resources);
     }

@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
@@ -50,7 +51,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -483,18 +483,15 @@ public class ResourceDAO {
             criteria.createAlias(resourceReference + ".institution", "institution", JoinType.INNER_JOIN);
         }
 
-        String resourceReferenceUpper = resourceScope.name();
         criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_UNSUBMITTED")))
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_DISABLED_COMPLETED")));
+                .add(getResourceParentManageableConstraint(resourceScope, user));
 
         if (!isNullOrEmpty(searchTerm)) {
             criteria.add(Restrictions.like(resourceReference + ".name", searchTerm, MatchMode.ANYWHERE));
         }
 
-        return (List<ResourceConnectionDTO>) criteria.add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.in("userRole.role.id", PrismRoleGroup.valueOf(resourceReferenceUpper + "_STAFF").getRoles())) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceConnectionDTO.class))
+        return (List<ResourceConnectionDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(ResourceConnectionDTO.class)) //
                 .list();
     }
 

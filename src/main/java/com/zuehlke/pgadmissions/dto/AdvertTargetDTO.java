@@ -5,6 +5,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipStat
 
 public class AdvertTargetDTO {
 
+    private Integer id;
+    
     private Integer thisInstitutionId;
 
     private String thisInstitutionName;
@@ -14,8 +16,6 @@ public class AdvertTargetDTO {
     private Integer thisDepartmentId;
 
     private String thisDepartmentName;
-    
-    private Integer advertTargetId;
 
     private Integer otherInstitutionId;
 
@@ -44,6 +44,15 @@ public class AdvertTargetDTO {
     private PrismPartnershipState partnershipState;
     
     private Boolean canAccept;
+    
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
     
     public Integer getThisInstitutionId() {
         return thisInstitutionId;
@@ -84,15 +93,7 @@ public class AdvertTargetDTO {
     public void setThisDepartmentName(String thisDepartmentName) {
         this.thisDepartmentName = thisDepartmentName;
     }
-
-    public Integer getAdvertTargetId() {
-        return advertTargetId;
-    }
-
-    public void setAdvertTargetId(Integer advertTargetId) {
-        this.advertTargetId = advertTargetId;
-    }
-
+    
     public Integer getOtherInstitutionId() {
         return otherInstitutionId;
     }
@@ -207,7 +208,7 @@ public class AdvertTargetDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(advertTargetId);
+        return Objects.hashCode(id);
     }
 
     @Override
@@ -219,7 +220,7 @@ public class AdvertTargetDTO {
             return false;
         }
         AdvertTargetDTO other = (AdvertTargetDTO) object;
-        return Objects.equal(advertTargetId, other.getAdvertTargetId());
+        return Objects.equal(id, other.getId());
     }
 
 }

@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
@@ -62,7 +63,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -562,16 +562,12 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<Integer> getAdvertsForWhichUserCanManageConnections(User user, PrismScope resourceScope) {
-        String resourceReferenceUpper = resourceScope.name();
+    public List<Integer> getAdvertsForWhichUserCanManageConnections(PrismScope resourceScope, User user) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("resource.advert.id")) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_UNSUBMITTED"))) //
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_DISABLED_COMPLETED"))) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReferenceUpper + "_ADMINISTRATOR"))) //
+                .add(getResourceParentManageableConstraint(resourceScope, user)) //
                 .list();
     }
 
@@ -758,28 +754,28 @@ public class AdvertDAO {
 
         return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id").as("id")) //
                         .add(Projections.property("thisInstitution.id").as("thisInstitutionId")) //
                         .add(Projections.property("thisInstitution.name").as("thisInstitutionName")) //
                         .add(Projections.property("thisInstitution.logoImage.id").as("thisLogoImageId")) //
                         .add(Projections.property("thisDepartment.id").as("thisDepartmentId")) //
                         .add(Projections.property("thisDepartment.name").as("thisDepartmentName"))
-                        .add(Projections.property("id").as("advertTargetId")) //
                         .add(Projections.property("otherInstitution.id").as("otherInstitutionId")) //
                         .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
                         .add(Projections.property("otherInstitution.logoImage.id").as("otherInstitutionLogoImageId")) //
                         .add(Projections.property("otherDepartment.id").as("otherDepartmentId")) //
                         .add(Projections.property("otherDepartment.name").as("otherDepartmentName"))
-                        .add(Projections.property("otherAdvertUser.id").as("otherAdvertUserId")) //
-                        .add(Projections.property("otherUser.firstName").as("otherAdvertUserFirstName")) //
-                        .add(Projections.property("otherUser.lastName").as("otherAdvertUserLastName")) //
-                        .add(Projections.property("otherUser.email").as("otherAdvertUserEmail")) //
-                        .add(Projections.property("otherAdvertUserAccount.linkedinProfileUrl").as("otherUserLinkedinProfileUrl")) //
-                        .add(Projections.property("otherAdvertUserAccount.linkedinImageUrl").as("otherUserLinkedinImageUrl")) //
-                        .add(Projections.property("otherAdvertUserAccount.portraitImage.id").as("otherUserPortraitImageId")) //
+                        .add(Projections.property("otherUser.id").as("otherUserId")) //
+                        .add(Projections.property("otherUser.firstName").as("otherUserFirstName")) //
+                        .add(Projections.property("otherUser.lastName").as("otherUserLastName")) //
+                        .add(Projections.property("otherUser.email").as("otherUserEmail")) //
+                        .add(Projections.property("otherUserAccount.linkedinProfileUrl").as("otherUserLinkedinProfileUrl")) //
+                        .add(Projections.property("otherUserAccount.linkedinImageUrl").as("otherUserLinkedinImageUrl")) //
+                        .add(Projections.property("otherUserAccount.portraitImage.id").as("otherUserPortraitImageId")) //
                         .add(Projections.property("partnershipState").as("partnershipState"))) //
                 .createAlias(thisAdvertReference, "thisAdvert", JoinType.INNER_JOIN) //
                 .createAlias("thisAdvert.institution", "thisInstitution", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("thisAdvert.institution", "thisInstitution", JoinType.INNER_JOIN) //
+                .createAlias("thisAdvert.department", "thisDepartment", JoinType.INNER_JOIN) //
                 .createAlias(thisAdvertReference + "User", "thisUser", JoinType.INNER_JOIN) //
                 .createAlias(otherAdvertReference, "otherAdvert", JoinType.INNER_JOIN) //
                 .createAlias("otherAdvert.institution", "otherInstitution", JoinType.INNER_JOIN) //

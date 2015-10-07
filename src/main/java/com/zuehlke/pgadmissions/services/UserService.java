@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
@@ -63,8 +64,8 @@ import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
+import com.zuehlke.pgadmissions.dto.UnverifiedUserDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
@@ -403,19 +404,19 @@ public class UserService {
         }
     }
 
-    public List<UserRole> getUsersToVerify(User user) {
+    public List<UnverifiedUserDTO> getUsersToVerify(User user) {
         HashMultimap<PrismScope, Integer> administratorResources = null;
         boolean systemAdministrator = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
         if (!systemAdministrator) {
             administratorResources = resourceService.getUserAdministratorResources(user);
         }
 
-        List<UserRole> userRoles = Lists.newLinkedList();
+        Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
         for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
         }
 
-        return userRoles;
+        return newLinkedList(userRoles);
     }
 
     public boolean isUserLoggedIn() {

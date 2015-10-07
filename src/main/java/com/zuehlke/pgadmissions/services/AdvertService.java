@@ -477,11 +477,11 @@ public class AdvertService {
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
 
         Integer resourceId = null;
-        PrismScope resourceScope = null;
-        ResourceDTO resource = query.getResource();
-        if (resource != null) {
-            resourceId = resource.getId();
-            resourceScope = resource.getScope();
+        ResourceParent resource = null;
+        PrismScope resourceScope = query.getResourceScope();
+        if (resourceScope != null) {
+            resourceId = query.getResourceId();
+            resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         }
 
         Set<Integer> possibleTargets = Sets.newHashSet();
@@ -494,7 +494,7 @@ public class AdvertService {
         }
 
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, query, user, possibleTargets));
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, resource, query, user, possibleTargets));
         }
 
         return adverts;

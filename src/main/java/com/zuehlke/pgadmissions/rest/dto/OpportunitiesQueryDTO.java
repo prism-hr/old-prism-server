@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 public class OpportunitiesQueryDTO {
 
@@ -215,13 +214,6 @@ public class OpportunitiesQueryDTO {
 
     public void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
-    }
-
-    public ResourceDTO getResource() {
-        if (getResourceScope() != null && getResourceId() != null) {
-            return new ResourceDTO().withId(getResourceId()).withScope(getResourceScope());
-        }
-        return null;
     }
 
 }

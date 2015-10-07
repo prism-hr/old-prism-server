@@ -1,11 +1,34 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.application.*;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.*;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.user.*;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.*;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -13,65 +36,6 @@ import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMEN
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.springframework.beans.BeanUtils.instantiate;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
-import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAdvertRelationSection;
-import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
-import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
-import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
-import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
-import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.user.UserAddress;
-import com.zuehlke.pgadmissions.domain.user.UserDocument;
-import com.zuehlke.pgadmissions.domain.user.UserEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.user.UserPersonalDetail;
-import com.zuehlke.pgadmissions.domain.user.UserQualification;
-import com.zuehlke.pgadmissions.domain.user.UserReferee;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
 @Transactional
@@ -129,8 +93,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserPersonalDetail userPersonalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
 
-        LocalDate dateOfBirth = personalDetailDTO.getDateOfBirth();
-        userPersonalDetail.setDateOfBirth(personalDetailDTO.getDateOfBirth());
+        LocalDate dateOfBirth = userPersonalDetail.getDateOfBirth();
         applicationPersonalDetail.setAgeRange(prismService.getAgeRangeFromAge(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
 
         userAccount.setPersonalDetail(userPersonalDetail);
@@ -205,7 +168,7 @@ public class ProfileService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
-            ProfileEmploymentPositionDTO employmentPositionDTO) {
+                                                                             ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
 
@@ -421,8 +384,8 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(T profile, Class<U> personalDetailClass,
-            ProfilePersonalDetailDTO personalDetailDTO) {
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(
+            T profile, Class<U> personalDetailClass, ProfilePersonalDetailDTO personalDetailDTO) {
         userService.updateUser(personalDetailDTO.getUser());
         U personalDetail = (U) profile.getPersonalDetail();
         if (personalDetail == null) {
@@ -437,6 +400,10 @@ public class ProfileService {
 
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
+
+        if (personalDetailClass.equals(UserPersonalDetail.class)) {
+            ((UserPersonalDetail) personalDetail).setDateOfBirth(personalDetailDTO.getDateOfBirth());
+        }
 
         return personalDetail;
     }
@@ -468,7 +435,7 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> U updateQualification(T profile, Class<U> qualificationClass, Integer qualificationId,
-            ProfileQualificationDTO qualificationDTO) {
+                                                                                                                    ProfileQualificationDTO qualificationDTO) {
         U qualification;
         if (qualificationId == null) {
             qualification = instantiate(qualificationClass);
@@ -482,7 +449,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(T profile, U qualification,
-            ProfileQualificationDTO qualificationDTO) {
+                                                                                                                       ProfileQualificationDTO qualificationDTO) {
         createAdvertRelation(profile.getUser(), qualification, qualificationDTO);
 
         qualification.setStartYear(qualificationDTO.getStartDate().getYear());
@@ -509,14 +476,14 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void deleteQualification(T profile, Class<U> qualificationClass,
-            Integer qualificationId) {
+                                                                                                                       Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
         profile.getQualifications().remove(qualification);
         entityService.flush();
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> U updateEmploymentPosition(T profile, Class<U> employmentPositionClass,
-            Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
+                                                                                                                              Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         U employmentPosition;
         if (employmentPositionId == null) {
             employmentPosition = instantiate(employmentPositionClass);
@@ -530,7 +497,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(T profile, U employmentPosition,
-            ProfileEmploymentPositionDTO employmentPositionDTO) {
+                                                                                                                                 ProfileEmploymentPositionDTO employmentPositionDTO) {
         createAdvertRelation(profile.getUser(), employmentPosition, employmentPositionDTO);
 
         employmentPosition.setStartYear(employmentPositionDTO.getStartDate().getYear());
@@ -554,14 +521,14 @@ public class ProfileService {
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void deleteEmploymentPosition(T profile, Class<U> employmentPositionClass,
-            Integer employmentPositionId) {
+                                                                                                                                 Integer employmentPositionId) {
         U employmentPosition = getProfileEmploymentPosition(employmentPositionClass, employmentPositionId);
         profile.getEmploymentPositions().remove(employmentPosition);
         entityService.flush();
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> ProfileRefereeUpdateDTO updateReferee(T profile, Class<U> refereeClass, Integer refereeId,
-            ProfileRefereeDTO refereeDTO) {
+                                                                                                                              ProfileRefereeDTO refereeDTO) {
         U referee;
         if (refereeId == null) {
             referee = instantiate(refereeClass);
@@ -575,7 +542,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(T profile, U referee,
-            ProfileRefereeDTO refereeDTO) {
+                                                                                                                                ProfileRefereeDTO refereeDTO) {
         List<CommentAssignedUser> refereeAssignments = assignReferee(profile, referee, refereeDTO);
         createAdvertRelation(profile.getUser(), referee, refereeDTO);
 
@@ -606,7 +573,7 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileAdditionalInformation<T>> U updateAdditionalInformation(T profile, Class<U> additionalInformationClass,
-            ProfileAdditionalInformationDTO additionalInformationDTO) {
+                                                                                                                                    ProfileAdditionalInformationDTO additionalInformationDTO) {
         U additionalInformation = (U) profile.getAdditionalInformation();
         if (additionalInformation == null) {
             additionalInformation = instantiate(additionalInformationClass);
@@ -625,7 +592,7 @@ public class ProfileService {
     }
 
     private <T extends ProfileReferee<U>, U extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> assignReferee(U profile, T referee,
-            ProfileRefereeDTO refereeDTO) {
+                                                                                                                                ProfileRefereeDTO refereeDTO) {
         User oldUser = referee.getUser();
         UserDTO userDTO = refereeDTO.getResource().getUser();
         User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());

@@ -82,7 +82,6 @@ import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -190,7 +189,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityFilterDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> activeStates, PrismActionCondition actionCondition,
-            OpportunitiesQueryDTO query, User currentUser, Set<Integer> possibleTargets) {
+            ResourceParent resource, OpportunitiesQueryDTO query, User currentUser, Set<Integer> possibleTargets) {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("advert.id").as("id")) //
                 .add(Projections.property("resource.opportunityCategories").as("opportunityCategories"));
@@ -211,11 +210,10 @@ public class AdvertDAO {
                                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
 
-        ResourceDTO resource = query.getResource();
         boolean narrowedByResource = resource != null;
         boolean narrowedByTarget = currentUser != null;
 
-        if (isNotEmpty(possibleTargets) && (narrowedByResource || narrowedByTarget)) {
+        if (narrowedByResource || narrowedByTarget) {
             for (PrismScope targetScope : targetScopes) {
                 String scopeReference = targetScope.getLowerCamelName();
                 String advertReference = scopeReference + "Advert";
@@ -589,7 +587,7 @@ public class AdvertDAO {
         }
     }
 
-    private void appendVisibilityConstraint(Criteria criteria, PrismScope scope, ResourceDTO resource, boolean userLoggedIn, boolean opportunityScope,
+    private void appendVisibilityConstraint(Criteria criteria, PrismScope scope, ResourceParent resource, boolean userLoggedIn, boolean opportunityScope,
             boolean recommended, Set<Integer> possibleTargets) {
         if (userLoggedIn && isNotEmpty(possibleTargets)) {
             boolean hasTargetConstraints = false;
@@ -627,11 +625,11 @@ public class AdvertDAO {
 
         if (resource != null) {
             Integer resourceId = resource.getId();
-            String resourceReference = resource.getScope().getLowerCamelName();
+            String resourceReference = resource.getResourceScope().getLowerCamelName();
 
             criteria.add(Restrictions.disjunction()
                     .add(Restrictions.eq("advert." + resourceReference + ".id", resourceId))
-                    .add(Restrictions.eq(resourceReference + "AdvertTarget.targetAdvert.id", resourceId)));
+                    .add(Restrictions.eq(resourceReference + "AdvertTarget.targetAdvert.id", resource.getAdvert().getId())));
         }
     }
 

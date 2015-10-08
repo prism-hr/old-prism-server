@@ -34,8 +34,8 @@ public class AdvertRepresentationSimple {
 
     private AdvertCategoriesRepresentation categories;
 
-    private List<AdvertTargetRepresentation> connections;
-
+    private List<AdvertTargetRepresentation> targets;
+    
     private List<AdvertCompetenceRepresentation> competences;
 
     private List<PrismActionCondition> externalConditions;
@@ -146,12 +146,12 @@ public class AdvertRepresentationSimple {
         this.categories = categories;
     }
 
-    public List<AdvertTargetRepresentation> getConnections() {
-        return connections;
+    public List<AdvertTargetRepresentation> getTargets() {
+        return targets;
     }
 
-    public void setConnections(List<AdvertTargetRepresentation> connections) {
-        this.connections = connections;
+    public void setTargets(List<AdvertTargetRepresentation> targets) {
+        this.targets = targets;
     }
 
     public List<AdvertCompetenceRepresentation> getCompetences() {

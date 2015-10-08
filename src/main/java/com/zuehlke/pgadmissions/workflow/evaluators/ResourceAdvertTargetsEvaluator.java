@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.evaluators;
 
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import javax.inject.Inject;
 
@@ -10,15 +10,14 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
 @Component
-public class ResourceAdvertConnectionsEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {
+public class ResourceAdvertTargetsEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {
 
     @Inject
     private AdvertService advertService;
 
-    // TODO: call the actual query
     @Override
     public boolean evaluate(ResourceParent resource) {
-        return isEmpty(null);
+        return isNotEmpty(advertService.getAdvertTargets(resource.getAdvert()));
     }
 
 }

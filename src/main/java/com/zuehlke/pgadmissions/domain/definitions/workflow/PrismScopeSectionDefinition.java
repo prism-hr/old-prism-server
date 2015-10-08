@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCategoriesEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCompetencesEvaluator;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertConnectionsEvaluator;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertTargetsEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertDetailsEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceDetailsEvaluator;
@@ -29,7 +29,7 @@ public enum PrismScopeSectionDefinition {
     ADVERT_CATEGORIES(ResourceAdvertCategoriesEvaluator.class, SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE), //
     ADVERT_DETAILS(ResourceAdvertDetailsEvaluator.class, SYSTEM_RESOURCE_ADVERT_DETAILS_INCOMPLETE), //
     ADVERT_COMPETENCES(ResourceAdvertCompetencesEvaluator.class, SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE), //
-    ADVERT_TARGETS(ResourceAdvertConnectionsEvaluator.class, SYSTEM_RESOURCE_TARGETS_INCOMPLETE);
+    ADVERT_TARGETS(ResourceAdvertTargetsEvaluator.class, SYSTEM_RESOURCE_TARGETS_INCOMPLETE);
 
     private static HashMultimap<PrismScope, PrismScopeSectionDefinition> requiredSections = HashMultimap.create();
 

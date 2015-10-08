@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.user.UserQualification;
 import com.zuehlke.pgadmissions.domain.user.UserReferee;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
@@ -47,10 +48,10 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ConnectionActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -68,13 +69,16 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Inject
     private AuthenticationTokenHelper authenticationTokenHelper;
 
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
+
+    @Inject
+    private AdvertMapper advertMapper;
 
     @Inject
     private AdvertService advertService;
@@ -203,8 +207,8 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/connection", method = RequestMethod.GET)
-    public List<ConnectionActivityRepresentation> getConnectionRepresentations() {
-        return userMapper.getUserConnectionRepresentations(advertService.getAdvertTargets(userService.getCurrentUser()));
+    public List<AdvertTargetRepresentation> getConnectionRepresentations() {
+        return advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargets(userService.getCurrentUser()));
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -221,7 +225,7 @@ public class UserController {
         try {
             resourceListFilterService.save(currentUser, entityService.getById(Scope.class, scope), filter);
         } catch (Exception e) {
-            LOGGER.info("Error saving filter for user " + currentUser.toString(), e);
+            logger.info("Error saving filter for user " + currentUser.toString(), e);
             throw new ResourceNotFoundException("Error saving filter");
         }
     }

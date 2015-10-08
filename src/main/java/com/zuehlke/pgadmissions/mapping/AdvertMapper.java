@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
 import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
@@ -56,6 +58,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
+import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -71,7 +74,9 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentat
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -308,7 +313,7 @@ public class AdvertMapper {
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
-        representation.setConnections(getAdvertTargetRepresentations(advert));
+        representation.setTargets(getAdvertTargetRepresentations(advertService.getAdvertTargets(advert)));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setExternalConditions(actionService.getExternalConditions(advert.getResource()));
 
@@ -343,6 +348,44 @@ public class AdvertMapper {
         }
 
         return null;
+    }
+
+    public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets) {
+        Map<ResourceRepresentationActivity, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
+        TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> representationFilter = TreeMultimap.create();
+        for (AdvertTargetDTO advertTarget : advertTargets) {
+            ResourceRepresentationActivity thisResourceRepresentation = resourceMapper.getResourceRepresentationActivity(advertTarget.getThisInstitutionId(),
+                    advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
+
+            AdvertTargetRepresentation representation = representationIndex.get(thisResourceRepresentation);
+            if (representation == null) {
+                representation = new AdvertTargetRepresentation().withResource(thisResourceRepresentation);
+                representationIndex.put(thisResourceRepresentation, representation);
+            }
+
+            AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
+                    .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
+                            advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
+                    .withCanManage(BooleanUtils.isTrue(advertTarget.getCanManage()));
+
+            Integer otherUserId = advertTarget.getOtherUserId();
+            if (otherUserId != null) {
+                connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
+                        .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
+                        .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
+                        .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
+            }
+
+            representationFilter.put(representation, connectionRepresentation);
+        }
+
+        List<AdvertTargetRepresentation> representations = Lists.newLinkedList();
+        representationFilter.keySet().forEach(representation -> {
+            representation.setConnections(Lists.newLinkedList(representationFilter.get(representation)));
+            representations.add(representation);
+        });
+
+        return representations;
     }
 
     private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(Advert advert) {
@@ -380,11 +423,6 @@ public class AdvertMapper {
         AdvertCategories categories = advertService.getAdvertCategories(advert);
         return categories == null ? null : new AdvertCategoriesRepresentation().withIndustries(categories.getIndustries().stream().map(i -> i.getIndustry()).collect(toList()))
                 .withFunctions(categories.getFunctions().stream().map(f -> f.getFunction()).collect(toList()));
-    }
-
-    // TODO: sorting logic
-    private List<AdvertTargetRepresentation> getAdvertTargetRepresentations(Advert advert) {
-        return null;
     }
 
     private List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Advert advert) {

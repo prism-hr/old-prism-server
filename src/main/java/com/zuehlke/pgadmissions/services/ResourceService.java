@@ -828,10 +828,10 @@ public class ResourceService {
                 addResources(resourceDAO.getResources(user, scope, parentScopeId, filter, columns, conditions, responseClass), resources, onlyAsPartner);
             }
 
-//            onlyAsPartner = onlyAsPartner == null ? null : true;
-//            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
-//                addResources(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, columns, conditions, responseClass), resources, onlyAsPartner);
-//            }
+            onlyAsPartner = onlyAsPartner == null ? null : true;
+            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+                addResources(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, columns, conditions, responseClass), resources, onlyAsPartner);
+            }
         }
 
         return resources;

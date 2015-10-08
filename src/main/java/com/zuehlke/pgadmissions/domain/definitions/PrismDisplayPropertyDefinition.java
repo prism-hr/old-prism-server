@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -354,7 +354,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
 
     SYSTEM_OPPORTUNITY_TYPE_PAID_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "In order to advertise an opportunity of this type we need you to confirm that: (a) you are happy to pay the successful applicant a minimum of the national minimum wage, or; (b) that you are committed to rewarding the successful applicant in some other fair way for their effort, for example through the granting of shares in a company. Please check to confirm. Alternatively, you can offer the opportunity as volunteering or on course placement."),
-    SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type you are confirming that the successful applicant will work with you as a required component of their course of study. In order to do this, you must accept that the providing university or department has the final right of acceptance in your recruitment process.While we recommend that do you pay the successful applicant the national minimum wage, or reward them in some other fair way, you are not legally required to do so."),
+    SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type you are confirming that the successful applicant will work with you as a required component of their course of study. In order to do this, you must accept that the providing university or department has the final right of acceptance in your recruitment process. While we recommend that do you pay the successful applicant the national minimum wage, or reward them in some other fair way, you are not legally required to do so."),
     SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type, you are accepting that you are not legally entitled to bind the successful applicant into any kind of fixed work pattern or contract for employment/delivery. Alternatively, you can offer the opportunity as work experience or employment"),
 
     /*

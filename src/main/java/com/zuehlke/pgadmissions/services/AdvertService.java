@@ -27,6 +27,7 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -439,8 +440,10 @@ public class AdvertService {
 
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
         PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
-        PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(resource.getOpportunityCategories());
-        if (asList(EXPERIENCE, WORK).contains(opportunityCategory)) {
+
+        String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
+        List<PrismOpportunityCategory> opportunityCategories = asList(opprortunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
+        if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
                 advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts, null).forEach(at -> {
                     advertTargets.put(at.getId(), at);
@@ -448,7 +451,7 @@ public class AdvertService {
             }
         }
 
-        if (asList(STUDY, PERSONAL_DEVELOPMENT).contains(opportunityCategory)) {
+        if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
                 advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts, null).forEach(at -> {
                     advertTargets.put(at.getId(), at);

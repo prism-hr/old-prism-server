@@ -1,7 +1,15 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import javax.inject.Inject;
-
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.AdvertMapper;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,14 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mapping.AdvertMapper;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
-import com.zuehlke.pgadmissions.services.AdvertService;
+import javax.inject.Inject;
 
 @RestController
 @RequestMapping("/api/opportunities")
@@ -31,6 +32,9 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
+        if(query.getContext() == PrismMotivationContext.UNIVERSITY && query.getContextScope() == PrismScope.INSTITUTION && query.getResourceId() != null) {
+            throw new PrismForbiddenException("Cannot see university partners");
+        }
         AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
         return representation;
     }

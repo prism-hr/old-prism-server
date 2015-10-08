@@ -1,25 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
@@ -27,9 +7,22 @@ import com.zuehlke.pgadmissions.domain.Domicile;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
-
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
 @Repository
 public class InstitutionDAO {
@@ -111,9 +104,14 @@ public class InstitutionDAO {
                         .add(Projections.property("address.domicile.id").as("addressDomicileId")) //
                         .add(Projections.property("address.googleId").as("addressGoogleId")) //
                         .add(Projections.property("address.addressCoordinates.latitude").as("addressCoordinateLatitude")) //
-                        .add(Projections.property("address.addressCoordinates.longitude").as("addressCoordinateLongitude"))) //
+                        .add(Projections.property("address.addressCoordinates.longitude").as("addressCoordinateLongitude"))
+                        .add(Projections.property("user.id").as("userId"))
+                        .add(Projections.property("user.firstName").as("userFirstName"))
+                        .add(Projections.property("user.lastName").as("userLastName"))
+                        .add(Projections.property("user.email").as("userEmail")))
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.user", "user", JoinType.LEFT_OUTER_JOIN) //
                 .add(searchConstraint) //
                 .add(Restrictions.ne("state.id", INSTITUTION_DISABLED_COMPLETED)) //
                 .addOrder(Order.asc("name")) //

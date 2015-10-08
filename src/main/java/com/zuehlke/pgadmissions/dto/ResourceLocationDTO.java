@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
+
+import java.math.BigDecimal;
 
 public class ResourceLocationDTO extends ResourceSimpleDTO {
 
@@ -23,6 +23,14 @@ public class ResourceLocationDTO extends ResourceSimpleDTO {
     private BigDecimal addressCoordinateLatitude;
 
     private BigDecimal addressCoordinateLongitude;
+
+    private Integer userId;
+
+    private String userFirstName;
+
+    private String userLastName;
+
+    private String userEmail;
 
     public String getAddressLine1() {
         return addressLine1;
@@ -96,4 +104,35 @@ public class ResourceLocationDTO extends ResourceSimpleDTO {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getUserFirstName() {
+        return userFirstName;
+    }
+
+    public void setUserFirstName(String userFirstName) {
+        this.userFirstName = userFirstName;
+    }
+
+    public String getUserLastName() {
+        return userLastName;
+    }
+
+    public void setUserLastName(String userLastName) {
+        this.userLastName = userLastName;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 }

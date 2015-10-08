@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 public enum PrismDisplayPropertyCategory {
 
@@ -14,16 +14,16 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_ACTION(SYSTEM),
     SYSTEM_ROLE(SYSTEM),
     SYSTEM_YES_NO_UNSURE(SYSTEM),
-    SYSTEM_SCOPE(SYSTEM), 
+    SYSTEM_SCOPE(SYSTEM),
     SYSTEM_OPPORTUNITY_CATEGORY(SYSTEM),
     SYSTEM_OPPORTUNITY_TYPE(SYSTEM),
     SYSTEM_STUDY_OPTION(SYSTEM),
-    SYSTEM_AGE_RANGE(SYSTEM), 
-    SYSTEM_GENDER(SYSTEM), 
+    SYSTEM_AGE_RANGE(SYSTEM),
+    SYSTEM_GENDER(SYSTEM),
     SYSTEM_DOMICILE(SYSTEM),
-    SYSTEM_REJECTION_REASON(SYSTEM), 
+    SYSTEM_REJECTION_REASON(SYSTEM),
     SYSTEM_DURATION(SYSTEM),
-    SYSTEM_ENTITY(SYSTEM), 
+    SYSTEM_ENTITY(SYSTEM),
     SYSTEM_FILTER_PROPERTY(SYSTEM),
     SYSTEM_FILTER_EXPRESSION(SYSTEM),
     SYSTEM_ADVERT_INDUSTRY(SYSTEM),
@@ -36,6 +36,7 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_MONTH(SYSTEM),
     SYSTEM_DECLINE_ACTION(SYSTEM),
     SYSTEM_GENERAL(SYSTEM),
+    SYSTEM_CONNECT_SECTION(SYSTEM),
     SYSTEM_AUTHENTICATE(SYSTEM),
     SYSTEM_OPPORTUNITIES(SYSTEM),
     SYSTEM_OPPORTUNITIES_ENQUIRY(SYSTEM),

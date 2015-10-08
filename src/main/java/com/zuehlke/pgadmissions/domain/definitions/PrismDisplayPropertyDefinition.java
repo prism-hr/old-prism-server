@@ -1210,6 +1210,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Return to search"),
 
     /*
+     * *************** SYSTEM CONNECT SECTION *********************
+     */
+
+    SYSTEM_CONNECT_INVITING_RESOURCE_LABEL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Connect "),
+    SYSTEM_CONNECT_INVITING_RESOURCE_HINT(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Please select which institution / department would you like to connect as"),
+
+    /*
      * *************** SYSTEM AUTHENTICATE SECTION *********************
      */
 

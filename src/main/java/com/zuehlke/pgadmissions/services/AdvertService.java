@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.*;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO.AdvertFinancialDetailPayDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
@@ -221,7 +222,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
-    public void updateFinancialDetails(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailDTO financialDetailDTO) {
+    public void updateFinancialDetails(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailPayDTO financialDetailDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
 
@@ -235,7 +236,7 @@ public class AdvertService {
 
     public void updateFinancialDetails(Advert advert, String newCurrency) {
         Resource resource = advert.getResource();
-        AdvertFinancialDetailDTO financialDetailDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
+        AdvertFinancialDetailPayDTO financialDetailDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
         updateFinancialDetails(resource.getResourceScope(), resource.getId(), financialDetailDTO);
     }
 
@@ -768,7 +769,7 @@ public class AdvertService {
                 .forEach(exchangeRates::remove);
     }
 
-    private void updateFinancialDetail(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO financialDetailDTO) {
+    private void updateFinancialDetail(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailPayDTO financialDetailDTO) {
         if (financialDetailDTO == null) {
             advert.setPay(null);
             return;
@@ -779,7 +780,7 @@ public class AdvertService {
         updateFinancialDetails(advert.getPay(), financialDetailDTO, currencyAtLocale, baseline);
     }
 
-    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
+    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailPayDTO financialDetailsDTO, String currencyAtLocale,
                                         LocalDate baseline) {
         PrismDurationUnit interval = financialDetailsDTO.getInterval();
         String currencySpecified = financialDetailsDTO.getCurrency();
@@ -822,9 +823,9 @@ public class AdvertService {
         }
     }
 
-    private AdvertFinancialDetailDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
+    private AdvertFinancialDetailPayDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
         if (detail != null) {
-            AdvertFinancialDetailDTO detailDTO = new AdvertFinancialDetailDTO();
+            AdvertFinancialDetailPayDTO detailDTO = new AdvertFinancialDetailPayDTO();
             detailDTO.setCurrency(newCurrency);
 
             PrismDurationUnit interval = detail.getInterval();

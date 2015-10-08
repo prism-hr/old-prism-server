@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import java.util.List;
 
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
@@ -101,8 +103,8 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
         @Override
         public int compareTo(AdvertTargetConnectionRepresentation other) {
-            int compare = resource.compareTo(other.getResource());
-            return compare == 0 ? user.compareTo(other.getUser()) : compare;
+            int compare = compare(resource, other.getResource());
+            return compare == 0 ? compare(user, other.getUser()) : compare;
         }
 
     }

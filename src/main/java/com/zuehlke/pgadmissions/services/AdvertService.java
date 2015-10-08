@@ -455,13 +455,13 @@ public class AdvertService {
                 });
             }
         }
-        
+
         User user = userService.getCurrentUser();
         List<Integer> userAdverts = Lists.newArrayList();
         for (PrismScope targetScope : targetScopes) {
             userAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(targetScope, user));
         }
-        
+
         List<Integer> userAdvertTargets = advertDAO.getAdvertTargetsUserCanManage(user, userAdverts);
         advertTargets.keySet().forEach(at -> {
             if (userAdvertTargets.contains(at)) {
@@ -483,8 +483,8 @@ public class AdvertService {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(
-                        advertDAO.getAdvertTargets(resourceScope, advertReference, advertReference.equals("advert") ? "targetAdvert" : "advert", user, connectAdverts, exclusions));
+                String otherAdvertReference = advertReference.equals("advert") ? "targetAdvert" : "advert";
+                advertTargets.addAll(advertDAO.getAdvertTargets(resourceScope, advertReference, otherAdvertReference, user, connectAdverts, exclusions));
             }
         }
         return advertTargets;
@@ -582,7 +582,7 @@ public class AdvertService {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, advertReference, "acceptAdvert", user, connectAdverts, pending));
+                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts, pending));
             }
         }
 

@@ -728,17 +728,17 @@ public class AdvertDAO {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("target.id").as("id")) //
-                        .add(Projections.property("thisInstitution.id").as("thisInstitutionId")) //
+                        .add(Projections.groupProperty("thisInstitution.id").as("thisInstitutionId")) //
                         .add(Projections.property("thisInstitution.name").as("thisInstitutionName")) //
                         .add(Projections.property("thisInstitution.logoImage.id").as("thisLogoImageId")) //
-                        .add(Projections.property("thisDepartment.id").as("thisDepartmentId")) //
+                        .add(Projections.groupProperty("thisDepartment.id").as("thisDepartmentId")) //
                         .add(Projections.property("thisDepartment.name").as("thisDepartmentName"))
-                        .add(Projections.property("otherInstitution.id").as("otherInstitutionId")) //
+                        .add(Projections.groupProperty("otherInstitution.id").as("otherInstitutionId")) //
                         .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
                         .add(Projections.property("otherInstitution.logoImage.id").as("otherInstitutionLogoImageId")) //
-                        .add(Projections.property("otherDepartment.id").as("otherDepartmentId")) //
+                        .add(Projections.groupProperty("otherDepartment.id").as("otherDepartmentId")) //
                         .add(Projections.property("otherDepartment.name").as("otherDepartmentName"))
-                        .add(Projections.property("otherUser.id").as("otherUserId")) //
+                        .add(Projections.groupProperty("otherUser.id").as("otherUserId")) //
                         .add(Projections.property("otherUser.firstName").as("otherUserFirstName")) //
                         .add(Projections.property("otherUser.lastName").as("otherUserLastName")) //
                         .add(Projections.property("otherUser.email").as("otherUserEmail")) //
@@ -758,6 +758,7 @@ public class AdvertDAO {
                 .createAlias("otherAdvert.department", "otherDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
                 .add(getResourceParentManageableStateConstraint(resourceScope.name()))
                 .add(permissionsConstraint);
     }

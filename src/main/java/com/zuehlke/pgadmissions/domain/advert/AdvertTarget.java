@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.workflow.user.AdvertConnectionReassignmentProces
 
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id" }) })
+        @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id", "accept_advert_id", "accept_advert_user_id" }) })
 public class AdvertTarget extends AdvertAttribute implements UserAssignment<AdvertConnectionReassignmentProcessor> {
 
     @Id
@@ -168,7 +168,8 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("advertUser", advertUser).addProperty("targetAdvert", targetAdvert).addProperty("targetAdvertUser", targetAdvertUser);
+        return super.getEntitySignature().addProperty("advertUser", advertUser).addProperty("targetAdvert", targetAdvert).addProperty("targetAdvertUser", targetAdvertUser)
+                .addProperty("acceptAdvert", acceptAdvert).addProperty("acceptAdvertUser", acceptAdvertUser);
     }
 
 }

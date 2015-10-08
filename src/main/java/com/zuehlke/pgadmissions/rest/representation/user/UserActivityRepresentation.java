@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
@@ -14,9 +15,9 @@ public class UserActivityRepresentation {
 
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
-    private List<ResourceUserActivityRepresentation> joinActivities;
+    private List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities;
 
-    private List<ConnectionActivityRepresentation> connectionActivities;
+    private List<AdvertTargetRepresentation> advertTargetActivities;
 
     public List<ResourceActivityRepresentation> getResourceActivities() {
         return resourceActivities;
@@ -34,20 +35,20 @@ public class UserActivityRepresentation {
         this.appointmentActivities = appointmentActivities;
     }
 
-    public List<ResourceUserActivityRepresentation> getJoinActivities() {
-        return joinActivities;
+    public List<ResourceUnverifiedUserRepresentation> getUnverifiedUserActivities() {
+        return unverifiedUserActivities;
     }
 
-    public void setJoinActivities(List<ResourceUserActivityRepresentation> joinActivities) {
-        this.joinActivities = joinActivities;
+    public void setUnverifiedUserActivities(List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities) {
+        this.unverifiedUserActivities = unverifiedUserActivities;
     }
 
-    public List<ConnectionActivityRepresentation> getConnectionActivities() {
-        return connectionActivities;
+    public List<AdvertTargetRepresentation> getAdvertTargetActivities() {
+        return advertTargetActivities;
     }
 
-    public void setConnectionActivities(List<ConnectionActivityRepresentation> connectionActivities) {
-        this.connectionActivities = connectionActivities;
+    public void setAdvertTargetActivities(List<AdvertTargetRepresentation> advertTargetActivities) {
+        this.advertTargetActivities = advertTargetActivities;
     }
 
     public UserActivityRepresentation withResourceActivities(List<ResourceActivityRepresentation> resourceActivities) {
@@ -60,13 +61,13 @@ public class UserActivityRepresentation {
         return this;
     }
 
-    public UserActivityRepresentation withJoinActivities(List<ResourceUserActivityRepresentation> joinActivities) {
-        this.joinActivities = joinActivities;
+    public UserActivityRepresentation withUnverifiedUserActivities(List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities) {
+        this.unverifiedUserActivities = unverifiedUserActivities;
         return this;
     }
 
-    public UserActivityRepresentation withConnectionActivities(List<ConnectionActivityRepresentation> connectionActivities) {
-        this.connectionActivities = connectionActivities;
+    public UserActivityRepresentation withAdvertTargetActivities(List<AdvertTargetRepresentation> advertTargetActivities) {
+        this.advertTargetActivities = advertTargetActivities;
         return this;
     }
 
@@ -202,7 +203,7 @@ public class UserActivityRepresentation {
 
     }
 
-    public static class ResourceUserActivityRepresentation {
+    public static class ResourceUnverifiedUserRepresentation {
 
         private ResourceRepresentationActivity resource;
 
@@ -224,118 +225,14 @@ public class UserActivityRepresentation {
             this.users = users;
         }
 
-        public ResourceUserActivityRepresentation withResource(ResourceRepresentationActivity resource) {
+        public ResourceUnverifiedUserRepresentation withResource(ResourceRepresentationActivity resource) {
             this.resource = resource;
             return this;
         }
 
-        public ResourceUserActivityRepresentation withUsers(List<UserRepresentationUnverified> users) {
+        public ResourceUnverifiedUserRepresentation withUsers(List<UserRepresentationUnverified> users) {
             this.users = users;
             return this;
-        }
-
-    }
-
-    public static class ConnectionActivityRepresentation implements Comparable<ConnectionActivityRepresentation> {
-
-        private ResourceRepresentationActivity acceptResource;
-
-        private List<ConnectionRepresentation> connections;
-
-        public ResourceRepresentationActivity getAcceptResource() {
-            return acceptResource;
-        }
-
-        public void setAcceptResource(ResourceRepresentationActivity acceptResource) {
-            this.acceptResource = acceptResource;
-        }
-
-        public List<ConnectionRepresentation> getConnections() {
-            return connections;
-        }
-
-        public void setConnections(List<ConnectionRepresentation> connections) {
-            this.connections = connections;
-        }
-
-        public ConnectionActivityRepresentation withAcceptResource(ResourceRepresentationActivity targetResource) {
-            this.acceptResource = targetResource;
-            return this;
-        }
-
-        @Override
-        public int compareTo(ConnectionActivityRepresentation other) {
-            return acceptResource.compareTo(other.getAcceptResource());
-        }
-
-        public static class ConnectionRepresentation implements Comparable<ConnectionRepresentation> {
-
-            private Integer advertTargetId;
-
-            private ResourceRepresentationActivity resource;
-
-            private UserRepresentationSimple user;
-
-            private Boolean canAccept;
-
-            public Integer getAdvertTargetId() {
-                return advertTargetId;
-            }
-
-            public void setAdvertTargetId(Integer advertTargetId) {
-                this.advertTargetId = advertTargetId;
-            }
-
-            public ResourceRepresentationActivity getResource() {
-                return resource;
-            }
-
-            public void setResource(ResourceRepresentationActivity resource) {
-                this.resource = resource;
-            }
-
-            public UserRepresentationSimple getUser() {
-                return user;
-            }
-
-            public void setUser(UserRepresentationSimple user) {
-                this.user = user;
-            }
-
-            public Boolean getCanAccept() {
-                return canAccept;
-            }
-
-            public void setCanAccept(Boolean canAccept) {
-                this.canAccept = canAccept;
-            }
-
-            public ConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
-                this.advertTargetId = advertTargetId;
-                return this;
-            }
-
-            public ConnectionRepresentation withResource(ResourceRepresentationActivity resource) {
-                this.resource = resource;
-                return this;
-            }
-
-            public ConnectionRepresentation withUser(UserRepresentationSimple user) {
-                this.user = user;
-                return this;
-            }
-
-            public ConnectionRepresentation withCanAccept(Boolean canAccept) {
-                this.canAccept = canAccept;
-                return this;
-            }
-
-            @Override
-            public int compareTo(ConnectionRepresentation other) {
-                int compare = resource.compareTo(other.getResource());
-                return compare == 0 ? user.compareTo(other.getUser()) : compare;
-            }
-
         }
 
     }

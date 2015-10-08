@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipStat
 public class AdvertTargetDTO {
 
     private Integer id;
-    
+
     private Integer thisInstitutionId;
 
     private String thisInstitutionName;
@@ -42,9 +42,8 @@ public class AdvertTargetDTO {
     private Integer otherUserPortraitImageId;
 
     private PrismPartnershipState partnershipState;
-    
-    private Boolean canAccept;
-    
+
+    private Boolean canManage;
 
     public Integer getId() {
         return id;
@@ -53,7 +52,7 @@ public class AdvertTargetDTO {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     public Integer getThisInstitutionId() {
         return thisInstitutionId;
     }
@@ -93,7 +92,7 @@ public class AdvertTargetDTO {
     public void setThisDepartmentName(String thisDepartmentName) {
         this.thisDepartmentName = thisDepartmentName;
     }
-    
+
     public Integer getOtherInstitutionId() {
         return otherInstitutionId;
     }
@@ -198,12 +197,12 @@ public class AdvertTargetDTO {
         this.partnershipState = partnershipState;
     }
 
-    public Boolean getCanAccept() {
-        return canAccept;
+    public Boolean getCanManage() {
+        return canManage;
     }
 
-    public void setCanAccept(Boolean canAccept) {
-        this.canAccept = canAccept;
+    public void setCanManage(Boolean canManage) {
+        this.canManage = canManage;
     }
 
     @Override

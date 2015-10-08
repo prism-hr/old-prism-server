@@ -103,7 +103,11 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
     }
 
     public String getDisplayName() {
-        return Joiner.on(SPACE).skipNulls().join(asList(project, program, department, institution));
+        String projectName = project == null ? null : project.getName();
+        String programName = program == null ? null : program.getName();
+        String departmentName = department == null ? null : department.getName();
+        String institutionName = institution == null ? null : institution.getName();
+        return Joiner.on(SPACE).skipNulls().join(asList(projectName, programName, departmentName, institutionName));
     }
 
     @Override

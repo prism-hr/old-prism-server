@@ -7,6 +7,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -76,6 +80,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
@@ -83,8 +88,10 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
@@ -417,31 +424,75 @@ public class AdvertService {
         return categories;
     }
 
-    public List<AdvertTargetDTO> getAdvertTargets(ResourceParent resource) {
-        return advertDAO.getAdvertTargets(resource);
+    public List<AdvertTargetDTO> getAdvertTargets(Advert advert) {
+        ResourceParent resource = advert.getResource();
+        List<Integer> connectAdverts = Lists.newArrayList();
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            Department department = resource.getDepartment();
+            if (department != null) {
+                connectAdverts.add(department.getAdvert().getId());
+            }
+            connectAdverts.add(resource.getInstitution().getAdvert().getId());
+        } else {
+            connectAdverts.add(resource.getAdvert().getId());
+        }
+
+        Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
+        PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+        PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(resource.getOpportunityCategories());
+        if (asList(EXPERIENCE, WORK).contains(opportunityCategory)) {
+            for (PrismScope targetScope : targetScopes) {
+                advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts, null).forEach(at -> {
+                    advertTargets.put(at.getId(), at);
+                });
+            }
+        }
+
+        if (asList(STUDY, PERSONAL_DEVELOPMENT).contains(opportunityCategory)) {
+            for (PrismScope targetScope : targetScopes) {
+                advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts, null).forEach(at -> {
+                    advertTargets.put(at.getId(), at);
+                });
+            }
+        }
+        
+        User user = userService.getCurrentUser();
+        List<Integer> userAdverts = Lists.newArrayList();
+        for (PrismScope targetScope : targetScopes) {
+            userAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(targetScope, user));
+        }
+        
+        List<Integer> userAdvertTargets = advertDAO.getAdvertTargetsUserCanManage(user, userAdverts);
+        advertTargets.keySet().forEach(at -> {
+            if (userAdvertTargets.contains(at)) {
+                advertTargets.get(at).setCanManage(true);
+            }
+        });
+
+        return newArrayList(advertTargets.values());
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(User user) {
         List<Integer> connectAdverts = getAdvertsForWhichUserCanManageConnections(user);
         Set<AdvertTargetDTO> advertTargets = newHashSet(getAdvertTargetsReceived(user, connectAdverts, false));
-        advertTargets.addAll(getAdvertTargetsRequested(user, connectAdverts, advertTargets.stream().map(at -> at.getId()).collect(toList())));
+        advertTargets.addAll(getAdvertTargets(user, connectAdverts, advertTargets.stream().map(at -> at.getId()).collect(toList())));
         return newArrayList(advertTargets);
+    }
+
+    public List<AdvertTargetDTO> getAdvertTargets(User user, List<Integer> connectAdverts, List<Integer> exclusions) {
+        List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
+        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
+                advertTargets.addAll(
+                        advertDAO.getAdvertTargets(resourceScope, advertReference, advertReference.equals("advert") ? "targetAdvert" : "advert", user, connectAdverts, exclusions));
+            }
+        }
+        return advertTargets;
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(User user) {
         List<Integer> connectAdverts = getAdvertsForWhichUserCanManageConnections(user);
         return getAdvertTargetsReceived(user, connectAdverts, true);
-    }
-
-    public List<AdvertTargetDTO> getAdvertTargetsRequested(User user, List<Integer> connectAdverts, List<Integer> exclusions) {
-        List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
-        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(advertDAO.getAdvertTargetsRequested(resourceScope, advertReference, advertReference.equals("advert") ? "targetAdvert" : "advert", user,
-                        connectAdverts, exclusions));
-            }
-        }
-        return advertTargets;
     }
 
     public Integer getBackgroundImage(Advert advert) {
@@ -522,7 +573,7 @@ public class AdvertService {
     private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
         List<Integer> connectAdverts = Lists.newArrayList();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageConnections(resourceScope, user));
+            connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(resourceScope, user));
         }
         return connectAdverts;
     }
@@ -536,7 +587,7 @@ public class AdvertService {
         }
 
         advertTargets.forEach(advertTarget -> {
-            advertTarget.setCanAccept(true);
+            advertTarget.setCanManage(true);
         });
 
         return advertTargets;

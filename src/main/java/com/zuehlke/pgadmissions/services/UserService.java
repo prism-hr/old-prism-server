@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -425,22 +426,42 @@ public class UserService {
 
     public Set<Integer> getUsersForActivityNotification() {
         Set<Integer> users = Sets.newHashSet();
-        DateTime baseline = new DateTime().minusDays(1);
-        LocalDate lastNotifiedBaseline = baseline.toLocalDate().minusDays(3);
+        DateTime updateBaseline = new DateTime().minusDays(1);
+        LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(3);
 
         List<PrismScope> resourceScopes = scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM);
         int lastScopeIndex = (resourceScopes.size() - 1);
         for (int i = 0; i <= lastScopeIndex; i++) {
             PrismScope resourceScope = resourceScopes.get(i);
-            resourceScopes.subList(i, lastScopeIndex).forEach(roleScope -> {
-                users.addAll(userDAO.getUsersWithActivityForResourceScope(resourceScope, roleScope, baseline, lastNotifiedBaseline));
-                if (roleScope.ordinal() <= DEPARTMENT.ordinal()) {
-                    users.addAll(userDAO.getUsersWithActivityForPartnerResourceScope(resourceScope, roleScope, baseline, lastNotifiedBaseline));
-                }
+            users.addAll(userDAO.getUsersWithActivity(resourceScope, updateBaseline, lastNotifiedBaseline));
+            resourceScopes.subList(i, lastScopeIndex).forEach(parentScope -> {
+                users.addAll(userDAO.getUsersWithActivity(resourceScope, parentScope, updateBaseline, lastNotifiedBaseline));
             });
+
+            for (PrismScope targeterScope : targetScopes) {
+                if (resourceScope.ordinal() > targeterScope.ordinal()) {
+                    for (PrismScope targetScope : targetScopes) {
+                        users.addAll(userDAO.getUsersWithActivity(resourceScope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
+                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(resourceScope, targetScope, targeterScope, updateBaseline);
+                        if (!resources.isEmpty()) {
+                            users.addAll(userDAO.getUsersWithVerifiedRoles(resourceScope, resources));
+                        }
+                    }
+                }
+            }
         }
 
         users.addAll(userDAO.getUsersWithAppointmentsForApplications());
+
+        users.addAll(userDAO.getUsersWithConnectionsToVerify());
+        for (PrismScope targetScope : targetScopes) {
+            List<Integer> resources = resourceService.getResourcesWithUsersToVerify(targetScope);
+            if (!resources.isEmpty()) {
+                users.addAll(userDAO.getUsersWithUsersToVerify(targetScope, resources));
+            }
+            users.addAll(userDAO.getUsersWithConnectionsToVerify(targetScope));
+        }
+
         return users;
     }
 

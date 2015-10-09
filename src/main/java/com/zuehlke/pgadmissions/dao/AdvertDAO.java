@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableStateConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionJoinConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionVisibilityConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;

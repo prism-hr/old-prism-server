@@ -1,23 +1,23 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getTargetUserRoleConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraintNew;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -40,48 +40,24 @@ import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 @SuppressWarnings("unchecked")
 public class RoleDAO {
 
-    @Autowired
+    @Inject
+    private WorkflowDAO workflowDAO;
+
+    @Inject
     private SessionFactory sessionFactory;
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes) {
-        String resourceReference = resourceScope.getLowerCamelName();
 
-        Junction resourceConstraint = Restrictions.disjunction() //
-                .add(Restrictions.eqProperty("resource.id", "userRole." + resourceReference + ".id"));
-        parentScopes.forEach(parentScope -> {
-            String parentReference = parentScope.getLowerCamelName();
-            resourceConstraint.add(Restrictions.eqProperty("resource." + parentReference + ".id", "userRole." + parentReference + ".id"));
-        });
-
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinConstraint()) //
-                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+        return (List<PrismRole>) workflowDAO.getWorklflowCriteria(resourceScope, Projections.groupProperty("role.id"))
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(resourceConstraint) //
+                                .add(getUserRoleConstraint(resourceScope, parentScopes)) //
                                 .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
                         .add(getTargetUserRoleConstraint())) //
                 .add(getResourceStateActionConstraint()) //
-                .add(getEndorsementActionFilterConstraint())
+                .add(getEndorsementActionFilterConstraintNew())
                 .add(getUserEnabledConstraint(user)) //
                 .list();
     }
@@ -90,7 +66,7 @@ public class RoleDAO {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq("user", user)) //
-                .add(WorkflowDAOUtils.getUserRoleConstraint(resource)) //
+                .add(WorkflowDAO.getUserRoleConstraint(resource)) //
                 .list();
     }
 

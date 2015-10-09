@@ -32,7 +32,7 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.conjunction() //
                         .add(getUserRoleConstraint(resource)) //
                         .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                .add(getPartnerUserRoleConstraint()) //
+                .add(getTargetUserRoleConstraint()) //
                 .add(getResourceStateActionConstraint());
     }
 
@@ -42,7 +42,17 @@ public class WorkflowDAOUtils {
                 .add(getUserEnabledConstraint(user));
     }
 
-    public static Junction getPartnerUserRoleConstraint() {
+    public static Junction getTargetUserRoleConstraintNew() {
+        return Restrictions.conjunction() //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqProperty("departmentTargetDepartment.id", "userRole.department.id")) //
+                        .add(Restrictions.eqProperty("departmentTargetInstitution.id", "userRole.institution.id")) //
+                        .add(Restrictions.eqProperty("institutionTargetDepartment.id", "userRole.department.id")) //
+                        .add(Restrictions.eqProperty("institutionTargetInstitution.id", "userRole.institution.id"))) //
+                .add(Restrictions.eq("stateActionAssignment.externalMode", true));
+    }
+
+    public static Junction getTargetUserRoleConstraint() {
         return Restrictions.conjunction() //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eqProperty("targetAdvert.department", "userRole.department"))
@@ -63,11 +73,11 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
     }
 
-    public static Junction getSimilarUserRestriction(String searchTerm) {
-        return getSimilarUserRestriction(null, searchTerm);
+    public static Junction getSimilarUserConstraint(String searchTerm) {
+        return getSimilarUserConstraint(null, searchTerm);
     }
 
-    public static Junction getSimilarUserRestriction(String alias, String searchTerm) {
+    public static Junction getSimilarUserConstraint(String alias, String searchTerm) {
         alias = StringUtils.isEmpty(alias) ? "" : alias + ".";
         return Restrictions.disjunction() //
                 .add(Restrictions.like(alias + "firstName", searchTerm, MatchMode.START)) //
@@ -76,11 +86,26 @@ public class WorkflowDAOUtils {
                 .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
     }
 
-    public static Criterion getEndorsementActionJoinResolution() {
+    public static Criterion getEndorsementActionJoinConstraint() {
         return Restrictions.eq("ownerRole.role.id", DEPARTMENT_STUDENT);
     }
 
-    public static Junction getEndorsementActionFilterResolution() {
+    public static Junction getEndorsementActionFilterConstraintNew() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("action.partnershipState")) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.isNull("resourceTarget.partnershipState"))
+                                .add(Restrictions.eqProperty("action.partnershipState", "resourceTarget.partnershipState"))) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.isNull("advertDepartmentTarget.targetAdvertUser")) //
+                                .add(Restrictions.eqProperty("advertDepartmentTarget.targetAdvertUser", "userRole.user")) //
+                                .add(Restrictions.isNull("advertInstitutionTarget.targetAdvertUser")) //
+                                .add(Restrictions.eqProperty("advertInstitutionTarget.targetAdvertUser", "userRole.user")))
+                        .add(getEndorsementActionVisibilityConstraintNew()));
+    }
+
+    public static Junction getEndorsementActionFilterConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("action.partnershipState")) //
                 .add(Restrictions.conjunction() //
@@ -88,10 +113,24 @@ public class WorkflowDAOUtils {
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.isNull("target.targetAdvertUser")) //
                                 .add(Restrictions.eqProperty("target.targetAdvertUser", "userRole.user")))
-                        .add(getEndorsementActionVisibilityResolution()));
+                        .add(getEndorsementActionVisibilityConstraint()));
     }
 
-    public static Junction getEndorsementActionVisibilityResolution() {
+    public static Junction getEndorsementActionVisibilityConstraintNew() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.eq("scope.defaultShared", true)) //
+                        .add(Restrictions.eq("resource.shared", true))) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eqProperty("ownerDepartment.id", "departmentTargetDepartment.id"))
+                                .add(Restrictions.eqProperty("ownerDepartment.institution.id", "departmentTargetInstitution.id"))
+                                .add(Restrictions.eqProperty("ownerDepartment.id", "institutionTargetDepartment.id"))
+                                .add(Restrictions.eqProperty("ownerDepartment.institution.id", "institutionTargetInstitution.id")))
+                        .add(Restrictions.eq("resource.shared", true)));
+    }
+
+    public static Junction getEndorsementActionVisibilityConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("scope.defaultShared", true)) //

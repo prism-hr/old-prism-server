@@ -1,9 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterConstraintNew;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getTargetUserRoleConstraintNew;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserRoleWithPartnerConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
@@ -59,7 +60,7 @@ public class ActionDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -73,7 +74,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -97,7 +98,7 @@ public class ActionDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -111,7 +112,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -134,13 +135,27 @@ public class ActionDAO {
                         .add(Projections.min("stateActionAssignment.externalMode"), "onlyAsPartner") //
                         .add(Projections.property("action.declinableAction"), "declinable")) //
                 .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "resourceTarget", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.department", "advertDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advertDepartment.advert", "advertDepartmentAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advertDepartmentAdvert.targets", "advertDepartmentTarget", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advertDepartmentTarget.targetAdvert", "targetDepartmentAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targetDepartmentAdvert.department", "departmentTargetDepartment", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eqProperty("targetDepartmentAdvert.id", "departmentTargetDepartment.advert.id")) //
+                .createAlias("targetDepartmentAdvert.institution", "departmentTargetInstitution", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eqProperty("targetDepartmentAdvert.id", "departmentTargetInstitution.advert.id")) //
+                .createAlias("advert.institution", "advertInstitution", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advertInstitution.advert", "advertInstitutionAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advertInstitutionAdvert.targets", "advertInstitutionTarget", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advertInstitutionTarget.targetAdvert", "targetInstitutionAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targetInstitutionAdvert.department", "institutionTargetDepartment", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eqProperty("targetInstitutionAdvert.id", "institutionTargetDepartment.advert.id")) //
+                .createAlias("targetInstitutionAdvert.institution", "institutionTargetInstitution", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eqProperty("targetInstitutionAdvert.id", "institutionTargetInstitution.advert.id")) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -157,11 +172,10 @@ public class ActionDAO {
                         .add(Restrictions.conjunction() //
                                 .add(resourceConstraint) //
                                 .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                        .add(getPartnerUserRoleConstraint())) //
-                .add(getResourceStateActionConstraint()) //
+                        .add(getTargetUserRoleConstraintNew())) //
                 .add(getUserEnabledConstraint(user)) //
-                .add(getEndorsementActionFilterResolution())
-                .addOrder(Order.asc("resource.id"))
+                .add(getEndorsementActionFilterConstraintNew()) //
+                .addOrder(Order.asc("resource.id")) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
                 .addOrder(Order.asc("action.id")) //
@@ -245,7 +259,7 @@ public class ActionDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -260,7 +274,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 
@@ -274,7 +288,7 @@ public class ActionDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -289,7 +303,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 
@@ -303,7 +317,7 @@ public class ActionDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -317,7 +331,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 
@@ -331,7 +345,7 @@ public class ActionDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -346,7 +360,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 

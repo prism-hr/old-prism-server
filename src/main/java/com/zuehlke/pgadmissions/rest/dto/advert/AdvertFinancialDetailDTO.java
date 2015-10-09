@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
+
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.NumberFormat;
 
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 
 public class AdvertFinancialDetailDTO {
 
@@ -17,6 +19,11 @@ public class AdvertFinancialDetailDTO {
 
     public void setPay(AdvertFinancialDetailPayDTO pay) {
         this.pay = pay;
+    }
+
+    public AdvertFinancialDetailDTO withPay(AdvertFinancialDetailPayDTO pay) {
+        this.pay = pay;
+        return this;
     }
 
     public static class AdvertFinancialDetailPayDTO {

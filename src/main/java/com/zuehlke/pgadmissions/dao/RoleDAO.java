@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterResolution;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getPartnerUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionFilterConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceStateActionConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getTargetUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
@@ -62,7 +62,7 @@ public class RoleDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
@@ -79,9 +79,9 @@ public class RoleDAO {
                         .add(Restrictions.conjunction() //
                                 .add(resourceConstraint) //
                                 .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                        .add(getPartnerUserRoleConstraint())) //
+                        .add(getTargetUserRoleConstraint())) //
                 .add(getResourceStateActionConstraint()) //
-                .add(getEndorsementActionFilterResolution())
+                .add(getEndorsementActionFilterConstraint())
                 .add(getUserEnabledConstraint(user)) //
                 .list();
     }
@@ -230,7 +230,7 @@ public class RoleDAO {
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(getPartnerUserRoleConstraint())
+                .add(getTargetUserRoleConstraint())
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .addOrder(Order.asc("scope.ordinal")) //

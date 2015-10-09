@@ -108,6 +108,7 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertCompetenceDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO.AdvertFinancialDetailPayDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
@@ -826,55 +827,58 @@ public class AdvertService {
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
             LocalDate baseline) {
-        PrismDurationUnit interval = financialDetailsDTO.getInterval();
-        String currencySpecified = financialDetailsDTO.getCurrency();
+        AdvertFinancialDetailPayDTO payDTO = financialDetailsDTO.getPay();
+        if (payDTO != null) {
+            PrismDurationUnit interval = payDTO.getInterval();
+            String currencySpecified = payDTO.getCurrency();
 
-        financialDetails.setInterval(interval);
-        financialDetails.setCurrencySpecified(currencySpecified);
-        financialDetails.setCurrencyAtLocale(currencyAtLocale);
+            financialDetails.setInterval(interval);
+            financialDetails.setCurrencySpecified(currencySpecified);
+            financialDetails.setCurrencyAtLocale(currencyAtLocale);
 
-        String intervalPrefixSpecified = interval.name().toLowerCase();
-        BigDecimal minimumSpecified = financialDetailsDTO.getMinimum();
-        BigDecimal maximumSpecified = financialDetailsDTO.getMaximum();
+            String intervalPrefixSpecified = interval.name().toLowerCase();
+            BigDecimal minimumSpecified = payDTO.getMinimum();
+            BigDecimal maximumSpecified = payDTO.getMaximum();
 
-        String intervalPrefixGenerated;
-        BigDecimal minimumGenerated;
-        BigDecimal maximumGenerated;
+            String intervalPrefixGenerated;
+            BigDecimal minimumGenerated;
+            BigDecimal maximumGenerated;
 
-        if (interval == MONTH) {
-            intervalPrefixGenerated = YEAR.name().toLowerCase();
-            minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
-            maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
-        } else {
-            intervalPrefixGenerated = MONTH.name().toLowerCase();
-            minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
-            maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
-        }
+            if (interval == MONTH) {
+                intervalPrefixGenerated = YEAR.name().toLowerCase();
+                minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
+                maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
+            } else {
+                intervalPrefixGenerated = MONTH.name().toLowerCase();
+                minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
+                maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
+            }
 
-        setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                maximumGenerated, "Specified");
-        if (currencySpecified.equals(currencyAtLocale)) {
             setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                    maximumGenerated, "AtLocale");
-        } else {
-            try {
-                BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-                setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
-                        minimumGenerated, maximumGenerated, rate);
-            } catch (Exception e) {
-                logger.error("Problem performing currency conversion", e);
+                    maximumGenerated, "Specified");
+            if (currencySpecified.equals(currencyAtLocale)) {
+                setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
+                        maximumGenerated, "AtLocale");
+            } else {
+                try {
+                    BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
+                    setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
+                            minimumGenerated, maximumGenerated, rate);
+                } catch (Exception e) {
+                    logger.error("Problem performing currency conversion", e);
+                }
             }
         }
     }
 
     private AdvertFinancialDetailDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
         if (detail != null) {
-            AdvertFinancialDetailDTO detailDTO = new AdvertFinancialDetailDTO();
-            detailDTO.setCurrency(newCurrency);
+            AdvertFinancialDetailPayDTO payDTO = new AdvertFinancialDetailPayDTO();
+            payDTO.setCurrency(newCurrency);
 
             PrismDurationUnit interval = detail.getInterval();
             String intervalPrefix = interval.name().toLowerCase();
-            detailDTO.setInterval(interval);
+            payDTO.setInterval(interval);
 
             String oldCurrency = detail.getCurrencySpecified();
 
@@ -883,10 +887,10 @@ public class AdvertService {
             BigDecimal minimumSpecified = (BigDecimal) getProperty(detail, intervalPrefix + "MinimumSpecified");
             BigDecimal maximumSpecified = (BigDecimal) getProperty(detail, intervalPrefix + "MaximumSpecified");
 
-            setProperty(detailDTO, "minimum", minimumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
-            setProperty(detailDTO, "maximum", maximumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
+            setProperty(payDTO, "minimum", minimumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
+            setProperty(payDTO, "maximum", maximumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
 
-            return detailDTO;
+            return new AdvertFinancialDetailDTO().withPay(payDTO);
         }
         return null;
     }

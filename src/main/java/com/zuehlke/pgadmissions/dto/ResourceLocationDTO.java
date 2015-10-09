@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
-
 import java.math.BigDecimal;
+
+import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 
 public class ResourceLocationDTO extends ResourceSimpleDTO {
 

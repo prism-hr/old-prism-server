@@ -418,23 +418,28 @@ public class ResourceService {
             boolean hasRedactions = actionService.hasRedactions(user, scope);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, sequenceId, recordsToRetrieve, hasRedactions);
 
-            Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
-            Set<Integer> filteredResourceIds = rowIndex.keySet();
+            if (!rows.isEmpty()) {
+                Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
+                Set<Integer> filteredResourceIds = rowIndex.keySet();
 
-            LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResourceIds) : LinkedHashMultimap.create();
-            LinkedHashMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(scope, filteredResourceIds, user) : LinkedHashMultimap.create();
+                LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResourceIds)
+                        : LinkedHashMultimap.create();
+                LinkedHashMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(scope, filteredResourceIds, user)
+                        : LinkedHashMultimap.create();
 
-            Collection<Integer> filteredNativeOwnerResourceIds = ListUtils.removeAll(filteredResourceIds, onlyAsPartnerResourceIds);
-            LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredNativeOwnerResourceIds);
+                Collection<Integer> filteredNativeOwnerResourceIds = ListUtils.removeAll(filteredResourceIds, onlyAsPartnerResourceIds);
+                LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredNativeOwnerResourceIds);
 
-            rowIndex.keySet().forEach(resourceId -> {
-                ResourceListRowDTO row = rowIndex.get(resourceId);
-                row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
+                rowIndex.keySet().forEach(resourceId -> {
+                    ResourceListRowDTO row = rowIndex.get(resourceId);
+                    row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
 
-                List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
-                actions.addAll(creationActions.get(resourceId));
-                row.setActions(actions);
-            });
+                    List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
+                    actions.addAll(creationActions.get(resourceId));
+                    row.setActions(actions);
+                });
+            }
+            
             return rows;
         }
 
@@ -820,29 +825,34 @@ public class ResourceService {
     private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
             Class<T> responseClass) {
         Set<T> resources = Sets.newHashSet();
-        Boolean onlyAsPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
-        addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass), resources, onlyAsPartner);
+        Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
+        addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass), resources, asPartner);
 
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScopeId : parentScopes) {
-                addResources(resourceDAO.getResources(user, scope, parentScopeId, filter, columns, conditions, responseClass), resources, onlyAsPartner);
+                addResources(resourceDAO.getResources(user, scope, parentScopeId, filter, columns, conditions, responseClass), resources, asPartner);
             }
 
-            onlyAsPartner = onlyAsPartner == null ? null : true;
-            for (PrismScope partnerScopeId : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
-                addResources(resourceDAO.getPartnerResources(user, scope, partnerScopeId, filter, columns, conditions, responseClass), resources, onlyAsPartner);
+            asPartner = asPartner == null ? null : true;
+            PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+            for (PrismScope targetScope : targetScopes) {
+                for (PrismScope targeterScope : targetScopes) {
+                    if (scope.ordinal() > targeterScope.ordinal()) {
+                        addResources(resourceDAO.getTargeterResources(user, scope, targetScope, targeterScope, filter, columns, conditions, responseClass), resources, asPartner);
+                    }
+                }
             }
         }
 
         return resources;
     }
 
-    private <T> void addResources(List<T> resources, Set<T> resourcesFiltered, Boolean onlyAsPartner) {
-        boolean processOnlyAsPartner = onlyAsPartner != null;
+    private <T> void addResources(List<T> resources, Set<T> resourcesFiltered, Boolean asPartner) {
+        boolean processOnlyAsPartner = asPartner != null;
         resources.forEach(resource -> {
             resourcesFiltered.add(resource);
             if (processOnlyAsPartner) {
-                ((ResourceOpportunityCategoryDTO) resource).setOnlyAsPartner(onlyAsPartner);
+                ((ResourceOpportunityCategoryDTO) resource).setOnlyAsPartner(asPartner);
             }
         });
     }

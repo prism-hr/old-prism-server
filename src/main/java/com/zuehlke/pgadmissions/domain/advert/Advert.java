@@ -133,10 +133,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private Set<AdvertTarget> targets = Sets.newHashSet();
 
     @OrderBy(clause = "id")
-    @OneToMany(mappedBy = "targetAdvert")
-    private Set<AdvertTarget> reverseTargets = Sets.newHashSet();
-
-    @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertCompetence> competences = Sets.newHashSet();
 
@@ -334,10 +330,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public Set<AdvertTarget> getTargets() {
         return targets;
-    }
-
-    public Set<AdvertTarget> getReverseTargets() {
-        return reverseTargets;
     }
 
     public Set<AdvertCompetence> getCompetences() {

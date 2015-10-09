@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
-import com.google.common.base.Objects;
-
 import static org.apache.commons.lang3.ObjectUtils.compare;
+
+import com.google.common.base.Objects;
 
 public class UserRepresentation implements Comparable<UserRepresentation> {
 

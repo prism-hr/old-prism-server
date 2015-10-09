@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableStateConstraint;
@@ -435,13 +435,13 @@ public class AdvertDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN)
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN, //
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq("resource.advert", advert)) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.in("stateAction.action.id",
                         asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList()))) //
-                .add(getEndorsementActionVisibilityResolution()) //
+                .add(getEndorsementActionVisibilityConstraint()) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .list();

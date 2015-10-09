@@ -18,8 +18,8 @@ import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCategoriesEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertCompetencesEvaluator;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertTargetsEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertDetailsEvaluator;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceAdvertTargetsEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
 import com.zuehlke.pgadmissions.workflow.evaluators.ResourceDetailsEvaluator;
 

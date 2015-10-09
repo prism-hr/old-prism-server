@@ -2,11 +2,11 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinResolution;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityResolution;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionJoinConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getEndorsementActionVisibilityConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getResourceParentManageableConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserRestriction;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAOUtils.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
@@ -251,16 +251,19 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> List<T> getPartnerResources(User user, PrismScope scope, PrismScope partnerScope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
-            Class<T> responseClass) {
+    public <T> List<T> getTargeterResources(User user, PrismScope scope, PrismScope targetScope, PrismScope targeterScope, ResourceListFilterDTO filter, ProjectionList columns,
+            Junction conditions, Class<T> responseClass) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(columns) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN)
-                .createAlias("targetAdvert." + partnerScope.getLowerCamelName(), "partnerResource", JoinType.INNER_JOIN) //
-                .createAlias("partnerResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
+                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
+                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
@@ -272,11 +275,11 @@ public class ResourceDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinResolution()) //
+                        getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(getEndorsementActionVisibilityResolution())
+                .add(getEndorsementActionVisibilityConstraint())
                 .add(Restrictions.isNull("state.hidden"));
 
         appendResourceListFilterCriteria(criteria, conditions, filter);
@@ -304,7 +307,7 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property(prismScope.getLowerCamelName() + ".id")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(getSimilarUserRestriction("user", searchTerm)) //
+                .add(getSimilarUserConstraint("user", searchTerm)) //
                 .add(Restrictions.in("role.id", prismRoles)) //
                 .list();
     }

@@ -1,29 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.getSystemStudyOption;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_IMPORT_PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_RESTORE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
-import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.zuehlke.pgadmissions.dao.ImportedEntityDAO;
@@ -36,13 +12,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.department.Department;
-import com.zuehlke.pgadmissions.domain.imported.AgeRange;
-import com.zuehlke.pgadmissions.domain.imported.Domicile;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntity;
-import com.zuehlke.pgadmissions.domain.imported.ImportedEntityFeed;
-import com.zuehlke.pgadmissions.domain.imported.ImportedInstitution;
-import com.zuehlke.pgadmissions.domain.imported.OpportunityType;
-import com.zuehlke.pgadmissions.domain.imported.StudyOption;
+import com.zuehlke.pgadmissions.domain.imported.*;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
@@ -57,6 +27,26 @@ import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.Programm
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.ModeOfAttendance;
 import com.zuehlke.pgadmissions.referencedata.jaxb.ProgrammeOccurrences.ProgrammeOccurrence.Programme;
 import com.zuehlke.pgadmissions.rest.dto.application.ImportedInstitutionDTO;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption.getSystemStudyOption;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_PENDING_REACTIVATION;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareRowsForSqlInsert;
+import static com.zuehlke.pgadmissions.utils.PrismQueryUtils.prepareStringForInsert;
 
 @Service
 @Transactional
@@ -260,6 +250,7 @@ public class ImportedEntityService {
             Advert transientAdvert = new Advert().withTitle(transientTitle);
             transientAdvert.setAddress(advertService.createAddressCopy(institution.getAdvert().getAddress()));
             transientProgram.setAdvert(transientAdvert);
+            entityService.save(transientAdvert);
             entityService.save(transientProgram);
             return transientProgram;
         } else {

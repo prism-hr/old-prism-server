@@ -23,8 +23,8 @@ public class InstitutionLogoProcessor implements ImageDocumentProcessor {
                 throw new PrismBadRequestException("Uploaded file is not valid image file");
             }
 
-            final int WIDTH = 1200;
-            final int HEIGHT = 630;
+            final int WIDTH = 320;
+            final int HEIGHT = 250;
             boolean fitToWidth = (float) image.getWidth() / WIDTH >= (float) image.getHeight() / HEIGHT;
             if (fitToWidth) {
                 image = Scalr.resize(image, Scalr.Mode.FIT_TO_WIDTH, WIDTH, HEIGHT);

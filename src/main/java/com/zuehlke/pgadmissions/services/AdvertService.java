@@ -287,9 +287,9 @@ public class AdvertService {
                     performed = true;
                 } else {
                     String acceptResourceReference = acceptResource.getResourceScope().name();
-                    if (roleService.hasUserRole(acceptResource, acceptUser, PrismRole.valueOf(acceptResourceReference + "_ADMINISTRATOR"),
+                    if (roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResourceReference + "_ADMINISTRATOR"),
                             PrismRole.valueOf(acceptResourceReference + "_APPROVER"))) {
-                        processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
+                        processAdvertTarget(advertTargetId, acceptResource, user, partnershipState);
                         performed = true;
                     }
                 }

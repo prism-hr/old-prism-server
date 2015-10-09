@@ -517,23 +517,15 @@ public class ResourceService {
     }
 
     public List<PrismAction> getPartnerActions(ResourceParent resource) {
-        List<PrismActionCondition> filteredActionConditions = Lists.newLinkedList();
-        List<ResourceCondition> actionConditions = resourceDAO
-                .getResourceAttributes(resource, ResourceCondition.class, "actionCondition", null);
+        List<PrismActionCondition> actionConditions = Lists.newLinkedList();
+        List<ResourceCondition> resourceConditions = resourceDAO
+                .getResourceAttributesStrict(resource, ResourceCondition.class, "actionCondition");
 
-        PrismScope lastResourceScope = null;
-        for (ResourceCondition actionCondition : actionConditions) {
-            PrismScope thisResourceScope = actionCondition.getResource().getResourceScope();
-            if (lastResourceScope != null && !thisResourceScope.equals(lastResourceScope)) {
-                break;
-            }
-            filteredActionConditions.add(actionCondition.getActionCondition());
-            lastResourceScope = thisResourceScope;
+        for (ResourceCondition resourceCondition : resourceConditions) {
+            actionConditions.add(resourceCondition.getActionCondition());
         }
 
-        Resource lastResource = resource.getEnclosingResource(lastResourceScope);
-        List<PrismAction> partnerActions = actionService.getPartnerActions(lastResource, filteredActionConditions);
-        return partnerActions;
+        return actionConditions.isEmpty() ? Lists.<PrismAction> newArrayList() : actionService.getPartnerActions(resource, actionConditions);
     }
 
     public ResourceStudyOption getStudyOption(ResourceOpportunity resource, StudyOption studyOption) {

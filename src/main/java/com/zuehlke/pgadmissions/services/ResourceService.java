@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -439,7 +440,7 @@ public class ResourceService {
                     row.setActions(actions);
                 });
             }
-            
+
             return rows;
         }
 
@@ -801,6 +802,14 @@ public class ResourceService {
         }
     }
 
+    public List<Integer> getResourcesWithUsersToVerify(PrismScope resourceScope) {
+        return resourceDAO.getResourcesWithUsersToVerify(resourceScope);
+    }
+
+    public List<Integer> getResourcesWithNewOpportunities(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime createdBaseline) {
+        return resourceDAO.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, createdBaseline);
+    }
+
     private void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
         Action viewEditAction = actionService.getViewEditAction(resource);
         boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, userService.getCurrentUser(), false);
@@ -834,11 +843,10 @@ public class ResourceService {
             }
 
             asPartner = asPartner == null ? null : true;
-            PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
-            for (PrismScope targetScope : targetScopes) {
-                for (PrismScope targeterScope : targetScopes) {
-                    if (scope.ordinal() > targeterScope.ordinal()) {
-                        addResources(resourceDAO.getTargeterResources(user, scope, targetScope, targeterScope, filter, columns, conditions, responseClass), resources, asPartner);
+            for (PrismScope targeterScope : targetScopes) {
+                if (scope.ordinal() > targeterScope.ordinal()) {
+                    for (PrismScope targetScope : targetScopes) {
+                        addResources(resourceDAO.getResources(user, scope, targetScope, targetScope, filter, columns, conditions, responseClass), resources, asPartner);
                     }
                 }
             }

@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraintNew;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceStateActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraintNew;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithPartnerConstraint;
@@ -56,7 +56,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraintNew())
+                .add(getEndorsementActionFilterConstraint())
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -73,7 +73,7 @@ public class ActionDAO {
     public Action getPermittedAction(Resource resource, Action action, User user) {
         return (Action) workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.property("stateAction.action"))
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraintNew())
+                .add(getEndorsementActionFilterConstraint())
                 .setMaxResults(1) //
                 .uniqueResult();
     }
@@ -91,9 +91,9 @@ public class ActionDAO {
                         .add(Restrictions.conjunction() //
                                 .add(getUserRoleConstraint(resourceScope, parentScopes)) //
                                 .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                        .add(getTargetUserRoleConstraintNew())) //
+                        .add(getTargetUserRoleConstraint())) //
                 .add(getUserEnabledConstraint(user)) //
-                .add(getEndorsementActionFilterConstraintNew()) //
+                .add(getEndorsementActionFilterConstraint()) //
                 .addOrder(Order.asc("resource.id")) //
                 .addOrder(Order.desc("raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
@@ -174,7 +174,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraintNew())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 
@@ -184,7 +184,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraintNew())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 
@@ -193,7 +193,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraintNew())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 
@@ -203,7 +203,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action.id", actionId)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(getUserRoleWithPartnerConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraintNew())
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 

@@ -3,7 +3,7 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionJoinConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionVisibilityConstraintNew;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionVisibilityConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
@@ -437,7 +437,7 @@ public class AdvertDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.in("stateAction.action.id",
                         asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList()))) //
-                .add(getEndorsementActionVisibilityConstraintNew()) //
+                .add(getEndorsementActionVisibilityConstraint()) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .list();

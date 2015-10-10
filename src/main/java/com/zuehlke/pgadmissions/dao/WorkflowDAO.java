@@ -38,14 +38,19 @@ public class WorkflowDAO {
     private SessionFactory sessionFactory;
 
     public static PrismScope[] parentScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
-    
+
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     public Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets", "resourceTarget", JoinType.LEFT_OUTER_JOIN);
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targetAdvert.department", "targetDepartment", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eqProperty("targetAdvert.id", "targetDepartment.advert.id")) //
+                .createAlias("targetAdvert.institution", "targetInstitution", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eqProperty("targetAdvert.id", "targetInstitution.advert.id"));
 
         for (PrismScope targeterScope : parentScopes) {
             String targeterScopeLower = targeterScope.getLowerCamelName();
@@ -123,7 +128,7 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public Criteria getWorkflowCriteriaList(PrismScope resourceScope,  PrismScope targeterScope, PrismScope targetScope, Projection projection) {
+    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, Projection projection) {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
@@ -149,7 +154,7 @@ public class WorkflowDAO {
                         getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(getEndorsementActionVisibilityConstraintNew()) //
+                .add(getEndorsementActionVisibilityConstraint()) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
@@ -190,22 +195,15 @@ public class WorkflowDAO {
                 .add(getUserEnabledConstraint(user));
     }
 
-    public static Junction getTargetUserRoleConstraintNew() {
+    public static Junction getTargetUserRoleConstraint() {
         return Restrictions.conjunction() //
                 .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqProperty("targetDepartment.id", "userRole.department.id")) //
+                        .add(Restrictions.eqProperty("targetInstitution.id", "userRole.institution.id")) //
                         .add(Restrictions.eqProperty("departmentTargetDepartment.id", "userRole.department.id")) //
                         .add(Restrictions.eqProperty("departmentTargetInstitution.id", "userRole.institution.id")) //
                         .add(Restrictions.eqProperty("institutionTargetDepartment.id", "userRole.department.id")) //
                         .add(Restrictions.eqProperty("institutionTargetInstitution.id", "userRole.institution.id"))) //
-                .add(Restrictions.eq("stateActionAssignment.externalMode", true));
-    }
-
-    public static Junction getTargetUserRoleConstraint() {
-        return Restrictions.conjunction() //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eqProperty("targetAdvert.department", "userRole.department"))
-                        .add(Restrictions.eqProperty("targetAdvert.institution", "userRole.institution"))
-                        .add(Restrictions.eqProperty("targetAdvert.system", "userRole.system")))
                 .add(Restrictions.eq("stateActionAssignment.externalMode", true));
     }
 
@@ -238,22 +236,22 @@ public class WorkflowDAO {
         return Restrictions.eq("ownerRole.role.id", DEPARTMENT_STUDENT);
     }
 
-    public static Junction getEndorsementActionFilterConstraintNew() {
+    public static Junction getEndorsementActionFilterConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("action.partnershipState")) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
-                                .add(Restrictions.isNull("resourceTarget.partnershipState"))
-                                .add(Restrictions.eqProperty("action.partnershipState", "resourceTarget.partnershipState"))) //
+                                .add(Restrictions.isNull("target.id"))
+                                .add(Restrictions.eqProperty("action.partnershipState", "target.partnershipState"))) //
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.isNull("advertDepartmentTarget.targetAdvertUser")) //
                                 .add(Restrictions.eqProperty("advertDepartmentTarget.targetAdvertUser", "userRole.user")) //
                                 .add(Restrictions.isNull("advertInstitutionTarget.targetAdvertUser")) //
                                 .add(Restrictions.eqProperty("advertInstitutionTarget.targetAdvertUser", "userRole.user")))
-                        .add(getEndorsementActionVisibilityConstraintNew()));
+                        .add(getEndorsementActionVisibilityConstraint()));
     }
 
-    public static Junction getEndorsementActionVisibilityConstraintNew() {
+    public static Junction getEndorsementActionVisibilityConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("scope.defaultShared", true)) //

@@ -616,7 +616,12 @@ public class AdvertService {
     private void appendResourceUserTargets(User user, PrismScope resourceScope, Integer resourceId, Set<Integer> possibleTargets) {
         if (resourceScope == null) {
             possibleTargets.addAll(advertDAO.getUserAdvertIds(INSTITUTION, user));
-            possibleTargets.addAll(advertDAO.getUserAdvertIds(DEPARTMENT, user));
+
+            List<Integer> departmentAdverts = advertDAO.getUserAdvertIds(DEPARTMENT, user);
+            if (!departmentAdverts.isEmpty()) {
+                possibleTargets.addAll(departmentAdverts);
+                possibleTargets.addAll(advertDAO.getParentAdvertIds(DEPARTMENT, INSTITUTION, departmentAdverts));
+            }
         } else if (resourceScope.equals(INSTITUTION)) {
             possibleTargets.addAll(asList(advertDAO.getUserAdvertId(INSTITUTION, resourceId, user)));
             possibleTargets.addAll(advertDAO.getUserAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));

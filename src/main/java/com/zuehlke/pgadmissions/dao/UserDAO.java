@@ -448,6 +448,17 @@ public class UserDAO {
                 .list();
     }
 
+    public List<Integer> getUsersWithVerifiedRolesForChildResource(PrismScope resourceScope, PrismScope childScope, Collection<Integer> resources) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("userRole.user.id")) //
+                .createAlias(childScope.getLowerCamelName() + "s", "childResource", JoinType.INNER_JOIN) //
+                .createAlias("childResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", resources)) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .list();
+    }
+
     public List<ProfileListRowDTO> getUserProfiles(List<Integer> departments, ProfileListFilterDTO filter) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //

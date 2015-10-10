@@ -442,9 +442,14 @@ public class UserService {
                 if (resourceScope.ordinal() > targeterScope.ordinal()) {
                     for (PrismScope targetScope : parentScopes) {
                         users.addAll(userDAO.getUsersWithActivity(resourceScope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
-                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(resourceScope, targetScope, targeterScope, updateBaseline);
+                        
+                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, updateBaseline);
                         if (!resources.isEmpty()) {
-                            users.addAll(userDAO.getUsersWithVerifiedRoles(resourceScope, resources));
+                            users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
+                            
+                            if (targetScope.equals(DEPARTMENT)) {
+                                users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
+                            }
                         }
                     }
                 }
@@ -454,12 +459,12 @@ public class UserService {
         users.addAll(userDAO.getUsersWithAppointmentsForApplications());
 
         users.addAll(userDAO.getUsersWithConnectionsToVerify());
-        for (PrismScope targetScope : parentScopes) {
-            List<Integer> resources = resourceService.getResourcesWithUsersToVerify(targetScope);
+        for (PrismScope parentScope : parentScopes) {
+            List<Integer> resources = resourceService.getResourcesWithUsersToVerify(parentScope);
             if (!resources.isEmpty()) {
-                users.addAll(userDAO.getUsersWithUsersToVerify(targetScope, resources));
+                users.addAll(userDAO.getUsersWithUsersToVerify(parentScope, resources));
             }
-            users.addAll(userDAO.getUsersWithConnectionsToVerify(targetScope));
+            users.addAll(userDAO.getUsersWithConnectionsToVerify(parentScope));
         }
 
         return users;

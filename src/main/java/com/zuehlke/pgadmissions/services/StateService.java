@@ -152,7 +152,7 @@ public class StateService {
         return stateDAO.getStateTransitionsPending(scopeId);
     }
 
-    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) throws Exception {
+    public StateTransition executeStateTransition(Resource resource, Action action, Comment comment) {
         return executeStateTransition(resource, action, comment, true);
     }
 
@@ -218,7 +218,7 @@ public class StateService {
         return getStateTransition(resource, comment.getAction(), resource.getState().getId());
     }
 
-    public void executeDeferredStateTransition(PrismScope resourceScope, Integer resourceId, PrismAction actionId) throws Exception {
+    public void executeDeferredStateTransition(PrismScope resourceScope, Integer resourceId, PrismAction actionId) {
         Resource resource = resourceService.getById(resourceScope, resourceId);
         Action action = actionService.getById(actionId);
         Comment comment = new Comment().withResource(resource).withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false)

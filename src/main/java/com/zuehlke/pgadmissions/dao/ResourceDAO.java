@@ -223,9 +223,9 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targetScope, PrismScope targeterScope, ResourceListFilterDTO filter, ProjectionList columns,
+    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, ResourceListFilterDTO filter, ProjectionList columns,
             Junction conditions, Class<T> responseClass) {
-        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targetScope, targeterScope, columns)
+        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, columns)
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter);
         return (List<T>) criteria //

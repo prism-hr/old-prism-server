@@ -22,6 +22,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -515,8 +516,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, String query) {
-        return (List<ResourceSimpleDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+    public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, Optional<String> query) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("state.scope.id").as("scope")) //
                         .add(Projections.property("resource.id").as("id")) //
@@ -524,9 +525,13 @@ public class ResourceDAO {
                         .add(Projections.property("state.id").as("stateId"))) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
-                .add(Restrictions.like("resource.name", query, MatchMode.ANYWHERE)) //
-                .add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
+                .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
+
+        if (query.isPresent()) {
+            criteria.add(Restrictions.like("resource.name", query.get(), MatchMode.ANYWHERE));
+        }
+
+        return (List<ResourceSimpleDTO>) criteria.add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
                 .addOrder(Order.asc("resource.name")) //
                 .addOrder(Order.asc("resource.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //

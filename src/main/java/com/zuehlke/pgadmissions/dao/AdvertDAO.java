@@ -449,6 +449,16 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
+    public AdvertTarget getSimilarAdvertTarget(AdvertTarget advertTarget, User user) {
+        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.ne("id", advertTarget.getId())) //
+                .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
+                .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
+                .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
+                .add(Restrictions.eq("acceptAdvertUser", user)) //
+                .uniqueResult();
+    }
+
     public List<Integer> getAdvertIds(PrismScope resourceScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("advert.id")) //
@@ -525,7 +535,11 @@ public class AdvertDAO {
                 .setProjection(Projections.property("id"));
 
         if (isNotEmpty(adverts)) {
-            criteria.add(Restrictions.in("acceptAdvert.id", adverts));
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.in("acceptAdvert.id", adverts)) //
+                    .add(Restrictions.eq("acceptAdvertUser", user)));
+        } else {
+            criteria.add(Restrictions.eq("acceptAdvertUser", user));
         }
 
         return (List<Integer>) criteria.add(Restrictions.eq("acceptAdvertUser", user)) //

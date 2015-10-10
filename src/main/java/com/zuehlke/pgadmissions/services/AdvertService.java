@@ -332,9 +332,13 @@ public class AdvertService {
                     performed = true;
                 } else {
                     String acceptResourceReference = acceptResource.getResourceScope().name();
-                    if (roleService.hasUserRole(acceptResource, acceptUser, PrismRole.valueOf(acceptResourceReference + "_ADMINISTRATOR"),
+                    if (roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResourceReference + "_ADMINISTRATOR"),
                             PrismRole.valueOf(acceptResourceReference + "_APPROVER"))) {
-                        processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
+                        processAdvertTarget(advertTargetId, acceptResource, user, partnershipState);
+
+                        AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, acceptUser);
+                        similarAdvertTarget.setPartnershipState(partnershipState);
+
                         performed = true;
                     }
                 }
@@ -634,12 +638,12 @@ public class AdvertService {
         }
     }
 
-    private void processAdvertTarget(Integer advertTargetId, ResourceParent acceptResource, User acceptUser, PrismPartnershipState partnershipState) {
+    private void processAdvertTarget(Integer advertTargetId, ResourceParent acceptResource, User user, PrismPartnershipState partnershipState) {
         if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
-            resourceService.activateResource(acceptResource, acceptUser);
-            // TODO - send the connection confirmation
+            resourceService.activateResource(acceptResource, user);
         }
         advertDAO.processAdvertTarget(advertTargetId, partnershipState);
+        // TODO - send the connection confirmation
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

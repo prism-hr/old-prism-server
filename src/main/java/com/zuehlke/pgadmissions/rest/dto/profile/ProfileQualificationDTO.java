@@ -23,14 +23,13 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     @NotNull
     private ResourceRelationInvitationDTO resource;
 
+    private String description;
+
     @NotNull
     @DateNotFuture
     private LocalDate startDate;
 
     private LocalDate awardDate;
-
-    @NotEmpty
-    private String description;
 
     @NotEmpty
     @Size(max = 200)
@@ -58,6 +57,14 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
         this.resource = resource;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -72,14 +79,6 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getGrade() {

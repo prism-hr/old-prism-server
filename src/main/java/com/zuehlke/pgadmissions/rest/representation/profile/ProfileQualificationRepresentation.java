@@ -12,11 +12,11 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     private ResourceRelationInvitationRepresentation resource;
 
+    private String description;
+    
     private LocalDate startDate;
 
     private LocalDate awardDate;
-
-    private String description;
 
     private String grade;
 
@@ -40,6 +40,14 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         this.resource = resource;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -54,14 +62,6 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getGrade() {
@@ -97,6 +97,11 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         this.resource = resource;
         return this;
     }
+    
+    public ProfileQualificationRepresentation withDescription(final String description) {
+        this.description = description;
+        return this;
+    }
 
     public ProfileQualificationRepresentation withStartDate(LocalDate startDate) {
         this.startDate = startDate;
@@ -107,12 +112,7 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         this.awardDate = awardDate;
         return this;
     }
-
-    public ProfileQualificationRepresentation withDescription(final String description) {
-        this.description = description;
-        return this;
-    }
-
+    
     public ProfileQualificationRepresentation withGrade(String grade) {
         this.grade = grade;
         return this;

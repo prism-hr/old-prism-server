@@ -39,6 +39,9 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
+    @Column(name = "description", nullable = false)
+    private String description;
+    
     @Column(name = "start_year", nullable = false)
     private Integer startYear;
 
@@ -50,9 +53,6 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
 
     @Column(name = "end_month")
     private Integer endMonth;
-
-    @Column(name = "description", nullable = false)
-    private String description;
 
     @Column(name = "current", nullable = false)
     private Boolean current;
@@ -89,6 +89,16 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
+    }
+    
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -139,16 +149,6 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     @Override
     public void setEndMonth(Integer endMonth) {
         this.endMonth = endMonth;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override

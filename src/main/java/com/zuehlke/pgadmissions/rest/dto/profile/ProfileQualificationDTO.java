@@ -1,18 +1,16 @@
 package com.zuehlke.pgadmissions.rest.dto.profile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
-
+import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.LocalDate;
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @DateNotAfterDate(startDate = "startDate", endDate = "awardDate")
 public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO {
@@ -28,6 +26,9 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     private LocalDate startDate;
 
     private LocalDate awardDate;
+
+    @NotEmpty
+    private String description;
 
     @NotEmpty
     @Size(max = 200)
@@ -69,6 +70,14 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getGrade() {

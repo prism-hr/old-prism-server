@@ -1,22 +1,14 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.workflow.user.ApplicationEmploymentPositionReassignmentProcessor;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "application_employment_position", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })
@@ -50,6 +42,9 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
 
     @Column(name = "end_month")
     private Integer endMonth;
+
+    @Column(name = "description", nullable = false)
+    private String description;
 
     @Column(name = "current", nullable = false)
     private Boolean current;
@@ -139,6 +134,16 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
     public Boolean getCurrent() {
         return current;
     }
@@ -167,7 +172,7 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     public boolean isResourceUserAssignmentProperty() {
         return false;
     }
-    
+
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature().addProperty("startYear", startYear);

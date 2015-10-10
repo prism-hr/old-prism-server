@@ -6,6 +6,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
+
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
     /*
@@ -931,21 +933,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
-            "Confirm Interview Arrangements Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
-            "Confirm Offer Acceptance Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
-            "Confirm Offer Acceptance Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Arrangements Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Rejection Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
-            "Provide Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Interview Availability Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Interview Availability Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Reference Request"),
     SYSTEM_NOTIFICATION_APPLICATION_REVERSE_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Rejection Reversed Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_TERMINATE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Terminate Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
-            "Update Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Update Interview Availability Notification"),
     SYSTEM_NOTIFICATION_INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_INSTITUTION_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
     SYSTEM_NOTIFICATION_DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
@@ -1092,8 +1089,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
-    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take to confirm the eligibility of an applicant"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reference Duration"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant references"),
     SYSTEM_APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Review Duration"),
@@ -1101,26 +1097,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Interview Scheduling Duration"),
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to schedule an interview"),
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Interview Feedback Duration"),
-    SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take to collect feedback on an interview"),
+    SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect feedback on an interview"),
     SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Appointment Confirmation Duration"),
-    SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you expect it to take for a hiring manager to provide confirmation of appointment"),
+    SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for a hiring manager to provide confirmation of appointment"),
     SYSTEM_APPLICATION_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Escalation Duration"),
-    SYSTEM_APPLICATION_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_APPLICATION_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     SYSTEM_APPLICATION_PURGE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Expiry Duration"),
-    SYSTEM_APPLICATION_PURGE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you wish to keep information about a rejected or withdrawn application on record"),
+    SYSTEM_APPLICATION_PURGE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to keep information about a rejected or withdrawn application on record"),
     SYSTEM_PROJECT_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Escalation Duration"),
-    SYSTEM_PROJECT_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow a new position request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_PROJECT_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to allow a new position request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     SYSTEM_PROGRAM_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Escalation Duration"),
-    SYSTEM_PROGRAM_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_PROGRAM_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to allow a new program request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     SYSTEM_INSTITUTION_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Escalation Duration"),
-    SYSTEM_INSTITUTION_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
-            "The length of time you wish to allow a new organization request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
+    SYSTEM_INSTITUTION_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to allow a new organization request that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
 
     /*
      * *************** SYSTEM MONTH *********************
@@ -1163,8 +1152,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_GENERAL_FIELD_EMAIL_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Please enter your e-mail address."),
     SYSTEM_HTML_GENERAL_FIELD_PASSWORD_LABEL(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Password"),
     SYSTEM_HTML_GENERAL_FIELD_PASSWORD_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Please enter your password."),
-    SYSTEM_HTML_GENERAL_FIELD_PASSWORD_REGISTRATION_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL,
-            "Please enter a password with a minimum of 8 and a maximum of 15 characters."),
+    SYSTEM_HTML_GENERAL_FIELD_PASSWORD_REGISTRATION_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Please enter a password with a minimum of 8 and a maximum of 15 characters."),
     SYSTEM_HTML_GENERAL_FIELD_CONFIRM_PASSWORD_LABEL(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Confirm"),
     SYSTEM_HTML_GENERAL_FIELD_CONFIRM_PASSWORD_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Please confirm your password."),
     SYSTEM_HTML_GENERAL_FIELD_FIRST_NAME_LABEL(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "First Name"),
@@ -1192,11 +1180,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_COMMON_CONFIRM_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Confirm"),
     SYSTEM_HTML_COMMON_SUBMIT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Submit"),
     SYSTEM_HTML_COMMON_ADD_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Add"),
+    SYSTEM_HTML_COMMON_ARE_YOU_SURE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Are you sure?"),
     SYSTEM_HTML_DOWNLOAD_AS_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Download as PDF"),
     SYSTEM_HTML_ASSIGN_USERS_USER_NOT_IN_LIST(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "User not in the list?"),
     SYSTEM_HTML_DURATION_CONTROL_HOURS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Hours"),
     SYSTEM_HTML_DURATION_CONTROL_MINUTES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Minutes"),
-    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_UNCOMPLETED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Incomplete"),
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Completed"),
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "You cannot provide more than {{maxItems}} item(s)."),
     SYSTEM_HTML_FILE_UPLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload PDF"),
@@ -1239,20 +1227,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_AUTHENTICATE_USE_ANOTHER_METHOD(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Use another method"),
     SYSTEM_AUTHENTICATE_ACCOUNT_ACTIVATED(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Your account has been activated. Click below to sign in."),
     SYSTEM_AUTHENTICATE_CONFIRM_DETAILS(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Please confirm your details."),
-    SYSTEM_AUTHENTICATE_PASSWORD_RESENT_CONFIRMATION(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE,
-            "An e-mail with the new password will be sent to {{forgottenPasswordEmail}} shortly."),
+    SYSTEM_AUTHENTICATE_PASSWORD_RESENT_CONFIRMATION(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "An e-mail with the new password will be sent to {{forgottenPasswordEmail}} shortly."),
     SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Connect to LinkedIn networks to obtain your profile picture"),
     SYSTEM_AUTHENTICATE_JUST_REGISTERED_ALMOST_THERE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Almost there..."),
-    SYSTEM_AUTHENTICATE_JUST_REGISTERED_ACTIVATION_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE,
-            "Thank you for your registration. To activate your account follow the activation link in our confirmation email."),
-    SYSTEM_AUTHENTICATE_JUST_REGISTERED_INSTITUTION_ACTIVATION_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE,
-            "Thank you for your registration. We are very pleased to have you on board. Please activate your account by following the link in our confirmation email. We will approve your organization within 24 hours. As soon as you receive our approval notification, you will be able to post opportunities and target students and graduates in PRiSM."),
+    SYSTEM_AUTHENTICATE_JUST_REGISTERED_ACTIVATION_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Thank you for your registration. To activate your account follow the activation link in our confirmation email."),
+    SYSTEM_AUTHENTICATE_JUST_REGISTERED_INSTITUTION_ACTIVATION_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Thank you for your registration. We are very pleased to have you on board. Please activate your account by following the link in our confirmation email. We will approve your organization within 24 hours. As soon as you receive our approval notification, you will be able to post opportunities and target students and graduates in PRiSM."),
     SYSTEM_AUTHENTICATE_AUTHENTICATE_MODAL_TITLE(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Authentication"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_HEADER_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "You have warnings"),
     SYSTEM_AUTHENTICATE_WARNING_BLOCKER_TITLE_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Your attention is required"),
-    SYSTEM_AUTHENTICATE_WARNING_BLOCKER_CONTENT_MODAL(PrismDisplayPropertyCategory.
-            SYSTEM_AUTHENTICATE,
-            "Our system has detected that a plugin that blocks adverts is installed in your browser. This may be blocking essential functions of our site. We would advise that you disable it for our pages."),
+    SYSTEM_AUTHENTICATE_WARNING_BLOCKER_CONTENT_MODAL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Our system has detected that a plugin that blocks adverts is installed in your browser. This may be blocking essential functions of our site. We would advise that you disable it for our pages."),
 
     /*
      * *************** SYSTEM OPPORTUNITIES SECTION *********************
@@ -1506,8 +1489,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADDRESS_DOMICILE_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "Country"),
     SYSTEM_ADDRESS_DOMICILE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "The country of your address."),
     SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "Is this the same as your current address?"),
-    SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADDRESS,
-            "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
+    SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 
     /*
      * *************** SYSTEM RESOURCE PARENT *********************
@@ -1551,8 +1533,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_SOCIAL_LINKS(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Social Links Placement"),
     SYSTEM_RESOURCE_PARENT_ACCEPT_PUBLIC_MODE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Accept from external organizations"),
     SYSTEM_RESOURCE_PARENT_POSITION_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Position Options"),
-    SYSTEM_RESOURCE_PARENT_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT,
-            "Specify the type of position that you are offering (e.g. permanent/fixed-term, full-time/part-time."),
+    SYSTEM_RESOURCE_PARENT_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Specify the type of position that you are offering (e.g. permanent/fixed-term, full-time/part-time."),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Permanent"),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Fixed-Term/Contract"),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Minimum (Months)"),
@@ -1562,11 +1543,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Department"),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Specify the Department that this program/position belongs to"),
     SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Possible Locations"),
-    SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT,
-            "The locations at which it is possible for successful applicant of your opportunity to attend at."),
+    SYSTEM_RESOURCE_PARENT_STUDY_LOCATIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The locations at which it is possible for successful applicant of your opportunity to attend at."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Business Year Start Month"),
-    SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT,
-            "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
+    SYSTEM_RESOURCE_PARENT_BUSINESS_YEAR_START_MONTH_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The month of the year that your business year starts from. We use this knowledge to provide you with reports in a format the makes the greatest sense to you."),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Currency"),
     SYSTEM_RESOURCE_PARENT_BUSINESS_CURRENCY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The currency that your organization typically does business in"),
     SYSTEM_RESOURCE_PARENT_MINIMUM_WAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Minimum Hourly Wage"),
@@ -1599,7 +1578,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PARTNER_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow partnerships"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PARTNER_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow third party organizations to offer positions"),
 
-
     /*
      * *************** SYSTEM RESOURCE FAMILY CREATION *********************
      */
@@ -1624,14 +1602,20 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_RESOURCE_CONFIGURATION_SCOPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "Resource Scope"),
-    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION,
-            "The scope of the resource (e.g. system, organization, Department, program, position, application) that you wish to define configuration for."),
+    SYSTEM_RESOURCE_CONFIGURATION_SCOPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "The scope of the resource (e.g. system, organization, Department, program, position, application) that you wish to define configuration for."),
     SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "Opportunity Type"),
-    SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.
-            SYSTEM_RESOURCE_CONFIGURATION,
-            "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
+    SYSTEM_RESOURCE_CONFIGURATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "The type of the program that you wish to define configuration for. Think about this in terms of the terminology that will make sense for different types of recruitment (e.g. student, intern, employee, etc)."),
     SYSTEM_RESOURCE_CONFIGURATION_OVERRIDE_LOCAL_VERSIONS_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "Override Local Versions"),
     SYSTEM_RESOURCE_CONFIGURATION_RESTORE_DEFAULT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_CONFIGURATION, "Restore Default"),
+
+    /*
+     * *************** SYSTEM RESOURCE TARGETS *********************
+     */
+
+    SYSTEM_RESOURCE_TARGETS_RESOURCES_LABEL(SYSTEM_RESOURCE_TARGETS, "Targeted Resources"),
+    SYSTEM_RESOURCE_TARGETS_ACCEPT_BUTTON(SYSTEM_RESOURCE_TARGETS, "Accept"),
+    SYSTEM_RESOURCE_TARGETS_REJECT_BUTTON(SYSTEM_RESOURCE_TARGETS, "Reject"),
+    SYSTEM_RESOURCE_TARGETS_REMOVE_BUTTON(SYSTEM_RESOURCE_TARGETS, "Remove"),
 
     /*
      * *************** SYSTEM RESOURCE COMPETENCES *********************
@@ -1652,8 +1636,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Homepage URL"),
     SYSTEM_ADVERT_HOMEPAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the web address at which further information about your opportunity can be found"),
     SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Use different address"),
-    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT,
-            "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
+    SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify an address here if the address at which your opportunity is based is different from that of your organization"),
     SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Industries"),
     SYSTEM_ADVERT_CATEGORIES_INDUSTRIES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the industries that your advert is relevant to."),
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Functions"),
@@ -1739,10 +1722,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     DEPARTMENT_COMMENT_APPROVAL(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Your Department has been submitted for approval. We will notify you when it is ready to use"),
-    DEPARTMENT_COMMENT_APPROVED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT,
-            "We are pleased to tell you that your Department has been approved. You may now login to create other users, programs and positions, and manage your student/graduate recruitmemt"),
-    DEPARTMENT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT,
-            "Further information is required to activate your Department. Please login to address the reviewers comments"),
+    DEPARTMENT_COMMENT_APPROVED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are pleased to tell you that your Department has been approved. You may now login to create other users, programs and positions, and manage your student/graduate recruitmemt"),
+    DEPARTMENT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Further information is required to activate your Department. Please login to address the reviewers comments"),
     DEPARTMENT_COMMENT_REJECTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are sorry to inform you that your Department has been rejected"),
     DEPARTMENT_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Initialized Department"),
     DEPARTMENT_COMMENT_UPDATED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department"),
@@ -1766,8 +1747,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     PROGRAM_COMMENT_APPROVAL(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Your program has been submitted for approval. We will notify you when it is ready to use"),
-    PROGRAM_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROGRAM_COMMENT,
-            "We are pleased to tell you that your program has been approved. You may now login to create other users and positions, and manage your student/graduate recruitmemt"),
+    PROGRAM_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create other users and positions, and manage your student/graduate recruitmemt"),
     PROGRAM_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
     PROGRAM_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program"),
@@ -1793,8 +1773,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     PROJECT_COMMENT_APPROVAL(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Your position has been submitted for approval. We will notify you when it is ready to use"),
-    PROJECT_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROJECT_COMMENT,
-            "We are pleased to tell you that your position has been approved. You may now login to create other users and manage your student/graduate recruitmemt"),
+    PROJECT_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are pleased to tell you that your position has been approved. You may now login to create other users and manage your student/graduate recruitmemt"),
     PROJECT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Further information is required to activate your position. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are sorry to inform you that your position has been rejected"),
     PROJECT_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position"),
@@ -1839,8 +1818,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     APPLICATION_PROGRAM_DETAIL_HEADER(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Application Detail"),
-    APPLICATION_PROGRAM_DETAIL_DESCRIPTION(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL,
-            "This section allows you to provide details about the program, position or organization that you are applying for."),
+    APPLICATION_PROGRAM_DETAIL_DESCRIPTION(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "This section allows you to provide details about the program, position or organization that you are applying for."),
     APPLICATION_PROGRAM_DETAIL_PROGRAM_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "The PRiSM Program that you are applying for."),
     APPLICATION_PROGRAM_DETAIL_PROJECT_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "The PRiSM Position that you are applying for."),
     APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Mode of Engagement"),
@@ -1876,12 +1854,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_ADDRESS_CURRENT_HEADER(PrismDisplayPropertyCategory.PROFILE_ADDRESS, "Current Address"),
     PROFILE_ADDRESS_CONTACT_HEADER(PrismDisplayPropertyCategory.PROFILE_ADDRESS, "Contact Address"),
     PROFILE_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(PrismDisplayPropertyCategory.PROFILE_ADDRESS, "Is this the same as your current address?"),
-    PROFILE_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_ADDRESS,
-            "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
+    PROFILE_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
 
     PROFILE_QUALIFICATION_HEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualifications"),
-    PROFILE_QUALIFICATION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION,
-            "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
+    PROFILE_QUALIFICATION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     PROFILE_QUALIFICATION_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification"),
     PROFILE_QUALIFICATION_PROVIDER_PROGRAM_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Provider & Program"),
     PROFILE_QUALIFICATION_PROVIDER_PROGRAM_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "The provider of the qualification, and the program that you are following/completed."),
@@ -1896,30 +1872,31 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Expected Award Date"),
     PROFILE_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Confirmed Award Date"),
     PROFILE_QUALIFICATION_AWARD_DATE_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "The award date of the qualification (expected or confirmed)."),
+    PROFILE_QUALIFICATION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Description"),
+    PROFILE_QUALIFICATION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Description of your qualification."),
     PROFILE_QUALIFICATION_DOCUMENT_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Interim/Final Transcript (PDF)"),
-    PROFILE_QUALIFICATION_DOCUMENT_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION,
-            "Proof of the award of your progression towards the qualification. We require a complete grade transcript for university level qualifications."),
+    PROFILE_QUALIFICATION_DOCUMENT_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Proof of the award of your progression towards the qualification. We require a complete grade transcript for university level qualifications."),
     PROFILE_QUALIFICATION_STUDY_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Study Period"),
     PROFILE_QUALIFICATION_APPENDIX(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification Transcript"),
     PROFILE_QUALIFICATION_NO_ITEMS(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "This Application doesn't contain any Qualification"),
 
     PROFILE_EMPLOYMENT_POSITION_HEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Positions"),
-    PROFILE_EMPLOYMENT_POSITION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION,
-            "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),
+    PROFILE_EMPLOYMENT_POSITION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),
     PROFILE_EMPLOYMENT_POSITION_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Position Details"),
     PROFILE_EMPLOYMENT_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Position & Employer"),
     PROFILE_EMPLOYMENT_POSITION_EMPLOYER_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The position that you held, and the organization that employed/employs you."),
     PROFILE_EMPLOYMENT_POSITION_START_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Start Date"),
     PROFILE_EMPLOYMENT_POSITION_START_DATE_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The start date of the position."),
-    PROFILE_EMPLOYMENT_POSITION_CURRENT_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Is this your current position?"),
-    PROFILE_EMPLOYMENT_POSITION_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This tells us that the position is an ongoing one."),
     PROFILE_EMPLOYMENT_POSITION_END_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "End Date"),
     PROFILE_EMPLOYMENT_POSITION_END_DATE_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The end date of the position."),
-    PROFILE_EMPLOYMENT_POSITION_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Employment Period"),
+    PROFILE_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
+    PROFILE_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your employment."),
+    PROFILE_EMPLOYMENT_POSITION_CURRENT_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Is this your current position?"),
+    PROFILE_EMPLOYMENT_POSITION_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This tells us that the position is an ongoing one."),
+    PROFILE_EMPLOYMENT_POSITION_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Period"),
 
     PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referees"),
-    PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE,
-            "Specify your referee(s) here. Should you be considered for appointment, each referee will be asked to provide a statement in support of your application."),
+    PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Specify your referee(s) here. Should you be considered for appointment, each referee will be asked to provide a statement in support of your application."),
     PROFILE_REFEREE_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referee"),
     PROFILE_REFEREE_POSITION_CONTACT_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Contact Details"),
     PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Position & Employer"),
@@ -1933,36 +1910,27 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     PROFILE_DOCUMENT_HEADER(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Supporting Information"),
     APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Personal Summary"),
-    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT,
-            "A concise overview of your skills, personal characteristics and achievements. Take your time with this. Employers use it to differentiate between applicant. It is your chance to promote yourself."),
+    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "A concise overview of your skills, personal characteristics and achievements. Take your time with this. Employers use it to differentiate between applicant. It is your chance to promote yourself."),
     PROFILE_DOCUMENT_CV_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "CV / Resume (PDF)"),
-    PROFILE_DOCUMENT_CV_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT,
-            "Your CV/resume. This should summarise your ambitions, and academic and professionl achievements. Please provide no more than 2 pages of A4."),
+    PROFILE_DOCUMENT_CV_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Your CV/resume. This should summarise your ambitions, and academic and professionl achievements. Please provide no more than 2 pages of A4."),
     PROFILE_DOCUMENT_COVERING_LETTER_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Covering Letter (PDF)"),
-    PROFILE_DOCUMENT_COVERING_LETTER_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT,
-            "Your covering letter. This should describe why your are suitable for the opportunity. Please provide no more than 2 pages of A4."),
+    PROFILE_DOCUMENT_COVERING_LETTER_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Your covering letter. This should describe why your are suitable for the opportunity. Please provide no more than 2 pages of A4."),
 
     PROFILE_ADDITIONAL_INFORMATION_HEADER(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Additional Information"),
     PROFILE_ADDITIONAL_REQUIREMENT_LABEL(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Special Requirements"),
-    PROFILE_ADDITIONAL_REQUIREMENT_HINT(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION,
-            "So that we can prepare, please tell us whether you have any special requirements in relation to your ability to work or present for interview. This information will not influence the outcome of your application."),
+    PROFILE_ADDITIONAL_REQUIREMENT_HINT(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "So that we can prepare, please tell us whether you have any special requirements in relation to your ability to work or present for interview. This information will not influence the outcome of your application."),
     PROFILE_ADDITIONAL_INFORMATION_HAS_CONVICTION_LABEL(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Do you have any unspent Criminal Convictions?"),
-    PROFILE_ADDITIONAL_INFORMATION_HAS_CONVICTION_HINT(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION,
-            "Please tell us whether you have any unspent criminal convictions."),
+    PROFILE_ADDITIONAL_INFORMATION_HAS_CONVICTION_HINT(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Please tell us whether you have any unspent criminal convictions."),
     PROFILE_ADDITIONAL_INFORMATION_CONVICTION_LABEL(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Unspent Criminal Convictions"),
     PROFILE_ADDITIONAL_INFORMATION_CONVICTION_HINT(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Provide a short summary of each of your unspent convictions."),
     PROFILE_ADDITIONAL_INFORMATION_EMPTY(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
-    PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM,
-            "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and/or staff within your university.</em>"),
+    PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and/or staff within your university.</em>"),
     PROFILE_FORM_SAVE_FOR_LATER(PrismDisplayPropertyCategory.PROFILE_FORM, "Save for later"),
 
-    APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.
-            APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
-    APPLICATION_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.APPLICATION_FORM,
-            "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with careers support staff in your department or university.</em>"),
-    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(PrismDisplayPropertyCategory.APPLICATION_FORM,
-            "Send me recommendations about other opportunities to apply for.<br/><em>Uncheck this if you do not want us to send you recommendations.</em>"),
+    APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
+    APPLICATION_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with careers support staff in your department or university.</em>"),
+    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(PrismDisplayPropertyCategory.APPLICATION_FORM, "Send me recommendations about other opportunities to apply for.<br/><em>Uncheck this if you do not want us to send you recommendations.</em>"),
     APPLICATION_FORM_GO_TO_TIMELINE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Go to Timeline"),
     APPLICATION_FORM_SAVE_FOR_LATER(PrismDisplayPropertyCategory.APPLICATION_FORM, "Save for later"),
     APPLICATION_FORM_SUBMIT_APPLICATION(PrismDisplayPropertyCategory.APPLICATION_FORM, "Submit Application"),
@@ -1981,8 +1949,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_INTERESTED_IN_APPLICANT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interested in this applicant?"),
     APPLICATION_ACTION_INTERESTED_IN_APPLICANT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Tell us whether you would like to consider the applicant as a potential student."),
     APPLICATION_ACTION_RATING_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "How do they rate?"),
-    APPLICATION_ACTION_RATING_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
-            "Specify how highly you rate the applicant in comparison to other applicant that you have seen, with 5 stars being the highest rating and 0 the lowest."),
+    APPLICATION_ACTION_RATING_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify how highly you rate the applicant in comparison to other applicant that you have seen, with 5 stars being the highest rating and 0 the lowest."),
     APPLICATION_ACTION_ELIGIBLE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Is the applicant Eligible?"),
     APPLICATION_ACTION_ELIGIBLE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Assess whether the applicant is eligible."),
     APPLICATION_ACTION_SELECT_REFEREE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Referee"),
@@ -2023,9 +1990,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_INTERVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interview Duration"),
     APPLICATION_ACTION_INTERVIEW_DURATION_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to provide primary supervision"),
-    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.
-            APPLICATION_ACTION,
-            "Confirm that you are willing to provide primary supervision. You will be able to suggest amendments to the proposed research programme when you have provided a positive confirmation."),
+    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to provide primary supervision. You will be able to suggest amendments to the proposed research programme when you have provided a positive confirmation."),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_CONFIRM(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm"),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_DECLINE(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Decline"),
     APPLICATION_ACTION_DECLINE_SUPERVISION_REASON_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Reason"),
@@ -2033,16 +1998,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_POSITION_TITLE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Title"),
     APPLICATION_ACTION_POSITION_TITLE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Enter the position title."),
     APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Abstract"),
-    APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL_HINT(PrismDisplayPropertyCategory.
-            APPLICATION_ACTION,
-            "Enter a concise description of the position. This will constitute the 'ATAS Statement' if required by the applicant. It should summarise the scope and possible applications of the research that will take place. The applicant must agree with your description, as they will be required to provide an identical description in their ATAS Certificate Applicaton. We request an appropriate position description for all research admissions as a matter of policy."),
+    APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Enter a concise description of the position. This will constitute the 'ATAS Statement' if required by the applicant. It should summarise the scope and possible applications of the research that will take place. The applicant must agree with your description, as they will be required to provide an identical description in their ATAS Certificate Applicaton. We request an appropriate position description for all research admissions as a matter of policy."),
     APPLICATION_ACTION_POSITION_PROVISIONAL_START_DATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Provisional Start Date"),
-    APPLICATION_ACTION_POSITION_PROVISIONAL_START_DATE_HINT(PrismDisplayPropertyCategory.
-            APPLICATION_ACTION,
-            "The applicant's provisional start date. Prism generates a default value for provisional start date based upon the applicant's application. If you wish to amend the value you may do so."),
+    APPLICATION_ACTION_POSITION_PROVISIONAL_START_DATE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "The applicant's provisional start date. Prism generates a default value for provisional start date based upon the applicant's application. If you wish to amend the value you may do so."),
     APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Salary & Conditions"),
-    APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
-            "Specify the salary and conditions that you will be offering the applicant."),
+    APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify the salary and conditions that you will be offering the applicant."),
     APPLICATION_ACTION_REJECTION_REASON_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Reasons for Rejection"),
     APPLICATION_ACTION_REJECTION_REASON_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify the pertinent reason for rejection."),
     APPLICATION_ACTION_DELEGATE_ADMINISTRATION_BUTTON(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Delegate Administration"),

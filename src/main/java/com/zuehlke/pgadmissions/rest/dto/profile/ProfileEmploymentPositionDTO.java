@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.dto.profile;
 
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
@@ -18,13 +19,14 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
     @NotNull
     private ResourceRelationInvitationDTO resource;
 
+    @NotEmpty
+    private String description;
+
     @NotNull
     @DateNotFuture
     private LocalDate startDate;
 
     private LocalDate endDate;
-
-    private String description;
 
     private Boolean current;
 
@@ -46,6 +48,14 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
         this.resource = resource;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -60,14 +70,6 @@ public class ProfileEmploymentPositionDTO extends ApplicationAdvertRelationSecti
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public Boolean getCurrent() {

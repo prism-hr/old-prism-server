@@ -171,9 +171,8 @@ public class ProfileMapper {
         }
 
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId())
-                .withResource(relation).withGrade(qualification.getGrade())
-                .withStartDate(startDate).withAwardDate(awardDate).withDescription(qualification.getDescription())
-                .withCompleted(qualification.getCompleted())
+                .withResource(relation).withDescription(qualification.getDescription()).withGrade(qualification.getGrade())
+                .withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
 
         if (qualification.getClass().equals(ApplicationQualification.class)) {
@@ -197,8 +196,8 @@ public class ProfileMapper {
         }
 
         ProfileEmploymentPositionRepresentation representation = new ProfileEmploymentPositionRepresentation().withId(employmentPosition.getId())
-                .withResource(relation).withCurrent(employmentPosition.getCurrent())
-                .withStartDate(startDate).withEndDate(endDate).withDescription(employmentPosition.getDescription());
+                .withResource(relation).withDescription(employmentPosition.getDescription()).withCurrent(employmentPosition.getCurrent())
+                .withStartDate(startDate).withEndDate(endDate);
 
         if (employmentPosition.getClass().equals(ApplicationEmploymentPosition.class)) {
             representation.setLastUpdatedTimestamp(((ApplicationEmploymentPosition) employmentPosition).getLastUpdatedTimestamp());

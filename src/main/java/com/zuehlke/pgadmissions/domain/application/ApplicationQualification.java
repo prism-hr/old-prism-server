@@ -42,6 +42,9 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection
     @JoinColumn(name = "advert_id")
     private Advert advert;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "start_year", nullable = false)
     private Integer startYear;
 
@@ -54,8 +57,6 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection
     @Column(name = "award_month", nullable = false)
     private Integer awardMonth;
 
-    @Column(name = "description", nullable = false)
-    private String description;
     @Column(name = "grade", nullable = false)
     private String grade;
 
@@ -111,6 +112,16 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
     public Integer getStartYear() {
         return startYear;
     }
@@ -148,16 +159,6 @@ public class ApplicationQualification extends ApplicationAdvertRelationSection
     @Override
     public void setAwardMonth(Integer awardMonth) {
         this.awardMonth = awardMonth;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override

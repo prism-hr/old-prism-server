@@ -10,7 +10,7 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private Boolean sendApplicationRecommendationNotification;
 
-    private PrismScope permissionScope;
+    private List<PrismScope> visibleScopes;
 
     private String parentUser;
 
@@ -30,12 +30,12 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
     }
 
-    public PrismScope getPermissionScope() {
-        return permissionScope;
+    public List<PrismScope> getVisibleScopes() {
+        return visibleScopes;
     }
 
-    public void setPermissionScope(PrismScope permissionScope) {
-        this.permissionScope = permissionScope;
+    public void setVisibleScopes(List<PrismScope> visibleScopes) {
+        this.visibleScopes = visibleScopes;
     }
 
     public String getParentUser() {

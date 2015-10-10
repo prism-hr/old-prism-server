@@ -2,13 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -206,16 +205,18 @@ public class RoleService {
         updateUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
     }
 
-    public PrismScope getPermissionScope(User user) {
-        PrismScope permissionScope = roleDAO.getPermissionScope(user);
-        int permissionScopeOrdinal = permissionScope.ordinal();
-        for (PrismScope permissionScopePartner : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            PrismScope partnerScope = roleDAO.getPermissionScopePartner(user, permissionScopePartner);
-            if (partnerScope != null && partnerScope.ordinal() < permissionScopeOrdinal) {
-                return permissionScopePartner;
-            }
+    public List<PrismScope> getVisibleScopes(User user) {
+        List<PrismScope> visibleScopes = Lists.newArrayList();
+        for (PrismScope scope : PrismScope.values()) {
+            getRolesByScope(user, scope).forEach(role -> {
+                visibleScopes.addAll(role.getVisibleScopes());
+            });
         }
-        return permissionScope;
+        return visibleScopes;
+    }
+
+    public PrismScope getGreatestVisibleScope(User user) {
+        return new TreeSet<PrismScope>(getVisibleScopes(user)).iterator().next();
     }
 
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {

@@ -11,6 +11,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.Set;
+
+import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
@@ -56,6 +59,33 @@ public enum PrismRole implements PrismLocalizableDefinition {
     private boolean directlyAssignable;
 
     private PrismScope scope;
+    
+    private static HashMultimap<PrismRole, PrismScope> visibleScopes = HashMultimap.create();
+    
+    static {
+        for (PrismRole role : values()) {
+            if (!role.name().endsWith("_UNVERIFIED")) {
+                PrismScope roleScope = role.getScope();
+                visibleScopes.put(role, roleScope);
+                
+                if (roleScope.ordinal() <= PROJECT.ordinal()) {
+                    visibleScopes.put(role, APPLICATION);
+                }
+                
+                if (roleScope.ordinal() <= PROGRAM.ordinal()) {
+                    visibleScopes.put(role, PROJECT);
+                }
+                
+                if (roleScope.ordinal() <= DEPARTMENT.ordinal()) {
+                    visibleScopes.put(role, PROGRAM);
+                }
+                
+                if (roleScope.ordinal() <= INSTITUTION.ordinal()) {
+                    visibleScopes.put(role, DEPARTMENT);
+                }
+            }
+        }
+    }
 
     private PrismRole(PrismRoleCategory roleCategory, boolean directlyAssignable, PrismScope scope) {
         this.roleCategory = roleCategory;
@@ -73,6 +103,10 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     public PrismScope getScope() {
         return scope;
+    }
+    
+    public Set<PrismScope> getVisibleScopes() {
+        return visibleScopes.get(this);
     }
 
     @Override

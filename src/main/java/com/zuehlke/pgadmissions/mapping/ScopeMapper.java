@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentat
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.ScopeService;
 
 import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.collect.Maps;
@@ -47,9 +45,6 @@ public class ScopeMapper {
 
     @Inject
     private RoleService roleService;
-
-    @Inject
-    private ScopeService scopeService;
 
     public List<ResourceRelationRepresentation> getResourceFamilyCreationRepresentations() {
         List<ResourceRelationRepresentation> representations = Lists.newLinkedList();
@@ -85,7 +80,7 @@ public class ScopeMapper {
         DateTime baseline = new DateTime().minusDays(1);
 
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
-        List<PrismScope> visibleScopes = scopeService.getEnclosingScopesDescending(APPLICATION, roleService.getPermissionScope(user));
+        List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
         visibleScopes.forEach(scope -> {
             Set<Integer> updatedResources = Sets.newHashSet();
             Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();

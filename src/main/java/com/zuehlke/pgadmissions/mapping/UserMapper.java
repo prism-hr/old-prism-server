@@ -130,9 +130,7 @@ public class UserMapper {
     public UserRepresentationExtended getUserRepresentationExtended(User user) {
         UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
-
-        PrismScope permissionScope = roleService.getPermissionScope(user);
-        representation.setPermissionScope(permissionScope);
+        representation.setVisibleScopes(roleService.getVisibleScopes(user));
 
         representation.setParentUser(user.getEmail());
         representation.setLinkedUsers(userService.getLinkedUserAccounts(user));

@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionT
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
@@ -178,42 +177,6 @@ public class RoleDAO {
                 .list();
     }
 
-    public PrismScope getPermissionScope(User user) {
-        return (PrismScope) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("scope.id")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.verified", true)) //
-                .addOrder(Order.asc("scope.ordinal")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public PrismScope getPermissionScopePartner(User user, PrismScope scope) {
-        return (PrismScope) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("scope.id")) //
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN)//
-                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(getTargetUserRoleConstraint())
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("role.verified", true)) //
-                .addOrder(Order.asc("scope.ordinal")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public List<UserRole> getUserRoleByRoleCategory(User user, PrismRoleCategory prismRoleCategory, PrismScope... excludedPrismScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
@@ -229,14 +192,14 @@ public class RoleDAO {
 
     public List<PrismRole> getRolesByScope(PrismScope prismScope) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(Role.class) //
-                .setProjection(Projections.property("id")) //
+                .setProjection(Projections.groupProperty("id")) //
                 .add(Restrictions.eq("scope.id", prismScope)) //
                 .list();
     }
 
     public List<PrismRole> getRolesByScope(User user, PrismScope prismScope) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property("role.id")) //
+                .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.isNotNull(prismScope.getLowerCamelName())) //
                 .add(Restrictions.eq("user", user)) //
                 .list();

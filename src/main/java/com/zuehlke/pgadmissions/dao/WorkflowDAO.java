@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
 import java.util.Collection;
 
@@ -35,7 +37,9 @@ public class WorkflowDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public static PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+    public static PrismScope[] parentScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+    
+    public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     public Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
@@ -43,7 +47,7 @@ public class WorkflowDAO {
                 .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets", "resourceTarget", JoinType.LEFT_OUTER_JOIN);
 
-        for (PrismScope targeterScope : targetScopes) {
+        for (PrismScope targeterScope : parentScopes) {
             String targeterScopeLower = targeterScope.getLowerCamelName();
             String targeterScopeUpper = targeterScope.getUpperCamelName();
 
@@ -56,7 +60,7 @@ public class WorkflowDAO {
                     .createAlias(targeterResourceAdvert + ".targets", targeterResourceTarget, JoinType.LEFT_OUTER_JOIN) //
                     .createAlias(targeterResourceTarget + ".targetAdvert", targeterAdvert, JoinType.LEFT_OUTER_JOIN);
 
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : parentScopes) {
                 String targetScopeLower = targetScope.getLowerCamelName();
                 String targetResource = targetScopeLower + "Target" + targetScopeLower;
                 criteria.createAlias(targeterAdvert + "." + targetScopeLower, targetResource, JoinType.LEFT_OUTER_JOIN,

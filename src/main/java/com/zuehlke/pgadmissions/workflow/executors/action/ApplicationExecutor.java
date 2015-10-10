@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.executors.action;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 
 import javax.inject.Inject;
@@ -63,8 +64,9 @@ public class ApplicationExecutor implements ActionExecutor {
                 throw new PrismValidationException("Application not completed", errors);
             }
 
-            application.setShared(commentDTO.getApplicationShared());
-            user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getApplicationRecommend());
+            application.setShared(commentDTO.getShared());
+            application.setOnCourse(commentDTO.getOnCourse());
+            user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getRecommend());
         }
 
         Action action = actionService.getById(actionId);
@@ -105,6 +107,13 @@ public class ApplicationExecutor implements ActionExecutor {
 
         if (commentDTO.getAppointmentPreferences() != null) {
             commentService.appendAppointmentPreferences(comment, commentDTO);
+        }
+        
+        if (actionId.equals(APPLICATION_PROVIDE_PARTNER_APPROVAL)) {
+            Boolean onCourse = commentDTO.getOnCourse();
+            if (onCourse != null) {
+                comment.setOnCourse(onCourse);
+            }
         }
 
         return actionService.executeUserAction(application, action, comment);

@@ -12,11 +12,18 @@ public class OpportunityCategoryRepresentation {
 
     private boolean published;
 
+    private boolean defaultPermanent;
+
+    private boolean permittedOnCourse;
+
     private List<OpportunityTypeRepresentation> opportunityTypes;
 
-    public OpportunityCategoryRepresentation(PrismOpportunityCategory id, boolean published, List<OpportunityTypeRepresentation> opportunityTypes) {
+    public OpportunityCategoryRepresentation(PrismOpportunityCategory id, boolean published, boolean defaultPermanent, boolean permittedOnCourse,
+            List<OpportunityTypeRepresentation> opportunityTypes) {
         this.id = id;
         this.published = published;
+        this.defaultPermanent = defaultPermanent;
+        this.permittedOnCourse = permittedOnCourse;
         this.opportunityTypes = opportunityTypes;
     }
 
@@ -36,6 +43,22 @@ public class OpportunityCategoryRepresentation {
         this.published = published;
     }
 
+    public boolean isDefaultPermanent() {
+        return defaultPermanent;
+    }
+
+    public void setDefaultPermanent(boolean defaultPermanent) {
+        this.defaultPermanent = defaultPermanent;
+    }
+
+    public boolean isPermittedOnCourse() {
+        return permittedOnCourse;
+    }
+
+    public void setPermittedOnCourse(boolean permittedOnCourse) {
+        this.permittedOnCourse = permittedOnCourse;
+    }
+
     public List<OpportunityTypeRepresentation> getOpportunityTypes() {
         return opportunityTypes;
     }
@@ -50,15 +73,12 @@ public class OpportunityCategoryRepresentation {
 
         private boolean published;
 
-        private boolean requiredEndorsement;
+        private PrismDisplayPropertyDefinition description;
 
-        private PrismDisplayPropertyDefinition termsAndConditions;
-
-        public OpportunityTypeRepresentation(PrismOpportunityType id, boolean published, boolean requiredEndorsement, PrismDisplayPropertyDefinition termsAndConditions) {
+        public OpportunityTypeRepresentation(PrismOpportunityType id, boolean published, PrismDisplayPropertyDefinition termsAndConditions) {
             this.id = id;
             this.published = published;
-            this.requiredEndorsement = requiredEndorsement;
-            this.termsAndConditions = termsAndConditions;
+            this.description = termsAndConditions;
         }
 
         public PrismOpportunityType getId() {
@@ -77,20 +97,12 @@ public class OpportunityCategoryRepresentation {
             this.published = published;
         }
 
-        public boolean isRequiredEndorsement() {
-            return requiredEndorsement;
+        public PrismDisplayPropertyDefinition getDescription() {
+            return description;
         }
 
-        public void setRequiredEndorsement(boolean requiredEndorsement) {
-            this.requiredEndorsement = requiredEndorsement;
-        }
-
-        public PrismDisplayPropertyDefinition getTermsAndConditions() {
-            return termsAndConditions;
-        }
-
-        public void setTermsAndConditions(PrismDisplayPropertyDefinition termsAndConditions) {
-            this.termsAndConditions = termsAndConditions;
+        public void setDescription(PrismDisplayPropertyDefinition termsAndConditions) {
+            this.description = termsAndConditions;
         }
 
     }

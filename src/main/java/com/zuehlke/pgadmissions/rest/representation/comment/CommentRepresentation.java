@@ -31,6 +31,10 @@ public class CommentRepresentation {
 
     private PrismState transitionState;
 
+    private Boolean shared;
+
+    private Boolean onCourse;
+
     private BigDecimal rating;
 
     private PrismYesNoUnsureResponse eligible;
@@ -48,9 +52,9 @@ public class CommentRepresentation {
     private Boolean recruiterAcceptAppointment;
 
     private Boolean partnerAcceptAppointment;
-    
+
     private Boolean applicantAcceptAppointment;
-    
+
     private PrismRejectionReason rejectionReason;
 
     private DateTime createdTimestamp;
@@ -129,6 +133,22 @@ public class CommentRepresentation {
         this.transitionState = transitionState;
     }
 
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
+    public Boolean getOnCourse() {
+        return onCourse;
+    }
+
+    public void setOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
+    }
+
     public PrismYesNoUnsureResponse getEligible() {
         return eligible;
     }
@@ -184,7 +204,7 @@ public class CommentRepresentation {
     public void setRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
         this.recruiterAcceptAppointment = recruiterAcceptAppointment;
     }
-    
+
     public Boolean getPartnerAcceptAppointment() {
         return partnerAcceptAppointment;
     }
@@ -305,6 +325,16 @@ public class CommentRepresentation {
         return this;
     }
 
+    public CommentRepresentation withShared(Boolean shared) {
+        this.shared = shared;
+        return this;
+    }
+
+    public CommentRepresentation withOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
+        return this;
+    }
+
     public CommentRepresentation withRating(BigDecimal rating) {
         this.rating = rating;
         return this;
@@ -349,12 +379,12 @@ public class CommentRepresentation {
         this.partnerAcceptAppointment = partnerAcceptAppointment;
         return this;
     }
-    
+
     public CommentRepresentation withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
         this.applicantAcceptAppointment = applicantAcceptAppointment;
         return this;
     }
-    
+
     public CommentRepresentation withRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
         return this;

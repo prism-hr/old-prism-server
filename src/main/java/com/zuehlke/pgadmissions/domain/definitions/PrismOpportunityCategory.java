@@ -2,19 +2,33 @@ package com.zuehlke.pgadmissions.domain.definitions;
 
 public enum PrismOpportunityCategory implements PrismLocalizableDefinition {
 
-    STUDY(false), //
-    PERSONAL_DEVELOPMENT(false), //
-    EXPERIENCE(true), //
-    WORK(true);
+    STUDY(false, false, false), //
+    PERSONAL_DEVELOPMENT(false, false, true), //
+    EXPERIENCE(true, false, true), //
+    WORK(true, true, false);
 
     private boolean published;
+    
+    private boolean defaultPermanent;
+    
+    private boolean permittedOnCourse;
 
-    PrismOpportunityCategory(boolean published) {
+    private PrismOpportunityCategory(boolean published, boolean defaultPermanent, boolean permittedOnCourse) {
         this.published = published;
+        this.defaultPermanent = defaultPermanent;
+        this.permittedOnCourse = permittedOnCourse;
     }
 
     public boolean isPublished() {
         return published;
+    }
+
+    public boolean isDefaultPermanent() {
+        return defaultPermanent;
+    }
+
+    public boolean isPermittedOnCourse() {
+        return permittedOnCourse;
     }
 
     @Override

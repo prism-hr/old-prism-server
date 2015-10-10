@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.parentScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -438,9 +438,9 @@ public class UserService {
                 users.addAll(userDAO.getUsersWithActivity(resourceScope, parentScope, updateBaseline, lastNotifiedBaseline));
             });
 
-            for (PrismScope targeterScope : targetScopes) {
+            for (PrismScope targeterScope : parentScopes) {
                 if (resourceScope.ordinal() > targeterScope.ordinal()) {
-                    for (PrismScope targetScope : targetScopes) {
+                    for (PrismScope targetScope : parentScopes) {
                         users.addAll(userDAO.getUsersWithActivity(resourceScope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
                         List<Integer> resources = resourceService.getResourcesWithNewOpportunities(resourceScope, targetScope, targeterScope, updateBaseline);
                         if (!resources.isEmpty()) {
@@ -454,7 +454,7 @@ public class UserService {
         users.addAll(userDAO.getUsersWithAppointmentsForApplications());
 
         users.addAll(userDAO.getUsersWithConnectionsToVerify());
-        for (PrismScope targetScope : targetScopes) {
+        for (PrismScope targetScope : parentScopes) {
             List<Integer> resources = resourceService.getResourcesWithUsersToVerify(targetScope);
             if (!resources.isEmpty()) {
                 users.addAll(userDAO.getUsersWithUsersToVerify(targetScope, resources));

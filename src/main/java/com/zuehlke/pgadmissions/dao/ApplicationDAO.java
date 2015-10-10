@@ -159,6 +159,15 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
+    public Boolean getApplicationOnCourse(Application application) {
+        return (Boolean) sessionFactory.getCurrentSession().createCriteria(Comment.class)
+                .setProjection(Projections.property("onCourse")) //
+                .add(Restrictions.eq("application", application)) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByRejectionReason(ResourceParent parent, Collection<String> rejectionReasons) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //

@@ -38,10 +38,10 @@ public class PrismMapper {
 
     public List<OpportunityCategoryRepresentation> getOpportunityTypeRepresentations() {
         return asList(PrismOpportunityCategory.values()).stream()
-                .map(oc -> new OpportunityCategoryRepresentation(oc, oc.isPublished(),
+                .map(oc -> new OpportunityCategoryRepresentation(oc, oc.isPublished(), oc.isDefaultPermanent(), oc.isPermittedOnCourse(),
                         getOpportunityTypes(oc)
                                 .stream()
-                                .map(ot -> new OpportunityTypeRepresentation(ot, ot.isPublished(), ot.isRequireEndorsement(), ot.getTermsAndConditions()))
+                                .map(ot -> new OpportunityTypeRepresentation(ot, ot.isPublished(), ot.getDescription()))
                                 .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }

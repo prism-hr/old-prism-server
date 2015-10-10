@@ -349,13 +349,17 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_STUDY_POSTGRADUATE_RESEARCH(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Postgraduate Research"),
     SYSTEM_OPPORTUNITY_TYPE_TRAINING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Vocational Training"),
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work Experience"),
-    SYSTEM_OPPORTUNITY_TYPE_ON_COURSE_PLACEMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement"),
+    SYSTEM_OPPORTUNITY_TYPE_PLACEMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement"),
     SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering"),
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
-
-    SYSTEM_OPPORTUNITY_TYPE_PAID_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "In order to advertise an opportunity of this type we need you to confirm that <ol> <li> you are happy to pay the successful applicant a minimum of the national minimum wage, or;</li> <li>that you are committed to rewarding the successful applicant in some other fair way for their effort, for example through the granting of shares in a company.</li></ol> Please check to confirm. Alternatively, you can offer the opportunity as volunteering or work experience."),
-    SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type you are confirming that the successful applicant will work with you as a required component of their course of study. In order to do this, you must accept that the providing university or department has the final right of acceptance in your recruitment process. While we recommend that do you pay the successful applicant the national minimum wage, or reward them in some other fair way, you are not legally required to do so."),
-    SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "By offering an opportunity of this type, you are accepting that you are not legally entitled to bind the successful applicant into any kind of fixed work pattern or contract for employment/delivery. Alternatively, you can offer the opportunity as work experience or employment"),
+    
+    SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work experience positions are typically short term engagements where the participant observes or shadows employees in your organization."),
+    SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically longer term engagments where the particpant performs concrete tasks."),
+    SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering positions are typically engagements where the participant contributes towards a charitable cause."),
+    
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the participant the national minimum wage. Please confirm that your opportunity complies with national minimum wage requirements."),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "National minimum wage requirements"),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LOCATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "https://www.gov.uk/guidance/national-minimum-wage-work-experience-and-internships"),
 
     /*
      * *************** SYSTEM STUDY OPTION *********************

@@ -16,6 +16,8 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     private LocalDate awardDate;
 
+    private String description;
+
     private String grade;
 
     private Boolean completed;
@@ -52,6 +54,14 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getGrade() {
@@ -98,6 +108,10 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
         return this;
     }
 
+    public ProfileQualificationRepresentation withDescription(final String description) {
+        this.description = description;
+        return this;
+    }
 
     public ProfileQualificationRepresentation withGrade(String grade) {
         this.grade = grade;

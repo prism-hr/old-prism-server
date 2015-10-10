@@ -27,10 +27,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -780,7 +777,7 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
-    public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, String query) {
+    public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, Optional<String> query) {
         return resourceDAO.getResources(enclosingResource, resourceScope, query);
     }
 

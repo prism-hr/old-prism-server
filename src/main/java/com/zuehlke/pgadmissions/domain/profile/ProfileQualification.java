@@ -20,6 +20,10 @@ public interface ProfileQualification<T extends ProfileEntity<?, ?, ?, ?, ?, ?, 
 
     void setAwardMonth(Integer awardMonth);
 
+    String getDescription();
+
+    void setDescription(String description);
+
     String getGrade();
 
     void setGrade(String grade);

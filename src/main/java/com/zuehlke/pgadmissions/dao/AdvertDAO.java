@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionJoinConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionVisibilityConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionVisibilityConstraintNew;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
@@ -14,10 +15,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -87,8 +85,6 @@ import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 @Repository
 @SuppressWarnings("unchecked")
 public class AdvertDAO {
-
-    private static final PrismScope[] targetScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -215,7 +211,7 @@ public class AdvertDAO {
         boolean narrowedByTarget = currentUser != null;
 
         if (narrowedByResource || narrowedByTarget) {
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : advertScopes) {
                 String scopeReference = targetScope.getLowerCamelName();
                 String advertReference = scopeReference + "Advert";
                 criteria.createAlias("advert." + targetScope.getLowerCamelName(), scopeReference, JoinType.LEFT_OUTER_JOIN)
@@ -441,7 +437,7 @@ public class AdvertDAO {
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.in("stateAction.action.id",
                         asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList()))) //
-                .add(getEndorsementActionVisibilityConstraint()) //
+                .add(getEndorsementActionVisibilityConstraintNew()) //
                 .add(getResourceStateActionConstraint()) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .list();
@@ -551,34 +547,20 @@ public class AdvertDAO {
     private void appendVisibilityConstraint(Criteria criteria, PrismScope scope, ResourceParent resource, boolean userLoggedIn, boolean opportunityScope,
             boolean recommended, Set<Integer> possibleTargets) {
         if (userLoggedIn && isNotEmpty(possibleTargets)) {
-            boolean hasTargetConstraints = false;
             Junction targetConstraints = Restrictions.disjunction();
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : advertScopes) {
                 String targetReference = targetScope.getLowerCamelName() + "AdvertTarget";
                 targetConstraints.add(Restrictions.conjunction()
                         .add(Restrictions.in(targetReference + ".targetAdvert.id", possibleTargets))
                         .add(Restrictions.ne(targetReference + ".partnershipState", ENDORSEMENT_REVOKED)));
-                hasTargetConstraints = true;
             }
 
-            if (opportunityScope) {
+            if (recommended) {
+                criteria.add(targetConstraints);
+            } else {
                 criteria.add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("opportunityType.requireEndorsement", false)) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.eq("opportunityType.requireEndorsement", true)) //
-                                .add(Restrictions.eq(scope.getLowerCamelName() + "AdvertTarget.partnershipState", ENDORSEMENT_PROVIDED))));
-            }
-
-            if (hasTargetConstraints) {
-                if (recommended) {
-                    criteria.add(targetConstraints);
-                } else {
-                    criteria.add(Restrictions.disjunction() //
-                            .add(Restrictions.eq("advert.globallyVisible", true)) //
-                            .add(targetConstraints));
-                }
-            } else if (!recommended) {
-                criteria.add(Restrictions.eq("advert.globallyVisible", true));
+                        .add(Restrictions.eq("advert.globallyVisible", true)) //
+                        .add(targetConstraints));
             }
         } else {
             criteria.add(Restrictions.eq("advert.globallyVisible", true));
@@ -592,7 +574,7 @@ public class AdvertDAO {
                     .add(Restrictions.eq("advert." + resourceReference + ".id", resourceId));
 
             Integer resourceAdvertId = resource.getAdvert().getId();
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : advertScopes) {
                 resourceConstraint.add(Restrictions.eq(targetScope.getLowerCamelName() + "AdvertTarget.targetAdvert.id", resourceAdvertId));
             }
 

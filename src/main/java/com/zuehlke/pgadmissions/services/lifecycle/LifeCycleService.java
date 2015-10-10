@@ -1,15 +1,9 @@
 package com.zuehlke.pgadmissions.services.lifecycle;
 
-import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
-import static java.util.concurrent.Executors.newFixedThreadPool;
-
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
-
+import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
+import com.zuehlke.pgadmissions.mapping.StaticDataMapper;
+import com.zuehlke.pgadmissions.services.SystemService;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,10 +12,14 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMaintenanceTask;
-import com.zuehlke.pgadmissions.mapping.StaticDataMapper;
-import com.zuehlke.pgadmissions.services.SystemService;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.inject.Inject;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+
+import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 @Service
 public class LifeCycleService {
@@ -79,7 +77,9 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
-        systemService.initializeAmazon();
+        if (BooleanUtils.isTrue(dropWorkflow)) {
+            systemService.initializeAmazon();
+        }
         staticDataMapper.getData();
 
         if (BooleanUtils.isTrue(maintain)) {

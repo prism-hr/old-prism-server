@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -843,9 +842,9 @@ public class ResourceService {
             }
 
             asPartner = asPartner == null ? null : true;
-            for (PrismScope targeterScope : targetScopes) {
+            for (PrismScope targeterScope : parentScopes) {
                 if (scope.ordinal() > targeterScope.ordinal()) {
-                    for (PrismScope targetScope : targetScopes) {
+                    for (PrismScope targetScope : parentScopes) {
                         addResources(resourceDAO.getResources(user, scope, targetScope, targetScope, filter, columns, conditions, responseClass), resources, asPartner);
                     }
                 }

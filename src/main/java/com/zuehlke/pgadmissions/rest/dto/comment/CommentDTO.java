@@ -23,15 +23,19 @@ public class CommentDTO {
 
     private PrismAction action;
 
-    private Boolean applicationShared;
+    private Boolean recommend;
 
-    private Boolean applicationRecommend;
-
+    private Boolean declinedResponse;
+    
     @Size(max = 50000)
     private String content;
-
+    
     private PrismState transitionState;
 
+    private Boolean shared;
+    
+    private Boolean onCourse;
+    
     private BigDecimal rating;
 
     private PrismYesNoUnsureResponse eligible;
@@ -55,8 +59,6 @@ public class CommentDTO {
     private Boolean partnerAcceptAppointment;
 
     private Boolean applicantAcceptAppointment;
-
-    private Boolean declinedResponse;
 
     private PrismRejectionReason rejectionReason;
 
@@ -107,21 +109,13 @@ public class CommentDTO {
     public void setAction(PrismAction action) {
         this.action = action;
     }
-
-    public final Boolean getApplicationShared() {
-        return applicationShared;
+    
+    public final Boolean getRecommend() {
+        return recommend;
     }
 
-    public final void setApplicationShared(Boolean applicationShared) {
-        this.applicationShared = applicationShared;
-    }
-
-    public final Boolean getApplicationRecommend() {
-        return applicationRecommend;
-    }
-
-    public final void setApplicationRecommend(Boolean applicationRecommend) {
-        this.applicationRecommend = applicationRecommend;
+    public final void setRecommend(Boolean applicationRecommend) {
+        this.recommend = applicationRecommend;
     }
 
     public String getContent() {
@@ -138,6 +132,22 @@ public class CommentDTO {
 
     public void setTransitionState(PrismState transitionState) {
         this.transitionState = transitionState;
+    }
+    
+    public final Boolean getShared() {
+        return shared;
+    }
+
+    public final void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
+    public Boolean getOnCourse() {
+        return onCourse;
+    }
+
+    public void setOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
     }
 
     public PrismYesNoUnsureResponse getEligible() {

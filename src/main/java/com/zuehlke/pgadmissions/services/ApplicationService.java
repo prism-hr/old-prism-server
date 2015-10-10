@@ -300,6 +300,10 @@ public class ApplicationService {
         return applicationDAO.getApplicationsByEmployingResourceScope(parent, resourceScope, resources);
     }
 
+    public Boolean getApplicationOnCourse(Application application) {
+        return applicationDAO.getApplicationOnCourse(application);
+    }
+
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(opportunityType.getOpportunityCategory().name());

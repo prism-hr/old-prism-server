@@ -85,7 +85,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             synchronizeOfferRecommendation(resource, comment);
         }
 
-        if (comment.isApplicationCompletionComment()) {
+        if (comment.isApplicationProcessingCompletedComment()) {
             resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
     }

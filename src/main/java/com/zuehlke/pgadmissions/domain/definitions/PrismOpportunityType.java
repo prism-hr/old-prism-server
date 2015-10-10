@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PAID_TOC;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -17,22 +17,20 @@ import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,
     PrismLocalizableDefinition {
 
-    STUDY_UNDERGRADUATE(STUDY, false, false, null), //
-    STUDY_POSTGRADUATE_TAUGHT(STUDY, false, false, null), //
-    STUDY_POSTGRADUATE_RESEARCH(STUDY, false, false, null), //
-    TRAINING(PERSONAL_DEVELOPMENT, false, false, null), //
-    WORK_EXPERIENCE(EXPERIENCE, true, false, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC), //
-    ON_COURSE_PLACEMENT(EXPERIENCE, true, true, SYSTEM_OPPORTUNITY_TYPE_OPTIONAL_TOC), //
-    VOLUNTEERING(EXPERIENCE, true, false, SYSTEM_OPPORTUNITY_TYPE_UNPAID_TOC), //
-    EMPLOYMENT(WORK, true, false, SYSTEM_OPPORTUNITY_TYPE_PAID_TOC); //
+    STUDY_UNDERGRADUATE(STUDY, false, null), //
+    STUDY_POSTGRADUATE_TAUGHT(STUDY, false, null), //
+    STUDY_POSTGRADUATE_RESEARCH(STUDY, false, null), //
+    TRAINING(PERSONAL_DEVELOPMENT, false, null), //
+    WORK_EXPERIENCE(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION), //
+    PLACEMENT(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION), //
+    VOLUNTEERING(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION), //
+    EMPLOYMENT(WORK, true, null); //
 
     private PrismOpportunityCategory opportunityCategory;
-    
-    private boolean published;
-    
-    private boolean requireEndorsement;
 
-    private PrismDisplayPropertyDefinition termsAndConditions;
+    private boolean published;
+
+    private PrismDisplayPropertyDefinition description;
 
     private static final LinkedListMultimap<PrismOpportunityCategory, PrismOpportunityType> byCategory = LinkedListMultimap.create();
 
@@ -42,29 +40,24 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
         }
     }
 
-    private PrismOpportunityType(PrismOpportunityCategory category, boolean published, boolean requireEndorsement, PrismDisplayPropertyDefinition termsAndConditions) {
-        this.opportunityCategory = category;
+    private PrismOpportunityType(PrismOpportunityCategory opportunityCategory, boolean published, PrismDisplayPropertyDefinition description) {
+        this.opportunityCategory = opportunityCategory;
         this.published = published;
-        this.requireEndorsement = requireEndorsement;
-        this.termsAndConditions = termsAndConditions;
+        this.description = description;
     }
 
     public PrismOpportunityCategory getOpportunityCategory() {
         return opportunityCategory;
     }
-    
+
     public boolean isPublished() {
         return published;
     }
 
-    public boolean isRequireEndorsement() {
-        return requireEndorsement;
+    public PrismDisplayPropertyDefinition getDescription() {
+        return description;
     }
 
-    public PrismDisplayPropertyDefinition getTermsAndConditions() {
-        return termsAndConditions;
-    }
-    
     public static List<PrismOpportunityType> getOpportunityTypes(PrismOpportunityCategory opportunityCategory) {
         return byCategory.get(opportunityCategory);
     }

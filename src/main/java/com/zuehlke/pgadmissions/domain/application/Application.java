@@ -153,6 +153,9 @@ public class Application extends Resource implements
     @Column(name = "shared", nullable = false)
     private Boolean shared;
 
+    @Column(name = "on_course", nullable = false)
+    private Boolean onCourse;
+    
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
@@ -497,6 +500,14 @@ public class Application extends Resource implements
     @Override
     public void setShared(Boolean shared) {
         this.shared = shared;
+    }
+
+    public Boolean getOnCourse() {
+        return onCourse;
+    }
+
+    public void setOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
     }
 
     @Override

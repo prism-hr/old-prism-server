@@ -137,6 +137,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
+    @Column(name = "application_shared")
+    private Boolean shared;
+
+    @Column(name = "application_on_course")
+    private Boolean onCourse;
+
     @Column(name = "application_rating")
     private BigDecimal rating;
 
@@ -344,6 +350,22 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public void setRating(BigDecimal rating) {
         this.rating = rating;
+    }
+
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
+    public Boolean getOnCourse() {
+        return onCourse;
+    }
+
+    public void setOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
     }
 
     public PrismYesNoUnsureResponse getEligible() {
@@ -643,11 +665,11 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return Arrays.asList(INSTITUTION_CREATE_APPLICATION, DEPARTMENT_CREATE_APPLICATION, PROJECT_CREATE_APPLICATION).contains(action.getId());
     }
 
-    public boolean isApplicationSubmittedComment() {
+    public boolean isApplicationCompleteComment() {
         return action.getId().equals(APPLICATION_COMPLETE);
     }
 
-    public boolean isApplicationCompletionComment() {
+    public boolean isApplicationProcessingCompletedComment() {
         return Arrays.asList(APPLICATION_CONFIRM_OFFER, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
                 .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
     }

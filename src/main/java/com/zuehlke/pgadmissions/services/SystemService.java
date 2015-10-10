@@ -299,8 +299,7 @@ public class SystemService {
     private void initializeOpportunityTypes() throws DeduplicationException {
         for (PrismOpportunityType prismOpportunityType : PrismOpportunityType.values()) {
             entityService.createOrUpdate(new OpportunityType().withId(prismOpportunityType).withOpportunityCategory(prismOpportunityType.getOpportunityCategory())
-                    .withPublished(prismOpportunityType.isPublished()).withRequireEndorsement(prismOpportunityType.isRequireEndorsement())
-                    .withOrdinal(prismOpportunityType.ordinal()));
+                    .withPublished(prismOpportunityType.isPublished()).withOrdinal(prismOpportunityType.ordinal()));
         }
     }
 

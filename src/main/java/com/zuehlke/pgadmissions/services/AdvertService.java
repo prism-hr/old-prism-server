@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.parentScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -564,7 +564,7 @@ public class AdvertService {
             PrismScope resourceScope = resource.getResourceScope();
 
             Set<Advert> targetAdverts = Sets.newHashSet();
-            for (PrismScope partnerScope : targetScopes) {
+            for (PrismScope partnerScope : parentScopes) {
                 targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(advert, user, resourceScope, partnerScope));
             }
 
@@ -576,7 +576,7 @@ public class AdvertService {
 
     private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
         List<Integer> connectAdverts = Lists.newArrayList();
-        for (PrismScope resourceScope : targetScopes) {
+        for (PrismScope resourceScope : parentScopes) {
             connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(resourceScope, user));
         }
         return connectAdverts;
@@ -584,7 +584,7 @@ public class AdvertService {
 
     private List<AdvertTargetDTO> getAdvertTargetsReceived(User user, List<Integer> connectAdverts, boolean pending) {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
-        for (PrismScope resourceScope : targetScopes) {
+        for (PrismScope resourceScope : parentScopes) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
                 advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts, pending));
             }

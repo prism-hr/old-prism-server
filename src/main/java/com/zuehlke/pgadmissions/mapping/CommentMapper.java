@@ -175,9 +175,16 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentationSimple(Comment comment) {
-        return new CommentRepresentation().withId(comment.getId()).withUser(userMapper.getUserRepresentationSimple(comment.getUser()))
+        CommentRepresentation representation = new CommentRepresentation().withId(comment.getId()).withUser(userMapper.getUserRepresentationSimple(comment.getUser()))
                 .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
                 .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp());
+
+        if (comment.isApplicationCompleteComment()) {
+            representation.setShared(comment.getShared());
+            representation.setOnCourse(comment.getOnCourse());
+        }
+
+        return representation;
     }
 
     private CommentRepresentation getCommentRepresentationExtended(Comment comment) {

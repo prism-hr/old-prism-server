@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.StateService;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
@@ -25,6 +27,9 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransit
 public class ApplicationConfirmedOfferOutcome implements StateTransitionResolver<Application> {
 
     @Inject
+    private ApplicationService applicationService;
+    
+    @Inject
     private ResourceService resourceService;
 
     @Inject
@@ -32,7 +37,7 @@ public class ApplicationConfirmedOfferOutcome implements StateTransitionResolver
 
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
-        if (resource.getOpportunityType().isRequireEndorsement()) {
+        if (isTrue(applicationService.getApplicationOnCourse(resource))) {
             List<Integer> creatorDepartments = resourceService.getResourcesIdForWhichUserHasRoles(resource.getUser(), DEPARTMENT_STUDENT, DEPARTMENT_STUDENT_UNVERIFIED);
             List<Integer> recruiterDepartment = resourceService.getResourcesIdForWhichUserHasRoles(comment.getUser(), DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER);
             if (containsAny(creatorDepartments, recruiterDepartment)) {

@@ -561,7 +561,7 @@ public class ResourceDAO {
                 .add(Restrictions.ge("resource.createdTimestamp", createdBaseline)) //
                 .add(Restrictions.eq("stateAction.action.id", PrismAction.valueOf(resourceScope.name() + "_CREATE_APPLICATION")))
                 .list();
-    }
+    }    
 
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
         List<Integer> resourceIds = filter.getResourceIds();

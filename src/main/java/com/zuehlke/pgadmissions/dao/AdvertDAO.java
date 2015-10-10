@@ -511,6 +511,14 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<Integer> getParentAdvertIds(PrismScope resourceScope, PrismScope parentScope, Collection<Integer> adverts) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("parentResource.advert.id")) //
+                .createAlias(parentScope.getLowerCamelName(), "parentResource") //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .list();
+    }
+
     public void processAdvertTarget(Integer advertTargetId, PrismPartnershipState partnershipState) {
         sessionFactory.getCurrentSession().createQuery(
                 "update AdvertTarget "

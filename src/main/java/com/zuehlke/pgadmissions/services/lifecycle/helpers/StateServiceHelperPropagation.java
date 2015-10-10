@@ -53,7 +53,7 @@ public class StateServiceHelperPropagation extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void executeDeferredStateTransition(PrismScope actionScope, Integer resourceId, PrismAction actionId) throws Exception {
+    private void executeDeferredStateTransition(PrismScope actionScope, Integer resourceId, PrismAction actionId) {
         if (!isShuttingDown()) {
             stateService.executeDeferredStateTransition(actionScope, resourceId, actionId);
         }

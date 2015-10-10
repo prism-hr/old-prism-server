@@ -2,12 +2,9 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionJoinConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionVisibilityConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
@@ -30,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -44,7 +43,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
@@ -86,7 +84,10 @@ import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 @SuppressWarnings("unchecked")
 public class AdvertDAO {
 
-    @Autowired
+    @Inject
+    private WorkflowDAO workflowDAO;
+
+    @Inject
     private SessionFactory sessionFactory;
 
     public Advert getAdvert(PrismScope resourceScope, Integer resourceId) {
@@ -412,34 +413,14 @@ public class AdvertDAO {
         return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
     }
 
-    public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope partnerScope) {
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
-                .setProjection(Projections.groupProperty("target.targetAdvert")) //
-                .createAlias(advert.getResource().getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("targetAdvert." + partnerScope.getLowerCamelName(), "partnerResource", JoinType.INNER_JOIN) //
-                .createAlias("partnerResource.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("target.partnershipState", "action.partnershipState")) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN)
-                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN, //
-                        getEndorsementActionJoinConstraint()) //
-                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
-                .add(Restrictions.eq("resource.advert", advert)) //
-                .add(Restrictions.eq("userRole.user", user)) //
+    public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope) {
+        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("target.targetAdvert"))
+                .add(Restrictions.eq("target.advert", advert)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("target.targetAdvertUser", user))
+                        .add(Restrictions.eq("userRole.user", user))) //
                 .add(Restrictions.in("stateAction.action.id",
-                        asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList()))) //
-                .add(getEndorsementActionVisibilityConstraint()) //
-                .add(getResourceStateActionConstraint()) //
-                .add(Restrictions.eqProperty("state", "stateAction.state")) //
+                        asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList())))
                 .list();
     }
 

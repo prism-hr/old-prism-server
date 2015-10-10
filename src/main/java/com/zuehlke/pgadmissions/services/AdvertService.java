@@ -444,12 +444,11 @@ public class AdvertService {
         }
 
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
-        PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
 
         String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opprortunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : parentScopes) {
                 advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts, null).forEach(at -> {
                     advertTargets.put(at.getId(), at);
                 });
@@ -457,7 +456,7 @@ public class AdvertService {
         }
 
         if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : parentScopes) {
                 advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts, null).forEach(at -> {
                     advertTargets.put(at.getId(), at);
                 });
@@ -466,7 +465,7 @@ public class AdvertService {
 
         User user = userService.getCurrentUser();
         List<Integer> userAdverts = Lists.newArrayList();
-        for (PrismScope targetScope : targetScopes) {
+        for (PrismScope targetScope : parentScopes) {
             userAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(targetScope, user));
         }
 
@@ -568,8 +567,15 @@ public class AdvertService {
             PrismScope resourceScope = resource.getResourceScope();
 
             Set<Advert> targetAdverts = Sets.newHashSet();
-            for (PrismScope partnerScope : parentScopes) {
-                targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(advert, user, resourceScope, partnerScope));
+            for (PrismScope targeterScope : parentScopes) {
+                if (resourceScope.ordinal() < targeterScope.ordinal()) {
+                    ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
+                    if (targeterResource != null) {
+                        for (PrismScope targetScope : parentScopes) {
+                            targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope, targetScope));
+                        }
+                    }
+                }
             }
 
             targetAdverts.forEach(targetAdvert -> {

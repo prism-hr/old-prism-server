@@ -846,7 +846,7 @@ public class ResourceService {
             for (PrismScope targeterScope : parentScopes) {
                 if (scope.ordinal() > targeterScope.ordinal()) {
                     for (PrismScope targetScope : parentScopes) {
-                        addResources(resourceDAO.getResources(user, scope, targetScope, targetScope, filter, columns, conditions, responseClass), resources, asPartner);
+                        addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, filter, columns, conditions, responseClass), resources, asPartner);
                     }
                 }
             }

@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -46,6 +47,8 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         private ResourceRepresentationActivity resource;
 
         private UserRepresentationSimple user;
+        
+        private PrismPartnershipState partnershipState;
 
         private Boolean canManage;
 
@@ -72,6 +75,14 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         public void setUser(UserRepresentationSimple user) {
             this.user = user;
         }
+        
+        public PrismPartnershipState getPartnershipState() {
+            return partnershipState;
+        }
+
+        public void setPartnershipState(PrismPartnershipState partnershipState) {
+            this.partnershipState = partnershipState;
+        }
 
         public Boolean getCanManage() {
             return canManage;
@@ -96,6 +107,11 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             return this;
         }
 
+        public AdvertTargetConnectionRepresentation withPartnershipState(PrismPartnershipState partnershipState) {
+            this.partnershipState = partnershipState;
+            return this;
+        }
+        
         public AdvertTargetConnectionRepresentation withCanManage(Boolean canManage) {
             this.canManage = canManage;
             return this;

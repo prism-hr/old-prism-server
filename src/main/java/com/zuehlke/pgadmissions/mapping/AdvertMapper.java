@@ -366,7 +366,7 @@ public class AdvertMapper {
             AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
                     .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
                             advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
-                    .withCanManage(BooleanUtils.isTrue(advertTarget.getCanManage()));
+                    .withPartnershipState(advertTarget.getPartnershipState()).withCanManage(BooleanUtils.isTrue(advertTarget.getCanManage()));
 
             Integer otherUserId = advertTarget.getOtherUserId();
             if (otherUserId != null) {

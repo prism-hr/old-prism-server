@@ -18,6 +18,10 @@ public interface ProfileEmploymentPosition<T extends ProfileEntity<?, ?, ?, ?, ?
 
     void setEndMonth(Integer endMonth);
 
+    String getDescription();
+
+    void setDescription(String description);
+
     Boolean getCurrent();
 
     void setCurrent(Boolean current);

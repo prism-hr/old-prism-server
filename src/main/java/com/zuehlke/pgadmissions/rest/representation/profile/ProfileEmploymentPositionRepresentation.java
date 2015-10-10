@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.rest.representation.profile;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationSectionRepresentation;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 public class ProfileEmploymentPositionRepresentation extends ApplicationSectionRepresentation {
 
@@ -15,6 +14,8 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    private String description;
 
     private Boolean current;
 
@@ -68,6 +69,14 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
         this.endDate = endDate;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public ProfileEmploymentPositionRepresentation withStartDate(final LocalDate startDate) {
         this.startDate = startDate;
         return this;
@@ -75,6 +84,11 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
 
     public ProfileEmploymentPositionRepresentation withEndDate(final LocalDate endDate) {
         this.endDate = endDate;
+        return this;
+    }
+
+    public ProfileEmploymentPositionRepresentation withDescription(final String description) {
+        this.description = description;
         return this;
     }
 

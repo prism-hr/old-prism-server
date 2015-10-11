@@ -175,7 +175,7 @@ public class WorkflowConfigurationHelper {
         StateDurationDefinition definition = state.getStateDurationDefinition();
 
         if (definition != null) {
-            if (stateService.getStateDurationConfiguration(system, system.getUser(), state.getStateDurationDefinition()) != null) {
+            if (stateService.getStateDurationConfiguration(system, state.getStateDurationDefinition()) != null) {
                 assertFalse(escalationActions.isEmpty());
             }
         }

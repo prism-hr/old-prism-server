@@ -1,18 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.DESCENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint.getPermittedFilters;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode;
@@ -25,6 +12,17 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.DESCENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint.getPermittedFilters;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
 
 @Service
 @Transactional
@@ -96,7 +94,7 @@ public class ResourceListFilterService {
         }
 
         return new ResourceListFilterDTO().withUrgentOnly(false).withSortOrder(DESCENDING)
-                .withConstraints(new ArrayList<ResourceListFilterConstraintDTO>(0));
+                .withConstraints(Collections.emptyList());
     }
 
     public ResourceListFilterDTO saveOrGetByUserAndScope(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO) throws DeduplicationException {

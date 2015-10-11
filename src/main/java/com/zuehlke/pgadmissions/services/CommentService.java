@@ -1,40 +1,14 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
-import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
-import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -45,13 +19,26 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.exceptions.DeduplicationException;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentAssignedUserDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentCompetenceDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewAppointmentDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentInterviewInstructionDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.*;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
 
 @Service
 @Transactional
@@ -79,20 +66,12 @@ public class CommentService {
         return entityService.getById(Comment.class, id);
     }
 
-    public Comment getLatestComment(Resource resource) {
-        return commentDAO.getLatestComment(resource);
-    }
-
     public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, prismActions) : null;
     }
 
     public Comment getLatestComment(Resource resource, User user, PrismAction... prismActions) {
         return prismActions.length > 0 ? commentDAO.getLatestComment(resource, user, prismActions) : null;
-    }
-
-    public Comment getLatestComment(Resource resource, PrismAction actionId, DateTime baseline) {
-        return commentDAO.getLatestComment(resource, actionId, baseline);
     }
 
     public Comment getLatestComment(Resource resource, PrismAction actionId, User user, DateTime baseline) {
@@ -102,7 +81,7 @@ public class CommentService {
     public boolean isCommentOwner(Comment comment, User user) {
         Integer userId = user.getId();
         User ownerDelegate = comment.getDelegateUser();
-        return (comment.getUser().getId() == userId || (ownerDelegate != null && ownerDelegate.getId() == userId));
+        return (Objects.equals(comment.getUser().getId(), userId) || (ownerDelegate != null && Objects.equals(ownerDelegate.getId(), userId)));
     }
 
     public void persistComment(Resource resource, Comment comment) {
@@ -138,10 +117,6 @@ public class CommentService {
         resource.addComment(comment);
 
         entityService.flush();
-    }
-
-    public List<Comment> getRecentComments(PrismScope resourceScope, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
-        return commentDAO.getRecentComments(resourceScope, resourceId, rangeStart, rangeClose);
     }
 
     public void recordStateTransition(Comment comment, State state, State transitionState, Set<State> stateTerminations) {
@@ -281,7 +256,7 @@ public class CommentService {
         }
 
         Comment comment = new Comment().withUser(user).withResource(resource).withContent(commentContent).withAction(action)
-                .withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime()).withDeclinedResponse(commentDTO.getDeclinedResponse() == null ? false : true);
+                .withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime()).withDeclinedResponse(commentDTO.getDeclinedResponse() != null);
         appendCommentProperties(comment, commentDTO);
         return comment;
     }

@@ -1,21 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Set;
-
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
+
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
@@ -74,10 +66,15 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
                 if (roleScope.ordinal() <= DEPARTMENT.ordinal()) {
                     visibleScopes.put(role, PROJECT);
+                    visibleScopes.put(role, PROGRAM);
                 }
 
                 if (roleScope.ordinal() <= INSTITUTION.ordinal()) {
                     visibleScopes.put(role, DEPARTMENT);
+                }
+
+                if (roleScope.ordinal() <= SYSTEM.ordinal()) {
+                    visibleScopes.put(role, INSTITUTION);
                 }
             }
         }

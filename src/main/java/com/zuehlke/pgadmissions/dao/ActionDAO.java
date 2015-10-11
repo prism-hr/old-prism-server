@@ -95,7 +95,7 @@ public class ActionDAO {
                 .add(getUserEnabledConstraint(user)) //
                 .add(getEndorsementActionFilterConstraint()) //
                 .addOrder(Order.asc("resource.id")) //
-                .addOrder(Order.desc("raisesUrgentFlag")) //
+                .addOrder(Order.desc("stateAction.raisesUrgentFlag")) //
                 .addOrder(Order.desc("primaryState")) //
                 .addOrder(Order.asc("action.id")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //

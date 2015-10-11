@@ -241,11 +241,10 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/requestUser", method = RequestMethod.POST)
     @PreAuthorize("permitAll")
-    public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @RequestParam PrismJoinResourceContext context,
+    public void requestUser(@PathVariable Integer resourceId, @RequestParam PrismJoinResourceContext context,
             @RequestBody UserRegistrationDTO userRegistrationDTO, @ModelAttribute ResourceDescriptor resourceDescriptor, HttpServletRequest request) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         userAccountService.joinResource(resource, context, userRegistrationDTO, request.getSession());
-        throw new Error("Invoker attempted to impersonate another user");
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/verify", method = RequestMethod.POST)

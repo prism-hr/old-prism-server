@@ -12,6 +12,8 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private List<PrismScope> visibleScopes;
 
+    private List<UserRolesRepresentation> userRoles;
+
     private String parentUser;
 
     private List<String> linkedUsers;
@@ -36,6 +38,14 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     public void setVisibleScopes(List<PrismScope> visibleScopes) {
         this.visibleScopes = visibleScopes;
+    }
+
+    public List<UserRolesRepresentation> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(List<UserRolesRepresentation> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public String getParentUser() {

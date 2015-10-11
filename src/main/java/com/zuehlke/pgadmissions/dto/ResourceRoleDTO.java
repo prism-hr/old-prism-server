@@ -2,12 +2,25 @@ package com.zuehlke.pgadmissions.dto;
 
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceRoleDTO {
+
+    private PrismScope scope;
 
     private Integer id;
 
     private PrismRole role;
+
+    private Boolean verified;
+
+    public PrismScope getScope() {
+        return scope;
+    }
+
+    public void setScope(PrismScope scope) {
+        this.scope = scope;
+    }
 
     public Integer getId() {
         return id;
@@ -25,6 +38,14 @@ public class ResourceRoleDTO {
         this.role = role;
     }
 
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(id, role);
@@ -39,7 +60,7 @@ public class ResourceRoleDTO {
             return false;
         }
         final ResourceRoleDTO other = (ResourceRoleDTO) object;
-        return id.equals(other.getId()) && role.equals(other.getRole());
+        return Objects.equal(scope, other.getScope()) && Objects.equal(id, other.getId()) && Objects.equal(role, other.getRole());
     }
 
 }

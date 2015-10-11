@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.dto.ResourceRoleDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -72,6 +73,10 @@ public class RoleService {
         return entityService.getByProperty(Role.class, "id", roleId);
     }
 
+    public List<Role> getRoles() {
+        return entityService.list(Role.class);
+    }
+
     public UserRole getUserRole(Resource resource, User user, Role role) {
         return roleDAO.getUserRole(resource, user, role);
     }
@@ -80,8 +85,12 @@ public class RoleService {
         return roleDAO.getUserRole(resource, user, role);
     }
 
-    public List<Role> getRoles() {
-        return entityService.list(Role.class);
+    public List<ResourceRoleDTO> getUserRoles(User user) {
+        List<ResourceRoleDTO> userRoles = Lists.newArrayList();
+        for (PrismScope resourceScope : PrismScope.values()) {
+            userRoles.addAll(roleDAO.getUserRoles(user, resourceScope));
+        }
+        return userRoles;
     }
 
     public UserRole getOrCreateUserRole(UserRole transientUserRole) {

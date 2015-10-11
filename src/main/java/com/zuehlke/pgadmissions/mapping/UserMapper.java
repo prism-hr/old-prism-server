@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
@@ -21,6 +22,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
@@ -53,6 +56,8 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExten
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationInvitationBounced;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRolesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
@@ -131,6 +136,7 @@ public class UserMapper {
         UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
         representation.setVisibleScopes(roleService.getVisibleScopes(user));
+        representation.setUserRoles(getUserRoleRepresentations(user));
 
         representation.setParentUser(user.getEmail());
         representation.setLinkedUsers(userService.getLinkedUserAccounts(user));
@@ -243,6 +249,21 @@ public class UserMapper {
         representation.setEmail(profileEntity.getUserEmail());
         representation.setAccountImageUrl(profileEntity.getUserAccountImageUrl());
         return representation;
+    }
+
+    public List<UserRolesRepresentation> getUserRoleRepresentations(User user) {
+        HashMultimap<ResourceRepresentationIdentity, RoleRepresentation> index = HashMultimap.create();
+        roleService.getUserRoles(user).forEach(userRole -> {
+            index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()),
+                    new RoleRepresentation(userRole.getRole(), userRole.getVerified()));
+        });
+
+        List<UserRolesRepresentation> representations = Lists.newArrayList();
+        index.keySet().forEach(resource -> {
+            representations.add(new UserRolesRepresentation(resource, newArrayList(index.get(resource))));
+        });
+
+        return representations;
     }
 
     public List<ResourceRepresentationConnection> getUserConnectionResourceRepresentations(User user, String searchTerm) {

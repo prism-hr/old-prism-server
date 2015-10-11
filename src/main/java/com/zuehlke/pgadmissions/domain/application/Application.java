@@ -593,6 +593,11 @@ public class Application extends Resource implements
         this.opportunityCategories = opportunityCategories;
         return this;
     }
+    
+    public Application withOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
+        return this;
+    }
 
     public String getCreatedTimestampDisplay(String dateFormat) {
         return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat);

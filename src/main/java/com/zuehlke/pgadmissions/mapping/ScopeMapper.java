@@ -1,20 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.hibernate.criterion.Projections;
-import org.joda.time.DateTime;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.PrismScopeRelations;
@@ -29,9 +14,21 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentat
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
-
 import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.collect.Maps;
+import org.hibernate.criterion.Projections;
+import org.joda.time.DateTime;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 
 @Service
 @Transactional
@@ -81,13 +78,13 @@ public class ScopeMapper {
 
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
         List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
-        visibleScopes.forEach(scope -> {
+        for (PrismScope scope : visibleScopes) {
             Set<Integer> updatedResources = Sets.newHashSet();
             Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();
 
             Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, visibleScopes.stream()
-                    .filter(as -> as.ordinal() < scope.ordinal())
-                    .collect(Collectors.toList()), //
+                            .filter(as -> as.ordinal() < scope.ordinal())
+                            .collect(Collectors.toList()), //
                     new ResourceListFilterDTO().withMatchMode(ANY).withUrgentOnly(true).withUpdateOnly(true), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("resourceId")) //
@@ -111,8 +108,10 @@ public class ScopeMapper {
                 actions.add(new ActionActivityRepresentation().withAction(actionMapper.getActionRepresentation(action)).withUrgentCount(actionCounts.get(action)));
             });
 
-            representations.add(new ResourceActivityRepresentation().withScope(scope).withUpdateCount(updatedResources.size()).withActions(actions));
-        });
+            if (!updatedResources.isEmpty() || !actions.isEmpty()) {
+                representations.add(new ResourceActivityRepresentation().withScope(scope).withUpdateCount(updatedResources.size()).withActions(actions));
+            }
+        }
 
         return representations;
     }

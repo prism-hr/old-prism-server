@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -354,11 +354,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement"),
     SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering"),
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
-    
+
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work experience positions are typically short term engagements where the participant observes or shadows employees in your organization."),
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically longer term engagments where the particpant performs concrete tasks."),
     SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering positions are typically engagements where the participant contributes towards a charitable cause."),
-    
+
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the participant the national minimum wage. Please confirm that your opportunity complies with national minimum wage requirements."),
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "National minimum wage requirements"),
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LOCATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "https://www.gov.uk/guidance/national-minimum-wage-work-experience-and-internships"),
@@ -1185,8 +1185,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_ASSIGN_USERS_USER_NOT_IN_LIST(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "User not in the list?"),
     SYSTEM_HTML_DURATION_CONTROL_HOURS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Hours"),
     SYSTEM_HTML_DURATION_CONTROL_MINUTES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Minutes"),
-    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Completed"),
-    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "You cannot provide more than {{maxItems}} item(s)."),
+    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Completed"),
+    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "You cannot provide more than {{maxItems}} item(s)."),
     SYSTEM_HTML_FILE_UPLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload PDF"),
     SYSTEM_HTML_FILE_UPLOAD_IMAGE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload Logo"),
     SYSTEM_HTML_LOOKUP_USER_LABEL(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Lookup User"),
@@ -1201,12 +1201,18 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_LOOKUP_EMAIL_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Please enter user's e-mail address."),
     SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Return to search"),
 
+     /*
+      * *************** SYSTEM ACTIVITY SECTION *********************
+      */
+
+    SYSTEM_ACTIVITY_RECENTLY_UPDATED(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Recently Updated"),
+
     /*
      * *************** SYSTEM CONNECT SECTION *********************
      */
 
-    SYSTEM_CONNECT_INVITING_RESOURCE_LABEL(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Connect "),
-    SYSTEM_CONNECT_INVITING_RESOURCE_HINT(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Please select which institution / department would you like to connect as"),
+    SYSTEM_CONNECT_INVITING_RESOURCE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Connect"),
+    SYSTEM_CONNECT_INVITING_RESOURCE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Please select which institution / department would you like to connect as"),
 
     /*
      * *************** SYSTEM AUTHENTICATE SECTION *********************
@@ -1381,7 +1387,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_RESOURCE_COLUMN_STATUS(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Status"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Actions"),
     SYSTEM_RESOURCES_RESOURCE_RECENTLY_UPDATED(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Recently Updated"),
-    SYSTEM_RESOURCES_RESOURCE_PARENT_UNCOMPLETED(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Advert has incomplete sections, click the link to edit"),
+    SYSTEM_RESOURCES_RESOURCE_PARENT_UNCOMPLETED(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Advert has incomplete sections, click the link to edit"),
     SYSTEM_RESOURCES_LOAD_MORE(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Load More"),
     SYSTEM_RESOURCES_SUMMARY_CREATED(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Created:"),
     SYSTEM_RESOURCES_SUMMARY_AUTHOR(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Author:"),

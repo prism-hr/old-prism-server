@@ -1,10 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -16,16 +20,10 @@ import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -33,15 +31,6 @@ public class CommentDAO {
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    public Comment getLatestComment(Resource resource) {
-        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
 
     public Comment getLatestComment(Resource resource, PrismAction... prismActions) {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
@@ -60,17 +49,6 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
                         .add(Restrictions.eq("delegateUser", user))) //
-                .addOrder(Order.desc("createdTimestamp")) //
-                .addOrder(Order.desc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public Comment getLatestComment(Resource resource, PrismAction prismAction, DateTime baseline) {
-        return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("action.id", prismAction)) //
-                .add(Restrictions.ge("createdTimestamp", baseline)) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
@@ -131,13 +109,6 @@ public class CommentDAO {
                 .add(Restrictions.ge("createdTimestamp", comment.getCreatedTimestamp())) //
                 .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS)) //
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
-                .list();
-    }
-
-    public List<Comment> getRecentComments(PrismScope resourceScope, Integer resourceId, DateTime rangeStart, DateTime rangeClose) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(resourceScope.getLowerCamelName() + ".id", resourceId)) //
-                .add(Restrictions.between("createdTimestamp", rangeStart, rangeClose)) //
                 .list();
     }
 

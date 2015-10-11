@@ -1,21 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -24,34 +8,29 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.StateDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
-import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.domain.workflow.StateAction;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
-import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
-import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
-import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
-import com.zuehlke.pgadmissions.domain.workflow.StateTermination;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionEvaluation;
-import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
+import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.termination.StateTerminationResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 
 @Service
 @Transactional
@@ -122,7 +101,7 @@ public class StateService {
         return entityService.list(StateTransitionEvaluation.class);
     }
 
-    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, User user, StateDurationDefinition definition) {
+    public StateDurationConfiguration getStateDurationConfiguration(Resource resource, StateDurationDefinition definition) {
         return (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, resource, definition);
     }
 
@@ -249,8 +228,8 @@ public class StateService {
 
     public List<PrismState> getRecommendedNextStates(Resource resource) {
         String tokens = stateDAO.getRecommendedNextStates(resource);
-        return Lists.newArrayList(Splitter.on("|").omitEmptyStrings().split(Strings.nullToEmpty(tokens))).stream()
-                .map(token -> PrismState.valueOf(token))
+        return Splitter.on("|").omitEmptyStrings().splitToList(Strings.nullToEmpty(tokens)).stream()
+                .map(PrismState::valueOf)
                 .collect(Collectors.toList());
     }
 
@@ -346,13 +325,9 @@ public class StateService {
     private List<StateTransition> getSecondaryStateTransitions(Resource resource, Action action, Comment comment) {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);
 
-        List<StateTransition> stateTransitions = Lists.newArrayList();
-        List<PrismState> states = getSecondaryResourceStates(operativeResource);
-        for (PrismState state : states) {
-            stateTransitions.add(stateDAO.getSecondaryStateTransition(operativeResource, state, action));
-        }
-
-        return stateTransitions;
+        return getSecondaryResourceStates(operativeResource).stream()
+                .map(state -> stateDAO.getSecondaryStateTransition(operativeResource, state, action))
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")

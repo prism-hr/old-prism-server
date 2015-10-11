@@ -1,27 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.social.linkedin.api.LinkedInProfile;
-import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
-import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
-import org.springframework.social.oauth1.OAuth1Operations;
-import org.springframework.social.oauth1.OAuth1Parameters;
-import org.springframework.social.oauth1.OAuthToken;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.social.twitter.connect.TwitterServiceProvider;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -34,14 +14,26 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.social.linkedin.api.LinkedInProfile;
+import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
+import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 
 @Service
 @Transactional
 public class UserAccountService {
 
     public static final String OAUTH_USER_TO_CONFIRM = "oauthUserToConfirm";
-
-    private static final String OAUTH_TOKEN_ATTRIBUTE = "oauthToken";
 
     @Value("${auth.facebook.appSecret}")
     private String facebookAppSecret;
@@ -75,19 +67,6 @@ public class UserAccountService {
 
     @Inject
     private UserService userService;
-
-    public String requestToken(HttpSession session, PrismOauthProvider oauthProvider) {
-        switch (oauthProvider) {
-        case TWITTER:
-            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-        default:
-            throw new Error("Requesting token not supported for: " + oauthProvider);
-        }
-    }
 
     public User getOrCreateUserAccountExternal(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();

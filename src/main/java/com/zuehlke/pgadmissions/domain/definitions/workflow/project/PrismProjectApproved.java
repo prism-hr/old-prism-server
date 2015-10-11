@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_REENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ENDORSER_GROUP;
@@ -39,7 +40,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PROJECT_ENDORSE) //
+                .withAction(PROJECT_REENDORSE) //
                 .withPartnerAssignments(PROJECT_ENDORSER_GROUP) //
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 

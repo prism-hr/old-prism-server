@@ -43,7 +43,9 @@ public class WorkflowDAO {
 
     public Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -66,9 +68,8 @@ public class WorkflowDAO {
                     .createAlias(targeterResourceTarget + ".targetAdvert", targeterAdvert, JoinType.LEFT_OUTER_JOIN);
 
             for (PrismScope targetScope : parentScopes) {
-                String targetScopeLower = targetScope.getLowerCamelName();
-                String targetResource = targetScopeLower + "Target" + targetScopeLower;
-                criteria.createAlias(targeterAdvert + "." + targetScopeLower, targetResource, JoinType.LEFT_OUTER_JOIN,
+                String targetResource = targeterScopeLower + "Target" + targetScope.getUpperCamelName();
+                criteria.createAlias(targeterAdvert + "." + targetScope.getLowerCamelName(), targetResource, JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eqProperty(targeterAdvert + ".id", targetResource + ".advert.id"));
             }
         }
@@ -154,7 +155,10 @@ public class WorkflowDAO {
                         getEndorsementActionJoinConstraint()) //
                 .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(getEndorsementActionVisibilityConstraint()) //
+                .add(getEndorsementActionDefaultVisibilityConstraint()
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.eqProperty("ownerDepartment." + (targetScope.equals(DEPARTMENT) ? "id" : "institution.id"), "targetResource.id"))
+                                .add(Restrictions.eq("resource.shared", true)))) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
@@ -252,10 +256,7 @@ public class WorkflowDAO {
     }
 
     public static Junction getEndorsementActionVisibilityConstraint() {
-        return Restrictions.disjunction() //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("scope.defaultShared", true)) //
-                        .add(Restrictions.eq("resource.shared", true))) //
+        return getEndorsementActionDefaultVisibilityConstraint()
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.eqProperty("ownerDepartment.id", "departmentTargetDepartment.id"))
@@ -301,6 +302,13 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("userNotification.id")) //
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline));
+    }
+
+    private static Junction getEndorsementActionDefaultVisibilityConstraint() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.eq("scope.defaultShared", true)) //
+                        .add(Restrictions.eq("resource.shared", true)));
     }
 
 }

@@ -66,6 +66,7 @@ public class NotificationDAO {
                 .add(Projections.groupProperty("user.id").as("userId")) //
                 .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")) //
                 .add(Projections.groupProperty("stateAction.action.id").as("actionId")))
+                .createAlias("stateAction.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("userNotification." + resourceReference, resource)) //
@@ -83,6 +84,8 @@ public class NotificationDAO {
         Criteria criteria = workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.projectionList() //
                 .add(Projections.groupProperty("user.id").as("userId")) //
                 .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")))
+                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
+                .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("resource.id", resource.getId())); //

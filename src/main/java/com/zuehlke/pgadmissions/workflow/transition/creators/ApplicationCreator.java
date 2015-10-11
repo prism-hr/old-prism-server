@@ -34,7 +34,7 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
         }
 
         return new Application().withUser(user).withParentResource(parentResource).withAdvert(parentResource.getAdvert())
-                .withOpportunityCategories(opportunityCategory.name());
+                .withOpportunityCategories(opportunityCategory.name()).withOnCourse(false);
     }
 
 }

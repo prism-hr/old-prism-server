@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -7,7 +8,7 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
@@ -206,17 +208,13 @@ public class RoleService {
     }
 
     public List<PrismScope> getVisibleScopes(User user) {
-        List<PrismScope> visibleScopes = Lists.newArrayList();
+        Set<PrismScope> visibleScopes = Sets.newTreeSet();
         for (PrismScope scope : PrismScope.values()) {
             getRolesByScope(user, scope).forEach(role -> {
                 visibleScopes.addAll(role.getVisibleScopes());
             });
         }
-        return visibleScopes;
-    }
-
-    public PrismScope getGreatestVisibleScope(User user) {
-        return new TreeSet<PrismScope>(getVisibleScopes(user)).iterator().next();
+        return newLinkedList(visibleScopes);
     }
 
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {

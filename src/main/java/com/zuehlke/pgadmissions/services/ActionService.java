@@ -185,7 +185,7 @@ public class ActionService {
     }
 
     public boolean hasRedactions(User user, PrismScope resourceScope) {
-        if (roleService.getGreatestVisibleScope(user).ordinal() == resourceScope.ordinal()) {
+        if (roleService.getVisibleScopes(user).get(0).ordinal() == resourceScope.ordinal()) {
             List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
             List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
 

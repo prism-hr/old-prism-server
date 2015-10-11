@@ -1511,7 +1511,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_VISIBILITY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visibility"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visiblity that you want for your opportunity."),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_PUBLIC_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everyone"),
-    SYSTEM_RESOURCE_PARENT_VISIBILITY_PRIVATE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible only to my Connections"),
+    SYSTEM_RESOURCE_PARENT_VISIBILITY_PRIVATE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible only to my connections"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Use our recruitment engine?"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Specify whether you wish to use our recruitment engine, or link to your own."),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Application Page URL"),

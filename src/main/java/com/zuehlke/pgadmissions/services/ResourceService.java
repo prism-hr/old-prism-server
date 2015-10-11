@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -838,14 +839,14 @@ public class ResourceService {
         addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass), resources, asPartner);
 
         if (!scope.equals(SYSTEM)) {
-            for (PrismScope parentScopeId : parentScopes) {
-                addResources(resourceDAO.getResources(user, scope, parentScopeId, filter, columns, conditions, responseClass), resources, asPartner);
+            for (PrismScope parentScope : parentScopes) {
+                addResources(resourceDAO.getResources(user, scope, parentScope, filter, columns, conditions, responseClass), resources, asPartner);
             }
 
             asPartner = asPartner == null ? null : true;
-            for (PrismScope targeterScope : parentScopes) {
+            for (PrismScope targeterScope : targetScopes) {
                 if (scope.ordinal() > targeterScope.ordinal()) {
-                    for (PrismScope targetScope : parentScopes) {
+                    for (PrismScope targetScope : targetScopes) {
                         addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, filter, columns, conditions, responseClass), resources, asPartner);
                     }
                 }

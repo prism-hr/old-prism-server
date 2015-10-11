@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
@@ -55,7 +54,6 @@ public class RoleDAO {
                                 .add(getUserRoleConstraint(resourceScope, parentScopes)) //
                                 .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
                         .add(getTargetUserRoleConstraint())) //
-                .add(getResourceStateActionConstraint()) //
                 .add(getEndorsementActionFilterConstraint())
                 .add(getUserEnabledConstraint(user)) //
                 .list();

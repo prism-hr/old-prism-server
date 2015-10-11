@@ -401,7 +401,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource) {
-        validateActionExecutable(resource);
+        validateViewerPermission(resource);
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -420,7 +420,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
-        validateActionExecutable((T) resource);
+        validateViewerPermission((T) resource);
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -629,9 +629,9 @@ public class ResourceMapper {
         return representation;
     }
 
-    private <T extends Resource> void validateActionExecutable(T resource) {
+    private <T extends Resource> void validateViewerPermission(T resource) {
         Action action = actionService.getViewEditAction(resource);
-        if (action == null || !actionService.checkActionExecutable(resource, action, userService.getCurrentUser(), false)) {
+        if (action == null || !actionService.checkActionVisible(resource, action, userService.getCurrentUser())) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
     }

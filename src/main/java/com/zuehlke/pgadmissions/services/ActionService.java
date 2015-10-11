@@ -250,6 +250,15 @@ public class ActionService {
         return actionDAO.getExternalConditions(resource);
     }
 
+    public boolean checkActionVisible(Resource resource, Action action, User user) {
+        boolean available = true;
+        Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);
+        if (expectedActionEnhancements.size() > 0) {
+            available = !getPermittedActionEnhancements(resource, user).stream().filter(ae -> ae.name().contains("_VIEW")).collect(Collectors.toList()).isEmpty();
+        }
+        return available ? checkActionAvailable(resource, action, user, false) : false;
+    }
+
     public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {
         boolean canExecute = true;
         Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);

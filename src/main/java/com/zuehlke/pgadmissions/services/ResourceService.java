@@ -792,6 +792,18 @@ public class ResourceService {
         return user;
     }
 
+    public void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
+        Action viewEditAction = actionService.getViewEditAction(resource);
+        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, userService.getCurrentUser(), false);
+        if (context.equals(STUDENT)) {
+            Role role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
+            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
+        } else if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
+            Role role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
+            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
+        }
+    }
+    
     public void activateResource(ResourceParent resource, User user) {
         String scopePrefix = resource.getResourceScope().name();
         Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
@@ -809,18 +821,6 @@ public class ResourceService {
 
     public List<Integer> getResourcesWithNewOpportunities(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime createdBaseline) {
         return resourceDAO.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, createdBaseline);
-    }
-
-    private void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
-        Action viewEditAction = actionService.getViewEditAction(resource);
-        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, userService.getCurrentUser(), false);
-        if (context.equals(STUDENT)) {
-            Role role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
-        } else if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
-            Role role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
-        }
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction conditions) {

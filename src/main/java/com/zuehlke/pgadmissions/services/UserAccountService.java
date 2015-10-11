@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
@@ -18,7 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -26,6 +31,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
@@ -56,27 +62,30 @@ public class UserAccountService {
     private String applicationUrl;
 
     @Inject
-    private UserService userService;
-
-    @Inject
-    private NotificationService notificationService;
-
-    @Inject
     private ActionService actionService;
 
     @Inject
     private EntityService entityService;
 
+    @Inject
+    private NotificationService notificationService;
+
+    @Inject
+    private ResourceService resourceService;
+
+    @Inject
+    private UserService userService;
+
     public String requestToken(HttpSession session, PrismOauthProvider oauthProvider) {
         switch (oauthProvider) {
-            case TWITTER:
-                TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
-                OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
-                OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
-                session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
-                return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
-            default:
-                throw new Error("Requesting token not supported for: " + oauthProvider);
+        case TWITTER:
+            TwitterServiceProvider twitterServiceProvider = new TwitterServiceProvider(twitterClientId, twitterAppSecret);
+            OAuth1Operations oAuthOperations = twitterServiceProvider.getOAuthOperations();
+            OAuthToken requestToken = oAuthOperations.fetchRequestToken(applicationUrl, null);
+            session.setAttribute(OAUTH_TOKEN_ATTRIBUTE, requestToken);
+            return oAuthOperations.buildAuthorizeUrl(requestToken.getValue(), OAuth1Parameters.NONE);
+        default:
+            throw new Error("Requesting token not supported for: " + oauthProvider);
         }
     }
 
@@ -85,26 +94,26 @@ public class UserAccountService {
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
 
         switch (oauthAssociationType) {
-            case ASSOCIATE_CURRENT_USER:
-                return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
-            case ASSOCIATE_NEW_USER:
-                return oauthAssociateNewUser(oauthUserDefinition, session);
-            case ASSOCIATE_SPECIFIED_USER:
-                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
-            case AUTHENTICATE:
-                return oauthAuthenticate(oauthUserDefinition);
-            default:
-                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+        case ASSOCIATE_CURRENT_USER:
+            return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
+        case ASSOCIATE_NEW_USER:
+            return oauthAssociateNewUser(oauthUserDefinition, session);
+        case ASSOCIATE_SPECIFIED_USER:
+            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
+        case AUTHENTICATE:
+            return oauthAuthenticate(oauthUserDefinition);
+        default:
+            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
-    public User registerUser(UserRegistrationDTO registrationDTO, HttpSession session) {
-        User user = userService.getUserByEmail(registrationDTO.getEmail());
+    public User registerUser(UserRegistrationDTO userRegistrationDTO, HttpSession session) {
+        User user = userService.getUserByEmail(userRegistrationDTO.getEmail());
 
         boolean enableAccount = user != null;
         if (enableAccount) {
-            if (user.getUserAccount() == null && registrationDTO.getActivationCode() != null) {
-                if (!user.getActivationCode().equals(registrationDTO.getActivationCode())) {
+            if (user.getUserAccount() == null && userRegistrationDTO.getActivationCode() != null) {
+                if (!user.getActivationCode().equals(userRegistrationDTO.getActivationCode())) {
                     throw new Error();
                 }
             } else {
@@ -112,20 +121,38 @@ public class UserAccountService {
             }
         }
 
-        user = userService.getOrCreateUser(registrationDTO.getFirstName(), registrationDTO.getLastName(), registrationDTO.getEmail());
+        user = userService.getOrCreateUser(userRegistrationDTO.getFirstName(), userRegistrationDTO.getLastName(), userRegistrationDTO.getEmail());
 
-        if (registrationDTO.getPassword() == null) {
+        if (userRegistrationDTO.getPassword() == null) {
             OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
             getOrCreateUserAccount(user, oauthUserDefinition, enableAccount);
         } else {
-            getOrCreateUserAccount(user, registrationDTO.getPassword(), enableAccount);
+            getOrCreateUserAccount(user, userRegistrationDTO.getPassword(), enableAccount);
         }
 
-        ActionOutcomeDTO outcome = actionService.executeRegistrationAction(user, registrationDTO);
+        ActionOutcomeDTO outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
         if (outcome != null) {
             notificationService.sendRegistrationNotification(user, outcome);
         }
         return user;
+    }
+
+    public User joinResource(Resource resource, PrismJoinResourceContext context, UserRegistrationDTO userRegistrationDTO, HttpSession session) {
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null || currentUser.getEmail().equals(userRegistrationDTO.getEmail())) {
+            User user;
+            try {
+                userRegistrationDTO.setComment(new CommentDTO().withAction(SYSTEM_MANAGE_ACCOUNT));
+                user = registerUser(userRegistrationDTO, session);
+            } catch (ResourceNotFoundException e) {
+                user = currentUser;
+            }
+
+            resourceService.joinResource((ResourceParent) resource, user, context);
+            return user;
+        }
+
+        throw new Error("Invoker attempted to impersonate another user");
     }
 
     public void updateUserAccount(UserAccount userAccount) {

@@ -132,14 +132,10 @@ public class NotificationService {
     }
 
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
-        sendRegistrationNotification(user, actionOutcome, null);
-    }
-
-    public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome, Comment comment) {
         System system = systemService.getSystem();
         sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST,
                 new NotificationDefinitionModelDTO().withUser(user).withAuthor(system.getUser()).withResource(actionOutcome.getTransitionResource())
-                        .withComment(comment).withTransitionAction(actionOutcome.getTransitionAction().getId()));
+                        .withTransitionAction(actionOutcome.getTransitionAction().getId()));
     }
 
     public void sendResetPasswordNotification(User user, String newPassword) {

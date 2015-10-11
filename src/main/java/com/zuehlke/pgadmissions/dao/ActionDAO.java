@@ -17,6 +17,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -111,18 +112,15 @@ public class ActionDAO {
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("action.scope.id", SYSTEM)) //
-                        .add(userLoggedIn ? Restrictions.isNotNull("resourceCondition.id") : Restrictions.eq("resourceCondition.externalMode", true))) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
-                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
+                .add(getUnsecuredActionVisibilityConstraint(userLoggedIn)) //
                 .addOrder(Order.asc("creationScope.ordinal")) //
                 .uniqueResult();
     }
 
-    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+    public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds, boolean userLoggedIn) {
         return (List<ActionDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id"), "resourceId") //
@@ -140,7 +138,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("resourceCondition.internalMode", true)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
-                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
+                .add(getUnsecuredActionVisibilityConstraint(userLoggedIn)) //
                 .addOrder(Order.asc("creationScope.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
@@ -318,6 +316,16 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
                 .list();
+    }
+
+    private static Junction getUnsecuredActionVisibilityConstraint(boolean userLoggedIn) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("stateAction.actionCondition")) //
+                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")))
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("action.scope.id", SYSTEM))
+                        .add(userLoggedIn ? Restrictions.isNull("stateAction.actionCondition") : Restrictions.eq("resourceCondition.externalMode", true)));
     }
 
 }

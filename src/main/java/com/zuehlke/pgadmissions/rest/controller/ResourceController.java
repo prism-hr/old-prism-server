@@ -48,7 +48,7 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
@@ -64,6 +64,7 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.UserAccountService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -75,6 +76,9 @@ public class ResourceController {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private UserAccountService userAccountService;
 
     @Inject
     private RoleService roleService;
@@ -238,12 +242,9 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/requestUser", method = RequestMethod.POST)
     @PreAuthorize("permitAll")
     public UserRepresentationSimple requestUser(@PathVariable Integer resourceId, @RequestParam PrismJoinResourceContext context,
-            @RequestBody UserDTO user, @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        User currentUser = userService.getCurrentUser();
-        if (currentUser == null || currentUser.getEmail().equals(user.getEmail())) {
-            Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-            return userMapper.getUserRepresentationSimple(resourceService.joinResource((ResourceParent) resource, user, context));
-        }
+            @RequestBody UserRegistrationDTO userRegistrationDTO, @ModelAttribute ResourceDescriptor resourceDescriptor, HttpServletRequest request) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        userAccountService.joinResource(resource, context, userRegistrationDTO, request.getSession());
         throw new Error("Invoker attempted to impersonate another user");
     }
 

@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
 import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
+import com.zuehlke.pgadmissions.workflow.executors.action.SystemExecutor;
 import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.DepartmentCreator;
 import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
@@ -63,7 +64,8 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     SYSTEM(PrismScopeCategory.SYSTEM, "SM", true, //
             new PrismScopeDefinition() //
-                .withResourceClass(System.class)), //
+                .withResourceClass(System.class) //
+                .withActionExecutor(SystemExecutor.class)), //
     INSTITUTION(PrismScopeCategory.ORGANIZATION, "IN", true, //
             new PrismScopeDefinition() //
                 .withResourceClass(Institution.class) //

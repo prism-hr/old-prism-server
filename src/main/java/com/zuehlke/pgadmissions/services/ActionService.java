@@ -104,7 +104,7 @@ public class ActionService {
 
     public List<ActionDTO> getPermittedUnsecuredActions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         if (isNotEmpty(resourceIds)) {
-            return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds);
+            return actionDAO.getPermittedUnsecuredActions(resourceScope, resourceIds, userService.isUserLoggedIn());
         }
         return Lists.newArrayList();
     }

@@ -309,5 +309,10 @@ public class CommentDTO {
     public void setDocuments(List<DocumentDTO> documents) {
         this.documents = documents;
     }
+    
+    public CommentDTO withAction(PrismAction action) {
+        this.action = action;
+        return this;
+    }
 
 }

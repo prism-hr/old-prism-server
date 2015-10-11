@@ -79,6 +79,10 @@ public enum PrismRole implements PrismLocalizableDefinition {
                 if (roleScope.ordinal() <= INSTITUTION.ordinal()) {
                     visibleScopes.put(role, DEPARTMENT);
                 }
+                
+                if (roleScope.ordinal() <= SYSTEM.ordinal()) {
+                    visibleScopes.put(role, INSTITUTION);
+                }
             }
         }
     }

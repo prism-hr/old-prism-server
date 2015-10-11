@@ -14,6 +14,8 @@ public class ResourceRoleDTO {
 
     private Boolean verified;
 
+    private Boolean directlyAssignable;
+
     public PrismScope getScope() {
         return scope;
     }
@@ -44,6 +46,14 @@ public class ResourceRoleDTO {
 
     public void setVerified(Boolean verified) {
         this.verified = verified;
+    }
+
+    public Boolean getDirectlyAssignable() {
+        return directlyAssignable;
+    }
+
+    public void setDirectlyAssignable(Boolean directlyAssignable) {
+        this.directlyAssignable = directlyAssignable;
     }
 
     @Override

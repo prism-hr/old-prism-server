@@ -91,7 +91,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("role.id", prismRole)) //
                 .uniqueResult();
     }
-    
+
     public List<ResourceRoleDTO> getUserRoles(User user, PrismScope resourceScope) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (List<ResourceRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
@@ -99,9 +99,11 @@ public class RoleDAO {
                         .add(Projections.property("role.scope.id").as("scope")) //
                         .add(Projections.property(resourceReference + ".id").as("id")) //
                         .add(Projections.property("role.id").as("role")) //
-                        .add(Projections.property("role.verified").as("verified")))
+                        .add(Projections.property("role.verified").as("verified")) //
+                        .add(Projections.property("role.directlyAssignable").as("directlyAssignable"))) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull(resourceReference)) //
+                .add(Restrictions.eq("user", user)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
                 .list();
     }

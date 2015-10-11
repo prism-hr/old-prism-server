@@ -10,13 +10,9 @@ public class RoleRepresentation {
 
     private Boolean directlyAssignable;
 
-    public RoleRepresentation(PrismRole id, Boolean verified) {
+    public RoleRepresentation(PrismRole id, Boolean verified, Boolean directlyAssignable) {
         this.id = id;
         this.verified = verified;
-    }
-
-    public RoleRepresentation(PrismRole id, Boolean verified, Boolean directlyAssignable) {
-        this(id, verified);
         this.directlyAssignable = directlyAssignable;
     }
 

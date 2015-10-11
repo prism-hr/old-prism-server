@@ -255,7 +255,7 @@ public class UserMapper {
         HashMultimap<ResourceRepresentationIdentity, RoleRepresentation> index = HashMultimap.create();
         roleService.getUserRoles(user).forEach(userRole -> {
             index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()),
-                    new RoleRepresentation(userRole.getRole(), userRole.getVerified()));
+                    new RoleRepresentation(userRole.getRole(), userRole.getVerified(), userRole.getDirectlyAssignable()));
         });
 
         List<UserRolesRepresentation> representations = Lists.newArrayList();

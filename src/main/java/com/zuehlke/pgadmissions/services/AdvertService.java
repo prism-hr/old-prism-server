@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.parentScopes;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
@@ -448,7 +448,7 @@ public class AdvertService {
         String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opprortunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
-            for (PrismScope targetScope : parentScopes) {
+            for (PrismScope targetScope : targetScopes) {
                 advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts, null).forEach(at -> {
                     advertTargets.put(at.getId(), at);
                 });
@@ -456,7 +456,7 @@ public class AdvertService {
         }
 
         if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
-            for (PrismScope targetScope : parentScopes) {
+            for (PrismScope targetScope : targetScopes) {
                 advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts, null).forEach(at -> {
                     advertTargets.put(at.getId(), at);
                 });
@@ -465,7 +465,7 @@ public class AdvertService {
 
         User user = userService.getCurrentUser();
         List<Integer> userAdverts = Lists.newArrayList();
-        for (PrismScope targetScope : parentScopes) {
+        for (PrismScope targetScope : targetScopes) {
             userAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(targetScope, user));
         }
 
@@ -567,11 +567,11 @@ public class AdvertService {
             PrismScope resourceScope = resource.getResourceScope();
 
             Set<Advert> targetAdverts = Sets.newHashSet();
-            for (PrismScope targeterScope : parentScopes) {
+            for (PrismScope targeterScope : targetScopes) {
                 if (resourceScope.ordinal() < targeterScope.ordinal()) {
                     ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
                     if (targeterResource != null) {
-                        for (PrismScope targetScope : parentScopes) {
+                        for (PrismScope targetScope : targetScopes) {
                             targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope, targetScope));
                         }
                     }
@@ -586,7 +586,7 @@ public class AdvertService {
 
     private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
         List<Integer> connectAdverts = Lists.newArrayList();
-        for (PrismScope resourceScope : parentScopes) {
+        for (PrismScope resourceScope : targetScopes) {
             connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(resourceScope, user));
         }
         return connectAdverts;
@@ -594,7 +594,7 @@ public class AdvertService {
 
     private List<AdvertTargetDTO> getAdvertTargetsReceived(User user, List<Integer> connectAdverts, boolean pending) {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
-        for (PrismScope resourceScope : parentScopes) {
+        for (PrismScope resourceScope : targetScopes) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
                 advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts, pending));
             }

@@ -37,7 +37,7 @@ public class WorkflowDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public static PrismScope[] parentScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+    public static PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
 
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
@@ -54,7 +54,7 @@ public class WorkflowDAO {
                 .createAlias("targetAdvert.institution", "targetInstitution", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.eqProperty("targetAdvert.id", "targetInstitution.advert.id"));
 
-        for (PrismScope targeterScope : parentScopes) {
+        for (PrismScope targeterScope : targetScopes) {
             String targeterScopeLower = targeterScope.getLowerCamelName();
             String targeterScopeUpper = targeterScope.getUpperCamelName();
 
@@ -67,7 +67,7 @@ public class WorkflowDAO {
                     .createAlias(targeterResourceAdvert + ".targets", targeterResourceTarget, JoinType.LEFT_OUTER_JOIN) //
                     .createAlias(targeterResourceTarget + ".targetAdvert", targeterAdvert, JoinType.LEFT_OUTER_JOIN);
 
-            for (PrismScope targetScope : parentScopes) {
+            for (PrismScope targetScope : targetScopes) {
                 String targetResource = targeterScopeLower + "Target" + targetScope.getUpperCamelName();
                 criteria.createAlias(targeterAdvert + "." + targetScope.getLowerCamelName(), targetResource, JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eqProperty(targeterAdvert + ".id", targetResource + ".advert.id"));

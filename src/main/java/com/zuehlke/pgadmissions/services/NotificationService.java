@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_INVITATION_NOTIFICATION;
@@ -128,7 +129,7 @@ public class NotificationService {
         System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_INVITATION_NOTIFICATION);
         sendNotification(definition, new NotificationDefinitionModelDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(user).withResource(system)
-                .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
     public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {

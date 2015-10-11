@@ -42,7 +42,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
 import com.zuehlke.pgadmissions.rest.representation.FilterEntityRepresentation;
@@ -53,6 +52,7 @@ import com.zuehlke.pgadmissions.rest.representation.workflow.WorkflowDefinitionR
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
+import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
 
 @Service
@@ -70,6 +70,9 @@ public class StaticDataMapper {
 
     @Inject
     private InstitutionService institutionService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private ActionMapper actionMapper;
@@ -128,8 +131,7 @@ public class StaticDataMapper {
 
     private Map<String, Object> getRoles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        List<Role> roles = entityService.list(Role.class);
-        staticData.put("roles", roles.stream().map(r -> new RoleRepresentation(r.getId(), r.getDirectlyAssignable())).collect(toList()));
+        staticData.put("roles", roleService.getRoles().stream().map(r -> new RoleRepresentation(r.getId(), r.getVerified(), r.getDirectlyAssignable())).collect(toList()));
         return staticData;
     }
 
@@ -162,7 +164,7 @@ public class StaticDataMapper {
 
         for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
                 PrismAdvertIndustry.class, PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
-        PrismGender.class}) {
+                PrismGender.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());

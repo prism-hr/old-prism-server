@@ -13,10 +13,10 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -33,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
+import com.zuehlke.pgadmissions.dto.ResourceRoleDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -63,7 +64,7 @@ public class RoleDAO {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq("user", user)) //
-                .add(WorkflowDAO.getUserRoleConstraint(resource)) //
+                .add(getUserRoleConstraint(resource)) //
                 .list();
     }
 
@@ -90,14 +91,18 @@ public class RoleDAO {
                 .add(Restrictions.eq("role.id", prismRole)) //
                 .uniqueResult();
     }
-
-    public List<UserRole> getUserRoles(User user, List<PrismRole> roles) {
-        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+    
+    public List<ResourceRoleDTO> getUserRoles(User user, PrismScope resourceScope) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<ResourceRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("role.scope.id").as("scope")) //
+                        .add(Projections.property(resourceReference + ".id").as("id")) //
+                        .add(Projections.property("role.id").as("role")) //
+                        .add(Projections.property("role.verified").as("verified")))
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.in("role.id", roles)) //
-                .addOrder(Order.asc("scope.ordinal")) //
+                .add(Restrictions.isNotNull(resourceReference)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
                 .list();
     }
 

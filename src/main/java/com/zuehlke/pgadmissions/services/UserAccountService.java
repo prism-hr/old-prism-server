@@ -137,7 +137,7 @@ public class UserAccountService {
         return user;
     }
 
-    public User joinResource(Resource resource, PrismJoinResourceContext context, UserRegistrationDTO userRegistrationDTO, HttpSession session) {
+    public void joinResource(Resource resource, PrismJoinResourceContext context, UserRegistrationDTO userRegistrationDTO, HttpSession session) {
         User currentUser = userService.getCurrentUser();
         if (currentUser == null || currentUser.getEmail().equals(userRegistrationDTO.getEmail())) {
             User user;
@@ -149,7 +149,6 @@ public class UserAccountService {
             }
 
             resourceService.joinResource((ResourceParent) resource, user, context);
-            return user;
         }
 
         throw new Error("Invoker attempted to impersonate another user");

@@ -25,6 +25,7 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
@@ -793,17 +794,28 @@ public class ResourceService {
     }
 
     public void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
+        User currentUser = userService.getCurrentUser();
         Action viewEditAction = actionService.getViewEditAction(resource);
-        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, userService.getCurrentUser(), false);
+        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser, false);
+
+        Role role = null;
         if (context.equals(STUDENT)) {
-            Role role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
+            role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
+            if (isTrue(role.getVerified())) {
+
+            }
         } else if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
-            Role role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
+            role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
         }
+
+        if (canViewEdit && role != null) {
+            executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
+                    new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
+        }
     }
-    
+
     public void activateResource(ResourceParent resource, User user) {
         String scopePrefix = resource.getResourceScope().name();
         Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -45,7 +46,6 @@ public class WorkflowDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
@@ -189,8 +189,7 @@ public class WorkflowDAO {
                 .add(Restrictions.conjunction() //
                         .add(getUserRoleConstraint(resource)) //
                         .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                .add(getTargetUserRoleConstraint()) //
-                .add(getResourceStateActionConstraint());
+                .add(getTargetUserRoleConstraint());
     }
 
     public static Junction getUserRoleWithPartnerConstraint(Resource resource, User user) {
@@ -217,12 +216,6 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("userAccount.enabled", true));
     }
 
-    public static Junction getResourceStateActionConstraint() {
-        return Restrictions.disjunction() //
-                .add(Restrictions.isNull("stateAction.actionCondition")) //
-                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
-    }
-
     public static Junction getSimilarUserConstraint(String searchTerm) {
         return getSimilarUserConstraint(null, searchTerm);
     }
@@ -245,7 +238,9 @@ public class WorkflowDAO {
                 .add(Restrictions.isNull("action.partnershipState")) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
-                                .add(Restrictions.isNull("target.id"))
+                                .add(Restrictions.conjunction() //
+                                        .add(Restrictions.isNull("target.id")) //
+                                        .add(Restrictions.eq("action.partnershipState", ENDORSEMENT_PENDING))) //
                                 .add(Restrictions.eqProperty("action.partnershipState", "target.partnershipState"))) //
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.isNull("advertDepartmentTarget.targetAdvertUser")) //

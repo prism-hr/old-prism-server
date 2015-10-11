@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceStateActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
@@ -118,7 +117,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
-                .add(getResourceStateActionConstraint()) //
+                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
                 .addOrder(Order.asc("creationScope.ordinal")) //
                 .uniqueResult();
     }
@@ -141,7 +140,7 @@ public class ActionDAO {
                 .add(Restrictions.eq("resourceCondition.internalMode", true)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
-                .add(getResourceStateActionConstraint()) //
+                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
                 .addOrder(Order.asc("creationScope.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();

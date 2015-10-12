@@ -1,5 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zuehlke.pgadmissions.dao.PrismDAO;
 import com.zuehlke.pgadmissions.domain.AgeRange;
 import com.zuehlke.pgadmissions.domain.Domicile;
@@ -7,11 +14,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.List;
 
 @Service
 @Transactional

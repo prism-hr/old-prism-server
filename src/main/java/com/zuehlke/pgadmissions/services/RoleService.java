@@ -1,5 +1,22 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
@@ -23,21 +40,6 @@ import com.zuehlke.pgadmissions.dto.ResourceRoleDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Service
 @Transactional
@@ -109,19 +111,17 @@ public class RoleService {
     }
 
     public void verifyUserRoles(User user, Resource resource, User roleUser, Boolean verify) {
-        roleDAO.getUnverifiedRoles(resource, roleUser).stream()
-                .filter(userRole -> userRole != null)
-                .forEach(userRole -> {
-                    if (isTrue(verify)) {
-                        Role role = userRole.getRole();
-                        updateUserRoles(user, resource, roleUser, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
-                    } else {
-                        Action action = actionService.getViewEditAction(resource);
-                        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
-                            entityService.delete(userRole);
-                        }
-                    }
-                });
+        roleDAO.getUnverifiedRoles(resource, roleUser).forEach(userRole -> {
+            if (isTrue(verify)) {
+                Role role = userRole.getRole();
+                updateUserRoles(user, resource, roleUser, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
+            } else {
+                Action action = actionService.getViewEditAction(resource);
+                if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+                    entityService.delete(userRole);
+                }
+            }
+        });
     }
 
     public void setResourceOwner(Resource resource, User user) {
@@ -174,7 +174,7 @@ public class RoleService {
     }
 
     public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return resource == null ? Lists.<User>newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
+        return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {

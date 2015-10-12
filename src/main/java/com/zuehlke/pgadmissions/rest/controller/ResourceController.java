@@ -29,7 +29,6 @@ import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -48,7 +47,6 @@ import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
@@ -64,7 +62,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserAccountService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @RestController
@@ -76,9 +73,6 @@ public class ResourceController {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private UserAccountService userAccountService;
 
     @Inject
     private RoleService roleService;
@@ -242,14 +236,6 @@ public class ResourceController {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
-    }
-
-    @RequestMapping(value = "{resourceId}/requestUser", method = RequestMethod.POST)
-    @PreAuthorize("permitAll")
-    public void requestUser(@PathVariable Integer resourceId, @RequestParam PrismJoinResourceContext context,
-            @RequestBody UserRegistrationDTO userRegistrationDTO, @ModelAttribute ResourceDescriptor resourceDescriptor, HttpServletRequest request) {
-        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-        userAccountService.joinResource(resource, context, userRegistrationDTO, request.getSession());
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)

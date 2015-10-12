@@ -2,18 +2,18 @@ package com.zuehlke.pgadmissions.rest.representation.user;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class UserRepresentationUnverified extends UserRepresentationSimple {
 
-    private List<PrismJoinResourceContext> contexts;
+    private List<PrismRoleContext> contexts;
 
-    public List<PrismJoinResourceContext> getContexts() {
+    public List<PrismRoleContext> getContexts() {
         return contexts;
     }
 
-    public void setContexts(List<PrismJoinResourceContext> contexts) {
+    public void setContexts(List<PrismRoleContext> contexts) {
         this.contexts = contexts;
     }
 

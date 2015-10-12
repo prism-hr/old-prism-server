@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismJoinResourceContext {
+public enum PrismRoleContext {
 
     STUDENT, //
     VIEWER;

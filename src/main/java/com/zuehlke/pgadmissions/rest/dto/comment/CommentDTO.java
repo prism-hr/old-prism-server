@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDateTime;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -23,19 +24,21 @@ public class CommentDTO {
 
     private PrismAction action;
 
+    private PrismRoleContext roleContext;
+
     private Boolean recommend;
 
     private Boolean declinedResponse;
-    
+
     @Size(max = 50000)
     private String content;
-    
+
     private PrismState transitionState;
 
     private Boolean shared;
-    
+
     private Boolean onCourse;
-    
+
     private BigDecimal rating;
 
     private PrismYesNoUnsureResponse eligible;
@@ -109,7 +112,15 @@ public class CommentDTO {
     public void setAction(PrismAction action) {
         this.action = action;
     }
-    
+
+    public PrismRoleContext getRoleContext() {
+        return roleContext;
+    }
+
+    public void setRoleContext(PrismRoleContext roleContext) {
+        this.roleContext = roleContext;
+    }
+
     public final Boolean getRecommend() {
         return recommend;
     }
@@ -133,7 +144,7 @@ public class CommentDTO {
     public void setTransitionState(PrismState transitionState) {
         this.transitionState = transitionState;
     }
-    
+
     public final Boolean getShared() {
         return shared;
     }
@@ -309,7 +320,7 @@ public class CommentDTO {
     public void setDocuments(List<DocumentDTO> documents) {
         this.documents = documents;
     }
-    
+
     public CommentDTO withAction(PrismAction action) {
         this.action = action;
         return this;

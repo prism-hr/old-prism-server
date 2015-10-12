@@ -5,7 +5,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;

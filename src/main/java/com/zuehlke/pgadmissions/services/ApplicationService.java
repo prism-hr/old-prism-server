@@ -1,40 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
-import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
-import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.text.WordUtils.capitalize;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.ValidationUtils;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -47,11 +12,7 @@ import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.application.ApplicationSection;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.PrismApplicationReportColumn;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -69,6 +30,34 @@ import com.zuehlke.pgadmissions.rest.dto.application.ApplicationProgramDetailDTO
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.validation.ProfileValidator;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.ValidationUtils;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static com.zuehlke.pgadmissions.PrismConstants.ANGULAR_HASH;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.text.WordUtils.capitalize;
 
 @Service
 @Transactional
@@ -162,16 +151,16 @@ public class ApplicationService {
                 String value = null;
                 String getMethod = "get" + capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
-                case DATE:
-                    value = (String) invokeMethod(reportRow, getMethod, dateFormat);
-                    break;
-                case DISPLAY_PROPERTY:
-                    PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
-                    value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
-                    break;
-                case STRING:
-                    value = (String) invokeMethod(reportRow, getMethod);
-                    break;
+                    case DATE:
+                        value = (String) invokeMethod(reportRow, getMethod, dateFormat);
+                        break;
+                    case DISPLAY_PROPERTY:
+                        PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
+                        value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
+                        break;
+                    case STRING:
+                        value = (String) invokeMethod(reportRow, getMethod);
+                        break;
                 }
                 row.addCell(value);
             }
@@ -250,7 +239,7 @@ public class ApplicationService {
     }
 
     public List<ApplicationAppointmentDTO> getApplicationAppointments(User user) {
-        return newLinkedList(newLinkedHashSet(applicationDAO.getApplicationAppointments(user)));
+        return applicationDAO.getApplicationAppointments(user);
     }
 
     public void updateProgramDetail(Integer applicationId, ApplicationProgramDetailDTO programDetailDTO) {

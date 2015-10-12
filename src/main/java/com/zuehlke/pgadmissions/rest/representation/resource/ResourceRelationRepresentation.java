@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
@@ -35,6 +36,8 @@ public class ResourceRelationRepresentation {
 
         private PrismScope resourceScope;
 
+        private PrismOpportunityCategory[] categories;
+
         private Boolean autosuggest;
 
         private Boolean description;
@@ -43,8 +46,9 @@ public class ResourceRelationRepresentation {
 
         private Boolean required;
 
-        public ResourceRelationComponentRepresentation(PrismScope resourceScope, Boolean autosuggest, Boolean description, Boolean user) {
+        public ResourceRelationComponentRepresentation(PrismScope resourceScope, Boolean autosuggest, Boolean description, Boolean user, PrismOpportunityCategory... categories) {
             this.resourceScope = resourceScope;
+            this.categories = categories;
             this.autosuggest = autosuggest;
             this.description = description;
             this.user = user;
@@ -56,6 +60,14 @@ public class ResourceRelationRepresentation {
 
         public void setResourceScope(PrismScope resourceScope) {
             this.resourceScope = resourceScope;
+        }
+
+        public PrismOpportunityCategory[] getCategories() {
+            return categories;
+        }
+
+        public void setCategories(PrismOpportunityCategory[] categories) {
+            this.categories = categories;
         }
 
         public Boolean getAutosuggest() {

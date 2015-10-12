@@ -1,26 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -47,24 +26,31 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.*;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationInvitationBounced;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.UserFeedbackService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static java.math.RoundingMode.HALF_UP;
 
 @Service
 @Transactional
@@ -139,7 +125,7 @@ public class UserMapper {
         representation.setUserRoles(getUserRoleRepresentations(user));
 
         representation.setParentUser(user.getEmail());
-        representation.setLinkedUsers(userService.getLinkedUserAccounts(user));
+        representation.setLinkedUsers(userService.getLinkedUsers(user).stream().map(u -> u.getEmail()).collect(Collectors.toList()));
 
         representation.setConnectedWithLinkedin(user.getUserAccount().getLinkedinId() != null);
         representation.setRequiredFeedbackRoleCategory(userFeedbackService.getRequiredFeedbackRoleCategory(user));
@@ -151,13 +137,8 @@ public class UserMapper {
     public List<UserRepresentationInvitationBounced> getUserUnverifiedRepresentations(Resource resource, UserListFilterDTO filterDTO) {
         String noDiagnosis = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(SYSTEM_NO_DIAGNOSTIC_INFORMATION);
 
-        List<User> users = userService.getBouncedOrUnverifiedUsers(resource, filterDTO);
-        List<UserRepresentationInvitationBounced> representations = Lists.newArrayListWithCapacity(users.size());
-        for (User user : users) {
-            representations.add(getUserRepresentationUnverified(user, noDiagnosis));
-        }
-
-        return representations;
+        return userService.getBouncedOrUnverifiedUsers(resource, filterDTO).stream()
+                .map(user -> getUserRepresentationUnverified(user, noDiagnosis)).collect(Collectors.toList());
     }
 
     public UserFeedbackRepresentation getUserFeedbackRepresentation(UserFeedback userFeedback) {

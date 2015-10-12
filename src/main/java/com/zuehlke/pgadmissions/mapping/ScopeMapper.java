@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.PrismScopeRelations;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.PrismScopeRelations;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -48,18 +48,19 @@ public class ScopeMapper {
 
     public List<ResourceRelationRepresentation> getResourceFamilyCreationRepresentations() {
         List<ResourceRelationRepresentation> representations = Lists.newLinkedList();
-        for (PrismMotivationContext resourceFamilyCreation : PrismMotivationContext.values()) {
-            ResourceRelationRepresentation representation = new ResourceRelationRepresentation(resourceFamilyCreation);
+        for (PrismScopeRelationContext relation : PrismScopeRelationContext.values()) {
+            ResourceRelationRepresentation representation = new ResourceRelationRepresentation(relation);
 
             Map<PrismScope, Integer> occurrences = Maps.newHashMap();
             Map<PrismScope, ResourceRelationComponentRepresentation> scopeRepresentations = Maps.newLinkedHashMap();
-            PrismScopeRelations scopeCreationFamilies = resourceFamilyCreation.getPermittedRelations();
+            PrismScopeRelations scopeCreationFamilies = relation.getRelations();
             scopeCreationFamilies.forEach(scf -> {
                 scf.forEach(s -> {
-                    Integer frequency = occurrences.get(s);
+                    PrismScope scope = s.getScope();
+                    Integer frequency = occurrences.get(scope);
                     frequency = frequency == null ? 1 : (frequency + 1);
-                    occurrences.put(s, frequency);
-                    scopeRepresentations.put(s, new ResourceRelationComponentRepresentation(s));
+                    occurrences.put(scope, frequency);
+                    scopeRepresentations.put(scope, new ResourceRelationComponentRepresentation(scope, s.getAutosuggest(), s.getDescription(), s.getUser()));
                 });
             });
 
@@ -86,8 +87,8 @@ public class ScopeMapper {
             Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();
 
             Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, visibleScopes.stream()
-                            .filter(as -> as.ordinal() < scope.ordinal())
-                            .collect(Collectors.toList()), //
+                    .filter(as -> as.ordinal() < scope.ordinal())
+                    .collect(Collectors.toList()), //
                     new ResourceListFilterDTO().withMatchMode(ANY).withUrgentOnly(true).withUpdateOnly(true), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("resourceId")) //

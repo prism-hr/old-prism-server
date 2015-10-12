@@ -76,7 +76,7 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationS
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
@@ -351,10 +351,10 @@ public class AdvertMapper {
     }
 
     public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets) {
-        Map<ResourceRepresentationActivity, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
+        Map<ResourceRepresentationConnection, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
         TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> representationFilter = TreeMultimap.create();
         for (AdvertTargetDTO advertTarget : advertTargets) {
-            ResourceRepresentationActivity thisResourceRepresentation = resourceMapper.getResourceRepresentationActivity(advertTarget.getThisInstitutionId(),
+            ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
                     advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
 
             AdvertTargetRepresentation representation = representationIndex.get(thisResourceRepresentation);
@@ -364,7 +364,7 @@ public class AdvertMapper {
             }
 
             AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
-                    .withResource(resourceMapper.getResourceRepresentationActivity(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
+                    .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
                             advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
                     .withPartnershipState(advertTarget.getPartnershipState()).withCanManage(BooleanUtils.isTrue(advertTarget.getCanManage()));
 

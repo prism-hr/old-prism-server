@@ -607,26 +607,21 @@ public class ResourceMapper {
         return filters;
     }
 
-    public ResourceRepresentationActivity getResourceRepresentationActivity(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
             String departmentName) {
-        ResourceRepresentationActivity resourceRepresentation = new ResourceRepresentationActivity().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+        ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 
         if (departmentId != null) {
-            resourceRepresentation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId).withName(departmentName));
+            representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId).withName(departmentName));
         }
 
-        return resourceRepresentation;
+        return representation;
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
-        Integer departmentId = resource.getDepartmentId();
-        Integer institutionId = resource.getInstitutionId();
-        PrismScope scope = departmentId == null ? INSTITUTION : DEPARTMENT;
-        ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withScope(scope).withId(scope.equals(INSTITUTION) ? institutionId : departmentId)
-                .withLogoImage(documentMapper.getDocumentRepresentation(resource.getLogoImageId())).withInstitutionName(resource.getInstitutionName())
-                .withDepartmentName(resource.getDepartmentName());
-        return representation;
+        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getLogoImageId(), resource.getDepartmentId(),
+                resource.getDepartmentName());
     }
 
     private <T extends Resource> void validateViewerPermission(T resource) {

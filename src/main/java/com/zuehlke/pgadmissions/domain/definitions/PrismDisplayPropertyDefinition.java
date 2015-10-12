@@ -359,8 +359,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically longer term engagments where the particpant performs concrete tasks."),
     SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering positions are typically engagements where the participant contributes towards a charitable cause."),
     
-    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the participant the national minimum wage. Please confirm that your opportunity complies with national minimum wage requirements."),
-    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "National minimum wage requirements"),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the national minimum wage."),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Please check and confirm that your opportunity complies with "),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "national minimum wage requirements."),
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LOCATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "https://www.gov.uk/guidance/national-minimum-wage-work-experience-and-internships"),
 
     /*

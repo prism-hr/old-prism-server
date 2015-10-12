@@ -1,7 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static java.util.Arrays.asList;
+
 import org.apache.commons.lang3.ObjectUtils;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 
 public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
@@ -34,6 +39,12 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
     public ResourceRepresentationConnection withDepartment(ResourceRepresentationSimple department) {
         setDepartment(department);
         return this;
+    }
+
+    public String getDisplayName() {
+        String institutionName = institution == null ? null : institution.getName();
+        String departmentName = department == null ? null : department.getName();
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(asList(institutionName, departmentName));
     }
 
     @Override

@@ -8,6 +8,8 @@ public class PrismConstants {
 
     public static final String SPACE = " ";
 
+    public static final String HYPHEN = "-";
+
     public static final String BACK_SLASH = "/";
 
     public static final String ANGULAR_HASH = "#!";

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.program;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_REENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ENDORSER_GROUP;
@@ -19,12 +18,6 @@ public class PrismProgramApproved extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(programCreateProject());
         stateActions.add(programEmailCreatorApproved());
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(PROGRAM_ENDORSE) //
-                .withRaisesUrgentFlag() //
-                .withPartnerAssignments(PROGRAM_ENDORSER_GROUP) //
-                .withTransitions(PROGRAM_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_UNENDORSE) //

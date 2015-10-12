@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.project;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_ENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_REENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
@@ -27,12 +26,6 @@ public class PrismProjectApproved extends PrismWorkflowState {
                         .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
         stateActions.add(projectEmailCreatorApproved()); //
-
-        stateActions.add(new PrismStateAction() //
-                .withAction(PROJECT_ENDORSE) //
-                .withRaisesUrgentFlag() //
-                .withPartnerAssignments(PROJECT_ENDORSER_GROUP) //
-                .withTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_UNENDORSE) //

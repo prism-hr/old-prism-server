@@ -421,7 +421,7 @@ public class AdvertDAO {
                         .add(Restrictions.eq("target.targetAdvertUser", user))
                         .add(Restrictions.eq("userRole.user", user))) //
                 .add(Restrictions.in("stateAction.action.id",
-                        asList("ENDORSE", "UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList())))
+                        asList("UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList())))
                 .list();
     }
 

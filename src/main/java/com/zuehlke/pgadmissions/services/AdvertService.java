@@ -568,7 +568,7 @@ public class AdvertService {
 
             Set<Advert> targetAdverts = Sets.newHashSet();
             for (PrismScope targeterScope : targetScopes) {
-                if (resourceScope.ordinal() < targeterScope.ordinal()) {
+                if (targeterScope.ordinal() < resourceScope.ordinal()) {
                     ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
                     if (targeterResource != null) {
                         for (PrismScope targetScope : targetScopes) {
@@ -637,7 +637,7 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        return entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withPartnershipState(partnershipState));
+        return entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
     private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept) {

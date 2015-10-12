@@ -206,7 +206,7 @@ public class RoleService {
     public List<PrismScope> getVisibleScopes(User user) {
         Set<PrismScope> visibleScopes = Sets.newTreeSet();
         for (PrismScope scope : PrismScope.values()) {
-            roleDAO.getRolesByScope(user, scope).forEach(role -> visibleScopes.addAll(role.getVisibleScopes()));
+            roleDAO.getRolesByVisibleScope(user, scope).forEach(role -> visibleScopes.addAll(role.getVisibleScopes()));
         }
         return newLinkedList(visibleScopes);
     }

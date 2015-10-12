@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstrai
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
 import java.util.List;
@@ -218,7 +219,9 @@ public class RoleDAO {
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("resource.id")) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.ne("state.hidden", false)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("state.scope.id", SYSTEM)) //
+                        .add(Restrictions.isNull("state.hidden"))) //
                 .list();
     }
 

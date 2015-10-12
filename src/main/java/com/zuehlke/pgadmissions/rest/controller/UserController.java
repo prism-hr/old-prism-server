@@ -316,9 +316,10 @@ public class UserController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/profile/share", method = RequestMethod.PUT)
-    public void shareUserProfile(@RequestParam(required = true) Boolean shareProfile) {
-        userAccountService.shareUserProfile(shareProfile);
+    @RequestMapping(value = "/profile/{operation:share|hide}", method = RequestMethod.POST)
+    public void shareUserProfile(@PathVariable String operation, @RequestBody Map undertow) {
+        boolean share = operation.equals("share");
+        userAccountService.shareUserProfile(share);
     }
 
     @PreAuthorize("isAuthenticated()")

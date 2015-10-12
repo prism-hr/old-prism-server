@@ -5,20 +5,20 @@ import static org.apache.commons.lang3.ObjectUtils.compare;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepresentation> {
 
-    private ResourceRepresentationActivity resource;
+    private ResourceRepresentationConnection resource;
 
     private List<AdvertTargetConnectionRepresentation> connections;
 
-    public ResourceRepresentationActivity getResource() {
+    public ResourceRepresentationConnection getResource() {
         return resource;
     }
 
-    public void setResource(ResourceRepresentationActivity resource) {
+    public void setResource(ResourceRepresentationConnection resource) {
         this.resource = resource;
     }
 
@@ -30,7 +30,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         this.connections = connections;
     }
 
-    public AdvertTargetRepresentation withResource(ResourceRepresentationActivity resource) {
+    public AdvertTargetRepresentation withResource(ResourceRepresentationConnection resource) {
         this.resource = resource;
         return this;
     }
@@ -44,10 +44,10 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
         private Integer advertTargetId;
 
-        private ResourceRepresentationActivity resource;
+        private ResourceRepresentationConnection resource;
 
         private UserRepresentationSimple user;
-        
+
         private PrismPartnershipState partnershipState;
 
         private Boolean canManage;
@@ -60,11 +60,11 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.advertTargetId = advertTargetId;
         }
 
-        public ResourceRepresentationActivity getResource() {
+        public ResourceRepresentationConnection getResource() {
             return resource;
         }
 
-        public void setResource(ResourceRepresentationActivity resource) {
+        public void setResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
         }
 
@@ -75,7 +75,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         public void setUser(UserRepresentationSimple user) {
             this.user = user;
         }
-        
+
         public PrismPartnershipState getPartnershipState() {
             return partnershipState;
         }
@@ -97,7 +97,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             return this;
         }
 
-        public AdvertTargetConnectionRepresentation withResource(ResourceRepresentationActivity resource) {
+        public AdvertTargetConnectionRepresentation withResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
             return this;
         }
@@ -111,7 +111,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.partnershipState = partnershipState;
             return this;
         }
-        
+
         public AdvertTargetConnectionRepresentation withCanManage(Boolean canManage) {
             this.canManage = canManage;
             return this;

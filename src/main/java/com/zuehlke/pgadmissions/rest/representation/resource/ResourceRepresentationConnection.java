@@ -1,53 +1,62 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import org.apache.commons.lang3.ObjectUtils;
 
-public class ResourceRepresentationConnection extends ResourceRepresentationIdentity {
+import com.google.common.base.Objects;
 
-    private String institutionName;
+public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
 
-    private String departmentName;
+    private ResourceRepresentationIdentity institution;
 
-    public String getInstitutionName() {
-        return institutionName;
+    private ResourceRepresentationIdentity department;
+
+    public ResourceRepresentationIdentity getInstitution() {
+        return institution;
     }
 
-    public void setInstitutionName(String institutionName) {
-        this.institutionName = institutionName;
+    public void setInstitution(ResourceRepresentationIdentity institution) {
+        this.institution = institution;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public ResourceRepresentationIdentity getDepartment() {
+        return department;
     }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
+    public void setDepartment(ResourceRepresentationIdentity department) {
+        this.department = department;
     }
-    
-    public ResourceRepresentationConnection withScope(PrismScope scope) {
-        setScope(scope);
+
+    public ResourceRepresentationConnection withInstitution(ResourceRepresentationSimple institution) {
+        setInstitution(institution);
         return this;
     }
 
-    public ResourceRepresentationConnection withId(Integer id) {
-        setId(id);
+    public ResourceRepresentationConnection withDepartment(ResourceRepresentationSimple department) {
+        setDepartment(department);
         return this;
     }
 
-    public ResourceRepresentationConnection withInstitutionName(String institutionName) {
-        this.institutionName = institutionName;
-        return this;
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(institution, department);
     }
-    
-    public ResourceRepresentationConnection withDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-        return this;
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceRepresentationConnection other = (ResourceRepresentationConnection) object;
+        return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment());
     }
-    
-    public ResourceRepresentationConnection withLogoImage(DocumentRepresentation logoImage) {
-        setLogoImage(logoImage);
-        return this;
+
+    @Override
+    public int compareTo(ResourceRepresentationConnection other) {
+        int compare = ObjectUtils.compare(institution, other.getInstitution());
+        return compare == 0 ? ObjectUtils.compare(department, other.getDepartment(), true) : compare;
     }
-    
+
 }

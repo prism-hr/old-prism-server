@@ -102,6 +102,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Already registered with"),
     SYSTEM_UCAS(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "UCAS"),
     SYSTEM_HESA(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "HESA"),
+    SYSTEM_PROPERTY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Property"),
+    SYSTEM_DURATION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Duration"), 
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -306,14 +308,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_DEPARTMENT_VIEWER_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified Viewer"),
     SYSTEM_ROLE_DEPARTMENT_STUDENT(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Student"),
     SYSTEM_ROLE_DEPARTMENT_STUDENT_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified student"),
-    SYSTEM_ROLE_DEPARTMENT_EMPLOYEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Employee"),
-    SYSTEM_ROLE_DEPARTMENT_EMPLOYEE_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified Employee"),
     SYSTEM_ROLE_INSTITUTION_ADMINISTRATOR(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_INSTITUTION_APPROVER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Approver"),
     SYSTEM_ROLE_INSTITUTION_VIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Viewer"),
     SYSTEM_ROLE_INSTITUTION_VIEWER_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified Viewer"),
-    SYSTEM_ROLE_INSTITUTION_EMPLOYEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Employee"),
-    SYSTEM_ROLE_INSTITUTION_EMPLOYEE_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified Employee"),
+    SYSTEM_ROLE_INSTITUTION_STUDENT(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Student"),
+    SYSTEM_ROLE_INSTITUTION_STUDENT_UNVERIFIED(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Unverified student"),
     SYSTEM_ROLE_PROGRAM_ADMINISTRATOR(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Administrator"),
     SYSTEM_ROLE_PROGRAM_APPROVER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Approver"),
     SYSTEM_ROLE_PROGRAM_VIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Viewer"),
@@ -673,6 +673,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DURATION_UNIT_MONTH(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Month"),
     SYSTEM_DURATION_UNIT_YEAR(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Year"),
 
+    SYSTEM_DURATION_UNIT_DAYS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Days"),
+    SYSTEM_DURATION_UNIT_WEEKS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Weeks"),
+    SYSTEM_DURATION_UNIT_MONTHS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Months"),
+    SYSTEM_DURATION_UNIT_YEARS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Years"),
+    
     SYSTEM_DURATION_UNIT_PER_DAY(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Day"),
     SYSTEM_DURATION_UNIT_PER_WEEK(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Week"),
     SYSTEM_DURATION_UNIT_PER_MONTH(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Month"),
@@ -1088,7 +1093,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     /*
      * *************** SYSTEM STATE DURATION *********************
      */
-
+       
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reference Duration"),
@@ -1427,7 +1432,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_NEXT_STATE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Please choose the next state."),
     SYSTEM_RESOURCE_TIMELINE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Timeline"),
     SYSTEM_RESOURCE_MANAGE_USERS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Manage Users"),
-    SYSTEM_RESOURCE_EMAIL_TEMPLATES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Email Templates"),
+    SYSTEM_RESOURCE_NOTIFICATION_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Email Templates"),
     SYSTEM_RESOURCE_CONFIGURATION_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Configuration"),
     SYSTEM_RESOURCE_SUMMARY_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Summary"),
     SYSTEM_RESOURCE_DETAILS_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Upload personalized images and content to increase the interest in your advert."),

@@ -172,29 +172,13 @@ public class SystemService {
     }
 
     @Transactional(timeout = 600)
-    public void dropDisplayProperties() {
-        logger.info("Destroying display properties");
-        entityService.deleteAll(DisplayPropertyConfiguration.class);
-        entityService.deleteAll(DisplayPropertyDefinition.class);
-    }
-
-    @Transactional(timeout = 600)
-    public void initializeDisplayProperties() throws Exception {
-        logger.info("Initializing display property definitions");
-        verifyDefinition(DisplayPropertyDefinition.class);
-        initializeDisplayPropertyDefinitions();
-
-        logger.info("Initializing display property configurations");
-        initializeDisplayPropertyConfigurations(getSystem());
-    }
-
-    @Transactional(timeout = 600)
     public void dropWorkflow() {
         if (asList("prod", "uat").contains(environment)) {
-            throw new Error("You tried to reset the " + environment + " database, destroying all data and contents. Did you really mean to do that?");
+            throw new Error("You tried to clear the " + environment + " database, destroying all data. Did you really mean to do that?");
+        } else if (environment.equals("dev")) {
+            logger.info("Destroying workflow properties");
+            systemDAO.clearSchema();
         }
-        logger.info("Destroying workflow properties");
-        systemDAO.clearSchema();
     }
 
     @Transactional(timeout = 600)
@@ -255,6 +239,23 @@ public class SystemService {
         entityService.clear();
     }
 
+    @Transactional(timeout = 600)
+    public void dropDisplayProperties() {
+        logger.info("Destroying display properties");
+        entityService.deleteAll(DisplayPropertyConfiguration.class);
+        entityService.deleteAll(DisplayPropertyDefinition.class);
+    }
+
+    @Transactional(timeout = 600)
+    public void initializeDisplayProperties() throws Exception {
+        logger.info("Initializing display property definitions");
+        verifyDefinition(DisplayPropertyDefinition.class);
+        initializeDisplayPropertyDefinitions();
+
+        logger.info("Initializing display property configurations");
+        initializeDisplayPropertyConfigurations(getSystem());
+    }
+
     public void initializePropertyLoader() {
         logger.info("Initializing default display property loader");
         this.propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeEager(getSystem());
@@ -272,11 +273,6 @@ public class SystemService {
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome);
         }
-    }
-
-    @Transactional
-    public void initializeAmazon() {
-        systemDAO.resetAmazon();
     }
 
     @Transactional

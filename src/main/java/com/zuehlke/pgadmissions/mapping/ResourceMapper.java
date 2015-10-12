@@ -612,7 +612,7 @@ public class ResourceMapper {
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName) {
+            String departmentName, Integer backgroundImageId) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 
@@ -620,12 +620,16 @@ public class ResourceMapper {
             representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId).withName(departmentName));
         }
 
+        if (backgroundImageId != null) {
+            representation.setBackgroundImage(documentMapper.getDocumentRepresentation(backgroundImageId));
+        }
+
         return representation;
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
-        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getLogoImageId(), resource.getDepartmentId(),
-                resource.getDepartmentName());
+        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getInstitutionLogoImageId(), resource.getDepartmentId(),
+                resource.getDepartmentName(), null);
     }
 
     private <T extends Resource> void validateViewerPermission(T resource) {
@@ -638,7 +642,7 @@ public class ResourceMapper {
     private <T extends Resource, V extends ResourceRepresentationActivity> V getResourceRepresentationActivity(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationSimple(resource, returnType);
 
-        if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType)) {
+        if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ((ResourceOpportunityRepresentationActivity) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
         }
 

@@ -409,7 +409,7 @@ public class ResourceDAO {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
-                .add(Projections.property("institution.logoImage.id").as("logoImageId"));
+                .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId"));
 
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {

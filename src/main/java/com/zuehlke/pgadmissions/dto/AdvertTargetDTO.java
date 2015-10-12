@@ -11,7 +11,7 @@ public class AdvertTargetDTO {
 
     private String thisInstitutionName;
 
-    private Integer thisLogoImageId;
+    private Integer thisInstitutionLogoImageId;
 
     private Integer thisDepartmentId;
 
@@ -23,9 +23,13 @@ public class AdvertTargetDTO {
 
     private Integer otherInstitutionLogoImageId;
 
+    private Integer otherInstitutionBackgroundImageId;
+
     private Integer otherDepartmentId;
 
     private String otherDepartmentName;
+
+    private Integer otherDepartmentBackgroundImageId;
 
     private Integer otherUserId;
 
@@ -69,12 +73,12 @@ public class AdvertTargetDTO {
         this.thisInstitutionName = thisInstitutionName;
     }
 
-    public Integer getThisLogoImageId() {
-        return thisLogoImageId;
+    public Integer getThisInstitutionLogoImageId() {
+        return thisInstitutionLogoImageId;
     }
 
-    public void setThisLogoImageId(Integer thisLogoImageId) {
-        this.thisLogoImageId = thisLogoImageId;
+    public void setThisInstitutionLogoImageId(Integer thisInstitutionLogoImageId) {
+        this.thisInstitutionLogoImageId = thisInstitutionLogoImageId;
     }
 
     public Integer getThisDepartmentId() {
@@ -117,6 +121,14 @@ public class AdvertTargetDTO {
         this.otherInstitutionLogoImageId = otherInstitutionLogoImageId;
     }
 
+    public Integer getOtherInstitutionBackgroundImageId() {
+        return otherInstitutionBackgroundImageId;
+    }
+
+    public void setOtherInstitutionBackgroundImageId(Integer otherInstitutionBackgroundImageId) {
+        this.otherInstitutionBackgroundImageId = otherInstitutionBackgroundImageId;
+    }
+
     public Integer getOtherDepartmentId() {
         return otherDepartmentId;
     }
@@ -131,6 +143,14 @@ public class AdvertTargetDTO {
 
     public void setOtherDepartmentName(String otherDepartmentName) {
         this.otherDepartmentName = otherDepartmentName;
+    }
+
+    public Integer getOtherDepartmentBackgroundImageId() {
+        return otherDepartmentBackgroundImageId;
+    }
+
+    public void setOtherDepartmentBackgroundImageId(Integer otherDepartmentBackgroundImageId) {
+        this.otherDepartmentBackgroundImageId = otherDepartmentBackgroundImageId;
     }
 
     public Integer getOtherUserId() {
@@ -203,6 +223,10 @@ public class AdvertTargetDTO {
 
     public void setCanManage(Boolean canManage) {
         this.canManage = canManage;
+    }
+
+    public Integer getOtherBackgroundId() {
+        return otherDepartmentBackgroundImageId == null ? otherInstitutionBackgroundImageId : otherDepartmentBackgroundImageId;
     }
 
     @Override

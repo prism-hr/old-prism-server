@@ -355,7 +355,8 @@ public class AdvertMapper {
         TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> representationFilter = TreeMultimap.create();
         for (AdvertTargetDTO advertTarget : advertTargets) {
             ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
-                    advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
+                    advertTarget.getThisInstitutionName(), advertTarget.getThisInstitutionLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName(),
+                    null);
 
             AdvertTargetRepresentation representation = representationIndex.get(thisResourceRepresentation);
             if (representation == null) {
@@ -365,7 +366,8 @@ public class AdvertMapper {
 
             AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
                     .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
-                            advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName()))
+                            advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
+                            advertTarget.getOtherBackgroundId()))
                     .withPartnershipState(advertTarget.getPartnershipState()).withCanManage(BooleanUtils.isTrue(advertTarget.getCanManage()));
 
             Integer otherUserId = advertTarget.getOtherUserId();

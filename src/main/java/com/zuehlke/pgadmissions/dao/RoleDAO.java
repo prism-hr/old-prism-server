@@ -210,6 +210,18 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<PrismRole> getRolesByVisibleScope(User user, PrismScope prismScope) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias(prismScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNotNull("resource.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.ne("state.hidden", false)) //
+                .list();
+    }
+
     public List<Role> getCreatorRoles() {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("roleTransition.transitionRole")) //

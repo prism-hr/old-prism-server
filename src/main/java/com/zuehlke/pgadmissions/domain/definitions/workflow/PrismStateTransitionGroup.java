@@ -11,14 +11,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_PARENT_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
@@ -51,6 +51,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL_PARENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL;
@@ -61,11 +62,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PARENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_OUTCOME;
@@ -230,6 +233,10 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
                     .withTransitionEvaluation(PROJECT_CREATED_OUTCOME),
             new PrismStateTransition() //
+                    .withTransitionState(PROJECT_APPROVAL_PARENT_APPROVAL) //
+                    .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
+                    .withTransitionEvaluation(PROJECT_CREATED_OUTCOME),
+            new PrismStateTransition() //
                     .withTransitionState(PROJECT_APPROVAL) //
                     .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
                     .withTransitionEvaluation(PROJECT_CREATED_OUTCOME),
@@ -270,6 +277,10 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                     .withTransitionEvaluation(PROGRAM_CREATED_OUTCOME), //
             new PrismStateTransition() //
+                    .withTransitionState(PROGRAM_APPROVAL_PARENT_APPROVAL) //
+                    .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
+                    .withTransitionEvaluation(PROGRAM_CREATED_OUTCOME), //
+            new PrismStateTransition() //
                     .withTransitionState(PROGRAM_APPROVAL) //
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                     .withTransitionEvaluation(PROGRAM_CREATED_OUTCOME),
@@ -283,7 +294,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(PROGRAM_APPROVED) //
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                     .withTransitionEvaluation(PROGRAM_APPROVED_OUTCOME) //
-                    .withPropagatedActions(PROJECT_COMPLETE), //
+                    .withPropagatedActions(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
@@ -311,6 +322,10 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
                     .withTransitionEvaluation(DEPARTMENT_CREATED_OUTCOME), //
             new PrismStateTransition() //
+                    .withTransitionState(DEPARTMENT_APPROVAL_PARENT_APPROVAL) //
+                    .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
+                    .withTransitionEvaluation(DEPARTMENT_CREATED_OUTCOME), //
+            new PrismStateTransition() //
                     .withTransitionState(DEPARTMENT_APPROVAL) //
                     .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
                     .withTransitionEvaluation(DEPARTMENT_CREATED_OUTCOME),
@@ -324,7 +339,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(DEPARTMENT_APPROVED) //
                     .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
                     .withTransitionEvaluation(DEPARTMENT_APPROVED_OUTCOME) //
-                    .withPropagatedActions(PROGRAM_COMPLETE, PROJECT_COMPLETE), //
+                    .withPropagatedActions(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE, PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(DEPARTMENT_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
@@ -360,7 +375,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_APPROVED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT) //
                     .withTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME) //
-                    .withPropagatedActions(DEPARTMENT_COMPLETE, PROGRAM_COMPLETE, PROJECT_COMPLETE),
+                    .withPropagatedActions(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE, PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE, DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_REJECTED) //
                     .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST)

@@ -355,8 +355,7 @@ public class AdvertMapper {
         TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> representationFilter = TreeMultimap.create();
         for (AdvertTargetDTO advertTarget : advertTargets) {
             ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
-                    advertTarget.getThisInstitutionName(), advertTarget.getThisInstitutionLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName(),
-                    null);
+                    advertTarget.getThisInstitutionName(), advertTarget.getThisInstitutionLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
 
             AdvertTargetRepresentation representation = representationIndex.get(thisResourceRepresentation);
             if (representation == null) {

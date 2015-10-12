@@ -612,6 +612,11 @@ public class ResourceMapper {
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+            String departmentName) {
+        return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null);
+    }
+
+    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
             String departmentName, Integer backgroundImageId) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
@@ -629,7 +634,7 @@ public class ResourceMapper {
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
         return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getInstitutionLogoImageId(), resource.getDepartmentId(),
-                resource.getDepartmentName(), null);
+                resource.getDepartmentName());
     }
 
     private <T extends Resource> void validateViewerPermission(T resource) {

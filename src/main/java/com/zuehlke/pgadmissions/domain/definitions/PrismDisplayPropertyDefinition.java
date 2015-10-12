@@ -235,6 +235,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_INSTITUTION_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_DEPARTMENT_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Department"),
+    SYSTEM_ACTION_DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_DEPARTMENT_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_DEPARTMENT_VIEW_EDIT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_DEPARTMENT_CORRECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Correct"),
@@ -248,6 +249,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_DEPARTMENT_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_DEPARTMENT_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_PROGRAM_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Program Complete"),
+    SYSTEM_ACTION_PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROGRAM_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROGRAM_ENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Endorse"),
     SYSTEM_ACTION_PROGRAM_REENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Re-endorse"),
@@ -263,6 +265,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROGRAM_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_PROGRAM_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_PROJECT_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Project Complete"),
+    SYSTEM_ACTION_PROJECT_COMPLETE_PARENT_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROJECT_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROJECT_ENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Endorse"),
     SYSTEM_ACTION_PROJECT_REENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Re-endorse"),
@@ -359,9 +362,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically more focused engagments where the particpant performs concrete tasks."),
     SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering positions are typically engagements where the participant contributes towards a charitable cause."),
 
-    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the national minimum wage."),
-    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Please check and confirm that your opportunity complies with "),
-    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "national minimum wage requirements."),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the minimum wage."),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Please check and confirm that your opportunity complies with your "),
+    SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "national requirements."),
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_GUIDANCE_LINK_LOCATION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "https://www.gov.uk/guidance/national-minimum-wage-work-experience-and-internships"),
 
     /*

@@ -325,7 +325,7 @@ public class ActionDAO {
                         .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")))
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("action.scope.id", SYSTEM))
-                        .add(userLoggedIn ? Restrictions.isNull("stateAction.actionCondition") : Restrictions.eq("resourceCondition.externalMode", true)));
+                        .add(userLoggedIn ? Restrictions.eq("resourceCondition.internalMode", true) : Restrictions.eq("resourceCondition.externalMode", true)));
     }
 
 }

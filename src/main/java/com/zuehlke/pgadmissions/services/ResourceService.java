@@ -1,44 +1,45 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.dao.ResourceDAO;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.comment.*;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.PrismScopeRelation;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.resource.*;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.domain.workflow.*;
-import com.zuehlke.pgadmissions.dto.*;
-import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
-import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.*;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
-import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
-import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
-import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
-import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
-import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import jersey.repackaged.com.google.common.collect.Sets;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
+import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.joda.time.DateTime.now;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
@@ -52,31 +53,85 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.dao.ResourceDAO;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentState;
+import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
+import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.PrismScopeRelation;
+import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.domain.workflow.Scope;
+import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
+import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
+import com.zuehlke.pgadmissions.dto.ActionDTO;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
+import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
+import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
+import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
+import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConditionDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterConstraintDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSitemap;
+import com.zuehlke.pgadmissions.services.builders.PrismResourceListConstraintBuilder;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import com.zuehlke.pgadmissions.workflow.evaluators.ResourceCompletenessEvaluator;
+import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.duration.StateDurationResolver;
+import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
+import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
-import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang.BooleanUtils.toBoolean;
-import static org.joda.time.DateTime.now;
+import jersey.repackaged.com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -151,7 +206,7 @@ public class ResourceService {
                 .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
-        ActionOutcomeDTO outcome;
+        ActionOutcomeDTO outcome = null;
         if (systemInvocation) {
             outcome = actionService.executeAction(resource, action, comment);
         } else {
@@ -170,40 +225,49 @@ public class ResourceService {
 
     public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
-            ResourceParent resourceChild = null;
-            User lastUser = systemService.getSystem().getUser();
+            ResourceParent resource = null;
+            User resourceUser = systemService.getSystem().getUser();
             for (ResourceCreationDTO resourceDTO : resourceRelationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
                 PrismScope thisScope = resourceDTO.getScope();
-                PrismScope lastScope = resourceChild == null ? SYSTEM : resourceChild.getResourceScope();
+                PrismScope lastScope = resource == null ? SYSTEM : resource.getResourceScope();
 
                 resourceDTO.setContext(resourceRelationDTO.getContext());
 
                 if (thisId == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
-                    if (resourceChild != null) {
-                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(resourceChild.getId()));
+                    if (resource != null) {
+                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(resource.getId()));
+                    }
+
+                    User owner;
+                    if (thisScope.equals(PROJECT)) {
+                        User viewer = null;
+                        User student = userService.getCurrentUser();
+
+                        UserDTO userDTO = resourceRelationDTO.getUser();
+                        if (userDTO != null) {
+                            viewer = joinResource(resource, userDTO, VIEWER);
+                        }
+
+                        if (resourceRelationDTO.getContext().equals(APPLICANT)) {
+                            joinResource(resource, student, STUDENT);
+                        }
+
+                        owner = resourceRelationDTO.getRelationContext().equals(REFEREE) ? viewer : student;
+                    } else {
+                        owner = resourceUser;
                     }
 
                     Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
-                    resourceChild = (ResourceParent) createResource(lastUser, action, resourceDTO, true).getResource();
+                    resource = (ResourceParent) createResource(owner, action, resourceDTO, true).getResource();
                 } else {
-                    resourceChild = (ResourceParent) getById(thisScope, thisId);
-                    lastUser = resourceChild.getUser();
+                    resource = (ResourceParent) getById(thisScope, thisId);
+                    resourceUser = resource.getUser();
                 }
             }
 
-            ResourceParent resourceParent = getFirstResourceParent(resourceChild);
-            if (resourceRelationDTO.getContext().equals(APPLICANT)) {
-                joinResource(resourceParent, userService.getCurrentUser(), STUDENT);
-            }
-
-            UserDTO userDTO = resourceRelationDTO.getUser();
-            if (userDTO != null) {
-                joinResource(resourceParent, userDTO, VIEWER);
-            }
-
-            return resourceChild;
+            return resource;
         }
 
         throw new UnsupportedOperationException("Invalid resource relation creation attempt");
@@ -244,14 +308,14 @@ public class ResourceService {
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = null;
         PrismRoleContext roleContext = commentDTO.getRoleContext();
-        if (roleContext != null) {
-            ResourceCreationDTO resource = commentDTO.getResource();
-            joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext);
-        } else if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
+        if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO, false);
+        } else if (roleContext != null) {
+            ResourceCreationDTO resource = commentDTO.getResource();
+            joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext);
         } else {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
@@ -932,13 +996,6 @@ public class ResourceService {
             }
         }
         return false;
-    }
-
-    private ResourceParent getFirstResourceParent(ResourceParent resource) {
-        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            return getFirstResourceParent(resource.getParentResource());
-        }
-        return resource;
     }
 
 }

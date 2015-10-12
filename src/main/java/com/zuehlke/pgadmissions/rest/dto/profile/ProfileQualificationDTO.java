@@ -23,8 +23,6 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     @NotNull
     private ResourceRelationInvitationDTO resource;
 
-    private String description;
-
     @NotNull
     @DateNotFuture
     private LocalDate startDate;
@@ -55,14 +53,6 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     @Override
     public void setResource(ResourceRelationInvitationDTO resource) {
         this.resource = resource;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public LocalDate getStartDate() {

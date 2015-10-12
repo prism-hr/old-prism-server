@@ -12,8 +12,6 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
 
     private ResourceRelationInvitationRepresentation resource;
 
-    private String description;
-    
     private LocalDate startDate;
 
     private LocalDate endDate;
@@ -36,14 +34,6 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
         this.resource = resource;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    
     public Boolean getCurrent() {
         return current;
     }
@@ -85,11 +75,6 @@ public class ProfileEmploymentPositionRepresentation extends ApplicationSectionR
 
     public ProfileEmploymentPositionRepresentation withEndDate(final LocalDate endDate) {
         this.endDate = endDate;
-        return this;
-    }
-
-    public ProfileEmploymentPositionRepresentation withDescription(final String description) {
-        this.description = description;
         return this;
     }
 

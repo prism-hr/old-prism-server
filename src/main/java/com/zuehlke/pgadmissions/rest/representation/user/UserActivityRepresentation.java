@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresent
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 
 public class UserActivityRepresentation {
 
@@ -205,15 +206,15 @@ public class UserActivityRepresentation {
 
     public static class ResourceUnverifiedUserRepresentation {
 
-        private ResourceRepresentationActivity resource;
+        private ResourceRepresentationConnection resource;
 
         private List<UserRepresentationUnverified> users;
 
-        public ResourceRepresentationActivity getResource() {
+        public ResourceRepresentationConnection getResource() {
             return resource;
         }
 
-        public void setResource(ResourceRepresentationActivity resource) {
+        public void setResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
         }
 
@@ -225,7 +226,7 @@ public class UserActivityRepresentation {
             this.users = users;
         }
 
-        public ResourceUnverifiedUserRepresentation withResource(ResourceRepresentationActivity resource) {
+        public ResourceUnverifiedUserRepresentation withResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
             return this;
         }

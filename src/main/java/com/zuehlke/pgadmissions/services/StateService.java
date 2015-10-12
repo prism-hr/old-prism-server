@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 
 import java.util.Collection;
@@ -232,6 +233,10 @@ public class StateService {
 
     public List<PrismState> getStatesByStateGroup(PrismStateGroup stateGroupId) {
         return stateDAO.getStatesByStateGroup(stateGroupId);
+    }
+
+    public List<PrismState> getResourceStates(Resource resource) {
+        return resource.getResourceStates().stream().map(rs -> rs.getState().getId()).collect(toList());
     }
 
     public List<PrismState> getResourceStates(PrismScope resourceScope) {

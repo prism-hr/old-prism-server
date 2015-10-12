@@ -416,7 +416,7 @@ public class ResourceService {
 
     @SuppressWarnings("unchecked")
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Integer recordsToRetrieve,
-                                                    String sequenceId, Collection<Integer> resourceIds, Collection<Integer> onlyAsPartnerResourceIds, boolean extended) {
+            String sequenceId, Collection<Integer> resourceIds, Collection<Integer> onlyAsPartnerResourceIds, boolean extended) {
         if (!resourceIds.isEmpty()) {
             boolean hasRedactions = actionService.hasRedactions(user, scope);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, sequenceId, recordsToRetrieve, hasRedactions);
@@ -474,7 +474,7 @@ public class ResourceService {
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanMakeConnections(User user, String searchTerm) {
         Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
-        for (PrismScope resourceScope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
+        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm)
                     .forEach(resource -> resources.add(resource));
         }
@@ -580,26 +580,26 @@ public class ResourceService {
         if (resourceConditions == null) {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
-                case INSTITUTION:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                case DEPARTMENT:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                case PROGRAM:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                case PROJECT:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
+            case INSTITUTION:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case DEPARTMENT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case PROGRAM:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case PROJECT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            default:
+                throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
             }
         }
 
@@ -690,7 +690,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
-                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
@@ -831,6 +831,18 @@ public class ResourceService {
         return resourceDAO.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, createdBaseline);
     }
 
+    public ResourceParent getResourceParent(ResourceParent resource) {
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            return getResourceParent(resource.getParentResource());
+        }
+        return resource;
+    }
+
+    public boolean isUnderApproval(ResourceParent resource) {
+        List<PrismState> states = stateService.getResourceStates(resource);
+        return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
+    }
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, filter, //
                 Projections.projectionList() //
@@ -841,7 +853,7 @@ public class ResourceService {
     }
 
     private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
-                                    Class<T> responseClass) {
+            Class<T> responseClass) {
         Set<T> resources = Sets.newHashSet();
         Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
         addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass), resources, asPartner);
@@ -942,7 +954,7 @@ public class ResourceService {
         resourceOpportunity.setOpportunityCategories(opportunityCategory);
         advert.setOpportunityCategories(opportunityCategory);
 
-        for (PrismScope scope : new PrismScope[]{DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             ResourceParent enclosing = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
             if (enclosing != null) {
                 String opportunityCategories = enclosing.getOpportunityCategories();

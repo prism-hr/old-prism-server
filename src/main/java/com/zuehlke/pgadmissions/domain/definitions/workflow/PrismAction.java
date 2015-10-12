@@ -72,6 +72,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROJECT_REENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     PROJECT_COMPLETE(getDefaultProcessResourceActionDefinition(PROJECT)), //
     PROJECT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_COMPLETE_PARENT_APPROVAL_STAGE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROJECT)), //
     PROJECT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(PROJECT)), //
@@ -86,6 +87,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_REENDORSE(getDefaultPartnerActionDefinition(PROGRAM, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     PROGRAM_COMPLETE(getDefaultProcessResourceActionDefinition(PROGRAM)), //
     PROGRAM_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROGRAM)), //
     PROGRAM_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionInvisible(PROGRAM)), //
@@ -97,6 +99,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     DEPARTMENT_COMPLETE(getDefaultProcessResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
+    DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionInvisible(DEPARTMENT)), //

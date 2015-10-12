@@ -399,7 +399,8 @@ public class AdvertDAO {
             criteria.add(Restrictions.not(Restrictions.in("target.id", exclusions)));
         }
 
-        return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+        return (List<AdvertTargetDTO>) criteria.add(Restrictions.ne("target.partnershipState", ENDORSEMENT_REVOKED))
+                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,

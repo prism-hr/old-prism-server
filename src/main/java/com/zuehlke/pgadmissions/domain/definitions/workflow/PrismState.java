@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepa
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentDisabledCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentParentApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWithdrawn;
@@ -62,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgram
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramDisabledCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramParentApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.program.PrismProgramWithdrawn;
@@ -69,6 +71,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProject
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApprovalPendingCorrection;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectDisabledCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectParentApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectRejected;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectUnsubmitted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.project.PrismProjectWithdrawn;
@@ -123,6 +126,7 @@ public enum PrismState {
             PrismApplicationWithdrawnCompleted.class),
 
     PROJECT_UNSUBMITTED(PrismStateGroup.PROJECT_UNSUBMITTED, null, null, PrismProjectUnsubmitted.class),
+    PROJECT_APPROVAL_PARENT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PrismProjectParentApproval.class),
     PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PrismProjectApproval.class),
     PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null,
             PrismProjectApprovalPendingCorrection.class),
@@ -132,6 +136,7 @@ public enum PrismState {
     PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, PrismProjectWithdrawn.class),
 
     PROGRAM_UNSUBMITTED(PrismStateGroup.PROGRAM_UNSUBMITTED, null, null, PrismProgramUnsubmitted.class),
+    PROGRAM_APPROVAL_PARENT_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, PrismProgramParentApproval.class),
     PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, PrismProgramApproval.class),
     PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApprovalPendingCorrection.class),
@@ -141,6 +146,7 @@ public enum PrismState {
     PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, null, PrismProgramWithdrawn.class),
 
     DEPARTMENT_UNSUBMITTED(PrismStateGroup.DEPARTMENT_UNSUBMITTED, null, null, PrismDepartmentUnsubmitted.class),
+    DEPARTMENT_APPROVAL_PARENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null, PrismDepartmentParentApproval.class),
     DEPARTMENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null, PrismDepartmentApproval.class),
     DEPARTMENT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null,
             PrismDepartmentApprovalPendingCorrection.class),

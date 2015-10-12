@@ -65,9 +65,9 @@ import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.PrismScopeRelation;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.PrismScopeRelation;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -980,8 +980,8 @@ public class ResourceService {
 
     private boolean validateResourceFamilyCreation(ResourceRelationInvitationDTO resourceRelationDTO) {
         List<PrismScope> scopes = resourceRelationDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
-        for (PrismScopeRelation creationFamily : resourceRelationDTO.getContext().getPermittedRelations()) {
-            if (creationFamily.containsAll(scopes)) {
+        for (PrismScopeRelation relation : resourceRelationDTO.getRelationContext().getRelations()) {
+            if (relation.containsAll(scopes)) {
                 return true;
             }
         }

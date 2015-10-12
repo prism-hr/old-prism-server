@@ -8,8 +8,8 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDateTime;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;

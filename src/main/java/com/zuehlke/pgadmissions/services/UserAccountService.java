@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -56,6 +59,9 @@ public class UserAccountService {
 
     @Inject
     private NotificationService notificationService;
+
+    @Inject
+    private SystemService systemService;
 
     @Inject
     private UserService userService;
@@ -101,10 +107,18 @@ public class UserAccountService {
             getOrCreateUserAccount(user, userRegistrationDTO.getPassword(), enableAccount);
         }
 
-        ActionOutcomeDTO outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
+        ActionOutcomeDTO outcome;
+        PrismRoleContext roleContext = userRegistrationDTO.getComment().getRoleContext();
+        if (roleContext != null) {
+            outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(actionService.getById(SYSTEM_MANAGE_ACCOUNT));
+        } else {
+            outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
+        }
+
         if (outcome != null) {
             notificationService.sendRegistrationNotification(user, outcome);
         }
+
         return user;
     }
 

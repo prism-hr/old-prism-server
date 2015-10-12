@@ -2,24 +2,24 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceRelationRepresentation {
 
-    private PrismMotivationContext context;
+    private PrismScopeRelationContext context;
 
     private List<ResourceRelationComponentRepresentation> resourceRelations;
 
-    public ResourceRelationRepresentation(PrismMotivationContext context) {
+    public ResourceRelationRepresentation(PrismScopeRelationContext context) {
         this.context = context;
     }
 
-    public PrismMotivationContext getContext() {
+    public PrismScopeRelationContext getContext() {
         return context;
     }
 
-    public void setContext(PrismMotivationContext creationContext) {
+    public void setContext(PrismScopeRelationContext creationContext) {
         this.context = creationContext;
     }
 
@@ -35,10 +35,19 @@ public class ResourceRelationRepresentation {
 
         private PrismScope resourceScope;
 
-        private boolean required;
+        private Boolean autosuggest;
 
-        public ResourceRelationComponentRepresentation(PrismScope resourceScope) {
+        private Boolean description;
+
+        private Boolean user;
+
+        private Boolean required;
+
+        public ResourceRelationComponentRepresentation(PrismScope resourceScope, Boolean autosuggest, Boolean description, Boolean user) {
             this.resourceScope = resourceScope;
+            this.autosuggest = autosuggest;
+            this.description = description;
+            this.user = user;
         }
 
         public PrismScope getResourceScope() {
@@ -49,11 +58,35 @@ public class ResourceRelationRepresentation {
             this.resourceScope = resourceScope;
         }
 
-        public boolean isRequired() {
+        public Boolean getAutosuggest() {
+            return autosuggest;
+        }
+
+        public void setAutosuggest(Boolean autosuggest) {
+            this.autosuggest = autosuggest;
+        }
+
+        public Boolean getDescription() {
+            return description;
+        }
+
+        public void setDescription(Boolean description) {
+            this.description = description;
+        }
+
+        public Boolean getUser() {
+            return user;
+        }
+
+        public void setUser(Boolean user) {
+            this.user = user;
+        }
+
+        public Boolean getRequired() {
             return required;
         }
 
-        public void setRequired(boolean required) {
+        public void setRequired(Boolean required) {
             this.required = required;
         }
 

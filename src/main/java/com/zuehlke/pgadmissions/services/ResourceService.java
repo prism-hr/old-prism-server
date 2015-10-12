@@ -5,9 +5,9 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
@@ -65,9 +65,9 @@ import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.PrismScopeRelation;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -297,11 +297,15 @@ public class ResourceService {
     @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = null;
+        PrismRoleContext roleContext = commentDTO.getRoleContext();
         if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO, false);
+        } else if (roleContext != null) {
+            ResourceCreationDTO resource = commentDTO.getResource();
+            joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext);
         } else {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
@@ -783,19 +787,19 @@ public class ResourceService {
         return resourceDAO.getResources(enclosingResource, resourceScope, query);
     }
 
-    public User joinResource(ResourceParent resource, UserDTO userDTO, PrismJoinResourceContext context) {
+    public User joinResource(ResourceParent resource, UserDTO userDTO, PrismRoleContext roleContext) {
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-        joinResource(resource, user, context);
+        joinResource(resource, user, roleContext);
         return user;
     }
 
-    public void joinResource(ResourceParent resource, User user, PrismJoinResourceContext context) {
+    public void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext) {
         User currentUser = userService.getCurrentUser();
         Action viewEditAction = actionService.getViewEditAction(resource);
         boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser, false);
 
         Role role = null;
-        if (context.equals(STUDENT)) {
+        if (roleContext.equals(STUDENT)) {
             role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
             if (isTrue(role.getVerified())) {

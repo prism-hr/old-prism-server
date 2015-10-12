@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
@@ -16,9 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
@@ -26,7 +21,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
-import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
@@ -62,9 +56,6 @@ public class UserAccountService {
 
     @Inject
     private NotificationService notificationService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private UserService userService;
@@ -115,23 +106,6 @@ public class UserAccountService {
             notificationService.sendRegistrationNotification(user, outcome);
         }
         return user;
-    }
-
-    public void joinResource(Resource resource, PrismJoinResourceContext context, UserRegistrationDTO userRegistrationDTO, HttpSession session) {
-        User currentUser = userService.getCurrentUser();
-        if (currentUser == null || currentUser.getEmail().equals(userRegistrationDTO.getEmail())) {
-            User user;
-            try {
-                userRegistrationDTO.setComment(new CommentDTO().withAction(SYSTEM_MANAGE_ACCOUNT));
-                user = registerUser(userRegistrationDTO, session);
-            } catch (ResourceNotFoundException e) {
-                user = currentUser;
-            }
-
-            resourceService.joinResource((ResourceParent) resource, user, context);
-        }
-
-        throw new Error("Invoker attempted to impersonate another user");
     }
 
     public void updateUserAccount(UserAccount userAccount) {

@@ -4,8 +4,8 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext.VIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
 import static java.math.RoundingMode.HALF_UP;
 
 import java.util.List;
@@ -28,7 +28,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -268,7 +268,7 @@ public class UserMapper {
 
     private List<ResourceUnverifiedUserRepresentation> getUnverifiedUserRepresentations(User user) {
         Map<String, ResourceUnverifiedUserRepresentation> representations = Maps.newLinkedHashMap();
-        TreeMultimap<UserRepresentationUnverified, PrismJoinResourceContext> userRepresentationIndex = TreeMultimap.create();
+        TreeMultimap<UserRepresentationUnverified, PrismRoleContext> userRepresentationIndex = TreeMultimap.create();
         for (UnverifiedUserDTO unverifiedUser : userService.getUsersToVerify(user)) {
             Integer departmentId = unverifiedUser.getDepartmentId();
             Integer institutionId = unverifiedUser.getInstitutionId();

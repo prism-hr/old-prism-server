@@ -79,9 +79,6 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
-        if (BooleanUtils.isTrue(dropWorkflow)) {
-            systemService.initializeAmazon();
-        }
         staticDataMapper.getData();
 
         if (BooleanUtils.isTrue(maintain)) {

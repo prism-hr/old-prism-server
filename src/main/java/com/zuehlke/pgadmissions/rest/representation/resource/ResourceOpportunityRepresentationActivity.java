@@ -2,7 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
-public class ResourceOpportunityRepresentationActivity extends ResourceRepresentationActivity{
+public class ResourceOpportunityRepresentationActivity extends ResourceRepresentationActivity {
 
     private PrismOpportunityType opportunityType;
 

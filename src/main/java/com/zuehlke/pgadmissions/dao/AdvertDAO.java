@@ -715,14 +715,16 @@ public class AdvertDAO {
                         .add(Projections.property("target.id").as("id")) //
                         .add(Projections.groupProperty("thisInstitution.id").as("thisInstitutionId")) //
                         .add(Projections.property("thisInstitution.name").as("thisInstitutionName")) //
-                        .add(Projections.property("thisInstitution.logoImage.id").as("thisLogoImageId")) //
+                        .add(Projections.property("thisInstitution.logoImage.id").as("thisInstitutionLogoImageId")) //
                         .add(Projections.groupProperty("thisDepartment.id").as("thisDepartmentId")) //
                         .add(Projections.property("thisDepartment.name").as("thisDepartmentName"))
                         .add(Projections.groupProperty("otherInstitution.id").as("otherInstitutionId")) //
                         .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
                         .add(Projections.property("otherInstitution.logoImage.id").as("otherInstitutionLogoImageId")) //
+                        .add(Projections.property("otherInstitutionAdvert.backgroundImage.id").as("otherInstitutionBackgroundImageId")) //
                         .add(Projections.groupProperty("otherDepartment.id").as("otherDepartmentId")) //
                         .add(Projections.property("otherDepartment.name").as("otherDepartmentName"))
+                        .add(Projections.property("otherDepartmentAdvert.backgroundImage.id").as("otherDepartmentBackgroundImageId")) //
                         .add(Projections.groupProperty("otherUser.id").as("otherUserId")) //
                         .add(Projections.property("otherUser.firstName").as("otherUserFirstName")) //
                         .add(Projections.property("otherUser.lastName").as("otherUserLastName")) //
@@ -740,7 +742,9 @@ public class AdvertDAO {
                 .createAlias(thisAdvertReference + "User", "thisUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(otherAdvertReference, "otherAdvert", JoinType.INNER_JOIN) //
                 .createAlias("otherAdvert.institution", "otherInstitution", JoinType.INNER_JOIN) //
+                .createAlias("otherInstitution.advert", "otherInstitutionAdvert", JoinType.LEFT_OUTER_JOIN)
                 .createAlias("otherAdvert.department", "otherDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("otherDepartment.advert", "otherDepartmentAdvert", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //

@@ -6,7 +6,7 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
 
     private String institutionName;
 
-    private Integer logoImageId;
+    private Integer institutionLogoImageId;
 
     private Integer departmentId;
 
@@ -28,12 +28,12 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
         this.institutionName = institutionName;
     }
 
-    public Integer getLogoImageId() {
-        return logoImageId;
+    public Integer getInstitutionLogoImageId() {
+        return institutionLogoImageId;
     }
 
-    public void setLogoImageId(Integer logoImageId) {
-        this.logoImageId = logoImageId;
+    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
+        this.institutionLogoImageId = institutionLogoImageId;
     }
 
     public Integer getDepartmentId() {
@@ -51,5 +51,5 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
-
+    
 }

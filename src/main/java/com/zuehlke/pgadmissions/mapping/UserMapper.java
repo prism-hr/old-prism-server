@@ -288,7 +288,7 @@ public class UserMapper {
                 userRepresentations = newLinkedList();
                 ResourceRepresentationActivity resourceRepresentation = new ResourceRepresentationActivity()
                         .withInstitution(new ResourceRepresentationSimple().withScope(PrismScope.INSTITUTION).withId(institutionId).withName(unverifiedUser.getInstitutionName())
-                                .withLogoImage(documentMapper.getDocumentRepresentation(unverifiedUser.getLogoImageId())));
+                                .withLogoImage(documentMapper.getDocumentRepresentation(unverifiedUser.getInstitutionLogoImageId())));
 
                 if (departmentId != null) {
                     resourceRepresentation

@@ -1,5 +1,20 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.social.linkedin.api.LinkedInProfile;
+import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
+import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.PrismJoinResourceContext;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -14,20 +29,6 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.social.linkedin.api.LinkedInProfile;
-import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
-import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 
 @Service
 @Transactional

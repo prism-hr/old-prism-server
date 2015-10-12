@@ -115,6 +115,7 @@ public class RoleService {
             if (isTrue(verify)) {
                 Role role = userRole.getRole();
                 updateUserRoles(user, resource, roleUser, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
+                entityService.delete(userRole);
             } else {
                 Action action = actionService.getViewEditAction(resource);
                 if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {

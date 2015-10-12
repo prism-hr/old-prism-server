@@ -303,15 +303,13 @@ public class AdvertService {
         User userTarget = null;
         UserDTO userTargetDTO = target.getUser();
         if (userTargetDTO != null) {
-            userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            userTarget = resourceService.joinResource(resource, userTargetDTO, VIEWER);
         }
 
         if (target.getContext().equals(EMPLOYER)) {
-            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, null, ENDORSEMENT_PENDING);
-            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, ENDORSEMENT_PENDING);
+            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget);
         } else {
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, null, ENDORSEMENT_PENDING);
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
+            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget);
         }
     }
 
@@ -337,7 +335,9 @@ public class AdvertService {
                         processAdvertTarget(advertTargetId, acceptResource, user, partnershipState);
 
                         AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, acceptUser);
-                        similarAdvertTarget.setPartnershipState(partnershipState);
+                        if (similarAdvertTarget != null) {
+                            similarAdvertTarget.setPartnershipState(partnershipState);
+                        }
 
                         performed = true;
                     }
@@ -640,13 +640,21 @@ public class AdvertService {
         return entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
-    private void createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
-            PrismPartnershipState partnershipState) {
-        AdvertTarget advertTarget = entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
-                .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
-        if (!(acceptAdvertUser == null && updateAdvertTarget(advertTarget.getId(), true))) {
+    private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept) {
+        createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, null, ENDORSEMENT_PENDING);
+        if (userTarget != null) {
+            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, ENDORSEMENT_PENDING);
+        }
+        
+        if (!(userAccept == null && updateAdvertTarget(advertTarget.getId(), true))) {
             // TODO - send the connection request
         }
+    }
+
+    private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
+            PrismPartnershipState partnershipState) {
+        return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
+                .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
     }
 
     private void processAdvertTarget(Integer advertTargetId, ResourceParent acceptResource, User user, PrismPartnershipState partnershipState) {
@@ -654,7 +662,6 @@ public class AdvertService {
             resourceService.activateResource(acceptResource, user);
         }
         advertDAO.processAdvertTarget(advertTargetId, partnershipState);
-        // TODO - send the connection confirmation
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

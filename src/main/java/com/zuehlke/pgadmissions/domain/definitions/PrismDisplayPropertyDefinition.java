@@ -1212,8 +1212,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM CONNECT SECTION *********************
      */
 
-    SYSTEM_CONNECT_INVITING_RESOURCE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Connect"),
-    SYSTEM_CONNECT_INVITING_RESOURCE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Please select which institution / department would you like to connect as"),
+    SYSTEM_CONNECT_INVITING_RESOURCE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Connect as"),
+    SYSTEM_CONNECT_INVITING_RESOURCE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Select the organization that you would like to connect as."),
 
     /*
      * *************** SYSTEM AUTHENTICATE SECTION *********************

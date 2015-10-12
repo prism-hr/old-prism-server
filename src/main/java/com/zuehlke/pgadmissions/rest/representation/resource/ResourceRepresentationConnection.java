@@ -2,12 +2,15 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.util.Arrays.asList;
 
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
 
@@ -39,6 +42,14 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
     public ResourceRepresentationConnection withDepartment(ResourceRepresentationSimple department) {
         setDepartment(department);
         return this;
+    }
+
+    public Integer getId() {
+        return department == null ? institution.getId() : department.getId();
+    }
+
+    public PrismScope getScope() {
+        return department == null ? INSTITUTION : DEPARTMENT;
     }
 
     public String getDisplayName() {

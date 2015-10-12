@@ -560,6 +560,7 @@ public class Project extends ResourceOpportunity {
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature()
+                .addProperty("user", user)
                 .addProperty("program", getProgram())
                 .addProperty("department", getDepartment())
                 .addExclusion("state.id", PROJECT_DISABLED_COMPLETED)

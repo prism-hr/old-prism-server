@@ -638,7 +638,7 @@ public class ResourceMapper {
     private <T extends Resource, V extends ResourceRepresentationActivity> V getResourceRepresentationActivity(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationSimple(resource, returnType);
 
-        if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType)) {
+        if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ((ResourceOpportunityRepresentationActivity) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
         }
 

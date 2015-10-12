@@ -6,6 +6,8 @@ public class ResourceOpportunityRepresentationActivity extends ResourceRepresent
 
     private PrismOpportunityType opportunityType;
 
+    private String summary;
+
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
@@ -13,4 +15,13 @@ public class ResourceOpportunityRepresentationActivity extends ResourceRepresent
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
 }

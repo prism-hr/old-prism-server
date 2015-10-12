@@ -39,9 +39,6 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     @JoinColumn(name = "advert_id", nullable = false)
     private Advert advert;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-    
     @Column(name = "start_year", nullable = false)
     private Integer startYear;
 
@@ -89,16 +86,6 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
     @Override
     public void setAdvert(Advert advert) {
         this.advert = advert;
-    }
-    
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override
@@ -183,7 +170,7 @@ public class ApplicationEmploymentPosition extends ApplicationAdvertRelationSect
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("startYear", startYear);
+        return super.getEntitySignature().addProperty("startYear", startYear).addProperty("startMonth", startMonth);
     }
 
 }

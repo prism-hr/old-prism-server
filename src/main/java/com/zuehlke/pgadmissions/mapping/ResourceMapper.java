@@ -649,6 +649,7 @@ public class ResourceMapper {
 
         if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ((ResourceOpportunityRepresentationActivity) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
+            ((ResourceOpportunityRepresentationActivity) representation).setSummary(((ResourceOpportunity) resource).getAdvert().getSummary());
         }
 
         if (ResourceRepresentationStandard.class.isAssignableFrom(returnType)) {

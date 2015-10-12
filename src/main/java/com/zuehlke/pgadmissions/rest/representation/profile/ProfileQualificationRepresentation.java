@@ -11,8 +11,6 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
     private Integer id;
 
     private ResourceRelationInvitationRepresentation resource;
-
-    private String description;
     
     private LocalDate startDate;
 
@@ -38,14 +36,6 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     public void setResource(ResourceRelationInvitationRepresentation resource) {
         this.resource = resource;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
     
     public LocalDate getStartDate() {
@@ -95,11 +85,6 @@ public class ProfileQualificationRepresentation extends ApplicationSectionRepres
 
     public ProfileQualificationRepresentation withResource(ResourceRelationInvitationRepresentation resource) {
         this.resource = resource;
-        return this;
-    }
-    
-    public ProfileQualificationRepresentation withDescription(final String description) {
-        this.description = description;
         return this;
     }
 

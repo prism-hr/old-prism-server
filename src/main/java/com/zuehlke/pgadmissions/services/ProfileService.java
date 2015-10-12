@@ -204,7 +204,7 @@ public class ProfileService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
-                                                                             ProfileEmploymentPositionDTO employmentPositionDTO) {
+            ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
 
@@ -498,7 +498,6 @@ public class ProfileService {
             qualification.setAwardMonth(awardDate.getMonthOfYear());
         }
 
-        qualification.setDescription(qualificationDTO.getDescription());
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setCompleted(isTrue(qualificationDTO.getCompleted()));
         Document document = qualificationDTO.getDocument() != null ? documentService.getById(qualificationDTO.getDocument().getId(), DOCUMENT) : null;
@@ -547,7 +546,6 @@ public class ProfileService {
             employmentPosition.setEndMonth(endDate.getMonthOfYear());
         }
 
-        employmentPosition.setDescription(employmentPositionDTO.getDescription());
         employmentPosition.setCurrent(isTrue(employmentPositionDTO.getCurrent()));
 
         if (employmentPosition.getClass().equals(ApplicationEmploymentPosition.class)) {

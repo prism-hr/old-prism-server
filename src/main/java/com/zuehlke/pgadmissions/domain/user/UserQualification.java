@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 import com.zuehlke.pgadmissions.workflow.user.UserQualificationReassignmentProcessor;
 
 @Entity
-@Table(name = "user_qualification", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "advert_id", "start_year"})})
+@Table(name = "user_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "advert_id", "start_year" }) })
 public class UserQualification extends UserAdvertRelationSection implements ProfileQualification<UserAccount>, UserAssignment<UserQualificationReassignmentProcessor> {
 
     @Id
@@ -142,16 +142,6 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     }
 
     @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @Override
     public String getGrade() {
         return grade;
     }
@@ -193,7 +183,7 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("startYear", startYear);
+        return super.getEntitySignature().addProperty("startYear", startYear).addProperty("startMonth", startMonth);
     }
 
 }

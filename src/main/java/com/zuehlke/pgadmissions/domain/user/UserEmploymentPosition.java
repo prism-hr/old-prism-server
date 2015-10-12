@@ -46,9 +46,6 @@ public class UserEmploymentPosition extends UserAdvertRelationSection
     @Column(name = "end_month")
     private Integer endMonth;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-
     @Column(name = "current", nullable = false)
     private Boolean current;
 
@@ -132,15 +129,6 @@ public class UserEmploymentPosition extends UserAdvertRelationSection
 
         this.endMonth = endMonth;
     }
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     @Override
     public Boolean getCurrent() {
@@ -164,7 +152,7 @@ public class UserEmploymentPosition extends UserAdvertRelationSection
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("startYear", startYear);
+        return super.getEntitySignature().addProperty("startYear", startYear).addProperty("startMonth", startMonth);
     }
 
 }

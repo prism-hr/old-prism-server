@@ -79,6 +79,11 @@ public class ApplicationExecutor implements ActionExecutor {
                 .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment())
                 .withApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment()).withRejectionReason(commentDTO.getRejectionReason());
 
+        if (isCompleteAction) {
+            comment.setShared(commentDTO.getShared());
+            comment.setOnCourse(commentDTO.getOnCourse());
+        }
+
         CommentPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
         if (positionDetailDTO != null) {
             comment.setPositionDetail(new CommentPositionDetail().withPositionTitle(positionDetailDTO.getPositionTitle()).withPositionDescription(
@@ -108,7 +113,7 @@ public class ApplicationExecutor implements ActionExecutor {
         if (commentDTO.getAppointmentPreferences() != null) {
             commentService.appendAppointmentPreferences(comment, commentDTO);
         }
-        
+
         if (actionId.equals(APPLICATION_PROVIDE_PARTNER_APPROVAL)) {
             Boolean onCourse = commentDTO.getOnCourse();
             if (onCourse != null) {

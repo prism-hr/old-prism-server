@@ -103,7 +103,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_UCAS(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "UCAS"),
     SYSTEM_HESA(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "HESA"),
     SYSTEM_PROPERTY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Property"),
-    SYSTEM_DURATION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Duration"), 
+    SYSTEM_DURATION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Duration"),
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -677,7 +677,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DURATION_UNIT_WEEKS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Weeks"),
     SYSTEM_DURATION_UNIT_MONTHS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Months"),
     SYSTEM_DURATION_UNIT_YEARS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Years"),
-    
+
     SYSTEM_DURATION_UNIT_PER_DAY(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Day"),
     SYSTEM_DURATION_UNIT_PER_WEEK(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Week"),
     SYSTEM_DURATION_UNIT_PER_MONTH(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Month"),
@@ -1093,7 +1093,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     /*
      * *************** SYSTEM STATE DURATION *********************
      */
-       
+
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
     SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reference Duration"),
@@ -1941,7 +1941,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_ADDITIONAL_INFORMATION_EMPTY(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
     PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and/or staff within your university.</em>"),
-    PROFILE_FORM_SAVE_FOR_LATER(PrismDisplayPropertyCategory.PROFILE_FORM, "Save for later"),
 
     APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
     APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Check this box if application is on course"),

@@ -1,33 +1,28 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
-import java.util.List;
-
+import com.zuehlke.pgadmissions.rest.representation.profile.*;
 import org.joda.time.DateTime;
 
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
+import java.util.List;
 
 public class UserProfileRepresentation {
 
     private ProfilePersonalDetailRepresentation personalDetail;
-    
+
     private ProfileAddressRepresentation address;
-    
+
     private List<ProfileQualificationRepresentation> qualifications;
-    
+
     private List<ProfileEmploymentPositionRepresentation> employmentPositions;
-    
+
     private List<ProfileRefereeRepresentation> referees;
-    
+
     private ProfileDocumentRepresentation document;
-    
+
     private ProfileAdditionalInformationRepresentation additionalInformation;
-    
+
+    private Boolean shared;
+
     private DateTime updatedTimestamp;
 
     public ProfilePersonalDetailRepresentation getPersonalDetail() {
@@ -86,6 +81,14 @@ public class UserProfileRepresentation {
         this.additionalInformation = additionalInformation;
     }
 
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
@@ -93,7 +96,7 @@ public class UserProfileRepresentation {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     public UserProfileRepresentation withPersonalDetail(ProfilePersonalDetailRepresentation personalDetail) {
         this.personalDetail = personalDetail;
         return this;
@@ -113,7 +116,7 @@ public class UserProfileRepresentation {
         this.employmentPositions = employmentPositions;
         return this;
     }
-    
+
     public UserProfileRepresentation withReferees(List<ProfileRefereeRepresentation> referees) {
         this.referees = referees;
         return this;
@@ -129,10 +132,15 @@ public class UserProfileRepresentation {
         return this;
     }
 
+    public UserProfileRepresentation withShared(final Boolean shared) {
+        this.shared = shared;
+        return this;
+    }
+
     public UserProfileRepresentation withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
-    
-    
+
+
 }

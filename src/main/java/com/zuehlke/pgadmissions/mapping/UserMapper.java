@@ -217,7 +217,7 @@ public class UserMapper {
                 .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions()))
                 .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees())).withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
                 .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation()))
-                .withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
+                .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
     }
 
     public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity) {

@@ -356,7 +356,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
 
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work experience positions are typically short term engagements where the participant observes or shadows employees in your organization."),
-    SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically longer term engagments where the particpant performs concrete tasks."),
+    SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically more focused engagments where the particpant performs concrete tasks."),
     SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering positions are typically engagements where the participant contributes towards a charitable cause."),
 
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the national minimum wage."),
@@ -1940,13 +1940,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_ADDITIONAL_INFORMATION_CONVICTION_HINT(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "Provide a short summary of each of your unspent convictions."),
     PROFILE_ADDITIONAL_INFORMATION_EMPTY(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
-    PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and/or staff within your university.</em>"),
+    PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and support staff in your university.</em>"),
     PROFILE_FORM_SAVE_FOR_LATER(PrismDisplayPropertyCategory.PROFILE_FORM, "Save for later"),
 
-    APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
-    APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Check this box if application is on course"),
-    APPLICATION_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with careers support staff in your department or university.</em>"),
-    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(PrismDisplayPropertyCategory.APPLICATION_FORM, "Send me recommendations about other opportunities to apply for.<br/><em>Uncheck this if you do not want us to send you recommendations.</em>"),
+    APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
+    APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "On course placement.<br/><em>Check this if you want your department to consider your application as counting towards a mandatory on cource placement."),
+    APPLICATION_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with support staff in your university.</em>"),
+    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(PrismDisplayPropertyCategory.APPLICATION_FORM, "Send me recommendations.<br/><em>Uncheck this if you do not want us to send you recommendations about other opportunities.</em>"),
     APPLICATION_FORM_GO_TO_TIMELINE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Go to Timeline"),
     APPLICATION_FORM_SAVE_FOR_LATER(PrismDisplayPropertyCategory.APPLICATION_FORM, "Save for later"),
     APPLICATION_FORM_SUBMIT_APPLICATION(PrismDisplayPropertyCategory.APPLICATION_FORM, "Submit Application"),

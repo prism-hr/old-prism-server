@@ -11,12 +11,15 @@ import org.apache.commons.lang3.ObjectUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
 
     private ResourceRepresentationIdentity institution;
 
     private ResourceRepresentationIdentity department;
+
+    private DocumentRepresentation backgroundImage;
 
     public ResourceRepresentationIdentity getInstitution() {
         return institution;
@@ -34,6 +37,14 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
         this.department = department;
     }
 
+    public DocumentRepresentation getBackgroundImage() {
+        return backgroundImage;
+    }
+
+    public void setBackgroundImage(DocumentRepresentation backgroundImage) {
+        this.backgroundImage = backgroundImage;
+    }
+
     public ResourceRepresentationConnection withInstitution(ResourceRepresentationSimple institution) {
         setInstitution(institution);
         return this;
@@ -41,6 +52,11 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
 
     public ResourceRepresentationConnection withDepartment(ResourceRepresentationSimple department) {
         setDepartment(department);
+        return this;
+    }
+
+    public ResourceRepresentationConnection withBackgroundImage(DocumentRepresentation backgroundImage) {
+        this.backgroundImage = backgroundImage;
         return this;
     }
 

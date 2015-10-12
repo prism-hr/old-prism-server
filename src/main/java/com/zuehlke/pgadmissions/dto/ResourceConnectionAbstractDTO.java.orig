@@ -1,0 +1,25 @@
+package com.zuehlke.pgadmissions.dto;
+
+public abstract class ResourceConnectionAbstractDTO implements Comparable<ResourceConnectionAbstractDTO> {
+
+    public abstract Integer getInstitutionId();
+
+    public abstract void setInstitutionId(Integer institutionId);
+
+    public abstract String getInstitutionName();
+
+    public abstract void setInstitutionName(String institutionName);
+
+    public abstract Integer getInstitutionLogoImageId();
+
+    public abstract void setInstitutionLogoImageId(Integer institutionLogoImageId);
+    
+    public abstract Integer getDepartmentId();
+
+    public abstract void setDepartmentId(Integer departmentId);
+
+    public abstract String getDepartmentName();
+
+    public abstract void setDepartmentName(String departmentName);
+
+}

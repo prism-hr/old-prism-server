@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -240,7 +240,7 @@ public class WorkflowDAO {
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.conjunction() //
                                         .add(Restrictions.isNull("target.id")) //
-                                        .add(Restrictions.eq("action.partnershipState", ENDORSEMENT_PENDING))) //
+                                        .add(Restrictions.eq("action.partnershipTransitionState", ENDORSEMENT_REVOKED))) //
                                 .add(Restrictions.eqProperty("action.partnershipState", "target.partnershipState"))) //
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.isNull("advertDepartmentTarget.targetAdvertUser")) //

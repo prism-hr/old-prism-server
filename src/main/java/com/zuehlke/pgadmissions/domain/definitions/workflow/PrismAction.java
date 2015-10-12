@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
@@ -67,7 +66,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
     APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
 
-    PROJECT_ENDORSE(getDefaultPartnerReviewActionDefinition(PROJECT, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
     PROJECT_UNENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
     PROJECT_REENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     PROJECT_COMPLETE(getDefaultProcessResourceActionDefinition(PROJECT)), //
@@ -82,7 +80,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROJECT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROJECT)), //
 
-    PROGRAM_ENDORSE(getDefaultPartnerReviewActionDefinition(PROGRAM, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
     PROGRAM_UNENDORSE(getDefaultPartnerActionDefinition(PROGRAM, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
     PROGRAM_REENDORSE(getDefaultPartnerActionDefinition(PROGRAM, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     PROGRAM_COMPLETE(getDefaultProcessResourceActionDefinition(PROGRAM)), //
@@ -322,13 +319,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return getDefaultProcessResourceActionDefinitionVisible(scope) //
                 .withPartnershipState(partnershipState) //
                 .withPartnershipTransitionState(partnershipTransitionState);
-    }
-
-    private static PrismActionDefinition getDefaultPartnerReviewActionDefinition(PrismScope scope, PrismPartnershipState partnershipState,
-            PrismPartnershipState partnershipTransitionState) {
-        return getDefaultPartnerActionDefinition(scope, partnershipState, partnershipTransitionState)
-                .withDeclinableAction() //
-                .withRatingAction();
     }
 
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinition() {

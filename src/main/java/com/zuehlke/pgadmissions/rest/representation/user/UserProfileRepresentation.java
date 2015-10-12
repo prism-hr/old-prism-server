@@ -1,9 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.user;
 
-import com.zuehlke.pgadmissions.rest.representation.profile.*;
+import java.util.List;
+
 import org.joda.time.DateTime;
 
-import java.util.List;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAdditionalInformationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileAddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileDocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfilePersonalDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
 
 public class UserProfileRepresentation {
 

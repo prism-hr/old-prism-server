@@ -1,5 +1,34 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.amazonaws.util.StringUtils.isNullOrEmpty;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.DoubleType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
+import org.springframework.stereotype.Repository;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -22,34 +51,8 @@ import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
+
 import freemarker.template.Template;
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.DoubleType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
-import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static com.amazonaws.util.StringUtils.isNullOrEmpty;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 @Repository
 public class ApplicationDAO {

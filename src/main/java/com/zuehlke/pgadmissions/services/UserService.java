@@ -249,7 +249,16 @@ public class UserService {
 
     public void unlinkUser(Integer userId) {
         User user = getById(userId);
-        if (Objects.equals(user.getId(), user.getParentUser().getId())) { // user is a parent, need to designate a new one
+        if (Objects.equals(user.getId(), user.getParentUser().getId())) { // user
+                                                                          // is
+                                                                          // a
+                                                                          // parent,
+                                                                          // need
+                                                                          // to
+                                                                          // designate
+                                                                          // a
+                                                                          // new
+                                                                          // one
             User newParent = getCurrentUser();
             List<User> allUsers = Lists.asList(user, user.getChildUsers().toArray(new User[0]));
             for (User u : allUsers) {
@@ -339,7 +348,7 @@ public class UserService {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
         }
-        return Lists.<User>newArrayList();
+        return Lists.<User> newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
@@ -407,8 +416,10 @@ public class UserService {
         }
 
         Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
-        for (PrismScope scope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
-            userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
+        if (!administratorResources.isEmpty()) {
+            for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+                userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
+            }
         }
 
         return newLinkedList(userRoles);

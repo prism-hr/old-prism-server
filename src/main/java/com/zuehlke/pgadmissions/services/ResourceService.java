@@ -314,8 +314,7 @@ public class ResourceService {
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO, false);
         } else if (roleContext != null) {
-            ResourceCreationDTO resource = commentDTO.getResource();
-            joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext);
+            joinResource(commentDTO.getResource(), user, roleContext);
         } else {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
@@ -801,6 +800,10 @@ public class ResourceService {
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         joinResource(resource, user, roleContext);
         return user;
+    }
+
+    public void joinResource(ResourceCreationDTO resource, User user, PrismRoleContext roleContext) {
+        joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext);
     }
 
     public void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext) {

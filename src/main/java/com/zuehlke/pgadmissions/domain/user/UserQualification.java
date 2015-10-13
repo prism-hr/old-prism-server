@@ -48,9 +48,6 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     @Column(name = "award_month", nullable = false)
     private Integer awardMonth;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-
     @Column(name = "grade", nullable = false)
     private String grade;
 

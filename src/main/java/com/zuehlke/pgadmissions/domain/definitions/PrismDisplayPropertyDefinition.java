@@ -104,6 +104,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HESA(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "HESA"),
     SYSTEM_PROPERTY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Property"),
     SYSTEM_DURATION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Duration"),
+    SYSTEM_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preview"),
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -1458,6 +1459,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TIMELINE_NOW(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Now"),
     SYSTEM_RESOURCE_TIMELINE_ON_BEHALF_OF(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "{{user}} on behalf of {{delegateUser}}"),
     SYSTEM_RESOURCE_APPLICATION_FORM_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Form"),
+    SYSTEM_RESOURCE_APPROVAL_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "is currently under approval. We aim to get back to you with a decision in 48 hours."),
 
     /*
      * *************** SYSTEM ACCOUNT SECTION *********************

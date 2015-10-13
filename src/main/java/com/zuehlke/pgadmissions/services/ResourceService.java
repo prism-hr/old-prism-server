@@ -474,15 +474,15 @@ public class ResourceService {
     public HashMultimap<PrismScope, Integer> getUserAdministratorResources(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, SYSTEM)) {
-            for (ResourceIdentityDTO resource : resourceDAO.getUserAdministratorResources(scope, user)) {
+            for (ResourceIdentityDTO resource : resourceDAO.getUserAdministratorResources(user, scope)) {
                 resources.put(resource.getScope(), resource.getId());
             }
         }
         return resources;
     }
 
-    public List<Integer> getResourcesIdForWhichUserHasRoles(User user, PrismRole... roles) {
-        return resourceDAO.getResourceIdsForWhichUserHasRoles(user, roles);
+    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
+        return resourceDAO.getResourceForWhichUserHasRoles(user, roles);
     }
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanMakeConnections(User user, String searchTerm) {

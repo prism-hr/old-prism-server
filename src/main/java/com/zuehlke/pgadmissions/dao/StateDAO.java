@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
@@ -168,9 +169,14 @@ public class StateDAO {
                 .add(Restrictions.eq("action.scope.id", resourceScope)) //
                 .add(Restrictions.isNull("state.hidden"));
 
-        if (ResourceParent.class.isAssignableFrom(resourceScope.getResourceClass())) {
-            criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceScope.name() + "_APPROVAL")));
-            criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceScope.name() + "_APPROVAL_PENDING_CORRECTION")));
+        Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
+        if (ResourceParent.class.isAssignableFrom(resourceClass)) {
+            String resourceName = resourceScope.name();
+            if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
+                criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceName + "_APPROVAL_PARENT_APPROVAL")));
+            }
+            criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceName + "_APPROVAL")));
+            criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceName + "_APPROVAL_PENDING_CORRECTION")));
         }
 
         return (List<PrismState>) criteria.add(Restrictions.isNotNull("action.creationScope")) //

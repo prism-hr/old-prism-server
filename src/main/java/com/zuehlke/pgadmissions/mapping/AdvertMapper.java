@@ -81,6 +81,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional
@@ -92,6 +93,9 @@ public class AdvertMapper {
     @Inject
     private AdvertService advertService;
 
+    @Inject
+    private UserService userService;
+    
     @Inject
     private AddressMapper addressMapper;
 
@@ -114,7 +118,7 @@ public class AdvertMapper {
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(query, filterScopes);
+        Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(userService.getCurrentUser(), query, filterScopes);
         processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
 
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };

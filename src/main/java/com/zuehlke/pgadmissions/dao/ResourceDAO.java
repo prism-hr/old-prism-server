@@ -395,16 +395,6 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getResourceIdsForWhichUserHasRoles(User user, PrismRole... roles) {
-        String resourceReference = roles[0].getScope().getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property(resourceReference + ".id"))
-                .add(Restrictions.isNotNull(resourceReference))
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.in("role.id", roles)) //
-                .list();
-    }
-
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, PrismScope resourceScope, String searchTerm) {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("institution.id").as("institutionId")) //
@@ -439,7 +429,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<ResourceIdentityDTO> getUserAdministratorResources(PrismScope resourceScope, User user) {
+    public List<ResourceIdentityDTO> getUserAdministratorResources(User user, PrismScope resourceScope) {
         String resourceReference = resourceScope.getLowerCamelName();
         PrismActionEnhancement[] administratorEnhancements = RESOURCE_ADMINISTRATOR.getActionEnhancements();
 
@@ -458,6 +448,16 @@ public class ResourceDAO {
                         .add(Restrictions.in("stateAction.actionEnhancement", administratorEnhancements))) //
                 .add(Restrictions.isNotNull(resourceReference)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceIdentityDTO.class)) //
+                .list();
+    }
+
+    public List<Integer> getResourceForWhichUserHasRoles(User user, PrismRole... roles) {
+        String resourceReference = roles[0].getScope().getLowerCamelName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property(resourceReference + ".id"))
+                .add(Restrictions.isNotNull(resourceReference))
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.in("role.id", roles)) //
                 .list();
     }
 
@@ -561,7 +561,7 @@ public class ResourceDAO {
                 .add(Restrictions.ge("resource.createdTimestamp", createdBaseline)) //
                 .add(Restrictions.eq("stateAction.action.id", PrismAction.valueOf(resourceScope.name() + "_CREATE_APPLICATION")))
                 .list();
-    }    
+    }
 
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
         List<Integer> resourceIds = filter.getResourceIds();

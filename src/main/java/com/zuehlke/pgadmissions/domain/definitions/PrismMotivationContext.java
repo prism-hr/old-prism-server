@@ -9,9 +9,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismMotivationContext {
 
-    APPLICANT(PROGRAM, PROJECT), //
-    UNIVERSITY(INSTITUTION, DEPARTMENT), //
-    EMPLOYER(INSTITUTION, DEPARTMENT);
+    APPLICANT(PROJECT, PROGRAM), //
+    UNIVERSITY(DEPARTMENT, INSTITUTION), //
+    EMPLOYER(DEPARTMENT, INSTITUTION);
 
     private PrismScope[] filterScopes;
 

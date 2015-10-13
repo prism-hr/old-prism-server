@@ -20,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
@@ -73,6 +74,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -226,7 +228,12 @@ public class ResourceService {
     public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
             ResourceParent resource = null;
+
+            User viewer = null;
+            User student = userService.getCurrentUser();
             User resourceUser = systemService.getSystem().getUser();
+
+            boolean assignedUsers = false;
             for (ResourceCreationDTO resourceDTO : resourceRelationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
                 PrismScope thisScope = resourceDTO.getScope();
@@ -240,11 +247,8 @@ public class ResourceService {
                         resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(resource.getId()));
                     }
 
-                    User owner;
-                    if (thisScope.equals(PROJECT)) {
-                        User viewer = null;
-                        User student = userService.getCurrentUser();
-
+                    PrismScopeCategory scopeCategory = thisScope.getScopeCategory();
+                    if (!assignedUsers && scopeCategory.equals(OPPORTUNITY)) {
                         UserDTO userDTO = resourceRelationDTO.getUser();
                         if (userDTO != null) {
                             viewer = joinResource(resource, userDTO, VIEWER);
@@ -254,6 +258,11 @@ public class ResourceService {
                             joinResource(resource, student, STUDENT);
                         }
 
+                        assignedUsers = true;
+                    }
+
+                    User owner;
+                    if (thisScope.equals(PROJECT)) {
                         owner = resourceRelationDTO.getRelationContext().equals(REFEREE) ? viewer : student;
                     } else {
                         owner = resourceUser;

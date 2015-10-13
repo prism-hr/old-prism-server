@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public class ResourceRelationRepresentation {
 
@@ -38,7 +38,7 @@ public class ResourceRelationRepresentation {
 
         private PrismOpportunityCategory[] categories;
 
-        private Boolean autosuggest;
+        private Boolean autoSuggest;
 
         private Boolean description;
 
@@ -46,10 +46,10 @@ public class ResourceRelationRepresentation {
 
         private Boolean required;
 
-        public ResourceRelationComponentRepresentation(PrismScope resourceScope, Boolean autosuggest, Boolean description, Boolean user, PrismOpportunityCategory... categories) {
+        public ResourceRelationComponentRepresentation(PrismScope resourceScope, Boolean autoSuggest, Boolean description, Boolean user, PrismOpportunityCategory... categories) {
             this.resourceScope = resourceScope;
             this.categories = categories;
-            this.autosuggest = autosuggest;
+            this.autoSuggest = autoSuggest;
             this.description = description;
             this.user = user;
         }
@@ -70,12 +70,12 @@ public class ResourceRelationRepresentation {
             this.categories = categories;
         }
 
-        public Boolean getAutosuggest() {
-            return autosuggest;
+        public Boolean getAutoSuggest() {
+            return autoSuggest;
         }
 
-        public void setAutosuggest(Boolean autosuggest) {
-            this.autosuggest = autosuggest;
+        public void setAutoSuggest(Boolean autoSuggest) {
+            this.autoSuggest = autoSuggest;
         }
 
         public Boolean getDescription() {

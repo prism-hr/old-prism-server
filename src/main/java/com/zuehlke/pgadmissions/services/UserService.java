@@ -4,7 +4,6 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -14,6 +13,7 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.WordUtils.capitalize;
 
 import java.lang.reflect.Field;
@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -343,7 +344,7 @@ public class UserService {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesUserCanAdminister(getCurrentUser());
         if (!administratorResources.isEmpty()) {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
@@ -352,7 +353,7 @@ public class UserService {
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesUserCanAdminister(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 
         String email = userCorrectionDTO.getEmail();
@@ -409,19 +410,16 @@ public class UserService {
     }
 
     public List<UnverifiedUserDTO> getUsersToVerify(User user) {
-        HashMultimap<PrismScope, Integer> administratorResources = null;
-        boolean systemAdministrator = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
-        if (!systemAdministrator) {
-            administratorResources = resourceService.getUserAdministratorResources(user);
-        }
-
+        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesUserCanAdminister(user);
         Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
-        if (!administratorResources.isEmpty()) {
+        if (!resources.isEmpty()) {
             for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-                userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
+                Set<Integer> scopedResources = resources.get(scope);
+                if (isNotEmpty(scopedResources)) {
+                    userRoles.addAll(userDAO.getUsersToVerify(scope, resources.get(scope)));
+                }
             }
         }
-
         return newLinkedList(userRoles);
     }
 

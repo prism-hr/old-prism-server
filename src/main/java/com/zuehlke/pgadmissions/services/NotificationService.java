@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
@@ -24,7 +23,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -114,15 +112,6 @@ public class NotificationService {
     public void sendNotification(PrismNotificationDefinition notificationTemplateId, NotificationDefinitionModelDTO modelDTO) {
         NotificationDefinition notificationTemplate = getById(notificationTemplateId);
         sendNotification(notificationTemplate, modelDTO);
-    }
-
-    public void sendInvitationNotifications(Comment comment) {
-        for (CommentAssignedUser assignee : comment.getAssignedUsers()) {
-            User invitee = assignee.getUser();
-            if (assignee.getRoleTransitionType() == CREATE && invitee.getUserAccount() == null) {
-                sendInvitationNotification(comment.getUser(), invitee);
-            }
-        }
     }
 
     public void sendInvitationNotification(User user, User invitee) {

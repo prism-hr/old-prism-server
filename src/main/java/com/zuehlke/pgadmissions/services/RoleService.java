@@ -106,19 +106,27 @@ public class RoleService {
             }
 
             actionService.executeUserAction(resource, action, comment);
-            notificationService.sendInvitationNotifications(comment);
+            
+            if (transitionType.equals(CREATE) && user.getUserAccount() == null) {
+                notificationService.sendInvitationNotification(user, invoker);
+            }
         }
     }
 
-    public void verifyUserRoles(User user, Resource resource, User roleUser, Boolean verify) {
-        roleDAO.getUnverifiedRoles(resource, roleUser).forEach(userRole -> {
-            if (isTrue(verify)) {
+    public void verifyUserRoles(User invoker, Resource resource, User user, Boolean verify) {
+        boolean isVerify = isTrue(verify);
+        roleDAO.getUnverifiedRoles(resource, user).forEach(userRole -> {
+            if (isVerify) {
                 Role role = userRole.getRole();
-                updateUserRoles(user, resource, roleUser, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
+                updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
                 entityService.delete(userRole);
+                
+                if (user.getUserAccount() != null) {
+                    // TODO: send a confirmation message
+                }
             } else {
                 Action action = actionService.getViewEditAction(resource);
-                if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+                if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {
                     entityService.delete(userRole);
                 }
             }

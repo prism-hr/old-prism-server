@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
@@ -59,6 +60,9 @@ public class UserAccountService {
 
     @Inject
     private NotificationService notificationService;
+
+    @Inject
+    private ResourceService resourceService;
 
     @Inject
     private SystemService systemService;
@@ -108,9 +112,11 @@ public class UserAccountService {
         }
 
         ActionOutcomeDTO outcome;
-        PrismRoleContext roleContext = userRegistrationDTO.getComment().getRoleContext();
+        CommentDTO commentDTO = userRegistrationDTO.getComment();
+        PrismRoleContext roleContext = commentDTO.getRoleContext();
         if (roleContext != null) {
             outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(actionService.getById(SYSTEM_MANAGE_ACCOUNT));
+            resourceService.joinResource(commentDTO.getResource(), user, roleContext);
         } else {
             outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
         }

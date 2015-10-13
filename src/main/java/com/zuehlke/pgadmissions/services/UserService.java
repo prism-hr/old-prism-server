@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -250,20 +249,11 @@ public class UserService {
 
     public void unlinkUser(Integer userId) {
         User user = getById(userId);
-        if (Objects.equals(user.getId(), user.getParentUser().getId())) { // user
-                                                                          // is
-                                                                          // a
-                                                                          // parent,
-                                                                          // need
-                                                                          // to
-                                                                          // designate
-                                                                          // a
-                                                                          // new
-                                                                          // one
+        if (Objects.equals(user.getId(), user.getParentUser().getId())) {
             User newParent = getCurrentUser();
-            List<User> allUsers = Lists.asList(user, user.getChildUsers().toArray(new User[0]));
-            for (User u : allUsers) {
-                u.setParentUser(newParent);
+            List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[0]));
+            for (User childUser : childUsers) {
+                childUser.setParentUser(newParent);
             }
         }
         user.setParentUser(user);

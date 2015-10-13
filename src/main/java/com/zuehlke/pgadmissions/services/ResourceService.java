@@ -236,11 +236,11 @@ public class ResourceService {
             boolean assignedUsers = false;
             for (ResourceCreationDTO resourceDTO : resourceRelationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
+
                 PrismScope thisScope = resourceDTO.getScope();
                 PrismScope lastScope = resource == null ? SYSTEM : resource.getResourceScope();
 
                 resourceDTO.setContext(resourceRelationDTO.getContext());
-
                 if (thisId == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                     if (resource != null) {

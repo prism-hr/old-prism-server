@@ -828,19 +828,15 @@ public class ResourceService {
         }
     }
 
-    public void activateResource(ResourceParent resource, User invoker, User resourceUser) {
+    public void activateResource(User user, ResourceParent resource) {
         String scopePrefix = resource.getResourceScope().name();
         Action action = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE_APPROVAL_STAGE"));
 
         if (actionService.getActions(resource).contains(action)) {
             String approvedMessage = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem())
                     .loadLazy(PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_APPROVED"));
-            actionService.executeAction(resource, action, new Comment().withUser(invoker).withAction(action).withContent(approvedMessage).withDeclinedResponse(false)
+            actionService.executeAction(resource, action, new Comment().withUser(user).withAction(action).withContent(approvedMessage).withDeclinedResponse(false)
                     .withTransitionState(stateService.getById(PrismState.valueOf(scopePrefix + "_APPROVED"))).withCreatedTimestamp(new DateTime()));
-
-            if (resourceUser != null) {
-                roleService.verifyUserRoles(invoker, resource, resourceUser, true);
-            }
         }
     }
 

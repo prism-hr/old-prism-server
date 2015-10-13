@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -163,10 +162,6 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
             return acceptAdvertId.equals(advert.getId()) ? targetAdvert : advert;
         }
         return null;
-    }
-
-    public User getOtherUser() {
-        return Objects.equal(acceptAdvertUser, advertUser) ? targetAdvertUser : advertUser;
     }
 
     @Override

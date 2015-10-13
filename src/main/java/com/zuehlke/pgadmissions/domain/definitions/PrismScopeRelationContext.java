@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -15,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismScopeRelationContext {
 
-    QUALIFICATION(new PrismScopeRelationGroup()
+    QUALIFICATION(UNIVERSITY, new PrismScopeRelationGroup()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION, true, false, false)
                     .withScope(DEPARTMENT, true, false, false)
@@ -25,21 +27,28 @@ public enum PrismScopeRelationContext {
                     .withScope(DEPARTMENT, true, false, false)
                     .withScope(PROGRAM, true, false, false, STUDY, PERSONAL_DEVELOPMENT)
                     .withScope(PROJECT, false, true, null))), //
-    EMPLOYER(new PrismScopeRelationGroup()
+    EMPLOYMENT_POSITION(EMPLOYER, new PrismScopeRelationGroup()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION, true, false, false)
                     .withScope(PROJECT, false, true, false, EXPERIENCE, WORK))), //
-    REFEREE(new PrismScopeRelationGroup()
+    REFEREE(EMPLOYER, new PrismScopeRelationGroup()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION, true, false, null)
                     .withScope(PROJECT, false, true, true, WORK)));
 
+    private PrismMotivationContext context;
+    
     private PrismScopeRelationGroup relations;
 
-    private PrismScopeRelationContext(PrismScopeRelationGroup creations) {
+    private PrismScopeRelationContext(PrismMotivationContext context, PrismScopeRelationGroup creations) {
+        this.context = context;
         this.relations = creations;
     }
 
+    public PrismMotivationContext getContext() {
+        return context;
+    }
+    
     public PrismScopeRelationGroup getRelations() {
         return relations;
     }

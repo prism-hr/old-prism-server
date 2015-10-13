@@ -105,6 +105,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.application.Applica
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.ScopeService;
@@ -129,6 +130,9 @@ public class ResourceMapper {
     @Inject
     private ApplicationService applicationService;
 
+    @Inject
+    private EntityService entityService;
+    
     @Inject
     private StateService stateService;
 
@@ -372,6 +376,9 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
+        resourceService.setResourceAdvertIncompleteSection(resource);
+        entityService.flush();
+        
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));

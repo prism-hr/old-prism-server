@@ -5,17 +5,13 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 public class ResourceRelationInvitationDTO {
 
     @NotNull
-    private PrismMotivationContext context;
-
-    @NotNull
-    private PrismScopeRelationContext relationContext;
+    private PrismScopeRelationContext context;
 
     @Valid
     @NotNull
@@ -24,20 +20,12 @@ public class ResourceRelationInvitationDTO {
     @Valid
     private UserDTO user;
 
-    public PrismMotivationContext getContext() {
+    public PrismScopeRelationContext getContext() {
         return context;
     }
 
-    public void setContext(PrismMotivationContext context) {
+    public void setContext(PrismScopeRelationContext context) {
         this.context = context;
-    }
-
-    public PrismScopeRelationContext getRelationContext() {
-        return relationContext;
-    }
-
-    public void setRelationContext(PrismScopeRelationContext relationContext) {
-        this.relationContext = relationContext;
     }
 
     public ResourceActivityDTO getResource() {

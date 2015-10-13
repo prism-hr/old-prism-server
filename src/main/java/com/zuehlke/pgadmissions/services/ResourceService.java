@@ -240,7 +240,7 @@ public class ResourceService {
                 PrismScope thisScope = resourceDTO.getScope();
                 PrismScope lastScope = resource == null ? SYSTEM : resource.getResourceScope();
 
-                resourceDTO.setContext(resourceRelationDTO.getContext());
+                resourceDTO.setContext(resourceRelationDTO.getContext().getContext());
                 if (thisId == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                     if (resource != null) {
@@ -263,7 +263,7 @@ public class ResourceService {
 
                     User owner;
                     if (thisScope.equals(PROJECT)) {
-                        owner = resourceRelationDTO.getRelationContext().equals(REFEREE) ? viewer : student;
+                        owner = resourceRelationDTO.getContext().equals(REFEREE) ? viewer : student;
                     } else {
                         owner = resourceUser;
                     }
@@ -817,7 +817,7 @@ public class ResourceService {
             if (isTrue(role.getVerified())) {
 
             }
-        } else if (roleService.getVerifiedRoles(user, resource).isEmpty()) {
+        } else {
             role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
         }
@@ -828,14 +828,19 @@ public class ResourceService {
         }
     }
 
-    public void activateResource(ResourceParent resource, User user) {
+    public void activateResource(ResourceParent resource, User invoker, User resourceUser) {
         String scopePrefix = resource.getResourceScope().name();
-        Action completeAction = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE"));
+        Action action = actionService.getById(PrismAction.valueOf(scopePrefix + "_COMPLETE_APPROVAL_STAGE"));
 
-        if (actionService.getActions(resource).contains(completeAction)) {
-            User systemUser = systemService.getSystem().getUser();
-            executeUpdate(resource, systemUser, PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_SUBMITTED"));
-            roleService.verifyUserRoles(systemUser, resource, user, true);
+        if (actionService.getActions(resource).contains(action)) {
+            String approvedMessage = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem())
+                    .loadLazy(PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_APPROVED"));
+            actionService.executeAction(resource, action, new Comment().withUser(invoker).withAction(action).withContent(approvedMessage).withDeclinedResponse(false)
+                    .withTransitionState(stateService.getById(PrismState.valueOf(scopePrefix + "_APPROVED"))).withCreatedTimestamp(new DateTime()));
+
+            if (resourceUser != null) {
+                roleService.verifyUserRoles(invoker, resource, resourceUser, true);
+            }
         }
     }
 
@@ -1015,7 +1020,7 @@ public class ResourceService {
 
     private boolean validateResourceFamilyCreation(ResourceRelationInvitationDTO resourceRelationDTO) {
         List<PrismScope> scopes = resourceRelationDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
-        for (PrismScopeRelation relation : resourceRelationDTO.getRelationContext().getRelations()) {
+        for (PrismScopeRelation relation : resourceRelationDTO.getContext().getRelations()) {
             if (relation.containsAll(scopes)) {
                 return true;
             }

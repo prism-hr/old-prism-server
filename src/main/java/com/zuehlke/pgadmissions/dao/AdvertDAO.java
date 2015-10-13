@@ -677,10 +677,10 @@ public class AdvertDAO {
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
-                    .add(Restrictions.eq("thisUser.id", user.getId()))
+                    .add(getAdvertTargetAcceptUserConstraint(user))
                     .add(Restrictions.in("thisAdvert.id", connectAdverts));
         } else if (user != null) {
-            permissionsConstraint = Restrictions.eq("thisUser.id", user.getId());
+            permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
         } else {
             permissionsConstraint = Restrictions.in("thisAdvert.id", connectAdverts);
         }
@@ -718,6 +718,8 @@ public class AdvertDAO {
                 .createAlias("thisAdvert.institution", "thisInstitution", JoinType.INNER_JOIN) //
                 .createAlias("thisAdvert.department", "thisDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(thisAdvertReference + "User", "thisUser", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("thisUser.userRoles", "thisUserRole", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("thisUserRole.role", "thisRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias(otherAdvertReference, "otherAdvert", JoinType.INNER_JOIN) //
                 .createAlias("otherAdvert.institution", "otherInstitution", JoinType.INNER_JOIN) //
                 .createAlias("otherInstitution.advert", "otherInstitutionAdvert", JoinType.LEFT_OUTER_JOIN)
@@ -728,6 +730,15 @@ public class AdvertDAO {
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
                 .add(getResourceParentManageableStateConstraint(resourceScope.name()))
                 .add(permissionsConstraint);
+    }
+
+    private Junction getAdvertTargetAcceptUserConstraint(User user) {
+        return Restrictions.conjunction()
+                .add(Restrictions.eq("thisRole.verified", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
+                        .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")))
+                .add(Restrictions.eq("thisUser.id", user.getId()));
     }
 
 }

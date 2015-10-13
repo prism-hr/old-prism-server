@@ -303,11 +303,11 @@ public class AdvertService {
         User userTarget = null;
         UserDTO userTargetDTO = target.getUser();
         if (userTargetDTO != null) {
-            userTarget = resourceService.joinResource(resource, userTargetDTO, VIEWER);
+            userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
         }
 
         if (target.getContext().equals(EMPLOYER)) {
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget);
+            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget);
         } else {
             createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget);
         }
@@ -326,13 +326,15 @@ public class AdvertService {
 
                 PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
                 if (user.equals(acceptUser)) {
-                    processAdvertTarget(advertTargetId, acceptResource, acceptUser, partnershipState);
+                    processAdvertTarget(advertTarget.getOtherAdvert().getResource(), systemService.getSystem().getUser(), advertTargetId, partnershipState,
+                            advertTarget.getOtherUser());
                     performed = true;
                 } else {
                     String acceptResourceReference = acceptResource.getResourceScope().name();
                     if (roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResourceReference + "_ADMINISTRATOR"),
                             PrismRole.valueOf(acceptResourceReference + "_APPROVER"))) {
-                        processAdvertTarget(advertTargetId, acceptResource, user, partnershipState);
+                        processAdvertTarget(advertTarget.getOtherAdvert().getResource(), systemService.getSystem().getUser(), advertTargetId, partnershipState,
+                                advertTarget.getOtherUser());
 
                         AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, acceptUser);
                         if (similarAdvertTarget != null) {
@@ -632,9 +634,9 @@ public class AdvertService {
     }
 
     private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept) {
-        createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, null, ENDORSEMENT_PENDING);
+        createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, null, ENDORSEMENT_PENDING);
         if (userTarget != null) {
-            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, ENDORSEMENT_PENDING);
+            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
         }
 
         if (!(userAccept == null && updateAdvertTarget(advertTarget.getId(), true))) {
@@ -648,9 +650,9 @@ public class AdvertService {
                 .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
     }
 
-    private void processAdvertTarget(Integer advertTargetId, ResourceParent acceptResource, User user, PrismPartnershipState partnershipState) {
+    private void processAdvertTarget(ResourceParent resource, User invoker, Integer advertTargetId, PrismPartnershipState partnershipState, User targetUser) {
         if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
-            resourceService.activateResource(acceptResource, user);
+            resourceService.activateResource(resource, invoker, targetUser);
         }
         advertDAO.processAdvertTarget(advertTargetId, partnershipState);
     }

@@ -149,8 +149,9 @@ public class UserController {
     @RequestMapping(value = "/switch", method = RequestMethod.POST)
     public Map<String, String> switchUser(@RequestParam String username) {
         User currentUser = userService.getCurrentUser();
+        User user = userService.getUserByEmail(username);
         List<User> linkedUsers = userService.getLinkedUsers(currentUser);
-        if (!linkedUsers.contains(currentUser)) {
+        if (!linkedUsers.contains(user)) {
             throw new AccessDeniedException("Users are not linked");
         }
 

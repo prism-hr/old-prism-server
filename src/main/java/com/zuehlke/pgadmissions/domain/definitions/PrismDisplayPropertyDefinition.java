@@ -1446,7 +1446,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Salary"),
     SYSTEM_RESOURCE_CLOSING_DATES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Closing Dates"),
     SYSTEM_RESOURCE_TARGETS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Connections"),
-    SYSTEM_RESOURCE_TARGETS_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Tell us which organizations you want to target, so that we can find the most qualified candidates for you."),
+    SYSTEM_RESOURCE_TARGETS_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "There are no Connections, search for employers or universities and connect to build your network."),
     SYSTEM_RESOURCE_COMPETENCES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Target Competences"),
     SYSTEM_RESOURCE_COMPETENCES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Tell us what kind of people you want to target, so that we can find the most suitable candidates for you."),
     SYSTEM_RESOURCE_STATISTICS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Statistics"),

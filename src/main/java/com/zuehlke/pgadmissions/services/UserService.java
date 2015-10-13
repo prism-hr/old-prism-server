@@ -1,5 +1,49 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.WordUtils.capitalize;
+
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeMap;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.SessionFactory;
+import org.hibernate.metadata.ClassMetadata;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -17,7 +61,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.domain.user.UserCompetence;
+import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UnverifiedUserDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
@@ -31,40 +79,6 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.metadata.ClassMetadata;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BeanPropertyBindingResult;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.Map.Entry;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
-import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.WordUtils.capitalize;
 
 @Service
 @Transactional
@@ -236,8 +250,16 @@ public class UserService {
 
     public void unlinkUser(Integer userId) {
         User user = getById(userId);
-        if (Objects.equals(user.getId(), user.getParentUser().getId())) {
-            // user is a parent, need to designate a new one
+        if (Objects.equals(user.getId(), user.getParentUser().getId())) { // user
+                                                                          // is
+                                                                          // a
+                                                                          // parent,
+                                                                          // need
+                                                                          // to
+                                                                          // designate
+                                                                          // a
+                                                                          // new
+                                                                          // one
             User newParent = getCurrentUser();
             List<User> allUsers = Lists.asList(user, user.getChildUsers().toArray(new User[0]));
             for (User u : allUsers) {
@@ -322,16 +344,16 @@ public class UserService {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesUserCanAdminister(getCurrentUser());
         if (!administratorResources.isEmpty()) {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
         }
-        return Lists.<User>newArrayList();
+        return Lists.<User> newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getUserAdministratorResources(getCurrentUser());
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesUserCanAdminister(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 
         String email = userCorrectionDTO.getEmail();
@@ -388,19 +410,16 @@ public class UserService {
     }
 
     public List<UnverifiedUserDTO> getUsersToVerify(User user) {
-        HashMultimap<PrismScope, Integer> administratorResources = HashMultimap.create();
-        boolean systemAdministrator = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
-        if (!systemAdministrator) {
-            administratorResources = resourceService.getUserAdministratorResources(user);
-        }
-
+        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesUserCanAdminister(user);
         Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
-        if (!administratorResources.isEmpty()) {
-            for (PrismScope scope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
-                userRoles.addAll(userDAO.getUsersToVerify(scope, systemAdministrator ? null : administratorResources.get(scope)));
+        if (!resources.isEmpty()) {
+            for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+                Set<Integer> scopedResources = resources.get(scope);
+                if (isNotEmpty(scopedResources)) {
+                    userRoles.addAll(userDAO.getUsersToVerify(scope, resources.get(scope)));
+                }
             }
         }
-
         return newLinkedList(userRoles);
     }
 

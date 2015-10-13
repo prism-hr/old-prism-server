@@ -279,6 +279,18 @@ public class ActionService {
         return false;
     }
 
+    public PrismActionEnhancement[] getAdministratorActionEnhancements(PrismScope scope) {
+        String scopeName = scope.name();
+        List<PrismActionEnhancement> actionEnhancements = Lists.newArrayList();
+        for (PrismActionEnhancement actionEnhancement : PrismActionEnhancement.values()) {
+            String actionEnhancementName = actionEnhancement.name();
+            if (actionEnhancementName.contains(scopeName) && actionEnhancementName.contains("VIEW_EDIT")) {
+                actionEnhancements.add(actionEnhancement);
+            }
+        }
+        return actionEnhancements.toArray(new PrismActionEnhancement[actionEnhancements.size()]);
+    }
+
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();
 

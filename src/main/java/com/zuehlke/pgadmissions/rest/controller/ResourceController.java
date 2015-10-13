@@ -254,7 +254,7 @@ public class ResourceController {
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), commentDTO);
-        return actionMapper.getActionOutcomeRepresentation(actionOutcome);
+        return actionOutcome == null ? null : actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)

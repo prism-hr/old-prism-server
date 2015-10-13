@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1609,9 +1609,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_PROGRAM_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Program"),
     SYSTEM_HTML_RESOURCE_FAMILY_PROGRAM_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your program, or enter a new one"),
     SYSTEM_HTML_RESOURCE_FAMILY_PROGRAM_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. MSci Chemistry"),
-    SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Project"),
-    SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your project, or enter a new one"),
-    SYSTEM_HTML_RESOURCE_FAMILY_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. A new Classification for Inorganic Compounds"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Project"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your project, or enter a new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. A new Classification for Inorganic Compounds"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Position"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your position, or enter a new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Software Engineer"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Position"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your referee's position, or enter a new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Business Unit Leader"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your qualification."),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your employment."),
     SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Qualification Type"),
     SYSTEM_HTML_LOOKUP_PROGRAM_QUALIFICATION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your qualification"),
 
@@ -1890,8 +1900,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_QUALIFICATION_EXPECTED_AWARD_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Expected Award Date"),
     PROFILE_QUALIFICATION_CONFIRMED_AWARD_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Confirmed Award Date"),
     PROFILE_QUALIFICATION_AWARD_DATE_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "The award date of the qualification (expected or confirmed)."),
-    PROFILE_QUALIFICATION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Description"),
-    PROFILE_QUALIFICATION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Description of your qualification."),
     PROFILE_QUALIFICATION_DOCUMENT_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Interim/Final Transcript (PDF)"),
     PROFILE_QUALIFICATION_DOCUMENT_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Proof of the award of your progression towards the qualification. We require a complete grade transcript for university level qualifications."),
     PROFILE_QUALIFICATION_STUDY_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Study Period"),
@@ -1907,8 +1915,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_EMPLOYMENT_POSITION_START_DATE_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The start date of the position."),
     PROFILE_EMPLOYMENT_POSITION_END_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "End Date"),
     PROFILE_EMPLOYMENT_POSITION_END_DATE_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The end date of the position."),
-    PROFILE_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
-    PROFILE_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your employment."),
     PROFILE_EMPLOYMENT_POSITION_CURRENT_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Is this your current position?"),
     PROFILE_EMPLOYMENT_POSITION_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This tells us that the position is an ongoing one."),
     PROFILE_EMPLOYMENT_POSITION_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Period"),

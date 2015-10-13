@@ -1,19 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import java.util.LinkedList;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismScopeRelationContext {
 
@@ -34,10 +28,10 @@ public enum PrismScopeRelationContext {
     REFEREE(EMPLOYER, new PrismScopeRelationGroup()
             .withScopeCreationFamily(new PrismScopeRelation()
                     .withScope(INSTITUTION, true, false, null)
-                    .withScope(PROJECT, false, true, true, WORK)));
+                    .withScope(PROJECT, false, false, true, WORK)));
 
     private PrismMotivationContext context;
-    
+
     private PrismScopeRelationGroup relations;
 
     private PrismScopeRelationContext(PrismMotivationContext context, PrismScopeRelationGroup creations) {
@@ -48,7 +42,7 @@ public enum PrismScopeRelationContext {
     public PrismMotivationContext getContext() {
         return context;
     }
-    
+
     public PrismScopeRelationGroup getRelations() {
         return relations;
     }
@@ -68,8 +62,8 @@ public enum PrismScopeRelationContext {
 
         private static final long serialVersionUID = -4310091481554527257L;
 
-        public PrismScopeRelation withScope(PrismScope scope, Boolean autosuggest, Boolean description, Boolean user, PrismOpportunityCategory... opportunityCategories) {
-            super.add(new PrismScopeCreation(scope, autosuggest, description, user));
+        public PrismScopeRelation withScope(PrismScope scope, Boolean autoSuggest, Boolean description, Boolean user, PrismOpportunityCategory... opportunityCategories) {
+            super.add(new PrismScopeCreation(scope, autoSuggest, description, user, opportunityCategories));
             return this;
         }
 
@@ -81,19 +75,15 @@ public enum PrismScopeRelationContext {
 
         private PrismOpportunityCategory[] opportunityCategories;
 
-        private Boolean autosuggest;
+        private Boolean autoSuggest;
 
         private Boolean description;
 
         private Boolean user;
 
-        public PrismScopeCreation(PrismScope scope) {
+        public PrismScopeCreation(PrismScope scope, Boolean autoSuggest, Boolean description, Boolean user, PrismOpportunityCategory... opportunityCategories) {
             this.scope = scope;
-        }
-
-        public PrismScopeCreation(PrismScope scope, Boolean autosuggest, Boolean description, Boolean user, PrismOpportunityCategory... opportunityCategories) {
-            this.scope = scope;
-            this.autosuggest = autosuggest;
+            this.autoSuggest = autoSuggest;
             this.description = description;
             this.user = user;
             this.opportunityCategories = opportunityCategories;
@@ -115,12 +105,12 @@ public enum PrismScopeRelationContext {
             this.opportunityCategories = opportunityCategories;
         }
 
-        public Boolean getAutosuggest() {
-            return autosuggest;
+        public Boolean getAutoSuggest() {
+            return autoSuggest;
         }
 
-        public void setAutosuggest(Boolean autosuggest) {
-            this.autosuggest = autosuggest;
+        public void setAutoSuggest(Boolean autoSuggest) {
+            this.autoSuggest = autoSuggest;
         }
 
         public Boolean getDescription() {

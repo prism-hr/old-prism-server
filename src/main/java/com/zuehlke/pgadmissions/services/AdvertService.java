@@ -528,8 +528,7 @@ public class AdvertService {
         return importances;
     }
 
-    public Set<EntityOpportunityFilterDTO> getVisibleAdverts(OpportunitiesQueryDTO query, PrismScope[] scopes) {
-        User user = userService.getCurrentUser();
+    public Set<EntityOpportunityFilterDTO> getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
         PrismMotivationContext context = query.getContext();
         Set<EntityOpportunityFilterDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
@@ -542,17 +541,18 @@ public class AdvertService {
             resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         }
 
-        Set<Integer> possibleTargets = Sets.newHashSet();
+        Set<Integer> networkAdverts = Sets.newHashSet();
         if (user != null) {
             if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
-                appendSystemUserTargets(resourceScope, resourceId, possibleTargets);
+                networkAdverts = getNetworkAdverts(resourceScope, resourceId);
             } else {
-                appendResourceUserTargets(user, resourceScope, resourceId, possibleTargets);
+                networkAdverts = getNetworkAdverts(user, resourceScope, resourceId);
             }
         }
 
         for (PrismScope scope : scopes) {
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), actionCondition, resource, query, user, possibleTargets));
+            List<PrismState> activeStates = stateService.getActiveResourceStates(scope);
+            adverts.addAll(advertDAO.getVisibleAdverts(scope, activeStates, actionCondition, resource, query, user, networkAdverts));
         }
 
         return adverts;
@@ -607,37 +607,28 @@ public class AdvertService {
         return advertTargets;
     }
 
-    private void appendSystemUserTargets(PrismScope resourceScope, Integer resourceId, Set<Integer> possibleTargets) {
-        if (resourceScope == null) {
-            possibleTargets.addAll(advertDAO.getAdvertIds(INSTITUTION));
-            possibleTargets.addAll(advertDAO.getAdvertIds(DEPARTMENT));
-        } else if (resourceScope.equals(INSTITUTION)) {
-            possibleTargets.add(advertDAO.getAdvertId(INSTITUTION, resourceId));
-            possibleTargets.addAll(advertDAO.getAdvertIds(INSTITUTION, resourceId, DEPARTMENT));
-        } else {
-            possibleTargets.add(advertDAO.getAdvertId(DEPARTMENT, resourceId));
-        }
+    private Set<Integer> getNetworkAdverts(PrismScope resourceScope, Integer resourceId) {
+        Set<Integer> adverts = Sets.newHashSet();
+        adverts.addAll(advertDAO.getAdvertIds(INSTITUTION));
+        adverts.addAll(advertDAO.getAdvertIds(DEPARTMENT));
+        return adverts;
     }
 
-    private void appendResourceUserTargets(User user, PrismScope resourceScope, Integer resourceId, Set<Integer> possibleTargets) {
-        if (resourceScope == null) {
-            possibleTargets.addAll(advertDAO.getUserAdvertIds(INSTITUTION, user));
+    private Set<Integer> getNetworkAdverts(User user, PrismScope resourceScope, Integer resourceId) {
+        Set<Integer> adverts = Sets.newHashSet();
+        adverts.addAll(advertDAO.getUserAdvertIds(user, INSTITUTION));
 
-            List<Integer> departmentAdverts = advertDAO.getUserAdvertIds(DEPARTMENT, user);
-            if (!departmentAdverts.isEmpty()) {
-                possibleTargets.addAll(departmentAdverts);
-                possibleTargets.addAll(advertDAO.getParentAdvertIds(DEPARTMENT, INSTITUTION, departmentAdverts));
-            }
-        } else if (resourceScope.equals(INSTITUTION)) {
-            possibleTargets.addAll(asList(advertDAO.getUserAdvertId(INSTITUTION, resourceId, user)));
-            possibleTargets.addAll(advertDAO.getUserAdvertIds(INSTITUTION, resourceId, DEPARTMENT, user));
-        } else {
-            possibleTargets.addAll(asList(advertDAO.getUserAdvertId(DEPARTMENT, resourceId, user)));
+        List<Integer> departmentAdverts = advertDAO.getUserAdvertIds(user, DEPARTMENT);
+        if (!departmentAdverts.isEmpty()) {
+            adverts.addAll(departmentAdverts);
+            adverts.addAll(advertDAO.getParentAdvertIds(DEPARTMENT, INSTITUTION, departmentAdverts));
         }
+        return adverts;
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        return entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
+        return entityService
+                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
     private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept) {
@@ -645,7 +636,7 @@ public class AdvertService {
         if (userTarget != null) {
             createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, ENDORSEMENT_PENDING);
         }
-        
+
         if (!(userAccept == null && updateAdvertTarget(advertTarget.getId(), true))) {
             // TODO - send the connection request
         }

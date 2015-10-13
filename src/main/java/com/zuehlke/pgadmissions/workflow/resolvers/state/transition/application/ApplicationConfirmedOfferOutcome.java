@@ -38,8 +38,8 @@ public class ApplicationConfirmedOfferOutcome implements StateTransitionResolver
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
         if (isTrue(applicationService.getApplicationOnCourse(resource))) {
-            List<Integer> creatorDepartments = resourceService.getResourcesIdForWhichUserHasRoles(resource.getUser(), DEPARTMENT_STUDENT, DEPARTMENT_STUDENT_UNVERIFIED);
-            List<Integer> recruiterDepartment = resourceService.getResourcesIdForWhichUserHasRoles(comment.getUser(), DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER);
+            List<Integer> creatorDepartments = resourceService.getResourcesForWhichUserHasRoles(resource.getUser(), DEPARTMENT_STUDENT, DEPARTMENT_STUDENT_UNVERIFIED);
+            List<Integer> recruiterDepartment = resourceService.getResourcesForWhichUserHasRoles(comment.getUser(), DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER);
             if (containsAny(creatorDepartments, recruiterDepartment)) {
                 return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
             }

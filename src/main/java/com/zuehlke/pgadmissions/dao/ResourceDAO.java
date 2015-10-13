@@ -50,6 +50,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
@@ -569,9 +570,21 @@ public class ResourceDAO {
             criteria.add(Restrictions.in("resource.id", resourceIds));
         }
 
+        PrismRoleCategory roleCategory = filter.getRoleCategory();
+        if (roleCategory != null) {
+            criteria.add(Restrictions.eq("role.roleCategory", roleCategory));
+        }
+
         PrismAction actionId = filter.getActionId();
         if (actionId != null) {
             criteria.add(Restrictions.eq("stateAction.action.id", actionId));
+        }
+
+        PrismActionEnhancement[] actionEnhancements = filter.getActionEnhancements();
+        if (actionEnhancements != null) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.in("stateAction.actionEnhancement", actionEnhancements))
+                    .add(Restrictions.in("stateActionAssignment.actionEnhancement", actionEnhancements)));
         }
 
         if (filter.isUrgentOnly()) {

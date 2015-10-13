@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -417,16 +418,6 @@ public class ResourceService {
         return properties;
     }
 
-    public HashMultimap<PrismScope, Integer> getUserAdministratorResources(User user) {
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, SYSTEM)) {
-            for (ResourceIdentityDTO resource : resourceDAO.getUserAdministratorResources(user, scope)) {
-                resources.put(resource.getScope(), resource.getId());
-            }
-        }
-        return resources;
-    }
-
     public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
         return resourceDAO.getResourceForWhichUserHasRoles(user, roles);
     }
@@ -804,6 +795,29 @@ public class ResourceService {
     public boolean isUnderApproval(ResourceParent resource) {
         List<PrismState> states = stateService.getResourceStates(resource);
         return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
+    }
+
+    public HashMultimap<PrismScope, Integer> getResourcesUserCanAdminister(User user) {
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+
+        List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
+        for (PrismScope scope : visibleScopes) {
+            String scopeReference = scope.name();
+
+            getResources(user, scope, visibleScopes.stream()
+                    .filter(as -> as.ordinal() < scope.ordinal())
+                    .collect(Collectors.toList()), //
+                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionId(PrismAction.valueOf(scopeReference + "_VIEW_EDIT"))
+                            .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
+                    Projections.projectionList() //
+                            .add(Projections.groupProperty("action.scope.id").as("scope")) //
+                            .add(Projections.groupProperty("resource.id").as("id")),
+                    ResourceIdentityDTO.class).forEach(resource -> {
+                        resources.put(resource.getScope(), resource.getId());
+                    });
+        }
+
+        return resources;
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction conditions) {

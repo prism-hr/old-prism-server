@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
@@ -128,7 +127,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             parentScope = scope;
         }
 
-        defaults.put(new SimpleEntry<>(INSTITUTION, APPLICANT), new PrismScopeCreationDefault(OCTOBER, STUDY));
         defaults.put(new SimpleEntry<>(INSTITUTION, UNIVERSITY), new PrismScopeCreationDefault(OCTOBER, STUDY));
         defaults.put(new SimpleEntry<>(INSTITUTION, EMPLOYER), new PrismScopeCreationDefault(APRIL, WORK, EXPERIENCE));
         defaults.put(new SimpleEntry<>(DEPARTMENT, UNIVERSITY), new PrismScopeCreationDefault(STUDY));

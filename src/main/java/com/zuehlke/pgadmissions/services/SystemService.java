@@ -268,7 +268,7 @@ public class SystemService {
         if (user.getUserAccount() == null) {
             Action action = actionService.getById(SYSTEM_STARTUP);
             String content = applicationContext.getBean(PropertyLoader.class).localizeLazy(system).loadLazy(SYSTEM_COMMENT_INITIALIZED_SYSTEM);
-            Comment comment = new Comment().withAction(action).withContent(content).withDeclinedResponse(false).withUser(user)
+            Comment comment = new Comment().withUser(user).withAction(action).withContent(content).withDeclinedResponse(false)
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
             notificationService.sendRegistrationNotification(user, outcome);

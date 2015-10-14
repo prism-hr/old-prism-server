@@ -1952,7 +1952,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and support staff in your university.</em>"),
 
     APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
-    APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "On course placement.<br/><em>Check this if you want your department to consider your application as counting towards a mandatory on cource placement."),
+    APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "On course placement.<br/><em>Check this if you want your department to consider your application as counting towards a mandatory on cource placement. Your application will be shared with your study tutor so that they can assess the relevance of the position."),
     APPLICATION_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with support staff in your university.</em>"),
     APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(PrismDisplayPropertyCategory.APPLICATION_FORM, "Send me recommendations.<br/><em>Uncheck this if you do not want us to send you recommendations about other opportunities.</em>"),
     APPLICATION_FORM_GO_TO_TIMELINE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Go to Timeline"),

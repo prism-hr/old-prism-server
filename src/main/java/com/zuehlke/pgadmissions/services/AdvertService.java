@@ -327,18 +327,18 @@ public class AdvertService {
                 User acceptUser = advertTarget.getAcceptAdvertUser();
 
                 PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
-                if (Objects.equal(user, acceptUser)) {
+                boolean isAdmin = roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResource.getResourceScope().name() + "_ADMINISTRATOR"));
+                if (Objects.equal(user, acceptUser) || isAdmin) {
                     processAdvertTarget(advertTarget.getOtherAdvert().getResource(), systemService.getSystem().getUser(), advertTargetId, partnershipState);
                     performed = true;
-                } else if (acceptUser == null && roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResource.getResourceScope().name() + "_ADMINISTRATOR"))) {
-                    processAdvertTarget(advertTarget.getOtherAdvert().getResource(), systemService.getSystem().getUser(), advertTargetId, partnershipState);
-                    performed = true;
-                } else {
-                    AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, user);
-                    if (similarAdvertTarget != null) {
-                        similarAdvertTarget.setPartnershipState(partnershipState);
+                    
+                    if (isAdmin) {
+                        AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, user);
+                        if (similarAdvertTarget != null) {
+                            similarAdvertTarget.setPartnershipState(partnershipState);
+                        }
+                        performed = true;
                     }
-                    performed = true;
                 }
             }
         }

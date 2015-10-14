@@ -435,7 +435,9 @@ public class AdvertDAO {
                 .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
                 .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
                 .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
-                .add(Restrictions.eq("acceptAdvertUser", user)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("acceptAdvertUser")) //
+                        .add(Restrictions.eq("acceptAdvertUser", user))) //
                 .uniqueResult();
     }
 
@@ -518,9 +520,9 @@ public class AdvertDAO {
                 networkConstraint.add(getAdvertVisibilityConstraint(networkScope, resource == null ? null : resource.getAdvert().getId(), networkAdverts, recommended));
             }
 
-            visibilityConstraint.add(networkConstraint);           
+            visibilityConstraint.add(networkConstraint);
         } else if (resource != null) {
-            visibilityConstraint.add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
+            visibilityConstraint.add(Restrictions.eq("resource." + resource.getResourceScope().getLowerCamelName(), resource));
         } else {
             visibilityConstraint.add(Restrictions.eq("advert.globallyVisible", true));
         }
@@ -678,7 +680,9 @@ public class AdvertDAO {
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
                     .add(getAdvertTargetAcceptUserConstraint(user))
-                    .add(Restrictions.in("thisAdvert.id", connectAdverts));
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.isNull("thisUser.id"))
+                            .add(Restrictions.in("thisAdvert.id", connectAdverts)));
         } else if (user != null) {
             permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
         } else {
@@ -735,10 +739,10 @@ public class AdvertDAO {
     private Junction getAdvertTargetAcceptUserConstraint(User user) {
         return Restrictions.conjunction()
                 .add(Restrictions.eq("thisRole.verified", true)) //
+                .add(Restrictions.eq("thisUser.id", user.getId())) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
-                        .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")))
-                .add(Restrictions.eq("thisUser.id", user.getId()));
+                        .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
     }
 
 }

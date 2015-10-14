@@ -507,13 +507,17 @@ public class ResourceDAO {
     }
 
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope, String query) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("resource.id")) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN)
                 .createAlias("resource.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
-                .add(Restrictions.like("resource.name", query, MatchMode.ANYWHERE)) //
-                .add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
+                .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
+
+        if (!isNullOrEmpty(query)) {
+            criteria.add(Restrictions.like("resource.name", query, MatchMode.ANYWHERE));
+        }
+
+        return (List<Integer>) criteria.add(WorkflowDAO.getResourceParentManageableStateConstraint(resourceScope.name()))
                 .list();
     }
 

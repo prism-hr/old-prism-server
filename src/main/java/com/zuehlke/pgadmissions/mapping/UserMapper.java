@@ -1,26 +1,5 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.STUDENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
-import static java.math.RoundingMode.HALF_UP;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -44,24 +23,29 @@ import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
-import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.*;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserFeedbackRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserInstitutionIdentityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserProfileRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationInvitationBounced;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationUnverified;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRolesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.workflow.RoleRepresentation;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.SystemService;
-import com.zuehlke.pgadmissions.services.UserFeedbackService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
+import static java.math.RoundingMode.HALF_UP;
 
 @Service
 @Transactional
@@ -244,18 +228,13 @@ public class UserMapper {
     }
 
     public List<UserRolesRepresentation> getUserRoleRepresentations(User user) {
-        HashMultimap<ResourceRepresentationIdentity, RoleRepresentation> index = HashMultimap.create();
-        roleService.getUserRoles(user).forEach(userRole -> {
-            index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()),
-                    new RoleRepresentation(userRole.getRole(), userRole.getVerified(), userRole.getDirectlyAssignable()));
-        });
+        HashMultimap<ResourceRepresentationIdentity, PrismRole> index = HashMultimap.create();
+        roleService.getUserRoles(user).forEach(userRole ->
+                index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
 
-        List<UserRolesRepresentation> representations = Lists.newArrayList();
-        index.keySet().forEach(resource -> {
-            representations.add(new UserRolesRepresentation(resource, newArrayList(index.get(resource))));
-        });
-
-        return representations;
+        return index.keySet().stream()
+                .map(resource -> new UserRolesRepresentation(resource, newArrayList(index.get(resource))))
+                .collect(Collectors.toList());
     }
 
     public List<ResourceRepresentationConnection> getUserConnectionResourceRepresentations(User user, String searchTerm) {

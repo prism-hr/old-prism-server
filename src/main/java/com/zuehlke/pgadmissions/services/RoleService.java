@@ -108,7 +108,7 @@ public class RoleService {
             actionService.executeUserAction(resource, action, comment);
             
             if (transitionType.equals(CREATE) && user.getUserAccount() == null) {
-                notificationService.sendInvitationNotification(user, invoker);
+                notificationService.sendInvitationNotification(invoker, user);
             }
         }
     }

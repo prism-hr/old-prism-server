@@ -518,7 +518,7 @@ public class AdvertDAO {
                 networkConstraint.add(getAdvertVisibilityConstraint(networkScope, resource == null ? null : resource.getAdvert().getId(), networkAdverts, recommended));
             }
 
-            visibilityConstraint.add(networkConstraint);
+            visibilityConstraint.add(networkConstraint);           
         } else if (resource != null) {
             visibilityConstraint.add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
         } else {

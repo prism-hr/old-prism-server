@@ -113,16 +113,18 @@ public class UserAccountService {
 
         ActionOutcomeDTO outcome;
         CommentDTO commentDTO = userRegistrationDTO.getComment();
-        PrismRoleContext roleContext = commentDTO.getRoleContext();
-        if (roleContext != null) {
-            outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(actionService.getById(SYSTEM_MANAGE_ACCOUNT));
-            resourceService.joinResource(commentDTO.getResource(), user, roleContext);
-        } else {
-            outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
-        }
-
-        if (outcome != null) {
-            notificationService.sendRegistrationNotification(user, outcome);
+        if (commentDTO != null) {
+            PrismRoleContext roleContext = commentDTO.getRoleContext();
+            if (roleContext != null) {
+                outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(actionService.getById(SYSTEM_MANAGE_ACCOUNT));
+                resourceService.joinResource(commentDTO.getResource(), user, roleContext);
+            } else {
+                outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
+            }
+    
+            if (outcome != null) {
+                notificationService.sendRegistrationNotification(user, outcome);
+            }
         }
 
         return user;

@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.S
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
@@ -319,13 +320,23 @@ public class ActionDAO {
     }
 
     private static Junction getUnsecuredActionVisibilityConstraint(boolean userLoggedIn) {
-        return Restrictions.conjunction() //
+        Junction constraint = Restrictions.conjunction() //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("stateAction.actionCondition")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")))
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("action.scope.id", SYSTEM))
-                        .add(userLoggedIn ? Restrictions.eq("resourceCondition.internalMode", true) : Restrictions.eq("resourceCondition.externalMode", true)));
+                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")));
+
+        if (userLoggedIn) {
+            constraint.add(Restrictions.disjunction() //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.eq("action.creationScope.id", APPLICATION))
+                            .add(Restrictions.eq("resourceCondition.externalMode", true)))
+                    .add(Restrictions.eq("action.scope.id", SYSTEM))
+                    .add(Restrictions.eq("resourceCondition.internalMode", true)));
+        } else {
+            constraint.add(Restrictions.eq("resourceCondition.externalMode", true));
+        }
+
+        return constraint;
     }
 
 }

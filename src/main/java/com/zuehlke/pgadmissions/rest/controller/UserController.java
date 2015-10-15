@@ -141,8 +141,8 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/linkedUsers/selectParentUser", method = RequestMethod.POST)
-    public void selectParentUser(@RequestBody UserEmailDTO email) {
-        userService.selectParentUser(email.getEmail());
+    public void setParentUser(@RequestBody UserEmailDTO email) {
+        userService.setParentUser(email.getEmail());
     }
 
     @PreAuthorize("isAuthenticated()")

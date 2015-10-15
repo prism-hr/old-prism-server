@@ -116,29 +116,25 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.parentUser"), "user") //
+                        .add(Projections.groupProperty("user"), "user") //
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
-                .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.id")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
                 .add(Restrictions.eq("interested", true)) //
-                .addOrder(Order.asc("parentUser.firstName")) //
-                .addOrder(Order.asc("parentUser.lastName")) //
                 .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
     }
 
     public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.parentUser"), "user") //
+                        .add(Projections.groupProperty("user"), "user") //
                         .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
-                .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.id")) //
@@ -150,11 +146,9 @@ public class UserDAO {
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects,
             List<Integer> relatedApplications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user.parentUser"), "user")) //
+                .setProjection(Projections.groupProperty("user").as("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.parentUser", "parentUser", JoinType.INNER_JOIN) //
-                .createAlias("parentUser.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
         Junction condition = Restrictions.disjunction() //
                 .add(Restrictions.eq("program.id", program)); //
@@ -172,8 +166,8 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.id")) //
                         .add(Restrictions.eq("userAccount.enabled", true))) //
-                .addOrder(Order.asc("parentUser.firstName")) //
-                .addOrder(Order.asc("parentUser.lastName")) //
+                .addOrder(Order.asc("user.firstName")) //
+                .addOrder(Order.asc("user.lastName")) //
                 .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
     }
 
@@ -208,7 +202,6 @@ public class UserDAO {
                         .add(Projections.property("userAccount.linkedinProfileUrl"), "accountProfileUrl")) //
                 .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("id", "parentUser.id")) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userRole.id")) //
@@ -231,7 +224,7 @@ public class UserDAO {
                 .list();
     }
 
-    public void selectParentUser(User newParentUser) {
+    public void setParentUser(User newParentUser) {
         sessionFactory.getCurrentSession()
                 .createQuery("update User " //
                         + "set parentUser = :newParentUser " //

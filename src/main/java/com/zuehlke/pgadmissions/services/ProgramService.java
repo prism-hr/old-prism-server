@@ -36,7 +36,7 @@ public class ProgramService {
     public List<Integer> getProjects(Integer program) {
         return programDAO.getProjects(program);
     }
-
+    
     public List<Integer> getApplications(Integer program) {
         return programDAO.getApplications(program);
     }

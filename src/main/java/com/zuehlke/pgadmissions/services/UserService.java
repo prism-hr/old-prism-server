@@ -259,9 +259,9 @@ public class UserService {
         user.setParentUser(user);
     }
 
-    public void selectParentUser(String email) {
+    public void setParentUser(String email) {
         User user = getUserByEmail(email);
-        userDAO.selectParentUser(user);
+        userDAO.setParentUser(user);
     }
 
     public List<User> getLinkedUsers(User user) {

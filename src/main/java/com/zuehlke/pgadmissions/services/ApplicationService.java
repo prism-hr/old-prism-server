@@ -160,16 +160,16 @@ public class ApplicationService {
                 String value = null;
                 String getMethod = "get" + capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
-                    case DATE:
-                        value = (String) invokeMethod(reportRow, getMethod, dateFormat);
-                        break;
-                    case DISPLAY_PROPERTY:
-                        PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
-                        value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
-                        break;
-                    case STRING:
-                        value = (String) invokeMethod(reportRow, getMethod);
-                        break;
+                case DATE:
+                    value = (String) invokeMethod(reportRow, getMethod, dateFormat);
+                    break;
+                case DISPLAY_PROPERTY:
+                    PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
+                    value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
+                    break;
+                case STRING:
+                    value = (String) invokeMethod(reportRow, getMethod);
+                    break;
                 }
                 row.addCell(value);
             }

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1368,6 +1368,14 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERTISE_UNIVERSITY_ORGANIZATION_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you have already registered your department, you don't need to do this again. Just login with the account that you provided, and nagivate to your departments in the resources menu."),
 
     /*
+     * *************** SYSTEM INVITE SECTION *********************
+     */
+
+    SYSTEM_INVITE_UNIVERSITY_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite University"),
+    SYSTEM_INVITE_EMPLOYER_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Employer"),
+    SYSTEM_INVITE_JUST_INVITED_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Thank you. {{name}} has been invited."),
+
+    /*
      * *************** SYSTEM RESOURCES SECTION *********************
      */
 
@@ -1527,7 +1535,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_SUMMARY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Summary"),
     SYSTEM_RESOURCE_PARENT_SUMMARY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "A brief description of your opportunity."),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visibility"),
-    SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visiblity that you want for your opportunity."),
+    SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visibility that you want for your opportunity."),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_PUBLIC_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_PRIVATE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Use our recruitment engine?"),

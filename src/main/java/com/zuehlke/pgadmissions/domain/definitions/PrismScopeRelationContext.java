@@ -1,19 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 import java.util.LinkedList;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismScopeRelationContext {
 
@@ -33,8 +27,20 @@ public enum PrismScopeRelationContext {
                     .withScope(PROJECT, false, true, false, EXPERIENCE, WORK))), //
     REFEREE(EMPLOYER, new PrismScopeRelationGroup()
             .withScopeCreationFamily(new PrismScopeRelation()
-                    .withScope(INSTITUTION, true, false, null)
-                    .withScope(PROJECT, false, false, true, WORK)));
+                    .withScope(INSTITUTION, true, false, false)
+                    .withScope(PROJECT, false, false, true, WORK))),
+    EMPLOYER_INVITATION(EMPLOYER, new PrismScopeRelationGroup()
+            .withScopeCreationFamily(new PrismScopeRelation()
+                    .withScope(INSTITUTION, true, false, true))
+            .withScopeCreationFamily(new PrismScopeRelation()
+                    .withScope(INSTITUTION, true, false, true)
+                    .withScope(DEPARTMENT, true, false, true))),
+    UNIVERSITY_INVITATION(EMPLOYER, new PrismScopeRelationGroup()
+            .withScopeCreationFamily(new PrismScopeRelation()
+                    .withScope(INSTITUTION, true, false, true))
+            .withScopeCreationFamily(new PrismScopeRelation()
+                    .withScope(INSTITUTION, true, false, true)
+                    .withScope(DEPARTMENT, true, false, true)));
 
     private PrismMotivationContext context;
 

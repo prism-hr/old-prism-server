@@ -125,6 +125,11 @@ public class PrismInstitutionWorkflow {
                         .withTransitionState(INSTITUTION_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST));
     }
+    
+    public static PrismStateAction institutionViewEditAbstract() {
+        return new PrismStateAction() //
+                .withAction(INSTITUTION_VIEW_EDIT);
+    }
 
     private static PrismStateAction institutionEmailCreatorAbstract() {
         return new PrismStateAction() //
@@ -135,11 +140,6 @@ public class PrismInstitutionWorkflow {
     private static PrismStateAction institutionTerminateAbstract() {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_TERMINATE);
-    }
-
-    private static PrismStateAction institutionViewEditAbstract() {
-        return new PrismStateAction() //
-                .withAction(INSTITUTION_VIEW_EDIT);
     }
 
 }

@@ -112,6 +112,11 @@ public class PrismDepartmentWorkflow {
                         .withTransitionState(DEPARTMENT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST));
     }
+    
+    public static PrismStateAction departmentViewEditAbstract() {
+        return new PrismStateAction() //
+                .withAction(DEPARTMENT_VIEW_EDIT);
+    }
 
     private static PrismStateAction departmentEmailCreatorAbstract() {
         return new PrismStateAction() //
@@ -122,11 +127,6 @@ public class PrismDepartmentWorkflow {
     private static PrismStateAction departmentTerminateAbstract() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_TERMINATE);
-    }
-
-    private static PrismStateAction departmentViewEditAbstract() {
-        return new PrismStateAction() //
-                .withAction(DEPARTMENT_VIEW_EDIT);
     }
 
 }

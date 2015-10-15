@@ -232,7 +232,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/setAsOwner", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void setUserAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestBody Map undertow,
+    public void setUserAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestBody Map<?, ?> undertow,
                                @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -242,7 +242,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision,
-                           @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody Map undertow) {
+                           @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody Map<?, ?> undertow) {
         boolean accept = decision.equals("accept");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);

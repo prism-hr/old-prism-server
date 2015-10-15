@@ -101,6 +101,11 @@ public class PrismProgramWorkflow {
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST));
     }
 
+    public static PrismStateAction programViewEditAbstract() {
+        return new PrismStateAction() //
+                .withAction(PROGRAM_VIEW_EDIT);
+    }
+    
     private static PrismStateAction programEmailCreatorAbstract() {
         return new PrismStateAction() //
                 .withAction(PROGRAM_EMAIL_CREATOR) //
@@ -115,11 +120,6 @@ public class PrismProgramWorkflow {
     private static PrismStateAction programTerminateAbstract() {
         return new PrismStateAction() //
                 .withAction(PROGRAM_TERMINATE);
-    }
-
-    private static PrismStateAction programViewEditAbstract() {
-        return new PrismStateAction() //
-                .withAction(PROGRAM_VIEW_EDIT);
     }
 
 }

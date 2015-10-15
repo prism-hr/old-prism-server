@@ -88,6 +88,11 @@ public class PrismProjectWorkflow {
                         .withTransitionState(PROJECT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST));
     }
+    
+    public static PrismStateAction projectViewEditAbstract() {
+        return new PrismStateAction() //
+                .withAction(PROJECT_VIEW_EDIT);
+    }
 
     private static PrismStateAction projectEmailCreatorAbstract() {
         return new PrismStateAction() //
@@ -103,11 +108,6 @@ public class PrismProjectWorkflow {
     private static PrismStateAction projectTerminateAbstract() {
         return new PrismStateAction() //
                 .withAction(PROJECT_TERMINATE);
-    }
-
-    private static PrismStateAction projectViewEditAbstract() {
-        return new PrismStateAction() //
-                .withAction(PROJECT_VIEW_EDIT);
     }
 
 }

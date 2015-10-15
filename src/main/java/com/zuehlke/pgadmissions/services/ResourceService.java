@@ -500,8 +500,8 @@ public class ResourceService {
         return resourceDAO.getResourcesByMatchingUsersAndRole(prismScope, searchTerm, prismRoles);
     }
 
-    public List<Integer> getResourcesByMatchingEnclosingResource(PrismScope enclosingResourceScope, String searchTerm) {
-        return resourceDAO.getResourcesByMatchingEnclosingResourceName(enclosingResourceScope, searchTerm);
+    public List<Integer> getSimilarResources(PrismScope enclosingResourceScope, String searchTerm) {
+        return resourceDAO.getSimilarResources(enclosingResourceScope, searchTerm);
     }
 
     public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope scope, PrismScope creationScope, String searchTerm) {

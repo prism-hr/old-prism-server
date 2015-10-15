@@ -22,6 +22,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
@@ -39,6 +40,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -331,7 +333,7 @@ public class AdvertService {
                 if (Objects.equal(user, acceptUser) || isAdmin) {
                     processAdvertTarget(advertTarget.getOtherAdvert().getResource(), systemService.getSystem().getUser(), advertTargetId, partnershipState);
                     performed = true;
-                    
+
                     if (isAdmin) {
                         AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, user);
                         if (similarAdvertTarget != null) {
@@ -540,11 +542,11 @@ public class AdvertService {
         }
 
         Set<Integer> networkAdverts = Sets.newHashSet();
-        if (user != null) {
+        if (user != null && Arrays.asList(scopes).stream().map(s -> s.getScopeCategory()).collect(toList()).contains(OPPORTUNITY)) {
             if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
-                networkAdverts = getNetworkAdverts(resourceScope, resourceId);
+                networkAdverts = getNetworkAdverts();
             } else {
-                networkAdverts = getNetworkAdverts(user, resourceScope, resourceId);
+                networkAdverts = getNetworkAdverts(user);
             }
         }
 
@@ -605,14 +607,14 @@ public class AdvertService {
         return advertTargets;
     }
 
-    private Set<Integer> getNetworkAdverts(PrismScope resourceScope, Integer resourceId) {
+    private Set<Integer> getNetworkAdverts() {
         Set<Integer> adverts = Sets.newHashSet();
         adverts.addAll(advertDAO.getAdvertIds(INSTITUTION));
         adverts.addAll(advertDAO.getAdvertIds(DEPARTMENT));
         return adverts;
     }
 
-    private Set<Integer> getNetworkAdverts(User user, PrismScope resourceScope, Integer resourceId) {
+    private Set<Integer> getNetworkAdverts(User user) {
         Set<Integer> adverts = Sets.newHashSet();
         adverts.addAll(advertDAO.getUserAdvertIds(user, INSTITUTION));
 

@@ -27,6 +27,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
@@ -205,30 +206,31 @@ public class ResourceDAO {
         return Collections.emptyList();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
+    public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass,
+            DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, columns) //
                 .add(Restrictions.eq("userRole.user", user));
-        appendResourceListFilterCriteria(criteria, conditions, filter);
+        appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
     public <T> List<T> getResources(User user, PrismScope scope, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
-            Class<T> responseClass) {
+            Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, parentScope, columns) //
                 .add(Restrictions.eq("userRole.user", user));
-        appendResourceListFilterCriteria(criteria, conditions, filter);
+        appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
     public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, ResourceListFilterDTO filter, ProjectionList columns,
-            Junction conditions, Class<T> responseClass) {
+            Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, columns)
                 .add(Restrictions.eq("userRole.user", user));
-        appendResourceListFilterCriteria(criteria, conditions, filter);
+        appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -568,7 +570,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter) {
+    private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));
@@ -591,12 +593,17 @@ public class ResourceDAO {
                     .add(Restrictions.in("stateActionAssignment.actionEnhancement", actionEnhancements)));
         }
 
-        if (filter.isUrgentOnly()) {
+        boolean urgentOnly = BooleanUtils.isTrue(filter.getUrgentOnly());
+        boolean updateOnly = BooleanUtils.isTrue(filter.getUpdateOnly());
+        
+        if (urgentOnly && updateOnly) {
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
+                    .add(Restrictions.ge("resource.updatedTimestamp", updateBaseline)));
+        } else if (urgentOnly) {
             criteria.add(Restrictions.eq("stateAction.raisesUrgentFlag", true));
-        }
-
-        if (filter.isUpdateOnly()) {
-            criteria.add(Restrictions.ge("resource.updatedTimestamp", new DateTime().minusDays(1)));
+        } else if (updateOnly) {
+            criteria.add(Restrictions.ge("resource.updatedTimestamp", updateBaseline));
         }
 
         if (constraints != null) {

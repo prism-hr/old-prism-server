@@ -16,6 +16,8 @@ import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.collect.Maps;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.criterion.Projections;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterMatchMode.ANY;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 @Service
 @Transactional
@@ -96,9 +99,11 @@ public class ScopeMapper {
                     ResourceActionDTO.class);
 
             for (ResourceActionDTO resourceActionDTO : resourceActionDTOs) {
-                PrismAction actionId = resourceActionDTO.getActionId();
-                Integer existingCount = actionCounts.get(actionId);
-                actionCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);
+                if (isTrue(resourceActionDTO.getRaisesUrgentFlag())) {
+                    PrismAction actionId = resourceActionDTO.getActionId();
+                    Integer existingCount = actionCounts.get(actionId);
+                    actionCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);
+                }
 
                 if (resourceActionDTO.getUpdatedTimestamp().isAfter(baseline)) {
                     updatedResources.add(resourceActionDTO.getResourceId());

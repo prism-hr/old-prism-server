@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -264,7 +264,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROGRAM_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROGRAM_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_PROGRAM_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
-    SYSTEM_ACTION_PROJECT_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Project Complete"),
+    SYSTEM_ACTION_PROJECT_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Position Complete"),
     SYSTEM_ACTION_PROJECT_COMPLETE_PARENT_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROJECT_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_PROJECT_REENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Share with my students"),

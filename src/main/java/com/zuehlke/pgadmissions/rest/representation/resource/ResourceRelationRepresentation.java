@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-
-import java.util.List;
 
 public class ResourceRelationRepresentation {
 

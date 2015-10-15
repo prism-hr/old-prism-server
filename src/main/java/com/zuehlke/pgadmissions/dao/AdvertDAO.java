@@ -560,7 +560,7 @@ public class AdvertDAO {
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else if (hasNetworkAdverts) {
             constraint.add(Restrictions.disjunction() //
-                    .add(Restrictions.in(scopeAdvertReference, networkAdverts))
+                    .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkAdverts))
                     .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts))
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else {

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
@@ -207,12 +206,20 @@ public class AdvertDAO {
                                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
                                 .add(Restrictions.eq("resourceCondition.actionCondition", actionCondition))); //
 
-        for (PrismScope targetScope : advertScopes) {
-            String scopeReference = targetScope.getLowerCamelName();
+        for (PrismScope targeterScope : targetScopes) {
+            String scopeReference = targeterScope.getLowerCamelName();
             String advertReference = scopeReference + "Advert";
-            criteria.createAlias("advert." + targetScope.getLowerCamelName(), scopeReference, JoinType.LEFT_OUTER_JOIN)
+            String advertTargetReference = advertReference + "Target";
+            String advertTargetAdvertReference = advertTargetReference + "Advert";
+            criteria.createAlias("advert." + targeterScope.getLowerCamelName(), scopeReference, JoinType.LEFT_OUTER_JOIN)
                     .createAlias(scopeReference + ".advert", advertReference, JoinType.LEFT_OUTER_JOIN)
-                    .createAlias(advertReference + ".targets", advertReference + "Target", JoinType.LEFT_OUTER_JOIN);
+                    .createAlias(advertReference + ".targets", advertReference + "Target", JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias(advertTargetReference + ".targetAdvert", advertTargetReference + "Advert", JoinType.LEFT_OUTER_JOIN);
+
+            for (PrismScope targetScope : targetScopes) {
+                String advertTargetResourceReference = advertTargetReference + targetScope.getUpperCamelName();
+                criteria.createAlias(advertTargetAdvertReference + "." + targetScope.getLowerCamelName(), advertTargetResourceReference, JoinType.LEFT_OUTER_JOIN);
+            }
         }
 
         boolean opportunityRequest = ResourceOpportunity.class.isAssignableFrom(scope.getResourceClass());
@@ -510,42 +517,43 @@ public class AdvertDAO {
     private void appendVisibilityConstraint(Criteria criteria, ResourceParent resource, Collection<Integer> networkAdverts) {
         Junction visibilityConstraint = Restrictions.disjunction();
 
-        for (PrismScope networkScope : advertScopes) {
-            visibilityConstraint.add(getAdvertVisibilityConstraint(networkScope, resource == null ? null : resource.getAdvert().getId(), networkAdverts));
+        Integer resourceAdvertId = resource == null ? null : resource.getAdvert().getId();
+        for (PrismScope targeterScope : targetScopes) {
+            for (PrismScope targetScope : targetScopes) {
+                visibilityConstraint.add(getAdvertVisibilityConstraint(targeterScope, targetScope, resourceAdvertId, networkAdverts));
+            }
         }
 
         criteria.add(visibilityConstraint);
     }
 
-    private Junction getAdvertVisibilityConstraint(PrismScope networkScope, Integer resourceAdvert, Collection<Integer> networkAdverts) {
-        String scopeReference = networkScope.getLowerCamelName();
-        String networkReference = scopeReference + "AdvertTarget";
+    private Junction getAdvertVisibilityConstraint(PrismScope targeterScope, PrismScope targetScope, Integer resourceAdvert, Collection<Integer> networkAdverts) {
+        String scopeReference = targeterScope.getLowerCamelName();
+        String scopeAdvertReference = scopeReference + "Advert.id";
+        String targetAdvertReference = scopeReference + "AdvertTarget" + targetScope.getUpperCamelName() + ".advert.id";
 
         boolean hasResourceAdvert = resourceAdvert != null;
         boolean hasNetworkAdverts = isNotEmpty(networkAdverts);
 
         Junction constraint = Restrictions.conjunction();
         if (hasResourceAdvert && hasNetworkAdverts) {
-            String scopeAdvertReference = scopeReference + "Advert.id";
-            String networkTargetReference = networkReference + ".targetAdvert.id";
-
             constraint.add(Restrictions.disjunction() //
                     .add(Restrictions.conjunction() //
                             .add(Restrictions.eq(scopeAdvertReference, resourceAdvert)) //
                             .add(Restrictions.in(scopeAdvertReference, networkAdverts))) //
                     .add(Restrictions.conjunction()
-                            .add(Restrictions.eq(networkTargetReference, resourceAdvert)) //
-                            .add(Restrictions.in(networkTargetReference, networkAdverts))));
+                            .add(Restrictions.eq(targetAdvertReference, resourceAdvert)) //
+                            .add(Restrictions.in(targetAdvertReference, networkAdverts))));
         } else if (hasResourceAdvert) {
             constraint.add(Restrictions.conjunction() //
                     .add(Restrictions.disjunction()
-                            .add(Restrictions.eq(scopeReference + "Advert.id", resourceAdvert)) //
-                            .add(Restrictions.eq(networkReference + ".targetAdvert.id", resourceAdvert))) //
+                            .add(Restrictions.eq(scopeAdvertReference, resourceAdvert)) //
+                            .add(Restrictions.eq(targetAdvertReference, resourceAdvert))) //
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else if (hasNetworkAdverts) {
             constraint.add(Restrictions.disjunction() //
-                    .add(Restrictions.in(scopeReference + "Advert.id", networkAdverts))
-                    .add(Restrictions.in(networkReference + ".targetAdvert.id", networkAdverts))
+                    .add(Restrictions.in(scopeAdvertReference, networkAdverts))
+                    .add(Restrictions.in(targetAdvertReference, networkAdverts))
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else {
             constraint.add(Restrictions.eq("advert.globallyVisible", true));

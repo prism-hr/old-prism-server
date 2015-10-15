@@ -100,6 +100,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
+import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -541,7 +542,7 @@ public class AdvertService {
             resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         }
 
-        Set<Integer> networkAdverts = Sets.newHashSet();
+        Set<ResourceConnectionDTO> networkAdverts = Sets.newHashSet();
         if (user != null && Arrays.asList(scopes).stream().map(s -> s.getScopeCategory()).collect(toList()).contains(OPPORTUNITY)) {
             if (roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
                 networkAdverts = getNetworkAdverts();
@@ -607,22 +608,17 @@ public class AdvertService {
         return advertTargets;
     }
 
-    private Set<Integer> getNetworkAdverts() {
-        Set<Integer> adverts = Sets.newHashSet();
-        adverts.addAll(advertDAO.getAdvertIds(INSTITUTION));
-        adverts.addAll(advertDAO.getAdvertIds(DEPARTMENT));
+    private Set<ResourceConnectionDTO> getNetworkAdverts() {
+        Set<ResourceConnectionDTO> adverts = Sets.newHashSet();
+        adverts.addAll(advertDAO.getAdverts(INSTITUTION));
+        adverts.addAll(advertDAO.getAdverts(DEPARTMENT));
         return adverts;
     }
 
-    private Set<Integer> getNetworkAdverts(User user) {
-        Set<Integer> adverts = Sets.newHashSet();
-        adverts.addAll(advertDAO.getUserAdvertIds(user, INSTITUTION));
-
-        List<Integer> departmentAdverts = advertDAO.getUserAdvertIds(user, DEPARTMENT);
-        if (!departmentAdverts.isEmpty()) {
-            adverts.addAll(departmentAdverts);
-            adverts.addAll(advertDAO.getParentAdvertIds(DEPARTMENT, INSTITUTION, departmentAdverts));
-        }
+    private Set<ResourceConnectionDTO> getNetworkAdverts(User user) {
+        Set<ResourceConnectionDTO> adverts = Sets.newHashSet();
+        adverts.addAll(advertDAO.getUserAdverts(user, INSTITUTION));
+        adverts.addAll(advertDAO.getUserAdverts(user, DEPARTMENT));
         return adverts;
     }
 

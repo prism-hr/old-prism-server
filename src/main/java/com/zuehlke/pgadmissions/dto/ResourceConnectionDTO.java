@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.google.common.base.Objects;
+
 public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
 
     private Integer institutionId;
@@ -51,5 +53,22 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
     }
-    
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(institutionId, departmentId);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceConnectionDTO other = (ResourceConnectionDTO) object;
+        return Objects.equal(institutionId, other.getInstitutionId()) && Objects.equal(departmentId, other.getDepartmentId());
+    }
+
 }

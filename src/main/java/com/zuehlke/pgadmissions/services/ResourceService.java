@@ -893,19 +893,21 @@ public class ResourceService {
     private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
             Class<T> responseClass) {
         Set<T> resources = Sets.newHashSet();
+        DateTime baseline = DateTime.now().minusDays(1);
+
         Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
-        addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass), resources, asPartner);
+        addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
 
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScope : parentScopes) {
-                addResources(resourceDAO.getResources(user, scope, parentScope, filter, columns, conditions, responseClass), resources, asPartner);
+                addResources(resourceDAO.getResources(user, scope, parentScope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
             }
 
             asPartner = asPartner == null ? null : true;
             for (PrismScope targeterScope : targetScopes) {
                 if (scope.ordinal() > targeterScope.ordinal()) {
                     for (PrismScope targetScope : targetScopes) {
-                        addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, filter, columns, conditions, responseClass), resources, asPartner);
+                        addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
                     }
                 }
             }

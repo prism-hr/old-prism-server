@@ -153,12 +153,19 @@ public class WorkflowDAO {
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
                 .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinConstraint()) //
-                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN)
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerDepartment.advert", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(getEndorsementActionDefaultVisibilityConstraint()
+                .add(Restrictions.disjunction()//
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.eqProperty("ownerDepartment." + (targetScope.equals(DEPARTMENT) ? "id" : "institution.id"), "targetResource.id"))
-                                .add(Restrictions.eq("resource.shared", true)))) //
+                                .add(Restrictions.disjunction() //
+                                        .add(Restrictions.eqProperty("ownerAdvert.department", "targetAdvert.department"))
+                                        .add(Restrictions.conjunction() //
+                                                .add(Restrictions.eq("role.scope.id", INSTITUTION)) //
+                                                .add(Restrictions.eqProperty("ownerAdvert.institution", "targetAdvert.institution")))) //
+                                .add(Restrictions.disjunction() //
+                                        .add(Restrictions.eq("resource.shared", true))))
+                        .add(Restrictions.eq("scope.defaultShared", true))) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
@@ -251,14 +258,19 @@ public class WorkflowDAO {
     }
 
     public static Junction getEndorsementActionVisibilityConstraint() {
-        return getEndorsementActionDefaultVisibilityConstraint()
+        return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.eqProperty("ownerDepartment.id", "departmentTargetDepartment.id"))
-                                .add(Restrictions.eqProperty("ownerDepartment.institution.id", "departmentTargetInstitution.id"))
+                                .add(Restrictions.conjunction() //
+                                        .add(Restrictions.eq("role.scope.id", INSTITUTION))
+                                        .add(Restrictions.eqProperty("ownerDepartment.institution.id", "departmentTargetInstitution.id")))
                                 .add(Restrictions.eqProperty("ownerDepartment.id", "institutionTargetDepartment.id"))
-                                .add(Restrictions.eqProperty("ownerDepartment.institution.id", "institutionTargetInstitution.id")))
-                        .add(Restrictions.eq("resource.shared", true)));
+                                .add(Restrictions.conjunction() //
+                                        .add(Restrictions.eq("role.scope.id", INSTITUTION))
+                                        .add(Restrictions.eqProperty("ownerDepartment.institution.id", "institutionTargetInstitution.id"))))
+                        .add(Restrictions.eq("resource.shared", true)))
+                .add(Restrictions.eq("scope.defaultShared", true));
     }
 
     public static Junction getOpportunityCategoryConstraint(PrismOpportunityCategory opportunityCategory) {
@@ -297,13 +309,6 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("userNotification.id")) //
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline));
-    }
-
-    private static Junction getEndorsementActionDefaultVisibilityConstraint() {
-        return Restrictions.disjunction() //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("scope.defaultShared", true)) //
-                        .add(Restrictions.eq("resource.shared", true)));
     }
 
 }

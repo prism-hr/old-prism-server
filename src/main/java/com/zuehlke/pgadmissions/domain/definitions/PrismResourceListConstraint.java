@@ -36,13 +36,13 @@ public enum PrismResourceListConstraint {
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
     NAME("resource.name", STRING, Arrays.asList(CONTAIN), //
             Arrays.asList(PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //
-    INSTITUTION_NAME("institution.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
+    INSTITUTION_NAME("resource.institution.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT)), //
-    DEPARTMENT_NAME("department.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
+    DEPARTMENT_NAME("resource.department.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM)), //
-    PROGRAM_NAME("program.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
+    PROGRAM_NAME("resource.program.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN), //
             Arrays.asList(APPLICATION, PROJECT)), //
-    PROJECT_NAME("project.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
+    PROJECT_NAME("resource.project.id", STRING, ResourceByParentResourceSelector.class, Arrays.asList(CONTAIN, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
     STATE_GROUP_NAME("state.id", STATE_GROUP, StateByStateGroupSelector.class, Arrays.asList(EQUAL), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION)), //

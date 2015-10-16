@@ -32,6 +32,9 @@ public class LifeCycleService {
 
     private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
 
+    @Value("${context.environment}")
+    private String environment;
+
     @Value("${startup.workflow.initialize.drop}")
     private Boolean dropWorkflow;
 
@@ -79,7 +82,9 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
-        staticDataMapper.getData();
+        if (!environment.equals("test")) {
+            staticDataMapper.getData();
+        }
 
         if (BooleanUtils.isTrue(maintain)) {
             executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));

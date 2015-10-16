@@ -207,7 +207,7 @@ public class SystemInitialisationHelper {
             DisplayPropertyDefinition displayProperty = value.getDefinition();
             PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-            assertEquals(value.getOpportunityType(), displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
+            assertEquals(value.getOpportunityType().getId(), displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
             assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
             assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
             assertTrue(value.getSystemDefault());
@@ -225,7 +225,7 @@ public class SystemInitialisationHelper {
 
             NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, system, definition);
 
-            assertEquals(configuration.getOpportunityType(), definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
+            assertEquals(configuration.getOpportunityType().getId(), definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
             assertEquals(configuration.getDefinition(), definition);
             assertTrue(configuration.getSystemDefault());
 
@@ -242,7 +242,7 @@ public class SystemInitialisationHelper {
             StateDurationConfiguration configuration = (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, system,
                     state.getStateDurationDefinition());
 
-            assertEquals(configuration.getOpportunityType(), state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType()
+            assertEquals(configuration.getOpportunityType().getId(), state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType()
                     : null);
             assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), configuration.getDuration());
             assertTrue(configuration.getSystemDefault());

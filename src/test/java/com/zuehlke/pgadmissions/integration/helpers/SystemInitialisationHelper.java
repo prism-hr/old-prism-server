@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -201,20 +202,22 @@ public class SystemInitialisationHelper {
 
     public void verifyDisplayPropertyCreation() {
         System system = systemService.getSystem();
-        for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
-            assertEquals(value.getResource(), system);
+        for (DisplayPropertyConfiguration configuration : localizationService.getAllLocalizedProperties()) {
+            assertEquals(configuration.getResource(), system);
 
-            DisplayPropertyDefinition displayProperty = value.getDefinition();
+            DisplayPropertyDefinition displayProperty = configuration.getDefinition();
             PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-            assertEquals(value.getOpportunityType().getId(), displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
+            OpportunityType opportunityType = configuration.getOpportunityType();
+            assertEquals((opportunityType == null ? null : opportunityType.getId()),
+                    (displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
             assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
-            assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
-            assertTrue(value.getSystemDefault());
+            assertEquals(configuration.getValue(), prismDisplayProperty.getDefaultValue());
+            assertTrue(configuration.getSystemDefault());
         }
     }
 
-    public void verifyNotificationTemplateCreation() {
+    public void verifyNotificationCreation() {
         System system = systemService.getSystem();
         for (NotificationDefinition definition : notificationService.getDefinitions()) {
             PrismNotificationDefinition prismNotificationDefinition = definition.getId();
@@ -225,7 +228,9 @@ public class SystemInitialisationHelper {
 
             NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, system, definition);
 
-            assertEquals(configuration.getOpportunityType().getId(), definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
+            OpportunityType opportunityType = configuration.getOpportunityType();
+            assertEquals((opportunityType == null ? null : opportunityType.getId()),
+                    (definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
             assertEquals(configuration.getDefinition(), definition);
             assertTrue(configuration.getSystemDefault());
 
@@ -242,8 +247,9 @@ public class SystemInitialisationHelper {
             StateDurationConfiguration configuration = (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, system,
                     state.getStateDurationDefinition());
 
-            assertEquals(configuration.getOpportunityType().getId(), state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType()
-                    : null);
+            OpportunityType opportunityType = configuration.getOpportunityType();
+            assertEquals((opportunityType == null ? null : opportunityType.getId()),
+                    (state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
             assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), configuration.getDuration());
             assertTrue(configuration.getSystemDefault());
         }
@@ -275,7 +281,7 @@ public class SystemInitialisationHelper {
             verifyStateTransitionCreation(stateAction, prismStateAction);
         }
 
-        verifyNotificationTemplateCreation();
+        verifyNotificationCreation();
         verifyStateDurationCreation();
     }
 

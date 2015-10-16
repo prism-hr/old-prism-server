@@ -531,7 +531,7 @@ public class Institution extends ResourceParent {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return googleId == null ? super.getEntitySignature().addProperty("user", user) : super.getEntitySignature().addProperty("googleId", googleId);
+        return super.getEntitySignature().addProperty("user", user);
     }
 
 }

@@ -56,7 +56,7 @@ public class LifeCycleTest {
             systemInitialisationHelper.verifySystemCreation();
             systemInitialisationHelper.verifySystemUserCreation();
 
-            systemInitialisationHelper.verifyNotificationTemplateCreation();
+            systemInitialisationHelper.verifyNotificationCreation();
             systemInitialisationHelper.verifyStateDurationCreation();
 
             systemInitialisationHelper.verifyStateActionCreation();

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserNotification;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -83,7 +84,7 @@ public class NotificationDAO {
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions) {
         Criteria criteria = workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.projectionList() //
                 .add(Projections.groupProperty("user.id").as("userId")) //
-                .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")))
+                .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")), ResourcePreviousState.class)
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
                 .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //

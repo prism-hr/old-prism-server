@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Component
@@ -43,7 +44,11 @@ public class WorkflowDAO {
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     public Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+        return getWorklflowCriteria(resourceScope, projection, ResourceState.class);
+    }
+
+    public Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection, Class<? extends ResourceStateDefinition> responseClass) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(responseClass) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
@@ -85,7 +90,7 @@ public class WorkflowDAO {
                 .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }

@@ -6,12 +6,12 @@ import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
-public class ApplicationConfirmedPositionTitleBuilder implements NotificationPropertyBuilder {
+public class ApplicationPositionNameBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         CommentPositionDetail positionDetail = propertyLoader.getNotificationDefinitionModelDTO().getComment().getPositionDetail();
-        return positionDetail == null ? null : positionDetail.getPositionTitle();
+        return positionDetail == null ? null : positionDetail.getPositionName();
     }
 
 }

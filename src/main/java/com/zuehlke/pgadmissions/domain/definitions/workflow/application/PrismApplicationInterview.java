@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
@@ -158,6 +159,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
                 .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST) //
                 .withAssignments(APPLICATION_INTERVIEWER);
     }
 

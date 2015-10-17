@@ -39,7 +39,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReviewPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationReviewPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmitted;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationUnsubmittedPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationValidationPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWithdrawnCompleted;
@@ -81,8 +80,6 @@ public enum PrismState {
 
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationUnsubmitted.class),
-    APPLICATION_UNSUBMITTED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationUnsubmittedPendingCompletion.class),
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, APPLICATION_CLOSING_DATE, PrismApplicationValidation.class),
     APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationValidationPendingCompletion.class),

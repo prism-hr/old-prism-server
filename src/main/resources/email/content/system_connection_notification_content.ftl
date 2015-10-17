@@ -3,8 +3,11 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INVOKER_FULL_NAME} has invited you to connect in ${TEMPLATE_SYSTEM_TITLE}, the marketplace for student and graduate careers! 
-    Follow the link below to login and confirm or reject your connection.
+    ${TEMPLATE_AUTHOR_FULL_NAME} has invited you to connect in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers. 
+</p>
+
+<p>
+	Follow the link below to confirm or reject this invitation.
 </p>
 
 ${SYSTEM_USER_ACCOUNT_ACTIVATION}
@@ -13,4 +16,3 @@ ${SYSTEM_USER_ACCOUNT_ACTIVATION}
     Yours sincerely,
     <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>
-

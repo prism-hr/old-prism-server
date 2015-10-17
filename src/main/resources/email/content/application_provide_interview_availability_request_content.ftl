@@ -2,19 +2,17 @@
     Dear ${TEMPLATE_USER_FIRST_NAME},
 </h1>
 
+<p><b>
+	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} 
+	in the position of ${TEMPLATE_PARENT_RESOURCE_NAME}.
+</b></p>
+
 <p>
-    We wish to schedule an interview in connection with Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
-</p>
-<p>
-    Please let us know when you would be available to attend.
+    We wish to schedule an interview in connection with this application. Please let us know when you would 
+    be available to attend.
 </p>
 
 ${ACTION_COMPLETE}
-
-<p>
-    To ensure that we can schedule the interview quickly and efficiently, our system will send you reminders until you
-    respond to this request.
-</p>
 
 <p>
     Yours sincerely,

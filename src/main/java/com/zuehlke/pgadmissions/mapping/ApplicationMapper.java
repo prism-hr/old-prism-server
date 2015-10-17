@@ -5,8 +5,8 @@ import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_LATEST_BUFFER;
 import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_MANAGEMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
@@ -250,7 +250,7 @@ public class ApplicationMapper {
 
             User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
-                sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_MANAGEMENT, manager, sourceComment.getCreatedTimestamp());
+                sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager, sourceComment.getCreatedTimestamp());
             }
 
             if (sourceComment != null) {
@@ -259,7 +259,7 @@ public class ApplicationMapper {
 
                 CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
                 if (positionDetail != null) {
-                    positionTitle = positionDetail.getPositionTitle();
+                    positionTitle = positionDetail.getPositionName();
                     positionDescription = positionDetail.getPositionDescription();
                 }
 
@@ -291,7 +291,7 @@ public class ApplicationMapper {
         boolean positionDetailNull = positionDetail == null;
         boolean offerDetailNull = offerDetail == null;
 
-        return new ApplicationOfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionTitle())
+        return new ApplicationOfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionName())
                 .withPositionDescription(positionDetailNull ? null : positionDetail.getPositionDescription())
                 .withPositionProvisionalStartDate(offerDetailNull ? null : offerDetail.getPositionProvisionalStartDate())
                 .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());

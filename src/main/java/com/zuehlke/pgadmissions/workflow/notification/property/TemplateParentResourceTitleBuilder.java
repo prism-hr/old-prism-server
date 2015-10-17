@@ -9,13 +9,12 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
 @Component
-public class ApplicationParentResourceTitleBuilder implements NotificationPropertyBuilder {
+public class TemplateParentResourceTitleBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         PropertyLoader loader = propertyLoader.getPropertyLoader();
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getParentResourceTitleDisplay(loader.loadLazy(SYSTEM_LOWER_AT),
-                loader.loadLazy(SYSTEM_LOWER_IN));
+        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getParentResourceNameDisplay(loader.loadLazy(SYSTEM_LOWER_AT), loader.loadLazy(SYSTEM_LOWER_IN));
     }
 
 }

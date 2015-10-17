@@ -2,9 +2,10 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_MANAGEMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_APPROVER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
@@ -45,7 +46,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                         .withRoleTransitions(APPLICATION_CREATE_ADMINISTRATOR_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_APPROVAL_PENDING_FEEDBACK) //
-                                .withTransitionAction(APPLICATION_CONFIRM_MANAGEMENT) //
+                                .withTransitionAction(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL) //
                                 .withTransitionEvaluation(APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_HIRING_MANAGER_GROUP))); //
 
@@ -78,10 +79,11 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                 APPLICATION_RETIRE_HIRING_MANAGER_GROUP); //
     }
 
-    public static PrismStateAction applicationConfirmAppointment() {
+    public static PrismStateAction applicationProvideHiringManagerApproval() {
         return new PrismStateAction() //
-                .withAction(APPLICATION_CONFIRM_MANAGEMENT) //
+                .withAction(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL) //
                 .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST) //
                 .withAssignments(APPLICATION_HIRING_MANAGER);
     }
 

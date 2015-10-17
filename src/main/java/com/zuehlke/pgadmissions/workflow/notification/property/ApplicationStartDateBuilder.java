@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
-public class ApplicationConfirmedStartDateBuilder implements NotificationPropertyBuilder {
+public class ApplicationStartDateBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {

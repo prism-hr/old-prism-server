@@ -6,7 +6,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationCompleteApproval;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationConfirmAppointment;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationProvideHiringManagerApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationTerminateApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationViewEditApproval;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
@@ -27,7 +27,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
         stateActions.add(applicationCompleteApproval(state) //
                 .withRaisesUrgentFlag()); //
 
-        stateActions.add(applicationConfirmAppointment() //
+        stateActions.add(applicationProvideHiringManagerApproval() //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //

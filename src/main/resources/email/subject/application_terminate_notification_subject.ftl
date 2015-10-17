@@ -1,1 +1,1 @@
-Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_CODE} - Termination
+Application ${APPLICATION_CODE} for ${TEMPLATE_PARENT_RESOURCE_CODE} - Termination

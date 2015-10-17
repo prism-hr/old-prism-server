@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithTargetConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
 import java.util.Collection;
@@ -74,7 +74,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
                 .add(getEndorsementActionFilterConstraint())
                 .add(Restrictions.isNull("userNotification.id")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -97,7 +97,8 @@ public class NotificationDAO {
         }
 
         return (List<UserNotificationDefinitionDTO>) criteria //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(getEndorsementActionFilterConstraint())
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();

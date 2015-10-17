@@ -7,7 +7,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageab
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceRecentlyActiveConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserDueNotificationConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithPartnerConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithTargetConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -289,7 +289,7 @@ public class UserDAO {
         return (List<User>) workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
-                .add(getUserRoleWithPartnerConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
                 .add(getEndorsementActionFilterConstraint())
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //

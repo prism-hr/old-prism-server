@@ -196,7 +196,7 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("userRole.system", resource.getSystem()));
     }
 
-    public static Junction getUserRoleWithPartnerConstraint(Resource resource) {
+    public static Junction getUserRoleWithTargetConstraint(Resource resource) {
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(getUserRoleConstraint(resource)) //
@@ -204,9 +204,9 @@ public class WorkflowDAO {
                 .add(getTargetUserRoleConstraint());
     }
 
-    public static Junction getUserRoleWithPartnerConstraint(Resource resource, User user) {
+    public static Junction getUserRoleWithTargetConstraint(Resource resource, User user) {
         return Restrictions.conjunction() //
-                .add(getUserRoleWithPartnerConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
                 .add(getUserEnabledConstraint(user));
     }
 

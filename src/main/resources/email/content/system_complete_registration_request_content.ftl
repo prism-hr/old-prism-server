@@ -3,16 +3,20 @@
 </h1>
 
 <p>
-    Thank you for your registration for ${TEMPLATE_SYSTEM_TITLE} the marketplace for student and graduate careers! 
-    Please follow the link below to confirm your identity. You will be asked to login using the account credentials that you provided.
+    Thank you for your registration for ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
+</p>
+
+<p>
+	Please follow the link below to confirm your identity. You will be asked to login using your account credentials.
 </p>
 
 ${SYSTEM_USER_ACCOUNT_ACTIVATION}
 
-Welcome to ${TEMPLATE_SYSTEM_TITLE}!
+<p>
+	Welcome to ${TEMPLATE_SYSTEM_NAME}.
+</p>
 
 <p>
     Yours sincerely,
     <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
 </p>
-

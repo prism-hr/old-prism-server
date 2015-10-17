@@ -1,1 +1,1 @@
-Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_CODE} - Interview Confirmation
+Application ${APPLICATION_CODE} for ${TEMPLATE_PARENT_RESOURCE_CODE} - Interview Confirmation

@@ -3,25 +3,22 @@ package com.zuehlke.pgadmissions.rest.dto.comment;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import uk.co.alumeni.prism.utils.validation.ATASConstraint;
-
 public class CommentPositionDetailDTO {
 
     @NotNull
     @Size(max = 255)
-    private String positionTitle;
+    private String positionName;
 
     @NotNull
     @Size(max = 2000)
-    @ATASConstraint
     private String positionDescription;
 
-    public final String getPositionTitle() {
-        return positionTitle;
+    public final String getPositionName() {
+        return positionName;
     }
 
-    public final void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public final void setPositionName(String positionName) {
+        this.positionName = positionName;
     }
 
     public final String getPositionDescription() {

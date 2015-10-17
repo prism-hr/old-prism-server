@@ -8,14 +8,19 @@
 </b></p>
 
 <p>
-    ${TEMPLATE_INVOKER_FULL_NAME} has provided their preferences for interview.
+    We would appreciate your feedback on your recent interview of ${APPLICATION_CREATOR_FULL_NAME}.
 </p>
 
 <p>
-    You may wish to log in and confirm the interview arrangements.
+	Follow the proceed link below to provide your feedback. You can also use the decline link to quickly 
+	decline the request if you do not feel able to comment.
 </p>
 
-${ACTION_VIEW_EDIT}
+${ACTION_COMPLETE}
+
+<p>
+    Thank you in advance for your time.
+</p>
 
 <p>
     Yours sincerely,

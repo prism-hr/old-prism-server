@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
-public class ApplicationConfirmedOfferConditionBuilder implements NotificationPropertyBuilder {
+public class ApplicationOfferConditionBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {

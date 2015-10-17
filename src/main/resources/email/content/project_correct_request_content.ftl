@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    Your request to create a new ${TEMPLATE_SYSTEM_TITLE} Project ${PROJECT_CODE} has been reviewed.
+    Your request to create a new Project ${PROJECT_NAME} in ${TEMPLATE_PARENT_RESOURCE_NAME} has been reviewed.
 </p>
 
 <p>
@@ -15,7 +15,8 @@
 </p>
 
 <p>
-	In order to approve your Project we need you to provide clarification on the above. Please follow the link below to do so:
+	In order to approve your request we would need you to provide clarification on the above. Please follow 
+	the link below to do so:
 </p>
 
 ${ACTION_COMPLETE}

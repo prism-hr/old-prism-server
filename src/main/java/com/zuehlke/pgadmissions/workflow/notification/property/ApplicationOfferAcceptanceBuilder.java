@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
-public class ApplicationConfirmedOfferAcceptanceBuilder implements NotificationPropertyBuilder {
+public class ApplicationOfferAcceptanceBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {

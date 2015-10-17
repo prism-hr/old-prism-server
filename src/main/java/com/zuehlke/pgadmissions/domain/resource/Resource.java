@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -61,9 +63,9 @@ public abstract class Resource implements UniqueEntity {
     public abstract Application getApplication();
 
     public abstract Boolean getShared();
-    
+
     public abstract void setShared(Boolean shared);
-    
+
     public abstract State getState();
 
     public abstract void setState(State state);
@@ -140,6 +142,19 @@ public abstract class Resource implements UniqueEntity {
         }
     }
 
+    public String getParentResourceNameDisplay(String at, String in) {
+        Resource parent = getParentResource();
+        if (parent.sameAs(this)) {
+            return getSystem().getName();
+        } else {
+            return getParentResourceNameDisplay((ResourceParent) parent, at, in);
+        }
+    }
+
+    public String getParentResourceCodeDisplay() {
+        return getParentResource().getCode();
+    }
+
     public PrismScope getResourceScope() {
         return PrismScope.valueOf(getClass().getSimpleName().toUpperCase());
     }
@@ -164,6 +179,21 @@ public abstract class Resource implements UniqueEntity {
     @Override
     public String toString() {
         return getResourceScope().name() + "#" + getId();
+    }
+
+    private String getParentResourceNameDisplay(ResourceParent resource, String at, String in) {
+        if (resource instanceof Institution) {
+            return resource.getName();
+        } else if (resource instanceof Department || resource instanceof Program) {
+            return resource.getName() + SPACE + at + SPACE + getInstitution().getName();
+        } else if (resource instanceof Project) {
+            Resource grandParent = resource.getParentResource();
+            if (grandParent instanceof Program) {
+                return resource.getName() + SPACE + in + SPACE + getProgram().getName();
+            }
+            return resource.getName() + SPACE + at + SPACE + getProject().getName();
+        }
+        return null;
     }
 
 }

@@ -6,7 +6,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
-public class ApplicationConfirmedPositionDescriptionBuilder implements NotificationPropertyBuilder {
+public class ApplicationPositionDescriptionBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {

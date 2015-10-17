@@ -1,1 +1,1 @@
-Updates from your network in ${TEMPLATE_SYSTEM_TITLE}, the marketplace for student and graduate careers!
+Updates from your network in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers!

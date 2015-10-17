@@ -21,8 +21,6 @@ public class NotificationDefinitionModelDTO {
 
     private PrismAction transitionAction;
 
-    private String dataImportErrorMessage;
-
     private String newPassword;
 
     List<AdvertRecommendationDTO> advertRecommendations;
@@ -57,10 +55,6 @@ public class NotificationDefinitionModelDTO {
 
     public void setTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
-    }
-
-    public String getDataImportErrorMessage() {
-        return dataImportErrorMessage;
     }
 
     public String getNewPassword() {
@@ -98,11 +92,6 @@ public class NotificationDefinitionModelDTO {
 
     public NotificationDefinitionModelDTO withTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
-        return this;
-    }
-
-    public NotificationDefinitionModelDTO withDataImportErrorMessage(String dataImportErrorMessage) {
-        this.dataImportErrorMessage = dataImportErrorMessage;
         return this;
     }
 

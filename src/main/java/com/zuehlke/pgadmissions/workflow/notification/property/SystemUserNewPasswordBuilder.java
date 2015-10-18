@@ -9,7 +9,7 @@ public class SystemUserNewPasswordBuilder implements NotificationPropertyBuilder
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getNewPassword();
+        return propertyLoader.getNotificationDefinitionDTO().getNewPassword();
     }
 
 }

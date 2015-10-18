@@ -8,7 +8,7 @@
 </b></p>
 
 <p>
-    ${TEMPLATE_INVOKER_FULL_NAME} has updated their preferences for interview.
+    ${TEMPLATE_AUTHOR_FULL_NAME} has updated their preferences for interview.
 </p>
 
 <p>
@@ -19,5 +19,5 @@ ${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

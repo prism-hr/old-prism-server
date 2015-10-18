@@ -44,7 +44,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -88,13 +88,13 @@ public class MailSender {
     private SystemService systemService;
 
     public void sendEmail(final MailMessageDTO messageDTO) {
-        NotificationDefinitionModelDTO modelDTO = messageDTO.getModelDTO();
-        final NotificationConfiguration configuration = messageDTO.getConfiguration();
+        NotificationDefinitionDTO notificationDefinitionDTO = messageDTO.getNotificationDefinitionDTO();
+        final NotificationConfiguration configuration = messageDTO.getNotificationConfiguration();
         try {
-            Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getDefinition(), modelDTO);
+            Map<String, Object> model = createNotificationModel(messageDTO.getNotificationConfiguration().getDefinition(), notificationDefinitionDTO);
             final String subject = processHeader(configuration.getDefinition().getId(), configuration.getSubject(), model);
 
-            Institution institution = modelDTO.getResource().getInstitution();
+            Institution institution = notificationDefinitionDTO.getResource().getInstitution();
             Document logoImage = institution != null ? institution.getLogoImage() : null;
             final String html = processContent(configuration.getDefinition().getId(), configuration.getContent(), model, subject,
                     logoImage);
@@ -103,7 +103,7 @@ public class MailSender {
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + messageDTO.toString());
 
-                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(modelDTO.getUser()).toString() });
+                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(notificationDefinitionDTO.getUser()).toString() });
                 Content subjectContent = new Content().withData(subject);
                 Content plainTextContent = new Content().withData(plainText);
                 Content htmlContent = new Content().withData(html);
@@ -162,15 +162,15 @@ public class MailSender {
         return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
     }
 
-    public Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionModelDTO modelDTO) throws Exception {
-        return createNotificationModel(notificationDefinition, modelDTO, false);
+    public Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO) throws Exception {
+        return createNotificationModel(notificationDefinition, notificationDefinitionDTO, false);
     }
 
-    private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionModelDTO modelDTO,
+    private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO,
             boolean safetyMode) throws Exception {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationDefinitionPropertyCategory> categories = notificationDefinition.getId().getPropertyCategories();
-        NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);
+        NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(notificationDefinitionDTO, propertyLoader);
         for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
             for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {
                 String value = safetyMode ? "placeholder" : loader.load(property);

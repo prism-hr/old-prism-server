@@ -9,7 +9,7 @@ public class InstitutionUserContactBuilder implements NotificationPropertyBuilde
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getInstitution().getUser().toString();
+        return propertyLoader.getNotificationDefinitionDTO().getResource().getInstitution().getUser().toString();
     }
 
 }

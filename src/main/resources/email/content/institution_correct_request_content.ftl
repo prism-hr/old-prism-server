@@ -16,7 +16,7 @@
 
 <p>
 	In order to approve your organization we would need you to provide clarification on the above. Please follow 
-	the link below to do so:
+	the link below to do so.
 </p>
 
 ${ACTION_COMPLETE}
@@ -27,5 +27,5 @@ ${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

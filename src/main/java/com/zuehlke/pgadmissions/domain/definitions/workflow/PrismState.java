@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproved;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedPendingPartnerApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
@@ -112,8 +113,10 @@ public enum PrismState {
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationApproved.class),
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, 
             PrismApplicationApprovedPendingPartnerApproval.class),
+    APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null,
+            PrismApplicationApprovedCompleted.class),
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null,
-            PrismApplicationApproved.class),
+            PrismApplicationApprovedCompleted.class),
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationRejected.class),
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null,
             PrismApplicationRejectedCompleted.class),

@@ -12,7 +12,7 @@ public class ApplicationIntervieweeInstructionsBuilder implements NotificationPr
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionModelDTO().getComment().getInterviewInstruction();
+        CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionDTO().getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.getPropertyLoader().loadLazy(SYSTEM_VALUE_NOT_PROVIDED) : instructions;
     }

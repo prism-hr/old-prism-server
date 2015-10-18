@@ -1,1 +1,1 @@
-Institution ${INSTITUTION_CODE} - Approval Notification
+Your Organization ${INSTITUTION_CODE} - Approval Notification

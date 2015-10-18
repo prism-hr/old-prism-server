@@ -9,7 +9,7 @@ public class ApplicationInterviewTimeZoneBuilder implements NotificationProperty
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getComment().getInterviewTimeZoneDisplay();
+        return propertyLoader.getNotificationDefinitionDTO().getComment().getInterviewTimeZoneDisplay();
     }
 
 }

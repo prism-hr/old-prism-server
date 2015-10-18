@@ -10,7 +10,7 @@ public class ApplicationPositionNameBuilder implements NotificationPropertyBuild
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        CommentPositionDetail positionDetail = propertyLoader.getNotificationDefinitionModelDTO().getComment().getPositionDetail();
+        CommentPositionDetail positionDetail = propertyLoader.getNotificationDefinitionDTO().getComment().getPositionDetail();
         return positionDetail == null ? null : positionDetail.getPositionName();
     }
 

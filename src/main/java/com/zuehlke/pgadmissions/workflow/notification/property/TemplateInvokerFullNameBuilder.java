@@ -9,7 +9,7 @@ public class TemplateInvokerFullNameBuilder implements NotificationPropertyBuild
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getInvoker().getFullName();
+        return propertyLoader.getNotificationDefinitionDTO().getInvoker().getFullName();
     }
     
 }

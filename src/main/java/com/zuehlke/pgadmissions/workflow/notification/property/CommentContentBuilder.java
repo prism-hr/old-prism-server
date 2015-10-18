@@ -11,7 +11,7 @@ public class CommentContentBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        String content = propertyLoader.getNotificationDefinitionModelDTO().getComment().getContent();
+        String content = propertyLoader.getNotificationDefinitionDTO().getComment().getContent();
         return content == null ? propertyLoader.getPropertyLoader().loadLazy(SYSTEM_COMMENT_CONTENT_NOT_PROVIDED) : "\"" + content + "\"";
     }
 

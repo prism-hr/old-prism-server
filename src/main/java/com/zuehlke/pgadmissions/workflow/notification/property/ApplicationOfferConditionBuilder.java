@@ -10,7 +10,7 @@ public class ApplicationOfferConditionBuilder implements NotificationPropertyBui
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        CommentOfferDetail offerDetail = propertyLoader.getNotificationDefinitionModelDTO().getComment().getOfferDetail();
+        CommentOfferDetail offerDetail = propertyLoader.getNotificationDefinitionDTO().getComment().getOfferDetail();
         return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }
 

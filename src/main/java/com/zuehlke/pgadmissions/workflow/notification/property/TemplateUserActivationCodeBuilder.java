@@ -9,7 +9,7 @@ public class TemplateUserActivationCodeBuilder implements NotificationPropertyBu
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getUser().getActivationCode();
+        return propertyLoader.getNotificationDefinitionDTO().getUser().getActivationCode();
     }
     
 }

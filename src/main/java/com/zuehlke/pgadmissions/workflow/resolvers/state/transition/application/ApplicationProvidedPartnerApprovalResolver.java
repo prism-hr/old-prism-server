@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class ApplicationProvidedPartnerApprovalResolver implements StateTransiti
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
         if (isTrue(comment.getPartnerAcceptAppointment())) {
-            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE);
         }
         return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED);
     }

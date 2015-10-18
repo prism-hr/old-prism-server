@@ -40,9 +40,9 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.Proj
 public enum PrismStateTransitionEvaluation {
 
     APPLICATION_COMPLETED_OUTCOME(false, APPLICATION, ApplicationCompletedResolver.class), //
-    APPLICATION_CONFIRMED_MANAGEMENT_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
     APPLICATION_CONFIRMED_OFFER_OUTCOME(false, APPLICATION, ApplicationConfirmedOfferOutcome.class), //
     APPLICATION_COMPLETED_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedStateResolver.class), //
+    APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewAvailabilityResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewFeedbackResolver.class), //
     APPLICATION_ASSIGNED_REVIEWER_OUTCOME(false, APPLICATION, ApplicationAssignedReviewerResolver.class), //

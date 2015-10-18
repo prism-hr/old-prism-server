@@ -17,8 +17,7 @@
     <br/>
 <ul>
     <li>Please follow the <i>Proceed</i> link below.</li>
-    <li>Enter a password of your choice on the registration form, (or simply login if you have already
-        registered).
+    <li>Enter a password of your choice on the registration form, (or login if you have already registered).
     </li>
     <li>Then follow the onscreen guidance to access our feedback form.</li>
 </ul>
@@ -26,8 +25,9 @@
 <b>If you feel unable to do this:</b>
 <br/>
 <ul>
-    <li>Simply click on the alternative, <i>Decline</i>, link to notify us of the situation. (Please be aware
-        that by declining you may reduce the chance of the applicant securing a position).
+    <li>
+    	Follow the alternative, <i>Decline</i>, link to notify us of the situation. (Please be aware that by 
+    	declining you may reduce the chance of the applicant securing a position).
     </li>
 </ul>
 <br/>
@@ -36,13 +36,13 @@
 ${ACTION_COMPLETE}
 
 <p>
-    We kindly ask you to provide your feedback using our portal, (rather than submitting via other means), so that we 
-    can validate that your comments are authentic, and maintain a comprehensive record of our decision making.
+    We kindly ask you to provide your feedback using our portal, (rather than submitting via other means), so that 
+    we can validate that your comments are authentic, and maintain a comprehensive record of our decision making.
 </p>
 
 <p>
-    We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, please
-    see our dedicated ${TEMPLATE_SYSTEM_HELPDESK} to access further assistance.
+    We look forward to receiving your feedback at your earliest convenience. Should you run into any difficulty, 
+    please see our dedicated ${TEMPLATE_SYSTEM_HELPDESK} to access further assistance.
 </p>
 
 <p>
@@ -51,5 +51,5 @@ ${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

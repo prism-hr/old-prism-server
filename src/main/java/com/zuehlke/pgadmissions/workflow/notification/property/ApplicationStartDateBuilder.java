@@ -11,7 +11,7 @@ public class ApplicationStartDateBuilder implements NotificationPropertyBuilder 
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getComment()
+        return propertyLoader.getNotificationDefinitionDTO().getComment()
                 .getPositionProvisionalStartDateDisplay(propertyLoader.getPropertyLoader().loadLazy(SYSTEM_DATE_FORMAT));
     }
 

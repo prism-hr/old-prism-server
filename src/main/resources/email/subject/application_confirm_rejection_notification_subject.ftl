@@ -1,1 +1,1 @@
-Application ${APPLICATION_CODE} for ${TEMPLATE_PARENT_RESOURCE_CODE} - Outcome
+Your Application ${APPLICATION_CODE} - Outcome of Consideration

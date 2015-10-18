@@ -11,7 +11,7 @@ public class ApplicationOpportunityCategoryBuilder implements NotificationProper
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         return propertyLoader.getPropertyLoader()
-                .loadLazy(PrismOpportunityCategory.valueOf(propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getOpportunityCategories())
+                .loadLazy(PrismOpportunityCategory.valueOf(propertyLoader.getNotificationDefinitionDTO().getResource().getApplication().getOpportunityCategories())
                         .getDisplayProperty());
     }
 

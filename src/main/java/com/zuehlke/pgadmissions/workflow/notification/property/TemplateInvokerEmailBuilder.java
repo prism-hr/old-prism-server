@@ -9,7 +9,7 @@ public class TemplateInvokerEmailBuilder implements NotificationPropertyBuilder 
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getInvoker().getEmail();
+        return propertyLoader.getNotificationDefinitionDTO().getInvoker().getEmail();
     }
     
 }

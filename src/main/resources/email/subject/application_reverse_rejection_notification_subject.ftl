@@ -1,1 +1,1 @@
-Application ${APPLICATION_CODE} for ${TEMPLATE_PARENT_RESOURCE_CODE} - Reinstatement
+Your Application ${APPLICATION_CODE} - Reinstatement

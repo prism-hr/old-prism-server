@@ -1,1 +1,1 @@
-Updates from your network in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers!
+Daily summary of activity in ${TEMPLATE_SYSTEM_NAME}

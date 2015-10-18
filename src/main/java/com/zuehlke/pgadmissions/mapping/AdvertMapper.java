@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -95,7 +96,7 @@ public class AdvertMapper {
 
     @Inject
     private UserService userService;
-    
+
     @Inject
     private AddressMapper addressMapper;
 
@@ -229,6 +230,7 @@ public class AdvertMapper {
                         .setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(oc -> PrismOpportunityCategory.valueOf(oc)).collect(Collectors.toList()));
             }
 
+            setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
             representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
         }
 
@@ -260,6 +262,8 @@ public class AdvertMapper {
         }
 
         representation.setOpportunityType(advert.getOpportunityType());
+        setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
+
         representation.setName(advert.getName());
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
@@ -460,6 +464,12 @@ public class AdvertMapper {
             return resourceRepresentation;
         }
         return null;
+    }
+
+    private void setTargetOpportunityTypes(AdvertRepresentationExtended representation, String targetOpportunityTypes) {
+        if (targetOpportunityTypes != null) {
+            representation.setTargetOpportunityTypes(asList(targetOpportunityTypes.split("\\|")).stream().map(PrismOpportunityType::valueOf).collect(toList()));
+        }
     }
 
 }

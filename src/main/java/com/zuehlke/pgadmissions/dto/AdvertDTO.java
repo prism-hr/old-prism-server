@@ -34,6 +34,8 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     private PrismOpportunityType opportunityType;
 
+    private String targetOpportunityTypes;
+
     private String name;
 
     private String summary;
@@ -79,11 +81,11 @@ public class AdvertDTO extends ResourceActivityDTO {
     private BigDecimal payYearMaximum;
 
     private LocalDate closingDate;
-    
+
     private Long applicationCount;
-    
+
     private Long applicationRatingCount;
-    
+
     private Double applicationRatingAverage;
 
     private String sequenceIdentifier;
@@ -182,6 +184,14 @@ public class AdvertDTO extends ResourceActivityDTO {
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
+    }
+
+    public String getTargetOpportunityTypes() {
+        return targetOpportunityTypes;
+    }
+
+    public void setTargetOpportunityTypes(String targetOpportunityTypes) {
+        this.targetOpportunityTypes = targetOpportunityTypes;
     }
 
     public String getName() {
@@ -375,7 +385,7 @@ public class AdvertDTO extends ResourceActivityDTO {
     public void setApplicationCount(Long applicationCount) {
         this.applicationCount = applicationCount;
     }
-    
+
     public Long getApplicationRatingCount() {
         return applicationRatingCount;
     }

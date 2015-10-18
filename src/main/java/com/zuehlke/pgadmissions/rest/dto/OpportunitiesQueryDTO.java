@@ -26,6 +26,8 @@ public class OpportunitiesQueryDTO {
 
     private PrismOpportunityCategory opportunityCategory;
 
+    private Boolean recommendation;
+
     private String keyword;
 
     private List<PrismAdvertIndustry> industries;
@@ -33,6 +35,8 @@ public class OpportunitiesQueryDTO {
     private List<PrismAdvertFunction> functions;
 
     private List<PrismOpportunityType> opportunityTypes;
+
+    private List<PrismOpportunityType> targetOpportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
 
@@ -94,6 +98,14 @@ public class OpportunitiesQueryDTO {
         this.opportunityCategory = opportunityCategory;
     }
 
+    public Boolean getRecommendation() {
+        return recommendation;
+    }
+
+    public void setRecommendation(Boolean recommendation) {
+        this.recommendation = recommendation;
+    }
+
     public String getKeyword() {
         return keyword;
     }
@@ -124,6 +136,14 @@ public class OpportunitiesQueryDTO {
 
     public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
         this.opportunityTypes = opportunityTypes;
+    }
+
+    public List<PrismOpportunityType> getTargetOpportunityTypes() {
+        return targetOpportunityTypes;
+    }
+
+    public void setTargetOpportunityTypes(List<PrismOpportunityType> targetOpportunityTypes) {
+        this.targetOpportunityTypes = targetOpportunityTypes;
     }
 
     public List<PrismStudyOption> getStudyOptions() {

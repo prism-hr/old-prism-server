@@ -15,11 +15,11 @@
 	${APPLICATION_OFFER_ACCEPTANCE}.
 </p></b>
 
-<p>Login to view the history of the application and the terms and conditions accepted.</p>
+<p>Login to view the history of the application.</p>
 
 ${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

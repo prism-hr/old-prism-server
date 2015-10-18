@@ -24,7 +24,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -32,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
@@ -46,7 +45,7 @@ public class NotificationPropertyLoader {
 
     private PropertyLoader propertyLoader;
 
-    private NotificationDefinitionModelDTO notificationDefinitionModelDTO;
+    private NotificationDefinitionDTO notificationDefinitionDTO;
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -73,8 +72,8 @@ public class NotificationPropertyLoader {
         return propertyLoader;
     }
 
-    public NotificationDefinitionModelDTO getNotificationDefinitionModelDTO() {
-        return notificationDefinitionModelDTO;
+    public NotificationDefinitionDTO getNotificationDefinitionDTO() {
+        return notificationDefinitionDTO;
     }
 
     public String getApplicationUrl() {
@@ -107,14 +106,9 @@ public class NotificationPropertyLoader {
                 + ": " + helpdesk + "]" : value;
     }
 
-    public NotificationPropertyLoader localize(NotificationDefinitionModelDTO templateModelDTO, PropertyLoader propertyLoader) {
-        this.notificationDefinitionModelDTO = templateModelDTO;
-        Comment comment = this.notificationDefinitionModelDTO.getComment();
-        if (comment == null) {
-            this.notificationDefinitionModelDTO.setInvoker(systemService.getSystem().getUser());
-        } else {
-            this.notificationDefinitionModelDTO.setInvoker(comment.getUser());
-        }
+    public NotificationPropertyLoader localize(NotificationDefinitionDTO notificationDefinitionDTO, PropertyLoader propertyLoader) {
+        this.notificationDefinitionDTO = notificationDefinitionDTO;
+        this.notificationDefinitionDTO.setInvoker(systemService.getSystem().getUser());
         this.propertyLoader = propertyLoader;
         return this;
     }
@@ -128,13 +122,13 @@ public class NotificationPropertyLoader {
     }
 
     public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws Exception {
-        Resource resource = notificationDefinitionModelDTO.getResource();
-        String url = buildRedirectionUrl(resource, notificationDefinitionModelDTO.getTransitionAction(), notificationDefinitionModelDTO.getUser());
+        Resource resource = notificationDefinitionDTO.getResource();
+        String url = buildRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getUser());
         return buildRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
     public String getCommentAssigneesAsString(PrismRole roleId) {
-        Set<CommentAssignedUser> assigneeObjects = notificationDefinitionModelDTO.getComment().getAssignedUsers();
+        Set<CommentAssignedUser> assigneeObjects = notificationDefinitionDTO.getComment().getAssignedUsers();
         Set<String> assigneeStrings = Sets.newTreeSet();
         for (CommentAssignedUser assigneeObject : assigneeObjects) {
             if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType() == CREATE) {

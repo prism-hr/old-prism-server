@@ -9,7 +9,7 @@ public class ApplicationCreatorFullNameBuilder implements NotificationPropertyBu
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getUser().getFullName();
+        return propertyLoader.getNotificationDefinitionDTO().getResource().getApplication().getUser().getFullName();
     }
 
 }

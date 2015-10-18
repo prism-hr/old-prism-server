@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_REENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ENDORSER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_MANAGER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_ENDORSE_TRANSITION;
@@ -29,12 +29,12 @@ public class PrismProjectApproved extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_UNENDORSE) //
-                .withPartnerAssignments(PROJECT_ENDORSER_GROUP) //
+                .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_REENDORSE) //
-                .withPartnerAssignments(PROJECT_ENDORSER_GROUP) //
+                .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
                 .withTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(projectTerminateApproved()); //

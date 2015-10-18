@@ -61,6 +61,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -84,6 +85,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinitio
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
@@ -237,6 +239,11 @@ public class AdvertService {
     }
 
     public void updateAdvert(Resource parentResource, Advert advert, AdvertDTO advertDTO, String resourceName) {
+        List<PrismOpportunityType> targetOpportunityTypes = advertDTO.getTargetOpportunityTypes();
+        if (isNotEmpty(targetOpportunityTypes)) {
+            advert.setTargetOpportunityTypes(Joiner.on("|").join(targetOpportunityTypes.stream().map(tot -> tot.name()).collect(toList())));
+        }
+
         advert.setSummary(advertDTO.getSummary());
         advert.setHomepage(advertDTO.getHomepage());
         advert.setApplyHomepage(advertDTO.getApplyHomepage());

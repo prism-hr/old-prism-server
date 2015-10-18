@@ -22,5 +22,5 @@ ${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

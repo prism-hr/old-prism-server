@@ -1,1 +1,1 @@
-Invitation to connect in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers!
+Request to Connect in ${TEMPLATE_SYSTEM_NAME} Accepted

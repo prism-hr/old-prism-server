@@ -4,11 +4,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE;
@@ -32,7 +32,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_COMPLETION;
@@ -73,11 +72,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_UNSUBMITTED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_MANAGEMENT_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REVIEW_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.DEPARTMENT_APPROVED_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.DEPARTMENT_CREATED_OUTCOME;
@@ -182,35 +179,15 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE) //
                     .withTransitionEvaluation(APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME)), //
 
-    APPLICATION_CONFIRM_APPOINTMENT_TRANSITION( //
+    APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_TRANSITION( //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVAL_PENDING_COMPLETION) //
-                    .withTransitionAction(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE) //
-                    .withTransitionEvaluation(APPLICATION_CONFIRMED_MANAGEMENT_OUTCOME),
+                    .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
+                    .withTransitionEvaluation(APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME),
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVAL_PENDING_FEEDBACK) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                    .withTransitionEvaluation(APPLICATION_CONFIRMED_MANAGEMENT_OUTCOME)), //
-
-    APPLICATION_CONFIRM_OFFER_RECOMMENDATION_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL)
-                    .withTransitionAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
-                    .withTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME),
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_COMPLETED) //
-                    .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                    .withTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME)), //
-
-    APPLICATION_PROVIDE_PARTNER_APPROVAL_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED)
-                    .withTransitionAction(APPLICATION_CONFIRM_OFFER) //
-                    .withTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME),
-            new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_COMPLETED) //
-                    .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                    .withTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME)), //
+                    .withTransitionEvaluation(APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME)), //
 
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION( //
             new PrismStateTransition() //
@@ -356,6 +333,11 @@ public enum PrismStateTransitionGroup {
                     .withTransitionEvaluation(DEPARTMENT_UPDATED_OUTCOME) //
                     .withPropagatedActions(PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE)), //
 
+    DEPARTMENT_ENDORSE_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(DEPARTMENT_APPROVED) //
+                    .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST)), //
+
     INSTITUTION_CREATE_TRANSITION( //
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_UNSUBMITTED) //
@@ -390,7 +372,12 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_DISABLED_COMPLETED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT) //
                     .withTransitionEvaluation(INSTITUTION_UPDATED_OUTCOME) //
-                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE));
+                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE)), //
+
+    INSTITUTION_ENDORSE_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(INSTITUTION_APPROVED) //
+                    .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST));
 
     private PrismStateTransition[] stateTransitionTemplates;
 

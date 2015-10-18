@@ -1,16 +1,21 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.URL;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class AdvertDTO {
+
+    private List<PrismOpportunityType> targetOpportunityTypes;
 
     @Size(max = 1000)
     private String summary;
@@ -36,6 +41,14 @@ public class AdvertDTO {
     private ResourceTargetDTO target;
 
     private Boolean globallyVisible;
+
+    public List<PrismOpportunityType> getTargetOpportunityTypes() {
+        return targetOpportunityTypes;
+    }
+
+    public void setTargetOpportunityTypes(List<PrismOpportunityType> targetOpportunityTypes) {
+        this.targetOpportunityTypes = targetOpportunityTypes;
+    }
 
     public String getSummary() {
         return summary;

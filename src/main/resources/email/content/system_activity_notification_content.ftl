@@ -40,11 +40,11 @@ ${TEMPLATE_SYSTEM_HOMEPAGE}
 <p>
 	If you do not wish to receive these messages any more, or wish to take a break, 
 	let us know us by updating your user preferences.
-	<br/>
-	${SYSTEM_USER_ACCOUNT_MANAGEMENT}
 </p>
+
+${SYSTEM_USER_ACCOUNT_MANAGEMENT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

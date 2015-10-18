@@ -8,7 +8,7 @@
 </b></p>
 
 <p>
-    We have assessed your application and regret to inform you that it was unsuccessful.
+    We have assessed your application and we regret to inform you that it was unsuccessful.
 </p>
 
 <p>
@@ -23,5 +23,5 @@ ${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

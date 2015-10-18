@@ -220,6 +220,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_UPLOAD_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Upload Reference"),
     SYSTEM_ACTION_APPLICATION_VIEW_EDIT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View / Edit"),
     SYSTEM_ACTION_APPLICATION_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
+    SYSTEM_ACTION_INSTITUTION_ENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Approve as Placement Provider"),
+    SYSTEM_ACTION_INSTITUTION_UNENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Suspend as Placement Provider"),
+    SYSTEM_ACTION_INSTITUTION_REENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore as Placement Provider"),
     SYSTEM_ACTION_INSTITUTION_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Institution"),
     SYSTEM_ACTION_INSTITUTION_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_INSTITUTION_VIEW_EDIT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View / Edit"),
@@ -235,6 +238,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_INSTITUTION_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_INSTITUTION_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
+    SYSTEM_ACTION_DEPARTMENT_ENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Approve as Placement Provider"),
+    SYSTEM_ACTION_DEPARTMENT_UNENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Suspend as Placement Provider"),
+    SYSTEM_ACTION_DEPARTMENT_REENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore as Placement Provider"),
     SYSTEM_ACTION_DEPARTMENT_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Department"),
     SYSTEM_ACTION_DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
     SYSTEM_ACTION_DEPARTMENT_COMPLETE_APPROVAL_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Approval Stage"),
@@ -1728,7 +1734,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     INSTITUTION_COMMENT_APPROVAL(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Your Institution has been submitted for approval. We will notify you when it is ready to use"),
-    INSTITUTION_COMMENT_APPROVED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "We are pleased to tell you that your organization has been approved. You may now login to create other users, Departments, programs and positions, and manage your student/graduate recruitmemt"),
+    INSTITUTION_COMMENT_APPROVED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "We are pleased to tell you that your organization has been approved. You may now login to create users, Departments, programs and positions, and manage your recruitmemt"),
     INSTITUTION_COMMENT_CORRECTION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Further information is required to activate your organization. Please login to address the reviewers comments"),
     INSTITUTION_COMMENT_REJECTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "We are sorry to inform you that your organization has been rejected"),
     INSTITUTION_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Initialized organization"),
@@ -1758,7 +1764,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     DEPARTMENT_COMMENT_APPROVAL(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Your Department has been submitted for approval. We will notify you when it is ready to use"),
-    DEPARTMENT_COMMENT_APPROVED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are pleased to tell you that your Department has been approved. You may now login to create other users, programs and positions, and manage your student/graduate recruitmemt"),
+    DEPARTMENT_COMMENT_APPROVED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are pleased to tell you that your Department has been approved. You may now login to create users, programs and positions, and manage your recruitmemt"),
     DEPARTMENT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Further information is required to activate your Department. Please login to address the reviewers comments"),
     DEPARTMENT_COMMENT_REJECTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are sorry to inform you that your Department has been rejected"),
     DEPARTMENT_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Initialized Department"),
@@ -1783,7 +1789,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     PROGRAM_COMMENT_APPROVAL(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Your program has been submitted for approval. We will notify you when it is ready to use"),
-    PROGRAM_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create other users and positions, and manage your student/graduate recruitmemt"),
+    PROGRAM_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are pleased to tell you that your program has been approved. You may now login to create users and positions, and manage your recruitmemt"),
     PROGRAM_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
     PROGRAM_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program"),
@@ -1809,7 +1815,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     PROJECT_COMMENT_APPROVAL(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Your position has been submitted for approval. We will notify you when it is ready to use"),
-    PROJECT_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are pleased to tell you that your position has been approved. You may now login to create other users and manage your student/graduate recruitmemt"),
+    PROJECT_COMMENT_APPROVED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are pleased to tell you that your position has been approved. You may now login to create users and manage your recruitmemt"),
     PROJECT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Further information is required to activate your position. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are sorry to inform you that your position has been rejected"),
     PROJECT_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position"),

@@ -12,7 +12,7 @@ public class ActionCompleteBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.buildRedirectionControl(SYSTEM_PROCEED, propertyLoader.getNotificationDefinitionModelDTO().getTransitionAction()
+        return propertyLoader.buildRedirectionControl(SYSTEM_PROCEED, propertyLoader.getNotificationDefinitionDTO().getTransitionAction()
                 .isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
 

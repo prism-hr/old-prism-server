@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
@@ -24,8 +24,8 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        NotificationDefinitionModelDTO modelDTO = propertyLoader.getNotificationDefinitionModelDTO();
-        List<AdvertRecommendationDTO> advertRecommendations = modelDTO.getAdvertRecommendations();
+        NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
+        List<AdvertRecommendationDTO> advertRecommendations = notificationDefinitionDTO.getAdvertRecommendations();
 
         if (!advertRecommendations.isEmpty()) {
             List<String> recommendations = Lists.newLinkedList();
@@ -40,7 +40,7 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
 
                 String applyHomepage = advert.getApplyHomepage();
                 applyHomepage = applyHomepage == null ? propertyLoader.buildRedirectionUrl(resourceParent,
-                        createResourceActions.get(resourceParent.getResourceScope()), modelDTO.getUser()) : applyHomepage;
+                        createResourceActions.get(resourceParent.getResourceScope()), notificationDefinitionDTO.getUser()) : applyHomepage;
                 recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
             }
 

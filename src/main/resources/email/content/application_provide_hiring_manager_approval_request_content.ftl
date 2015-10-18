@@ -8,12 +8,14 @@
 </b></p>
 
 <p>
-    ${TEMPLATE_AUTHOR_FULL_NAME} has nominated you as the hiring manager for their application. We need you 
-    to confirm that you are willing to support their appointment, and the terms and conditions proposed.
+    ${TEMPLATE_AUTHOR_FULL_NAME} has stipulated that s/he would like this position to be considered as 
+    an on course placement. Before they can accept an offer from the provider, they need their department 
+    to confirm that this is acceptable from an academic standpoint.
 </p>
 
 <p>
-    Please following the link below to provide your confirmation:
+    Follow the link below to either accept or reject this request. Be aware that both the applicant and 
+    the provider would appreciate a speedy response.
 </p>
 
 ${ACTION_COMPLETE}
@@ -24,5 +26,5 @@ ${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

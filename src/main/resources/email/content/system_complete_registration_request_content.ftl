@@ -18,5 +18,5 @@ ${SYSTEM_USER_ACCOUNT_ACTIVATION}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

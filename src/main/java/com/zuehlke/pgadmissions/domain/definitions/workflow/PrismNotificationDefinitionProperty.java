@@ -20,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TARGET_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TEMPLATE_GLOBAL;
 
 import java.util.List;
@@ -73,7 +74,7 @@ import com.zuehlke.pgadmissions.workflow.notification.property.TemplateAuthorFul
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInvokerEmailBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInvokerFullNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateParentResourceCodeBuilder;
-import com.zuehlke.pgadmissions.workflow.notification.property.TemplateParentResourceTitleBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TemplateParentResourceNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemHelpdeskBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemNameBuilder;
@@ -97,13 +98,15 @@ public enum PrismNotificationDefinitionProperty {
     TEMPLATE_SYSTEM_NAME(TEMPLATE_GLOBAL, true, TemplateSystemNameBuilder.class), //
     TEMPLATE_SYSTEM_HOMEPAGE(TEMPLATE_GLOBAL, true, TemplateSystemHomepageBuilder.class), //
     TEMPLATE_SYSTEM_HELPDESK(TEMPLATE_GLOBAL, false, TemplateSystemHelpdeskBuilder.class), //
-    TEMPLATE_PARENT_RESOURCE_TITLE(TEMPLATE_GLOBAL, true, TemplateParentResourceTitleBuilder.class), //
+    TEMPLATE_PARENT_RESOURCE_NAME(TEMPLATE_GLOBAL, true, TemplateParentResourceNameBuilder.class), //
     TEMPLATE_PARENT_RESOURCE_CODE(TEMPLATE_GLOBAL, true, TemplateParentResourceCodeBuilder.class), //
     ACTION_COMPLETE(ACTION_GLOBAL, false, ActionCompleteBuilder.class), //
     ACTION_VIEW_EDIT(ACTION_GLOBAL, false, ActionViewEditBuilder.class), //
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
+    TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, null), //
+    TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, null), //
     APPLICATION_CREATOR_EMAIL(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true, ApplicationCodeBuilder.class), //

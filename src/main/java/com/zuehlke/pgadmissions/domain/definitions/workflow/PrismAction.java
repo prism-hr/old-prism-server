@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
@@ -94,6 +95,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
 
+    DEPARTMENT_ENDORSE(getDefaultPartnerActionDefinition(DEPARTMENT, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
+    DEPARTMENT_UNENDORSE(getDefaultPartnerActionDefinition(DEPARTMENT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
+    DEPARTMENT_REENDORSE(getDefaultPartnerActionDefinition(DEPARTMENT, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     DEPARTMENT_COMPLETE(getDefaultViewEditResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
@@ -108,6 +112,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(DEPARTMENT)), //
 
+    INSTITUTION_ENDORSE(getDefaultPartnerActionDefinition(INSTITUTION, ENDORSEMENT_PENDING, ENDORSEMENT_PROVIDED)), //
+    INSTITUTION_UNENDORSE(getDefaultPartnerActionDefinition(INSTITUTION, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //
+    INSTITUTION_REENDORSE(getDefaultPartnerActionDefinition(INSTITUTION, ENDORSEMENT_REVOKED, ENDORSEMENT_PROVIDED)), //
     INSTITUTION_COMPLETE(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_COMPLETE_APPROVAL_STAGE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(INSTITUTION)), //

@@ -9,7 +9,7 @@ public class ApplicationRejectionReasonBuilder implements NotificationPropertyBu
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getPropertyLoader().loadLazy(propertyLoader.getNotificationDefinitionModelDTO().getComment().getRejectionReason().getDisplayProperty());
+        return propertyLoader.getPropertyLoader().loadLazy(propertyLoader.getNotificationDefinitionDTO().getComment().getRejectionReason().getDisplayProperty());
     }
 
 }

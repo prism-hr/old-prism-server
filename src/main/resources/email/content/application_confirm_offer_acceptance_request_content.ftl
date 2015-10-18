@@ -13,8 +13,8 @@
 
 <p>
     We now need you to login at your earliest convenience to confirm that you are happy to accept our 
-    terms of offer. Please do this quickly, so that we have the opporutunity to offer the opportunity to 
-    another applicant should you wish to decline.
+    terms of offer. <b>Please do this quickly, so that we have the opportunity to offer the opportunity to 
+    another applicant should you wish to decline.</b>
 </p>
 
 <p>
@@ -35,5 +35,5 @@ ${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
 </p>

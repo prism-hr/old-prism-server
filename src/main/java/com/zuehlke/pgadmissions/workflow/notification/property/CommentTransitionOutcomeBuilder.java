@@ -1,11 +1,12 @@
 package com.zuehlke.pgadmissions.workflow.notification.property;
 
+import static com.google.common.collect.Iterables.getLast;
+import static com.google.common.collect.Lists.newArrayList;
+
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
@@ -13,10 +14,10 @@ public class CommentTransitionOutcomeBuilder implements NotificationPropertyBuil
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        NotificationDefinitionModelDTO modelDTO = propertyLoader.getNotificationDefinitionModelDTO();
-        String resourceName = modelDTO.getResource().getResourceScope().name();
-        String outcomePostfix = Iterables.getLast(Lists.newArrayList(modelDTO.getComment().getTransitionState().getId().name().split("_")));
-        return propertyLoader.getPropertyLoader().loadLazy(PrismDisplayPropertyDefinition.valueOf(resourceName + "_COMMENT_" + outcomePostfix));
+        NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
+        String resourceReference = notificationDefinitionDTO.getResource().getResourceScope().name();
+        String outcomePostfix = getLast(newArrayList(notificationDefinitionDTO.getComment().getTransitionState().getId().name().split("_")));
+        return propertyLoader.getPropertyLoader().loadLazy(PrismDisplayPropertyDefinition.valueOf(resourceReference + "_COMMENT_" + outcomePostfix));
     }
 
 }

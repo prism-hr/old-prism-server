@@ -9,7 +9,7 @@ public class ApplicationCodeBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getCode();
+        return propertyLoader.getNotificationDefinitionDTO().getResource().getApplication().getCode();
     }
 
 }

@@ -9,7 +9,7 @@ public class ApplicationCreatorEmailBuilder implements NotificationPropertyBuild
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getUser().getEmail();
+        return propertyLoader.getNotificationDefinitionDTO().getResource().getApplication().getUser().getEmail();
     }
 
 }

@@ -14,7 +14,7 @@ public class ApplicationOfferAcceptanceBuilder implements NotificationPropertyBu
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
         return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED, SYSTEM_NOTIFICATION_APPLICANT_DECLINED,
-                toBoolean(propertyLoader.getNotificationDefinitionModelDTO().getComment().getApplicantAcceptAppointment()));
+                toBoolean(propertyLoader.getNotificationDefinitionDTO().getComment().getApplicantAcceptAppointment()));
     }
 
 }

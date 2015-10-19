@@ -318,20 +318,20 @@ public class ActionDAO {
     }
 
     private static Junction getUnsecuredActionVisibilityConstraint(boolean userLoggedIn) {
-        Junction constraint = Restrictions.conjunction() //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("stateAction.actionCondition")) //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")));
-
+        Junction conditionConstraint = Restrictions.conjunction() //
+                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
         if (userLoggedIn) {
-            constraint.add(Restrictions.eq("resourceCondition.externalMode", true));
-        } else {
-            constraint.add(Restrictions.disjunction() //
-                    .add(Restrictions.isNull("resourceCondition.id"))
+            conditionConstraint.add(Restrictions.disjunction() //
+                    .add(Restrictions.eq("resourceCondition.internalMode", true)) //
                     .add(Restrictions.eq("resourceCondition.externalMode", true)));
+        } else {
+            conditionConstraint.add(Restrictions.eq("resourceCondition.externalMode", true));
         }
 
-        return constraint;
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("resourceCondition.id")) //
+                .add(Restrictions.isNull("stateAction.actionCondition")) //
+                .add(conditionConstraint);
     }
 
 }

@@ -36,16 +36,16 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST) //
                 .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL)
                         .withTransitionAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
-                        .withTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME) //
+                        .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME) //
                         .withRoleTransitions(APPLICATION_RETIRE_REFEREE_GROUP) //
                         .withStateTerminations(APPLICATION_TERMINATE_REFERENCE_GROUP.getStateTerminations()), //
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE) //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                                .withTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_APPOINTEE_GROUP, //
                                         APPLICATION_RETIRE_REFEREE_GROUP)
                                 .withStateTerminations(APPLICATION_TERMINATE_REFERENCE_GROUP.getStateTerminations()))); //

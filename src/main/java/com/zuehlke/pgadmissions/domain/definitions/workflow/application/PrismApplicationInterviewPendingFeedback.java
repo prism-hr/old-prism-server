@@ -25,7 +25,7 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
 
         stateActions.add(applicationProvideInterviewFeedback() //
-                .withTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION //
+                .withStateTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));
 
         stateActions.add(applicationTerminateInterviewScheduled());

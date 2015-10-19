@@ -24,7 +24,7 @@ public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
         stateActions.add(PrismApplicationWorkflow.applicationEscalate(APPLICATION_REVIEW_PENDING_COMPLETION));
 
         stateActions.add(applicationProvideReview()
-                .withTransitions(APPLICATION_PROVIDE_REVIEW_TRANSITION //
+                .withStateTransitions(APPLICATION_PROVIDE_REVIEW_TRANSITION //
                         .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP)));
 
         stateActions.add(applicationTerminateReview());

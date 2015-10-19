@@ -23,10 +23,10 @@ public class PrismProjectApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(projectCompleteApproval() //
                 .withRaisesUrgentFlag() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
-                        .withTransitionEvaluation(PROJECT_APPROVED_OUTCOME)));
+                        .withStateTransitionEvaluation(PROJECT_APPROVED_OUTCOME)));
 
         stateActions.add(projectEmailCreatorUnnapproved());
         stateActions.add(projectEscalateUnapproved());
@@ -40,7 +40,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
                 .withAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
                 .withAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotification(PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-                .withTransitions(PROJECT_APPROVE_TRANSITION);
+                .withStateTransitions(PROJECT_APPROVE_TRANSITION);
     }
 
 }

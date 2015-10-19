@@ -27,7 +27,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                 .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationProvideHiringManagerApproval() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
                         .withRoleTransitions(APPLICATION_CONFIRM_APPOINTMENT_GROUP))); //

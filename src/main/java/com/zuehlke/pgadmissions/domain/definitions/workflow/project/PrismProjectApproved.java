@@ -22,7 +22,7 @@ public class PrismProjectApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_CREATE_APPLICATION) //
                 .withActionCondition(ACCEPT_APPLICATION) //
-                .withTransitions(APPLICATION_CREATE_TRANSITION //
+                .withStateTransitions(APPLICATION_CREATE_TRANSITION //
                         .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
         stateActions.add(projectEmailCreatorApproved()); //
@@ -30,12 +30,12 @@ public class PrismProjectApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_UNENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
-                .withTransitions(PROJECT_ENDORSE_TRANSITION));
+                .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_REENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
-                .withTransitions(PROJECT_ENDORSE_TRANSITION));
+                .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(projectTerminateApproved()); //
         stateActions.add(projectViewEditApproved()); //

@@ -58,21 +58,21 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withAction(APPLICATION_ASSIGN_INTERVIEWERS) //
                 .withRaisesUrgentFlag() //
                 .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW_PENDING_AVAILABILITY) //
                         .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
-                        .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
+                        .withStateTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
                         .withRoleTransitions(APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP, //
                                 APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP), //
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_INTERVIEW_PENDING_FEEDBACK) //
                                 .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
-                                .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_INTERVIEWER_GROUP), //
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_INTERVIEW_PENDING_INTERVIEW) //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                                .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_INTERVIEWEE_GROUP, //
                                         APPLICATION_CREATE_INTERVIEWER_GROUP))); //
 
@@ -112,23 +112,23 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
                 .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(APPLICATION_CONFIRMED_INTERVIEW_GROUP, APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW) //
                         .withTransitionAction(APPLICATION_ASSIGN_INTERVIEWERS) //
-                        .withTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
+                        .withStateTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
                         .withRoleTransitions(APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
                                 APPLICATION_RETIRE_INTERVIEWER_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_INTERVIEW_PENDING_FEEDBACK) //
                                 .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
-                                .withTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP, //
                                         APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP, //
                                         APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP), //
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_INTERVIEW_PENDING_INTERVIEW) //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                                .withTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_CONFIRMED_INTERVIEW_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP, //
                                         APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP));
     }

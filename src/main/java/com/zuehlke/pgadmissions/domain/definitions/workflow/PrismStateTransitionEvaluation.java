@@ -23,15 +23,19 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationPurgedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationUpdateInterviewAvailabilityResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentCompletedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department.DepartmentUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionApprovedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionCompletedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution.InstitutionUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramApprovedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramCompletedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.program.ProgramUpdatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectApprovedResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCompletedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectCreatedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project.ProjectUpdatedResolver;
 
@@ -53,21 +57,25 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PURGED_OUTCOME(false, APPLICATION, ApplicationPurgedResolver.class), //
     APPLICATION_IDENTIFIED_OUTCOME(false, APPLICATION, ApplicationIdentifiedResolver.class), //
 
+    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class), //
+    PROJECT_COMPLETED_OUTCOME(false, PROJECT, ProjectCompletedResolver.class), //
     PROJECT_APPROVED_OUTCOME(true, PROJECT, ProjectApprovedResolver.class), //
     PROJECT_UPDATED_OUTCOME(true, PROJECT, ProjectUpdatedResolver.class), //
-    PROJECT_CREATED_OUTCOME(false, PROJECT, ProjectCreatedResolver.class), //
 
+    PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class), //
+    PROGRAM_COMPLETED_OUTCOME(false, PROGRAM, ProgramCompletedResolver.class), //
     PROGRAM_APPROVED_OUTCOME(true, PROGRAM, ProgramApprovedResolver.class), //
     PROGRAM_UPDATED_OUTCOME(true, PROGRAM, ProgramUpdatedResolver.class), //
-    PROGRAM_CREATED_OUTCOME(false, PROGRAM, ProgramCreatedResolver.class),
 
+    DEPARTMENT_CREATED_OUTCOME(false, DEPARTMENT, DepartmentCreatedResolver.class), //
+    DEPARTMENT_COMPLETED_OUTCOME(false, DEPARTMENT, DepartmentCompletedResolver.class), //
     DEPARTMENT_APPROVED_OUTCOME(true, DEPARTMENT, DepartmentApprovedResolver.class), //
     DEPARTMENT_UPDATED_OUTCOME(true, DEPARTMENT, DepartmentUpdatedResolver.class), //
-    DEPARTMENT_CREATED_OUTCOME(false, DEPARTMENT, DepartmentCreatedResolver.class), //
 
+    INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class), //
+    INSTITUTION_COMPLETED_OUTCOME(false, INSTITUTION, InstitutionCompletedResolver.class), //
     INSTITUTION_APPROVED_OUTCOME(true, INSTITUTION, InstitutionApprovedResolver.class), //
-    INSTITUTION_UPDATED_OUTCOME(true, INSTITUTION, InstitutionUpdatedResolver.class), //
-    INSTITUTION_CREATED_OUTCOME(false, INSTITUTION, InstitutionCreatedResolver.class);
+    INSTITUTION_UPDATED_OUTCOME(true, INSTITUTION, InstitutionUpdatedResolver.class);
 
     private boolean nextStateSelection;
 

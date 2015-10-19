@@ -36,7 +36,7 @@ public class PrismDepartmentWorkflow {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_PROGRAM) //
                 .withActionCondition(ACCEPT_PROGRAM) //
-                .withTransitions(PROGRAM_CREATE_TRANSITION //
+                .withStateTransitions(PROGRAM_CREATE_TRANSITION //
                         .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
     }
 
@@ -44,7 +44,7 @@ public class PrismDepartmentWorkflow {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_PROJECT) //
                 .withActionCondition(ACCEPT_PROJECT) //
-                .withTransitions(PROJECT_CREATE_TRANSITION //
+                .withStateTransitions(PROJECT_CREATE_TRANSITION //
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP));
     }
 
@@ -60,21 +60,21 @@ public class PrismDepartmentWorkflow {
     public static PrismStateAction departmentEscalateUnapproved() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_ESCALATE) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_REJECTED) //
                         .withTransitionAction(DEPARTMENT_ESCALATE));
     }
 
     public static PrismStateAction departmentTerminateUnapproved() {
         return departmentTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_REJECTED) //
                         .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
     public static PrismStateAction departmentTerminateApproved() {
         return departmentTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_DISABLED_COMPLETED) //
                         .withTransitionAction(DEPARTMENT_TERMINATE));
     }
@@ -83,7 +83,7 @@ public class PrismDepartmentWorkflow {
         return departmentViewEditAbstract()
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(DEPARTMENT_VIEW_EDIT)
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
@@ -94,7 +94,7 @@ public class PrismDepartmentWorkflow {
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
                 .withAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
-                .withTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
+                .withStateTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
 
@@ -108,7 +108,7 @@ public class PrismDepartmentWorkflow {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_WITHDRAW) //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST));
     }

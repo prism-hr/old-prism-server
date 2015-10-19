@@ -29,14 +29,14 @@ public class PrismApplicationApprovedPendingPartnerApproval extends PrismWorkflo
                 .withAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
                 .withRaisesUrgentFlag() //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_APPROVED)
                         .withTransitionAction(APPLICATION_CONFIRM_OFFER) //
-                        .withTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME),
+                        .withStateTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE) //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                                .withTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_APPOINTEE_GROUP)));
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //

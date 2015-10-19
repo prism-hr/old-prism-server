@@ -33,7 +33,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                 APPLICATION_RETIRE_REVIEWER_GROUP)); //
 
         stateActions.add(applicationProvideReview() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REVIEW_PENDING_COMPLETION) //
                         .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP))); //

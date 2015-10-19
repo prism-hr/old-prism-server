@@ -38,7 +38,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
         stateActions.add(applicationCommentWithViewerRecruiter()); //
 
         stateActions.add(applicationCompleteReference(state) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionAction(APPLICATION_VIEW_EDIT) //
                         .withRoleTransitions(APPLICATION_RETIRE_REFEREE_GROUP) //
                         .withStateTerminations(new PrismStateTermination() //
@@ -48,19 +48,19 @@ public class PrismApplicationReference extends PrismWorkflowState {
         stateActions.add(applicationEscalate(APPLICATION_REFERENCE_PENDING_COMPLETION));
 
         stateActions.add(applicationProvideReference() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REFERENCE) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                        .withTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
+                        .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
                                 .withTransitionAction(PrismAction.APPLICATION_COMPLETE_REFERENCE_STAGE) //
-                                .withTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
-                                .withTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
+                                .withStateTransitionEvaluation(APPLICATION_PROVIDED_REFERENCE_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP) //
                                 .withStateTerminations(new PrismStateTermination() //
                                         .withTerminationState(APPLICATION_REFERENCE) //

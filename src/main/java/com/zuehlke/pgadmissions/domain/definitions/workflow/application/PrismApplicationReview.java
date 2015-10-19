@@ -34,7 +34,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
                 .withAction(APPLICATION_ASSIGN_REVIEWERS) //
                 .withRaisesUrgentFlag() //
                 .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REVIEW_PENDING_FEEDBACK) //
                         .withTransitionAction(APPLICATION_PROVIDE_REVIEW) //
                         .withRoleTransitions(APPLICATION_CREATE_REVIEWER_GROUP)));

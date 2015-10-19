@@ -25,7 +25,7 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_APPLICATION) //
                 .withActionCondition(ACCEPT_APPLICATION) //
-                .withTransitions(APPLICATION_CREATE_TRANSITION //
+                .withStateTransitions(APPLICATION_CREATE_TRANSITION //
                         .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
         stateActions.add(departmentCreateProgram()); //
@@ -35,17 +35,17 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_ENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
-                .withTransitions(DEPARTMENT_ENDORSE_TRANSITION));
+                .withStateTransitions(DEPARTMENT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_UNENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
-                .withTransitions(DEPARTMENT_ENDORSE_TRANSITION));
+                .withStateTransitions(DEPARTMENT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_REENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
-                .withTransitions(DEPARTMENT_ENDORSE_TRANSITION));
+                .withStateTransitions(DEPARTMENT_ENDORSE_TRANSITION));
 
         stateActions.add(departmentTerminateApproved()); //
         stateActions.add(departmentViewEditApproved()); //

@@ -42,16 +42,16 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP)); //
 
         stateActions.add(applicationUpdateInterviewAvailability() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW) //
                         .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
-                        .withTransitionEvaluation(APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME)
+                        .withStateTransitionEvaluation(APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME)
                         .withRoleTransitions(APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
                                 APPLICATION_RETIRE_INTERVIEWER_GROUP),
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_INTERVIEW_PENDING_SCHEDULING) //
                                 .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
-                                .withTransitionEvaluation(APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME)));
+                                .withStateTransitionEvaluation(APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME)));
 
         stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,

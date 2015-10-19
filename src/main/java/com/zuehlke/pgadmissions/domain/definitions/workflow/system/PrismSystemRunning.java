@@ -32,14 +32,14 @@ public class PrismSystemRunning extends PrismWorkflowState {
                 .withAction(SYSTEM_VIEW_EDIT) //
                 .withActionEnhancement(SYSTEM_VIEW_EDIT_AS_USER)
                 .withAssignments(SYSTEM_ADMINISTRATOR)
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(SYSTEM_RUNNING) //
                         .withTransitionAction(SYSTEM_VIEW_EDIT)
                         .withRoleTransitions(SYSTEM_MANAGE_USER_GROUP)));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(SYSTEM_CREATE_INSTITUTION) //
-                .withTransitions(INSTITUTION_CREATE_TRANSITION //
+                .withStateTransitions(INSTITUTION_CREATE_TRANSITION //
                         .withRoleTransitions(INSTITUTION_CREATE_ADMINISTRATOR_GROUP)));
 
         stateActions.add(new PrismStateAction() //
@@ -47,7 +47,7 @@ public class PrismSystemRunning extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(SYSTEM_STARTUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(SYSTEM_RUNNING) //
                         .withTransitionAction(SYSTEM_VIEW_EDIT)
                         .withRoleTransitions(SYSTEM_CREATE_ADMINISTRATOR_GROUP)));

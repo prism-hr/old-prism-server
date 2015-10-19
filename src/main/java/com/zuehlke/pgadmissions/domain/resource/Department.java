@@ -1,27 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -29,6 +7,15 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Set;
 
 @Entity
 @Table(name = "department", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "name" }) })
@@ -85,7 +72,7 @@ public class Department extends ResourceParent {
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
-    
+
     @ManyToOne
     @JoinColumn(name = "state_id")
     private State state;
@@ -128,6 +115,9 @@ public class Department extends ResourceParent {
 
     @OneToMany(mappedBy = "department")
     private Set<Project> projects = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "program")
+    private Set<Application> applications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "department")
     private Set<Comment> comments = Sets.newHashSet();
@@ -352,6 +342,10 @@ public class Department extends ResourceParent {
 
     public Set<Project> getProjects() {
         return projects;
+    }
+
+    public Set<Application> getApplications() {
+        return applications;
     }
 
     @Override

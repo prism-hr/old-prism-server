@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationIntervieweeInstructionsBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionDTO().getComment().getInterviewInstruction();
         String instructions = interviewInstruction == null ? null : interviewInstruction.getIntervieweeInstructions();
         return instructions == null ? propertyLoader.getPropertyLoader().loadLazy(SYSTEM_VALUE_NOT_PROVIDED) : instructions;

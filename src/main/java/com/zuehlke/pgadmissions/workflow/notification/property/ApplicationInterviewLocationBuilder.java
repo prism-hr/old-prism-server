@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationInterviewLocationBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         CommentInterviewInstruction interviewInstruction = propertyLoader.getNotificationDefinitionDTO().getComment().getInterviewInstruction();
         String interviewLocation = interviewInstruction == null ? null : interviewInstruction.getInterviewLocation();
         return interviewLocation == null ? "<p>" + propertyLoader.getPropertyLoader().loadLazy(APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED) + "</p>"

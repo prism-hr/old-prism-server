@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationOfferAcceptanceBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED, SYSTEM_NOTIFICATION_APPLICANT_DECLINED,
                 toBoolean(propertyLoader.getNotificationDefinitionDTO().getComment().getApplicantAcceptAppointment()));
     }

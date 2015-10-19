@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class CommentContentBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         String content = propertyLoader.getNotificationDefinitionDTO().getComment().getContent();
         return content == null ? propertyLoader.getPropertyLoader().loadLazy(SYSTEM_COMMENT_CONTENT_NOT_PROVIDED) : "\"" + content + "\"";
     }

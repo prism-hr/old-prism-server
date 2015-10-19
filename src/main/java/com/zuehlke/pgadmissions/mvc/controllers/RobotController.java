@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -16,16 +15,13 @@ import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -33,8 +29,7 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.SystemMapper;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.SystemService;
-
-import freemarker.template.Template;
+import com.zuehlke.pgadmissions.utils.PrismTemplateUtils;
 
 @Controller
 @RequestMapping("api/robots")
@@ -56,7 +51,7 @@ public class RobotController {
     private SystemMapper systemMapper;
 
     @Inject
-    private FreeMarkerConfig freemarkerConfig;
+    private PrismTemplateUtils prismTemplateUtils;
 
     @ResponseBody
     @RequestMapping(method = RequestMethod.GET, produces = "text/html")
@@ -71,15 +66,9 @@ public class RobotController {
         }
 
         Map<String, Object> model = Maps.newHashMap();
-        model.put(
-                "metadata",
-                resourceScope.equals(SYSTEM) ? systemMapper.getRobotsRepresentation() : resourceMapper
-                        .getResourceRepresentationRobot((ResourceParent) resourceService.getById(resourceScope, resourceId)));
-
-        String templateContent = Resources.toString(Resources.getResource("template/robot_representation.ftl"), Charsets.UTF_8);
-        Template template = new Template("robot_representation", new StringReader(templateContent), freemarkerConfig.getConfiguration());
-
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        model.put("metadata", resourceScope.equals(SYSTEM) ? systemMapper.getRobotsRepresentation()
+                : resourceMapper.getResourceRepresentationRobot((ResourceParent) resourceService.getById(resourceScope, resourceId)));
+        return prismTemplateUtils.getContentFromLocation("robot_representation", "template/robot_representation.ftl", model);
     }
 
     private Map<String, String> getQueryMap(String escapedFragment) throws UnsupportedEncodingException {

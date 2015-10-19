@@ -1,5 +1,5 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
 <p><b>
@@ -23,5 +23,5 @@ ${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

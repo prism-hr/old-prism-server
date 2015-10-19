@@ -1,5 +1,5 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
 <p><b>
@@ -8,7 +8,7 @@
 </b></p>
 
 <p>
-    ${TEMPLATE_AUTHOR_FULL_NAME} has updated their preferences for interview.
+    ${TEMPLATE_INITIATOR_FULL_NAME} has updated their preferences for interview.
 </p>
 
 <p>
@@ -19,5 +19,5 @@ ${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

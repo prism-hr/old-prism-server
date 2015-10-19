@@ -165,9 +165,9 @@ public class NotificationService {
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
 
         if (requests.size() > 0) {
-            Map<UserNotificationDTO, Long> recentRequests = Maps.newHashMap();
+            Map<UserNotificationDTO, Integer> recentRequests = Maps.newHashMap();
             notificationDAO.getRecentNotifications(requests.stream().map(r -> r.getUserId()).collect(toList()), baseline).forEach(un -> {
-                recentRequests.put(un, un.getSentCount());
+                recentRequests.put(un, un.getSentCount().intValue());
             });
 
             for (UserNotificationDefinitionDTO request : requests) {

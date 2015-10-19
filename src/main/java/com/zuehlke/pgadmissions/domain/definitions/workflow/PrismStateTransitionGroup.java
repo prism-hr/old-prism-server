@@ -286,7 +286,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(PROGRAM_DISABLED_COMPLETED) //
                     .withTransitionAction(PROGRAM_VIEW_EDIT) //
                     .withTransitionEvaluation(PROGRAM_UPDATED_OUTCOME) //
-                    .withPropagatedActions(PROJECT_TERMINATE, APPLICATION_TERMINATE)), //
+                    .withPropagatedActions(PROJECT_TERMINATE)), //
 
     PROGRAM_ENDORSE_TRANSITION( //
             new PrismStateTransition() //

@@ -26,7 +26,7 @@ public class NotificationDefinitionDTO {
 
     private ResourceParent parentResource;
 
-    private ResourceParent targetResource;
+    private ResourceParent initiatorResource;
 
     private PrismMotivationContext targetContext;
 
@@ -68,8 +68,8 @@ public class NotificationDefinitionDTO {
         return parentResource;
     }
 
-    public ResourceParent getTargetResource() {
-        return targetResource;
+    public ResourceParent getInitiatorResource() {
+        return initiatorResource;
     }
 
     public PrismMotivationContext getTargetContext() {
@@ -122,8 +122,8 @@ public class NotificationDefinitionDTO {
         return this;
     }
 
-    public NotificationDefinitionDTO withTargetResource(ResourceParent targetResource) {
-        this.targetResource = targetResource;
+    public NotificationDefinitionDTO withInitiatorResource(ResourceParent targetResource) {
+        this.initiatorResource = targetResource;
         return this;
     }
 

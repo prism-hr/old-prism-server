@@ -145,6 +145,9 @@ public class AdvertService {
     private EntityService entityService;
 
     @Inject
+    private NotificationService notificationService;
+
+    @Inject
     private ResourceService resourceService;
 
     @Inject
@@ -339,16 +342,26 @@ public class AdvertService {
                 PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
                 boolean isAdmin = roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResource.getResourceScope().name() + "_ADMINISTRATOR"));
                 if (Objects.equal(user, acceptUser) || isAdmin) {
-                    processAdvertTarget(advertTarget.getOtherAdvert().getResource(), systemService.getSystem().getUser(), advertTargetId, partnershipState);
-                    performed = true;
+                    boolean endorsementProvided = partnershipState.equals(ENDORSEMENT_PROVIDED);
+                    if (endorsementProvided) {
+                        resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
+                    }
+                    advertDAO.processAdvertTarget(advertTargetId, partnershipState);
 
+                    PrismPartnershipState oldPartnershipState = null;
                     if (isAdmin) {
                         AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, user);
                         if (similarAdvertTarget != null) {
+                            oldPartnershipState = similarAdvertTarget.getPartnershipState();
                             similarAdvertTarget.setPartnershipState(partnershipState);
                         }
-                        performed = true;
                     }
+
+                    if (endorsementProvided && !Objects.equal(oldPartnershipState, ENDORSEMENT_PROVIDED)) {
+                        notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
+                    }
+
+                    performed = true;
                 }
             }
         }
@@ -635,13 +648,13 @@ public class AdvertService {
     }
 
     private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept) {
-        createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, null, ENDORSEMENT_PENDING);
+        AdvertTarget target = createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, null, ENDORSEMENT_PENDING);
         if (userTarget != null) {
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
+            target = createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
         }
 
-        if (!(userAccept == null || updateAdvertTarget(advertTarget.getId(), true))) {
-            // TODO - send the connection request
+        if (!(updateAdvertTarget(target.getId(), true) || userAccept == null || roleService.getVerifiedRoles(userAccept, advertAccept.getResource()).isEmpty())) {
+            notificationService.sendConnectionRequest(target.getOtherUser(), userAccept, target);
         }
     }
 
@@ -649,13 +662,6 @@ public class AdvertService {
             PrismPartnershipState partnershipState) {
         return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
                 .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
-    }
-
-    private void processAdvertTarget(ResourceParent resource, User user, Integer advertTargetId, PrismPartnershipState partnershipState) {
-        if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
-            resourceService.activateResource(user, resource);
-        }
-        advertDAO.processAdvertTarget(advertTargetId, partnershipState);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

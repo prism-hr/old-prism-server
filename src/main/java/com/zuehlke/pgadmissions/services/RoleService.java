@@ -112,7 +112,7 @@ public class RoleService {
 
             if (transitionType.equals(CREATE) && user.getUserAccount() == null) {
                 if (stream(roles).anyMatch(r -> r.name().contains("STUDENT"))) {
-                    notificationService.sendUserInvitationNotification(invoker, user, resource.getSystem(), SYSTEM_MANAGE_ACCOUNT);
+                    notificationService.sendUserInvitationNotification(invoker, user, resource, SYSTEM_MANAGE_ACCOUNT);
                 } else {
                     notificationService.sendUserInvitationNotification(invoker, user, resource, PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT"));
                 }
@@ -128,9 +128,7 @@ public class RoleService {
                 updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
                 entityService.delete(userRole);
 
-                if (user.getUserAccount() != null) {
-                    notificationService.sendJoinNotification(invoker, user, resource);
-                }
+                notificationService.sendJoinNotification(invoker, user, resource);
             } else {
                 Action action = actionService.getViewEditAction(resource);
                 if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {

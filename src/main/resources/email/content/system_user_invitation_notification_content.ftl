@@ -1,9 +1,9 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
 <p>
-    ${TEMPLATE_AUTHOR_FULL_NAME} of ${TEMPLATE_RESOURCE_NAME} has invited you to join 
+    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TEMPLATE_RESOURCE_NAME} has invited you to join 
 	${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
 </p>
 
@@ -19,5 +19,5 @@ ${SYSTEM_USER_ACCOUNT_MANAGEMENT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_INVOKER_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

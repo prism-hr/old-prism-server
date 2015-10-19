@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
-public class TemplateAuthorFullNameBuilder implements NotificationPropertyBuilder {
+public class TemplateSignatoryEmailBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.getNotificationDefinitionDTO().getSignatory().getFullName();
+        return propertyLoader.getNotificationDefinitionDTO().getSignatory().getEmail();
     }
     
 }

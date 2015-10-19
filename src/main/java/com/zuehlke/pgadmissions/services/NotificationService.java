@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -136,11 +139,18 @@ public class NotificationService {
                 .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword));
     }
 
-    public void sendConnectionNotification(User initiator, User recipient) {
+    public void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
         System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
-        sendNotification(definition,
-                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+        NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
+        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
+                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+    }
+
+    public void sendConnectionNotification(User initiator, User recipient, AdvertTarget advertTarget) {
+        System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_CONNECTION_NOTIFICATION);
+        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
+                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {

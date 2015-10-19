@@ -16,6 +16,8 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.workflow.user.AdvertConnectionReassignmentProcessor;
 
+import jersey.repackaged.com.google.common.base.Objects;
+
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id", "accept_advert_id", "accept_advert_user_id" }) })
@@ -159,7 +161,14 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     public Advert getOtherAdvert() {
         Integer acceptAdvertId = acceptAdvert.getId();
         if (acceptAdvertId != null) {
-            return acceptAdvertId.equals(advert.getId()) ? targetAdvert : advert;
+            return Objects.equal(acceptAdvertId, advert.getId()) ? targetAdvert : advert;
+        }
+        return null;
+    }
+
+    public User getOtherUser() {
+        if (acceptAdvertUser != null) {
+            return Objects.equal(acceptAdvertUser, advertUser) ? targetAdvertUser : advertUser;
         }
         return null;
     }

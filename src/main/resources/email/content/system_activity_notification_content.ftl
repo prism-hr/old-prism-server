@@ -10,11 +10,9 @@
     You currently have waiting for you:
     <br/>
     <ul>
-    	<li>N pending tasks</li>
-    	<li>N updates to applications that you are following</li>
-    	<li>N updates to opportunities that you are following</li>
-    	<li>N updates from organizations that you are following</li>
-    	<li>N requests to join organizations that you manage</li>
+    	<li><b>N outstanding tasks that require your attention</b></li>
+    	<li>N updates to applications, opportunities and organizations that you are following</li>
+    	<li>N requests to join organizations that you administer</li>
     	<li>N new connection requests from organizations in your network</li>
     </ul>
 </p>

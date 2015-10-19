@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_APPOINTEE_GROUP;
@@ -27,7 +26,6 @@ public class PrismApplicationApprovedPendingPartnerApproval extends PrismWorkflo
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_APPROVED)

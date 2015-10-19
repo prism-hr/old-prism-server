@@ -293,6 +293,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_SYSTEM_VIEW_PROGRAM_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Programs"),
     SYSTEM_ACTION_SYSTEM_VIEW_PROJECT_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Positions"),
     SYSTEM_ACTION_SYSTEM_VIEW_APPLICATION_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Applications"),
+    SYSTEM_ACTION_SYSTEM_VIEW_TASK_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Tasks"),
+    SYSTEM_ACTION_SYSTEM_VIEW_APPOINTMENT_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Appointments"),
+    SYSTEM_ACTION_SYSTEM_VIEW_CONNECTION_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Connection Requests"),
+    SYSTEM_ACTION_SYSTEM_VIEW_JOIN_LIST(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View Membership Requests"),
     SYSTEM_ACTION_SYSTEM_MANAGE_ACCOUNT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Manage Account"),
 
     /*

@@ -13,7 +13,7 @@
 
 <p>
     ${TEMPLATE_SYSTEM_NAME} will keep you up to date with every new step in the progress of your application, 
-    and you can log in at any time to review your progress, or add new supporting information.
+    and you can log in at any time to review your progress.
 </p>
 
 ${ACTION_VIEW_EDIT}

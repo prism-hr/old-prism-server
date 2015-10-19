@@ -11,13 +11,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_MARKETING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_DEPARTMENT_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_INSTITUTION_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROGRAM_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROJECT_SYNDICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROGRAM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TARGET_GLOBAL;
@@ -91,23 +89,23 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
             Lists.newArrayList(INSTITUTION_GLOBAL, ACTION_GLOBAL, COMMENT_GLOBAL, COMMENT_TRANSITION, TEMPLATE_GLOBAL)), //
 
     SYSTEM_CONNECTION_REQUEST(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(SYSTEM_USER_ACCOUNT, TARGET_GLOBAL, TEMPLATE_GLOBAL)), //
+            Lists.newArrayList(TARGET_GLOBAL, TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_CONNECTION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(SYSTEM_USER_ACCOUNT, TARGET_GLOBAL, TEMPLATE_GLOBAL)), //
+            Lists.newArrayList(TARGET_GLOBAL, TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_JOIN_REQUEST(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(SYSTEM_USER_ACCOUNT, TEMPLATE_GLOBAL)), //
+            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_JOIN_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(SYSTEM_USER_ACCOUNT, TEMPLATE_GLOBAL)), //
+            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_USER_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
+            Lists.newArrayList(TEMPLATE_GLOBAL)), //
     SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
+            Lists.newArrayList(TEMPLATE_GLOBAL)), //
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, REQUEST, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
     SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
-            Lists.newArrayList(SYSTEM_USER_ACCOUNT, SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL)), //
-    SYSTEM_ACTIVITY_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, Lists.newArrayList(SYSTEM_USER_ACCOUNT, TEMPLATE_GLOBAL, SYSTEM_APPLICATION_MARKETING, //
-            SYSTEM_APPLICATION_SYNDICATED, SYSTEM_PROJECT_SYNDICATED, SYSTEM_PROGRAM_SYNDICATED, SYSTEM_DEPARTMENT_SYNDICATED, SYSTEM_INSTITUTION_SYNDICATED));
+            Lists.newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL)), //
+    SYSTEM_ACTIVITY_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
+            Lists.newArrayList(TEMPLATE_GLOBAL, SYSTEM_APPLICATION, SYSTEM_PROJECT, SYSTEM_PROGRAM, SYSTEM_DEPARTMENT, SYSTEM_INSTITUTION));
 
     private final PrismNotificationType notificationType;
 

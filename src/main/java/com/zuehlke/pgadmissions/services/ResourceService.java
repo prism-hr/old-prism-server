@@ -13,6 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -21,12 +22,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
+import static com.zuehlke.pgadmissions.services.NotificationService.requestLimit;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
@@ -106,6 +107,7 @@ import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
+import com.zuehlke.pgadmissions.dto.UserNotificationDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -161,6 +163,9 @@ public class ResourceService {
 
     @Inject
     private PrismService prismService;
+
+    @Inject
+    private NotificationService notificationService;
 
     @Inject
     private RoleService roleService;
@@ -809,20 +814,28 @@ public class ResourceService {
         boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser, false);
 
         Role role = null;
+        String resourceName = resource.getResourceScope().name();
         if (roleContext.equals(STUDENT)) {
-            role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
+            role = roleService.getById(PrismRole.valueOf(resourceName + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
-            if (isTrue(role.getVerified())) {
-
-            }
         } else {
-            role = roleService.getById(PrismRole.valueOf(resource.getResourceScope().name() + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
+            role = roleService.getById(PrismRole.valueOf(resourceName + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
         }
 
         if (canViewEdit && role != null) {
             executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
                     new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
+        } else {
+            List<User> admins = userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR"));
+            Map<UserNotificationDTO, Integer> recentRequests = notificationService.getRecentRequests(admins.stream().map(a -> a.getId()).collect(toList()), LocalDate.now());
+
+            admins.forEach(admin -> {
+                Integer recentRequestCount = recentRequests.get(new UserNotificationDTO().withUserId(admin.getId()).withNotificationDefinitionId(SYSTEM_JOIN_REQUEST));
+                if (recentRequestCount == null || recentRequestCount <= requestLimit) {
+                    notificationService.sendJoinRequest(user, admin, resource);
+                }
+            });
         }
     }
 

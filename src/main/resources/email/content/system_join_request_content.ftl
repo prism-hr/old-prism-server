@@ -3,15 +3,14 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TARGET_RESOURCE_ACCEPT_NAME} has accepted your invitation 
-    to connect in ${TEMPLATE_SYSTEM_NAME}. 
+    ${TEMPLATE_INITIATOR_FULL_NAME} has requested membership of ${TEMPLATE_RESOURCE_NAME};
 </p>
 
 <p>
-	Login to manage your connections, and advertise and promote opportunities.
+	Login to accept or reject this request.
 </p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

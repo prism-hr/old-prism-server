@@ -151,7 +151,7 @@ public class NotificationDAO {
                 .list();
     }
 
-    public List<UserNotificationDTO> getRecentNotifications(List<Integer> users, LocalDate lastNotifiedDate) {
+    public List<UserNotificationDTO> getRecentRequests(List<Integer> users, LocalDate lastNotifiedDate) {
         return (List<UserNotificationDTO>) sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //

@@ -35,6 +35,16 @@ public class UserNotificationDTO {
         this.sentCount = sentCount;
     }
 
+    public UserNotificationDTO withUserId(Integer userId) {
+        this.userId = userId;
+        return this;
+    }
+
+    public UserNotificationDTO withNotificationDefinitionId(PrismNotificationDefinition notificationDefinitionId) {
+        this.notificationDefinitionId = notificationDefinitionId;
+        return this;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(userId, notificationDefinitionId);

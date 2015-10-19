@@ -11,7 +11,7 @@
 	Login to manage your connections, and advertise and promote opportunities.
 </p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

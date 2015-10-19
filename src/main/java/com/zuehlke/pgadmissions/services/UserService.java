@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -60,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -229,8 +231,8 @@ public class UserService {
         if (user != null) {
             UserAccount account = user.getUserAccount();
             if (account == null) {
-                User superAdmin = getUserByEmail("systemUserEmail");
-                notificationService.sendInvitationNotification(superAdmin, user);
+                System system = systemService.getSystem();
+                notificationService.sendUserInvitationNotification(system.getUser(), user, system, SYSTEM_MANAGE_ACCOUNT);
             } else {
                 String newPassword = PrismEncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);
@@ -324,6 +326,10 @@ public class UserService {
 
     public List<User> getResourceUsers(Resource resource) {
         return userDAO.getResourceUsers(resource);
+    }
+
+    public List<User> getResourceUsers(Resource resource, PrismRole role) {
+        return userDAO.getResourceUsers(resource, role);
     }
 
     public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {

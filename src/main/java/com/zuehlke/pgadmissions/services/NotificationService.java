@@ -2,13 +2,19 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_CONNECTION_LIST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_JOIN_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.joda.time.LocalDate.now;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +23,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -27,9 +34,11 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserNotification;
@@ -53,7 +62,7 @@ import jersey.repackaged.com.google.common.collect.Maps;
 @SuppressWarnings("unchecked")
 public class NotificationService {
 
-    private static Integer requestThrottle = 3;
+    public static Integer requestLimit = 3;
 
     @Inject
     private NotificationDAO notificationDAO;
@@ -121,11 +130,10 @@ public class NotificationService {
         sendNotification(notificationTemplate, notificationDefinitionDTO);
     }
 
-    public void sendInvitationNotification(User initiator, User recipient) {
-        System system = systemService.getSystem();
+    public void sendUserInvitationNotification(User initiator, User recipient, Resource resource, PrismAction transitionAction) {
         NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
         sendNotification(definition,
-                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(transitionAction));
     }
 
     public void sendRegistrationNotification(User initiator, ActionOutcomeDTO actionOutcome) {
@@ -139,11 +147,26 @@ public class NotificationService {
                 .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword));
     }
 
+    public void sendJoinRequest(User initiator, User recipient, ResourceParent resource) {
+        System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_JOIN_REQUEST);
+        sendNotification(definition,
+                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(SYSTEM_VIEW_JOIN_LIST));
+        createOrUpdateUserNotification(system, recipient, definition, now());
+    }
+
+    public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
+        NotificationDefinition definition = getById(SYSTEM_JOIN_NOTIFICATION);
+        sendNotification(definition,
+                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+    }
+
     public void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
         System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
         sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
-                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+                .withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST));
+        createOrUpdateUserNotification(system, recipient, definition, now());
     }
 
     public void sendConnectionNotification(User initiator, User recipient, AdvertTarget advertTarget) {
@@ -175,21 +198,32 @@ public class NotificationService {
         notificationDAO.resetNotifications(user, individualDefinitions);
     }
 
+    public Map<UserNotificationDTO, Integer> getRecentRequests(Integer user, LocalDate lastNotifiedDate) {
+        return getRecentRequests(asList(user), lastNotifiedDate);
+    }
+
+    public Map<UserNotificationDTO, Integer> getRecentRequests(List<Integer> users, LocalDate lastNotifiedDate) {
+        Map<UserNotificationDTO, Integer> recentRequests = Maps.newHashMap();
+        if (CollectionUtils.isNotEmpty(users)) {
+            notificationDAO.getRecentRequests(users, lastNotifiedDate).forEach(un -> {
+                recentRequests.put(un, un.getSentCount().intValue());
+            });
+        }
+        return recentRequests;
+    }
+
     private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, LocalDate baseline) {
         Set<User> recipients = Sets.newHashSet();
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
 
         if (requests.size() > 0) {
-            Map<UserNotificationDTO, Integer> recentRequests = Maps.newHashMap();
-            notificationDAO.getRecentNotifications(requests.stream().map(r -> r.getUserId()).collect(toList()), baseline).forEach(un -> {
-                recentRequests.put(un, un.getSentCount().intValue());
-            });
+            Map<UserNotificationDTO, Integer> recentRequests = getRecentRequests(requests.stream().map(r -> r.getUserId()).collect(toList()), baseline);
 
             User initiator = comment.getUser();
             for (UserNotificationDefinitionDTO request : requests) {
                 User recipient = userService.getById(request.getUserId());
                 Integer recentRequestCount = recentRequests.get(request);
-                if (recentRequestCount == null || recentRequestCount < requestThrottle) {
+                if (recentRequestCount == null || recentRequestCount <= requestLimit) {
                     NotificationDefinition definition = getById(request.getNotificationDefinitionId());
                     sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withComment(comment)
                             .withTransitionAction(request.getActionId()));

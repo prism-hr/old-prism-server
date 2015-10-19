@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApp
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApproved;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferAcceptance;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationApprovedPendingPartnerApproval;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
@@ -84,10 +85,6 @@ public enum PrismState {
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, APPLICATION_CLOSING_DATE, PrismApplicationValidation.class),
     APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationValidationPendingCompletion.class),
-    APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null,
-            PrismApplicationReference.class),
-    APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationReferencePendingCompletion.class),
     APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null, PrismApplicationReview.class),
     APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null,
             PrismApplicationReviewPendingFeedback.class),
@@ -110,11 +107,15 @@ public enum PrismState {
             PrismApplicationApprovalPendingFeedback.class),
     APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApprovalPendingCompletion.class),
+    APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null,
+            PrismApplicationReference.class),
+    APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
+            PrismApplicationReferencePendingCompletion.class),
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationApproved.class),
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null, 
             PrismApplicationApprovedPendingPartnerApproval.class),
     APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null,
-            PrismApplicationApprovedCompleted.class),
+            PrismApplicationApprovedPendingOfferAcceptance.class),
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null,
             PrismApplicationApprovedCompleted.class),
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, PrismApplicationRejected.class),

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.application;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_ACCEPTANCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_APPOINTEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
@@ -20,6 +21,7 @@ public class PrismApplicationApprovedPendingOfferAcceptance extends PrismWorkflo
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_CONFIRM_OFFER_ACCEPTANCE) //
                 .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST)
                 .withAssignments(APPLICATION_APPOINTEE) //
                 .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                 .withTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION //

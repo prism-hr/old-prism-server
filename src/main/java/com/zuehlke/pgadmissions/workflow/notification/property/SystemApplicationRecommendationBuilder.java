@@ -39,9 +39,9 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
                 String summary = advert.getSummary();
 
                 String applyHomepage = advert.getApplyHomepage();
-                applyHomepage = applyHomepage == null ? propertyLoader.buildRedirectionUrl(resourceParent,
+                applyHomepage = applyHomepage == null ? propertyLoader.getRedirectionUrl(resourceParent,
                         createResourceActions.get(resourceParent.getResourceScope()), notificationDefinitionDTO.getRecipient()) : applyHomepage;
-                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
+                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.getRedirectionControl(applyHomepage, SYSTEM_APPLY)));
             }
 
             return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";

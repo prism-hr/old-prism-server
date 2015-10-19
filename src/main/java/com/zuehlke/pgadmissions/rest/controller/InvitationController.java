@@ -21,7 +21,7 @@ public class InvitationController {
     @PreAuthorize("permitAll")
     @RequestMapping(method = RequestMethod.POST)
     public void inviteResource(@RequestBody ResourceRelationInvitationDTO invitationDTO) {
-        resourceService.createResourceRelation(invitationDTO);
+        resourceService.inviteResourceRelation(invitationDTO);
     }
 
 }

@@ -11,7 +11,7 @@ public class SystemUserAccountActivationBuilder implements NotificationPropertyB
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.buildRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
+        return propertyLoader.getRedirectionControl(SYSTEM_ACTIVATE_ACCOUNT);
     }
 
 }

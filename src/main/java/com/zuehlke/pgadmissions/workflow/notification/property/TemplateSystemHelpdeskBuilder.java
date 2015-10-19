@@ -11,7 +11,7 @@ public class TemplateSystemHelpdeskBuilder implements NotificationPropertyBuilde
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.buildRedirectionControl(propertyLoader.getHelpdesk(), SYSTEM_HELPDESK);
+        return propertyLoader.getRedirectionControl(propertyLoader.getHelpdesk(), SYSTEM_HELPDESK);
     }
 
 }

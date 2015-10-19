@@ -11,7 +11,7 @@ public class ActionViewEditBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.buildRedirectionControl(SYSTEM_VIEW_EDIT);
+        return propertyLoader.getRedirectionControl(SYSTEM_VIEW_EDIT);
     }
 
 }

@@ -351,12 +351,12 @@ public class SystemService {
 
     private void initializeStateGroups() throws DeduplicationException {
         int ordinal = 0;
-        PrismScope lastScope = null;
+        PrismScope lastPrismScope = null;
         for (PrismStateGroup prismStateGroup : PrismStateGroup.values()) {
-            PrismScope thisScope = prismStateGroup.getScope();
-            if (!Objects.equal(thisScope, lastScope)) {
+            PrismScope prismScope = prismStateGroup.getScope();
+            if (!Objects.equal(prismScope, lastPrismScope)) {
                 ordinal = 0;
-                lastScope = thisScope;
+                lastPrismScope = prismScope;
             }
             Scope scope = scopeService.getById(prismStateGroup.getScope());
             StateGroup transientStateGroup = new StateGroup().withId(prismStateGroup).withOrdinal(ordinal).withScope(scope);
@@ -366,13 +366,20 @@ public class SystemService {
     }
 
     private void initializeStates() throws DeduplicationException {
+        int ordinal = 0;
+        StateGroup lastStateGroup = null;
         for (PrismState prismState : PrismState.values()) {
             StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismState.getDefaultDuration());
             Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getStateGroup().getScope());
             StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
-            State transientState = new State().withId(prismState).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
+            if (!Objects.equal(stateGroup, lastStateGroup)) {
+                ordinal = 0;
+                lastStateGroup = stateGroup;
+            }
+            State transientState = new State().withId(prismState).withOrdinal(ordinal).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
                     .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withScope(scope);
             entityService.createOrUpdate(transientState);
+            ordinal++;
         }
     }
 

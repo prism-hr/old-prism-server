@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
-    APPLICATION_ADMINISTRATOR(RECRUITER, false, APPLICATION), //
     APPLICATION_APPOINTEE(APPLICANT, false, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, false, APPLICATION), //
     APPLICATION_HIRING_MANAGER(RECRUITER, false, APPLICATION), //
@@ -81,7 +80,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
                 if (roleScope.ordinal() <= INSTITUTION.ordinal()) {
                     visibleScopes.put(role, DEPARTMENT);
                 }
-                
+
                 if (roleScope.ordinal() <= SYSTEM.ordinal()) {
                     visibleScopes.put(role, INSTITUTION);
                 }

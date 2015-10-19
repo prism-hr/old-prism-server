@@ -4,7 +4,7 @@
 
 <p><b>
 	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} 
-	in the position of ${TEMPLATE_PARENT_RESOURCE_NAME}.
+	in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>

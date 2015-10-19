@@ -4,7 +4,7 @@
 
 <#if TEMPLATE_USER_EMAIL.equals(APPLICATION_CREATOR_EMAIL)>
 	<p><b>
-		Your application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} in the position of 
+		Your application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} in the position of: 
 		${TEMPLATE_PARENT_RESOURCE_NAME}.
 	</b></p>
 	
@@ -14,7 +14,7 @@
 <#else>
 	<p><b>
 		${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} 
-		in the position of ${TEMPLATE_PARENT_RESOURCE_NAME}.
+		in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
 	</b></p>
 
 	<p>

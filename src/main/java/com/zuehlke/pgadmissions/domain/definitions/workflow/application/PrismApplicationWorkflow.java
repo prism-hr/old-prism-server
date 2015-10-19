@@ -14,7 +14,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
@@ -71,11 +70,6 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_VIEWER_RECRUITER);
     }
 
-    public static PrismStateAction applicationCommentWithViewerRecruiterAndAdministrator() {
-        return applicationCommentWithViewerRecruiter() //
-                .withAssignments(APPLICATION_ADMINISTRATOR);
-    }
-
     public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees) {
         return applicationCompleteStateAbstract(action, assignees)
                 .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
@@ -105,11 +99,6 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_VIEWER_RECRUITER);
     }
 
-    public static PrismStateAction applicationEmailCreatorWithViewerRecruiterAndAdministrator() {
-        return applicationEmailCreatorWithViewerRecruiter() //
-                .withAssignments(APPLICATION_ADMINISTRATOR);
-    }
-
     public static PrismStateAction applicationEscalate(PrismState state) {
         return applicationEscalateAbstract() //
                 .withTransitions(new PrismStateTransition() //
@@ -136,7 +125,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_TERMINATE);
     }
-    
+
     public static PrismStateAction applicationTerminateUnsubmitted() {
         return applicationTerminateAbstract()
                 .withTransitions(new PrismStateTransition() //
@@ -202,11 +191,6 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_VIEWER_RECRUITER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
-    public static PrismStateAction applicationViewEditWithViewerRecruiterAndAdministrator(PrismState state) {
-        return applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(APPLICATION_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER);
-    }
-    
     public static PrismStateAction applicationWithdrawAbstract() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_WITHDRAW) //
@@ -225,7 +209,7 @@ public class PrismApplicationWorkflow {
                 .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
                         .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
     }
-   
+
     private static PrismStateAction applicationCompleteStateAbstract(PrismAction action, PrismRoleGroup assignees) {
         return new PrismStateAction() //
                 .withAction(action) //
@@ -236,7 +220,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_ESCALATE);
     }
-    
+
     private static List<PrismState> applicationNextStateExclusions(PrismState state) {
         List<PrismState> exclusions = Lists.newArrayList();
         if (state.name().equals(state.getStateGroup().name())) {

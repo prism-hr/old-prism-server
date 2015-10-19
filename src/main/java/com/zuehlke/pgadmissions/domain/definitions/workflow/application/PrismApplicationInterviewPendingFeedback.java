@@ -8,8 +8,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
@@ -19,9 +19,9 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationCommentWithViewerRecruiter()); //
         stateActions.add(applicationCompleteInterviewScheduled(state)); //
-        stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
 
         stateActions.add(applicationProvideInterviewFeedback() //

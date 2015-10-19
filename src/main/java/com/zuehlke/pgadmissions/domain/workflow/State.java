@@ -31,6 +31,9 @@ public class State extends WorkflowDefinition {
     @Id
     @Enumerated(EnumType.STRING)
     private PrismState id;
+    
+    @Column(name = "ordinal", nullable = false)
+    private Integer ordinal;
 
     @ManyToOne
     @JoinColumn(name = "state_group_id", nullable = false)
@@ -88,6 +91,14 @@ public class State extends WorkflowDefinition {
 
     public void setId(PrismState id) {
         this.id = id;
+    }
+
+    public Integer getOrdinal() {
+        return ordinal;
+    }
+
+    public void setOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
     }
 
     public StateGroup getStateGroup() {
@@ -178,6 +189,11 @@ public class State extends WorkflowDefinition {
 
     public State withId(PrismState id) {
         this.id = id;
+        return this;
+    }
+    
+    public State withOrdinal(Integer ordinal) {
+        this.ordinal = ordinal;
         return this;
     }
 

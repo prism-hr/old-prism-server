@@ -8,8 +8,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedInterviewerResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedReviewerResolver;
-import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationAssignedSupervisorResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedReferenceStateResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application.ApplicationCompletedStateResolver;
@@ -45,9 +43,7 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewAvailabilityResolver.class), //
     APPLICATION_PROVIDED_INTERVIEW_FEEDBACK_OUTCOME(false, APPLICATION, ApplicationProvidedInterviewFeedbackResolver.class), //
-    APPLICATION_ASSIGNED_REVIEWER_OUTCOME(false, APPLICATION, ApplicationAssignedReviewerResolver.class), //
     APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME(false, APPLICATION, ApplicationAssignedInterviewerResolver.class), //
-    APPLICATION_ASSIGNED_SUPERVISOR_OUTCOME(false, APPLICATION, ApplicationAssignedSupervisorResolver.class), //
     APPLICATION_CONFIRMED_INTERVIEW_OUTCOME(false, APPLICATION, ApplicationConfirmedInterviewResolver.class), //
     APPLICATION_PROVIDED_REFERENCE_OUTCOME(false, APPLICATION, ApplicationProvidedReferenceResolver.class), //
     APPLICATION_COMPLETED_REFERENCE_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedReferenceStateResolver.class), //

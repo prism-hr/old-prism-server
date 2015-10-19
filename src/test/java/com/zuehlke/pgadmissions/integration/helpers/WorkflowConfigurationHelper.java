@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -88,8 +89,8 @@ public class WorkflowConfigurationHelper {
     public void verifyWorkflowConfiguration() {
         verifyState(null);
 
-        List<State> workflowStates = stateService.getStates();
-        assertEquals(workflowStates.size(), statesVisited.size());
+        List<State> states = stateService.getStates();
+        assertEquals(states.size(), statesVisited.size());
 
         verifyPropagatedActions();
         verifyCreatorRoles();
@@ -152,7 +153,12 @@ public class WorkflowConfigurationHelper {
                 assertTrue(stateAction.getStateActionAssignments().isEmpty());
             }
 
-            if (stateAction.getRaisesUrgentFlag()) {
+            Set<PrismScope> assigneeRoleScopes = Sets.newHashSet();
+            stateAction.getStateActionAssignments().forEach(stateActionAssignment -> {
+                assigneeRoleScopes.add(stateActionAssignment.getRole().getScope().getId());
+            });
+
+            if (isTrue(stateAction.getRaisesUrgentFlag()) && assigneeRoleScopes.contains(action.getScope().getId())) {
                 assertNotNull(stateAction.getNotificationDefinition());
             }
 

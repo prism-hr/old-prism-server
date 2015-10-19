@@ -14,15 +14,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_INTERVIEW_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_INTERVIEWEE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_INTERVIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWEE_GROUP;
@@ -37,13 +35,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_INTERVIEW_OUTCOME;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -59,18 +57,13 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_ASSIGN_INTERVIEWERS) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
+                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(APPLICATION_INTERVIEW) //
-                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
+                        .withTransitionState(APPLICATION_INTERVIEW_PENDING_AVAILABILITY) //
+                        .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
                         .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
-                        .withRoleTransitions(APPLICATION_CREATE_ADMINISTRATOR_GROUP),
-                        new PrismStateTransition() //
-                                .withTransitionState(APPLICATION_INTERVIEW_PENDING_AVAILABILITY) //
-                                .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
-                                .withTransitionEvaluation(APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME) //
-                                .withRoleTransitions(APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP, //
-                                        APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP), //
+                        .withRoleTransitions(APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP, //
+                                APPLICATION_CREATE_POTENTIAL_INTERVIEWER_GROUP), //
                         new PrismStateTransition() //
                                 .withTransitionState(APPLICATION_INTERVIEW_PENDING_FEEDBACK) //
                                 .withTransitionAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
@@ -83,47 +76,41 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                                 .withRoleTransitions(APPLICATION_CREATE_INTERVIEWEE_GROUP, //
                                         APPLICATION_CREATE_INTERVIEWER_GROUP))); //
 
-        stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
-        stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 
-        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP)); //
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //
 
-        stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_ADMINISTRATOR_GROUP,
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
+        stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP));
 
         stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_REFEREE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
+                APPLICATION_RETIRE_REFEREE_GROUP));
 
         stateActions.add(applicationUploadReference(state));
-        stateActions.add(applicationViewEditWithViewerRecruiterAndAdministrator(state)); //
+        stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
 
-        stateActions.add(applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
+        stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
                 APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_REFEREE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP));
+                APPLICATION_RETIRE_REFEREE_GROUP));
     }
 
     public static PrismStateAction applicationCompleteInterviewScheduling(PrismState state) {
         return applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
-                APPLICATION_ADMINISTRATOR_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+                APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_INTERVIEWEE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationCompleteInterviewScheduled(PrismState state) {
         return applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, //
-                APPLICATION_ADMINISTRATOR_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
+                APPLICATION_PARENT_ADMINISTRATOR_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationConfirmInterviewArrangements() {
         return new PrismStateAction() //
                 .withAction(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
-                .withAssignments(APPLICATION_ADMINISTRATOR_GROUP) //
+                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(APPLICATION_CONFIRMED_INTERVIEW_GROUP, APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION) //
                 .withTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW) //
@@ -152,7 +139,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withRaisesUrgentFlag()
                 .withNotification(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
                 .withAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
+                .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
     }
 
     public static PrismStateAction applicationProvideInterviewFeedback() {
@@ -167,12 +154,11 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_UPDATE_INTERVIEW_AVAILABILITY) //
                 .withAssignments(APPLICATION_CONFIRMED_INTERVIEW_GROUP) //
-                .withNotifications(APPLICATION_ADMINISTRATOR_GROUP, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
+                .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
     }
 
     public static PrismStateAction applicationTerminateInterviewScheduling() {
         return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWEE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWER_GROUP);
@@ -180,7 +166,6 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
     public static PrismStateAction applicationTerminateInterviewScheduled() {
         return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);
     }
@@ -191,23 +176,21 @@ public class PrismApplicationInterview extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationViewEditInterviewScheduled(PrismState state) {
-        return applicationViewEditWithViewerRecruiterAndAdministrator(state) //
+        return applicationViewEditWithViewerRecruiter(state) //
                 .withAssignments(APPLICATION_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationWithdrawInterviewScheduling() {
-        return applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
+        return applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
                 APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWEE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationWithdrawInterviewScheduled() {
-        return applicationWithdrawSubmitted(APPLICATION_ADMINISTRATOR_GROUP, //
+        return applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
                 APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_ADMINISTRATOR_GROUP, //
                 APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP);
     }

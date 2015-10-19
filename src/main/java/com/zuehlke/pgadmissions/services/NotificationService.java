@@ -157,8 +157,8 @@ public class NotificationService {
 
     public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
         NotificationDefinition definition = getById(SYSTEM_JOIN_NOTIFICATION);
-        sendNotification(definition,
-                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
+                .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT")));
     }
 
     public void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {

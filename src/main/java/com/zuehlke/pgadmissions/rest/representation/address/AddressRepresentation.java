@@ -6,8 +6,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 
 public class AddressRepresentation extends AddressDefinition<PrismDomicile> {
 
-    private Integer id;
-
     private String addressLine1;
 
     private String addressLine2;
@@ -23,14 +21,6 @@ public class AddressRepresentation extends AddressDefinition<PrismDomicile> {
     private String googleId;
 
     private AddressCoordinatesRepresentation coordinates;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getAddressLine1() {
         return addressLine1;
@@ -135,7 +125,7 @@ public class AddressRepresentation extends AddressDefinition<PrismDomicile> {
         this.coordinates = coordinates;
         return this;
     }
-    
+
     public String getLocationString() {
         return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode);
     }

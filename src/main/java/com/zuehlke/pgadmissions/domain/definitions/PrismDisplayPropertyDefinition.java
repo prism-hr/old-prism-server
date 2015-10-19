@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1498,8 +1498,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACCOUNT_LINKED_OTHER_PASSWORD_HINT(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Please enter the password of the other account."),
     SYSTEM_ACCOUNT_LINKED_LINK_BUTTON(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Link Accounts"),
 
-
-
     /*
      * *************** SYSTEM ADDRESS *********************
      */
@@ -1516,6 +1514,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADDRESS_DOMICILE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "The country of your address."),
     SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "Is this the same as your current address?"),
     SYSTEM_ADDRESS_CONTACT_SAME_AS_CURRENT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "This tells us that your contact address is the same as your current address. If you wish to specify a different address, you may choose to."),
+    SYSTEM_ADDRESS_LOOKUP_ADDRESS_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "Lookup address"),
+    SYSTEM_ADDRESS_LOOKUP_ADDRESS_HINT(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "Start typing the address"),
+    SYSTEM_ADDRESS_LOOKUP_ADDRESS_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "e.g. 112 Great Russell Street"),
+    SYSTEM_ADDRESS_LOOKUP_ADDRESS_BUTTON(PrismDisplayPropertyCategory.SYSTEM_ADDRESS, "Lookup address"),
 
     /*
      * *************** SYSTEM RESOURCE PARENT *********************

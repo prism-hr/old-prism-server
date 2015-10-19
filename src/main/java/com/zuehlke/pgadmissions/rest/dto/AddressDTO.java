@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
-import javax.validation.constraints.NotNull;
-
 import com.zuehlke.pgadmissions.domain.address.AddressDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 
-public class AddressDTO extends AddressDefinition<PrismDomicile> {
+import javax.validation.constraints.NotNull;
 
-    private Integer id;
+public class AddressDTO extends AddressDefinition<PrismDomicile> {
 
     private String addressLine1;
 
@@ -23,14 +21,6 @@ public class AddressDTO extends AddressDefinition<PrismDomicile> {
     private PrismDomicile domicile;
 
     private String googleId;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getAddressLine1() {
         return addressLine1;

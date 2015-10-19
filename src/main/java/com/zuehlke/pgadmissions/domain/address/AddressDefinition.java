@@ -2,10 +2,6 @@ package com.zuehlke.pgadmissions.domain.address;
 
 public abstract class AddressDefinition<T> {
 
-    public abstract Integer getId();
-
-    public abstract void setId(Integer id);
-
     public abstract String getAddressLine1();
 
     public abstract void setAddressLine1(String addressLine1);

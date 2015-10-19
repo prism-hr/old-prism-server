@@ -9,7 +9,7 @@ public class TemplateAuthorFullNameBuilder implements NotificationPropertyBuilde
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionDTO().getAuthor().getFullName();
+        return propertyLoader.getNotificationDefinitionDTO().getSignatory().getFullName();
     }
     
 }

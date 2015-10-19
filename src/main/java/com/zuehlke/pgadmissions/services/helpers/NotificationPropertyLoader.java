@@ -123,7 +123,7 @@ public class NotificationPropertyLoader {
 
     public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws Exception {
         Resource resource = notificationDefinitionDTO.getResource();
-        String url = buildRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getUser());
+        String url = buildRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
         return buildRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 

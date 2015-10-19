@@ -23,17 +23,17 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
                 .withAction(APPLICATION_COMPLETE) //
                 .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
-                .withTransitions(APPLICATION_COMPLETE_TRANSITION));
+                .withStateTransitions(APPLICATION_COMPLETE_TRANSITION));
 
         stateActions.add(applicationEscalate(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED));
 
         stateActions.add(applicationTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)));
 
         stateActions.add(applicationWithdrawAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)));
     }

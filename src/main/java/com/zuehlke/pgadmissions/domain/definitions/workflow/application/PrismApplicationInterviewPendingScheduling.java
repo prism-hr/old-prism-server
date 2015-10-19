@@ -37,7 +37,7 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
                 APPLICATION_RETIRE_INTERVIEWER_GROUP));
 
         stateActions.add(applicationProvideInterviewAvailability() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP)));
@@ -45,7 +45,7 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
         stateActions.add(applicationTerminateInterviewScheduling());
 
         stateActions.add(applicationUpdateInterviewAvailability() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)));
 

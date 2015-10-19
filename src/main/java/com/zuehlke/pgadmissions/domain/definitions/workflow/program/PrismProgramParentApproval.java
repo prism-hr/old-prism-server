@@ -23,14 +23,14 @@ public class PrismProgramParentApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVED) //
                         .withTransitionAction(PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE)));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_CREATE_PROJECT) //
                 .withActionCondition(ACCEPT_PROJECT) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVAL_PARENT_APPROVAL) //
                         .withTransitionAction(PROJECT_VIEW_EDIT)
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP)));

@@ -24,10 +24,10 @@ public class PrismProgramApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(programCompleteApproval()
                 .withRaisesUrgentFlag() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
-                        .withTransitionEvaluation(PROGRAM_APPROVED_OUTCOME))); //
+                        .withStateTransitionEvaluation(PROGRAM_APPROVED_OUTCOME))); //
 
         stateActions.add(programCreateProject());
         stateActions.add(programEmailCreatorUnnapproved()); //
@@ -42,7 +42,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                 .withAction(PROGRAM_COMPLETE_APPROVAL_STAGE) //
                 .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotification(PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-                .withTransitions(PROGRAM_APPROVE_TRANSITION);
+                .withStateTransitions(PROGRAM_APPROVE_TRANSITION);
     }
 
 }

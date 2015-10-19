@@ -31,7 +31,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP));
 
         stateActions.add(applicationProvideInterviewFeedback() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW_PENDING_COMPLETION) //
                         .withTransitionAction(APPLICATION_COMPLETE_INTERVIEW_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));

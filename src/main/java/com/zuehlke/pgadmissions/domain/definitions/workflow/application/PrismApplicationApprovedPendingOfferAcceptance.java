@@ -24,7 +24,7 @@ public class PrismApplicationApprovedPendingOfferAcceptance extends PrismWorkflo
                 .withNotification(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST)
                 .withAssignments(APPLICATION_APPOINTEE) //
                 .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
-                .withTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION //
+                .withStateTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION //
                         .withRoleTransitions(APPLICATION_RETIRE_APPOINTEE_GROUP)));
 
         stateActions.add(applicationCommentWithViewerRecruiter()); //

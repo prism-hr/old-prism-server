@@ -417,7 +417,7 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public Set<Integer> getUsersForActivityNotification() {
+    public Set<Integer> getUsersWithActivity() {
         Set<Integer> users = Sets.newHashSet();
         DateTime updateBaseline = new DateTime().minusDays(1);
         LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(3);

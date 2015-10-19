@@ -109,7 +109,7 @@ public class NotificationService {
         entityService.flush();
     }
 
-    public void sendSyndicatedUserNotifications() {
+    public void sendUserActivityNotification(Integer user) {
 
     }
 

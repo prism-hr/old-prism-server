@@ -24,11 +24,9 @@ public class NotificationDefinitionDTO {
 
     private AdvertTarget advertTarget;
 
-    private ResourceParent parentResource;
+    private ResourceParent invitedResource;
 
-    private ResourceParent initiatorResource;
-
-    private PrismMotivationContext targetContext;
+    private PrismMotivationContext invitedResourceContext;
 
     private PrismAction transitionAction;
 
@@ -64,16 +62,12 @@ public class NotificationDefinitionDTO {
         return advertTarget;
     }
 
-    public ResourceParent getParentResource() {
-        return parentResource;
+    public ResourceParent getInvitedResource() {
+        return invitedResource;
     }
 
-    public ResourceParent getInitiatorResource() {
-        return initiatorResource;
-    }
-
-    public PrismMotivationContext getTargetContext() {
-        return targetContext;
+    public PrismMotivationContext getInvitedResourceContext() {
+        return invitedResourceContext;
     }
 
     public PrismAction getTransitionAction() {
@@ -117,18 +111,13 @@ public class NotificationDefinitionDTO {
         return this;
     }
 
-    public NotificationDefinitionDTO withParentResource(ResourceParent parentResource) {
-        this.parentResource = parentResource;
+    public NotificationDefinitionDTO withInvitedResource(ResourceParent invitedResource) {
+        this.invitedResource = invitedResource;
         return this;
     }
 
-    public NotificationDefinitionDTO withInitiatorResource(ResourceParent targetResource) {
-        this.initiatorResource = targetResource;
-        return this;
-    }
-
-    public NotificationDefinitionDTO withTargetContext(PrismMotivationContext targetContext) {
-        this.targetContext = targetContext;
+    public NotificationDefinitionDTO withInvitedResourceContext(PrismMotivationContext invitedResourceContext) {
+        this.invitedResourceContext = invitedResourceContext;
         return this;
     }
 

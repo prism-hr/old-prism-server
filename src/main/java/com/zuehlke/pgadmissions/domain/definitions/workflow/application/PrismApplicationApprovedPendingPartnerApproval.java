@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.AP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
@@ -38,6 +39,7 @@ public class PrismApplicationApprovedPendingPartnerApproval extends PrismWorkflo
                                 .withRoleTransitions(APPLICATION_CREATE_APPOINTEE_GROUP)));
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEscalate(APPLICATION_APPROVED)); //
         stateActions.add(applicationViewEdit()); //
     }
 

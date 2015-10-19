@@ -172,7 +172,8 @@ public class NotificationService {
 
             for (UserNotificationDefinitionDTO request : requests) {
                 User user = userService.getById(request.getUserId());
-                if (recentRequests.get(request).intValue() < requestThrottle) {
+                Integer recentRequestCount = recentRequests.get(request);
+                if (recentRequestCount == null || recentRequestCount < requestThrottle) {
                     NotificationDefinition definition = getById(request.getNotificationDefinitionId());
                     sendNotification(definition, new NotificationDefinitionDTO().withUser(user).withAuthor(comment.getUser()).withResource(resource).withComment(comment)
                             .withTransitionAction(request.getActionId()));

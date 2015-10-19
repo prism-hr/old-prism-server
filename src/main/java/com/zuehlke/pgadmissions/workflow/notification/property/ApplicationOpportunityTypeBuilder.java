@@ -11,7 +11,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationOpportunityTypeBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         Resource resource = propertyLoader.getNotificationDefinitionDTO().getResource();
         if (ResourceOpportunity.class.isAssignableFrom(resource.getParentResource().getClass())) {
             return propertyLoader.getPropertyLoader().loadLazy(PrismOpportunityType

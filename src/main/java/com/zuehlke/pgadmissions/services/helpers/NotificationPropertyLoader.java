@@ -15,15 +15,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -35,8 +31,7 @@ import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-
-import freemarker.template.Template;
+import com.zuehlke.pgadmissions.utils.PrismTemplateUtils;
 
 @Service
 @Transactional
@@ -63,7 +58,7 @@ public class NotificationPropertyLoader {
     private SystemService systemService;
 
     @Inject
-    private FreeMarkerConfig freemarkerConfig;
+    private PrismTemplateUtils prismTemplateUtils;
 
     @Inject
     ApplicationContext applicationContext;
@@ -96,32 +91,30 @@ public class NotificationPropertyLoader {
         return systemService;
     }
 
-    public FreeMarkerConfig getFreemarkerConfig() {
-        return freemarkerConfig;
-    }
-
-    public String load(PrismNotificationDefinitionProperty property) throws Exception {
-        String value = applicationContext.getBean(property.getBuilder()).build(this);
-        return value == null ? "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT)
-                + ": " + helpdesk + "]" : value;
+    public String load(PrismNotificationDefinitionProperty property) {
+        String propertyValue = applicationContext.getBean(property.getBuilder()).build(this);
+        if (propertyValue == null) {
+            return "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT) + ": " + helpdesk + "]";
+        }
+        return propertyValue;
     }
 
     public NotificationPropertyLoader localize(NotificationDefinitionDTO notificationDefinitionDTO, PropertyLoader propertyLoader) {
         this.notificationDefinitionDTO = notificationDefinitionDTO;
-        this.notificationDefinitionDTO.setInvoker(systemService.getSystem().getUser());
+        this.notificationDefinitionDTO.setSignatory(systemService.getSystem().getUser());
         this.propertyLoader = propertyLoader;
         return this;
     }
 
-    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel) throws Exception {
+    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {
         return buildRedirectionControl(linkLabel, null);
     }
 
-    public String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) throws Exception {
+    public String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) {
         return buildRedirectionControl(url, linkLabel, null);
     }
 
-    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws Exception {
+    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
         Resource resource = notificationDefinitionDTO.getResource();
         String url = buildRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
         return buildRedirectionControl(url, linkLabel, declineLinkLabel);
@@ -144,8 +137,7 @@ public class NotificationPropertyLoader {
                 + user.getActivationCode();
     }
 
-    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel)
-            throws Exception {
+    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
         Map<String, Object> model = Maps.newHashMap();
         ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.loadLazy(linkLabel));
         model.put("link", link);
@@ -155,10 +147,7 @@ public class NotificationPropertyLoader {
             model.put("declineLink", declineLink);
         }
 
-        String emailControlTemplate = Resources.toString(Resources.getResource("email/email_control_template.ftl"), Charsets.UTF_8);
-        Template template = new Template("Email Control Template", emailControlTemplate, freemarkerConfig.getConfiguration());
-
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        return prismTemplateUtils.getContentFromLocation("Email Control Template", "email/email_control_template.ftl", model);
     }
 
 }

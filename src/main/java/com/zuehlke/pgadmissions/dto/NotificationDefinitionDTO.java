@@ -13,21 +13,21 @@ import com.zuehlke.pgadmissions.domain.user.User;
 public class NotificationDefinitionDTO {
 
     private User initiator;
-    
+
     private User recipient;
-    
+
     private User signatory;
 
     private Resource resource;
 
     private Comment comment;
-    
+
     private AdvertTarget advertTarget;
-    
+
     private ResourceParent parentResource;
-    
+
     private ResourceParent targetResource;
-    
+
     private PrismMotivationContext targetContext;
 
     private PrismAction transitionAction;
@@ -43,11 +43,15 @@ public class NotificationDefinitionDTO {
     public User getRecipient() {
         return recipient;
     }
-    
+
     public User getSignatory() {
         return signatory;
     }
-    
+
+    public void setSignatory(User signatory) {
+        this.signatory = signatory;
+    }
+
     public Resource getResource() {
         return resource;
     }
@@ -92,14 +96,9 @@ public class NotificationDefinitionDTO {
         this.initiator = initiator;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withRecipient(User user) {
         this.recipient = user;
-        return this;
-    }
-    
-    public NotificationDefinitionDTO withSignatory(User signatory) {
-        this.signatory = signatory;
         return this;
     }
 
@@ -112,22 +111,22 @@ public class NotificationDefinitionDTO {
         this.comment = comment;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withAdvertTarget(AdvertTarget advertTarget) {
         this.advertTarget = advertTarget;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withParentResource(ResourceParent parentResource) {
         this.parentResource = parentResource;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withTargetResource(ResourceParent targetResource) {
         this.targetResource = targetResource;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withTargetContext(PrismMotivationContext targetContext) {
         this.targetContext = targetContext;
         return this;

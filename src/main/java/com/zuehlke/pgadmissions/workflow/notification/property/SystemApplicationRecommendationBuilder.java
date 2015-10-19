@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class SystemApplicationRecommendationBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
         List<AdvertRecommendationDTO> advertRecommendations = notificationDefinitionDTO.getAdvertRecommendations();
 

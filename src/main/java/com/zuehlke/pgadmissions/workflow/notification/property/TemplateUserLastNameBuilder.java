@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class TemplateUserLastNameBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         return propertyLoader.getNotificationDefinitionDTO().getRecipient().getLastName();
     }
     

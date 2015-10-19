@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationPositionNameBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         CommentPositionDetail positionDetail = propertyLoader.getNotificationDefinitionDTO().getComment().getPositionDetail();
         return positionDetail == null ? null : positionDetail.getPositionName();
     }

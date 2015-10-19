@@ -9,7 +9,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationOfferConditionBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         CommentOfferDetail offerDetail = propertyLoader.getNotificationDefinitionDTO().getComment().getOfferDetail();
         return offerDetail == null ? null : offerDetail.getAppointmentConditions();
     }

@@ -26,15 +26,11 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.io.Resources;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
@@ -51,8 +47,7 @@ import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationReportListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
-
-import freemarker.template.Template;
+import com.zuehlke.pgadmissions.utils.PrismTemplateUtils;
 
 @Repository
 public class ApplicationDAO {
@@ -61,7 +56,7 @@ public class ApplicationDAO {
     private SessionFactory sessionFactory;
 
     @Inject
-    private FreeMarkerConfig freemarkerConfig;
+    private PrismTemplateUtils prismTemplateUtils;
 
     public ApplicationReferee getApplicationReferee(Application application, User user) {
         return (ApplicationReferee) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
@@ -274,18 +269,8 @@ public class ApplicationDAO {
         }
 
         ImmutableMap<String, Object> model = ImmutableMap.of("columnExpression", (Object) columnExpression, "constraintExpression", constraintExpression);
-
-        String queryString;
-        try {
-            String statement = Resources.toString(Resources.getResource(templateLocation), Charsets.UTF_8);
-            Template template = new Template("statement", statement, freemarkerConfig.getConfiguration());
-            queryString = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
-        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(queryString);
-
-        return query.addScalar("advertCount", LongType.INSTANCE) //
+        return sessionFactory.getCurrentSession().createSQLQuery(prismTemplateUtils.getContentFromLocation("statement", templateLocation, model))
+                .addScalar("advertCount", LongType.INSTANCE) //
                 .addScalar("applicationYear", StringType.INSTANCE) //
                 .addScalar("submittedApplicationCount", LongType.INSTANCE) //
                 .addScalar("approvedApplicationCount", LongType.INSTANCE) //

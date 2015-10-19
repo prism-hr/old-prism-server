@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class TemplateParentResourceNameBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
         if (notificationDefinitionDTO.getResource().getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
             return propertyLoader.getNotificationDefinitionDTO().getResource().getParentResource().getDisplayName();

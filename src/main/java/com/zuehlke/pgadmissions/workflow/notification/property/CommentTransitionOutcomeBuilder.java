@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class CommentTransitionOutcomeBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
         String resourceReference = notificationDefinitionDTO.getResource().getResourceScope().name();
         String outcomePostfix = getLast(newArrayList(notificationDefinitionDTO.getComment().getTransitionState().getId().name().split("_")));

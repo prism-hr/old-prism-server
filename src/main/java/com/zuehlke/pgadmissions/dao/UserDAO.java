@@ -224,6 +224,17 @@ public class UserDAO {
                 .list();
     }
 
+    public List<User> getResourceUsers(Resource resource, PrismRole role) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.eq("role.id", role))
+                .list();
+    }
+
     public void setParentUser(User newParentUser) {
         sessionFactory.getCurrentSession()
                 .createQuery("update User " //

@@ -11,7 +11,7 @@
 	Follow the link below to accept or reject this invitation.
 </p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

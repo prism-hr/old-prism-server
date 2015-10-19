@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext.VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
@@ -23,6 +24,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static com.zuehlke.pgadmissions.services.NotificationService.requestLimit;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
@@ -103,6 +105,7 @@ import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
+import com.zuehlke.pgadmissions.dto.UserNotificationDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -654,7 +657,12 @@ public class AdvertService {
         }
 
         if (!(updateAdvertTarget(target.getId(), true) || userAccept == null || roleService.getVerifiedRoles(userAccept, advertAccept.getResource()).isEmpty())) {
-            notificationService.sendConnectionRequest(target.getOtherUser(), userAccept, target);
+            Integer userAcceptId = userAccept.getId();
+            Map<UserNotificationDTO, Integer> recentRequests = notificationService.getRecentRequests(userAcceptId, LocalDate.now());
+            Integer recentRequestCount = recentRequests.get(new UserNotificationDTO().withUserId(userAcceptId).withNotificationDefinitionId(SYSTEM_CONNECTION_REQUEST));
+            if (recentRequests == null || recentRequestCount <= requestLimit) {
+                notificationService.sendConnectionRequest(target.getOtherUser(), userAccept, target);
+            }
         }
     }
 

@@ -86,15 +86,15 @@ import com.zuehlke.pgadmissions.workflow.notification.property.TemplateUserLastN
 
 public enum PrismNotificationDefinitionProperty {
 
-    TEMPLATE_USER_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateUserFullNameBuilder.class), //
-    TEMPLATE_USER_FIRST_NAME(TEMPLATE_GLOBAL, true, TemplateUserFirstNameBuilder.class), //
-    TEMPLATE_USER_LAST_NAME(TEMPLATE_GLOBAL, true, TemplateUserLastNameBuilder.class), //
-    TEMPLATE_USER_EMAIL(TEMPLATE_GLOBAL, true, TemplateUserEmailBuilder.class), //
-    TEMPLATE_USER_ACTIVATION_CODE(TEMPLATE_GLOBAL, true, TemplateUserActivationCodeBuilder.class), //
-    TEMPLATE_AUTHOR_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateAuthorFullNameBuilder.class), //
-    TEMPLATE_AUTHOR_EMAIL(TEMPLATE_GLOBAL, true, TemplateAuthorEmailBuilder.class), //
-    TEMPLATE_INVOKER_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateInvokerFullNameBuilder.class), //
-    TEMPLATE_INVOKER_EMAIL(TEMPLATE_GLOBAL, true, TemplateInvokerEmailBuilder.class), //
+    TEMPLATE_INITIATOR_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateInvokerFullNameBuilder.class), //
+    TEMPLATE_INITIATOR_EMAIL(TEMPLATE_GLOBAL, true, TemplateInvokerEmailBuilder.class), //
+    TEMPLATE_RECIPIENT_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateUserFullNameBuilder.class), //
+    TEMPLATE_RECIPIENT_FIRST_NAME(TEMPLATE_GLOBAL, true, TemplateUserFirstNameBuilder.class), //
+    TEMPLATE_RECIPIENT_LAST_NAME(TEMPLATE_GLOBAL, true, TemplateUserLastNameBuilder.class), //
+    TEMPLATE_RECIPIENT_EMAIL(TEMPLATE_GLOBAL, true, TemplateUserEmailBuilder.class), //
+    TEMPLATE_RECIPIENT_ACTIVATION_CODE(TEMPLATE_GLOBAL, true, TemplateUserActivationCodeBuilder.class), //
+    TEMPLATE_SIGNATORY_FULL_NAME(TEMPLATE_GLOBAL, true, TemplateAuthorFullNameBuilder.class), //
+    TEMPLATE_SIGNATORY_EMAIL(TEMPLATE_GLOBAL, true, TemplateAuthorEmailBuilder.class), //
     TEMPLATE_SYSTEM_NAME(TEMPLATE_GLOBAL, true, TemplateSystemNameBuilder.class), //
     TEMPLATE_SYSTEM_HOMEPAGE(TEMPLATE_GLOBAL, true, TemplateSystemHomepageBuilder.class), //
     TEMPLATE_SYSTEM_HELPDESK(TEMPLATE_GLOBAL, false, TemplateSystemHelpdeskBuilder.class), //
@@ -126,25 +126,25 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //
     PROJECT_NAME(PROJECT_GLOBAL, true, ProjectNameBuilder.class), //
     PROJECT_CODE(PROJECT_GLOBAL, true, ProjectCodeBuilder.class), //
-    PROJECT_USER_CONTACT(PROJECT_GLOBAL, true, ProjectUserContactBuilder.class), //
+    PROJECT_CONTACT(PROJECT_GLOBAL, true, ProjectUserContactBuilder.class), //
     PROGRAM_NAME(PROGRAM_GLOBAL, true, ProgramNameBuilder.class), //
     PROGRAM_CODE(PROGRAM_GLOBAL, true, ProgramCodeBuilder.class), //
-    PROGRAM_USER_CONTACT(PROGRAM_GLOBAL, true, ProgramUserContactBuilder.class), //
+    PROGRAM_CONTACT(PROGRAM_GLOBAL, true, ProgramUserContactBuilder.class), //
     DEPARTMENT_NAME(DEPARTMENT_GLOBAL, true, DepartmentNameBuilder.class), //
     DEPARTMENT_CODE(DEPARTMENT_GLOBAL, true, DepartmentCodeBuilder.class), //
-    DEPARTMENT_USER_CONTACT(DEPARTMENT_GLOBAL, true, DepartmentUserContactBuilder.class), //
+    DEPARTMENT_CONTACT(DEPARTMENT_GLOBAL, true, DepartmentUserContactBuilder.class), //
     INSTITUTION_NAME(INSTITUTION_GLOBAL, true, InstitutionNameBuilder.class), //
     INSTITUTION_CODE(INSTITUTION_GLOBAL, true, InstitutionCodeBuilder.class), //
-    INSTITUTION_USER_CONTACT(INSTITUTION_GLOBAL, true, InstitutionUserContactBuilder.class), //
+    INSTITUTION_CONTACT(INSTITUTION_GLOBAL, true, InstitutionUserContactBuilder.class), //
     SYSTEM_APPLICATION_HOMEPAGE(SYSTEM_APPLICATION_SYNDICATED, false, SystemApplicationHomepageBuilder.class), //
     SYSTEM_APPLICATION_RECOMMENDATION(SYSTEM_APPLICATION_MARKETING, false, SystemApplicationRecommendationBuilder.class), //
     SYSTEM_PROJECT_HOMEPAGE(SYSTEM_PROJECT_SYNDICATED, false, SystemProjectHomepageBuilder.class), //
     SYSTEM_PROGRAM_HOMEPAGE(SYSTEM_PROGRAM_SYNDICATED, false, SystemProgramHomepageBuilder.class), //
     SYSTEM_DEPARTMENT_HOMEPAGE(SYSTEM_DEPARTMENT_SYNDICATED, false, SystemDepartmentHomepageBuilder.class), //
     SYSTEM_INSTITUTION_HOMEPAGE(SYSTEM_INSTITUTION_SYNDICATED, false, SystemInstitutionHomepageBuilder.class), //
-    SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
-    SYSTEM_USER_ACCOUNT_MANAGEMENT(SYSTEM_USER_ACCOUNT, false, SystemUserAccountManagementBuilder.class), //
-    SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false, SystemUserAccountActivationBuilder.class);
+    SYSTEM_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
+    SYSTEM_ACCOUNT_MANAGEMENT(SYSTEM_USER_ACCOUNT, false, SystemUserAccountManagementBuilder.class), //
+    SYSTEM_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false, SystemUserAccountActivationBuilder.class);
 
     private PrismNotificationDefinitionPropertyCategory category;
 

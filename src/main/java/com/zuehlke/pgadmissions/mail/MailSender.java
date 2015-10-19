@@ -103,7 +103,7 @@ public class MailSender {
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + messageDTO.toString());
 
-                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(notificationDefinitionDTO.getUser()).toString() });
+                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(notificationDefinitionDTO.getRecipient()).toString() });
                 Content subjectContent = new Content().withData(subject);
                 Content plainTextContent = new Content().withData(plainText);
                 Content htmlContent = new Content().withData(html);

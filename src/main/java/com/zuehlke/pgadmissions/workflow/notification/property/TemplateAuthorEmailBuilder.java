@@ -9,7 +9,7 @@ public class TemplateAuthorEmailBuilder implements NotificationPropertyBuilder {
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionDTO().getAuthor().getEmail();
+        return propertyLoader.getNotificationDefinitionDTO().getSignatory().getEmail();
     }
     
 }

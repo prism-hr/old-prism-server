@@ -12,11 +12,11 @@ import com.zuehlke.pgadmissions.domain.user.User;
 
 public class NotificationDefinitionDTO {
 
-    private User user;
-
-    private User author;
-
-    private User invoker;
+    private User initiator;
+    
+    private User recipient;
+    
+    private User signatory;
 
     private Resource resource;
 
@@ -36,24 +36,20 @@ public class NotificationDefinitionDTO {
 
     List<AdvertRecommendationDTO> advertRecommendations;
 
-    public User getUser() {
-        return user;
+    public User getInitiator() {
+        return initiator;
     }
 
+    public User getRecipient() {
+        return recipient;
+    }
+    
+    public User getSignatory() {
+        return signatory;
+    }
+    
     public Resource getResource() {
         return resource;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public User getInvoker() {
-        return invoker;
-    }
-
-    public void setInvoker(User invoker) {
-        this.invoker = invoker;
     }
 
     public Comment getComment() {
@@ -92,18 +88,18 @@ public class NotificationDefinitionDTO {
         return advertRecommendations;
     }
 
-    public NotificationDefinitionDTO withUser(User user) {
-        this.user = user;
+    public NotificationDefinitionDTO withInitiator(User initiator) {
+        this.initiator = initiator;
         return this;
     }
-
-    public NotificationDefinitionDTO withAuthor(User author) {
-        this.author = author;
+    
+    public NotificationDefinitionDTO withRecipient(User user) {
+        this.recipient = user;
         return this;
     }
-
-    public NotificationDefinitionDTO withInvoker(User invoker) {
-        this.invoker = invoker;
+    
+    public NotificationDefinitionDTO withSignatory(User signatory) {
+        this.signatory = signatory;
         return this;
     }
 

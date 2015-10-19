@@ -40,7 +40,7 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
 
                 String applyHomepage = advert.getApplyHomepage();
                 applyHomepage = applyHomepage == null ? propertyLoader.buildRedirectionUrl(resourceParent,
-                        createResourceActions.get(resourceParent.getResourceScope()), notificationDefinitionDTO.getUser()) : applyHomepage;
+                        createResourceActions.get(resourceParent.getResourceScope()), notificationDefinitionDTO.getRecipient()) : applyHomepage;
                 recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
             }
 

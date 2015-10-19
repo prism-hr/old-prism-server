@@ -9,7 +9,7 @@ public class TemplateUserLastNameBuilder implements NotificationPropertyBuilder 
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionDTO().getUser().getLastName();
+        return propertyLoader.getNotificationDefinitionDTO().getRecipient().getLastName();
     }
     
 }

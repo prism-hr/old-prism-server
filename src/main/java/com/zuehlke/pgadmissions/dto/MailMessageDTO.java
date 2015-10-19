@@ -28,7 +28,7 @@ public final class MailMessageDTO {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("to", notificationDefinitionDTO.getUser().getEmail())
+                .add("to", notificationDefinitionDTO.getRecipient().getEmail())
                 .add("resourceScope", notificationDefinitionDTO.getResource().getResourceScope())
                 .add("resourceId", notificationDefinitionDTO.getResource().getId())
                 .add("template", notificationConfiguration.getDefinition().getId())

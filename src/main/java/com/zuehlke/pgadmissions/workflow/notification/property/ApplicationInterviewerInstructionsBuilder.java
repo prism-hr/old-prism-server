@@ -18,7 +18,7 @@ public class ApplicationInterviewerInstructionsBuilder implements NotificationPr
         NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
         Comment comment = notificationDefinitionDTO.getComment();
 
-        if (!Objects.equal(notificationDefinitionDTO.getUser(), comment.getApplication().getUser())) {
+        if (!Objects.equal(notificationDefinitionDTO.getRecipient(), comment.getApplication().getUser())) {
             CommentInterviewInstruction interviewInstruction = comment.getInterviewInstruction();
             String instructions = interviewInstruction == null ? null : interviewInstruction.getInterviewerInstructions();
             return instructions == null ? propertyLoader.getPropertyLoader().loadLazy(SYSTEM_VALUE_NOT_PROVIDED) : instructions;

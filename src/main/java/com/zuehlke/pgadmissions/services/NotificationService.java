@@ -118,24 +118,30 @@ public class NotificationService {
         sendNotification(notificationTemplate, notificationDefinitionDTO);
     }
 
-    public void sendInvitationNotification(User user, User invitee) {
+    public void sendInvitationNotification(User initiator, User recipient) {
         System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
-        sendNotification(definition, new NotificationDefinitionDTO().withUser(invitee).withAuthor(system.getUser()).withInvoker(user).withResource(system)
+        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withSignatory(system.getUser()).withResource(system)
                 .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
-    public void sendRegistrationNotification(User user, ActionOutcomeDTO actionOutcome) {
+    public void sendRegistrationNotification(User initiator, ActionOutcomeDTO actionOutcome) {
         System system = systemService.getSystem();
-        sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST,
-                new NotificationDefinitionDTO().withUser(user).withAuthor(system.getUser()).withResource(actionOutcome.getTransitionResource())
-                        .withTransitionAction(actionOutcome.getTransitionAction().getId()));
+        sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator).withSignatory(system.getUser())
+                .withResource(actionOutcome.getTransitionResource()).withTransitionAction(actionOutcome.getTransitionAction().getId()));
     }
 
-    public void sendResetPasswordNotification(User user, String newPassword) {
+    public void sendResetPasswordNotification(User initiator, String newPassword) {
         System system = systemService.getSystem();
-        sendNotification(SYSTEM_PASSWORD_NOTIFICATION, new NotificationDefinitionDTO().withUser(user).withAuthor(system.getUser()).withResource(system)
-                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword));
+        sendNotification(SYSTEM_PASSWORD_NOTIFICATION, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator).withSignatory(system.getUser())
+                .withResource(system).withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword));
+    }
+
+    public void sendConnectionNotification(User initiator, User recipient) {
+        System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
+        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withSignatory(system.getUser()).withResource(system)
+                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
@@ -170,16 +176,19 @@ public class NotificationService {
                 recentRequests.put(un, un.getSentCount().intValue());
             });
 
+            User initiator = comment.getUser();
+            User signatory = systemService.getSystem().getUser();
+
             for (UserNotificationDefinitionDTO request : requests) {
-                User user = userService.getById(request.getUserId());
+                User recipient = userService.getById(request.getUserId());
                 Integer recentRequestCount = recentRequests.get(request);
                 if (recentRequestCount == null || recentRequestCount < requestThrottle) {
                     NotificationDefinition definition = getById(request.getNotificationDefinitionId());
-                    sendNotification(definition, new NotificationDefinitionDTO().withUser(user).withAuthor(comment.getUser()).withResource(resource).withComment(comment)
-                            .withTransitionAction(request.getActionId()));
-                    createOrUpdateUserNotification(resource, user, definition, baseline);
+                    sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withSignatory(signatory).withResource(resource)
+                            .withComment(comment).withTransitionAction(request.getActionId()));
+                    createOrUpdateUserNotification(resource, recipient, definition, baseline);
                 }
-                recipients.add(user);
+                recipients.add(recipient);
             }
         }
 
@@ -191,19 +200,22 @@ public class NotificationService {
         if (updates.size() > 0) {
             Action action = actionService.getViewEditAction(resource);
             if (action != null) {
+                User initiator = comment.getUser();
+                User signatory = systemService.getSystem().getUser();
+
                 for (UserNotificationDefinitionDTO update : updates) {
-                    User user = userService.getById(update.getUserId());
+                    User recipient = userService.getById(update.getUserId());
                     NotificationDefinition definition = getById(update.getNotificationDefinitionId());
-                    sendNotification(definition, new NotificationDefinitionDTO().withUser(user).withAuthor(comment.getUser()).withResource(resource).withComment(comment)
-                            .withTransitionAction(action == null ? null : action.getId()));
-                    createOrUpdateUserNotification(resource, user, definition, baseline);
+                    sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withSignatory(signatory).withResource(resource)
+                            .withComment(comment).withTransitionAction(action == null ? null : action.getId()));
+                    createOrUpdateUserNotification(resource, recipient, definition, baseline);
                 }
             }
         }
     }
 
     private void sendNotification(NotificationDefinition template, NotificationDefinitionDTO notificationDefinitionDTO) {
-        User user = notificationDefinitionDTO.getUser();
+        User user = notificationDefinitionDTO.getRecipient();
         NotificationConfiguration configuration = getNotificationConfiguration(notificationDefinitionDTO.getResource(), user, template);
         MailMessageDTO message = new MailMessageDTO();
 
@@ -214,8 +226,8 @@ public class NotificationService {
         applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 
-    public void createOrUpdateUserNotification(Resource resource, User user, NotificationDefinition definition, LocalDate baseline) {
-        entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(user).withNotificationDefinition(definition)
+    public void createOrUpdateUserNotification(Resource resource, User recipient, NotificationDefinition definition, LocalDate baseline) {
+        entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
                 .withLastNotifiedDate(baseline));
     }
 

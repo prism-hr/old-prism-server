@@ -640,7 +640,7 @@ public class AdvertService {
             createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, ENDORSEMENT_PENDING);
         }
 
-        if (!(userAccept == null && updateAdvertTarget(advertTarget.getId(), true))) {
+        if (!(userAccept == null || updateAdvertTarget(advertTarget.getId(), true))) {
             // TODO - send the connection request
         }
     }

@@ -12,7 +12,7 @@
     <ul>
     	<li><b>N outstanding tasks that require your attention</b></li>
     	<li>N updates to applications, opportunities and organizations that you are following</li>
-    	<li>N requests to join organizations that you administer</li>
+    	<li>N requests to join organizations that you manage</li>
     	<li>N new connection requests from organizations in your network</li>
     </ul>
 </p>

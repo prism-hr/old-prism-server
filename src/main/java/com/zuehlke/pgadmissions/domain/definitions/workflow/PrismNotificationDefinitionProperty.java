@@ -74,6 +74,9 @@ import com.zuehlke.pgadmissions.workflow.notification.property.TemplateRecipient
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateRecipientFirstNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateRecipientFullNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateRecipientLastNameBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TemplateResourceCodeBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TemplateResourceNameBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TemplateResourceScopeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSignatoryEmailBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSignatoryFullNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateSystemHelpdeskBuilder;
@@ -93,8 +96,9 @@ public enum PrismNotificationDefinitionProperty {
     TEMPLATE_SYSTEM_NAME(TEMPLATE_GLOBAL, true, TemplateSystemNameBuilder.class), //
     TEMPLATE_SYSTEM_HOMEPAGE(TEMPLATE_GLOBAL, true, TemplateSystemHomepageBuilder.class), //
     TEMPLATE_SYSTEM_HELPDESK(TEMPLATE_GLOBAL, false, TemplateSystemHelpdeskBuilder.class), //
-    TEMPLATE_RESOURCE_NAME(TEMPLATE_GLOBAL, true, TemplateParentResourceNameBuilder.class), //
-    TEMPLATE_RESOURCE_CODE(TEMPLATE_GLOBAL, true, TemplateParentResourceCodeBuilder.class), //
+    TEMPLATE_RESOURCE_NAME(TEMPLATE_GLOBAL, true, TemplateResourceNameBuilder.class), //
+    TEMPLATE_RESOURCE_CODE(TEMPLATE_GLOBAL, true, TemplateResourceCodeBuilder.class), //
+    TEMPLATE_RESOURCE_SCOPE(TEMPLATE_GLOBAL, true, TemplateResourceScopeBuilder.class), //
     TEMPLATE_PARENT_RESOURCE_NAME(TEMPLATE_GLOBAL, true, TemplateParentResourceNameBuilder.class), //
     TEMPLATE_PARENT_RESOURCE_CODE(TEMPLATE_GLOBAL, true, TemplateParentResourceCodeBuilder.class), //
     ACTION_COMPLETE(ACTION_GLOBAL, false, ActionCompleteBuilder.class), //

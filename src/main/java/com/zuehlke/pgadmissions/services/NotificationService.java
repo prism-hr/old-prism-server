@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -131,9 +132,14 @@ public class NotificationService {
     }
 
     public void sendUserInvitationNotification(User initiator, User recipient, Resource resource, PrismAction transitionAction) {
-        NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
-        sendNotification(definition,
+        sendNotification(getById(SYSTEM_USER_INVITATION_NOTIFICATION),
                 new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(transitionAction));
+    }
+
+    public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource) {
+        sendNotification(getById(SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION),
+                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
+                        .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
     }
 
     public void sendRegistrationNotification(User initiator, ActionOutcomeDTO actionOutcome) {
@@ -156,8 +162,7 @@ public class NotificationService {
     }
 
     public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
-        NotificationDefinition definition = getById(SYSTEM_JOIN_NOTIFICATION);
-        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
+        sendNotification(getById(SYSTEM_JOIN_NOTIFICATION), new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
                 .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT")));
     }
 
@@ -171,9 +176,8 @@ public class NotificationService {
 
     public void sendConnectionNotification(User initiator, User recipient, AdvertTarget advertTarget) {
         System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_CONNECTION_NOTIFICATION);
-        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
-                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+        sendNotification(getById(SYSTEM_CONNECTION_NOTIFICATION), new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system)
+                .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {

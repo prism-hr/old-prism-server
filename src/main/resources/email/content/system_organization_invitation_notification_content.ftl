@@ -3,8 +3,8 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TEMPLATE_RESOURCE_NAME} has invited you to join 
-	${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
+    ${TEMPLATE_INITIATOR_FULL_NAME} has invited your ${TEMPLATE_RESOURCE_SCOPE} to 
+    join ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
 </p>
 
 <p>
@@ -14,10 +14,10 @@
 </p>
 
 <p>
-	Follow the link below to register your organization and join our community.	
+	Follow the link below to register and join our network.	
 </p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+${ACTION_COMPLETE}
 
 <p>
 	Welcome to ${TEMPLATE_SYSTEM_NAME}.

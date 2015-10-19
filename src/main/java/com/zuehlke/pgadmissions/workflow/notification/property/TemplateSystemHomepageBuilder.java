@@ -11,7 +11,7 @@ public class TemplateSystemHomepageBuilder implements NotificationPropertyBuilde
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.buildRedirectionControl(propertyLoader.getApplicationUrl(), SYSTEM_HOMEPAGE);
+        return propertyLoader.getRedirectionControl(propertyLoader.getApplicationUrl(), SYSTEM_HOMEPAGE);
     }
 
 }

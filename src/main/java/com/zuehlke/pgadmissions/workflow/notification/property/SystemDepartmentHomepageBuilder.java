@@ -11,7 +11,7 @@ public class SystemDepartmentHomepageBuilder implements NotificationPropertyBuil
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.buildRedirectionControl(SYSTEM_DEPARTMENTS);
+        return propertyLoader.getRedirectionControl(SYSTEM_DEPARTMENTS);
     }
 
 }

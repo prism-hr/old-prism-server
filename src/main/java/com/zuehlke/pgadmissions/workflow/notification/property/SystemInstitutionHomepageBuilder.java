@@ -11,7 +11,7 @@ public class SystemInstitutionHomepageBuilder implements NotificationPropertyBui
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.buildRedirectionControl(SYSTEM_INSTITUTIONS);
+        return propertyLoader.getRedirectionControl(SYSTEM_INSTITUTIONS);
     }
 
 }

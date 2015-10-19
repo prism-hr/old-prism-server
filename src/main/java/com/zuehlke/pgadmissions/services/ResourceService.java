@@ -229,6 +229,12 @@ public class ResourceService {
         return outcome;
     }
 
+    public ResourceParent inviteResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
+        ResourceParent resource = createResourceRelation(resourceRelationDTO);
+
+        return resource;
+    }
+
     public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
             ResourceParent resource = null;

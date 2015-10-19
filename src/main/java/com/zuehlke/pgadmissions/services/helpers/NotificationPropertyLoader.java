@@ -106,18 +106,18 @@ public class NotificationPropertyLoader {
         return this;
     }
 
-    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {
-        return buildRedirectionControl(linkLabel, null);
+    public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {
+        return getRedirectionControl(linkLabel, null);
     }
 
-    public String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) {
-        return buildRedirectionControl(url, linkLabel, null);
+    public String getRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) {
+        return getRedirectionControl(url, linkLabel, null);
     }
 
-    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
+    public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
         Resource resource = notificationDefinitionDTO.getResource();
-        String url = buildRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
-        return buildRedirectionControl(url, linkLabel, declineLinkLabel);
+        String url = getRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
+        return getRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
     public String getCommentAssigneesAsString(PrismRole roleId) {
@@ -131,13 +131,13 @@ public class NotificationPropertyLoader {
         return Joiner.on(", ").join(assigneeStrings);
     }
 
-    public String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
+    public String getRedirectionUrl(Resource resource, PrismAction actionId, User user) {
         Resource operative = (Resource) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }
 
-    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
+    private String getRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
         Map<String, Object> model = Maps.newHashMap();
         ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.loadLazy(linkLabel));
         model.put("link", link);

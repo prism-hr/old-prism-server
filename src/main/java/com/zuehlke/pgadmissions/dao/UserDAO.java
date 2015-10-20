@@ -371,7 +371,7 @@ public class UserDAO {
 
     public List<Integer> getUsersWithActivity(PrismScope resourceScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
         return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, Projections.groupProperty("user.id"))
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
                 .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
@@ -380,7 +380,7 @@ public class UserDAO {
 
     public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope parentScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
         return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, parentScope, Projections.groupProperty("user.id")) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
                 .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
@@ -388,8 +388,8 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targetScope, targeterScope, Projections.groupProperty("user.id")) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targeterScope, targetScope, Projections.groupProperty("user.id")) //
+                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
                 .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
@@ -436,7 +436,7 @@ public class UserDAO {
                 .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
                 .createAlias("acceptAdvert." + resourceScope.getLowerCamelName(), "acceptResource", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("acceptAdvert.id", "acceptResource.advert.id")) //
-                .createAlias("acceptRoles.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("acceptResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_PENDING)) //
                 .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR")))
                 .list();

@@ -7,11 +7,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -146,6 +149,7 @@ public class WorkflowDAO {
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
                 .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
@@ -314,6 +318,18 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("userNotification.id")) //
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline));
+    }
+
+    public static Junction getTokenizedLikeConstraint(String property, String query) {
+        Junction constraint = Restrictions.disjunction();
+        String[] tokens = query.split("\\s*(,|\\s)\\s*");
+        CharArraySet stopWords = EnglishAnalyzer.getDefaultStopSet();
+        Arrays.stream(tokens).forEach(token -> {
+            if (!stopWords.contains(token)) {
+                constraint.add(Restrictions.like(property, token, MatchMode.ANYWHERE));
+            }
+        });
+        return constraint;
     }
 
 }

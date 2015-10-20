@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
@@ -426,23 +427,20 @@ public class UserService {
     public Set<Integer> getUsersWithActivity() {
         Set<Integer> users = Sets.newHashSet();
         DateTime updateBaseline = new DateTime().minusDays(1);
-        LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(3);
+        LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(1);
 
-        List<PrismScope> resourceScopes = scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM);
-        int lastScopeIndex = (resourceScopes.size() - 1);
-        for (int i = 0; i <= lastScopeIndex; i++) {
-            PrismScope resourceScope = resourceScopes.get(i);
-            users.addAll(userDAO.getUsersWithActivity(resourceScope, updateBaseline, lastNotifiedBaseline));
-            resourceScopes.subList(i, lastScopeIndex).forEach(parentScope -> {
-                users.addAll(userDAO.getUsersWithActivity(resourceScope, parentScope, updateBaseline, lastNotifiedBaseline));
+        scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM).forEach(scope -> {
+            users.addAll(userDAO.getUsersWithActivity(scope, updateBaseline, lastNotifiedBaseline));
+            scopeService.getParentScopesDescending(scope, SYSTEM).forEach(parentScope -> {
+                users.addAll(userDAO.getUsersWithActivity(scope, parentScope, updateBaseline, lastNotifiedBaseline));
             });
 
             for (PrismScope targeterScope : targetScopes) {
-                if (resourceScope.ordinal() > targeterScope.ordinal()) {
+                if (scope.ordinal() > targeterScope.ordinal()) {
                     for (PrismScope targetScope : targetScopes) {
-                        users.addAll(userDAO.getUsersWithActivity(resourceScope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
+                        users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
 
-                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, updateBaseline);
+                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
                         if (!resources.isEmpty()) {
                             users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
 
@@ -450,6 +448,19 @@ public class UserService {
                                 users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
                             }
                         }
+                    }
+                }
+            }
+        });
+        
+        for (PrismScope targeterScope : targetScopes) {
+            for (PrismScope targetScope : targetScopes) {
+                List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
+                if (!resources.isEmpty()) {
+                    users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
+
+                    if (targetScope.equals(DEPARTMENT)) {
+                        users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
                     }
                 }
             }

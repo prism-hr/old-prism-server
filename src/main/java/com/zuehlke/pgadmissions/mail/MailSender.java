@@ -83,8 +83,8 @@ public class MailSender {
         try {
             Map<String, Object> model = createNotificationModel(messageDTO.getNotificationConfiguration().getDefinition(), notificationDefinitionDTO);
             String definitionReference = configuration.getDefinition().getId().name();
-            String subject = prismTemplateUtils.getContentFromLocation(definitionReference + "_subject", configuration.getSubject(), model);
-            String content = prismTemplateUtils.getContentFromLocation(definitionReference + "_content", configuration.getContent(), model);
+            String subject = prismTemplateUtils.getContent(definitionReference + "_subject", configuration.getSubject(), model);
+            String content = prismTemplateUtils.getContent(definitionReference + "_content", configuration.getContent(), model);
 
             String html = getMessage(messageDTO.getNotificationDefinitionDTO().getResource(), subject, content, model);
             String plainText = htmlToPlainText(html) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);

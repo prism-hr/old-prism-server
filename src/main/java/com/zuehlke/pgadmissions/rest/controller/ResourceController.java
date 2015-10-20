@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -199,7 +197,7 @@ public class ResourceController {
         PrismRole role = body.get("role");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.updateUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
+        roleService.createUserRoles(userService.getCurrentUser(), resource, user, role);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
@@ -208,7 +206,7 @@ public class ResourceController {
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
-        roleService.updateUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
+        roleService.deleteUserRoles(userService.getCurrentUser(), resource, user, role);
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)

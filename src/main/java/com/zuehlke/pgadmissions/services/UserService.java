@@ -5,7 +5,6 @@ import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -170,7 +169,7 @@ public class UserService {
 
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.updateUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
+        roleService.createUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
 

@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has requested membership of ${TEMPLATE_RESOURCE_NAME};
+    ${TEMPLATE_INITIATOR_FULL_NAME} has requested membership of ${TEMPLATE_RESOURCE_NAME}.
 </p>
 
 <p>

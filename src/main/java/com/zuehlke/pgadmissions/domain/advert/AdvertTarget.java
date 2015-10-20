@@ -159,18 +159,11 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     }
 
     public Advert getOtherAdvert() {
-        Integer acceptAdvertId = acceptAdvert.getId();
-        if (acceptAdvertId != null) {
-            return Objects.equal(acceptAdvertId, advert.getId()) ? targetAdvert : advert;
-        }
-        return null;
+        return Objects.equal(acceptAdvert.getId(), advert.getId()) ? targetAdvert : advert;
     }
 
     public User getOtherUser() {
-        if (acceptAdvertUser != null) {
-            return Objects.equal(acceptAdvertUser, advertUser) ? targetAdvertUser : advertUser;
-        }
-        return null;
+        return Objects.equal(acceptAdvert.getId(), advert.getId()) ? targetAdvertUser : advertUser;
     }
 
     @Override

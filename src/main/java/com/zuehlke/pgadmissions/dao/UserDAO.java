@@ -297,7 +297,7 @@ public class UserDAO {
     }
 
     public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
-        return (List<User>) workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
+        return (List<User>) workflowDAO.getWorklflowCriteriaAssignment(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
                 .add(getUserRoleWithTargetConstraint(resource)) //
@@ -418,7 +418,7 @@ public class UserDAO {
     public List<Integer> getUsersWithUsersToVerify(PrismScope resourceScope, List<Integer> resources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
-                .add(Restrictions.eq("role.id", PrismRole.valueOf(resourceScope.name()) + "_ADMINISTRATOR")) //
+                .add(Restrictions.eq("role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR"))) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resources)) //
                 .list();
     }

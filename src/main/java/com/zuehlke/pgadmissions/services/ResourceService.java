@@ -554,10 +554,10 @@ public class ResourceService {
                 break;
             case PROGRAM:
                 resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
                 break;
             case PROJECT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
                 break;
             default:
                 throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");

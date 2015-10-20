@@ -10,6 +10,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_VIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_VIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_VIEWER_GROUP;
@@ -68,8 +71,12 @@ public class PrismProjectWorkflow {
     public static PrismStateAction projectViewEditApproved() {
         return projectViewEditAbstract()
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
+                .withAssignments(INSTITUTION_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withAssignments(DEPARTMENT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withAssignments(PROGRAM_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
+                .withPartnerAssignments(DEPARTMENT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withStateTransitions(PROJECT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
     }
@@ -88,7 +95,7 @@ public class PrismProjectWorkflow {
                         .withTransitionState(PROJECT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST));
     }
-    
+
     public static PrismStateAction projectViewEditAbstract() {
         return new PrismStateAction() //
                 .withAction(PROJECT_VIEW_EDIT);

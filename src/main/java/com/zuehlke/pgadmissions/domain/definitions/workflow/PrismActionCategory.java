@@ -9,7 +9,8 @@ public enum PrismActionCategory {
     MANAGE_ACCOUNT, //
     PROCESS_RESOURCE, //
     PROPAGATE_RESOURCE, //
-    VIEW_RESOURCE, //
+    VIEW_ACTIVITY_LIST, //
+    VIEW_RESOURCE_LIST, //
     VIEW_EDIT_RESOURCE, //
     WITHDRAW_RESOURCE
 

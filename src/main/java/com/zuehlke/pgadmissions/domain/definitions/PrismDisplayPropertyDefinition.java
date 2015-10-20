@@ -1567,8 +1567,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_TELEPHONE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Provide us with a telephone number that we can contact you at should we need to."),
     SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Processing Options"),
     SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Configure the processing options that you wish to enable"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Enable CV Forwarding"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow students and graduates to forward their CVs to you"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Currently Accepting CVs?"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow candidates to forward their CVs"),
     SYSTEM_RESOURCE_PARENT_ACCEPT_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Enable new Departments?"),
     SYSTEM_RESOURCE_PARENT_ACCEPT_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow registered users within your organization to create new Departments"),
     SYSTEM_RESOURCE_PARENT_ACCEPT_PROGRAM_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Enable new Programs?"),
@@ -1605,6 +1605,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "To help your students decide whether to pursue work experience or employment with this employer, tell us how you rate them."),
     SYSTEM_RESOURCE_PARENT_PROVIDE_ENDORSEMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Endorse Employer"),
     SYSTEM_RESOURCE_PARENT_PROVIDE_ENDORSEMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Confirm that you are happy to endorse this employer. Please be aware that declining this request will mean that your students cannot see their advert."),
+    SYSTEM_RESOURCE_PARENT_DEACTIVATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Deactivate"), 
 
     /*
      * *************** SYSTEM RESOURCE OPPORTUNITY *********************
@@ -1614,8 +1615,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "To help your students decide whether to pursue this opportunity, tell us how you rate it."),
     SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Endorse Opportunity"),
     SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Confirm that you are happy to endorse this opportunity. Please be aware that declining this request will mean that your students cannot apply for it."),
-    SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_APPLICATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Currently accepting applications"),
-    SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_APPLICATION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow visitors to your advert to submit applications directly to you"),
+    SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_APPLICATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Currently Accepting Applications"),
+    SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_APPLICATION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow candidates to submit applications"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Currently accepting new departments"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow users to create new departments"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PROGRAM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Currently accepting new programs"),

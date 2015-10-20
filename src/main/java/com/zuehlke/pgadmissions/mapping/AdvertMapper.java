@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -54,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
@@ -95,7 +97,7 @@ public class AdvertMapper {
 
     @Inject
     private UserService userService;
-    
+
     @Inject
     private AddressMapper addressMapper;
 
@@ -229,6 +231,7 @@ public class AdvertMapper {
                         .setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(oc -> PrismOpportunityCategory.valueOf(oc)).collect(Collectors.toList()));
             }
 
+            setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
             representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
         }
 
@@ -260,6 +263,8 @@ public class AdvertMapper {
         }
 
         representation.setOpportunityType(advert.getOpportunityType());
+        setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
+
         representation.setName(advert.getName());
         representation.setSummary(advert.getSummary());
         representation.setDescription(advert.getDescription());
@@ -311,6 +316,12 @@ public class AdvertMapper {
 
         representation.setTelephone(advert.getTelephone());
         representation.setAddress(getAdvertAddressRepresentation(advert));
+
+        Resource resource = advert.getResource();
+        if (resource.getResourceScope().ordinal() > INSTITUTION.ordinal()) {
+            representation.setParentAddress(getAdvertAddressRepresentation(resource.getParentResource().getAdvert()));
+        }
+
         representation.setFinancialDetails(getAdvertFinancialDetailRepresentation(advert));
 
         representation.setClosingDate(getAdvertClosingDateRepresentation(advert));
@@ -460,6 +471,12 @@ public class AdvertMapper {
             return resourceRepresentation;
         }
         return null;
+    }
+
+    private void setTargetOpportunityTypes(AdvertRepresentationExtended representation, String targetOpportunityTypes) {
+        if (targetOpportunityTypes != null) {
+            representation.setTargetOpportunityTypes(asList(targetOpportunityTypes.split("\\|")).stream().map(PrismOpportunityType::valueOf).collect(toList()));
+        }
     }
 
 }

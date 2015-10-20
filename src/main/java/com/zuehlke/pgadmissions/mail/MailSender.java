@@ -1,10 +1,9 @@
 package com.zuehlke.pgadmissions.mail;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.htmlToPlainText;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
@@ -32,25 +29,21 @@ import com.amazonaws.services.simpleemail.model.Content;
 import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import com.zuehlke.pgadmissions.utils.PrismTemplateUtils;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -76,10 +69,7 @@ public class MailSender {
     private String emailStrategy;
 
     @Inject
-    private FreeMarkerConfig freemarkerConfig;
-
-    @Inject
-    private MailToPlainTextConverter mailToPlainTextConverter;
+    private PrismTemplateUtils prismTemplateUtils;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -88,22 +78,21 @@ public class MailSender {
     private SystemService systemService;
 
     public void sendEmail(final MailMessageDTO messageDTO) {
-        NotificationDefinitionModelDTO modelDTO = messageDTO.getModelDTO();
-        final NotificationConfiguration configuration = messageDTO.getConfiguration();
+        NotificationDefinitionDTO notificationDefinitionDTO = messageDTO.getNotificationDefinitionDTO();
+        final NotificationConfiguration configuration = messageDTO.getNotificationConfiguration();
         try {
-            Map<String, Object> model = createNotificationModel(messageDTO.getConfiguration().getDefinition(), modelDTO);
-            final String subject = processHeader(configuration.getDefinition().getId(), configuration.getSubject(), model);
+            Map<String, Object> model = createNotificationModel(messageDTO.getNotificationConfiguration().getDefinition(), notificationDefinitionDTO);
+            String definitionReference = configuration.getDefinition().getId().name();
+            String subject = prismTemplateUtils.getContent(definitionReference + "_subject", configuration.getSubject(), model);
+            String content = prismTemplateUtils.getContent(definitionReference + "_content", configuration.getContent(), model);
 
-            Institution institution = modelDTO.getResource().getInstitution();
-            Document logoImage = institution != null ? institution.getLogoImage() : null;
-            final String html = processContent(configuration.getDefinition().getId(), configuration.getContent(), model, subject,
-                    logoImage);
-            final String plainText = mailToPlainTextConverter.getPlainText(html) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
+            String html = getMessage(messageDTO.getNotificationDefinitionDTO().getResource(), subject, content, model);
+            String plainText = htmlToPlainText(html) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + messageDTO.toString());
 
-                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(modelDTO.getUser()).toString() });
+                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(notificationDefinitionDTO.getRecipient()).toString() });
                 Content subjectContent = new Content().withData(subject);
                 Content plainTextContent = new Content().withData(plainText);
                 Content htmlContent = new Content().withData(html);
@@ -118,7 +107,7 @@ public class MailSender {
                 client.setRegion(REGION);
                 client.sendEmail(request);
             } else if (emailStrategy.equals("log")) {
-                logger.info("Sending Development Email: " + messageDTO.toString() + "\nSubject: " + subject + "\nContent:\n" + html);
+                logger.info("Sending Development Email: " + messageDTO.toString() + "\n" + subject + "\nContent:\n" + html);
             } else {
                 logger.info("Sending Development Email: " + messageDTO.toString());
             }
@@ -133,48 +122,30 @@ public class MailSender {
         return this;
     }
 
-    public String processHeader(PrismNotificationDefinition templateId, String templateValue, Map<String, Object> model) throws IOException, TemplateException {
-        Template template = new Template(templateId.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-    }
+    public String getMessage(Resource resource, String subject, String content, Map<String, Object> model) {
+        model.put("IMAGES_PATH", applicationUrl + "/images/email");
 
-    public String processContent(PrismNotificationDefinition prismNotificationDefinition, String templateValue, Map<String, Object> model, String subject,
-            Document logoImage) throws Exception {
-        Template template = new Template(prismNotificationDefinition.name(), new StringReader(templateValue), freemarkerConfig.getConfiguration());
-        String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
-
-        String emailTemplate = Resources.toString(Resources.getResource("email/email_template.ftl"), Charsets.UTF_8);
-        template = new Template("Email template", emailTemplate, freemarkerConfig.getConfiguration());
-
-        String imagesPath = applicationUrl + "/images/email";
-        String logoUrl = null;
-        if (logoImage != null) {
-            logoUrl = applicationApiUrl + "/images/" + logoImage.getId();
+        Institution institution = resource.getInstitution();
+        if (institution != null) {
+            Document institutionLogoImage = institution.getLogoImage();
+            if (institutionLogoImage != null) {
+                model.put("LOGO_URL", applicationApiUrl + "/images/" + institutionLogoImage.getId());
+            }
         }
 
-        model = Maps.newHashMap();
-        if (logoUrl != null) {
-            model.put("LOGO_URL", logoUrl);
-        }
-        model.put("IMAGES_PATH", imagesPath);
         model.put("SUBJECT", subject);
         model.put("CONTENT", content);
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        return prismTemplateUtils.getContentFromLocation("email_template", "email/email_template.ftl", model);
     }
 
-    public Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionModelDTO modelDTO) throws Exception {
-        return createNotificationModel(notificationDefinition, modelDTO, false);
-    }
-
-    private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionModelDTO modelDTO,
-            boolean safetyMode) throws Exception {
+    private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO) {
         Map<String, Object> model = Maps.newHashMap();
         List<PrismNotificationDefinitionPropertyCategory> categories = notificationDefinition.getId().getPropertyCategories();
-        NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(modelDTO, propertyLoader);
+        NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(notificationDefinitionDTO, propertyLoader);
         for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
             for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {
-                String value = safetyMode ? "placeholder" : loader.load(property);
-                model.put(property.name(), property.isEscapeHtml() ? StringEscapeUtils.escapeHtml(value) : value);
+                String propertyValue = loader.load(property);
+                model.put(property.name(), property.isEscapeHtml() ? StringEscapeUtils.escapeHtml(propertyValue) : propertyValue);
             }
         }
         return model;

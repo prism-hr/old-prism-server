@@ -1,11 +1,17 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -61,9 +67,9 @@ public abstract class Resource implements UniqueEntity {
     public abstract Application getApplication();
 
     public abstract Boolean getShared();
-    
+
     public abstract void setShared(Boolean shared);
-    
+
     public abstract State getState();
 
     public abstract void setState(State state);
@@ -161,9 +167,26 @@ public abstract class Resource implements UniqueEntity {
         return id != null && otherId != null && id.equals(otherId);
     }
 
+    public String getDisplayName() {
+        PrismScope resourceScope = getResourceScope();
+        if (resourceScope.equals(SYSTEM)) {
+            return getSystem().getName();
+        } else if (resourceScope.equals(APPLICATION)) {
+            Application application = getApplication();
+            return application.getParentResource().getDisplayName() + SPACE + HYPHEN + SPACE + application.getUser().getFullName();
+        }
+
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceName(getInstitution()), getResourceName(getDepartment()), getResourceName(getProgram()),
+                getResourceName(getProject()));
+    }
+
     @Override
     public String toString() {
         return getResourceScope().name() + "#" + getId();
+    }
+
+    private String getResourceName(ResourceParent resource) {
+        return resource == null ? null : resource.getName();
     }
 
 }

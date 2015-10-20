@@ -9,9 +9,9 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationOpportunityCategoryBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
+    public String build(NotificationPropertyLoader propertyLoader) {
         return propertyLoader.getPropertyLoader()
-                .loadLazy(PrismOpportunityCategory.valueOf(propertyLoader.getNotificationDefinitionModelDTO().getResource().getApplication().getOpportunityCategories())
+                .loadLazy(PrismOpportunityCategory.valueOf(propertyLoader.getNotificationDefinitionDTO().getResource().getApplication().getOpportunityCategories())
                         .getDisplayProperty());
     }
 

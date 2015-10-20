@@ -1,1 +1,1 @@
-Department ${DEPARTMENT_CODE} Approval - Outcome
+Your Department ${DEPARTMENT_CODE} - Approval Outcome

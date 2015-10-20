@@ -1,20 +1,25 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
+<p><b>
+	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} 
+	in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
+</b></p>
+
 <p>
-   ${APPLICATION_CREATOR_FULL_NAME} has considered your offer in connection with 
-   Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}. 
-</p>
-<p>
-	${APPLICATION_CONFIRMED_OFFER_ACCEPTANCE}.
+   	${APPLICATION_CREATOR_FULL_NAME} has considered your offer and provided their response.
 </p>
 
-<p>Login to view the application and the terms and conditions offered.</p>
+<p><b>
+	${APPLICATION_OFFER_ACCEPTANCE}.
+</p></b>
+
+<p>Login to view the history of the application.</p>
 
 ${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

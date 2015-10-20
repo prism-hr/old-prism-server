@@ -63,7 +63,7 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
 
         for (PrismWorkflowConstraint constraint : PrismWorkflowConstraint.values()) {
             switch (constraint) {
-            case APPLICATION_REFEREES:
+            case APPLICATION_REFEREE_ASSIGNMENT:
                 validateRangeConstraint(profile, "referees", constraint, errors);
                 break;
             case APPLICATION_DOCUMENT_COVERING_LETTER:

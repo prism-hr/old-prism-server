@@ -30,7 +30,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
 
         stateActions.add(applicationProvideReference()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REFERENCE_PENDING_COMPLETION) //
                         .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //

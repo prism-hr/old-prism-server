@@ -70,7 +70,21 @@
             <artifactId>hibernate-validator-annotation-processor</artifactId>
             <version>4.3.2.Final</version>
         </dependency>
-
+        
+        <!-- Lucene -->
+        <dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>5.3.1</version>
+		</dependency>
+        
+        <dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>5.3.1</version>
+		</dependency>
+        
+        
         <!-- Spring -->
         <dependency>
             <groupId>cglib</groupId>

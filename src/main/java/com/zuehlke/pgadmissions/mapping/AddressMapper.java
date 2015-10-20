@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import com.zuehlke.pgadmissions.domain.address.AddressDefinition;
+import javax.transaction.Transactional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import com.zuehlke.pgadmissions.domain.address.AddressDefinition;
 
 @Service
 @Transactional

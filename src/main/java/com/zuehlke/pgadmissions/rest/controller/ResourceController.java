@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -167,7 +165,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
     @PreAuthorize("isAuthenticated()")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
-                          HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
@@ -195,26 +193,26 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody Map<String, PrismRole> body) {
+            @RequestBody Map<String, PrismRole> body) {
         PrismRole role = body.get("role");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.updateUserRoles(userService.getCurrentUser(), resource, user, CREATE, role);
+        roleService.createUserRoles(userService.getCurrentUser(), resource, user, role);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
-        roleService.updateUserRoles(userService.getCurrentUser(), resource, user, DELETE, role);
+        roleService.deleteUserRoles(userService.getCurrentUser(), resource, user, role);
     }
 
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) {
+            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = userRolesRepresentation.getUser();
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
@@ -233,7 +231,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/setAsOwner", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void setUserAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestBody Map<?, ?> undertow,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
@@ -241,18 +239,17 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision,
-                           @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestBody Map<?, ?> undertow) {
+    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody Map<?, ?> undertow) {
         boolean accept = decision.equals("accept");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.verifyUserRoles(userService.getCurrentUser(), resource, user, accept);
+        roleService.verifyUserRoles(userService.getCurrentUser(), (ResourceParent) resource, user, accept);
     }
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ActionOutcomeRepresentation executeAction(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), commentDTO);
         return actionOutcome == null ? null : actionMapper.getActionOutcomeRepresentation(actionOutcome);

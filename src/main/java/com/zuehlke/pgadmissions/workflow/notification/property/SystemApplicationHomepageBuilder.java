@@ -10,8 +10,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class SystemApplicationHomepageBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.buildRedirectionControl(SYSTEM_APPLICATIONS);
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getRedirectionControl(SYSTEM_APPLICATIONS);
     }
 
 }

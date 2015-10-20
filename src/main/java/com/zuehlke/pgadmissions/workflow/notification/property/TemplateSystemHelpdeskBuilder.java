@@ -10,8 +10,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class TemplateSystemHelpdeskBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.buildRedirectionControl(propertyLoader.getHelpdesk(), SYSTEM_HELPDESK);
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getRedirectionControl(propertyLoader.getHelpdesk(), SYSTEM_HELPDESK);
     }
 
 }

@@ -22,7 +22,7 @@ public class PrismInstitutionDisabledCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_RESTORE) //
                 .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_APPROVED) //
                         .withTransitionAction(INSTITUTION_VIEW_EDIT)));
 

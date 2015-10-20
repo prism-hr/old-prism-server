@@ -3,11 +3,12 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
@@ -60,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -167,7 +169,7 @@ public class UserService {
 
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.updateUserRoles(invoker, resource, user, CREATE, roles.toArray(new PrismRole[roles.size()]));
+        roleService.createUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
 
@@ -229,8 +231,8 @@ public class UserService {
         if (user != null) {
             UserAccount account = user.getUserAccount();
             if (account == null) {
-                User superAdmin = getUserByEmail("systemUserEmail");
-                notificationService.sendInvitationNotification(superAdmin, user);
+                System system = systemService.getSystem();
+                notificationService.sendUserInvitationNotification(system.getUser(), user, system, SYSTEM_MANAGE_ACCOUNT);
             } else {
                 String newPassword = PrismEncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);
@@ -326,6 +328,10 @@ public class UserService {
         return userDAO.getResourceUsers(resource);
     }
 
+    public List<User> getResourceUsers(Resource resource, PrismRole role) {
+        return userDAO.getResourceUsers(resource, role);
+    }
+
     public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
         UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
                 .withInstitution(application.getInstitution()).withIdentityType(PrismUserInstitutionIdentity.STUDY_APPLICANT)
@@ -417,26 +423,23 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public Set<Integer> getUsersForActivityNotification() {
+    public Set<Integer> getUsersWithActivity() {
         Set<Integer> users = Sets.newHashSet();
         DateTime updateBaseline = new DateTime().minusDays(1);
-        LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(3);
+        LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(1);
 
-        List<PrismScope> resourceScopes = scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM);
-        int lastScopeIndex = (resourceScopes.size() - 1);
-        for (int i = 0; i <= lastScopeIndex; i++) {
-            PrismScope resourceScope = resourceScopes.get(i);
-            users.addAll(userDAO.getUsersWithActivity(resourceScope, updateBaseline, lastNotifiedBaseline));
-            resourceScopes.subList(i, lastScopeIndex).forEach(parentScope -> {
-                users.addAll(userDAO.getUsersWithActivity(resourceScope, parentScope, updateBaseline, lastNotifiedBaseline));
+        scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM).forEach(scope -> {
+            users.addAll(userDAO.getUsersWithActivity(scope, updateBaseline, lastNotifiedBaseline));
+            scopeService.getParentScopesDescending(scope, SYSTEM).forEach(parentScope -> {
+                users.addAll(userDAO.getUsersWithActivity(scope, parentScope, updateBaseline, lastNotifiedBaseline));
             });
 
             for (PrismScope targeterScope : targetScopes) {
-                if (resourceScope.ordinal() > targeterScope.ordinal()) {
+                if (scope.ordinal() > targeterScope.ordinal()) {
                     for (PrismScope targetScope : targetScopes) {
-                        users.addAll(userDAO.getUsersWithActivity(resourceScope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
+                        users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
 
-                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, updateBaseline);
+                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
                         if (!resources.isEmpty()) {
                             users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
 
@@ -444,6 +447,19 @@ public class UserService {
                                 users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
                             }
                         }
+                    }
+                }
+            }
+        });
+        
+        for (PrismScope targeterScope : targetScopes) {
+            for (PrismScope targetScope : targetScopes) {
+                List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
+                if (!resources.isEmpty()) {
+                    users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
+
+                    if (targetScope.equals(DEPARTMENT)) {
+                        users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
                     }
                 }
             }

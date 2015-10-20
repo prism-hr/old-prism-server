@@ -15,16 +15,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.io.Resources;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -32,12 +27,11 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDef
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-
-import freemarker.template.Template;
+import com.zuehlke.pgadmissions.utils.PrismTemplateUtils;
 
 @Service
 @Transactional
@@ -46,7 +40,7 @@ public class NotificationPropertyLoader {
 
     private PropertyLoader propertyLoader;
 
-    private NotificationDefinitionModelDTO notificationDefinitionModelDTO;
+    private NotificationDefinitionDTO notificationDefinitionDTO;
 
     @Value("${application.url}")
     private String applicationUrl;
@@ -64,7 +58,7 @@ public class NotificationPropertyLoader {
     private SystemService systemService;
 
     @Inject
-    private FreeMarkerConfig freemarkerConfig;
+    private PrismTemplateUtils prismTemplateUtils;
 
     @Inject
     ApplicationContext applicationContext;
@@ -73,8 +67,8 @@ public class NotificationPropertyLoader {
         return propertyLoader;
     }
 
-    public NotificationDefinitionModelDTO getNotificationDefinitionModelDTO() {
-        return notificationDefinitionModelDTO;
+    public NotificationDefinitionDTO getNotificationDefinitionDTO() {
+        return notificationDefinitionDTO;
     }
 
     public String getApplicationUrl() {
@@ -97,44 +91,37 @@ public class NotificationPropertyLoader {
         return systemService;
     }
 
-    public FreeMarkerConfig getFreemarkerConfig() {
-        return freemarkerConfig;
-    }
-
-    public String load(PrismNotificationDefinitionProperty property) throws Exception {
-        String value = applicationContext.getBean(property.getBuilder()).build(this);
-        return value == null ? "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT)
-                + ": " + helpdesk + "]" : value;
-    }
-
-    public NotificationPropertyLoader localize(NotificationDefinitionModelDTO templateModelDTO, PropertyLoader propertyLoader) {
-        this.notificationDefinitionModelDTO = templateModelDTO;
-        Comment comment = this.notificationDefinitionModelDTO.getComment();
-        if (comment == null) {
-            this.notificationDefinitionModelDTO.setInvoker(systemService.getSystem().getUser());
-        } else {
-            this.notificationDefinitionModelDTO.setInvoker(comment.getUser());
+    public String load(PrismNotificationDefinitionProperty property) {
+        String propertyValue = applicationContext.getBean(property.getBuilder()).build(this);
+        if (propertyValue == null) {
+            return "[" + propertyLoader.loadLazy(SYSTEM_NOTIFICATION_PROPERTY_ERROR) + ". " + propertyLoader.loadLazy(SYSTEM_HELPDESK_REPORT) + ": " + helpdesk + "]";
         }
+        return propertyValue;
+    }
+
+    public NotificationPropertyLoader localize(NotificationDefinitionDTO notificationDefinitionDTO, PropertyLoader propertyLoader) {
+        this.notificationDefinitionDTO = notificationDefinitionDTO;
+        this.notificationDefinitionDTO.setSignatory(systemService.getSystem().getUser());
         this.propertyLoader = propertyLoader;
         return this;
     }
 
-    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel) throws Exception {
-        return buildRedirectionControl(linkLabel, null);
+    public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {
+        return getRedirectionControl(linkLabel, null);
     }
 
-    public String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) throws Exception {
-        return buildRedirectionControl(url, linkLabel, null);
+    public String getRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel) {
+        return getRedirectionControl(url, linkLabel, null);
     }
 
-    public String buildRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) throws Exception {
-        Resource resource = notificationDefinitionModelDTO.getResource();
-        String url = buildRedirectionUrl(resource, notificationDefinitionModelDTO.getTransitionAction(), notificationDefinitionModelDTO.getUser());
-        return buildRedirectionControl(url, linkLabel, declineLinkLabel);
+    public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
+        Resource resource = notificationDefinitionDTO.getResource();
+        String url = getRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
+        return getRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
     public String getCommentAssigneesAsString(PrismRole roleId) {
-        Set<CommentAssignedUser> assigneeObjects = notificationDefinitionModelDTO.getComment().getAssignedUsers();
+        Set<CommentAssignedUser> assigneeObjects = notificationDefinitionDTO.getComment().getAssignedUsers();
         Set<String> assigneeStrings = Sets.newTreeSet();
         for (CommentAssignedUser assigneeObject : assigneeObjects) {
             if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType() == CREATE) {
@@ -144,14 +131,13 @@ public class NotificationPropertyLoader {
         return Joiner.on(", ").join(assigneeStrings);
     }
 
-    public String buildRedirectionUrl(Resource resource, PrismAction actionId, User user) {
+    public String getRedirectionUrl(Resource resource, PrismAction actionId, User user) {
         Resource operative = (Resource) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }
 
-    private String buildRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel)
-            throws Exception {
+    private String getRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
         Map<String, Object> model = Maps.newHashMap();
         ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.loadLazy(linkLabel));
         model.put("link", link);
@@ -161,10 +147,7 @@ public class NotificationPropertyLoader {
             model.put("declineLink", declineLink);
         }
 
-        String emailControlTemplate = Resources.toString(Resources.getResource("email/email_control_template.ftl"), Charsets.UTF_8);
-        Template template = new Template("Email Control Template", emailControlTemplate, freemarkerConfig.getConfiguration());
-
-        return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        return prismTemplateUtils.getContentFromLocation("Email Control Template", "email/email_control_template.ftl", model);
     }
 
 }

@@ -140,12 +140,12 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withTransitions(PrismStateTransition... transitions) {
+    public PrismStateAction withStateTransitions(PrismStateTransition... transitions) {
         this.transitions.addAll(Arrays.asList(transitions));
         return this;
     }
 
-    public PrismStateAction withTransitions(PrismStateTransitionGroup stateTransitionGroup) {
+    public PrismStateAction withStateTransitions(PrismStateTransitionGroup stateTransitionGroup) {
         List<PrismStateTransition> transitions = Lists.newLinkedList();
         for (PrismStateTransition stateTransition : stateTransitionGroup.getStateTransitions()) {
             transitions.add(stateTransition);

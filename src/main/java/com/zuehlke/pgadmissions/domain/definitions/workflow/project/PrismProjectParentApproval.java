@@ -18,7 +18,7 @@ public class PrismProjectParentApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(PROJECT_COMPLETE_PARENT_APPROVAL_STAGE)));
 

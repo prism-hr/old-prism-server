@@ -1,1 +1,1 @@
-Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_CODE} - Outcome of Offer
+${APPLICATION_CREATOR_FULL_NAME} Application ${APPLICATION_CODE} - Offer Response

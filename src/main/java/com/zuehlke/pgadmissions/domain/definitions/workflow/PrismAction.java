@@ -7,8 +7,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.PROPAGATE_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_ACTIVITY_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_CONTENT;
@@ -134,10 +135,11 @@ public enum PrismAction implements PrismLocalizableDefinition {
     SYSTEM_CREATE_INSTITUTION(getDefaultCreateResourceActionDefinitionVisible(SYSTEM)), //
     SYSTEM_STARTUP(getDefaultResourceActionDefinitionVisible(INITIALISE_RESOURCE, SYSTEM)), //
     SYSTEM_MANAGE_ACCOUNT(getDefaultResourceActionDefinition(MANAGE_ACCOUNT, SYSTEM)), //
-    SYSTEM_VIEW_TASK_LIST(getDefaultResourceActionDefinition(VIEW_RESOURCE, SYSTEM)), //
-    SYSTEM_VIEW_APPOINTMENT_LIST(getDefaultResourceActionDefinition(VIEW_RESOURCE, SYSTEM)), //
-    SYSTEM_VIEW_CONNECTION_LIST(getDefaultResourceActionDefinition(VIEW_RESOURCE, SYSTEM)), //
-    SYSTEM_VIEW_JOIN_LIST(getDefaultResourceActionDefinition(VIEW_RESOURCE, SYSTEM)), //
+    SYSTEM_VIEW_ACTIVITY_LIST(getDefaultResourceActionDefinition(VIEW_ACTIVITY_LIST, SYSTEM)), //
+    SYSTEM_VIEW_TASK_LIST(getDefaultResourceActionDefinition(VIEW_ACTIVITY_LIST, SYSTEM)), //
+    SYSTEM_VIEW_APPOINTMENT_LIST(getDefaultResourceActionDefinition(VIEW_ACTIVITY_LIST, SYSTEM)), //
+    SYSTEM_VIEW_CONNECTION_LIST(getDefaultResourceActionDefinition(VIEW_ACTIVITY_LIST, SYSTEM)), //
+    SYSTEM_VIEW_JOIN_LIST(getDefaultResourceActionDefinition(VIEW_ACTIVITY_LIST, SYSTEM)), //
     SYSTEM_VIEW_INSTITUTION_LIST(getDefaultSystemViewResourceListActionDefinition()), //
     SYSTEM_VIEW_DEPARTMENT_LIST(getDefaultSystemViewResourceListActionDefinition()), //
     SYSTEM_VIEW_PROGRAM_LIST(getDefaultSystemViewResourceListActionDefinition()), //
@@ -313,7 +315,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     }
 
     private static PrismActionDefinition getDefaultSystemViewResourceListActionDefinition() {
-        return getDefaultResourceActionDefinition(VIEW_RESOURCE, SYSTEM);
+        return getDefaultResourceActionDefinition(VIEW_RESOURCE_LIST, SYSTEM);
     }
 
     private static PrismActionDefinition getDefaultRateApplicationActionDefinition() {

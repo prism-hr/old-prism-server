@@ -8,8 +8,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class InstitutionCodeBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getInstitution().getCode();
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getNotificationDefinitionDTO().getResource().getInstitution().getCode();
     }
 
 }

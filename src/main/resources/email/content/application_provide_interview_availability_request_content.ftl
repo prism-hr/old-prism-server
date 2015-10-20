@@ -1,22 +1,31 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
-<p>
-    We wish to schedule an interview in connection with Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE}.
-</p>
-<p>
-    Please let us know when you would be available to attend.
-</p>
+<#if TEMPLATE_USER_EMAIL.equals(APPLICATION_CREATOR_EMAIL)>
+	<p><b>
+		Your application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} in the position of: 
+		${TEMPLATE_PARENT_RESOURCE_NAME}.
+	</b></p>
+	
+	<p>
+	    We wish to schedule an interview with you. Please let us know when you would be available to attend.
+	</p>
+<#else>
+	<p><b>
+		${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} 
+		in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
+	</b></p>
+
+	<p>
+	    We wish to schedule an interview in connection with this application and we would like you to join 
+	    the panel. Please let us know when you would be available to attend.
+	</p>
+</#if>
 
 ${ACTION_COMPLETE}
 
 <p>
-    To ensure that we can schedule the interview quickly and efficiently, our system will send you reminders until you
-    respond to this request.
-</p>
-
-<p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

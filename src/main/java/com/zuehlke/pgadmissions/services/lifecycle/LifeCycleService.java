@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services.lifecycle;
 
 import static com.zuehlke.pgadmissions.utils.PrismExecutorUtils.shutdownExecutor;
 import static java.util.concurrent.Executors.newFixedThreadPool;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +32,9 @@ public class LifeCycleService {
     private ExecutorService executorService;
 
     private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
+
+    @Value("${context.environment}")
+    private String environment;
 
     @Value("${startup.workflow.initialize.drop}")
     private Boolean dropWorkflow;
@@ -79,7 +83,9 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
-        staticDataMapper.getData();
+        if (!environment.equals("test")) {
+            staticDataMapper.getData();
+        }
 
         if (BooleanUtils.isTrue(maintain)) {
             executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));
@@ -98,7 +104,7 @@ public class LifeCycleService {
 
     @Scheduled(fixedDelay = 60000)
     private void maintain() {
-        if (BooleanUtils.isTrue(maintain)) {
+        if (isTrue(maintain)) {
             for (final PrismMaintenanceTask execution : PrismMaintenanceTask.values()) {
                 synchronized (this) {
                     if (!executions.contains(execution)) {

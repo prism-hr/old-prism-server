@@ -1,9 +1,9 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
 <p>
-    Your request to create a new ${TEMPLATE_SYSTEM_TITLE} Department ${DEPARTMENT_CODE} has been reviewed.
+    Your request to create a new Department ${DEPARTMENT_NAME} in ${TEMPLATE_PARENT_RESOURCE_NAME} has been reviewed.
 </p>
 
 <p>
@@ -11,12 +11,12 @@
 </p>
 
 <p>
-	${COMMENT_TRANSITION_OUTCOME}
+	${COMMENT_TRANSITION_OUTCOME}.
 </p>
 
 ${ACTION_VIEW_EDIT}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

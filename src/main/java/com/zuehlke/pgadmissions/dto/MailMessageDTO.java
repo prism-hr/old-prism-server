@@ -5,33 +5,33 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 
 public final class MailMessageDTO {
 
-    private NotificationDefinitionModelDTO modelDTO;
+    private NotificationDefinitionDTO notificationDefinitionDTO;
 
-    private NotificationConfiguration configuration;
+    private NotificationConfiguration notificationConfiguration;
 
-    public NotificationDefinitionModelDTO getModelDTO() {
-        return modelDTO;
+    public NotificationDefinitionDTO getNotificationDefinitionDTO() {
+        return notificationDefinitionDTO;
     }
 
-    public void setModelDTO(NotificationDefinitionModelDTO modelDTO) {
-        this.modelDTO = modelDTO;
+    public void setNotificationDefinitionDTO(NotificationDefinitionDTO notificationDefinitionDTO) {
+        this.notificationDefinitionDTO = notificationDefinitionDTO;
     }
 
-    public NotificationConfiguration getConfiguration() {
-        return configuration;
+    public NotificationConfiguration getNotificationConfiguration() {
+        return notificationConfiguration;
     }
 
-    public void setConfiguration(NotificationConfiguration configuration) {
-        this.configuration = configuration;
+    public void setNotificationConfiguration(NotificationConfiguration notificationConfiguration) {
+        this.notificationConfiguration = notificationConfiguration;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("to", modelDTO.getUser().getEmail())
-                .add("resourceScope", modelDTO.getResource().getResourceScope())
-                .add("resourceId", modelDTO.getResource().getId())
-                .add("template", configuration.getDefinition().getId())
+                .add("to", notificationDefinitionDTO.getRecipient().getEmail())
+                .add("resourceScope", notificationDefinitionDTO.getResource().getResourceScope())
+                .add("resourceId", notificationDefinitionDTO.getResource().getId())
+                .add("template", notificationConfiguration.getDefinition().getId())
                 .toString();
     }
 

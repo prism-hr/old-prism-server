@@ -36,18 +36,18 @@ public class ProjectCreatedResolver implements StateTransitionResolver<Project> 
     @Override
     public StateTransition resolve(Project resource, Comment comment) {
         State initialState = comment.getTransitionState();
-        ResourceParent parent = (ResourceParent) resource.getParentResource();
+        ResourceParent parentResource = (ResourceParent) resource.getParentResource();
         if (initialState == null) {
             User user = comment.getUser();
             ResourceParent resourceParent = resourceService.getResourceParent(resource);
             if (resourceService.isUnderApproval(resourceParent)) {
-                return stateService.getStateTransition(parent, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
+                return stateService.getStateTransition(parentResource, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
             } else if (roleService.hasUserRole(resource, user, PROGRAM_ADMINISTRATOR_GROUP)) {
-                return stateService.getStateTransition(parent, comment.getAction(), PROJECT_APPROVED);
+                return stateService.getStateTransition(parentResource, comment.getAction(), PROJECT_APPROVED);
             }
-            return stateService.getStateTransition(parent, comment.getAction(), PROJECT_APPROVAL);
+            return stateService.getStateTransition(parentResource, comment.getAction(), PROJECT_APPROVAL);
         }
-        return stateService.getStateTransition(parent, comment.getAction(), PROJECT_UNSUBMITTED);
+        return stateService.getStateTransition(parentResource, comment.getAction(), PROJECT_UNSUBMITTED);
     }
 
 }

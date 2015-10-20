@@ -29,7 +29,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
                 .withRaisesUrgentFlag() //
                 .withNotification(PROGRAM_CORRECT_REQUEST) //
                 .withAssignments(PROGRAM_ADMINISTRATOR) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVAL) //
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST) //
                         .withRoleTransitions(PROGRAM_REVIVE_ADMINISTRATOR_GROUP))); //

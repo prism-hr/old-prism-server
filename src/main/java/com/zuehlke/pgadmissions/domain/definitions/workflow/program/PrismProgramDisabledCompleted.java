@@ -23,7 +23,7 @@ public class PrismProgramDisabledCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_RESTORE) //
                 .withAssignments(PROGRAM_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVED) //
                         .withTransitionAction(PROGRAM_VIEW_EDIT)));
 

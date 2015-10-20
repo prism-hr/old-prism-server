@@ -26,10 +26,10 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(institutionCompleteApproval() //
                 .withRaisesUrgentFlag() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST)
-                        .withTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME))); //
+                        .withStateTransitionEvaluation(INSTITUTION_APPROVED_OUTCOME))); //
         
         stateActions.add(institutionCreateDepartment());
         stateActions.add(institutionCreateProgram());
@@ -46,7 +46,7 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
                 .withAction(INSTITUTION_COMPLETE_APPROVAL_STAGE) //
                 .withAssignments(SYSTEM_ADMINISTRATOR) //
                 .withNotification(INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-                .withTransitions(INSTITUTION_APPROVE_TRANSITION);
+                .withStateTransitions(INSTITUTION_APPROVE_TRANSITION);
     }
 
 }

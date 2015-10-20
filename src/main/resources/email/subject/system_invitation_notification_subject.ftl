@@ -1,1 +1,0 @@
-Invitation to join ${TEMPLATE_SYSTEM_TITLE}, the marketplace for student and graduate careers!

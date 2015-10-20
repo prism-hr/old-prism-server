@@ -1,22 +1,27 @@
 <h1>
-    Dear ${TEMPLATE_USER_FIRST_NAME},
+    Dear ${TEMPLATE_RECIPIENT_FIRST_NAME},
 </h1>
 
+<p><b>
+	Your application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} in the position of: 
+	${TEMPLATE_PARENT_RESOURCE_NAME}.
+</b></p>
+
 <p>
-    We have assessed your Application ${APPLICATION_CODE} for ${APPLICATION_PARENT_RESOURCE_TITLE} and we regret to inform you
-    that it was unsucessful.
+    We have assessed your application and we regret to inform you that it was unsuccessful.
 </p>
+
 <p>
-    The following explanation was given: ${APPLICATION_REJECTION_REASON}
+    The following explanation was given: <b>${APPLICATION_REJECTION_REASON}.</b>
+</p>
+
+<p>
+    We wish you every success in your ongoing search.
 </p>
 
 ${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
-    We wish you success in your ongoing search.
-</p>
-
-<p>
     Yours sincerely,
-    <br/> ${TEMPLATE_AUTHOR_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

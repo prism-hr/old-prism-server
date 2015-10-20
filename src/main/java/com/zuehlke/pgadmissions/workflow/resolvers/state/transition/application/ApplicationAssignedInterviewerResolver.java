@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.application;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
@@ -24,17 +23,13 @@ public class ApplicationAssignedInterviewerResolver implements StateTransitionRe
 
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
-        if (comment.isApplicationDelegateAdministrationComment()) {
-            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW);
-        } else {
-            DateTime baseline = new DateTime();
-            if (comment.isApplicationInterviewRecordedComment(baseline)) {
-                return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_FEEDBACK);
-            } else if (comment.isApplicationInterviewScheduledComment(baseline)) {
-                return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_INTERVIEW);
-            }
-            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_AVAILABILITY);
+        DateTime baseline = new DateTime();
+        if (comment.isApplicationInterviewRecordedComment(baseline)) {
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_FEEDBACK);
+        } else if (comment.isApplicationInterviewScheduledComment(baseline)) {
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_INTERVIEW);
         }
+        return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_AVAILABILITY);
     }
 
 }

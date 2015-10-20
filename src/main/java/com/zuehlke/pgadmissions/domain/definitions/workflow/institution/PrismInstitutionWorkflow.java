@@ -41,7 +41,7 @@ public class PrismInstitutionWorkflow {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_CREATE_DEPARTMENT) //
                 .withActionCondition(ACCEPT_DEPARTMENT) //
-                .withTransitions(DEPARTMENT_CREATE_TRANSITION //
+                .withStateTransitions(DEPARTMENT_CREATE_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_CREATE_ADMINISTRATOR_GROUP));
     }
 
@@ -49,7 +49,7 @@ public class PrismInstitutionWorkflow {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_CREATE_PROJECT) //
                 .withActionCondition(ACCEPT_PROJECT) //
-                .withTransitions(PROJECT_CREATE_TRANSITION //
+                .withStateTransitions(PROJECT_CREATE_TRANSITION //
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP));
     }
 
@@ -57,7 +57,7 @@ public class PrismInstitutionWorkflow {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_CREATE_PROGRAM) //
                 .withActionCondition(ACCEPT_PROGRAM) //
-                .withTransitions(PROGRAM_CREATE_TRANSITION //
+                .withStateTransitions(PROGRAM_CREATE_TRANSITION //
                         .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
     }
 
@@ -73,21 +73,21 @@ public class PrismInstitutionWorkflow {
     public static PrismStateAction institutionEscalateUnapproved() {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_ESCALATE) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_REJECTED) //
                         .withTransitionAction(INSTITUTION_ESCALATE));
     }
 
     public static PrismStateAction institutionTerminateUnapproved() {
         return institutionTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_REJECTED) //
                         .withTransitionAction(INSTITUTION_TERMINATE));
     }
 
     public static PrismStateAction institutionTerminateApproved() {
         return institutionTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_DISABLED_COMPLETED) //
                         .withTransitionAction(INSTITUTION_TERMINATE));
     }
@@ -96,7 +96,7 @@ public class PrismInstitutionWorkflow {
         return institutionViewEditAbstract()
                 .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(INSTITUTION_VIEW_EDIT)
                         .withRoleTransitions(INSTITUTION_MANAGE_USERS_GROUP));
@@ -107,7 +107,7 @@ public class PrismInstitutionWorkflow {
                 .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
-                .withTransitions(INSTITUTION_VIEW_EDIT_TRANSITION //
+                .withStateTransitions(INSTITUTION_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(INSTITUTION_MANAGE_USERS_GROUP));
     }
 
@@ -121,7 +121,7 @@ public class PrismInstitutionWorkflow {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_WITHDRAW) //
                 .withAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST));
     }

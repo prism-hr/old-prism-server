@@ -56,8 +56,8 @@ public class RoleDAO {
                                 .add(getUserRoleConstraint(resourceScope, parentScopes)) //
                                 .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
                         .add(getTargetUserRoleConstraint())) //
-                .add(getEndorsementActionFilterConstraint())
                 .add(getUserEnabledConstraint(user)) //
+                .add(getEndorsementActionFilterConstraint())
                 .list();
     }
 

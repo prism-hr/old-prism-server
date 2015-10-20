@@ -79,6 +79,9 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Column(name = "opportunity_category")
     private String opportunityCategories;
+    
+    @Column(name = "target_opportunity_type")
+    private String targetOpportunityTypes;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -214,6 +217,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setOpportunityCategories(String opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public String getTargetOpportunityTypes() {
+        return targetOpportunityTypes;
+    }
+
+    public void setTargetOpportunityTypes(String targetOpportunityTypes) {
+        this.targetOpportunityTypes = targetOpportunityTypes;
     }
 
     public String getName() {

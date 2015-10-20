@@ -55,6 +55,7 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
@@ -315,6 +316,12 @@ public class AdvertMapper {
 
         representation.setTelephone(advert.getTelephone());
         representation.setAddress(getAdvertAddressRepresentation(advert));
+
+        Resource resource = advert.getResource();
+        if (resource.getResourceScope().ordinal() > INSTITUTION.ordinal()) {
+            representation.setParentAddress(getAdvertAddressRepresentation(resource.getParentResource().getAdvert()));
+        }
+
         representation.setFinancialDetails(getAdvertFinancialDetailRepresentation(advert));
 
         representation.setClosingDate(getAdvertClosingDateRepresentation(advert));

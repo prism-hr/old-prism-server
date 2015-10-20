@@ -10,8 +10,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationInterviewDateTimeBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getComment()
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getNotificationDefinitionDTO().getComment()
                 .getInterviewDateTimeDisplay(propertyLoader.getPropertyLoader().loadLazy(SYSTEM_DATE_TIME_FORMAT));
     }
 

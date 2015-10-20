@@ -26,6 +26,8 @@ public class AdvertRepresentationSimple {
 
     private AddressRepresentation address;
 
+    private AddressRepresentation parentAddress;
+
     private AdvertFinancialDetailRepresentation financialDetails;
 
     private AdvertClosingDateRepresentation closingDate;
@@ -35,7 +37,7 @@ public class AdvertRepresentationSimple {
     private AdvertCategoriesRepresentation categories;
 
     private List<AdvertTargetRepresentation> targets;
-    
+
     private List<AdvertCompetenceRepresentation> competences;
 
     private List<PrismActionCondition> externalConditions;
@@ -112,6 +114,14 @@ public class AdvertRepresentationSimple {
 
     public void setAddress(AddressRepresentation address) {
         this.address = address;
+    }
+
+    public AddressRepresentation getParentAddress() {
+        return parentAddress;
+    }
+
+    public void setParentAddress(AddressRepresentation parentAddress) {
+        this.parentAddress = parentAddress;
     }
 
     public AdvertFinancialDetailRepresentation getFinancialDetails() {

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -338,7 +338,7 @@ public class StateService {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);
 
         List<StateTransition> potentialStateTransitions;
-        if (BooleanUtils.isTrue(action.getSystemInvocationOnly())) {
+        if (isTrue(action.getSystemInvocationOnly())) {
             potentialStateTransitions = stateDAO.getPotentialStateTransitions(operativeResource, action);
         } else {
             potentialStateTransitions = stateDAO.getPotentialUserStateTransitions(operativeResource, action);

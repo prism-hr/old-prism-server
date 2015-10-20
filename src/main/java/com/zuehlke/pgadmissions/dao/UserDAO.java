@@ -7,7 +7,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageab
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceRecentlyActiveConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserDueNotificationConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithPartnerConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithTargetConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -224,6 +224,17 @@ public class UserDAO {
                 .list();
     }
 
+    public List<User> getResourceUsers(Resource resource, PrismRole role) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.eq("role.id", role))
+                .list();
+    }
+
     public void setParentUser(User newParentUser) {
         sessionFactory.getCurrentSession()
                 .createQuery("update User " //
@@ -286,10 +297,10 @@ public class UserDAO {
     }
 
     public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
-        return (List<User>) workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
+        return (List<User>) workflowDAO.getWorklflowCriteriaAssignment(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
-                .add(getUserRoleWithPartnerConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
                 .add(getEndorsementActionFilterConstraint())
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
@@ -360,7 +371,7 @@ public class UserDAO {
 
     public List<Integer> getUsersWithActivity(PrismScope resourceScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
         return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, Projections.groupProperty("user.id"))
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
                 .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
@@ -369,7 +380,7 @@ public class UserDAO {
 
     public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope parentScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
         return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, parentScope, Projections.groupProperty("user.id")) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
                 .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
@@ -377,8 +388,8 @@ public class UserDAO {
     }
 
     public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targetScope, targeterScope, Projections.groupProperty("user.id")) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targeterScope, targetScope, Projections.groupProperty("user.id")) //
+                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
                 .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
@@ -407,7 +418,7 @@ public class UserDAO {
     public List<Integer> getUsersWithUsersToVerify(PrismScope resourceScope, List<Integer> resources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
-                .add(Restrictions.eq("role.id", PrismRole.valueOf(resourceScope.name()) + "_ADMINISTRATOR")) //
+                .add(Restrictions.eq("role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR"))) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resources)) //
                 .list();
     }
@@ -425,7 +436,7 @@ public class UserDAO {
                 .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
                 .createAlias("acceptAdvert." + resourceScope.getLowerCamelName(), "acceptResource", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("acceptAdvert.id", "acceptResource.advert.id")) //
-                .createAlias("acceptRoles.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("acceptResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_PENDING)) //
                 .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR")))
                 .list();

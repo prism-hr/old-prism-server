@@ -10,6 +10,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_EDIT_AS_USER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_VIEWER_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_VIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_VIEWER_GROUP;
@@ -36,21 +39,21 @@ public class PrismProjectWorkflow {
 
     public static PrismStateAction projectEscalateUnapproved() {
         return projectEscalateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_REJECTED) //
                         .withTransitionAction(PROJECT_ESCALATE));
     }
 
     public static PrismStateAction projectTerminateUnapproved() {
         return projectTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_REJECTED) //
                         .withTransitionAction(PROJECT_TERMINATE));
     }
 
     public static PrismStateAction projectTerminateApproved() {
         return projectTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_DISABLED_COMPLETED) //
                         .withTransitionAction(PROJECT_TERMINATE));
     }
@@ -59,7 +62,7 @@ public class PrismProjectWorkflow {
         return projectViewEditAbstract()
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(PROJECT_VIEW_EDIT)
                         .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
@@ -68,9 +71,13 @@ public class PrismProjectWorkflow {
     public static PrismStateAction projectViewEditApproved() {
         return projectViewEditAbstract()
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
+                .withAssignments(INSTITUTION_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withAssignments(DEPARTMENT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withAssignments(PROGRAM_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
-                .withTransitions(PROJECT_VIEW_EDIT_TRANSITION //
+                .withPartnerAssignments(DEPARTMENT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateTransitions(PROJECT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
     }
 
@@ -84,11 +91,11 @@ public class PrismProjectWorkflow {
         return new PrismStateAction() //
                 .withAction(PROJECT_WITHDRAW) //
                 .withAssignments(PROJECT_ADMINISTRATOR)
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST));
     }
-    
+
     public static PrismStateAction projectViewEditAbstract() {
         return new PrismStateAction() //
                 .withAction(PROJECT_VIEW_EDIT);

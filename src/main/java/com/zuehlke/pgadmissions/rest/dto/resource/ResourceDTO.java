@@ -53,7 +53,7 @@ public class ResourceDTO {
             return false;
         }
         ResourceDTO other = (ResourceDTO) object;
-        return scope.equals(other.getScope()) && id.equals(other.getId());
+        return Objects.equal(scope, other.getScope()) && Objects.equal(id, other.getId());
     }
-    
+
 }

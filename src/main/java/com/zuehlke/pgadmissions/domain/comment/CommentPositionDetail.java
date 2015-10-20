@@ -6,18 +6,18 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class CommentPositionDetail {
 
-    @Column(name = "application_position_title")
-    private String positionTitle;
+    @Column(name = "application_position_name")
+    private String positionName;
 
     @Column(name = "application_position_description")
     private String positionDescription;
 
-    public final String getPositionTitle() {
-        return positionTitle;
+    public final String getPositionName() {
+        return positionName;
     }
 
-    public final void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public final void setPositionName(String positionName) {
+        this.positionName = positionName;
     }
 
     public final String getPositionDescription() {
@@ -28,8 +28,8 @@ public class CommentPositionDetail {
         this.positionDescription = positionDescription;
     }
 
-    public CommentPositionDetail withPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public CommentPositionDetail withPositionTitle(String positionName) {
+        this.positionName = positionName;
         return this;
     }
 

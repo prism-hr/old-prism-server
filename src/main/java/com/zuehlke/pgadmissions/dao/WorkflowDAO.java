@@ -7,11 +7,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -29,7 +32,9 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Component
@@ -42,52 +47,12 @@ public class WorkflowDAO {
 
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
-    public Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projection) //
-                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("targetAdvert.department", "targetDepartment", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eqProperty("targetAdvert.id", "targetDepartment.advert.id")) //
-                .createAlias("targetAdvert.institution", "targetInstitution", JoinType.LEFT_OUTER_JOIN, //
-                        Restrictions.eqProperty("targetAdvert.id", "targetInstitution.advert.id"));
+    public Criteria getWorklflowCriteriaAssignment(PrismScope resourceScope, Projection projection) {
+        return getWorklflowCriteria(resourceScope, projection, ResourceState.class);
+    }
 
-        for (PrismScope targeterScope : targetScopes) {
-            String targeterScopeLower = targeterScope.getLowerCamelName();
-            String targeterScopeUpper = targeterScope.getUpperCamelName();
-
-            String targeterResource = "advert" + targeterScopeUpper;
-            String targeterResourceAdvert = targeterResource + "Advert";
-            String targeterResourceTarget = targeterResource + "Target";
-            String targeterAdvert = "target" + targeterScopeUpper + "Advert";
-            criteria.createAlias("advert." + targeterScopeLower, targeterResource, JoinType.LEFT_OUTER_JOIN) //
-                    .createAlias(targeterResource + ".advert", targeterResourceAdvert, JoinType.LEFT_OUTER_JOIN) //
-                    .createAlias(targeterResourceAdvert + ".targets", targeterResourceTarget, JoinType.LEFT_OUTER_JOIN) //
-                    .createAlias(targeterResourceTarget + ".targetAdvert", targeterAdvert, JoinType.LEFT_OUTER_JOIN);
-
-            for (PrismScope targetScope : targetScopes) {
-                String targetResource = targeterScopeLower + "Target" + targetScope.getUpperCamelName();
-                criteria.createAlias(targeterAdvert + "." + targetScope.getLowerCamelName(), targetResource, JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eqProperty(targeterAdvert + ".id", targetResource + ".advert.id"));
-            }
-        }
-
-        return criteria.createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinConstraint()) //
-                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
+    public Criteria getWorklflowCriteriaNotification(PrismScope resourceScope, Projection projection) {
+        return getWorklflowCriteria(resourceScope, projection, ResourcePreviousState.class);
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope resourceScope, Projection projection) {
@@ -141,6 +106,7 @@ public class WorkflowDAO {
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
                 .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
@@ -191,7 +157,7 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("userRole.system", resource.getSystem()));
     }
 
-    public static Junction getUserRoleWithPartnerConstraint(Resource resource) {
+    public static Junction getUserRoleWithTargetConstraint(Resource resource) {
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(getUserRoleConstraint(resource)) //
@@ -199,9 +165,9 @@ public class WorkflowDAO {
                 .add(getTargetUserRoleConstraint());
     }
 
-    public static Junction getUserRoleWithPartnerConstraint(Resource resource, User user) {
+    public static Junction getUserRoleWithTargetConstraint(Resource resource, User user) {
         return Restrictions.conjunction() //
-                .add(getUserRoleWithPartnerConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
                 .add(getUserEnabledConstraint(user));
     }
 
@@ -291,6 +257,8 @@ public class WorkflowDAO {
     public static Junction getResourceParentManageableStateConstraint(String resourceReferenceUpper) {
         return Restrictions.conjunction() //
                 .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_UNSUBMITTED")))
+                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_WITHDRAWN")))
+                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_REJECTED")))
                 .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_DISABLED_COMPLETED")));
     }
 
@@ -309,6 +277,67 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("userNotification.id")) //
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline));
+    }
+
+    public static Junction getTokenizedLikeConstraint(String property, String query) {
+        Junction constraint = Restrictions.disjunction();
+        String[] tokens = query.split("\\s*(,|\\s)\\s*");
+        CharArraySet stopWords = EnglishAnalyzer.getDefaultStopSet();
+        Arrays.stream(tokens).forEach(token -> {
+            if (!stopWords.contains(token)) {
+                constraint.add(Restrictions.like(property, token, MatchMode.ANYWHERE));
+            }
+        });
+        return constraint;
+    }
+
+    private Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection, Class<? extends ResourceStateDefinition> responseClass) {
+        String assignmentReference = responseClass.equals(ResourceState.class) ? "stateActionAssignment" : "stateActionNotification";
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(responseClass) //
+                .setProjection(projection) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targetAdvert.department", "targetDepartment", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eqProperty("targetAdvert.id", "targetDepartment.advert.id")) //
+                .createAlias("targetAdvert.institution", "targetInstitution", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eqProperty("targetAdvert.id", "targetInstitution.advert.id"));
+
+        for (PrismScope targeterScope : targetScopes) {
+            String targeterScopeLower = targeterScope.getLowerCamelName();
+            String targeterScopeUpper = targeterScope.getUpperCamelName();
+
+            String targeterResource = "advert" + targeterScopeUpper;
+            String targeterResourceAdvert = targeterResource + "Advert";
+            String targeterResourceTarget = targeterResource + "Target";
+            String targeterAdvert = "target" + targeterScopeUpper + "Advert";
+            criteria.createAlias("advert." + targeterScopeLower, targeterResource, JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias(targeterResource + ".advert", targeterResourceAdvert, JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias(targeterResourceAdvert + ".targets", targeterResourceTarget, JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias(targeterResourceTarget + ".targetAdvert", targeterAdvert, JoinType.LEFT_OUTER_JOIN);
+
+            for (PrismScope targetScope : targetScopes) {
+                String targetResource = targeterScopeLower + "Target" + targetScope.getUpperCamelName();
+                criteria.createAlias(targeterAdvert + "." + targetScope.getLowerCamelName(), targetResource, JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eqProperty(targeterAdvert + ".id", targetResource + ".advert.id"));
+            }
+        }
+
+        return criteria.createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
+                        getEndorsementActionJoinConstraint()) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
+                        Restrictions.eq("action.systemInvocationOnly", false)) //
+                .createAlias("stateAction." + assignmentReference + "s", assignmentReference, JoinType.INNER_JOIN) //
+                .createAlias(assignmentReference + ".role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN);
     }
 
 }

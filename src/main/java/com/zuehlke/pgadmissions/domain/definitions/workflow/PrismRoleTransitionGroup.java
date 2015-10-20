@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_APPOINTEE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
@@ -34,10 +33,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTran
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.REVIVE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_HIRING_MANAGERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_INTERVIEWERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_REFEREES;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_REVIEWERS;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_HIRING_MANAGER_ASSIGNMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_INTERVIEWER_ASSIGNMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_REFEREE_ASSIGNMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_REVIEWER_ASSIGNMENT;
 
 public enum PrismRoleTransitionGroup {
 
@@ -55,14 +54,14 @@ public enum PrismRoleTransitionGroup {
                     .withRole(APPLICATION_REFEREE) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(APPLICATION_REFEREE) //
-                    .withPropertyDefinition(APPLICATION_REFEREES)), //
+                    .withPropertyDefinition(APPLICATION_REFEREE_ASSIGNMENT)), //
 
     APPLICATION_UPDATE_REFEREE_GROUP(
             new PrismRoleTransition() //
                     .withRole(APPLICATION_REFEREE) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(APPLICATION_REFEREE) //
-                    .withPropertyDefinition(APPLICATION_REFEREES), //
+                    .withPropertyDefinition(APPLICATION_REFEREE_ASSIGNMENT), //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_REFEREE) //
                     .withTransitionType(DELETE) //
@@ -81,19 +80,12 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionRole(APPLICATION_VIEWER_REFEREE) //
                     .withRestrictToOwner()), //
 
-    APPLICATION_CREATE_ADMINISTRATOR_GROUP( //
-            new PrismRoleTransition() //
-                    .withRole(PrismRole.APPLICATION_ADMINISTRATOR) //
-                    .withTransitionType(CREATE) //
-                    .withTransitionRole(APPLICATION_ADMINISTRATOR) //
-                    .withMaximumPermitted(1)), //
-
     APPLICATION_CREATE_REVIEWER_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_REVIEWER) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(APPLICATION_REVIEWER) //
-                    .withPropertyDefinition(APPLICATION_REVIEWERS)), //
+                    .withPropertyDefinition(APPLICATION_REVIEWER_ASSIGNMENT)), //
 
     APPLICATION_RETIRE_REVIEWER_GROUP( //
             new PrismRoleTransition() //
@@ -108,12 +100,6 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionRole(APPLICATION_VIEWER_RECRUITER) //
                     .withRestrictToOwner()),
 
-    APPLICATION_RETIRE_ADMINISTRATOR_GROUP( //
-            new PrismRoleTransition() //
-                    .withRole(APPLICATION_ADMINISTRATOR) //
-                    .withTransitionType(UPDATE) //
-                    .withTransitionRole(APPLICATION_VIEWER_RECRUITER)),
-
     APPLICATION_CREATE_POTENTIAL_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_CREATOR) //
@@ -125,7 +111,7 @@ public enum PrismRoleTransitionGroup {
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWER) //
-                    .withPropertyDefinition(APPLICATION_INTERVIEWERS)),
+                    .withPropertyDefinition(APPLICATION_INTERVIEWER_ASSIGNMENT)),
 
     APPLICATION_CREATE_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
@@ -138,7 +124,7 @@ public enum PrismRoleTransitionGroup {
                     .withRole(APPLICATION_INTERVIEWER) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(APPLICATION_INTERVIEWER) //
-                    .withPropertyDefinition(APPLICATION_INTERVIEWERS)),
+                    .withPropertyDefinition(APPLICATION_INTERVIEWER_ASSIGNMENT)),
 
     APPLICATION_RETIRE_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
@@ -208,7 +194,7 @@ public enum PrismRoleTransitionGroup {
                     .withRole(APPLICATION_HIRING_MANAGER) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(APPLICATION_HIRING_MANAGER) //
-                    .withPropertyDefinition(APPLICATION_HIRING_MANAGERS)), //
+                    .withPropertyDefinition(APPLICATION_HIRING_MANAGER_ASSIGNMENT)), //
 
     APPLICATION_RETIRE_HIRING_MANAGER_GROUP( //
             new PrismRoleTransition() //

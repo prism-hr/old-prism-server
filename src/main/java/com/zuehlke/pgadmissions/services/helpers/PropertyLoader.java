@@ -59,11 +59,11 @@ public class PropertyLoader {
         return value;
     }
 
-    public String loadLazy(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) throws Exception {
+    public String loadLazy(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) {
         return evaluation ? loadLazy(trueProperty) : loadLazy(falseProperty);
     }
 
-    public String loadEager(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) throws Exception {
+    public String loadEager(PrismDisplayPropertyDefinition trueProperty, PrismDisplayPropertyDefinition falseProperty, boolean evaluation) {
         return evaluation ? loadEager(trueProperty) : loadEager(falseProperty);
     }
 

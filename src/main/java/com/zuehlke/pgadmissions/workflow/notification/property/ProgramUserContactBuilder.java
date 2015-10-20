@@ -8,8 +8,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ProgramUserContactBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getResource().getProgram().getUser().toString();
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getNotificationDefinitionDTO().getResource().getProgram().getUser().toString();
     }
 
 }

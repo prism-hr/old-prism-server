@@ -21,13 +21,14 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_CREATE_APPLICATION) //
                 .withActionCondition(ACCEPT_APPLICATION) //
-                .withTransitions(APPLICATION_CREATE_TRANSITION //
+                .withStateTransitions(APPLICATION_CREATE_TRANSITION //
                         .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
         stateActions.add(institutionCreateDepartment());
         stateActions.add(institutionCreateProgram());
         stateActions.add(institutionCreateProject());
         stateActions.add(institutionEmailCreatorApproved()); //
+
         stateActions.add(institutionTerminateApproved());
         stateActions.add(institutionViewEditApproved()); //
     }

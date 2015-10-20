@@ -232,7 +232,7 @@ public class CommentMapper {
 
     private CommentPositionDetailRepresentation getCommentPositionDetailRepresentation(Comment comment) {
         CommentPositionDetail position = comment.getPositionDetail();
-        return position == null ? null : new CommentPositionDetailRepresentation().withPositionTitle(position.getPositionTitle()).withPositionDescription(
+        return position == null ? null : new CommentPositionDetailRepresentation().withPositionTitle(position.getPositionName()).withPositionDescription(
                 position.getPositionDescription());
     }
 

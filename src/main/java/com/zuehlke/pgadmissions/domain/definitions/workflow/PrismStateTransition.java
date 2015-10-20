@@ -54,7 +54,7 @@ public class PrismStateTransition {
         return this;
     }
 
-    public PrismStateTransition withTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
+    public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
         this.transitionEvaluation = transitionEvaluation;
         return this;
     }

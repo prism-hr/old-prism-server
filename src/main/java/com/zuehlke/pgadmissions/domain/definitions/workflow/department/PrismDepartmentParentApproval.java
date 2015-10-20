@@ -28,14 +28,14 @@ public class PrismDepartmentParentApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_APPROVED) //
                         .withTransitionAction(DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE)));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_PROGRAM) //
                 .withActionCondition(ACCEPT_PROGRAM) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVAL_PARENT_APPROVAL) //
                         .withTransitionAction(PROGRAM_VIEW_EDIT)
                         .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP)));
@@ -43,7 +43,7 @@ public class PrismDepartmentParentApproval extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_CREATE_PROJECT) //
                 .withActionCondition(ACCEPT_PROJECT) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVAL_PARENT_APPROVAL) //
                         .withTransitionAction(PROJECT_VIEW_EDIT)
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP)));

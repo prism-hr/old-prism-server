@@ -2,16 +2,16 @@ package com.zuehlke.pgadmissions.rest.representation.comment;
 
 public class CommentPositionDetailRepresentation {
 
-    private String positionTitle;
+    private String positionName;
 
     private String positionDescription;
 
-    public String getPositionTitle() {
-        return positionTitle;
+    public String getPositionName() {
+        return positionName;
     }
 
-    public void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public void setPositionName(String positionName) {
+        this.positionName = positionName;
     }
     
     public String getPositionDescription() {
@@ -22,8 +22,8 @@ public class CommentPositionDetailRepresentation {
         this.positionDescription = positionDescription;
     }
     
-    public CommentPositionDetailRepresentation withPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public CommentPositionDetailRepresentation withPositionTitle(String positionName) {
+        this.positionName = positionName;
         return this;
     }
     

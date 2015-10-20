@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.integration.helpers;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedaction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.ActionRedaction;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
+import com.zuehlke.pgadmissions.domain.workflow.OpportunityType;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
@@ -140,7 +141,7 @@ public class SystemInitialisationHelper {
             assertEquals(action.getId().isVisibleAction(), action.getVisibleAction());
             assertEquals(action.getId().getScope(), action.getScope().getId());
 
-            if (action.getActionCategory() == PrismActionCategory.CREATE_RESOURCE) {
+            if (action.getActionCategory() == CREATE_RESOURCE) {
                 assertEquals(action.getTransitionAction(), true);
             }
 
@@ -201,20 +202,22 @@ public class SystemInitialisationHelper {
 
     public void verifyDisplayPropertyCreation() {
         System system = systemService.getSystem();
-        for (DisplayPropertyConfiguration value : localizationService.getAllLocalizedProperties()) {
-            assertEquals(value.getResource(), system);
+        for (DisplayPropertyConfiguration configuration : localizationService.getAllLocalizedProperties()) {
+            assertEquals(configuration.getResource(), system);
 
-            DisplayPropertyDefinition displayProperty = value.getDefinition();
+            DisplayPropertyDefinition displayProperty = configuration.getDefinition();
             PrismDisplayPropertyDefinition prismDisplayProperty = displayProperty.getId();
 
-            assertEquals(value.getOpportunityType().getId(), displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
+            OpportunityType opportunityType = configuration.getOpportunityType();
+            assertEquals((opportunityType == null ? null : opportunityType.getId()),
+                    (displayProperty.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
             assertEquals(displayProperty.getCategory(), prismDisplayProperty.getCategory());
-            assertEquals(value.getValue(), prismDisplayProperty.getDefaultValue());
-            assertTrue(value.getSystemDefault());
+            assertEquals(configuration.getValue(), prismDisplayProperty.getDefaultValue());
+            assertTrue(configuration.getSystemDefault());
         }
     }
 
-    public void verifyNotificationTemplateCreation() {
+    public void verifyNotificationCreation() {
         System system = systemService.getSystem();
         for (NotificationDefinition definition : notificationService.getDefinitions()) {
             PrismNotificationDefinition prismNotificationDefinition = definition.getId();
@@ -225,7 +228,9 @@ public class SystemInitialisationHelper {
 
             NotificationConfiguration configuration = (NotificationConfiguration) customizationService.getConfiguration(NOTIFICATION, system, definition);
 
-            assertEquals(configuration.getOpportunityType().getId(), definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null);
+            OpportunityType opportunityType = configuration.getOpportunityType();
+            assertEquals((opportunityType == null ? null : opportunityType.getId()),
+                    (definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
             assertEquals(configuration.getDefinition(), definition);
             assertTrue(configuration.getSystemDefault());
 
@@ -242,8 +247,9 @@ public class SystemInitialisationHelper {
             StateDurationConfiguration configuration = (StateDurationConfiguration) customizationService.getConfiguration(STATE_DURATION, system,
                     state.getStateDurationDefinition());
 
-            assertEquals(configuration.getOpportunityType().getId(), state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType()
-                    : null);
+            OpportunityType opportunityType = configuration.getOpportunityType();
+            assertEquals((opportunityType == null ? null : opportunityType.getId()),
+                    (state.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
             assertEquals(state.getId().getDefaultDuration().getDefaultDuration(), configuration.getDuration());
             assertTrue(configuration.getSystemDefault());
         }
@@ -275,7 +281,7 @@ public class SystemInitialisationHelper {
             verifyStateTransitionCreation(stateAction, prismStateAction);
         }
 
-        verifyNotificationTemplateCreation();
+        verifyNotificationCreation();
         verifyStateDurationCreation();
     }
 
@@ -312,7 +318,7 @@ public class SystemInitialisationHelper {
             PrismStateTransition prismStateTransition = new PrismStateTransition()
                     .withTransitionState(transitionState == null ? null : transitionState.getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
-                    .withTransitionEvaluation(evaluation == null ? null : evaluation.getId());
+                    .withStateTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 PrismRoleTransition prismRoleTransition = new PrismRoleTransition().withRole(roleTransition.getRole().getId())

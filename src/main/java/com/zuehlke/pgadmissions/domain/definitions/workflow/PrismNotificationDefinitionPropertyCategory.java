@@ -8,6 +8,7 @@ public enum PrismNotificationDefinitionPropertyCategory {
     ACTION_GLOBAL, //
     COMMENT_GLOBAL, //
     COMMENT_TRANSITION, //
+    TARGET_GLOBAL, //
     APPLICATION_GLOBAL, //
     APPLICATION_INTERVIEW_SCHEDULED, //
     APPLICATION_APPROVED, //
@@ -17,16 +18,13 @@ public enum PrismNotificationDefinitionPropertyCategory {
     DEPARTMENT_GLOBAL, //
     INSTITUTION_GLOBAL, //
     INSTITUTION_APPROVED, //
-    SYSTEM_APPLICATION_SYNDICATED, //
-    SYSTEM_APPLICATION_MARKETING, //
-    SYSTEM_PROJECT_SYNDICATED, //
-    SYSTEM_PROGRAM_SYNDICATED, //
-    SYSTEM_DEPARTMENT_SYNDICATED, //
-    SYSTEM_INSTITUTION_SYNDICATED, //
+    SYSTEM_APPLICATION, //
+    SYSTEM_PROJECT, //
+    SYSTEM_PROGRAM, //
+    SYSTEM_DEPARTMENT, //
+    SYSTEM_INSTITUTION, //
     SYSTEM_USER_PASSWORD, //
-    SYSTEM_USER_ACCOUNT, //
-    SYSTEM_USER_ACTIVATION, //
-    SYSTEM_USER_MERGE;
+    SYSTEM_USER_ACTIVATION;
 
     public List<PrismNotificationDefinitionProperty> getProperties() {
         return PrismNotificationDefinitionProperty.getProperties(this);

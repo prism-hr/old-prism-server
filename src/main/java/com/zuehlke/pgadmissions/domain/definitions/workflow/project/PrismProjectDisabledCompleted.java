@@ -23,7 +23,7 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROJECT_RESTORE) //
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(PROJECT_VIEW_EDIT)));
 

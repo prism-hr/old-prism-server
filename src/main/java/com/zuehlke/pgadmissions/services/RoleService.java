@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.stream;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
@@ -23,6 +25,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
@@ -93,44 +96,53 @@ public class RoleService {
         return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
     }
 
-    public void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, PrismRole... roles) {
-        Action action = actionService.getViewEditAction(resource);
-        if (action != null) {
-            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-
-            Comment comment = new Comment().withAction(action).withUser(invoker)
-                    .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
-                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-            for (PrismRole role : roles) {
-                comment.addAssignedUser(user, getById(role), transitionType);
-            }
-
-            actionService.executeUserAction(resource, action, comment);
-            
-            if (transitionType.equals(CREATE) && user.getUserAccount() == null) {
-                notificationService.sendInvitationNotification(invoker, user);
-            }
+    public void deleteUserRole(Resource resource, User user, Role role) {
+        if (roleDAO.getRolesForResourceStrict(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
+            throw new PrismForbiddenException("Cannot remove the owner");
         }
+
+        UserRole userRole = getUserRole(resource, user, role);
+        entityService.delete(userRole);
+        entityService.flush();
     }
 
-    public void verifyUserRoles(User invoker, Resource resource, User user, Boolean verify) {
+    public void createUserRoles(User invoker, Resource resource, User user, PrismRole... roles) {
+        updateUserRoles(invoker, resource, user, CREATE, true, roles);
+    }
+
+    public void updateUserRoles(User invoker, Resource resource, User user, PrismRole... roles) {
+        updateUserRoles(invoker, resource, user, CREATE, false, roles);
+    }
+
+    public void deleteUserRoles(User invoker, Resource resource, User user, PrismRole... roles) {
+        updateUserRoles(invoker, resource, user, DELETE, false, roles);
+    }
+
+    public void deleteUserRoles(User invoker, Resource resource, User user) {
+        List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
+        deleteUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
+    }
+
+    public void verifyUserRoles(User invoker, ResourceParent resource, User user, Boolean verify) {
+        boolean notify = false;
         boolean isVerify = isTrue(verify);
-        roleDAO.getUnverifiedRoles(resource, user).forEach(userRole -> {
+        for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
             if (isVerify) {
                 Role role = userRole.getRole();
-                updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
+                updateUserRoles(invoker, resource, user, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
                 entityService.delete(userRole);
-                
-                if (user.getUserAccount() != null) {
-                    // TODO: send a confirmation message
-                }
+                notify = true;
             } else {
                 Action action = actionService.getViewEditAction(resource);
                 if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {
                     entityService.delete(userRole);
                 }
             }
-        });
+        }
+
+        if (notify) {
+            notificationService.sendJoinNotification(invoker, user, resource);
+        }
     }
 
     public void setResourceOwner(Resource resource, User user) {
@@ -206,11 +218,6 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void deleteUserRoles(User invoker, Resource resource, User user) {
-        List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
-        updateUserRoles(invoker, resource, user, DELETE, roles.toArray(new PrismRole[roles.size()]));
-    }
-
     public List<PrismScope> getVisibleScopes(User user) {
         Set<PrismScope> visibleScopes = Sets.newTreeSet();
         for (PrismScope scope : PrismScope.values()) {
@@ -238,16 +245,6 @@ public class RoleService {
         for (Role creatorRole : creatorRoles) {
             creatorRole.setScopeCreator(true);
         }
-    }
-
-    public void deleteUserRole(Resource resource, User user, Role role) {
-        if (roleDAO.getRolesForResourceStrict(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
-            throw new PrismForbiddenException("Cannot remove the owner");
-        }
-
-        UserRole userRole = getUserRole(resource, user, role);
-        entityService.delete(userRole);
-        entityService.flush();
     }
 
     public List<PrismRole> getRolesByScope(PrismScope prismScope) {
@@ -336,6 +333,30 @@ public class RoleService {
                     .withAssignedTimestamp(baseline);
 
             applicationContext.getBean(roleTransition.getRoleTransitionType().getResolver()).resolve(userRole, transitionUserRole, comment);
+        }
+    }
+
+    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, boolean notify, PrismRole... roles) {
+        Action action = actionService.getViewEditAction(resource);
+        if (action != null) {
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
+
+            Comment comment = new Comment().withAction(action).withUser(invoker)
+                    .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
+                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+            for (PrismRole role : roles) {
+                comment.addAssignedUser(user, getById(role), transitionType);
+            }
+
+            actionService.executeUserAction(resource, action, comment);
+
+            if (notify && transitionType.equals(CREATE) && user.getUserAccount() == null) {
+                if (stream(roles).anyMatch(r -> r.name().contains("STUDENT"))) {
+                    notificationService.sendUserInvitationNotification(invoker, user, resource, SYSTEM_MANAGE_ACCOUNT);
+                } else {
+                    notificationService.sendUserInvitationNotification(invoker, user, resource, PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT"));
+                }
+            }
         }
     }
 

@@ -16,16 +16,16 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.dto.AdvertRecommendationDTO;
-import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
+import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
 public class SystemApplicationRecommendationBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        NotificationDefinitionModelDTO modelDTO = propertyLoader.getNotificationDefinitionModelDTO();
-        List<AdvertRecommendationDTO> advertRecommendations = modelDTO.getAdvertRecommendations();
+    public String build(NotificationPropertyLoader propertyLoader) {
+        NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
+        List<AdvertRecommendationDTO> advertRecommendations = notificationDefinitionDTO.getAdvertRecommendations();
 
         if (!advertRecommendations.isEmpty()) {
             List<String> recommendations = Lists.newLinkedList();
@@ -39,9 +39,9 @@ public class SystemApplicationRecommendationBuilder implements NotificationPrope
                 String summary = advert.getSummary();
 
                 String applyHomepage = advert.getApplyHomepage();
-                applyHomepage = applyHomepage == null ? propertyLoader.buildRedirectionUrl(resourceParent,
-                        createResourceActions.get(resourceParent.getResourceScope()), modelDTO.getUser()) : applyHomepage;
-                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.buildRedirectionControl(applyHomepage, SYSTEM_APPLY)));
+                applyHomepage = applyHomepage == null ? propertyLoader.getRedirectionUrl(resourceParent,
+                        createResourceActions.get(resourceParent.getResourceScope()), notificationDefinitionDTO.getRecipient()) : applyHomepage;
+                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.getRedirectionControl(applyHomepage, SYSTEM_APPLY)));
             }
 
             return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";

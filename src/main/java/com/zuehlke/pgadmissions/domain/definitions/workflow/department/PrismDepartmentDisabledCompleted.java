@@ -22,7 +22,7 @@ public class PrismDepartmentDisabledCompleted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_RESTORE) //
                 .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_APPROVED) //
                         .withTransitionAction(DEPARTMENT_VIEW_EDIT)));
 

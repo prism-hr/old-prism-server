@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import javax.validation.constraints.NotNull;
+
 import com.zuehlke.pgadmissions.domain.address.AddressDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
-
-import javax.validation.constraints.NotNull;
 
 public class AddressDTO extends AddressDefinition<PrismDomicile> {
 

@@ -379,11 +379,6 @@ public enum PrismStateTransitionGroup {
                     .withStateTransitionEvaluation(DEPARTMENT_UPDATED_OUTCOME) //
                     .withPropagatedActions(PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE)), //
 
-    DEPARTMENT_ENDORSE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(DEPARTMENT_APPROVED) //
-                    .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST)), //
-
     INSTITUTION_CREATE_TRANSITION( //
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_UNSUBMITTED) //
@@ -428,12 +423,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_DISABLED_COMPLETED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT) //
                     .withStateTransitionEvaluation(INSTITUTION_UPDATED_OUTCOME) //
-                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE)), //
-
-    INSTITUTION_ENDORSE_TRANSITION( //
-            new PrismStateTransition() //
-                    .withTransitionState(INSTITUTION_APPROVED) //
-                    .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST));
+                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE));
 
     private PrismStateTransition[] stateTransitionTemplates;
 

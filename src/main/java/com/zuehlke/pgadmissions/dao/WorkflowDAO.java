@@ -257,6 +257,8 @@ public class WorkflowDAO {
     public static Junction getResourceParentManageableStateConstraint(String resourceReferenceUpper) {
         return Restrictions.conjunction() //
                 .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_UNSUBMITTED")))
+                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_WITHDRAWN")))
+                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_REJECTED")))
                 .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_DISABLED_COMPLETED")));
     }
 

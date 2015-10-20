@@ -66,6 +66,8 @@ import com.zuehlke.pgadmissions.workflow.notification.property.SystemProgramHome
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemProjectHomepageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemUserAccountActivationBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.SystemUserNewPasswordBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TargetResourceAcceptNameBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TargetResourceOtherNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInitiatorEmailBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInitiatorFullNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateParentResourceCodeBuilder;
@@ -106,8 +108,8 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
-    TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, null), //
-    TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, null), //
+    TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, TargetResourceOtherNameBuilder.class), //
+    TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, TargetResourceAcceptNameBuilder.class), //
     APPLICATION_CREATOR_EMAIL(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true, ApplicationCodeBuilder.class), //

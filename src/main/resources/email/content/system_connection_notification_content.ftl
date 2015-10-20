@@ -4,7 +4,7 @@
 
 <p>
     ${TEMPLATE_INITIATOR_FULL_NAME} of ${TARGET_RESOURCE_ACCEPT_NAME} has accepted your invitation 
-    to connect in ${TEMPLATE_SYSTEM_NAME}. 
+    to connect in ${TEMPLATE_SYSTEM_NAME} as ${TARGET_RESOURCE_OTHER_NAME}. 
 </p>
 
 <p>

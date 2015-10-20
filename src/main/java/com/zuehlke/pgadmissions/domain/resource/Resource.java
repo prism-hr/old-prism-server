@@ -175,12 +175,18 @@ public abstract class Resource implements UniqueEntity {
             Application application = getApplication();
             return application.getParentResource().getDisplayName() + SPACE + HYPHEN + SPACE + application.getUser().getFullName();
         }
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getInstitution(), getDepartment(), getProgram(), getProject());
+
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceName(getInstitution()), getResourceName(getDepartment()), getResourceName(getProgram()),
+                getResourceName(getProject()));
     }
 
     @Override
     public String toString() {
         return getResourceScope().name() + "#" + getId();
+    }
+
+    private String getResourceName(ResourceParent resource) {
+        return resource == null ? null : resource.getName();
     }
 
 }

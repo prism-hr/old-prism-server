@@ -48,7 +48,7 @@ public class RoleDAO {
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes) {
 
-        return (List<PrismRole>) workflowDAO.getWorklflowCriteria(resourceScope, Projections.groupProperty("role.id"))
+        return (List<PrismRole>) workflowDAO.getWorklflowCriteriaAssignment(resourceScope, Projections.groupProperty("role.id"))
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.disjunction() //

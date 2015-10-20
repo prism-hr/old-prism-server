@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowState;
 
-public class PrismApplicationApprovedPendingPartnerApproval extends PrismWorkflowState {
+public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {

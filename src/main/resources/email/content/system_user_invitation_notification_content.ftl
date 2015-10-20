@@ -11,7 +11,7 @@
 	Follow the link below to create your user profile and join our community.	
 </p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+${ACTION_COMPLETE}
 
 <p>
 	Welcome to ${TEMPLATE_SYSTEM_NAME}.

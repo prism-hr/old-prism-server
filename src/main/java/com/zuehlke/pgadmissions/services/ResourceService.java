@@ -772,7 +772,7 @@ public class ResourceService {
         if (canViewEdit && role != null) {
             executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
                     new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
-        } else {
+        } else if (!canViewEdit) {
             List<User> admins = userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR"));
             Map<UserNotificationDTO, Integer> recentRequests = notificationService.getRecentRequests(admins.stream().map(a -> a.getId()).collect(toList()), LocalDate.now());
 

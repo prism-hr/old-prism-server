@@ -16,8 +16,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.I
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -743,12 +741,6 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
 
     public boolean isSecondaryStateGroupTransitionComment() {
         return !secondaryTransitionStates.isEmpty();
-    }
-
-    public boolean isApplicationDelegateAdministrationComment() {
-        CommentAssignedUser firstAssignee = assignedUsers.isEmpty() ? null : assignedUsers.iterator().next();
-        return firstAssignee != null && firstAssignee.getRole().getId().equals(APPLICATION_ADMINISTRATOR)
-                && firstAssignee.getRoleTransitionType().equals(CREATE);
     }
 
     public boolean isApplicationInterviewScheduledComment(DateTime baseline) {

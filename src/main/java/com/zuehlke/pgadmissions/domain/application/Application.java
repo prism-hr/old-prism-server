@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain.application;
 
-import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
@@ -39,7 +38,6 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceCondition;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.resource.System;
@@ -613,26 +611,6 @@ public class Application extends Resource implements
 
     public boolean isSubmitted() {
         return submittedTimestamp != null;
-    }
-
-    public String getParentResourceTitleDisplay(String at, String in) {
-        ResourceParent parent = (ResourceParent) getParentResource();
-        if (parent instanceof Institution) {
-            return parent.getName();
-        } else if (parent instanceof Department || parent instanceof Program) {
-            return parent.getName() + SPACE + at + SPACE + institution.getName();
-        } else if (parent instanceof Project) {
-            Resource grandParent = parent.getParentResource();
-            if (grandParent instanceof Program) {
-                return parent.getName() + SPACE + in + SPACE + program.getName();
-            }
-            return parent.getName() + SPACE + at + SPACE + institution.getName();
-        }
-        return null;
-    }
-
-    public String getParentResourceCodeDisplay() {
-        return getParentResource().getCode();
     }
 
     public PrismOpportunityType getOpportunityType() {

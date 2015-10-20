@@ -4,6 +4,6 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 public interface NotificationPropertyBuilder {
 
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception;
-    
+    public String build(NotificationPropertyLoader propertyLoader);
+
 }

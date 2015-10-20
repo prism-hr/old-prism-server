@@ -11,8 +11,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationUpdateInterviewAvailability;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduling;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduling;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiterAndAdministrator;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiterAndAdministrator;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
@@ -23,20 +23,20 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(applicationCommentWithViewerRecruiterAndAdministrator()); //
+		stateActions.add(applicationCommentWithViewerRecruiter()); //
 		stateActions.add(applicationCompleteInterviewScheduling(state));
 		stateActions.add(applicationConfirmInterviewArrangements()); //
-		stateActions.add(applicationEmailCreatorWithViewerRecruiterAndAdministrator()); //
+		stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 		stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_SCHEDULING)); //
 
 		stateActions.add(applicationProvideInterviewAvailability() //
-		        .withTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_TRANSITION //
+		        .withStateTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_TRANSITION //
 		                .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP))); //
 
 		stateActions.add(applicationTerminateInterviewScheduling());
 		
 		stateActions.add(applicationUpdateInterviewAvailability() //
-		        .withTransitions(new PrismStateTransition() //
+		        .withStateTransitions(new PrismStateTransition() //
 		                .withTransitionState(state) //
 		                .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS)));
 		

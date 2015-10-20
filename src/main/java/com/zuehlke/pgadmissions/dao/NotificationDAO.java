@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithTargetConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
 import java.util.Collection;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserNotification;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.workflow.NotificationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
+import com.zuehlke.pgadmissions.dto.UserNotificationDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 
 @Repository
@@ -73,7 +75,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
                 .add(getEndorsementActionFilterConstraint())
                 .add(Restrictions.isNull("userNotification.id")) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
@@ -83,7 +85,7 @@ public class NotificationDAO {
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, Action action, Set<User> exclusions) {
         Criteria criteria = workflowDAO.getWorklflowCriteria(resource.getResourceScope(), Projections.projectionList() //
                 .add(Projections.groupProperty("user.id").as("userId")) //
-                .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")))
+                .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")), ResourcePreviousState.class)
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
                 .createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
@@ -96,7 +98,8 @@ public class NotificationDAO {
         }
 
         return (List<UserNotificationDefinitionDTO>) criteria //
-                .add(getUserRoleConstraint(resource)) //
+                .add(getUserRoleWithTargetConstraint(resource)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(getEndorsementActionFilterConstraint())
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
@@ -145,6 +148,18 @@ public class NotificationDAO {
                 .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateActionAssignment.role", role)) //
+                .list();
+    }
+
+    public List<UserNotificationDTO> getRecentRequests(List<Integer> users, LocalDate lastNotifiedDate) {
+        return (List<UserNotificationDTO>) sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("user.id").as("userId")) //
+                        .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")) //
+                        .add(Projections.countDistinct("id").as("sentCount"))) //
+                .add(Restrictions.in("user.id", users)) //
+                .add(Restrictions.ge("lastNotifiedDate", lastNotifiedDate)) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDTO.class)) //
                 .list();
     }
 

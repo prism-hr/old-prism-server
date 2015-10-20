@@ -1,1 +1,1 @@
-Your Registration for ${TEMPLATE_SYSTEM_TITLE}
+Your Registration for ${TEMPLATE_SYSTEM_NAME}

@@ -11,8 +11,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ActionCompleteBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.buildRedirectionControl(SYSTEM_PROCEED, propertyLoader.getNotificationDefinitionModelDTO().getTransitionAction()
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getRedirectionControl(SYSTEM_PROCEED, propertyLoader.getNotificationDefinitionDTO().getTransitionAction()
                 .isDeclinableAction() ? SYSTEM_DECLINE : null);
     }
 

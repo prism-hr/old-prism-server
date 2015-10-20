@@ -14,7 +14,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
@@ -71,21 +70,16 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_VIEWER_RECRUITER);
     }
 
-    public static PrismStateAction applicationCommentWithViewerRecruiterAndAdministrator() {
-        return applicationCommentWithViewerRecruiter() //
-                .withAssignments(APPLICATION_ADMINISTRATOR);
-    }
-
     public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees) {
         return applicationCompleteStateAbstract(action, assignees)
-                .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
+                .withStateTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
                         .withExclusions(applicationNextStateExclusions(state)));
     }
 
     public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees,
             PrismRoleTransitionGroup... roleTransitions) {
         return applicationCompleteStateAbstract(action, assignees)
-                .withTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
+                .withStateTransitions(APPLICATION_COMPLETE_STATE_TRANSITION //
                         .withRoleTransitionsAndExclusions(applicationNextStateExclusions(state), roleTransitions));
     }
 
@@ -105,14 +99,9 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_VIEWER_RECRUITER);
     }
 
-    public static PrismStateAction applicationEmailCreatorWithViewerRecruiterAndAdministrator() {
-        return applicationEmailCreatorWithViewerRecruiter() //
-                .withAssignments(APPLICATION_ADMINISTRATOR);
-    }
-
     public static PrismStateAction applicationEscalate(PrismState state) {
         return applicationEscalateAbstract() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_ESCALATE));
     }
@@ -120,33 +109,38 @@ public class PrismApplicationWorkflow {
     public static PrismStateAction applicationEscalate(PrismRoleTransitionGroup... roleTransitions) {
         return applicationEscalateAbstract() //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_TERMINATE_NOTIFICATION) //
-                .withTransitions(APPLICATION_ESCALATE_TRANSITION //
+                .withStateTransitions(APPLICATION_ESCALATE_TRANSITION //
                         .withRoleTransitions(roleTransitions)); //
     }
 
     public static PrismStateAction applicationEscalate(PrismState state, PrismRoleTransitionGroup... roleTransitions) {
         return applicationEscalateAbstract() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_ESCALATE) //
                         .withRoleTransitions(roleTransitions));
     }
 
+    public static PrismStateAction applicationTerminateAbstract() {
+        return new PrismStateAction() //
+                .withAction(APPLICATION_TERMINATE);
+    }
+
     public static PrismStateAction applicationTerminateUnsubmitted() {
         return applicationTerminateAbstract()
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
                         .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
     }
 
     public static PrismStateAction applicationTerminateSubmitted() {
         return applicationTerminateAbstract() //
-                .withTransitions(APPLICATION_TERMINATE_TRANSITION);
+                .withStateTransitions(APPLICATION_TERMINATE_TRANSITION);
     }
 
     public static PrismStateAction applicationTerminateSubmitted(PrismStateTerminationGroup stateTerminations, PrismRoleTransitionGroup... roleTransitions) {
         return applicationTerminateAbstract() //
-                .withTransitions(APPLICATION_TERMINATE_TRANSITION //
+                .withStateTransitions(APPLICATION_TERMINATE_TRANSITION //
                         .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
     }
 
@@ -154,7 +148,7 @@ public class PrismApplicationWorkflow {
         return new PrismStateAction() //
                 .withAction(APPLICATION_UPLOAD_REFERENCE) //
                 .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_UPLOAD_REFERENCE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP) //
@@ -165,7 +159,7 @@ public class PrismApplicationWorkflow {
 
     public static PrismStateAction applicationViewEdit(PrismState state, PrismRoleTransition... roleTransitions) {
         return applicationViewEdit() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_VIEW_EDIT) //
                         .withRoleTransitions(roleTransitions));
@@ -197,28 +191,22 @@ public class PrismApplicationWorkflow {
                 .withAssignments(APPLICATION_VIEWER_RECRUITER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
-    public static PrismStateAction applicationViewEditWithViewerRecruiterAndAdministrator(PrismState state) {
-        return applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(APPLICATION_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER);
-    }
-
-    public static PrismStateAction applicationWithdrawUnsubmitted() {
-        return applicationWithdrawAbstract()
-                .withTransitions(new PrismStateTransition() //
-                        .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
-                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
+    public static PrismStateAction applicationWithdrawAbstract() {
+        return new PrismStateAction() //
+                .withAction(APPLICATION_WITHDRAW) //
+                .withAssignments(APPLICATION_CREATOR);
     }
 
     public static PrismStateAction applicationWithdrawSubmitted(PrismRoleGroup notifications, PrismRoleTransitionGroup... roleTransitions) {
         return applicationWithdrawAbstract() //
-                .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
+                .withStateTransitions(APPLICATION_WITHDRAW_TRANSITION //
                         .withRoleTransitions(roleTransitions));
     }
 
     public static PrismStateAction applicationWithdrawSubmitted(PrismRoleGroup notifications, PrismStateTerminationGroup stateTerminations,
             PrismRoleTransitionGroup... roleTransitions) {
         return applicationWithdrawAbstract() //
-                .withTransitions(APPLICATION_WITHDRAW_TRANSITION //
+                .withStateTransitions(APPLICATION_WITHDRAW_TRANSITION //
                         .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
     }
 
@@ -231,17 +219,6 @@ public class PrismApplicationWorkflow {
     private static PrismStateAction applicationEscalateAbstract() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_ESCALATE);
-    }
-
-    private static PrismStateAction applicationTerminateAbstract() {
-        return new PrismStateAction() //
-                .withAction(APPLICATION_TERMINATE);
-    }
-
-    private static PrismStateAction applicationWithdrawAbstract() {
-        return new PrismStateAction() //
-                .withAction(APPLICATION_WITHDRAW) //
-                .withAssignments(APPLICATION_CREATOR);
     }
 
     private static List<PrismState> applicationNextStateExclusions(PrismState state) {

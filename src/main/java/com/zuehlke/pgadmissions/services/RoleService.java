@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.Arrays.stream;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
@@ -23,6 +25,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
@@ -106,24 +109,26 @@ public class RoleService {
             }
 
             actionService.executeUserAction(resource, action, comment);
-            
+
             if (transitionType.equals(CREATE) && user.getUserAccount() == null) {
-                notificationService.sendInvitationNotification(invoker, user);
+                if (stream(roles).anyMatch(r -> r.name().contains("STUDENT"))) {
+                    notificationService.sendUserInvitationNotification(invoker, user, resource, SYSTEM_MANAGE_ACCOUNT);
+                } else {
+                    notificationService.sendUserInvitationNotification(invoker, user, resource, PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT"));
+                }
             }
         }
     }
 
-    public void verifyUserRoles(User invoker, Resource resource, User user, Boolean verify) {
+    public void verifyUserRoles(User invoker, ResourceParent resource, User user, Boolean verify) {
         boolean isVerify = isTrue(verify);
         roleDAO.getUnverifiedRoles(resource, user).forEach(userRole -> {
             if (isVerify) {
                 Role role = userRole.getRole();
                 updateUserRoles(invoker, resource, user, CREATE, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
                 entityService.delete(userRole);
-                
-                if (user.getUserAccount() != null) {
-                    // TODO: send a confirmation message
-                }
+
+                notificationService.sendJoinNotification(invoker, user, resource);
             } else {
                 Action action = actionService.getViewEditAction(resource);
                 if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {

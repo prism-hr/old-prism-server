@@ -14,12 +14,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
-    APPLICATION_ADMINISTRATOR(RECRUITER, false, APPLICATION), //
     APPLICATION_APPOINTEE(APPLICANT, false, APPLICATION), //
     APPLICATION_CREATOR(APPLICANT, false, APPLICATION), //
     APPLICATION_HIRING_MANAGER(RECRUITER, false, APPLICATION), //
@@ -62,11 +62,15 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     private PrismScope scope;
 
+    private static Set<PrismRole> verifiedRoles = Sets.newHashSet();
+
     private static HashMultimap<PrismRole, PrismScope> visibleScopes = HashMultimap.create();
 
     static {
         for (PrismRole role : values()) {
             if (!role.name().endsWith("_UNVERIFIED")) {
+                verifiedRoles.add(role);
+
                 PrismScope roleScope = role.getScope();
                 visibleScopes.put(role, roleScope);
 
@@ -81,7 +85,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
                 if (roleScope.ordinal() <= INSTITUTION.ordinal()) {
                     visibleScopes.put(role, DEPARTMENT);
                 }
-                
+
                 if (roleScope.ordinal() <= SYSTEM.ordinal()) {
                     visibleScopes.put(role, INSTITUTION);
                 }
@@ -107,6 +111,10 @@ public enum PrismRole implements PrismLocalizableDefinition {
         return scope;
     }
 
+    public Set<PrismRole> getVerifiedRoles() {
+        return verifiedRoles;
+    }
+    
     public Set<PrismScope> getVisibleScopes() {
         return visibleScopes.get(this);
     }

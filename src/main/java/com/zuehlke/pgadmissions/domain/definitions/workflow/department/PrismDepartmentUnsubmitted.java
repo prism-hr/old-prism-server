@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow.department;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_CREATE_TRANSITION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_CREATE_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_COMPLETE_TRANSITION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
 
@@ -14,8 +15,9 @@ public class PrismDepartmentUnsubmitted extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_COMPLETE) //
-                .withTransitions(DEPARTMENT_CREATE_TRANSITION));
-        
+                .withStateTransitions(DEPARTMENT_COMPLETE_TRANSITION //
+                        .withRoleTransitions(DEPARTMENT_CREATE_ADMINISTRATOR_GROUP)));
+
         stateActions.add(departmentCreateProgram()); //
         stateActions.add(departmentCreateProject()); //
     }

@@ -10,8 +10,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class CommentDateTimeBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getNotificationDefinitionModelDTO().getComment()
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getNotificationDefinitionDTO().getComment()
                 .getCreatedTimestampDisplay(propertyLoader.getPropertyLoader().loadLazy(SYSTEM_DATE_TIME_FORMAT));
     }
 

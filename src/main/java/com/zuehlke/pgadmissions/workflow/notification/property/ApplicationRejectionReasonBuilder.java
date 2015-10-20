@@ -8,8 +8,8 @@ import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 public class ApplicationRejectionReasonBuilder implements NotificationPropertyBuilder {
 
     @Override
-    public String build(NotificationPropertyLoader propertyLoader) throws Exception {
-        return propertyLoader.getPropertyLoader().loadLazy(propertyLoader.getNotificationDefinitionModelDTO().getComment().getRejectionReason().getDisplayProperty());
+    public String build(NotificationPropertyLoader propertyLoader) {
+        return propertyLoader.getPropertyLoader().loadLazy(propertyLoader.getNotificationDefinitionDTO().getComment().getRejectionReason().getDisplayProperty());
     }
 
 }

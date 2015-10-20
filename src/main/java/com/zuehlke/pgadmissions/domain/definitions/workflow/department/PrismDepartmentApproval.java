@@ -25,10 +25,10 @@ public class PrismDepartmentApproval extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(departmentCompleteApproval()
                 .withRaisesUrgentFlag() //
-                .withTransitions(new PrismStateTransition() //
+                .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_APPROVAL_PENDING_CORRECTION) //
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
-                        .withTransitionEvaluation(DEPARTMENT_APPROVED_OUTCOME))); //
+                        .withStateTransitionEvaluation(DEPARTMENT_APPROVED_OUTCOME))); //
 
         stateActions.add(departmentCreateProgram()); //
         stateActions.add(departmentCreateProject()); //
@@ -44,7 +44,7 @@ public class PrismDepartmentApproval extends PrismWorkflowState {
                 .withAction(DEPARTMENT_COMPLETE_APPROVAL_STAGE) //
                 .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotification(DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-                .withTransitions(DEPARTMENT_APPROVE_TRANSITION);
+                .withStateTransitions(DEPARTMENT_APPROVE_TRANSITION);
     }
 
 }

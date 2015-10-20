@@ -10,16 +10,15 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -131,6 +130,7 @@ public class AdvertDAO {
                         .add(Projections.property("project.durationMinimum").as("projectDurationMinimum")) //
                         .add(Projections.property("project.durationMaximum").as("projectDurationMaximum")) //
                         .add(Projections.property("opportunityType.id").as("opportunityType")) //
+                        .add(Projections.property("targetOpportunityTypes").as("targetOpportunityTypes")) //
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.property("summary").as("summary")) //
                         .add(Projections.property("description").as("description")) //
@@ -233,10 +233,11 @@ public class AdvertDAO {
         criteria.add(Restrictions.in("state.id", activeStates));
 
         appendContextConstraint(criteria, query);
-        appendVisibilityConstraint(criteria, resource, networkAdverts);
+        appendVisibilityConstraint(criteria, resource, networkAdverts, isTrue(query.getRecommendation()));
 
-        appendLocationConstraint(criteria, query);
         appendKeywordConstraint(query, criteria);
+        appendLocationConstraint(criteria, query);
+        appendTargetOpportunityTypeConstraint(criteria, query);
 
         appendIndustryConstraint(criteria, query);
         appendFunctionConstraint(criteria, query);
@@ -520,19 +521,20 @@ public class AdvertDAO {
         }
     }
 
-    private void appendVisibilityConstraint(Criteria criteria, ResourceParent resource, Collection<ResourceConnectionDTO> networkAdverts) {
+    private void appendVisibilityConstraint(Criteria criteria, ResourceParent resource, Collection<ResourceConnectionDTO> networkAdverts, boolean recommendation) {
         Junction visibilityConstraint = Restrictions.disjunction();
 
         for (PrismScope targeterScope : targetScopes) {
             for (PrismScope targetScope : targetScopes) {
-                visibilityConstraint.add(getAdvertVisibilityConstraint(targeterScope, targetScope, resource, networkAdverts));
+                visibilityConstraint.add(getAdvertVisibilityConstraint(targeterScope, targetScope, resource, networkAdverts, recommendation));
             }
         }
 
         criteria.add(visibilityConstraint);
     }
 
-    private Junction getAdvertVisibilityConstraint(PrismScope targeterScope, PrismScope targetScope, ResourceParent resource, Collection<ResourceConnectionDTO> networkAdverts) {
+    private Junction getAdvertVisibilityConstraint(PrismScope targeterScope, PrismScope targetScope, ResourceParent resource, Collection<ResourceConnectionDTO> networkAdverts,
+            boolean recommendation) {
         String scopeReference = targeterScope.getLowerCamelName();
         String scopeAdvertReference = scopeReference + "Advert";
         String targetScopeReference = scopeAdvertReference + "Target" + targetScope.getUpperCamelName();
@@ -559,10 +561,15 @@ public class AdvertDAO {
                             .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource))) //
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else if (hasNetworkAdverts) {
-            constraint.add(Restrictions.disjunction() //
+            Junction networkAdvertsConstraint = Restrictions.disjunction() //
                     .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkAdverts))
-                    .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts))
-                    .add(Restrictions.eq("advert.globallyVisible", true)));
+                    .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts));
+
+            if (!recommendation) {
+                networkAdvertsConstraint.add(Restrictions.eq("advert.globallyVisible", true));
+            }
+
+            constraint.add(networkAdvertsConstraint);
         } else {
             constraint.add(Restrictions.eq("advert.globallyVisible", true));
         }
@@ -625,26 +632,33 @@ public class AdvertDAO {
     private void appendOpportunityTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         List<PrismOpportunityType> opportunityTypes = queryDTO.getOpportunityTypes();
         if (isNotEmpty(opportunityTypes)) {
-            if (opportunityTypes == null) {
-                PrismOpportunityCategory opportunityCategory = queryDTO.getOpportunityCategory();
-                if (opportunityCategory != null) {
-                    opportunityTypes = getOpportunityTypes(opportunityCategory);
-                } else {
-                    opportunityTypes = emptyList();
-                }
-            }
-
-            Disjunction opportunityTypeConstraint = Restrictions.disjunction();
+            Disjunction constraint = Restrictions.disjunction();
             for (PrismOpportunityType opportunityType : opportunityTypes) {
-                opportunityTypeConstraint.add(Restrictions.eq("opportunityType.id", opportunityType));
+                constraint.add(Restrictions.eq("opportunityType.id", opportunityType));
 
             }
-            criteria.add(opportunityTypeConstraint);
+            criteria.add(constraint);
         } else {
             PrismOpportunityCategory opportunityCategory = queryDTO.getOpportunityCategory();
             if (opportunityCategory != null) {
                 criteria.add(getOpportunityCategoryConstraint(opportunityCategory));
             }
+        }
+    }
+
+    private void appendTargetOpportunityTypeConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
+        List<PrismOpportunityType> targetOpportunityTypes = queryDTO.getTargetOpportunityTypes();
+        if (isNotEmpty(targetOpportunityTypes)) {
+            Disjunction constraint = Restrictions.disjunction();
+            for (PrismOpportunityType targetOpportunityType : targetOpportunityTypes) {
+                String targetOpportunityTypeName = targetOpportunityType.name();
+                constraint.add(Restrictions.eq("advert.targetOpportunityTypes", targetOpportunityTypeName))
+                        .add(Restrictions.like("advert.targetOpportunityTypes", targetOpportunityTypeName + "|", MatchMode.START))
+                        .add(Restrictions.like("advert.targetOpportunityTypes", "|" + targetOpportunityTypeName + "|", MatchMode.ANYWHERE))
+                        .add(Restrictions.like("advert.targetOpportunityTypes", "|" + targetOpportunityTypeName, MatchMode.END));
+
+            }
+            criteria.add(constraint);
         }
     }
 

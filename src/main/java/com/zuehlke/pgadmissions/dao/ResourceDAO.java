@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTokenizedLikeConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
@@ -535,7 +536,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
 
         if (query.isPresent()) {
-            criteria.add(Restrictions.like("resource.name", query.get(), MatchMode.ANYWHERE));
+            criteria.add(getTokenizedLikeConstraint("resource.name", query.get()));
         }
 
         return (List<ResourceSimpleDTO>) criteria.add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
@@ -557,12 +558,12 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("targetResource.id")) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource" + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
+                .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
                 .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN,
-                        Restrictions.eq("targetAdvert.id", "targetResource.advert.id")) //
+                        Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .add(Restrictions.ge("resource.createdTimestamp", createdBaseline)) //
@@ -595,7 +596,7 @@ public class ResourceDAO {
 
         boolean urgentOnly = BooleanUtils.isTrue(filter.getUrgentOnly());
         boolean updateOnly = BooleanUtils.isTrue(filter.getUpdateOnly());
-        
+
         if (urgentOnly && updateOnly) {
             criteria.add(Restrictions.disjunction() //
                     .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //

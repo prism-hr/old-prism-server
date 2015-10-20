@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow.institution;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.INSTITUTION_COMPLETE_APPROVAL_STAGE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_INSTITUTION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL_PENDING_CORRECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME;
@@ -45,7 +46,7 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_COMPLETE_APPROVAL_STAGE) //
                 .withAssignments(SYSTEM_ADMINISTRATOR) //
-                .withNotification(INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
+                .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                 .withStateTransitions(INSTITUTION_APPROVE_TRANSITION);
     }
 

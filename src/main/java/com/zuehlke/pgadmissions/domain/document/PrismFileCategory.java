@@ -17,7 +17,7 @@ public enum PrismFileCategory {
 
     public enum PrismImageCategory {
 
-        INSTITUTION_LOGO(InstitutionLogoProcessor.class, InstitutionLogoPersister.class), //
+        INSTITUTION_LOGO(null, InstitutionLogoPersister.class), //
         INSTITUTION_BACKGROUND(null, InstitutionBackgroundPersister.class), //
         DEPARTMENT_BACKGROUND(null, DepartmentBackgroundPersister.class), //
         PROGRAM_BACKGROUND(null, ProgramBackgroundPersister.class), //

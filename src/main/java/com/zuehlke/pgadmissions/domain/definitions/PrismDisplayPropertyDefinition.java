@@ -1380,12 +1380,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERTISE_INSTITUTION_OTHER_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Other Organization"),
     SYSTEM_ADVERTISE_EMPLOYER_AND_RECRUITERS(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Employers & Recruiters"),
     SYSTEM_ADVERTISE_EMPLOYER_AND_RECRUITERS_FREE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Advertising with PRiSM is free"),
-    SYSTEM_ADVERTISE_EMPLOYER_AND_RECRUITERS_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You can target as many university departments as you like, you only pay to process the applications and candidates that are of interest to you."),
-    SYSTEM_ADVERTISE_EMPLOYER_AND_RECRUITERS_ORGANIZATION_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you have already registered your organization, you don't need to do this again. Just login with the account that you provided, and nagivate to your organizations in the resources menu."),
+    SYSTEM_ADVERTISE_EMPLOYER_AND_RECRUITERS_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You can connect with as many university departments as you like, you only pay to process the applications and candidates that are of interest to you."),
+    SYSTEM_ADVERTISE_EMPLOYER_AND_RECRUITERS_ORGANIZATION_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you have already registered your organization, you don't need to do this again. Just login with the account that you provided, and nagivate to your organizations in menu."),
     SYSTEM_ADVERTISE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Universities & Departments"),
     SYSTEM_ADVERTISE_UNIVERSITY_FREE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "PRiSM is free for universities"),
     SYSTEM_ADVERTISE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You can connect with as many employers as you like, you only pay if you want to make it free for employers to process applications from your students and graduates."),
-    SYSTEM_ADVERTISE_UNIVERSITY_ORGANIZATION_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you have already registered your department, you don't need to do this again. Just login with the account that you provided, and nagivate to your departments in the resources menu."),
+    SYSTEM_ADVERTISE_UNIVERSITY_ORGANIZATION_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you have already registered your department, you don't need to do this again. Just login with the account that you provided, and nagivate to your departments in the menu."),
 
     /*
      * *************** SYSTEM INVITE SECTION *********************
@@ -1394,6 +1394,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INVITE_UNIVERSITY_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite University"),
     SYSTEM_INVITE_EMPLOYER_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Employer"),
     SYSTEM_INVITE_JUST_INVITED_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Thank you. {{name}} has been invited."),
+    SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Employers to bla bla bla bla bla "),
+    SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Universities to bla bla bla bla bla"),
 
     /*
      * *************** SYSTEM RESOURCES SECTION *********************

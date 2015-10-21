@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.resource.application;
 
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-
-import java.util.List;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
 

@@ -1,9 +1,28 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Service;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.comment.*;
+import com.zuehlke.pgadmissions.domain.comment.Comment;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
+import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
+import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
+import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
+import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
+import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -11,21 +30,21 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.*;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentCompetenceRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentOfferDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentPositionDetailRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RoleService;
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
 @Service
 @Transactional

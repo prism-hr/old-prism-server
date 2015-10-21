@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.Pri
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -44,15 +45,15 @@ public enum PrismRole implements PrismLocalizableDefinition {
     DEPARTMENT_APPROVER(RECRUITER, true, DEPARTMENT), //
     DEPARTMENT_VIEWER(RECRUITER, true, DEPARTMENT), //
     DEPARTMENT_VIEWER_UNVERIFIED(RECRUITER, false, DEPARTMENT), //
-    DEPARTMENT_STUDENT(APPLICANT, true, DEPARTMENT), //
-    DEPARTMENT_STUDENT_UNVERIFIED(APPLICANT, false, DEPARTMENT), //
+    DEPARTMENT_STUDENT(STUDENT, true, DEPARTMENT), //
+    DEPARTMENT_STUDENT_UNVERIFIED(STUDENT, false, DEPARTMENT), //
 
     INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, true, INSTITUTION), //
     INSTITUTION_APPROVER(RECRUITER, true, INSTITUTION), //
     INSTITUTION_VIEWER(RECRUITER, true, INSTITUTION), //
     INSTITUTION_VIEWER_UNVERIFIED(RECRUITER, false, INSTITUTION), //
-    INSTITUTION_STUDENT(APPLICANT, true, INSTITUTION), //
-    INSTITUTION_STUDENT_UNVERIFIED(APPLICANT, false, INSTITUTION), //
+    INSTITUTION_STUDENT(STUDENT, true, INSTITUTION), //
+    INSTITUTION_STUDENT_UNVERIFIED(STUDENT, false, INSTITUTION), //
 
     SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM);
 
@@ -128,6 +129,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
         ADMINISTRATOR, //
         RECRUITER, //
+        STUDENT, //
         APPLICANT, //
         REFEREE;
 

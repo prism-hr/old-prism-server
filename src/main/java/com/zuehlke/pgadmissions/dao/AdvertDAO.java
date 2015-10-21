@@ -555,10 +555,9 @@ public class AdvertDAO {
                             .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts))));
         } else if (hasResource) {
             String resourceReference = resource.getResourceScope().getLowerCamelName();
-            constraint.add(Restrictions.conjunction() //
-                    .add(Restrictions.disjunction()
-                            .add(Restrictions.eq(scopeAdvertReference + "." + resourceReference, resource)) //
-                            .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource))) //
+            constraint.add(Restrictions.disjunction()
+                    .add(Restrictions.eq(scopeAdvertReference + "." + resourceReference, resource)) //
+                    .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource)) //
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else if (hasNetworkAdverts) {
             Junction networkAdvertsConstraint = Restrictions.disjunction() //

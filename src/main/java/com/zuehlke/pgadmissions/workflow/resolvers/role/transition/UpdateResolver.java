@@ -15,7 +15,7 @@ public class UpdateResolver implements RoleTransitionResolver {
 
     @Inject
     private EntityService entityService;
-
+    
     @Inject
     private RoleService roleService;
 

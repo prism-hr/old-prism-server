@@ -6,7 +6,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCa
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
@@ -256,20 +255,17 @@ public class WorkflowConfigurationHelper {
 
             actualProcessedRoles.add(transitionRoleId);
 
-            if (roleTransitionType != RETIRE) {
+            PrismActionCategory actionCategory = action.getActionCategory();
+            if (transitionRole.getScopeCreator() != null && roleTransitionType == CREATE
+                    && (actionCategory == CREATE_RESOURCE || actionCategory == INITIALISE_RESOURCE)) {
+                assertTrue(roleTransition.getMinimumPermitted() == 1);
+                assertTrue(roleTransition.getMaximumPermitted() == 1);
+                actualCreatorRoles.put(transitionState.getScope().getId(), transitionRoleId);
+            }
 
-                PrismActionCategory actionCategory = action.getActionCategory();
-                if (transitionRole.getScopeCreator() != null && roleTransitionType == CREATE
-                        && (actionCategory == CREATE_RESOURCE || actionCategory == INITIALISE_RESOURCE)) {
-                    assertTrue(roleTransition.getMinimumPermitted() == 1);
-                    assertTrue(roleTransition.getMaximumPermitted() == 1);
-                    actualCreatorRoles.put(transitionState.getScope().getId(), transitionRoleId);
-                }
-
-                if (!(roleTransitionType == CREATE || roleTransitionType == BRANCH)) {
-                    assertEquals(state.getScope(), role.getScope());
-                    assertEquals(state.getScope(), transitionRole.getScope());
-                }
+            if (!(roleTransitionType == CREATE || roleTransitionType == BRANCH)) {
+                assertEquals(state.getScope(), role.getScope());
+                assertEquals(state.getScope(), transitionRole.getScope());
             }
         }
     }

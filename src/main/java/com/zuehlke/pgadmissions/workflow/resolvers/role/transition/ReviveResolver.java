@@ -22,7 +22,9 @@ public class ReviveResolver implements RoleTransitionResolver {
     @Override
     public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-        notificationService.resetNotifications(persistentRole);
+        if (persistentRole != null) {
+            notificationService.resetNotifications(persistentRole);
+        }
     }
 
 }

@@ -533,7 +533,7 @@ public class AdvertDAO {
         criteria.add(visibilityConstraint);
     }
 
-    private Junction getAdvertVisibilityConstraint(PrismScope targeterScope, PrismScope targetScope, ResourceParent resource, Collection<ResourceConnectionDTO> networkAdverts,
+    private Junction getAdvertVisibilityConstraint(PrismScope targeterScope, PrismScope targetScope, ResourceParent resource, Collection<ResourceConnectionDTO> networkResources,
             boolean recommendation) {
         String scopeReference = targeterScope.getLowerCamelName();
         String scopeAdvertReference = scopeReference + "Advert";
@@ -541,22 +541,19 @@ public class AdvertDAO {
         String targetScopeAdvertReference = targetScopeReference + "Advert";
 
         boolean hasResource = resource != null;
-        boolean hasNetworkAdverts = isNotEmpty(networkAdverts);
+        boolean hasNetworkAdverts = isNotEmpty(networkResources);
 
         Junction constraint = Restrictions.conjunction();
         if (hasResource && hasNetworkAdverts) {
             String resourceReference = resource.getResourceScope().getLowerCamelName();
-            constraint.add(Restrictions.disjunction() //
-                    .add(Restrictions.conjunction() //
+            constraint.add(Restrictions.conjunction() //
+                    .add(Restrictions.disjunction() //
                             .add(Restrictions.eq(scopeAdvertReference + "." + resourceReference, resource)) //
-                            .add(Restrictions.disjunction() //
-                                    .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkAdverts)) //
-                                    .add(Restrictions.eq("advert.globallyVisible", true)))) //
-                    .add(Restrictions.conjunction()
-                            .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource)) //
-                            .add(Restrictions.disjunction() // .
-                                    .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts))
-                                    .add(Restrictions.eq("advert.globallyVisible", true)))));
+                            .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource))) //
+                    .add(Restrictions.disjunction() //
+                            .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkResources)) //
+                            .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkResources))
+                            .add(Restrictions.eq("advert.globallyVisible", true))));
         } else if (hasResource) {
             String resourceReference = resource.getResourceScope().getLowerCamelName();
             constraint.add(Restrictions.conjunction() //
@@ -566,8 +563,8 @@ public class AdvertDAO {
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else if (hasNetworkAdverts) {
             Junction networkAdvertsConstraint = Restrictions.disjunction() //
-                    .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkAdverts))
-                    .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts));
+                    .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkResources))
+                    .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkResources));
 
             if (!recommendation) {
                 networkAdvertsConstraint.add(Restrictions.eq("advert.globallyVisible", true));

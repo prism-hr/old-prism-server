@@ -13,6 +13,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.joda.time.LocalDate.now;
 
 import java.util.List;
@@ -190,7 +191,9 @@ public class NotificationService {
         User user = userRole.getUser();
         Role role = userRole.getRole();
         List<NotificationDefinition> individualDefinitions = notificationDAO.getNotificationDefinitionsIndividual(role);
-        notificationDAO.resetNotifications(user, individualDefinitions);
+        if (isNotEmpty(individualDefinitions)) {
+            notificationDAO.resetNotifications(user, individualDefinitions);
+        }
     }
 
     private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, LocalDate baseline) {

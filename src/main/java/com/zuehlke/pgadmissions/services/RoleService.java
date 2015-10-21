@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -338,6 +339,14 @@ public class RoleService {
     }
 
     private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, boolean notify, PrismRole... roles) {
+        boolean isOwner = resource.getUser().equals(user);
+        List<PrismRole> filteredRoles = Lists.newArrayList();
+        for (PrismRole role : roles) {
+            if (!(isOwner && role.getRoleCategory().equals(ADMINISTRATOR))) {
+                filteredRoles.add(role);
+            }
+        }
+
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
@@ -345,9 +354,9 @@ public class RoleService {
             Comment comment = new Comment().withAction(action).withUser(invoker)
                     .withContent(loader.loadLazy(PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE")))
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
-            for (PrismRole role : roles) {
-                comment.addAssignedUser(user, getById(role), transitionType);
-            }
+            filteredRoles.forEach(filteredRole -> {
+                comment.addAssignedUser(user, getById(filteredRole), transitionType);
+            });
 
             actionService.executeUserAction(resource, action, comment);
 

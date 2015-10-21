@@ -70,6 +70,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.Pri
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -761,10 +762,11 @@ public class ResourceService {
 
         Role role = null;
         String resourceName = resource.getResourceScope().name();
-        if (roleContext.equals(STUDENT)) {
+        
+        if (roleContext.equals(STUDENT) && !roleService.hasUserRole(resource, user, PrismRole.valueOf(resourceName + "_STUDENT"))) {
             role = roleService.getById(PrismRole.valueOf(resourceName + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
-        } else {
+        } else if (!roleService.hasUserRole(resource, user, PrismRoleGroup.valueOf(resourceName + "_STAFF_GROUP"))) {
             role = roleService.getById(PrismRole.valueOf(resourceName + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
         }

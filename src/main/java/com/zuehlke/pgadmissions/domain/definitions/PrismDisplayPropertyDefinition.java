@@ -1936,6 +1936,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_QUALIFICATION_STUDY_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Study Period"),
     PROFILE_QUALIFICATION_APPENDIX(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification Transcript"),
     PROFILE_QUALIFICATION_NO_ITEMS(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "This Application doesn't contain any Qualification"),
+    PROFILE_QUALIFICATION_STUDY_LEVEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Study Level"),
+    PROFILE_QUALIFICATION_ORGANIZATION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Provider"), 
+    PROFILE_QUALIFICATION_POSITION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Program / Project"), 
 
     PROFILE_EMPLOYMENT_POSITION_HEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Positions"),
     PROFILE_EMPLOYMENT_POSITION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),

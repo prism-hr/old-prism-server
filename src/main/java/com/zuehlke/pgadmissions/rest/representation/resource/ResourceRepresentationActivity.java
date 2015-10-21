@@ -1,15 +1,23 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
+import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
-import static java.util.Arrays.asList;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import jersey.repackaged.com.google.common.collect.Sets;
 
 public class ResourceRepresentationActivity extends ResourceRepresentationSimple {
 
@@ -102,12 +110,18 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
         return this;
     }
 
+    public String getOrganizationDisplayName() {
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceFamily().stream().filter(r -> r == null ? false : r.getScope().getScopeCategory().equals(ORGANIZATION))
+                .map(rp -> getResourceName(rp)).collect(Collectors.toList()));
+    }
+
+    public String getPositionDisplayName() {
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceFamily().stream().filter(r -> r == null ? false : r.getScope().getScopeCategory().equals(OPPORTUNITY))
+                .map(ro -> getResourceName(ro)).collect(Collectors.toList()));
+    }
+
     public String getDisplayName() {
-        String projectName = project == null ? null : project.getName();
-        String programName = program == null ? null : program.getName();
-        String departmentName = department == null ? null : department.getName();
-        String institutionName = institution == null ? null : institution.getName();
-        return Joiner.on(SPACE).skipNulls().join(asList(projectName, programName, departmentName, institutionName));
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getOrganizationDisplayName(), getPositionDisplayName());
     }
 
     @Override
@@ -138,6 +152,14 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
             return compare == 0 ? ObjectUtils.compare(project, otherActivity.getProject(), true) : compare;
         }
         return super.compareTo(other);
+    }
+
+    private String getResourceName(ResourceRepresentationSimple resource) {
+        return resource == null ? null : resource.getName();
+    }
+
+    private Set<ResourceRepresentationSimple> getResourceFamily() {
+        return Sets.newLinkedHashSet(Lists.newArrayList(institution, department, program, project, this));
     }
 
 }

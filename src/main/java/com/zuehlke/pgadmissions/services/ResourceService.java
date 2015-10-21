@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
@@ -386,7 +385,6 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
     }
 
-    @SuppressWarnings("unchecked")
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Integer recordsToRetrieve,
             String sequenceId, Collection<Integer> resourceIds, Collection<Integer> onlyAsPartnerResourceIds, boolean extended) {
         if (!resourceIds.isEmpty()) {
@@ -402,15 +400,20 @@ public class ResourceService {
                 LinkedHashMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(scope, filteredResourceIds, user)
                         : LinkedHashMultimap.create();
 
-                Collection<Integer> filteredNativeOwnerResourceIds = ListUtils.removeAll(filteredResourceIds, onlyAsPartnerResourceIds);
-                LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredNativeOwnerResourceIds);
-
+                LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResourceIds);
                 rowIndex.keySet().forEach(resourceId -> {
                     ResourceListRowDTO row = rowIndex.get(resourceId);
                     row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
 
                     List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
-                    actions.addAll(creationActions.get(resourceId));
+
+                    boolean onlyAsPartner = onlyAsPartnerResourceIds.contains(resourceId);
+                    creationActions.get(resourceId).forEach(creationAction -> {
+                        if (!onlyAsPartner || creationAction.getActionId().name().endsWith("_CREATE_APPLICATION")) {
+                            actions.add(creationAction);
+                        }
+                    });
+
                     row.setActions(actions);
                 });
             }

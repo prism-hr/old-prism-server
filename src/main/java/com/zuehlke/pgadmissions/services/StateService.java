@@ -334,6 +334,10 @@ public class StateService {
         }
     }
 
+    public PrismState getPreviousPrimaryState(Resource resource, PrismState currentState) {
+        return stateDAO.getPreviousPrimaryState(resource, currentState);
+    }
+
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);
 

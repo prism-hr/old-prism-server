@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.workflow.transition.creators;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Component;
-
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -13,6 +9,9 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.services.ResourceService;
+import org.springframework.stereotype.Component;
+
+import javax.inject.Inject;
 
 @Component
 public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
@@ -27,7 +26,7 @@ public class ApplicationCreator implements ResourceCreator<ApplicationDTO> {
 
         PrismOpportunityCategory opportunityCategory = newResource.getOpportunityCategory();
         if (ResourceOpportunity.class.isAssignableFrom(parentResource.getClass())) {
-            opportunityCategory = opportunityCategory == null ? PrismOpportunityCategory.valueOf(((ResourceOpportunity) parentResource).getOpportunityCategories())
+            opportunityCategory = opportunityCategory == null ? PrismOpportunityCategory.valueOf(parentResource.getOpportunityCategories())
                     : opportunityCategory;
         } else {
             opportunityCategory = newResource.getOpportunityCategory();

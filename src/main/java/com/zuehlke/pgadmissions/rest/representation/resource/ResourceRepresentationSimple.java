@@ -11,8 +11,6 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
     private String importedCode;
 
     private StateRepresentationSimple state;
-    
-    private String telephone;
 
     public String getCode() {
         return code;
@@ -38,14 +36,6 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
         this.state = state;
     }
 
-    public String getTelephone() {
-        return telephone;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
     public ResourceRepresentationSimple withScope(PrismScope scope) {
         setScope(scope);
         return this;
@@ -66,9 +56,4 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
         return this;
     }
 
-    public ResourceRepresentationSimple withTelephone(String telephone) {
-        this.telephone = telephone;
-        return this;
-    }
-    
 }

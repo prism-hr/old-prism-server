@@ -5,22 +5,22 @@ import javax.validation.constraints.NotNull;
 public class CommentCompetenceDTO {
 
     @NotNull
-    private Integer competence;
-    
+    private Integer competenceId;
+
     @NotNull
     private Integer importance;
-    
+
     @NotNull
     private Integer rating;
-    
+
     private String remark;
 
-    public Integer getCompetence() {
-        return competence;
+    public Integer getCompetenceId() {
+        return competenceId;
     }
 
-    public void setCompetence(Integer competence) {
-        this.competence = competence;
+    public void setCompetenceId(Integer competenceId) {
+        this.competenceId = competenceId;
     }
 
     public Integer getImportance() {
@@ -46,5 +46,5 @@ public class CommentCompetenceDTO {
     public void setRemark(String remark) {
         this.remark = remark;
     }
-    
+
 }

@@ -1,28 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
-import javax.validation.constraints.NotNull;
-
 public class CommentCompetenceRepresentation {
-
-    @NotNull
-    private Integer competence;
 
     private String name;
 
     private String description;
 
-    @NotNull
+    private Integer importance;
+
     private Integer rating;
 
     private String remark;
-
-    public Integer getCompetence() {
-        return competence;
-    }
-
-    public void setCompetence(Integer competence) {
-        this.competence = competence;
-    }
 
     public String getName() {
         return name;
@@ -38,6 +26,14 @@ public class CommentCompetenceRepresentation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getImportance() {
+        return importance;
+    }
+
+    public void setImportance(Integer importance) {
+        this.importance = importance;
     }
 
     public Integer getRating() {
@@ -56,11 +52,6 @@ public class CommentCompetenceRepresentation {
         this.remark = remark;
     }
 
-    public CommentCompetenceRepresentation withCompetence(Integer competence) {
-        this.competence = competence;
-        return this;
-    }
-
     public CommentCompetenceRepresentation withName(String name) {
         this.name = name;
         return this;
@@ -68,6 +59,11 @@ public class CommentCompetenceRepresentation {
 
     public CommentCompetenceRepresentation withDescription(String description) {
         this.description = description;
+        return this;
+    }
+
+    public CommentCompetenceRepresentation withImportance(final Integer importance) {
+        this.importance = importance;
         return this;
     }
 

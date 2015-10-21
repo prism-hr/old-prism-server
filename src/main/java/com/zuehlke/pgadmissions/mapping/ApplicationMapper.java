@@ -32,11 +32,7 @@ import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -50,21 +46,32 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.*;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
-
 import jersey.repackaged.com.google.common.collect.Maps;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.PrismConstants.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
+import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
+import static java.util.Arrays.asList;
 
 @Service
 @Transactional
@@ -87,6 +94,9 @@ public class ApplicationMapper {
 
     @Inject
     private ResourceService resourceService;
+
+    @Inject
+    private AdvertMapper advertMapper;
 
     @Inject
     private UserMapper userMapper;
@@ -116,6 +126,7 @@ public class ApplicationMapper {
         representation.setInterview(getApplicationInterviewRepresentation(application));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
+        representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(application.getAdvert()));
         return representation;
     }
 

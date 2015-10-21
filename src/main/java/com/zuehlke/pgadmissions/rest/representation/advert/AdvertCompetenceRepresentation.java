@@ -2,11 +2,21 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 
 public class AdvertCompetenceRepresentation {
 
+    private Integer competenceId;
+
     private String name;
 
     private String description;
 
     private Integer importance;
+
+    public Integer getCompetenceId() {
+        return competenceId;
+    }
+
+    public void setCompetenceId(Integer competenceId) {
+        this.competenceId = competenceId;
+    }
 
     public String getName() {
         return name;
@@ -30,6 +40,11 @@ public class AdvertCompetenceRepresentation {
 
     public void setImportance(Integer importance) {
         this.importance = importance;
+    }
+
+    public AdvertCompetenceRepresentation withCompetenceId(final Integer competenceId) {
+        this.competenceId = competenceId;
+        return this;
     }
 
     public AdvertCompetenceRepresentation withName(final String name) {

@@ -13,7 +13,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCo
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -22,7 +21,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
-import static com.zuehlke.pgadmissions.services.NotificationService.requestLimit;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
@@ -105,7 +103,6 @@ import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
-import com.zuehlke.pgadmissions.dto.UserNotificationDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -776,14 +773,8 @@ public class ResourceService {
             executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
                     new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
         } else if (!canViewEdit) {
-            List<User> admins = userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR"));
-            Map<UserNotificationDTO, Integer> recentRequests = notificationService.getRecentRequests(admins.stream().map(a -> a.getId()).collect(toList()), LocalDate.now());
-
-            admins.forEach(admin -> {
-                Integer recentRequestCount = recentRequests.get(new UserNotificationDTO().withUserId(admin.getId()).withNotificationDefinitionId(SYSTEM_JOIN_REQUEST));
-                if (recentRequestCount == null || recentRequestCount <= requestLimit) {
-                    notificationService.sendJoinRequest(user, admin, resource);
-                }
+            userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
+                notificationService.sendJoinRequest(user, admin, resource);
             });
         }
     }

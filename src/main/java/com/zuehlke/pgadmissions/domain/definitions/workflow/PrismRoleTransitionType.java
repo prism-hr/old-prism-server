@@ -10,10 +10,12 @@ import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.UpdateResolve
 public enum PrismRoleTransitionType {
 
     DELETE(true, DeleteResolver.class), //
+    RETIRE(false, DeleteResolver.class), //
     CREATE(true, CreateResolver.class), //
     BRANCH(false, BranchResolver.class), //
     REVIVE(false, ReviveResolver.class), //
-    UPDATE(false, UpdateResolver.class);
+    UPDATE(false, UpdateResolver.class), //
+    EXHUME(true, UpdateResolver.class);
 
     private boolean specified;
 

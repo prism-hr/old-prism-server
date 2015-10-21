@@ -4,8 +4,7 @@
 
 <#if TEMPLATE_RECIPIENT_EMAIL?matches(APPLICATION_CREATOR_EMAIL)>
 	<p><b>
-		Your application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} in the position of: 
-		${TEMPLATE_PARENT_RESOURCE_NAME}.
+		Your application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
 	</b></p>
 	
 	<p>
@@ -13,8 +12,8 @@
 	</p>
 <#else>
 	<p><b>
-		${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} 
-		in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
+		${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: 
+		${TEMPLATE_PARENT_RESOURCE_NAME}.
 	</b></p>
 
 	<p>

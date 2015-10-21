@@ -155,13 +155,13 @@ public enum PrismRoleTransitionGroup {
     APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_INTERVIEWEE) //
-                    .withTransitionType(DELETE) //
+                    .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_INTERVIEWEE)),
 
     APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
-                    .withTransitionType(RETIRE) //
+                    .withTransitionType(UPDATE) //
                     .withTransitionRole(APPLICATION_VIEWER_RECRUITER)), //
 
     APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP( //

@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 
 import java.util.List;
 import java.util.Objects;
@@ -12,7 +13,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.context.ApplicationContext;
@@ -284,7 +284,7 @@ public class CommentService {
 
     private void updateCommentStates(Comment comment) {
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {
-            if (BooleanUtils.isFalse(resourceState.getPrimaryState())) {
+            if (isFalse(resourceState.getPrimaryState())) {
                 comment.addCommentState(resourceState.getState(), false);
             }
         }
@@ -301,7 +301,7 @@ public class CommentService {
     private void updateCommentTransitionStates(Comment comment, Set<State> stateTerminations) {
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {
             State state = resourceState.getState();
-            if (!stateTerminations.contains(state) && BooleanUtils.isFalse(resourceState.getPrimaryState())) {
+            if (!stateTerminations.contains(state) && isFalse(resourceState.getPrimaryState())) {
                 comment.addCommentTransitionState(state, false);
             }
         }

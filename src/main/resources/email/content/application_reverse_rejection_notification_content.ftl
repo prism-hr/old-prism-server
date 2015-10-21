@@ -3,8 +3,7 @@
 </h1>
 
 <p><b>
-	Your application for ${APPLICATION_OPPORTUNITY_TYPE} at ${INSTITUTION_NAME} in the position of: 
-	${TEMPLATE_PARENT_RESOURCE_NAME}.
+	Your application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: ${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>

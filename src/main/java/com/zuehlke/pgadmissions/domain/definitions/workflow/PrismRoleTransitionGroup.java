@@ -29,6 +29,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYS
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.BRANCH;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.EXHUME;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.RETIRE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.REVIVE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.UPDATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_HIRING_MANAGER_ASSIGNMENT;
@@ -127,11 +129,11 @@ public enum PrismRoleTransitionGroup {
     APPLICATION_RETIRE_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_INTERVIEWEE) //
-                    .withTransitionType(DELETE) //
+                    .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_INTERVIEWEE), //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWEE) //
-                    .withTransitionType(DELETE) //
+                    .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
 
     APPLICATION_RETIRE_INTERVIEWER_GROUP( //
@@ -147,7 +149,7 @@ public enum PrismRoleTransitionGroup {
     APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWEE) //
-                    .withTransitionType(DELETE) //
+                    .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
 
     APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP( //
@@ -159,7 +161,7 @@ public enum PrismRoleTransitionGroup {
     APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
-                    .withTransitionType(UPDATE) //
+                    .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_VIEWER_RECRUITER)), //
 
     APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP( //
@@ -210,7 +212,7 @@ public enum PrismRoleTransitionGroup {
     APPLICATION_EXHUME_REFEREE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_VIEWER_REFEREE) //
-                    .withTransitionType(UPDATE) //
+                    .withTransitionType(EXHUME) //
                     .withTransitionRole(APPLICATION_REFEREE)),
 
     APPLICATION_CREATE_APPOINTEE_GROUP( //
@@ -222,7 +224,7 @@ public enum PrismRoleTransitionGroup {
     APPLICATION_RETIRE_APPOINTEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_APPOINTEE) //
-                    .withTransitionType(DELETE) //
+                    .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_APPOINTEE)),
 
     PROJECT_CREATE_ADMINISTRATOR_GROUP( //

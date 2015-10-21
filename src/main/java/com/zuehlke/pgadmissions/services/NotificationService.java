@@ -13,18 +13,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 import static org.joda.time.LocalDate.now;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -51,19 +47,14 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
-import com.zuehlke.pgadmissions.dto.UserNotificationDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
-
-import jersey.repackaged.com.google.common.collect.Maps;
 
 @Service
 @Transactional
 @SuppressWarnings("unchecked")
 public class NotificationService {
-
-    public static Integer requestLimit = 3;
 
     @Inject
     private NotificationDAO notificationDAO;
@@ -202,37 +193,17 @@ public class NotificationService {
         notificationDAO.resetNotifications(user, individualDefinitions);
     }
 
-    public Map<UserNotificationDTO, Integer> getRecentRequests(Integer user, LocalDate lastNotifiedDate) {
-        return getRecentRequests(asList(user), lastNotifiedDate);
-    }
-
-    public Map<UserNotificationDTO, Integer> getRecentRequests(List<Integer> users, LocalDate lastNotifiedDate) {
-        Map<UserNotificationDTO, Integer> recentRequests = Maps.newHashMap();
-        if (CollectionUtils.isNotEmpty(users)) {
-            notificationDAO.getRecentRequests(users, lastNotifiedDate).forEach(un -> {
-                recentRequests.put(un, un.getSentCount().intValue());
-            });
-        }
-        return recentRequests;
-    }
-
     private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, LocalDate baseline) {
         Set<User> recipients = Sets.newHashSet();
         List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
-
         if (requests.size() > 0) {
-            Map<UserNotificationDTO, Integer> recentRequests = getRecentRequests(requests.stream().map(r -> r.getUserId()).collect(toList()), baseline);
-
             User initiator = comment.getUser();
             for (UserNotificationDefinitionDTO request : requests) {
                 User recipient = userService.getById(request.getUserId());
-                Integer recentRequestCount = recentRequests.get(request);
-                if (recentRequestCount == null || recentRequestCount <= requestLimit) {
-                    NotificationDefinition definition = getById(request.getNotificationDefinitionId());
-                    sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withComment(comment)
-                            .withTransitionAction(request.getActionId()));
-                    createOrUpdateUserNotification(resource, recipient, definition, baseline);
-                }
+                NotificationDefinition definition = getById(request.getNotificationDefinitionId());
+                sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withComment(comment)
+                        .withTransitionAction(request.getActionId()));
+                createOrUpdateUserNotification(resource, recipient, definition, baseline);
                 recipients.add(recipient);
             }
         }
@@ -245,7 +216,6 @@ public class NotificationService {
         if (updates.size() > 0) {
             Action action = actionService.getViewEditAction(resource);
             if (action != null) {
-
                 User initiator = comment.getUser();
                 for (UserNotificationDefinitionDTO update : updates) {
                     User recipient = userService.getById(update.getUserId());

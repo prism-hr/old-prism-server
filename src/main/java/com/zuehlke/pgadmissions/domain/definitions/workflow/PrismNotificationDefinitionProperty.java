@@ -28,6 +28,7 @@ import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.workflow.notification.property.ActionCompleteBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ActionViewEditBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCodeBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCreatorEmailBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCreatorFullNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewDateTimeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewLocationBuilder;
@@ -110,7 +111,7 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
     TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, TargetResourceOtherNameBuilder.class), //
     TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, TargetResourceAcceptNameBuilder.class), //
-    APPLICATION_CREATOR_EMAIL(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
+    APPLICATION_CREATOR_EMAIL(APPLICATION_GLOBAL, true, ApplicationCreatorEmailBuilder.class), //
     APPLICATION_CREATOR_FULL_NAME(APPLICATION_GLOBAL, true, ApplicationCreatorFullNameBuilder.class), //
     APPLICATION_CODE(APPLICATION_GLOBAL, true, ApplicationCodeBuilder.class), //
     APPLICATION_OPPORTUNITY_TYPE(APPLICATION_GLOBAL, true, ApplicationOpportunityTypeBuilder.class), //

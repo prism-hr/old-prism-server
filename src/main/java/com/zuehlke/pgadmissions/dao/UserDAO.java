@@ -53,7 +53,6 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
-import com.zuehlke.pgadmissions.dto.ApplicationAppointmentDTO;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UnverifiedUserDTO;
 import com.zuehlke.pgadmissions.dto.UserCompetenceDTO;
@@ -411,7 +410,6 @@ public class UserDAO {
                 .add(Restrictions.isNotNull("comment.interviewAppointment.interviewDateTime")) //
                 .addOrder(Order.asc("comment.interviewAppointment.interviewDateTime")) //
                 .addOrder(Order.asc("application.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ApplicationAppointmentDTO.class)) //
                 .list();
     }
 

@@ -8,37 +8,22 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
 import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
-import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
-import static java.util.Arrays.asList;
 import static java.util.Arrays.asList;
 
 import java.util.List;
-import java.util.List;
-import java.util.Map;
 import java.util.Map;
 import java.util.Set;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.transaction.Transactional;
 
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Iterables;

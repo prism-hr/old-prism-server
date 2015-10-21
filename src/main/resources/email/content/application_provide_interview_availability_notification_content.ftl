@@ -8,7 +8,7 @@
 </b></p>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has provided their preferences for interview.
+    ${TEMPLATE_INITIATOR_FULL_NAME} has provided his/her preferences for interview.
 </p>
 
 <p>

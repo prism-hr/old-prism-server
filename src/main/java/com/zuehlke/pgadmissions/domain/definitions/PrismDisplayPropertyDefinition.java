@@ -85,7 +85,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PROCEED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Proceed"),
     SYSTEM_DECLINE(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Decline"),
     SYSTEM_ACTIVATE_ACCOUNT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Activate Account"),
-    SYSTEM_HELPDESK(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Get Help"),
+    SYSTEM_HELPDESK(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "helpdesk"),
     SYSTEM_VIEW_EDIT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "View/Edit"),
     SYSTEM_NEW_PASSWORD(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "New password"),
     SYSTEM_HOMEPAGE(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Homepage"),

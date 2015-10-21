@@ -549,15 +549,20 @@ public class AdvertDAO {
             constraint.add(Restrictions.disjunction() //
                     .add(Restrictions.conjunction() //
                             .add(Restrictions.eq(scopeAdvertReference + "." + resourceReference, resource)) //
-                            .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkAdverts))) //
+                            .add(Restrictions.disjunction() //
+                                    .add(getAdvertTargetVisibilityConstraints(scopeAdvertReference, networkAdverts)) //
+                                    .add(Restrictions.eq("advert.globallyVisible", true)))) //
                     .add(Restrictions.conjunction()
                             .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource)) //
-                            .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts))));
+                            .add(Restrictions.disjunction() // .
+                                    .add(getAdvertTargetVisibilityConstraints(targetScopeAdvertReference, networkAdverts))
+                                    .add(Restrictions.eq("advert.globallyVisible", true)))));
         } else if (hasResource) {
             String resourceReference = resource.getResourceScope().getLowerCamelName();
-            constraint.add(Restrictions.disjunction()
-                    .add(Restrictions.eq(scopeAdvertReference + "." + resourceReference, resource)) //
-                    .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource)) //
+            constraint.add(Restrictions.conjunction() //
+                    .add(Restrictions.disjunction()
+                            .add(Restrictions.eq(scopeAdvertReference + "." + resourceReference, resource)) //
+                            .add(Restrictions.eq(targetScopeAdvertReference + "." + resourceReference, resource))) //
                     .add(Restrictions.eq("advert.globallyVisible", true)));
         } else if (hasNetworkAdverts) {
             Junction networkAdvertsConstraint = Restrictions.disjunction() //

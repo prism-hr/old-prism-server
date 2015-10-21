@@ -130,16 +130,16 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scopeId, List<PrismScope> parentScopeIds, Collection<Integer> resourceIds, ResourceListFilterDTO filter,
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds, ResourceListFilterDTO filter,
             String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
         if (CollectionUtils.isNotEmpty(resourceIds)) {
-            String scopeName = scopeId.getLowerCamelName();
-            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scopeId.getResourceClass(), scopeName);
+            String scopeName = scope.getLowerCamelName();
+            Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass(), scopeName);
 
             ProjectionList projectionList = Projections.projectionList();
 
             List<String> parentScopeNames = Lists.newLinkedList();
-            for (PrismScope parentScopeId : parentScopeIds) {
+            for (PrismScope parentScopeId : parentScopes) {
                 String parentScopeName = parentScopeId.getLowerCamelName();
                 projectionList.add(Projections.property(parentScopeName + ".id"), parentScopeName + "Id");
 
@@ -147,20 +147,21 @@ public class ResourceDAO {
                     projectionList.add(Projections.property(parentScopeName + ".name"), parentScopeName + "Name");
                 }
 
-                if (scopeId.equals(INSTITUTION)) {
+                if (scope.equals(INSTITUTION)) {
                     projectionList.add(Projections.property(scopeName + ".logoImage.id"), "logoImageId");
                 }
 
                 parentScopeNames.add(parentScopeName);
             }
 
-            boolean parentScope = !scopeId.equals(APPLICATION);
+            boolean parentScope = !scope.equals(APPLICATION);
             projectionList.add(Projections.property("id"), scopeName + "Id");
             if (parentScope) {
                 projectionList.add(Projections.property("name"), scopeName + "Name");
             }
 
-            projectionList.add(Projections.property("code"), "code") //
+            projectionList.add(Projections.property("advert.applyHomepage"), "applyHomepage") //
+                    .add(Projections.property("code"), "code") //
                     .add(Projections.property("user.id"), "userId") //
                     .add(Projections.property("user.firstName"), "userFirstName") //
                     .add(Projections.property("user.firstName2"), "userFirstName2") //
@@ -189,6 +190,7 @@ public class ResourceDAO {
 
             criteria.setProjection(projectionList) //
                     .createAlias("user", "user", JoinType.INNER_JOIN) //
+                    .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                     .createAlias("state", "state", JoinType.INNER_JOIN)
                     .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
 

@@ -9,7 +9,9 @@ public class ActionRepresentation {
     private PrismAction id;
 
     private PrismActionCategory category;
-    
+
+    private String redirectLink;
+
     private Boolean declinable;
 
     public PrismAction getId() {
@@ -26,6 +28,14 @@ public class ActionRepresentation {
 
     public void setCategory(PrismActionCategory category) {
         this.category = category;
+    }
+
+    public String getRedirectLink() {
+        return redirectLink;
+    }
+
+    public void setRedirectLink(String redirectLink) {
+        this.redirectLink = redirectLink;
     }
 
     public Boolean getDeclinable() {

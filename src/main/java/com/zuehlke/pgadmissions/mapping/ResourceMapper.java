@@ -247,7 +247,7 @@ public class ResourceMapper {
             representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
             representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
 
-            List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row.getActions());
+            List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
             DateTime updatedTimestamp = row.getUpdatedTimestamp();
 
             representation.setCreatedTimestamp(row.getCreatedTimestamp());

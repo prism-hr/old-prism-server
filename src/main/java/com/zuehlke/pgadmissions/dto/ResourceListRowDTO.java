@@ -29,6 +29,8 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
     private String projectName;
 
     private Integer applicationId;
+    
+    private String applyHomepage;
 
     private Integer userId;
 
@@ -136,6 +138,14 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     public void setApplicationId(Integer applicationId) {
         this.applicationId = applicationId;
+    }
+
+    public String getApplyHomepage() {
+        return applyHomepage;
+    }
+
+    public void setApplyHomepage(String applyHomepage) {
+        this.applyHomepage = applyHomepage;
     }
 
     public Integer getUserId() {

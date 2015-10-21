@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.mapping;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -15,12 +14,14 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.ActionDTO;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
@@ -44,10 +45,17 @@ public class ActionMapper {
         return getActionRepresentation(action, ActionRepresentation.class);
     }
 
-    public List<ActionRepresentationSimple> getActionRepresentations(Collection<ActionDTO> actions) {
+    public List<ActionRepresentationSimple> getActionRepresentations(ResourceListRowDTO resourceRow) {
         List<ActionRepresentationSimple> representations = Lists.newLinkedList();
-        for (ActionDTO action : actions) {
-            representations.add(getActionRepresentationSimple(action, ActionRepresentationSimple.class));
+        for (ActionDTO actionDTO : resourceRow.getActions()) {
+            ActionRepresentationSimple action = getActionRepresentationSimple(actionDTO, ActionRepresentationSimple.class);
+
+            String applyHomepage = resourceRow.getApplyHomepage();
+            if (applyHomepage != null && actionDTO.getActionId().name().endsWith("_CREATE_APPLICATION")) {
+                action.setRedirectLink(applyHomepage);
+            }
+
+            representations.add(action);
         }
         return representations;
     }
@@ -63,10 +71,21 @@ public class ActionMapper {
             representations.add(getActionRepresentationExtended(resource, action, user));
         }
 
-        if (!onlyAsPartner) {
-            List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()));
-            for (ActionDTO publicAction : publicActions) {
-                representations.add(getActionRepresentationExtended(resource, publicAction, user));
+        List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()));
+        for (ActionDTO publicAction : publicActions) {
+            boolean applicationAction = publicAction.getActionId().name().endsWith("_CREATE_APPLICATION");
+            if (!onlyAsPartner || applicationAction) {
+                Advert advert = resource.getAdvert();
+                ActionRepresentationExtended actionRepresentation = getActionRepresentationExtended(resource, publicAction, user);
+
+                if (advert != null) {
+                    String applyHomepage = advert.getApplyHomepage();
+                    if (applyHomepage != null && applicationAction) {
+                        actionRepresentation.setRedirectLink(applyHomepage);
+                    }
+                }
+
+                representations.add(actionRepresentation);
             }
         }
 

@@ -14,7 +14,7 @@ public class TemplateParentResourceNameBuilder implements NotificationPropertyBu
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
         NotificationDefinitionDTO notificationDefinitionDTO = propertyLoader.getNotificationDefinitionDTO();
-        if (notificationDefinitionDTO.getResource().getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
+        if (notificationDefinitionDTO.getResource().getParentResource().getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
             return propertyLoader.getNotificationDefinitionDTO().getResource().getParentResource().getDisplayName();
         }
         return propertyLoader.getPropertyLoader().loadLazy(SYSTEM_NO_POSITION_SPECIFIED);

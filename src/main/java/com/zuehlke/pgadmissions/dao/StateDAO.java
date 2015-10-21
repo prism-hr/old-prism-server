@@ -13,6 +13,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -292,6 +293,16 @@ public class StateDAO {
                         + "where id in (:states)")
                 .setParameterList("states", states) //
                 .executeUpdate();
+    }
+
+    public PrismState getPreviousPrimaryState(Resource resource, PrismState currentState) {
+        return (PrismState) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.property("transitionState.id")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.ne("transitionState.id", currentState)) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
 }

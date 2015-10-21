@@ -16,15 +16,15 @@ import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransit
 @Component
 public class ApplicationUpdateInterviewAvailabilityResolver implements StateTransitionResolver<Application> {
 
-	@Inject
-	private StateService stateService;
+    @Inject
+    private StateService stateService;
 
-	@Override
-	public StateTransition resolve(Application resource, Comment comment) {
-		if (resource.getPreviousState().getId().equals(APPLICATION_INTERVIEW)) {
-			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW);
-		}
-		return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_SCHEDULING);
-	}
+    @Override
+    public StateTransition resolve(Application resource, Comment comment) {
+        if (stateService.getPreviousPrimaryState(resource, resource.getState().getId()).equals(APPLICATION_INTERVIEW)) {
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW);
+        }
+        return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_INTERVIEW_PENDING_SCHEDULING);
+    }
 
 }

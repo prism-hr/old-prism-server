@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -377,6 +378,17 @@ public class Project extends ResourceOpportunity {
         this.state = state;
     }
 
+    @Override
+    public Set<Program> getPrograms() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    public Set<Project> getProjects() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public Set<Application> getApplications() {
         return applications;
     }

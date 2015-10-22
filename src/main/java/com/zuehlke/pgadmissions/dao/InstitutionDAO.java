@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTokenizedLikeConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getLikeConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
 import java.util.List;
@@ -78,7 +78,7 @@ public class InstitutionDAO {
         Disjunction searchConstraint = Restrictions.disjunction();
 
         if (query != null) {
-            searchConstraint.add(getTokenizedLikeConstraint("name", query));
+            searchConstraint.add(getLikeConstraint("name", query));
         }
         if (googleIds != null && googleIds.length > 0) {
             searchConstraint.add(Restrictions.in("googleId", googleIds));

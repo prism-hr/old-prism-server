@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getLikeConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTokenizedLikeConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
@@ -538,7 +538,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
 
         if (query.isPresent()) {
-            criteria.add(getTokenizedLikeConstraint("resource.name", query.get()));
+            criteria.add(getLikeConstraint("resource.name", query.get()));
         }
 
         return (List<ResourceSimpleDTO>) criteria.add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))

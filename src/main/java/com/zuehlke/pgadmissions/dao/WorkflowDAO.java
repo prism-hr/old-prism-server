@@ -7,14 +7,11 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -279,16 +276,8 @@ public class WorkflowDAO {
                 .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline));
     }
 
-    public static Junction getTokenizedLikeConstraint(String property, String query) {
-        Junction constraint = Restrictions.disjunction();
-        String[] tokens = query.split("\\s*(,|\\s)\\s*");
-        CharArraySet stopWords = EnglishAnalyzer.getDefaultStopSet();
-        Arrays.stream(tokens).forEach(token -> {
-            if (!stopWords.contains(token)) {
-                constraint.add(Restrictions.like(property, token, MatchMode.ANYWHERE));
-            }
-        });
-        return constraint;
+    public static Criterion getLikeConstraint(String property, String query) {
+        return Restrictions.like(property, query, MatchMode.ANYWHERE);
     }
 
     private Criteria getWorklflowCriteria(PrismScope resourceScope, Projection projection, Class<? extends ResourceStateDefinition> responseClass) {

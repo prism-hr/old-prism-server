@@ -774,7 +774,7 @@ public class ResourceService {
         if (canViewEdit && role != null) {
             executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
                     new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
-        } else if (!canViewEdit) {
+        } else if (!(canViewEdit || roleService.hasUserRole(resource, user, role.getId()))) {
             userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
                 notificationService.sendJoinRequest(user, admin, resource);
             });

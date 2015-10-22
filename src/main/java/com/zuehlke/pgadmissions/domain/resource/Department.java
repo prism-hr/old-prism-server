@@ -349,14 +349,17 @@ public class Department extends ResourceParent {
         return resourcePreviousStates;
     }
 
+    @Override
     public Set<Program> getPrograms() {
         return programs;
     }
 
+    @Override
     public Set<Project> getProjects() {
         return projects;
     }
 
+    @Override
     public Set<Application> getApplications() {
         return applications;
     }

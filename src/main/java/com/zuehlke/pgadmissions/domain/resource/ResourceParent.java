@@ -6,6 +6,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
@@ -39,6 +40,12 @@ public abstract class ResourceParent extends Resource implements ResourceParentD
 
     public abstract void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap);
 
+    public abstract Set<Program> getPrograms();
+
+    public abstract Set<Project> getProjects();
+
+    public abstract Set<Application> getApplications();
+    
     public abstract Set<Advert> getAdverts();
 
     public void addResourceCondition(ResourceCondition resourceCondition) {

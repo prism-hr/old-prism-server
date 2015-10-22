@@ -312,14 +312,17 @@ public class Institution extends ResourceParent {
         return departments;
     }
 
+    @Override
     public Set<Program> getPrograms() {
         return programs;
     }
 
+    @Override
     public Set<Project> getProjects() {
         return projects;
     }
 
+    @Override
     public Set<Application> getApplications() {
         return applications;
     }

@@ -133,7 +133,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_GROUP_APPLICATION_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Reference Collection"),
     SYSTEM_STATE_GROUP_APPLICATION_REVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Review"),
     SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Interview"),
-    SYSTEM_STATE_GROUP_APPLICATION_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Hiring Manager Approval"),
+    SYSTEM_STATE_GROUP_APPLICATION_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Approval"),
     SYSTEM_STATE_GROUP_APPLICATION_APPROVED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Approved"),
     SYSTEM_STATE_GROUP_APPLICATION_REJECTED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Rejected"),
     SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Withdrawn"),
@@ -1614,6 +1614,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM RESOURCE OPPORTUNITY *********************
      */
 
+    SYSTEM_RESOURCE_OPPORTUNITY_TYPE_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "You must accept the terms and conditions"), 
+    SYSTEM_RESOURCE_CONTRACT_TYPE_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "You must select an option"), 
+    SYSTEM_RESOURCE_ENGAGEMENT_TYPE_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "You must select at least one option"), 
+    
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Rate Opportunity"),
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "To help your students decide whether to pursue this opportunity, tell us how you rate it."),
     SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Endorse Opportunity"),
@@ -2057,7 +2061,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_DECLINE_SUPERVISION_REASON_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Explain why you wish to decline to provide primary supervision."),
     APPLICATION_ACTION_POSITION_TITLE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Title"),
     APPLICATION_ACTION_POSITION_TITLE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Enter the position title."),
-    APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Abstract"),
+    APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Overview"),
     APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Enter a concise description of the position. This will constitute the 'ATAS Statement' if required by the applicant. It should summarise the scope and possible applications of the research that will take place. The applicant must agree with your description, as they will be required to provide an identical description in their ATAS Certificate Applicaton. We request an appropriate position description for all research admissions as a matter of policy."),
     APPLICATION_ACTION_POSITION_PROVISIONAL_START_DATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Provisional Start Date"),
     APPLICATION_ACTION_POSITION_PROVISIONAL_START_DATE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "The applicant's provisional start date. Prism generates a default value for provisional start date based upon the applicant's application. If you wish to amend the value you may do so."),

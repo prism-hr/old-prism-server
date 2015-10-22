@@ -106,7 +106,6 @@ public class PrismInstitutionWorkflow {
         return institutionViewEditAbstract()
                 .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withStateTransitions(INSTITUTION_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(INSTITUTION_MANAGE_USERS_GROUP));
     }

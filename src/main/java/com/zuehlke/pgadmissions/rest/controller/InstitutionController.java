@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,15 +17,11 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.services.InstitutionService;
-import com.zuehlke.pgadmissions.services.ProgramService;
 
 @RestController
 @RequestMapping("api/institutions")
 @PreAuthorize("permitAll")
 public class InstitutionController {
-
-    @Inject
-    private ProgramService programService;
 
     @Inject
     private InstitutionMapper institutionMapper;
@@ -47,11 +42,6 @@ public class InstitutionController {
     public ResourceRepresentationSimple getInstitution(String googleId) {
         Institution institution = institutionService.getInstitutionByGoogleId(googleId);
         return institution == null ? null : resourceMapper.getResourceRepresentationSimple(institution);
-    }
-
-    @RequestMapping(value = "/{institutionId}/programs", method = RequestMethod.GET)
-    public List<ResourceRepresentationSimple> getPrograms(@PathVariable Integer institutionId) {
-        return programService.getApprovedPrograms(institutionId);
     }
 
 }

@@ -17,7 +17,10 @@ public enum PrismFileCategory {
 
     public enum PrismImageCategory {
 
-        INSTITUTION_LOGO(null, InstitutionLogoPersister.class), //
+        // 22/10/2015
+        // We need to downsample this by default for email
+        // Juan and Alastair will fix it next week - better downsampling
+        INSTITUTION_LOGO(InstitutionLogoProcessor.class, InstitutionLogoPersister.class), //
         INSTITUTION_BACKGROUND(null, InstitutionBackgroundPersister.class), //
         DEPARTMENT_BACKGROUND(null, DepartmentBackgroundPersister.class), //
         PROGRAM_BACKGROUND(null, ProgramBackgroundPersister.class), //

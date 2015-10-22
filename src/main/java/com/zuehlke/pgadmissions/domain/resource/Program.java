@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -468,6 +469,12 @@ public class Program extends ResourceOpportunity {
         return resourceConditions;
     }
 
+    @Override
+    public Set<Program> getPrograms() {
+        return Collections.emptySet();
+    }
+
+    @Override
     public Set<Project> getProjects() {
         return projects;
     }

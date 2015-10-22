@@ -1,8 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_DESCRIPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING_DESCRIPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -23,8 +24,8 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     TRAINING(PERSONAL_DEVELOPMENT, false, null), //
     WORK_EXPERIENCE(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION), //
     PLACEMENT(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION), //
-    VOLUNTEERING(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION), //
-    EMPLOYMENT(WORK, true, null); //
+    VOLUNTEERING(EXPERIENCE, true, SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING_DESCRIPTION), //
+    EMPLOYMENT(WORK, true, SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_DESCRIPTION); //
 
     private PrismOpportunityCategory opportunityCategory;
 

@@ -595,8 +595,17 @@ public class ResourceService {
         updateResource(resource, resourceDTO);
 
         resource.setAvailableDate(resourceDTO.getAvailableDate());
-        resource.setDurationMinimum(resourceDTO.getDurationMinimum());
-        resource.setDurationMaximum(resourceDTO.getDurationMaximum());
+        
+        Integer durationMinimum = resourceDTO.getDurationMinimum();
+        Integer durationMaximum = resourceDTO.getDurationMinimum();
+        if (!(durationMinimum == null && durationMaximum == null)) {
+            durationMinimum = durationMinimum == null ? durationMaximum : durationMinimum;
+            durationMaximum = durationMaximum == null ? durationMinimum : durationMaximum;
+            
+            resource.setDurationMinimum(durationMinimum);
+            resource.setDurationMaximum(durationMaximum);
+        }
+        
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
 
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();

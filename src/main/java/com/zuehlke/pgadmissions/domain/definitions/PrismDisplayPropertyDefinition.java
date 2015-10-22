@@ -369,9 +369,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering"),
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
 
-    SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work experience positions are typically short term engagements where the participant observes or shadows employees in your organization."),
-    SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement positions are typically more focused engagments where the particpant performs concrete tasks."),
-    SYSTEM_OPPORTUNITY_TYPE_WORK_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering positions are typically engagements where the participant contributes towards a charitable cause."),
+    SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Short term positions where the participant observes others."),
+    SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Focused positions where the particpant performs concrete tasks."),
+    SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Positions where the participant contributes towards a charitable cause."),
+    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Full or part-time jobs which the participant is paid to perform."),
 
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the minimum wage."),
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Please check and confirm that your opportunity complies with your "),
@@ -384,6 +385,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_STUDY_OPTION_FULL_TIME(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Full Time"),
     SYSTEM_STUDY_OPTION_PART_TIME(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Part Time"),
+    SYSTEM_STUDY_OPTION_BOTH(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Available Full Time or Part Time"),
 
     /*
      * *************** SYSTEM AGE RANGE *********************
@@ -1614,7 +1616,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM RESOURCE OPPORTUNITY *********************
      */
     
-    SYSTEM_RESOURCE_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Select your preferred opportunity type"),
+    SYSTEM_RESOURCE_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Select your preferred opportunity type."),
+    SYSTEM_RESOURCE_OPPORTUNITY_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Accept the terms and conditions and specify the nature of your position."),
 
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Rate Opportunity"),
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "To help your students decide whether to pursue this opportunity, tell us how you rate it."),

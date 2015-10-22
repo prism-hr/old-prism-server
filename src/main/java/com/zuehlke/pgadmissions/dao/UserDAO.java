@@ -16,6 +16,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGrou
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
@@ -142,32 +143,41 @@ public class UserDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
     }
 
-    public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Integer program, List<Integer> relatedProjects,
-            List<Integer> relatedApplications) {
+    public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(List<Integer> programs, List<Integer> projects, List<Integer> applications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user").as("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        Junction condition = Restrictions.disjunction() //
-                .add(Restrictions.eq("program.id", program)); //
-
-        if (!relatedProjects.isEmpty()) {
-            condition.add(Restrictions.in("project.id", relatedProjects));
+        boolean anyConstraint = false;
+        Junction condition = Restrictions.disjunction();
+        if (isNotEmpty(programs)) {
+            condition.add(Restrictions.in("program.id", programs));
+            anyConstraint = true;
         }
 
-        if (!relatedApplications.isEmpty()) {
-            condition.add(Restrictions.in("application.id", relatedApplications));
+        if (isNotEmpty(projects)) {
+            condition.add(Restrictions.in("project.id", projects));
+            anyConstraint = true;
         }
 
-        return (List<UserSelectionDTO>) criteria.add(condition) //
-                .add(Restrictions.in("role.id", APPLICATION_POTENTIAL_SUPERVISOR_GROUP.getRoles())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("userAccount.id")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
-                .addOrder(Order.asc("user.firstName")) //
-                .addOrder(Order.asc("user.lastName")) //
-                .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
+        if (isNotEmpty(applications)) {
+            condition.add(Restrictions.in("application.id", applications));
+            anyConstraint = true;
+        }
+
+        if (anyConstraint) {
+            return (List<UserSelectionDTO>) criteria.add(condition) //
+                    .add(Restrictions.in("role.id", APPLICATION_POTENTIAL_SUPERVISOR_GROUP.getRoles())) //
+                    .add(Restrictions.disjunction() //
+                            .add(Restrictions.isNull("userAccount.id")) //
+                            .add(Restrictions.eq("userAccount.enabled", true))) //
+                    .addOrder(Order.asc("user.firstName")) //
+                    .addOrder(Order.asc("user.lastName")) //
+                    .setResultTransformer(Transformers.aliasToBean(UserSelectionDTO.class)).list();
+        }
+
+        return emptyList();
     }
 
     public void refreshParentUser(User linkIntoUser, User linkFromUser) {

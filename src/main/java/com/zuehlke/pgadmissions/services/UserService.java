@@ -58,9 +58,10 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
@@ -92,9 +93,6 @@ public class UserService {
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private ProgramService programService;
 
     @Inject
     private RoleService roleService;
@@ -297,17 +295,18 @@ public class UserService {
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {
         List<UserSelectionDTO> usersToInclude = Lists.newLinkedList();
 
-        Program program = application.getProgram();
-        if (program != null) {
-            Integer programId = program.getId();
+        Department department = application.getDepartment();
+        Institution institution = application.getInstitution();
+        ResourceParent parent = department == null ? institution : department;
 
-            List<Integer> projects = programService.getProjects(programId);
-            List<Integer> applications = programService.getApplications(programId);
-            List<UserSelectionDTO> users = userDAO.getUsersPotentiallyInterestedInApplication(programId, projects, applications);
-            for (UserSelectionDTO userPotentiallyInterested : users) {
-                if (!usersToExclude.contains(userPotentiallyInterested)) {
-                    usersToInclude.add(userPotentiallyInterested);
-                }
+        List<Integer> programs = parent.getPrograms().stream().map(p -> p.getId()).collect(toList());
+        List<Integer> projects = parent.getProjects().stream().map(p -> p.getId()).collect(toList());
+        List<Integer> applications = parent.getApplications().stream().map(a -> a.getId()).collect(toList());
+
+        List<UserSelectionDTO> users = userDAO.getUsersPotentiallyInterestedInApplication(programs, projects, applications);
+        for (UserSelectionDTO userPotentiallyInterested : users) {
+            if (!usersToExclude.contains(userPotentiallyInterested)) {
+                usersToInclude.add(userPotentiallyInterested);
             }
         }
 
@@ -451,7 +450,7 @@ public class UserService {
                 }
             }
         });
-        
+
         for (PrismScope targeterScope : targetScopes) {
             for (PrismScope targetScope : targetScopes) {
                 List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);

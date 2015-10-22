@@ -1613,11 +1613,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     /*
      * *************** SYSTEM RESOURCE OPPORTUNITY *********************
      */
-
-    SYSTEM_RESOURCE_OPPORTUNITY_TYPE_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "You must accept the terms and conditions"), 
-    SYSTEM_RESOURCE_CONTRACT_TYPE_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "You must select an option"), 
-    SYSTEM_RESOURCE_ENGAGEMENT_TYPE_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "You must select at least one option"), 
     
+    SYSTEM_RESOURCE_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Select your preferred opportunity type"),
+
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Rate Opportunity"),
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "To help your students decide whether to pursue this opportunity, tell us how you rate it."),
     SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Endorse Opportunity"),

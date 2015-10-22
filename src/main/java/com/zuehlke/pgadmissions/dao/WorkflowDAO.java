@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -107,10 +107,7 @@ public class WorkflowDAO {
                         Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
                 .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN,
-                        Restrictions.not(Restrictions.conjunction() //
-                                .add(Restrictions.eq("role.roleCategory", STUDENT)) //
-                                .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_REVOKED)))) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
                 .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
@@ -120,20 +117,18 @@ public class WorkflowDAO {
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userRoles", "ownerUserRole", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("ownerUserRole.role", "ownerRole", JoinType.LEFT_OUTER_JOIN,
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
                         getEndorsementActionJoinConstraint()) //
-                .createAlias("ownerUserRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("ownerDepartment.advert", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.disjunction()//
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eqProperty("ownerUserRole.department", "targetAdvert.department"))
+                                        .add(Restrictions.eqProperty("ownerAdvert.department", "targetAdvert.department"))
                                         .add(Restrictions.conjunction() //
                                                 .add(Restrictions.eq("role.scope.id", INSTITUTION)) //
-                                                .add(Restrictions.disjunction() //
-                                                        .add(Restrictions.eqProperty("ownerUserRole.institution", "targetAdvert.institution"))
-                                                        .add(Restrictions.eqProperty("ownerDepartment.institution", "targetAdvert.institution"))))) //
+                                                .add(Restrictions.eqProperty("ownerAdvert.institution", "targetAdvert.institution")))) //
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.eq("resource.shared", true))))
                         .add(Restrictions.eq("scope.defaultShared", true))) //
@@ -208,7 +203,7 @@ public class WorkflowDAO {
     }
 
     public static Criterion getEndorsementActionJoinConstraint() {
-        return Restrictions.eq("ownerRole.roleCategory", STUDENT);
+        return Restrictions.eq("ownerRole.role.id", DEPARTMENT_STUDENT);
     }
 
     public static Junction getEndorsementActionFilterConstraint() {
@@ -232,13 +227,11 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.disjunction() //
-                                .add(Restrictions.eqProperty("ownerDepartment.id", "departmentTargetDepartment.id")) //
-                                .add(Restrictions.eqProperty("ownerDepartment.id", "institutionTargetDepartment.id")) //
-                                .add(Restrictions.eqProperty("ownerUserRole.institution.id", "departmentTargetInstitution.id")) //
-                                .add(Restrictions.eqProperty("ownerUserRole.institution.id", "institutionTargetInstitution.id"))
+                                .add(Restrictions.eqProperty("ownerDepartment.id", "departmentTargetDepartment.id"))
                                 .add(Restrictions.conjunction() //
                                         .add(Restrictions.eq("role.scope.id", INSTITUTION))
                                         .add(Restrictions.eqProperty("ownerDepartment.institution.id", "departmentTargetInstitution.id")))
+                                .add(Restrictions.eqProperty("ownerDepartment.id", "institutionTargetDepartment.id"))
                                 .add(Restrictions.conjunction() //
                                         .add(Restrictions.eq("role.scope.id", INSTITUTION))
                                         .add(Restrictions.eqProperty("ownerDepartment.institution.id", "institutionTargetInstitution.id"))))
@@ -332,10 +325,9 @@ public class WorkflowDAO {
         }
 
         return criteria.createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userRoles", "ownerUserRole", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("ownerUserRole.role", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinConstraint())
-                .createAlias("ownerUserRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
+                        getEndorsementActionJoinConstraint()) //
+                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,

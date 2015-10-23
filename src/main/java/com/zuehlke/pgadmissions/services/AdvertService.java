@@ -663,7 +663,7 @@ public class AdvertService {
             }
 
             if (!(userAccept == null || roleService.getVerifiedRoles(userAccept, advertAccept.getResource()).isEmpty())) {
-                notificationService.sendConnectionRequest(target.getOtherUser(), userAccept, target);
+                notificationService.sendConnectionRequest(userService.getCurrentUser(), userAccept, target);
             }
         }
     }

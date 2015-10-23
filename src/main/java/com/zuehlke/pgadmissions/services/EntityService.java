@@ -33,7 +33,7 @@ public class EntityService {
         return entityDAO.getByProperties(klass, properties);
     }
 
-    public <T> List<T> list(Class<T> klass) {
+    public <T> List<T> getAll(Class<T> klass) {
         return entityDAO.list(klass);
     }
 

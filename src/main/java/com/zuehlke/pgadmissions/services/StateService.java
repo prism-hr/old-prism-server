@@ -107,7 +107,7 @@ public class StateService {
     }
 
     public List<State> getStates() {
-        return entityService.list(State.class);
+        return entityService.getAll(State.class);
     }
 
     public List<State> getConfigurableStates() {
@@ -115,11 +115,11 @@ public class StateService {
     }
 
     public List<StateGroup> getStateGroups() {
-        return entityService.list(StateGroup.class);
+        return entityService.getAll(StateGroup.class);
     }
 
     public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
-        return entityService.list(StateTransitionEvaluation.class);
+        return entityService.getAll(StateTransitionEvaluation.class);
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, StateDurationDefinition definition) {
@@ -141,7 +141,7 @@ public class StateService {
     }
 
     public List<StateAction> getStateActions() {
-        return entityService.list(StateAction.class);
+        return entityService.getAll(StateAction.class);
     }
 
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {

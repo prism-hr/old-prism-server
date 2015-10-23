@@ -165,9 +165,9 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
+    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.createUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
+        roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
 

@@ -13,6 +13,8 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import com.zuehlke.pgadmissions.domain.Invitation;
+import com.zuehlke.pgadmissions.domain.InvitationEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -29,7 +31,7 @@ import com.zuehlke.pgadmissions.workflow.user.UserRoleReassignmentProcessor;
         @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
-public class UserRole extends WorkflowResourceExecution implements UserAssignment<UserRoleReassignmentProcessor> {
+public class UserRole extends WorkflowResourceExecution implements UserAssignment<UserRoleReassignmentProcessor>, InvitationEntity {
 
     @Id
     @GeneratedValue
@@ -71,10 +73,16 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
 
+    @ManyToOne
+    @JoinColumn(name = "invitation_id")
+    private Invitation invitation;
+
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -163,6 +171,16 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         this.assignedTimestamp = assignedTimestamp;
     }
 
+    @Override
+    public Invitation getInvitation() {
+        return invitation;
+    }
+
+    @Override
+    public void setInvitation(Invitation invitation) {
+        this.invitation = invitation;
+    }
+
     public UserRole withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -180,6 +198,11 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
 
     public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
         this.assignedTimestamp = assignedTimestamp;
+        return this;
+    }
+
+    public UserRole withInvitation(Invitation invitation) {
+        this.invitation = invitation;
         return this;
     }
 

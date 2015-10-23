@@ -616,7 +616,7 @@ public class SystemService {
 
     private <T extends UniqueEntity> void verifyDefinition(Class<T> definitionClass) throws WorkflowConfigurationException {
         try {
-            entityService.list(definitionClass).forEach(definition -> {
+            entityService.getAll(definitionClass).forEach(definition -> {
                 Object id = getProperty(definition, "id");
                 if (PrismLocalizableDefinition.class.isAssignableFrom(id.getClass())) {
                     ((PrismLocalizableDefinition) id).getDisplayProperty();

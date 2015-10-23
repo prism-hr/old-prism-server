@@ -193,11 +193,12 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody Map<String, PrismRole> body) {
-        PrismRole role = body.get("role");
+            ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.createUserRoles(userService.getCurrentUser(), resource, user, role);
+
+        List<PrismRole> roles = body.getRoles();
+        roleService.createUserRoles(userService.getCurrentUser(), resource, user, body.getMessage(), roles.toArray(new PrismRole[roles.size()]));
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
@@ -212,11 +213,11 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestBody ResourceUserRolesRepresentation userRolesRepresentation) {
+            @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
-        UserRepresentationSimple newUser = userRolesRepresentation.getUser();
+        UserRepresentationSimple newUser = body.getUser();
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
-                userRolesRepresentation.getRoles());
+                body.getMessage(), body.getRoles());
         return userMapper.getUserRepresentationSimple(user);
     }
 

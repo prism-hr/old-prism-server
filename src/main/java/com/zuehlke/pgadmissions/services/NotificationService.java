@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.joda.time.LocalDate.now;
@@ -30,10 +31,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.NotificationDAO;
+import com.zuehlke.pgadmissions.domain.Invitation;
+import com.zuehlke.pgadmissions.domain.InvitationEntity;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -48,7 +52,9 @@ import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.dto.MailMessageDTO;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.dto.UserConnectionDTO;
 import com.zuehlke.pgadmissions.dto.UserNotificationDefinitionDTO;
+import com.zuehlke.pgadmissions.dto.UserRoleCategoryDTO;
 import com.zuehlke.pgadmissions.mail.MailSender;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 
@@ -79,6 +85,9 @@ public class NotificationService {
     private CustomizationService customizationService;
 
     @Inject
+    private RoleService roleService;
+
+    @Inject
     private ScopeService scopeService;
 
     @Inject
@@ -93,7 +102,7 @@ public class NotificationService {
     }
 
     public List<NotificationDefinition> getDefinitions() {
-        return entityService.list(NotificationDefinition.class);
+        return entityService.getAll(NotificationDefinition.class);
     }
 
     public List<NotificationDefinition> getWorkflowDefinitions() {
@@ -115,7 +124,46 @@ public class NotificationService {
     }
 
     public void sendUserActivityNotification(Integer user) {
+        // TODO: get the objects to build the mail
+    }
 
+    public void sendInvitationRequest(Integer userRoleId, Set<UserRoleCategoryDTO> sent) {
+        UserRole userRole = roleService.getUserRoleById(userRoleId);
+        Resource resource = userRole.getResource();
+        Invitation invitation = userRole.getInvitation();
+        
+        UserRoleCategoryDTO messageIndex = new UserRoleCategoryDTO(userRole.getUser(), resource, userRole.getRole().getRoleCategory());
+        if (!sent.contains(messageIndex)) {
+            PrismAction transitionAction = userRole.getRole().getRoleCategory().equals(STUDENT) ? SYSTEM_MANAGE_ACCOUNT
+                    : PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT");
+            sendUserInvitationNotification(invitation.getUser(), userRole.getUser(), resource, transitionAction);
+        }
+
+        dequeueUserInvitation(invitation, userRole);
+    }
+
+    public void sendConnectionRequest(Integer advertTargetId, Set<UserConnectionDTO> sent) {
+        AdvertTarget advertTarget = entityService.getById(AdvertTarget.class, advertTargetId);
+        Invitation invitation = advertTarget.getInvitation();
+
+        UserConnectionDTO messageIndex = null;
+        User recipient = advertTarget.getAcceptAdvertUser();
+        if (recipient == null) {
+            ResourceParent resource = advertTarget.getAcceptAdvert().getResource();
+            List<User> recipientAdmins = userService.getResourceUsers(resource, PrismRole.valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR"));
+            for (User recipientAdmin : recipientAdmins) {
+                messageIndex = sendConnectionRequest(invitation, recipientAdmin, advertTarget, sent);
+            }
+        } else {
+            if (isNotEmpty(roleService.getVerifiedRoles(recipient, advertTarget.getAcceptAdvert().getResource()))) {
+                messageIndex = sendConnectionRequest(invitation, recipient, advertTarget, sent);
+            }
+        }
+
+        if (messageIndex != null) {
+            dequeueUserInvitation(invitation, advertTarget);
+            sent.add(messageIndex);
+        }
     }
 
     public void sendNotification(PrismNotificationDefinition notificationTemplateId, NotificationDefinitionDTO notificationDefinitionDTO) {
@@ -243,9 +291,27 @@ public class NotificationService {
         applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 
-    public void createOrUpdateUserNotification(Resource resource, User recipient, NotificationDefinition definition, LocalDate baseline) {
+    private void createOrUpdateUserNotification(Resource resource, User recipient, NotificationDefinition definition, LocalDate baseline) {
         entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
                 .withLastNotifiedDate(baseline));
+    }
+
+    private UserConnectionDTO sendConnectionRequest(Invitation invitation, User recipient, AdvertTarget advertTarget, Set<UserConnectionDTO> sent) {
+        UserConnectionDTO messageIndex;
+        messageIndex = new UserConnectionDTO(recipient, advertTarget.getOtherAdvert().getId());
+        if (!sent.contains(messageIndex)) {
+            sendConnectionRequest(invitation.getUser(), recipient, advertTarget);
+        }
+        return messageIndex;
+    }
+
+    private <T extends InvitationEntity> void dequeueUserInvitation(Invitation invitation, T invitationEntity) {
+        invitationEntity.setInvitation(null);
+        entityService.flush();
+
+        if (invitation.getUserRoles().isEmpty() && invitation.getAdvertTargets().isEmpty()) {
+            entityService.delete(invitation);
+        }
     }
 
 }

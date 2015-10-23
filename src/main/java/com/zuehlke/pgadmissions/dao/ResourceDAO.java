@@ -5,6 +5,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getLikeConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
@@ -475,11 +476,11 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name, Collection<PrismState> activeStates) {
-        return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
-                .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("name", name)) //
-                .add(Restrictions.in("resourceState.state.id", activeStates)) //
+    public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name) {
+        return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.name", name)) //
+                .add(getResourceParentManageableStateConstraint(resourceScope.name())) //
                 .addOrder(Order.asc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();

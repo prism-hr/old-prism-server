@@ -1395,9 +1395,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_INVITE_UNIVERSITY_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite University"),
     SYSTEM_INVITE_EMPLOYER_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Employer"),
-    SYSTEM_INVITE_JUST_INVITED_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Thank you. {{name}} has been invited."),
-    SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Employers to bla bla bla bla bla "),
-    SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Universities to bla bla bla bla bla"),
+    SYSTEM_INVITE_JUST_INVITED_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Thank you. {{name}} has been invited to join PRiSM."),
+    SYSTEM_INVITE_JUST_INVITED_NEXT_STEP(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "We will get back in touch with you to let you know when your invitation has been accepted."),
+    SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite employers to join your network to receive opportunities from them."),
+    SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite universities to join your network to promote opportunities to their students."),
+    SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Another"),
 
     /*
      * *************** SYSTEM RESOURCES SECTION *********************

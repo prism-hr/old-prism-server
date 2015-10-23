@@ -20,6 +20,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
@@ -595,17 +596,17 @@ public class ResourceService {
         updateResource(resource, resourceDTO);
 
         resource.setAvailableDate(resourceDTO.getAvailableDate());
-        
+
         Integer durationMinimum = resourceDTO.getDurationMinimum();
         Integer durationMaximum = resourceDTO.getDurationMinimum();
         if (!(durationMinimum == null && durationMaximum == null)) {
             durationMinimum = durationMinimum == null ? durationMaximum : durationMinimum;
             durationMaximum = durationMaximum == null ? durationMinimum : durationMaximum;
-            
+
             resource.setDurationMinimum(durationMinimum);
             resource.setDurationMaximum(durationMaximum);
         }
-        
+
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
 
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
@@ -732,7 +733,7 @@ public class ResourceService {
     public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name) {
         Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return resourceDAO.getActiveResourceByName(resourceScope, name, stateService.getActiveResourceStates(resourceScope));
+            return resourceDAO.getActiveResourceByName(resourceScope, name);
         }
         return null;
     }
@@ -771,7 +772,7 @@ public class ResourceService {
 
         Role role = null;
         String resourceName = resource.getResourceScope().name();
-        
+
         if (roleContext.equals(STUDENT) && !roleService.hasUserRole(resource, user, PrismRole.valueOf(resourceName + "_STUDENT"))) {
             role = roleService.getById(PrismRole.valueOf(resourceName + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
@@ -979,7 +980,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceCreationDTO> void createResourceTarget(Resource resource, T resourceDTO) {
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
             ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
             if (target != null) {
                 advertService.createAdvertTarget(resource.getResourceScope(), resource.getId(), target);
@@ -989,21 +990,25 @@ public class ResourceService {
 
     private ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO, boolean invitation) {
         if (validateResourceFamilyCreation(resourceRelationDTO)) {
-            ResourceParent resource = null;
-
-            User assignUser = null;
-            User currentUser = userService.getCurrentUser();
-            User resourceUser = systemService.getSystem().getUser();
+            User userAssign = null;
+            User userCurrent = userService.getCurrentUser();
+            User userResource = systemService.getSystem().getUser();
 
             boolean assignedUsers = false;
+            ResourceParent resource = null;
             for (ResourceCreationDTO resourceDTO : resourceRelationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
 
                 PrismScope thisScope = resourceDTO.getScope();
                 PrismScope lastScope = resource == null ? SYSTEM : resource.getResourceScope();
 
+                ResourceParent duplicateResource = null;
+                if (thisId == null && thisScope.getScopeCategory().equals(ORGANIZATION) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+                    duplicateResource = getActiveResourceByName(thisScope, ((ResourceParentDTO) resourceDTO).getName());
+                }
+
                 resourceDTO.setContext(resourceRelationDTO.getContext().getContext());
-                if (thisId == null) {
+                if (thisId == null && duplicateResource == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                     if (resource != null) {
                         resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(resource.getId()));
@@ -1012,32 +1017,36 @@ public class ResourceService {
                     if (!assignedUsers && thisScope.getScopeCategory().equals(OPPORTUNITY)) {
                         UserDTO userDTO = resourceRelationDTO.getUser();
                         if (userDTO != null) {
-                            assignUser = joinResource(resource, userDTO, VIEWER);
+                            userAssign = joinResource(resource, userDTO, VIEWER);
                         }
 
                         if (resourceRelationDTO.getContext().equals(APPLICANT)) {
-                            joinResource(resource, currentUser, STUDENT);
+                            joinResource(resource, userCurrent, STUDENT);
                         }
 
                         assignedUsers = true;
                     }
 
-                    User owner;
+                    User userOwner;
                     if (invitation) {
                         UserDTO userDTO = resourceRelationDTO.getUser();
-                        owner = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+                        userOwner = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
                     } else if (thisScope.equals(PROJECT)) {
-                        owner = resourceRelationDTO.getContext().equals(REFEREE) ? assignUser : currentUser;
+                        userOwner = resourceRelationDTO.getContext().equals(REFEREE) ? userAssign : userCurrent;
                     } else {
-                        owner = resourceUser;
+                        userOwner = userResource;
                     }
 
                     Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
-                    resource = (ResourceParent) createResource(owner, action, resourceDTO, true).getResource();
+                    resource = (ResourceParent) createResource(userOwner, action, resourceDTO, true).getResource();
                 } else {
-                    resource = (ResourceParent) getById(thisScope, thisId);
+                    if (thisId != null) {
+                        resource = (ResourceParent) getById(thisScope, thisId);
+                    } else if (duplicateResource != null) {
+                        resource = duplicateResource;
+                    }
                     createResourceTarget(resource, resourceDTO);
-                    resourceUser = resource.getUser();
+                    userResource = resource.getUser();
                 }
             }
 

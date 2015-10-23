@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.zuehlke.pgadmissions.domain.Invitation;
+import com.zuehlke.pgadmissions.domain.InvitationEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -21,7 +23,7 @@ import jersey.repackaged.com.google.common.base.Objects;
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id", "accept_advert_id", "accept_advert_user_id" }) })
-public class AdvertTarget extends AdvertAttribute implements UserAssignment<AdvertConnectionReassignmentProcessor> {
+public class AdvertTarget extends AdvertAttribute implements UserAssignment<AdvertConnectionReassignmentProcessor>, InvitationEntity {
 
     @Id
     @GeneratedValue
@@ -50,6 +52,10 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     @ManyToOne
     @JoinColumn(name = "accept_advert_user_id")
     private User acceptAdvertUser;
+
+    @ManyToOne
+    @JoinColumn(name = "invitation_id")
+    private Invitation invitation;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "partnership_state", nullable = false)
@@ -115,6 +121,16 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
         this.acceptAdvertUser = acceptAdvertUser;
     }
 
+    @Override
+    public Invitation getInvitation() {
+        return invitation;
+    }
+
+    @Override
+    public void setInvitation(Invitation invitation) {
+        this.invitation = invitation;
+    }
+
     public PrismPartnershipState getPartnershipState() {
         return partnershipState;
     }
@@ -150,6 +166,11 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
 
     public AdvertTarget withAcceptAdvertUser(User acceptAdvertUser) {
         this.acceptAdvertUser = acceptAdvertUser;
+        return this;
+    }
+
+    public AdvertTarget withInvitation(Invitation invitation) {
+        this.invitation = invitation;
         return this;
     }
 

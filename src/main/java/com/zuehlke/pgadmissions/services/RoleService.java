@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static java.util.Arrays.stream;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
@@ -23,10 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
@@ -74,11 +72,15 @@ public class RoleService {
     private ApplicationContext applicationContext;
 
     public Role getById(PrismRole roleId) {
-        return entityService.getByProperty(Role.class, "id", roleId);
+        return entityService.getById(Role.class, roleId);
+    }
+
+    public UserRole getUserRoleById(Integer userRoleId) {
+        return entityService.getById(UserRole.class, userRoleId);
     }
 
     public List<Role> getRoles() {
-        return entityService.list(Role.class);
+        return entityService.getAll(Role.class);
     }
 
     public UserRole getUserRole(Resource resource, User user, Role role) {
@@ -107,16 +109,16 @@ public class RoleService {
         entityService.flush();
     }
 
-    public void createUserRoles(User invoker, Resource resource, User user, PrismRole... roles) {
-        updateUserRoles(invoker, resource, user, CREATE, true, roles);
+    public void createUserRoles(User invoker, Resource resource, User user, String message, PrismRole... roles) {
+        updateUserRoles(invoker, resource, user, CREATE, message, true, roles);
     }
 
     public void updateUserRoles(User invoker, Resource resource, User user, PrismRole... roles) {
-        updateUserRoles(invoker, resource, user, CREATE, false, roles);
+        updateUserRoles(invoker, resource, user, CREATE, null, false, roles);
     }
 
     public void deleteUserRoles(User invoker, Resource resource, User user, PrismRole... roles) {
-        updateUserRoles(invoker, resource, user, DELETE, false, roles);
+        updateUserRoles(invoker, resource, user, DELETE, null, false, roles);
     }
 
     public void deleteUserRoles(User invoker, Resource resource, User user) {
@@ -338,11 +340,11 @@ public class RoleService {
         }
     }
 
-    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
         boolean isOwner = resource.getUser().equals(user);
         List<PrismRole> filteredRoles = Lists.newArrayList();
         for (PrismRole role : roles) {
-            if (!(isOwner && role.getRoleCategory().equals(ADMINISTRATOR))) {
+            if (!(isOwner && transitionType.equals(DELETE) && role.getRoleCategory().equals(ADMINISTRATOR))) {
                 filteredRoles.add(role);
             }
         }
@@ -360,11 +362,10 @@ public class RoleService {
 
             actionService.executeUserAction(resource, action, comment);
 
-            if (notify && transitionType.equals(CREATE) && user.getUserAccount() == null) {
-                if (stream(roles).anyMatch(r -> r.name().contains("STUDENT"))) {
-                    notificationService.sendUserInvitationNotification(invoker, user, resource, SYSTEM_MANAGE_ACCOUNT);
-                } else {
-                    notificationService.sendUserInvitationNotification(invoker, user, resource, PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT"));
+            if (notify && transitionType.equals(CREATE)) {
+                for (PrismRole role : roles) {
+                    UserRole userRole = getUserRole(resource, user, getById(role));
+                    userRole.setInvitation(new Invitation().withUser(invoker).withMessage(message));
                 }
             }
         }

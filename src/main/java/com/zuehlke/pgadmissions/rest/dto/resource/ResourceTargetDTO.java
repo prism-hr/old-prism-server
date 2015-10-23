@@ -10,14 +10,16 @@ public class ResourceTargetDTO {
 
     @NotNull
     private PrismMotivationContext context;
-    
+
     @Valid
     @NotNull
     private ResourceDTO resource;
-    
+
     @Valid
     private UserDTO user;
-    
+
+    private String message;
+
     public PrismMotivationContext getContext() {
         return context;
     }
@@ -41,5 +43,13 @@ public class ResourceTargetDTO {
     public void setUser(UserDTO user) {
         this.user = user;
     }
-    
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

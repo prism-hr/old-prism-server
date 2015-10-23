@@ -10,7 +10,7 @@ import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class NotificationServiceHelper extends PrismServiceHelperAbstract {
+public class NotificationServiceHelperActivity extends PrismServiceHelperAbstract {
 
     @Inject
     private NotificationService notificationService;

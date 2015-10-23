@@ -651,6 +651,7 @@ public class AdvertService {
         AdvertTarget target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
         if (userTarget != null) {
             target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
+            // TODO - send a mail here to tell the user that they have been proposed as a member
         }
 
         if (!updateAdvertTarget(target.getId(), true)) {

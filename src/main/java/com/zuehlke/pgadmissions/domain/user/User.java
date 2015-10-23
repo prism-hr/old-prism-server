@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.System;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import com.zuehlke.pgadmissions.workflow.user.UserReassignmentProcessor;
 
 @Entity
@@ -157,6 +159,12 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<UserReferee> userReferees = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Invitation> invitations = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<StateActionPending> stateActionPendings = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -344,6 +352,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserReferee> getUserReferees() {
         return userReferees;
+    }
+
+    public Set<Invitation> getInvitations() {
+        return invitations;
+    }
+
+    public Set<StateActionPending> getStateActionPendings() {
+        return stateActionPendings;
     }
 
     public User withId(Integer id) {

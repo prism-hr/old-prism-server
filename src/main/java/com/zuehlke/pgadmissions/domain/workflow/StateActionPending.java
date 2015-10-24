@@ -10,15 +10,13 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -26,7 +24,7 @@ import com.zuehlke.pgadmissions.workflow.user.StateActionPendingReassignmentProc
 
 @Entity
 @Table(name = "state_action_pending")
-public class StateActionPending implements UserAssignment<StateActionPendingReassignmentProcessor>, UniqueEntity {
+public class StateActionPending extends WorkflowResourceExecution implements UserAssignment<StateActionPendingReassignmentProcessor>, UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -79,10 +77,6 @@ public class StateActionPending implements UserAssignment<StateActionPendingReas
     @Lob
     @Column(name = "assign_user_message")
     private String assignUserMessage;
-
-    @Column(name = "created_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime createdTimestamp;
 
     public Integer getId() {
         return id;
@@ -187,15 +181,42 @@ public class StateActionPending implements UserAssignment<StateActionPendingReas
     public void setAssignUserMessage(String assignUserMessage) {
         this.assignUserMessage = assignUserMessage;
     }
-
-    public DateTime getCreatedTimestamp() {
-        return createdTimestamp;
+    
+    public StateActionPending withResource(Resource resource) {
+        setResource(resource);
+        return this;
     }
-
-    public void setCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
+    
+    public StateActionPending withUser(User user) {
+        this.user = user;
+        return this;
     }
-
+    
+    public StateActionPending withAction(Action action) {
+        this.action = action;
+        return this;
+    }
+    
+    public StateActionPending withContent(String content) {
+        this.content = content;
+        return this;
+    }
+    
+    public StateActionPending withAssignUserRole(Role assignUserRole) {
+        this.assignUserRole = assignUserRole;
+        return this;
+    }
+    
+    public StateActionPending withAssignUserList(String assignUserList) {
+        this.assignUserList = assignUserList;
+        return this;
+    }
+    
+    public StateActionPending withAssignUserMessage(String assignUserMessage) {
+        this.assignUserMessage = assignUserMessage;
+        return this;
+    }
+    
     @Override
     public Class<StateActionPendingReassignmentProcessor> getUserReassignmentProcessor() {
         return StateActionPendingReassignmentProcessor.class;

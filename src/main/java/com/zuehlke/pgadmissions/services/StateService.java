@@ -2,9 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -13,6 +16,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,12 +38,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
@@ -50,12 +57,17 @@ import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.termination.StateTerminationResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 @Service
 @Transactional
 public class StateService {
+
+    private static final Logger logger = LoggerFactory.getLogger(StateService.class);
 
     @Inject
     private StateDAO stateDAO;
@@ -88,6 +100,9 @@ public class StateService {
     private SystemService systemService;
 
     @Inject
+    private UserService userService;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public State getById(PrismState id) {
@@ -106,6 +121,10 @@ public class StateService {
         return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
     }
 
+    public StateActionPending getStateActionPendingById(Integer stateActionPendingId) {
+        return entityService.getById(StateActionPending.class, stateActionPendingId);
+    }
+
     public List<State> getStates() {
         return entityService.getAll(State.class);
     }
@@ -120,6 +139,10 @@ public class StateService {
 
     public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
         return entityService.getAll(StateTransitionEvaluation.class);
+    }
+
+    public List<Integer> getStateActionPendings() {
+        return stateDAO.getStateActionPendings();
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, StateDurationDefinition definition) {
@@ -172,6 +195,7 @@ public class StateService {
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
         resourceService.recordStateTransition(resource, comment, state, transitionState);
+        deleteStateActionPendings(resource);
         advertService.recordPartnershipStateTransition(resource, comment);
 
         resourceService.processResource(resource, comment);
@@ -216,6 +240,29 @@ public class StateService {
             return getStateTransition(resource, comment.getAction(), transitionState.getId());
         }
         return getStateTransition(resource, comment.getAction(), resource.getState().getId());
+    }
+
+    public void executeStateActionPending(Integer stateActionPendingId) {
+        StateActionPending stateActionPending = getStateActionPendingById(stateActionPendingId);
+
+        CSVReader csvReader = null;
+        Set<User> users = Sets.newHashSet();
+        try {
+            csvReader = new CSVReader(new StringReader(stateActionPending.getAssignUserList()));
+
+            String[] user;
+            while ((user = csvReader.readNext()) != null) {
+                users.add(userService.getOrCreateUser(user[0], user[1], user[2]));
+            }
+        } catch (Exception e) {
+            logger.error("User assignment list could not be read", e);
+        } finally {
+            closeQuietly(csvReader);
+        }
+
+        roleService.createUserRoles(stateActionPending.getUser(), stateActionPending.getResource(), users, stateActionPending.getAssignUserMessage(),
+                stateActionPending.getAssignUserRole().getId());
+        entityService.delete(stateActionPending);
     }
 
     public void executeDeferredStateTransition(PrismScope resourceScope, Integer resourceId, PrismAction actionId) {
@@ -336,6 +383,23 @@ public class StateService {
 
     public PrismState getPreviousPrimaryState(Resource resource, PrismState currentState) {
         return stateDAO.getPreviousPrimaryState(resource, currentState);
+    }
+
+    public StateActionPending createStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
+                .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole())).withAssignUserList(stateActionPendingDTO.getAssignUserList())
+                .withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
+        entityService.save(stateActionPending);
+        return stateActionPending;
+    }
+
+    public void deleteStateActionPendings(Resource resource) {
+        List<Action> actions = actionService.getActions(resource);
+        if (isEmpty(actions)) {
+            stateDAO.deleteStateActionPendings(resource);
+        } else {
+            stateDAO.deleteStateActionPendings(resource, actions);
+        }
     }
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {

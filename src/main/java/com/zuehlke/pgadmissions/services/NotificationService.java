@@ -131,12 +131,12 @@ public class NotificationService {
         UserRole userRole = roleService.getUserRoleById(userRoleId);
         Resource resource = userRole.getResource();
         Invitation invitation = userRole.getInvitation();
-        
+
         UserRoleCategoryDTO messageIndex = new UserRoleCategoryDTO(userRole.getUser(), resource, userRole.getRole().getRoleCategory());
         if (!sent.contains(messageIndex)) {
             PrismAction transitionAction = userRole.getRole().getRoleCategory().equals(STUDENT) ? SYSTEM_MANAGE_ACCOUNT
                     : PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT");
-            sendUserInvitationNotification(invitation.getUser(), userRole.getUser(), resource, transitionAction);
+            sendUserInvitationNotification(invitation.getUser(), userRole.getUser(), resource, invitation.getMessage(), transitionAction);
         }
 
         dequeueUserInvitation(invitation, userRole);
@@ -171,15 +171,16 @@ public class NotificationService {
         sendNotification(notificationTemplate, notificationDefinitionDTO);
     }
 
-    public void sendUserInvitationNotification(User initiator, User recipient, Resource resource, PrismAction transitionAction) {
+    public void sendUserInvitationNotification(User initiator, User recipient, Resource resource, String invitationMessage, PrismAction transitionAction) {
         sendNotification(getById(SYSTEM_USER_INVITATION_NOTIFICATION),
-                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(transitionAction));
+                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withInvitationMessage(invitationMessage)
+                        .withTransitionAction(transitionAction));
     }
 
-    public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource) {
+    public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource, String personalMessage) {
         sendNotification(getById(SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION),
                 new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
-                        .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
+                        .withInvitationMessage(personalMessage).withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
     }
 
     public void sendRegistrationNotification(User initiator, ActionOutcomeDTO actionOutcome) {
@@ -204,14 +205,6 @@ public class NotificationService {
     public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
         sendNotification(getById(SYSTEM_JOIN_NOTIFICATION), new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
                 .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT")));
-    }
-
-    public void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
-        System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
-        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
-                .withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST));
-        createOrUpdateUserNotification(system, recipient, definition, now());
     }
 
     public void sendConnectionNotification(User initiator, User recipient, AdvertTarget advertTarget) {
@@ -279,6 +272,23 @@ public class NotificationService {
         }
     }
 
+    private UserConnectionDTO sendConnectionRequest(Invitation invitation, User recipient, AdvertTarget advertTarget, Set<UserConnectionDTO> sent) {
+        UserConnectionDTO messageIndex;
+        messageIndex = new UserConnectionDTO(recipient, advertTarget.getOtherAdvert().getId());
+        if (!sent.contains(messageIndex)) {
+            sendConnectionRequest(invitation.getUser(), recipient, advertTarget);
+        }
+        return messageIndex;
+    }
+
+    private void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
+        System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
+        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
+                .withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST));
+        createOrUpdateUserNotification(system, recipient, definition, now());
+    }
+
     private void sendNotification(NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
         User user = definitionDTO.getRecipient();
         NotificationConfiguration configuration = getNotificationConfiguration(definitionDTO.getResource(), user, definition);
@@ -294,15 +304,6 @@ public class NotificationService {
     private void createOrUpdateUserNotification(Resource resource, User recipient, NotificationDefinition definition, LocalDate baseline) {
         entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
                 .withLastNotifiedDate(baseline));
-    }
-
-    private UserConnectionDTO sendConnectionRequest(Invitation invitation, User recipient, AdvertTarget advertTarget, Set<UserConnectionDTO> sent) {
-        UserConnectionDTO messageIndex;
-        messageIndex = new UserConnectionDTO(recipient, advertTarget.getOtherAdvert().getId());
-        if (!sent.contains(messageIndex)) {
-            sendConnectionRequest(invitation.getUser(), recipient, advertTarget);
-        }
-        return messageIndex;
     }
 
     private <T extends InvitationEntity> void dequeueUserInvitation(Invitation invitation, T invitationEntity) {

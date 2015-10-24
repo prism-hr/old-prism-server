@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_UNAUTHENTICATED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -68,11 +69,13 @@ import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UnverifiedUserDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
@@ -108,6 +111,9 @@ public class UserService {
 
     @Inject
     private ScopeService scopeService;
+
+    @Inject
+    private StateService stateService;
 
     @Inject
     private SystemService systemService;
@@ -162,6 +168,14 @@ public class UserService {
             return transientUser;
         } else {
             return duplicateUser;
+        }
+    }
+
+    public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
+        User user = getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+            stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
         }
     }
 
@@ -230,7 +244,8 @@ public class UserService {
             UserAccount account = user.getUserAccount();
             if (account == null) {
                 System system = systemService.getSystem();
-                notificationService.sendUserInvitationNotification(system.getUser(), user, system, SYSTEM_MANAGE_ACCOUNT);
+                String personalMessage = applicationContext.getBean(PropertyLoader.class).localizeLazy(system).loadLazy(SYSTEM_NOTIFICATION_UNAUTHENTICATED);
+                notificationService.sendUserInvitationNotification(system.getUser(), user, system, personalMessage, SYSTEM_MANAGE_ACCOUNT);
             } else {
                 String newPassword = PrismEncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);

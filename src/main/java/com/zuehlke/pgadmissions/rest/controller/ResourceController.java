@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.PrismRestUtils;
 import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
+import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
@@ -219,6 +220,14 @@ public class ResourceController {
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
                 body.getMessage(), body.getRoles());
         return userMapper.getUserRepresentationSimple(user);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/batch", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void addUsers(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody StateActionPendingDTO body) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        userService.getOrCreateUsersWithRoles(resource, body);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)

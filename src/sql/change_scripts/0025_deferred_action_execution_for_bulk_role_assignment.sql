@@ -35,3 +35,7 @@ create table state_action_pending (
 collate = utf8_general_ci
 engine = innodb
 ;
+
+alter table state_action_pending
+    drop column created_timestamp
+;

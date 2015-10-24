@@ -35,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.dto.ResourceRoleDTO;
+import com.zuehlke.pgadmissions.dto.UserRoleDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -47,7 +48,6 @@ public class RoleDAO {
     private SessionFactory sessionFactory;
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes) {
-
         return (List<PrismRole>) workflowDAO.getWorklflowCriteriaAssignment(resourceScope, Projections.groupProperty("role.id"))
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
@@ -91,6 +91,16 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.id", prismRole)) //
                 .uniqueResult();
+    }
+
+    public List<UserRoleDTO> getUserRoles(Resource resource) {
+        return (List<UserRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("user").as("user")) //
+                        .add(Projections.property("role.id").as("role"))) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .setResultTransformer(Transformers.aliasToBean(UserRoleDTO.class))
+                .list();
     }
 
     public List<ResourceRoleDTO> getUserRoles(User user, PrismScope resourceScope) {

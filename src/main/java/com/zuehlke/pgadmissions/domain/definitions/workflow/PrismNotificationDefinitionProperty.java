@@ -71,6 +71,7 @@ import com.zuehlke.pgadmissions.workflow.notification.property.TargetResourceAcc
 import com.zuehlke.pgadmissions.workflow.notification.property.TargetResourceOtherNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInitiatorEmailBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInitiatorFullNameBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.TemplateInvitationMessageBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateParentResourceCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateParentResourceNameBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.TemplateRecipientEmailBuilder;
@@ -104,6 +105,7 @@ public enum PrismNotificationDefinitionProperty {
     TEMPLATE_RESOURCE_SCOPE(TEMPLATE_GLOBAL, true, TemplateResourceScopeBuilder.class), //
     TEMPLATE_PARENT_RESOURCE_NAME(TEMPLATE_GLOBAL, true, TemplateParentResourceNameBuilder.class), //
     TEMPLATE_PARENT_RESOURCE_CODE(TEMPLATE_GLOBAL, true, TemplateParentResourceCodeBuilder.class), //
+    TEMPLATE_INVITATION_MESSAGE(TEMPLATE_GLOBAL, true, TemplateInvitationMessageBuilder.class), //
     ACTION_COMPLETE(ACTION_GLOBAL, false, ActionCompleteBuilder.class), //
     ACTION_VIEW_EDIT(ACTION_GLOBAL, false, ActionViewEditBuilder.class), //
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //

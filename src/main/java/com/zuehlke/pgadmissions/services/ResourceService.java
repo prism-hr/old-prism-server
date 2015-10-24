@@ -222,7 +222,7 @@ public class ResourceService {
 
     public ResourceParent inviteResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         ResourceParent resource = createResourceRelation(resourceRelationDTO, true);
-        notificationService.sendOrganizationInvitationNotification(userService.getCurrentUser(), resource.getUser(), resource);
+        notificationService.sendOrganizationInvitationNotification(userService.getCurrentUser(), resource.getUser(), resource, resourceRelationDTO.getMessage());
         return resource;
     }
 

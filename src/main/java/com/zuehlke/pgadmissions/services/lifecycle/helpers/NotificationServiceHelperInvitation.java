@@ -8,6 +8,8 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.UserConnectionDTO;
 import com.zuehlke.pgadmissions.dto.UserRoleCategoryDTO;
 import com.zuehlke.pgadmissions.services.InvitationService;
@@ -26,16 +28,14 @@ public class NotificationServiceHelperInvitation extends PrismServiceHelperAbstr
 
     @Override
     public void execute() throws Exception {
-        invitationService.getInvitations().forEach(invitation -> {
-            Set<UserRoleCategoryDTO> userRoleInvitations = Sets.newHashSet();
-            invitation.getUserRoles().forEach(userRole -> {
-                sendInvitationRequest(userRole.getId(), userRoleInvitations);
-            });
+        Set<UserRoleCategoryDTO> userRoleInvitations = Sets.newHashSet();
+        invitationService.getInvitationEntities(UserRole.class).forEach(userRole -> {
+            sendInvitationRequest(userRole, userRoleInvitations);
+        });
 
-            Set<UserConnectionDTO> connectionInvitations = Sets.newHashSet();
-            invitation.getAdvertTargets().forEach(advertTarget -> {
-                sendConnectionRequest(advertTarget.getId(), connectionInvitations);
-            });
+        Set<UserConnectionDTO> advertTargetInvitations = Sets.newHashSet();
+        invitationService.getInvitationEntities(AdvertTarget.class).forEach(advertTarget -> {
+            sendConnectionRequest(advertTarget, advertTargetInvitations);
         });
     }
 

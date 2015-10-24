@@ -994,7 +994,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_NO_RECOMMENDATIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that due to an unexpected glitch in our system we have no current recommendations for you"),
     SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are pleased to inform you that the applicant accepted your offer"),
     SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),
-    SYSTEM_NOTIFICATION_UNAUTHENTICATED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "You have not completed your registration. To do so, follow the link below, then you will be able to access system functions."), 
+    SYSTEM_NOTIFICATION_UNAUTHENTICATED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "You have not completed your registration. To do so, follow the instructions below."), 
 
     /*
      * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************

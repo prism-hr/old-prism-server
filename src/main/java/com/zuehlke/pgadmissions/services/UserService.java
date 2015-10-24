@@ -243,6 +243,7 @@ public class UserService {
         if (user != null) {
             UserAccount account = user.getUserAccount();
             if (account == null) {
+                // FIXME: make another message specific to this scenario
                 System system = systemService.getSystem();
                 String personalMessage = applicationContext.getBean(PropertyLoader.class).localizeLazy(system).loadLazy(SYSTEM_NOTIFICATION_UNAUTHENTICATED);
                 notificationService.sendUserInvitationNotification(system.getUser(), user, system, personalMessage, SYSTEM_MANAGE_ACCOUNT);

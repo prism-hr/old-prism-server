@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -105,7 +105,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PROPERTY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Property"),
     SYSTEM_DURATION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Duration"),
     SYSTEM_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preview"),
-    SYSTEM_NO_POSITION_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "no position specified"), 
+    SYSTEM_NO_POSITION_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "no position specified"),
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -1399,6 +1399,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INVITE_JUST_INVITED_NEXT_STEP(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "We will get back in touch with you to let you know when your invitation has been accepted."),
     SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite employers to join your network to receive opportunities from them."),
     SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite universities to join your network to promote opportunities to their students."),
+    SYSTEM_INVITE_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invitation message"),
+    SYSTEM_INVITE_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Please add optional message for invited person receive."),
     SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Another"),
 
     /*
@@ -1612,12 +1614,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "To help your students decide whether to pursue work experience or employment with this employer, tell us how you rate them."),
     SYSTEM_RESOURCE_PARENT_PROVIDE_ENDORSEMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Endorse Employer"),
     SYSTEM_RESOURCE_PARENT_PROVIDE_ENDORSEMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Confirm that you are happy to endorse this employer. Please be aware that declining this request will mean that your students cannot see their advert."),
-    SYSTEM_RESOURCE_PARENT_DEACTIVATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Deactivate"), 
+    SYSTEM_RESOURCE_PARENT_DEACTIVATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Deactivate"),
 
     /*
      * *************** SYSTEM RESOURCE OPPORTUNITY *********************
      */
-    
+
     SYSTEM_RESOURCE_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Select your preferred opportunity type."),
     SYSTEM_RESOURCE_OPPORTUNITY_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Accept the terms and conditions and specify the nature of your position."),
 
@@ -1946,8 +1948,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_QUALIFICATION_APPENDIX(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification Transcript"),
     PROFILE_QUALIFICATION_NO_ITEMS(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "This Application doesn't contain any Qualification"),
     PROFILE_QUALIFICATION_STUDY_LEVEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Study Level"),
-    PROFILE_QUALIFICATION_ORGANIZATION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Provider"), 
-    PROFILE_QUALIFICATION_POSITION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Program / Project"), 
+    PROFILE_QUALIFICATION_ORGANIZATION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Provider"),
+    PROFILE_QUALIFICATION_POSITION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Program / Project"),
 
     PROFILE_EMPLOYMENT_POSITION_HEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Positions"),
     PROFILE_EMPLOYMENT_POSITION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This section allows you to provide details about your employment history. Please only provide details that are relevant to your application."),

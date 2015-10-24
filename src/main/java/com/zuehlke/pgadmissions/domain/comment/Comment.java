@@ -378,8 +378,8 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.interested = interested;
     }
 
-    public void setEligible(PrismYesNoUnsureResponse applicationEligible) {
-        this.eligible = applicationEligible;
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
     }
 
     public CommentInterviewAppointment getInterviewAppointment() {

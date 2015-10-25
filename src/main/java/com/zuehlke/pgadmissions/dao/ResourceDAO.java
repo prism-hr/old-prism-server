@@ -436,6 +436,7 @@ public class ResourceDAO {
         }
 
         criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .add(getResourceParentConnectableConstraint(resourceScope, user));
 
         if (!isNullOrEmpty(searchTerm)) {

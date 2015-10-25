@@ -70,6 +70,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
@@ -697,8 +698,8 @@ public class AdvertService {
         return adverts;
     }
 
-    private AdvertTarget createAdvertTarget(User user, PrismScope resourceScope, Integer resourceId, ResourceTargetDTO targetDTO, String message, boolean validate) {
-        if (!(validate || resourceService.getResourceForWhichUserCanConnect(user, resourceScope, resourceId) == null)) {
+    private void createAdvertTarget(User user, PrismScope resourceScope, Integer resourceId, ResourceTargetDTO targetDTO, String message, boolean validate) {
+        if (!(validate && resourceService.getResourceForWhichUserCanConnect(user, resourceScope, resourceId) == null)) {
             ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
             Advert advert = resource.getAdvert();
 
@@ -712,35 +713,34 @@ public class AdvertService {
                 userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
             }
 
-            AdvertTarget target = null;
             if (targetDTO.getContext().equals(EMPLOYER)) {
-                target = createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message);
+                createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message);
             } else {
-                target = createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
+                createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
             }
-
-            return target;
         }
-
-        return null;
     }
 
-    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        return entityService
-                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
+    private void createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
+        entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
-    private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
-        AdvertTarget target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
+    private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
+        AdvertTarget targetUser = null;
         if (userTarget != null) {
-            target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
+            targetUser = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
         }
+        
+        AdvertTarget targetAdmin = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
+        Invitation invitation = invitationService.createInvitation(targetAdmin.getOtherUser(), message);
 
-        if (!updateAdvertTarget(target.getId(), true)) {
-            target.setInvitation(invitationService.createInvitation(target.getOtherUser(), message));
+        if (!(targetUser == null || updateAdvertTarget(targetUser.getId(), true))) {
+            targetUser.setInvitation(invitation);
         }
-
-        return target;
+        
+        if (!updateAdvertTarget(targetAdmin.getId(), true)) {
+            targetAdmin.setInvitation(invitation);
+        }
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -992,7 +992,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_CONFIGURATION_CONTENT_HINT(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Edit to amend the email content"),
     SYSTEM_NOTIFICATION_NO_RECOMMENDATIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that due to an unexpected glitch in our system we have no current recommendations for you"),
     SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are pleased to inform you that the applicant accepted your offer"),
-    SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"), 
+    SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),
 
     /*
      * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************
@@ -1663,7 +1663,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Position"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your position, or enter a new one"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Software Engineer"),
-    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Emloyment Type"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Employment Type"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your employment"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your employment."),
@@ -1672,6 +1672,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Position"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your referee's position, or enter a new one"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Business Unit Leader"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Employer"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for the employer"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Division"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for division, or enter a new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Human Resources"),
+    SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup College/University"),
+    SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for the college/university"),
+    SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Department"),
+    SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for the department, or enter a new one"),
+    SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************

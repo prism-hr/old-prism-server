@@ -1,13 +1,5 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
-import org.joda.time.LocalDateTime;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
@@ -15,6 +7,13 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import org.joda.time.LocalDateTime;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CommentDTO {
 
@@ -44,6 +43,9 @@ public class CommentDTO {
     private PrismYesNoUnsureResponse eligible;
 
     private Boolean interested;
+
+    @Valid
+    private ResourceRelationInvitationDTO resourceInvitation;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -183,6 +185,14 @@ public class CommentDTO {
 
     public void setRating(BigDecimal rating) {
         this.rating = rating;
+    }
+
+    public ResourceRelationInvitationDTO getResourceInvitation() {
+        return resourceInvitation;
+    }
+
+    public void setResourceInvitation(ResourceRelationInvitationDTO resourceInvitation) {
+        this.resourceInvitation = resourceInvitation;
     }
 
     public final CommentInterviewAppointmentDTO getInterviewAppointment() {

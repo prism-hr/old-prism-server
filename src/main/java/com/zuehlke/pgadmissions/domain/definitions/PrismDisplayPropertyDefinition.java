@@ -977,6 +977,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_PROJECT_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
     SYSTEM_NOTIFICATION_SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Registration Request"),
+    SYSTEM_NOTIFICATION_SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Registration Forgotten Request"),
     SYSTEM_NOTIFICATION_SYSTEM_PASSWORD_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Password Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_ACTIVITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Activity Update Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_CONNECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Connection Notification"),

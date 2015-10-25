@@ -1,46 +1,9 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
-import org.apache.commons.lang.WordUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
-import com.zuehlke.pgadmissions.domain.definitions.PrismGender;
-import com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismWorkflowConstraint;
+import com.google.common.collect.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.WorkflowDefinition;
@@ -54,6 +17,23 @@ import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.InstitutionService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.utils.TimeZoneUtils;
+import org.apache.commons.lang.WordUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.zuehlke.pgadmissions.utils.PrismWordUtils.pluralize;
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -109,6 +89,8 @@ public class StaticDataMapper {
         staticData.putAll(getWorkflowConstraints());
         staticData.putAll(getResourceFamilyCreations());
         staticData.putAll(getDomiciles());
+        staticData.putAll(getAdvertFunctions());
+        staticData.putAll(getAdvertIndustries());
         staticData.putAll(getAgeRanges());
         return staticData;
     }
@@ -162,9 +144,9 @@ public class StaticDataMapper {
     private Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class, PrismAdvertFunction.class,
-                PrismAdvertIndustry.class, PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
-                PrismGender.class }) {
+        for (Class<?> enumClass : new Class[]{PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+                PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
+                PrismGender.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -248,6 +230,14 @@ public class StaticDataMapper {
 
     private Map<String, Object> getDomiciles() {
         return singletonMap("domiciles", prismMapper.getDomicileRepresentations());
+    }
+
+    private Map<String, Object> getAdvertFunctions() {
+        return singletonMap("advertFunctions", prismMapper.getAdvertFunctionRepresentations());
+    }
+
+    private Map<String, Object> getAdvertIndustries() {
+        return singletonMap("advertIndustries", prismMapper.getAdvertIndustryRepresentations());
     }
 
 }

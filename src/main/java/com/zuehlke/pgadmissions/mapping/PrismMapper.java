@@ -1,18 +1,8 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.google.common.collect.ImmutableMap;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
+import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.rest.representation.AgeRangeRepresentation;
@@ -22,6 +12,18 @@ import com.zuehlke.pgadmissions.rest.representation.OpportunityCategoryRepresent
 import com.zuehlke.pgadmissions.services.PrismService;
 import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType.getOpportunityTypes;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional
@@ -54,6 +56,19 @@ public class PrismMapper {
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
         return prismService.getDomiciles().stream()
                 .map(d -> new DomicileRepresentation(d.getId(), propertyLoader.loadEager(PrismDisplayPropertyDefinition.valueOf("SYSTEM_DOMICILE_" + d.getId())), d.getCurrency()))
+                .collect(toList());
+    }
+
+    public List getAdvertFunctionRepresentations() {
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
+        return Stream.of(PrismAdvertFunction.values())
+                .map(f -> ImmutableMap.of("id", f, "name", propertyLoader.loadEager(PrismDisplayPropertyDefinition.valueOf("SYSTEM_ADVERT_FUNCTION_" + f))))
+                .collect(toList());
+    }
+    public List getAdvertIndustryRepresentations() {
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
+        return Stream.of(PrismAdvertIndustry.values())
+                .map(i -> ImmutableMap.of("id", i, "name", propertyLoader.loadEager(PrismDisplayPropertyDefinition.valueOf("SYSTEM_ADVERT_INDUSTRY_" + i))))
                 .collect(toList());
     }
 

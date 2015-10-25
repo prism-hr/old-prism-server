@@ -627,14 +627,14 @@ public class AdvertDAO {
     private void appendIndustryConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         List<PrismAdvertIndustry> industries = queryDTO.getIndustries();
         if (CollectionUtils.isNotEmpty(industries)) {
-            criteria.add(Restrictions.in("industry", industries));
+            criteria.add(Restrictions.in("industry.industry", industries));
         }
     }
 
     private void appendFunctionConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         List<PrismAdvertFunction> functions = queryDTO.getFunctions();
         if (CollectionUtils.isNotEmpty(functions)) {
-            criteria.add(Restrictions.in("function", functions));
+            criteria.add(Restrictions.in("function.function", functions));
         }
     }
 

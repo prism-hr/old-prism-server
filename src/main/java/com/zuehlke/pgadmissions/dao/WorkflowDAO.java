@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -261,6 +263,14 @@ public class WorkflowDAO {
 
     public static Junction getResourceParentManageableConstraint(PrismScope resourceScope, User user) {
         return getResourceParentManageableConstraint(resourceScope)
+                .add(Restrictions.eq("userRole.user", user));
+    }
+    
+    public static Junction getResourceParentConnectableConstraint(PrismScope resourceScope, User user) {
+        return getResourceParentManageableStateConstraint(resourceScope.name()) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
+                        .add(Restrictions.eq("role.roleCategory", RECRUITER))) //
                 .add(Restrictions.eq("userRole.user", user));
     }
 

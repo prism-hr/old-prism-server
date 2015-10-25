@@ -69,6 +69,9 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
+    @Column(name = "requested")
+    private Boolean requested;
+
     @Column(name = "assigned_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
@@ -163,6 +166,14 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         this.role = role;
     }
 
+    public Boolean getRequested() {
+        return requested;
+    }
+
+    public void setRequested(Boolean requested) {
+        this.requested = requested;
+    }
+
     public DateTime getAssignedTimestamp() {
         return assignedTimestamp;
     }
@@ -193,6 +204,11 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
 
     public UserRole withRole(Role role) {
         this.role = role;
+        return this;
+    }
+
+    public UserRole withRequested(Boolean requested) {
+        this.requested = requested;
         return this;
     }
 

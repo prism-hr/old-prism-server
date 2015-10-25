@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_UNAUTHENTICATED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -63,7 +61,6 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
@@ -243,10 +240,7 @@ public class UserService {
         if (user != null) {
             UserAccount account = user.getUserAccount();
             if (account == null) {
-                // FIXME: make another message specific to this scenario
-                System system = systemService.getSystem();
-                String personalMessage = applicationContext.getBean(PropertyLoader.class).localizeLazy(system).loadLazy(SYSTEM_NOTIFICATION_UNAUTHENTICATED);
-                notificationService.sendUserInvitationNotification(system.getUser(), user, system, personalMessage, SYSTEM_MANAGE_ACCOUNT);
+                notificationService.sendCompleteRegistrationForgottenRequest(user);
             } else {
                 String newPassword = PrismEncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);

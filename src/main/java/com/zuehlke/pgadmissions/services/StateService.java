@@ -3,11 +3,9 @@ package com.zuehlke.pgadmissions.services;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.io.IOUtils.closeQuietly;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
-import java.io.StringReader;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -16,8 +14,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,16 +54,14 @@ import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.utils.PrismMappingUtils;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.termination.StateTerminationResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 @Service
 @Transactional
 public class StateService {
-
-    private static final Logger logger = LoggerFactory.getLogger(StateService.class);
 
     @Inject
     private StateDAO stateDAO;
@@ -101,6 +95,9 @@ public class StateService {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private PrismMappingUtils prismMappingUtils;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -242,29 +239,21 @@ public class StateService {
         return getStateTransition(resource, comment.getAction(), resource.getState().getId());
     }
 
+    @Transactional(timeout = 600)
+    @SuppressWarnings("unchecked")
     public void executeStateActionPending(Integer stateActionPendingId) {
         StateActionPending stateActionPending = getStateActionPendingById(stateActionPendingId);
+        Set<UserDTO> userDTOs = prismMappingUtils.readValue(stateActionPending.getAssignUserList(), Set.class, UserDTO.class);
 
-        CSVReader csvReader = null;
         Set<User> users = Sets.newHashSet();
-        try {
-            csvReader = new CSVReader(new StringReader(stateActionPending.getAssignUserList()));
-
-            String[] user;
-            while ((user = csvReader.readNext()) != null) {
-                users.add(userService.getOrCreateUser(user[0], user[1], user[2]));
-            }
-        } catch (Exception e) {
-            logger.error("User assignment list could not be read", e);
-        } finally {
-            closeQuietly(csvReader);
-        }
+        userDTOs.forEach(userDTO -> users.add(userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail())));
 
         roleService.createUserRoles(stateActionPending.getUser(), stateActionPending.getResource(), users, stateActionPending.getAssignUserMessage(),
                 stateActionPending.getAssignUserRole().getId());
         entityService.delete(stateActionPending);
     }
 
+    @Transactional(timeout = 600)
     public void executeDeferredStateTransition(PrismScope resourceScope, Integer resourceId, PrismAction actionId) {
         Resource resource = resourceService.getById(resourceScope, resourceId);
         Action action = actionService.getById(actionId);

@@ -183,9 +183,14 @@ public class NotificationService {
                         .withInvitationMessage(personalMessage).withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
     }
 
-    public void sendRegistrationNotification(User initiator, ActionOutcomeDTO actionOutcome) {
+    public void sendCompleteRegistrationRequest(User initiator, ActionOutcomeDTO actionOutcome) {
         sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
                 .withResource(actionOutcome.getTransitionResource()).withTransitionAction(actionOutcome.getTransitionAction().getId()));
+    }
+
+    public void sendCompleteRegistrationForgottenRequest(User initiator) {
+        sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
+                .withResource(systemService.getSystem()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
     public void sendResetPasswordNotification(User initiator, String newPassword) {

@@ -1,6 +1,11 @@
 package com.zuehlke.pgadmissions.rest.dto;
 
+import java.util.List;
+
+import javax.validation.Valid;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 public class StateActionPendingDTO {
 
@@ -8,7 +13,8 @@ public class StateActionPendingDTO {
 
     private PrismRole assignUserRole;
 
-    private String assignUserList;
+    @Valid
+    private List<UserDTO> assignUserList;
 
     private String assignUserMessage;
 
@@ -28,11 +34,11 @@ public class StateActionPendingDTO {
         this.assignUserRole = assignUserRole;
     }
 
-    public String getAssignUserList() {
+    public List<UserDTO> getAssignUserList() {
         return assignUserList;
     }
 
-    public void setAssignUserList(String assignUserList) {
+    public void setAssignUserList(List<UserDTO> assignUserList) {
         this.assignUserList = assignUserList;
     }
 

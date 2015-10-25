@@ -221,13 +221,17 @@ public class ResourceService {
     }
 
     public ResourceParent inviteResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
-        ResourceParent resource = createResourceRelation(resourceRelationDTO, true);
-        notificationService.sendOrganizationInvitationNotification(userService.getCurrentUser(), resource.getUser(), resource, resourceRelationDTO.getMessage());
+        return inviteResourceRelation(userService.getCurrentUser(), resourceRelationDTO, resourceRelationDTO.getMessage());
+    }
+
+    public ResourceParent inviteResourceRelation(User userCurrent, ResourceRelationInvitationDTO resourceRelationDTO, String message) {
+        ResourceParent resource = createResourceRelation(userCurrent, resourceRelationDTO, true);
+        notificationService.sendOrganizationInvitationNotification(userService.getCurrentUser(), resource.getUser(), resource, message);
         return resource;
     }
 
-    public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
-        return createResourceRelation(resourceRelationDTO, false);
+    public ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationInvitationDTO) {
+        return createResourceRelation(userService.getCurrentUser(), resourceRelationInvitationDTO, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -757,13 +761,13 @@ public class ResourceService {
     public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, Optional<String> query) {
         return resourceDAO.getResources(enclosingResource, resourceScope, query);
     }
-    
+
     public User joinResource(ResourceParent resource, UserDTO userDTO, PrismRoleContext roleContext) {
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
         joinResource(resource, user, roleContext, null);
         return user;
     }
-    
+
     public void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext) {
         joinResource(resource, user, roleContext, true);
     }
@@ -959,7 +963,7 @@ public class ResourceService {
         resource.setOpportunityCategories(opportunityCategories);
         resource.getAdvert().setOpportunityCategories(opportunityCategories);
     }
-    
+
     private void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext, Boolean requested) {
         User currentUser = userService.getCurrentUser();
         Action viewEditAction = actionService.getViewEditAction(resource);
@@ -986,24 +990,14 @@ public class ResourceService {
         }
     }
 
-    private <T extends ResourceCreationDTO> void createResourceTarget(Resource resource, T resourceDTO) {
-        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
-            if (target != null) {
-                advertService.createAdvertTarget(resource.getResourceScope(), resource.getId(), target);
-            }
-        }
-    }
-
-    private ResourceParent createResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO, boolean invitation) {
-        if (validateResourceFamilyCreation(resourceRelationDTO)) {
+    private ResourceParent createResourceRelation(User userCurrent, ResourceRelationInvitationDTO resourceRelationInvitationDTO, boolean invitation) {
+        if (validateResourceFamilyCreation(resourceRelationInvitationDTO)) {
             User userAssign = null;
-            User userCurrent = userService.getCurrentUser();
             User userResource = systemService.getSystem().getUser();
 
             boolean assignedUsers = false;
             ResourceParent resource = null;
-            for (ResourceCreationDTO resourceDTO : resourceRelationDTO.getResources()) {
+            for (ResourceCreationDTO resourceDTO : resourceRelationInvitationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
 
                 PrismScope thisScope = resourceDTO.getScope();
@@ -1014,7 +1008,7 @@ public class ResourceService {
                     duplicateResource = getActiveResourceByName(thisScope, ((ResourceParentDTO) resourceDTO).getName());
                 }
 
-                resourceDTO.setContext(resourceRelationDTO.getContext().getContext());
+                resourceDTO.setContext(resourceRelationInvitationDTO.getContext().getContext());
                 if (thisId == null && duplicateResource == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                     if (resource != null) {
@@ -1022,12 +1016,12 @@ public class ResourceService {
                     }
 
                     if (!assignedUsers && thisScope.getScopeCategory().equals(OPPORTUNITY)) {
-                        UserDTO userDTO = resourceRelationDTO.getUser();
+                        UserDTO userDTO = resourceRelationInvitationDTO.getUser();
                         if (userDTO != null) {
                             userAssign = joinResource(resource, userDTO, VIEWER);
                         }
 
-                        if (resourceRelationDTO.getContext().equals(APPLICANT)) {
+                        if (resourceRelationInvitationDTO.getContext().equals(APPLICANT)) {
                             joinResource(resource, userCurrent, STUDENT);
                         }
 
@@ -1036,10 +1030,10 @@ public class ResourceService {
 
                     User userOwner;
                     if (invitation) {
-                        UserDTO userDTO = resourceRelationDTO.getUser();
+                        UserDTO userDTO = resourceRelationInvitationDTO.getUser();
                         userOwner = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
                     } else if (thisScope.equals(PROJECT)) {
-                        userOwner = resourceRelationDTO.getContext().equals(REFEREE) ? userAssign : userCurrent;
+                        userOwner = resourceRelationInvitationDTO.getContext().equals(REFEREE) ? userAssign : userCurrent;
                     } else {
                         userOwner = userResource;
                     }
@@ -1061,6 +1055,15 @@ public class ResourceService {
         }
 
         throw new UnsupportedOperationException("Invalid resource relation creation attempt");
+    }
+
+    private <T extends ResourceCreationDTO> void createResourceTarget(Resource resource, T resourceDTO) {
+        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+            ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
+            if (target != null) {
+                advertService.createAdvertTarget(resource.getResourceScope(), resource.getId(), target);
+            }
+        }
     }
 
     private boolean validateResourceFamilyCreation(ResourceRelationInvitationDTO resourceRelationDTO) {

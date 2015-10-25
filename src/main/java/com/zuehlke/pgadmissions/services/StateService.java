@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
@@ -106,20 +105,20 @@ public class StateService {
         return entityService.getById(State.class, id);
     }
 
-    public StateGroup getStateGroupById(PrismStateGroup stateGroupId) {
-        return entityService.getById(StateGroup.class, stateGroupId);
+    public StateGroup getStateGroupById(PrismStateGroup id) {
+        return entityService.getById(StateGroup.class, id);
     }
 
-    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDurationDefinition stateDurationDefinitionId) {
-        return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
+    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDurationDefinition id) {
+        return entityService.getById(StateDurationDefinition.class, id);
     }
 
-    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation stateTransitionEvaluationId) {
-        return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
+    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation id) {
+        return entityService.getById(StateTransitionEvaluation.class, id);
     }
 
-    public StateActionPending getStateActionPendingById(Integer stateActionPendingId) {
-        return entityService.getById(StateActionPending.class, stateActionPendingId);
+    public StateActionPending getStateActionPendingById(Integer id) {
+        return entityService.getById(StateActionPending.class, id);
     }
 
     public List<State> getStates() {
@@ -192,7 +191,6 @@ public class StateService {
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
         resourceService.recordStateTransition(resource, comment, state, transitionState);
-        deleteStateActionPendings(resource);
         advertService.recordPartnershipStateTransition(resource, comment);
 
         resourceService.processResource(resource, comment);
@@ -376,19 +374,10 @@ public class StateService {
 
     public StateActionPending createStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
         StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
-                .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole())).withAssignUserList(stateActionPendingDTO.getAssignUserList())
-                .withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
+                .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))
+                .withAssignUserList(prismMappingUtils.writeValue(stateActionPendingDTO.getAssignUserList())).withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
         entityService.save(stateActionPending);
         return stateActionPending;
-    }
-
-    public void deleteStateActionPendings(Resource resource) {
-        List<Action> actions = actionService.getActions(resource);
-        if (isEmpty(actions)) {
-            stateDAO.deleteStateActionPendings(resource);
-        } else {
-            stateDAO.deleteStateActionPendings(resource, actions);
-        }
     }
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {

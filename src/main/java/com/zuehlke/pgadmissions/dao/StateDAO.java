@@ -313,22 +313,4 @@ public class StateDAO {
                 .list();
     }
 
-    public void deleteStateActionPendings(Resource resource) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete StateActionPending "
-                        + resource.getResourceScope().getLowerCamelName() + " = :resource") //
-                .setParameter("resource", resource) //
-                .executeUpdate();
-    }
-
-    public void deleteStateActionPendings(Resource resource, List<Action> actions) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete StateActionPending "
-                        + resource.getResourceScope().getLowerCamelName() + " = :resource "
-                        + "and action not in (:actions)") //
-                .setParameter("resource", resource) //
-                .setParameterList("actions", actions) //
-                .executeUpdate();
-    }
-
 }

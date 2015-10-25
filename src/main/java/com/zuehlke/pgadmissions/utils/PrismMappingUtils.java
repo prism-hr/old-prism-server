@@ -22,7 +22,16 @@ public class PrismMappingUtils {
         try {
             return objectMapper.readValue(content, objectMapper.getTypeFactory().constructCollectionType(collectionClass, objectClass));
         } catch (Exception e) {
-            logger.error("Unable to process json", e);
+            logger.error("Unable to read json", e);
+            return null;
+        }
+    }
+
+    public String writeValue(Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (Exception e) {
+            logger.error("Unable to write json", e);
             return null;
         }
     }

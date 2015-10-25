@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.advert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,17 +22,17 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
     @GeneratedValue
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "advert_id")
-    private Advert advert;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Lob
-    @Column(name = "advert_target_list")
-    private String advertTargetList;
+    @Column(name = "advert_target_invite_list")
+    private String advertTargetInviteList;
+
+    @Lob
+    @Column(name = "advert_target_connect_list")
+    private String advertTargetConnectList;
 
     @Lob
     @Column(name = "advert_target_message")
@@ -47,14 +46,6 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
         this.id = id;
     }
 
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
-    }
-
     public User getUser() {
         return user;
     }
@@ -63,12 +54,20 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
         this.user = user;
     }
 
-    public String getAdvertTargetList() {
-        return advertTargetList;
+    public String getAdvertTargetInviteList() {
+        return advertTargetInviteList;
     }
 
-    public void setAdvertTargetList(String advertTargetList) {
-        this.advertTargetList = advertTargetList;
+    public void setAdvertTargetInviteList(String advertTargetInviteList) {
+        this.advertTargetInviteList = advertTargetInviteList;
+    }
+
+    public String getAdvertTargetConnectList() {
+        return advertTargetConnectList;
+    }
+
+    public void setAdvertTargetConnectList(String advertTargetConnectList) {
+        this.advertTargetConnectList = advertTargetConnectList;
     }
 
     public String getAdvertTargetMessage() {
@@ -77,6 +76,26 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
 
     public void setAdvertTargetMessage(String advertTargetMessage) {
         this.advertTargetMessage = advertTargetMessage;
+    }
+
+    public AdvertTargetPending withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public AdvertTargetPending withAdvertTargetInviteList(String advertTargetInviteList) {
+        this.advertTargetInviteList = advertTargetInviteList;
+        return this;
+    }
+
+    public AdvertTargetPending withAdvertTargetConnectList(String advertTargetConnectList) {
+        this.advertTargetConnectList = advertTargetConnectList;
+        return this;
+    }
+
+    public AdvertTargetPending withAdvertTargetMessage(String advertTargetMessage) {
+        this.advertTargetMessage = advertTargetMessage;
+        return this;
     }
 
     @Override

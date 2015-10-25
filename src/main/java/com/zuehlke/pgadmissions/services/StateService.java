@@ -33,12 +33,14 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTerminationEvaluation;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.RoleTransition;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionAssignment;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionNotification;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationConfiguration;
 import com.zuehlke.pgadmissions.domain.workflow.StateDurationDefinition;
 import com.zuehlke.pgadmissions.domain.workflow.StateGroup;
@@ -50,6 +52,9 @@ import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionDTO;
 import com.zuehlke.pgadmissions.dto.StateTransitionPendingDTO;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
+import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import com.zuehlke.pgadmissions.utils.PrismMappingUtils;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.termination.StateTerminationResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
 
@@ -88,26 +93,36 @@ public class StateService {
     private SystemService systemService;
 
     @Inject
+    private UserService userService;
+
+    @Inject
+    private PrismMappingUtils prismMappingUtils;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public State getById(PrismState id) {
         return entityService.getById(State.class, id);
     }
 
-    public StateGroup getStateGroupById(PrismStateGroup stateGroupId) {
-        return entityService.getById(StateGroup.class, stateGroupId);
+    public StateGroup getStateGroupById(PrismStateGroup id) {
+        return entityService.getById(StateGroup.class, id);
     }
 
-    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDurationDefinition stateDurationDefinitionId) {
-        return entityService.getById(StateDurationDefinition.class, stateDurationDefinitionId);
+    public StateDurationDefinition getStateDurationDefinitionById(PrismStateDurationDefinition id) {
+        return entityService.getById(StateDurationDefinition.class, id);
     }
 
-    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation stateTransitionEvaluationId) {
-        return entityService.getById(StateTransitionEvaluation.class, stateTransitionEvaluationId);
+    public StateTransitionEvaluation getStateTransitionEvaluationById(PrismStateTransitionEvaluation id) {
+        return entityService.getById(StateTransitionEvaluation.class, id);
+    }
+
+    public StateActionPending getStateActionPendingById(Integer id) {
+        return entityService.getById(StateActionPending.class, id);
     }
 
     public List<State> getStates() {
-        return entityService.list(State.class);
+        return entityService.getAll(State.class);
     }
 
     public List<State> getConfigurableStates() {
@@ -115,11 +130,15 @@ public class StateService {
     }
 
     public List<StateGroup> getStateGroups() {
-        return entityService.list(StateGroup.class);
+        return entityService.getAll(StateGroup.class);
     }
 
     public List<StateTransitionEvaluation> getStateTransitionEvaluations() {
-        return entityService.list(StateTransitionEvaluation.class);
+        return entityService.getAll(StateTransitionEvaluation.class);
+    }
+
+    public List<Integer> getStateActionPendings() {
+        return stateDAO.getStateActionPendings();
     }
 
     public StateDurationConfiguration getStateDurationConfiguration(Resource resource, StateDurationDefinition definition) {
@@ -141,7 +160,7 @@ public class StateService {
     }
 
     public List<StateAction> getStateActions() {
-        return entityService.list(StateAction.class);
+        return entityService.getAll(StateAction.class);
     }
 
     public List<State> getOrderedTransitionStates(State state, State... excludedTransitionStates) {
@@ -218,6 +237,21 @@ public class StateService {
         return getStateTransition(resource, comment.getAction(), resource.getState().getId());
     }
 
+    @Transactional(timeout = 600)
+    @SuppressWarnings("unchecked")
+    public void executeStateActionPending(Integer stateActionPendingId) {
+        StateActionPending stateActionPending = getStateActionPendingById(stateActionPendingId);
+        Set<UserDTO> userDTOs = prismMappingUtils.readValue(stateActionPending.getAssignUserList(), Set.class, UserDTO.class);
+
+        Set<User> users = Sets.newHashSet();
+        userDTOs.forEach(userDTO -> users.add(userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail())));
+
+        roleService.createUserRoles(stateActionPending.getUser(), stateActionPending.getResource(), users, stateActionPending.getAssignUserMessage(),
+                stateActionPending.getAssignUserRole().getId());
+        entityService.delete(stateActionPending);
+    }
+
+    @Transactional(timeout = 600)
     public void executeDeferredStateTransition(PrismScope resourceScope, Integer resourceId, PrismAction actionId) {
         Resource resource = resourceService.getById(resourceScope, resourceId);
         Action action = actionService.getById(actionId);
@@ -336,6 +370,14 @@ public class StateService {
 
     public PrismState getPreviousPrimaryState(Resource resource, PrismState currentState) {
         return stateDAO.getPreviousPrimaryState(resource, currentState);
+    }
+
+    public StateActionPending createStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
+                .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))
+                .withAssignUserList(prismMappingUtils.writeValue(stateActionPendingDTO.getAssignUserList())).withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
+        entityService.save(stateActionPending);
+        return stateActionPending;
     }
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {

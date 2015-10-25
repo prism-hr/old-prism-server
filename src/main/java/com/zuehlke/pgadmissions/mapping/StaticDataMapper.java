@@ -97,7 +97,7 @@ public class StaticDataMapper {
 
     private Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
-        List<Action> actions = entityService.list(Action.class);
+        List<Action> actions = entityService.getAll(Action.class);
         List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId()))
                 .collect(Collectors.toList());
         staticData.put("actions", actionRepresentations);
@@ -106,7 +106,7 @@ public class StaticDataMapper {
 
     private Map<String, Object> getStates() {
         Map<String, Object> staticData = Maps.newHashMap();
-        List<State> states = entityService.list(State.class);
+        List<State> states = entityService.getAll(State.class);
         staticData.put("states", states.stream().map(stateMapper::getStateRepresentationSimple).collect(Collectors.toList()));
         return staticData;
     }

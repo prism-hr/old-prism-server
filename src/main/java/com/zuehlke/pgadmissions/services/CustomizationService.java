@@ -221,7 +221,7 @@ public class CustomizationService {
     }
 
     public List<DisplayPropertyConfiguration> getAllLocalizedProperties() {
-        return entityService.list(DisplayPropertyConfiguration.class);
+        return entityService.getAll(DisplayPropertyConfiguration.class);
     }
 
     public void createOrUpdateConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,

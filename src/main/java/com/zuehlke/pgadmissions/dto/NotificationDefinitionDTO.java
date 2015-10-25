@@ -27,6 +27,8 @@ public class NotificationDefinitionDTO {
     private ResourceParent invitedResource;
 
     private PrismMotivationContext invitedResourceContext;
+    
+    private String invitationMessage;
 
     private PrismAction transitionAction;
 
@@ -68,6 +70,14 @@ public class NotificationDefinitionDTO {
 
     public PrismMotivationContext getInvitedResourceContext() {
         return invitedResourceContext;
+    }
+
+    public String getInvitationMessage() {
+        return invitationMessage;
+    }
+
+    public void setInvitationMessage(String invitationMessage) {
+        this.invitationMessage = invitationMessage;
     }
 
     public PrismAction getTransitionAction() {
@@ -118,6 +128,11 @@ public class NotificationDefinitionDTO {
 
     public NotificationDefinitionDTO withInvitedResourceContext(PrismMotivationContext invitedResourceContext) {
         this.invitedResourceContext = invitedResourceContext;
+        return this;
+    }
+    
+    public NotificationDefinitionDTO withInvitationMessage(String invitationMessage) {
+        this.invitationMessage = invitationMessage;
         return this;
     }
 

@@ -8,7 +8,9 @@
 </p>
 
 <#if TEMPLATE_INVITATION_MESSAGE?has_content>
-    Personal message from ${TEMPLATE_INITIATOR_FULL_NAME}: "${TEMPLATE_INVITATION_MESSAGE}".
+    <p>
+        Personal message from ${TEMPLATE_INITIATOR_FULL_NAME}: "${TEMPLATE_INVITATION_MESSAGE}".
+    </p>
 </#if>
 
 <p>

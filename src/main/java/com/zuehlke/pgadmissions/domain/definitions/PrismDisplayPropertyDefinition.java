@@ -89,8 +89,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VIEW_EDIT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "View/Edit"),
     SYSTEM_NEW_PASSWORD(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "New password"),
     SYSTEM_HOMEPAGE(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Homepage"),
-    SYSTEM_NOTIFICATION_PROPERTY_ERROR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Property value unavailable"),
-    SYSTEM_HELPDESK_REPORT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Please report this matter to our helpdesk"),
     SYSTEM_USER_ACCOUNT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "User Account"),
     SYSTEM_APPLY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Apply Now"),
     SYSTEM_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "The Opportunity Portal"),

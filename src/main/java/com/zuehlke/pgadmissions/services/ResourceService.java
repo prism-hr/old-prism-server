@@ -222,7 +222,7 @@ public class ResourceService {
 
     public ResourceParent inviteResourceRelation(ResourceRelationInvitationDTO resourceRelationDTO) {
         ResourceParent resource = createResourceRelation(resourceRelationDTO, true);
-        notificationService.sendOrganizationInvitationNotification(userService.getCurrentUser(), resource.getUser(), resource);
+        notificationService.sendOrganizationInvitationNotification(userService.getCurrentUser(), resource.getUser(), resource, resourceRelationDTO.getMessage());
         return resource;
     }
 
@@ -436,11 +436,14 @@ public class ResourceService {
         return resourceDAO.getResourceForWhichUserHasRoles(user, roles);
     }
 
-    public List<ResourceConnectionDTO> getResourcesForWhichUserCanMakeConnections(User user, String searchTerm) {
+    public Integer getResourceForWhichUserCanConnect(User user, PrismScope resourceScope, Integer resourceId) {
+        return resourceDAO.getResourceForWhichUserCanConnect(user, resourceScope, resourceId);
+    }
+
+    public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, String searchTerm) {
         Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm)
-                    .forEach(resource -> resources.add(resource));
+            resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> resources.add(resource));
         }
         return new ArrayList<>(resources);
     }
@@ -754,41 +757,19 @@ public class ResourceService {
     public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, Optional<String> query) {
         return resourceDAO.getResources(enclosingResource, resourceScope, query);
     }
-
+    
     public User joinResource(ResourceParent resource, UserDTO userDTO, PrismRoleContext roleContext) {
         User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-        joinResource(resource, user, roleContext);
+        joinResource(resource, user, roleContext, null);
         return user;
+    }
+    
+    public void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext) {
+        joinResource(resource, user, roleContext, true);
     }
 
     public void joinResource(ResourceCreationDTO resource, User user, PrismRoleContext roleContext) {
-        joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext);
-    }
-
-    public void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext) {
-        User currentUser = userService.getCurrentUser();
-        Action viewEditAction = actionService.getViewEditAction(resource);
-        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser, false);
-
-        Role role = null;
-        String resourceName = resource.getResourceScope().name();
-
-        if (roleContext.equals(STUDENT) && !roleService.hasUserRole(resource, user, PrismRole.valueOf(resourceName + "_STUDENT"))) {
-            role = roleService.getById(PrismRole.valueOf(resourceName + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
-        } else if (!roleService.hasUserRole(resource, user, PrismRoleGroup.valueOf(resourceName + "_STAFF_GROUP"))) {
-            role = roleService.getById(PrismRole.valueOf(resourceName + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withAssignedTimestamp(now()));
-        }
-
-        if (canViewEdit && role != null) {
-            executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
-                    new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
-        } else if (!(canViewEdit || roleService.hasUserRole(resource, user, role.getId()))) {
-            userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
-                notificationService.sendJoinRequest(user, admin, resource);
-            });
-        }
+        joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext, true);
     }
 
     public void activateResource(User user, ResourceParent resource) {
@@ -977,6 +958,32 @@ public class ResourceService {
     private void setResourceOpportunityCategories(ResourceParent resource, String opportunityCategories) {
         resource.setOpportunityCategories(opportunityCategories);
         resource.getAdvert().setOpportunityCategories(opportunityCategories);
+    }
+    
+    private void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext, Boolean requested) {
+        User currentUser = userService.getCurrentUser();
+        Action viewEditAction = actionService.getViewEditAction(resource);
+        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser, false);
+
+        Role role = null;
+        String resourceName = resource.getResourceScope().name();
+
+        if (roleContext.equals(STUDENT) && !roleService.hasUserRole(resource, user, PrismRole.valueOf(resourceName + "_STUDENT"))) {
+            role = roleService.getById(PrismRole.valueOf(resourceName + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
+            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now()));
+        } else if (!roleService.hasUserRole(resource, user, PrismRoleGroup.valueOf(resourceName + "_STAFF_GROUP"))) {
+            role = roleService.getById(PrismRole.valueOf(resourceName + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
+            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now()));
+        }
+
+        if (canViewEdit && role != null) {
+            executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
+                    new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
+        } else if (!(canViewEdit || roleService.hasUserRole(resource, user, role.getId()))) {
+            userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
+                notificationService.sendJoinRequest(user, admin, resource);
+            });
+        }
     }
 
     private <T extends ResourceCreationDTO> void createResourceTarget(Resource resource, T resourceDTO) {

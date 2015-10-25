@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -62,17 +61,18 @@ import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.domain.user.UserCompetence;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
 import com.zuehlke.pgadmissions.dto.UnverifiedUserDTO;
 import com.zuehlke.pgadmissions.dto.UserSelectionDTO;
 import com.zuehlke.pgadmissions.exceptions.PrismValidationException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowPermissionException;
+import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
 import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
@@ -108,6 +108,9 @@ public class UserService {
 
     @Inject
     private ScopeService scopeService;
+
+    @Inject
+    private StateService stateService;
 
     @Inject
     private SystemService systemService;
@@ -165,9 +168,17 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, List<PrismRole> roles) {
+    public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
+        User user = getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+            stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
+        }
+    }
+
+    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message, List<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
-        roleService.createUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
+        roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
 
@@ -229,8 +240,7 @@ public class UserService {
         if (user != null) {
             UserAccount account = user.getUserAccount();
             if (account == null) {
-                System system = systemService.getSystem();
-                notificationService.sendUserInvitationNotification(system.getUser(), user, system, SYSTEM_MANAGE_ACCOUNT);
+                notificationService.sendCompleteRegistrationForgottenRequest(user);
             } else {
                 String newPassword = PrismEncryptionUtils.getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);

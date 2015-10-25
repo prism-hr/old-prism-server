@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has accepted your request to join ${TEMPLATE_RESOURCE_NAME}. 
+    ${TEMPLATE_INITIATOR_FULL_NAME} has accepted you as a member of ${TEMPLATE_RESOURCE_NAME}. 
 </p>
 
 <p>

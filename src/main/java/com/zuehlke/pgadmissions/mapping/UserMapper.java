@@ -254,7 +254,7 @@ public class UserMapper {
 
     public List<ResourceRepresentationConnection> getUserConnectionResourceRepresentations(User user, String searchTerm) {
         List<ResourceRepresentationConnection> representations = Lists.newLinkedList();
-        resourceService.getResourcesForWhichUserCanMakeConnections(user, searchTerm).forEach(resource -> {
+        resourceService.getResourcesForWhichUserCanConnect(user, searchTerm).forEach(resource -> {
             representations.add(resourceMapper.getResourceRepresentationConnection(resource));
         });
         return representations;

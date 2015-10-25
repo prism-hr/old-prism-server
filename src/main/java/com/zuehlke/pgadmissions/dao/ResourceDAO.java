@@ -4,7 +4,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.zuehlke.pgadmissions.PrismConstants.SEQUENCE_IDENTIFIER;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getLikeConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentConnectableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismFilterSortOrder.getOrderExpression;
@@ -401,6 +401,17 @@ public class ResourceDAO {
                 .setResultTransformer(Transformers.aliasToBean(ResourceActivityDTO.class)) //
                 .uniqueResult();
     }
+    
+    public Integer getResourceForWhichUserCanConnect(User user, PrismScope resourceScope, Integer resourceId) {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("resource.id"))
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.id", resourceId)) //
+                .add(WorkflowDAO.getResourceParentConnectableConstraint(resourceScope, user)) //
+                .uniqueResult();
+    }
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, PrismScope resourceScope, String searchTerm) {
         ProjectionList projections = Projections.projectionList() //
@@ -425,7 +436,7 @@ public class ResourceDAO {
         }
 
         criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(getResourceParentManageableConstraint(resourceScope, user));
+                .add(getResourceParentConnectableConstraint(resourceScope, user));
 
         if (!isNullOrEmpty(searchTerm)) {
             criteria.add(Restrictions.like(resourceReference + ".name", searchTerm, MatchMode.ANYWHERE));

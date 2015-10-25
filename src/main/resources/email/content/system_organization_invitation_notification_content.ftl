@@ -13,6 +13,10 @@
 	and university departments.
 </p>
 
+<#if TEMPLATE_INVITATION_MESSAGE?has_content>
+    Personal message from ${TEMPLATE_INITIATOR_FULL_NAME}: "${TEMPLATE_INVITATION_MESSAGE}".
+</#if>
+
 <p>
 	Follow the link below to register and join our network.	
 </p>

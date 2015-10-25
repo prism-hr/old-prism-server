@@ -163,7 +163,7 @@ public class ActionService {
     }
 
     public List<Action> getActions() {
-        return entityService.list(Action.class);
+        return entityService.getAll(Action.class);
     }
 
     public List<PrismAction> getEscalationActions() {

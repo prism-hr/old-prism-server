@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain.user;
+package com.zuehlke.pgadmissions.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,15 +6,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-
-import com.zuehlke.pgadmissions.domain.Invitation;
-import com.zuehlke.pgadmissions.domain.InvitationEntity;
+import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -22,16 +18,13 @@ import com.zuehlke.pgadmissions.domain.resource.Program;
 import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.System;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.domain.workflow.WorkflowResourceExecution;
-import com.zuehlke.pgadmissions.workflow.user.UserRoleReassignmentProcessor;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAssignment;
+import com.zuehlke.pgadmissions.workflow.user.StateActionPendingReassignmentProcessor;
 
 @Entity
-@Table(name = "user_role", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
-public class UserRole extends WorkflowResourceExecution implements UserAssignment<UserRoleReassignmentProcessor>, InvitationEntity {
+@Table(name = "state_action_pending")
+public class StateActionPending extends WorkflowResourceExecution implements UserAssignment<StateActionPendingReassignmentProcessor>, UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -66,86 +59,77 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    private Role role;
+    @JoinColumn(name = "action_id", nullable = false)
+    private Action action;
 
-    @Column(name = "requested")
-    private Boolean requested;
-
-    @Column(name = "assigned_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime assignedTimestamp;
+    @Lob
+    @Column(name = "content")
+    private String content;
 
     @ManyToOne
-    @JoinColumn(name = "invitation_id")
-    private Invitation invitation;
+    @JoinColumn(name = "assign_user_role_id")
+    private Role assignUserRole;
 
-    @Override
+    @Lob
+    @Column(name = "assign_user_list")
+    private String assignUserList;
+
+    @Lob
+    @Column(name = "assign_user_message")
+    private String assignUserMessage;
+
     public Integer getId() {
         return id;
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    @Override
     public System getSystem() {
         return system;
     }
 
-    @Override
     public void setSystem(System system) {
         this.system = system;
     }
 
-    @Override
     public Institution getInstitution() {
         return institution;
     }
 
-    @Override
     public void setInstitution(Institution institution) {
         this.institution = institution;
     }
 
-    @Override
     public Department getDepartment() {
         return department;
     }
 
-    @Override
     public void setDepartment(Department department) {
         this.department = department;
     }
 
-    @Override
     public Program getProgram() {
         return program;
     }
 
-    @Override
     public void setProgram(Program program) {
         this.program = program;
     }
 
-    @Override
     public Project getProject() {
         return project;
     }
 
-    @Override
     public void setProject(Project project) {
         this.project = project;
     }
 
-    @Override
     public Application getApplication() {
         return application;
     }
 
-    @Override
     public void setApplication(Application application) {
         this.application = application;
     }
@@ -158,73 +142,84 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         this.user = user;
     }
 
-    public Role getRole() {
-        return role;
+    public Action getAction() {
+        return action;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setAction(Action action) {
+        this.action = action;
     }
 
-    public Boolean getRequested() {
-        return requested;
+    public String getContent() {
+        return content;
     }
 
-    public void setRequested(Boolean requested) {
-        this.requested = requested;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public DateTime getAssignedTimestamp() {
-        return assignedTimestamp;
+    public Role getAssignUserRole() {
+        return assignUserRole;
     }
 
-    public void setAssignedTimestamp(DateTime assignedTimestamp) {
-        this.assignedTimestamp = assignedTimestamp;
+    public void setAssignUserRole(Role assignUserRole) {
+        this.assignUserRole = assignUserRole;
     }
 
-    @Override
-    public Invitation getInvitation() {
-        return invitation;
+    public String getAssignUserList() {
+        return assignUserList;
     }
 
-    @Override
-    public void setInvitation(Invitation invitation) {
-        this.invitation = invitation;
+    public void setAssignUserList(String assignUserList) {
+        this.assignUserList = assignUserList;
     }
 
-    public UserRole withResource(Resource resource) {
+    public String getAssignUserMessage() {
+        return assignUserMessage;
+    }
+
+    public void setAssignUserMessage(String assignUserMessage) {
+        this.assignUserMessage = assignUserMessage;
+    }
+    
+    public StateActionPending withResource(Resource resource) {
         setResource(resource);
         return this;
     }
-
-    public UserRole withUser(User user) {
+    
+    public StateActionPending withUser(User user) {
         this.user = user;
         return this;
     }
-
-    public UserRole withRole(Role role) {
-        this.role = role;
+    
+    public StateActionPending withAction(Action action) {
+        this.action = action;
         return this;
     }
-
-    public UserRole withRequested(Boolean requested) {
-        this.requested = requested;
+    
+    public StateActionPending withContent(String content) {
+        this.content = content;
         return this;
     }
-
-    public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
-        this.assignedTimestamp = assignedTimestamp;
+    
+    public StateActionPending withAssignUserRole(Role assignUserRole) {
+        this.assignUserRole = assignUserRole;
         return this;
     }
-
-    public UserRole withInvitation(Invitation invitation) {
-        this.invitation = invitation;
+    
+    public StateActionPending withAssignUserList(String assignUserList) {
+        this.assignUserList = assignUserList;
         return this;
     }
-
+    
+    public StateActionPending withAssignUserMessage(String assignUserMessage) {
+        this.assignUserMessage = assignUserMessage;
+        return this;
+    }
+    
     @Override
-    public Class<UserRoleReassignmentProcessor> getUserReassignmentProcessor() {
-        return UserRoleReassignmentProcessor.class;
+    public Class<StateActionPendingReassignmentProcessor> getUserReassignmentProcessor() {
+        return StateActionPendingReassignmentProcessor.class;
     }
 
     @Override
@@ -234,7 +229,7 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("user", user).addProperty("role", role);
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

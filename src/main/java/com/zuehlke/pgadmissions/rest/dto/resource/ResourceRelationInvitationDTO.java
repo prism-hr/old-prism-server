@@ -20,6 +20,8 @@ public class ResourceRelationInvitationDTO {
     @Valid
     private UserDTO user;
 
+    private String message;
+
     public PrismScopeRelationContext getContext() {
         return context;
     }
@@ -46,6 +48,14 @@ public class ResourceRelationInvitationDTO {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }

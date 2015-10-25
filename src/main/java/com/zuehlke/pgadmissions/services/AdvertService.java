@@ -69,6 +69,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
@@ -306,25 +307,27 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void createAdvertTarget(PrismScope resourceScope, Integer resourceId, ResourceTargetDTO target) {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-        User user = resource.getUser();
+    public void createAdvertTarget(PrismScope resourceScope, Integer resourceId, ResourceTargetDTO target) {        
+        User user = userService.getCurrentUser();
+        if (resourceService.getResourceForWhichUserCanConnect(user, resourceScope, resourceId) != null) {
+            ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+            Advert advert = resource.getAdvert();
 
-        ResourceDTO resourceTargetDTO = target.getResource();
-        ResourceParent resourceTarget = (ResourceParent) resourceService.getById(resourceTargetDTO.getScope(), resourceTargetDTO.getId());
-        Advert advertTarget = resourceTarget.getAdvert();
+            ResourceDTO resourceTargetDTO = target.getResource();
+            ResourceParent resourceTarget = (ResourceParent) resourceService.getById(resourceTargetDTO.getScope(), resourceTargetDTO.getId());
+            Advert advertTarget = resourceTarget.getAdvert();
 
-        User userTarget = null;
-        UserDTO userTargetDTO = target.getUser();
-        if (userTargetDTO != null) {
-            userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
-        }
+            User userTarget = null;
+            UserDTO userTargetDTO = target.getUser();
+            if (userTargetDTO != null) {
+                userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            }
 
-        if (target.getContext().equals(EMPLOYER)) {
-            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget);
-        } else {
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget);
+            if (target.getContext().equals(EMPLOYER)) {
+                createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, target.getMessage());
+            } else {
+                createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, target.getMessage());
+            }
         }
     }
 
@@ -647,25 +650,14 @@ public class AdvertService {
                 .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
-    private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept) {
+    private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
         AdvertTarget target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
         if (userTarget != null) {
             target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
-            // TODO - send a mail here to tell the user that they have been proposed as a member
         }
 
         if (!updateAdvertTarget(target.getId(), true)) {
-            ResourceParent resource = target.getAcceptAdvert().getResource();
-
-            List<User> admins = userService.getResourceUsers(resource, PrismRole.valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR"));
-
-            for (User admin : admins) {
-                notificationService.sendConnectionRequest(user, admin, target);
-            }
-
-            if (!(userAccept == null || roleService.getVerifiedRoles(userAccept, advertAccept.getResource()).isEmpty())) {
-                notificationService.sendConnectionRequest(userService.getCurrentUser(), userAccept, target);
-            }
+            target.setInvitation(new Invitation().withUser(target.getOtherUser()).withMessage(message));
         }
     }
 

@@ -1,20 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpSession;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.social.linkedin.api.LinkedInProfile;
-import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
-import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -26,8 +11,23 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.social.linkedin.api.LinkedInProfile;
+import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
+import org.springframework.social.linkedin.connect.LinkedInServiceProvider;
+import org.springframework.social.oauth2.AccessGrant;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 
 @Service
 @Transactional
@@ -76,16 +76,16 @@ public class UserAccountService {
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
 
         switch (oauthAssociationType) {
-        case ASSOCIATE_CURRENT_USER:
-            return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
-        case ASSOCIATE_NEW_USER:
-            return oauthAssociateNewUser(oauthUserDefinition, session);
-        case ASSOCIATE_SPECIFIED_USER:
-            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
-        case AUTHENTICATE:
-            return oauthAuthenticate(oauthUserDefinition);
-        default:
-            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+            case ASSOCIATE_CURRENT_USER:
+                return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
+            case ASSOCIATE_NEW_USER:
+                return oauthAssociateNewUser(oauthUserDefinition, session);
+            case ASSOCIATE_SPECIFIED_USER:
+                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
+            case AUTHENTICATE:
+                return oauthAuthenticate(oauthUserDefinition);
+            default:
+                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
@@ -114,16 +114,18 @@ public class UserAccountService {
 
         CommentDTO commentDTO = userRegistrationDTO.getComment();
         if (commentDTO != null) {
+            Action transitionAction = actionService.getById(SYSTEM_MANAGE_ACCOUNT);
+            ActionOutcomeDTO outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(transitionAction);
             PrismRoleContext roleContext = commentDTO.getRoleContext();
+            ResourceRelationInvitationDTO resourceInvitation = commentDTO.getResourceInvitation();
             if (roleContext != null) {
-                Action transitionAction = actionService.getById(SYSTEM_MANAGE_ACCOUNT);
-                ActionOutcomeDTO outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(transitionAction);
                 resourceService.joinResource(commentDTO.getResource(), user, roleContext);
-                notificationService.sendCompleteRegistrationRequest(user, outcome);
+            } else if (resourceInvitation != null) {
+                resourceService.inviteResourceRelation(user, resourceInvitation);
             } else {
-                ActionOutcomeDTO outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
-                notificationService.sendCompleteRegistrationRequest(user, outcome);
+                outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
             }
+            notificationService.sendCompleteRegistrationRequest(user, outcome);
         }
 
         return user;

@@ -10,6 +10,8 @@ public class ResourceUserRolesRepresentation {
     private UserRepresentationSimple user;
 
     private List<PrismRole> roles;
+    
+    private String message;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -27,6 +29,14 @@ public class ResourceUserRolesRepresentation {
         this.roles = roles;
     }
     
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public ResourceUserRolesRepresentation withUser(UserRepresentationSimple user)  {
         this.user = user;
         return this;

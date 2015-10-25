@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStateTransitionSummary;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateAction;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransition;
 import com.zuehlke.pgadmissions.domain.workflow.StateTransitionPending;
 import com.zuehlke.pgadmissions.dto.ResourceStateDTO;
@@ -303,6 +304,13 @@ public class StateDAO {
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<Integer> getStateActionPendings() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(StateActionPending.class) //
+                .setProjection(Projections.property("id")) //
+                .addOrder(Order.asc("id")) //
+                .list();
     }
 
 }

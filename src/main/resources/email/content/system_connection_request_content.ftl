@@ -7,6 +7,10 @@
     in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers. 
 </p>
 
+<#if TEMPLATE_INVITATION_MESSAGE?has_content>
+    Personal message from ${TEMPLATE_INITIATOR_FULL_NAME}: "${TEMPLATE_INVITATION_MESSAGE}".
+</#if>
+
 <p>
 	Follow the link below to accept or reject this invitation.
 </p>

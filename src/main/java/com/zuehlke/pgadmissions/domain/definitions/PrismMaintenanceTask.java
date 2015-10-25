@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperAdvertTargetPending;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperDelete;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperExport;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.EmailBounceServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.InstitutionServiceHelper;
-import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelper;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperActivity;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperInvitation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.PrismServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
@@ -16,7 +18,9 @@ public enum PrismMaintenanceTask {
     SYSTEM_IMPORT_UCAS_INSTITUTION(InstitutionServiceHelper.class),
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class),
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class),
-    SYSTEM_SEND_USER_ACTIVITY_NOTIFICATION(NotificationServiceHelper.class), 
+    SYSTEM_SEND_USER_ACTIVITY_NOTIFICATION(NotificationServiceHelperActivity.class),
+    SYSTEM_SEND_USER_INVITATION_NOTIFICATION(NotificationServiceHelperInvitation.class), 
+    SYSTEM_CREATE_ADVERT_TARGET(AdvertServiceHelperAdvertTargetPending.class),
     SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class),
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class),
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class),

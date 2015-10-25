@@ -70,7 +70,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.dao.AdvertDAO;
 import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
@@ -174,6 +173,9 @@ public class AdvertService {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private InvitationService invitationService;
 
     @Inject
     private RestTemplate restTemplate;
@@ -735,7 +737,7 @@ public class AdvertService {
         }
 
         if (!updateAdvertTarget(target.getId(), true)) {
-            target.setInvitation(new Invitation().withUser(target.getOtherUser()).withMessage(message));
+            target.setInvitation(invitationService.createInvitation(target.getOtherUser(), message));
         }
 
         return target;

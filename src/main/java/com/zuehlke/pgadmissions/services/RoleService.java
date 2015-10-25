@@ -71,6 +71,9 @@ public class RoleService {
     private ScopeService scopeService;
 
     @Inject
+    private InvitationService invitationService;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     public Role getById(PrismRole roleId) {
@@ -150,7 +153,7 @@ public class RoleService {
                 if (isTrue(userRole.getRequested())) {
                     notificationService.sendJoinNotification(invoker, user, resource);
                 } else {
-                    userRole.setInvitation(new Invitation().withUser(invoker));
+                    userRole.setInvitation(invitationService.createInvitation(user));
                 }
             } else {
                 Action action = actionService.getViewEditAction(resource);
@@ -383,7 +386,7 @@ public class RoleService {
             actionService.executeUserAction(resource, action, comment);
 
             if (notify && transitionType.equals(CREATE)) {
-                Invitation invitation = new Invitation().withUser(invoker).withMessage(message);
+                Invitation invitation = invitationService.createInvitation(invoker, message);
                 comment.getAssignedUsers().forEach(assignee -> {
                     UserRole userRole = getUserRole(resource, assignee.getUser(), assignee.getRole());
                     userRole.setInvitation(invitation);

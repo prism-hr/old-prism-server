@@ -307,25 +307,27 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void createAdvertTarget(PrismScope resourceScope, Integer resourceId, ResourceTargetDTO target) {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-        User user = resource.getUser();
+    public void createAdvertTarget(PrismScope resourceScope, Integer resourceId, ResourceTargetDTO target) {        
+        User user = userService.getCurrentUser();
+        if (resourceService.getResourceForWhichUserCanConnect(user, resourceScope, resourceId) != null) {
+            ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+            Advert advert = resource.getAdvert();
 
-        ResourceDTO resourceTargetDTO = target.getResource();
-        ResourceParent resourceTarget = (ResourceParent) resourceService.getById(resourceTargetDTO.getScope(), resourceTargetDTO.getId());
-        Advert advertTarget = resourceTarget.getAdvert();
+            ResourceDTO resourceTargetDTO = target.getResource();
+            ResourceParent resourceTarget = (ResourceParent) resourceService.getById(resourceTargetDTO.getScope(), resourceTargetDTO.getId());
+            Advert advertTarget = resourceTarget.getAdvert();
 
-        User userTarget = null;
-        UserDTO userTargetDTO = target.getUser();
-        if (userTargetDTO != null) {
-            userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
-        }
+            User userTarget = null;
+            UserDTO userTargetDTO = target.getUser();
+            if (userTargetDTO != null) {
+                userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            }
 
-        if (target.getContext().equals(EMPLOYER)) {
-            createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, target.getMessage());
-        } else {
-            createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, target.getMessage());
+            if (target.getContext().equals(EMPLOYER)) {
+                createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, target.getMessage());
+            } else {
+                createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, target.getMessage());
+            }
         }
     }
 
@@ -648,12 +650,10 @@ public class AdvertService {
                 .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
-    // TODO - change to sql insert to support batches
     private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
         AdvertTarget target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
         if (userTarget != null) {
             target = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
-            // TODO - send mail to tell user they have been proposed
         }
 
         if (!updateAdvertTarget(target.getId(), true)) {

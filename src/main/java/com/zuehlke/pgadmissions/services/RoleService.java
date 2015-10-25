@@ -141,24 +141,23 @@ public class RoleService {
     }
 
     public void verifyUserRoles(User invoker, ResourceParent resource, User user, Boolean verify) {
-        boolean notify = false;
         boolean isVerify = isTrue(verify);
         for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
             if (isVerify) {
                 Role role = userRole.getRole();
                 createUserRoles(invoker, resource, user, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
                 entityService.delete(userRole);
-                notify = true;
+                if (isTrue(userRole.getRequested())) {
+                    notificationService.sendJoinNotification(invoker, user, resource);
+                } else {
+                    userRole.setInvitation(new Invitation().withUser(invoker));
+                }
             } else {
                 Action action = actionService.getViewEditAction(resource);
                 if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {
                     entityService.delete(userRole);
                 }
             }
-        }
-
-        if (notify) {
-            notificationService.sendJoinNotification(invoker, user, resource);
         }
     }
 
@@ -384,9 +383,10 @@ public class RoleService {
             actionService.executeUserAction(resource, action, comment);
 
             if (notify && transitionType.equals(CREATE)) {
+                Invitation invitation = new Invitation().withUser(invoker).withMessage(message);
                 comment.getAssignedUsers().forEach(assignee -> {
                     UserRole userRole = getUserRole(resource, assignee.getUser(), assignee.getRole());
-                    userRole.setInvitation(new Invitation().withUser(invoker).withMessage(message));
+                    userRole.setInvitation(invitation);
                 });
             }
         }

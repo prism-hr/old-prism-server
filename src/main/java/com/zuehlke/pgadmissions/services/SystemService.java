@@ -271,7 +271,7 @@ public class SystemService {
             Comment comment = new Comment().withUser(user).withAction(action).withContent(content).withDeclinedResponse(false)
                     .withCreatedTimestamp(new DateTime()).addAssignedUser(user, roleService.getCreatorRole(system), CREATE);
             ActionOutcomeDTO outcome = actionService.executeAction(system, action, comment);
-            notificationService.sendRegistrationNotification(user, outcome);
+            notificationService.sendCompleteRegistrationRequest(user, outcome);
         }
     }
 

@@ -19,6 +19,7 @@ import com.google.common.base.Preconditions;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
@@ -111,19 +112,17 @@ public class UserAccountService {
             getOrCreateUserAccount(user, userRegistrationDTO.getPassword(), enableAccount);
         }
 
-        ActionOutcomeDTO outcome;
         CommentDTO commentDTO = userRegistrationDTO.getComment();
         if (commentDTO != null) {
             PrismRoleContext roleContext = commentDTO.getRoleContext();
             if (roleContext != null) {
-                outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(actionService.getById(SYSTEM_MANAGE_ACCOUNT));
+                Action transitionAction = actionService.getById(SYSTEM_MANAGE_ACCOUNT);
+                ActionOutcomeDTO outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(transitionAction);
                 resourceService.joinResource(commentDTO.getResource(), user, roleContext);
+                notificationService.sendCompleteRegistrationRequest(user, outcome);
             } else {
-                outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
-            }
-    
-            if (outcome != null) {
-                notificationService.sendRegistrationNotification(user, outcome);
+                ActionOutcomeDTO outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
+                notificationService.sendCompleteRegistrationRequest(user, outcome);
             }
         }
 

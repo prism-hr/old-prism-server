@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetPending;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
@@ -165,6 +166,9 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<StateActionPending> stateActionPendings = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<AdvertTargetPending> advertTargetPendings = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -360,6 +364,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<StateActionPending> getStateActionPendings() {
         return stateActionPendings;
+    }
+
+    public Set<AdvertTargetPending> getAdvertTargetPendings() {
+        return advertTargetPendings;
     }
 
     public User withId(Integer id) {

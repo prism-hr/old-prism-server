@@ -48,6 +48,7 @@ import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
 import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTargetPending;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
@@ -506,6 +507,13 @@ public class AdvertDAO {
         }
 
         return (List<Integer>) criteria.add(Restrictions.eq("acceptAdvertUser", user)) //
+                .list();
+    }
+    
+    public List<Integer> getAdvertTargetPendings() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetPending.class) //
+                .setProjection(Projections.property("id")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 

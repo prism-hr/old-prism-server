@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperAdvertTargetPending;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.DocumentServiceHelperDelete;
@@ -19,6 +20,7 @@ public enum PrismMaintenanceTask {
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class),
     SYSTEM_SEND_USER_ACTIVITY_NOTIFICATION(NotificationServiceHelperActivity.class),
     SYSTEM_SEND_USER_INVITATION_NOTIFICATION(NotificationServiceHelperInvitation.class), 
+    SYSTEM_CREATE_ADVERT_TARGET(AdvertServiceHelperAdvertTargetPending.class),
     SYSTEM_UPDATE_ADVERT_CLOSING_DATE(AdvertServiceHelperClosingDate.class),
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class),
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class),

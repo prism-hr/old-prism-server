@@ -1228,6 +1228,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_LOOKUP_EMAIL_LABEL(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Email"),
     SYSTEM_HTML_LOOKUP_EMAIL_HINT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Please enter user's e-mail address."),
     SYSTEM_HTML_LOOKUP_RETURN_TO_SEARCH(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Return to search"),
+    SYSTEM_HTML_LOOKUP_DONT_KNOW_ANY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "I don't know any one"),
+    SYSTEM_HTML_LOOKUP_NOT_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "User not specified"),
 
      /*
       * *************** SYSTEM ACTIVITY SECTION *********************
@@ -1658,6 +1660,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your qualification"),
     SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
     SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your qualification."),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_USER_HEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Supervisor"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Employer"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for your employer"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Position"),
@@ -1945,6 +1948,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_QUALIFICATION_HEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualifications"),
     PROFILE_QUALIFICATION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     PROFILE_QUALIFICATION_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification"),
+    PROFILE_QUALIFICATION_OUTCOME_HEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification outcome"),
     PROFILE_QUALIFICATION_PROVIDER_PROGRAM_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Provider & Program"),
     PROFILE_QUALIFICATION_PROVIDER_PROGRAM_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "The provider of the qualification, and the program that you are following/completed."),
     PROFILE_QUALIFICATION_START_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Start Date"),

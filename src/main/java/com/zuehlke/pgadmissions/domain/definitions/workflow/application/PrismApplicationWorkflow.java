@@ -12,7 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEn
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
@@ -27,6 +26,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PRO
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROGRAM_VIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PROJECT_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
@@ -43,6 +43,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionGroup;
@@ -171,13 +172,15 @@ public class PrismApplicationWorkflow {
                 .withAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_APPROVER) //
                 .withAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
                 .withAssignments(INSTITUTION_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_EDIT_AS_APPROVER) //
-                .withAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_EDIT_AS_APPROVER) //
+                .withAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
                 .withAssignments(DEPARTMENT_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(PROGRAM_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(PROGRAM_ADMINISTRATOR, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(PROGRAM_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
                 .withAssignments(PROGRAM_VIEWER, APPLICATION_VIEW_AS_RECRUITER) //
-                .withAssignments(PROJECT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
+                .withAssignments(PROJECT_ADMINISTRATOR, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(PROJECT_APPROVER, APPLICATION_VIEW_AS_APPROVER) //
+                .withAssignments(PrismRole.PROJECT_VIEWER, APPLICATION_VIEW_AS_RECRUITER)
                 .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_AS_CREATOR) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
                 .withPartnerAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //

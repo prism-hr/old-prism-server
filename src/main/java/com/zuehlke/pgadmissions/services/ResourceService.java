@@ -929,13 +929,15 @@ public class ResourceService {
             roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now()));
         }
 
-        if (canViewEdit && role != null) {
-            executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
-                    new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
-        } else if (!(canViewEdit || role == null || roleService.hasUserRole(resource, user, role.getId()))) {
-            userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
-                notificationService.sendJoinRequest(user, admin, resource);
-            });
+        if (role != null) {
+            if (canViewEdit) {
+                executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
+                        new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
+            } else {
+                userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
+                    notificationService.sendJoinRequest(user, admin, resource);
+                });
+            }
         }
     }
 

@@ -48,7 +48,7 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppo
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRelation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
@@ -162,7 +162,7 @@ public class ApplicationMapper {
         applicationService.getApplicationAppointments(user).forEach(appointment -> {
             LocalDateTime interviewDateTime = appointment.getInterviewDateTime();
             if (interviewDateTime.toLocalDate().isAfter(baseline)) {
-                ResourceRepresentationActivity application = resourceMapper.getResourceRepresentationActivity(appointment);
+                ResourceRepresentationRelation application = resourceMapper.getResourceRepresentationActivity(appointment);
                 application.setCode(appointment.getApplicationCode());
                 representations.add(new AppointmentActivityRepresentation().withResource(application)
                         .withAppointment(new CommentInterviewAppointmentRepresentation().withInterviewDateTime(interviewDateTime)

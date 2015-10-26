@@ -8,7 +8,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismDomicile;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 
-public class AdvertDTO extends ResourceActivityDTO {
+public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private Integer advertId;
 

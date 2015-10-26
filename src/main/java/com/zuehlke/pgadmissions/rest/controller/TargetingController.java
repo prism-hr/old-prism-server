@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConnectionInvitationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConnectionInvitationsDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.services.AdvertService;
 
@@ -31,8 +31,8 @@ public class TargetingController {
 
     @RequestMapping(value = "/targets", method = POST)
     public void createTarget(@RequestBody ResourceConnectionInvitationDTO resourceConnection) {
-        ResourceDTO invitingResource = resourceConnection.getInvitingResource();
-        advertService.createAdvertTarget(invitingResource.getScope(), invitingResource.getId(), resourceConnection.getReceivingResource());
+        ResourceCreationDTO invitingResource = resourceConnection.getInvitingResource();
+        advertService.createAdvertTarget(invitingResource, resourceConnection.getReceivingResource());
     }
 
     @RequestMapping(value = "/targets/batch", method = POST)

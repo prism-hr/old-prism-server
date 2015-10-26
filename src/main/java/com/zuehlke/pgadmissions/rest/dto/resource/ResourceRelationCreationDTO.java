@@ -8,19 +8,17 @@ import javax.validation.constraints.NotNull;
 import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
-public class ResourceRelationInvitationDTO {
+public class ResourceRelationCreationDTO {
 
     @NotNull
     private PrismScopeRelationContext context;
 
     @Valid
     @NotNull
-    private ResourceActivityDTO resource;
+    private ResourceRelationDTO resource;
 
     @Valid
     private UserDTO user;
-
-    private String message;
 
     public PrismScopeRelationContext getContext() {
         return context;
@@ -30,11 +28,11 @@ public class ResourceRelationInvitationDTO {
         this.context = context;
     }
 
-    public ResourceActivityDTO getResource() {
+    public ResourceRelationDTO getResource() {
         return resource;
     }
 
-    public void setResource(ResourceActivityDTO resource) {
+    public void setResource(ResourceRelationDTO resource) {
         this.resource = resource;
     }
 
@@ -48,14 +46,6 @@ public class ResourceRelationInvitationDTO {
 
     public void setUser(UserDTO user) {
         this.user = user;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
 }

@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
-import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -26,7 +25,6 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthAssociationType;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
@@ -77,16 +75,16 @@ public class UserAccountService {
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
 
         switch (oauthAssociationType) {
-            case ASSOCIATE_CURRENT_USER:
-                return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
-            case ASSOCIATE_NEW_USER:
-                return oauthAssociateNewUser(oauthUserDefinition, session);
-            case ASSOCIATE_SPECIFIED_USER:
-                return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
-            case AUTHENTICATE:
-                return oauthAuthenticate(oauthUserDefinition);
-            default:
-                throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
+        case ASSOCIATE_CURRENT_USER:
+            return oauthAssociateUser(userService.getCurrentUser(), oauthUserDefinition);
+        case ASSOCIATE_NEW_USER:
+            return oauthAssociateNewUser(oauthUserDefinition, session);
+        case ASSOCIATE_SPECIFIED_USER:
+            return oauthAssociateUser(userService.getUserByActivationCode(oauthLoginDTO.getActivationCode()), oauthUserDefinition);
+        case AUTHENTICATE:
+            return oauthAuthenticate(oauthUserDefinition);
+        default:
+            throw new UnsupportedOperationException("Unsupported Oauth association type: " + oauthAssociationType);
         }
     }
 
@@ -117,12 +115,8 @@ public class UserAccountService {
         if (commentDTO != null) {
             Action transitionAction = actionService.getById(SYSTEM_MANAGE_ACCOUNT);
             ActionOutcomeDTO outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(transitionAction);
-            PrismRoleContext roleContext = commentDTO.getRoleContext();
-            ResourceRelationInvitationDTO resourceInvitation = commentDTO.getResourceInvitation();
-            if (roleContext != null) {
-                resourceService.joinResource(commentDTO.getResource(), user, roleContext);
-            } else if (resourceInvitation != null) {
-                resourceService.inviteResourceRelation(user, resourceInvitation);
+            if (commentDTO.isActionBypass()) {
+                resourceService.executeActionBypass(user, commentDTO);
             } else {
                 outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);
             }

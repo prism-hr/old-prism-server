@@ -13,7 +13,7 @@ public class ResourceTargetDTO {
 
     @Valid
     @NotNull
-    private ResourceDTO resource;
+    private ResourceRelationDTO resource;
 
     @Valid
     private UserDTO user;
@@ -28,11 +28,11 @@ public class ResourceTargetDTO {
         this.context = context;
     }
 
-    public ResourceDTO getResource() {
+    public ResourceRelationDTO getResource() {
         return resource;
     }
 
-    public void setResource(ResourceDTO resource) {
+    public void setResource(ResourceRelationDTO resource) {
         this.resource = resource;
     }
 

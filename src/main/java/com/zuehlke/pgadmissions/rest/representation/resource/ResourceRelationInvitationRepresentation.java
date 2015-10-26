@@ -6,7 +6,7 @@ public class ResourceRelationInvitationRepresentation {
 
     private UserRepresentationSimple user;
 
-    private ResourceRepresentationActivity resource;
+    private ResourceRepresentationRelation resource;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -16,11 +16,11 @@ public class ResourceRelationInvitationRepresentation {
         this.user = user;
     }
 
-    public ResourceRepresentationActivity getResource() {
+    public ResourceRepresentationRelation getResource() {
         return resource;
     }
 
-    public void setResource(ResourceRepresentationActivity resource) {
+    public void setResource(ResourceRepresentationRelation resource) {
         this.resource = resource;
     }
 
@@ -29,7 +29,7 @@ public class ResourceRelationInvitationRepresentation {
         return this;
     }
 
-    public ResourceRelationInvitationRepresentation withResource(final ResourceRepresentationActivity resource) {
+    public ResourceRelationInvitationRepresentation withResource(final ResourceRepresentationRelation resource) {
         this.resource = resource;
         return this;
     }

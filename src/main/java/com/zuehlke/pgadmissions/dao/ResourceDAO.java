@@ -66,8 +66,8 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceStudyOption;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
+import com.zuehlke.pgadmissions.dto.ResourceFlatToNestedDTO;
 import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceRatingSummaryDTO;
@@ -381,7 +381,7 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public ResourceActivityDTO getResourceWithParentResources(Resource resource, List<PrismScope> parentScopes) {
+    public ResourceFlatToNestedDTO getResourceWithParentResources(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         ProjectionList projections = Projections.projectionList();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
@@ -397,18 +397,20 @@ public class ResourceDAO {
             criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
         });
 
-        return (ResourceActivityDTO) criteria.add(Restrictions.eq("id", resource.getId())) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceActivityDTO.class)) //
+        return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId())) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceFlatToNestedDTO.class)) //
                 .uniqueResult();
     }
-    
-    public Integer getResourceForWhichUserCanConnect(User user, PrismScope resourceScope, Integer resourceId) {
+
+    public Integer getResourceForWhichUserCanConnect(User user, ResourceParent resource) {
+        PrismScope resourceScope = resource.getResourceScope();
+        String resourceReference = resourceScope.getLowerCamelName();
         return (Integer) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("resource.id"))
-                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource.id", resourceId)) //
+                .add(Restrictions.eq(resourceReference, resource)) //
                 .add(WorkflowDAO.getResourceParentConnectableConstraint(resourceScope, user)) //
                 .uniqueResult();
     }

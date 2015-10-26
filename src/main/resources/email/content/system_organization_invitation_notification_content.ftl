@@ -3,14 +3,17 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has invited your ${TEMPLATE_RESOURCE_SCOPE} to 
-    join ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
+    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TEMPLATE_RESOURCE_NAME} has invited your 
+    ${TEMPLATE_RESOURCE_SCOPE} to join ${TEMPLATE_SYSTEM_NAME}, the marketplace for 
+    student and graduate careers.
 </p>
 
 <p>
-	${TEMPLATE_SYSTEM_NAME} powers student and graduate and recruitment, by allowing 
-	employers to directly promote opportunities through connections with universities 
-	and university departments.
+	${TEMPLATE_SYSTEM_NAME} takes the pain out of graduate recruitment, by making it easy for 
+	employers to directly promote opportunities to students through personal connections with 
+	universities and university departments. It makes it quick and easy for employers to target
+	appropriate graduate hires, and helps universities to find better work experience and 
+	employment opportunities for their students and graduates.
 </p>
 
 <#if TEMPLATE_INVITATION_MESSAGE?has_content>

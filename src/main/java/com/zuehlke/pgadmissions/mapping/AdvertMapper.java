@@ -64,7 +64,7 @@ import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
-import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
+import com.zuehlke.pgadmissions.dto.ResourceFlatToNestedDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -133,7 +133,7 @@ public class AdvertMapper {
             PrismScope scope = advert.getScope();
             for (PrismScope advertScope : parentScopes) {
                 if (advertScope.ordinal() <= scope.ordinal()) {
-                    ResourceActivityDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
+                    ResourceFlatToNestedDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
                     if (enclosingResourceDTO != null) {
                         resources.put(advertScope, enclosingResourceDTO.getId());
                     }
@@ -454,7 +454,7 @@ public class AdvertMapper {
 
     @SuppressWarnings("unchecked")
     private <T extends ResourceRepresentationSimple> T getAdvertResourceRepresentation(AdvertDTO advert, PrismScope scope) {
-        ResourceActivityDTO resource = advert.getEnclosingResource(scope);
+        ResourceFlatToNestedDTO resource = advert.getEnclosingResource(scope);
         if (resource != null) {
             boolean isOpportunity = asList(PROGRAM, PROJECT).contains(scope);
             Class<?> representationClass = isOpportunity ? ResourceOpportunityRepresentationSimple.class : ResourceRepresentationSimple.class;

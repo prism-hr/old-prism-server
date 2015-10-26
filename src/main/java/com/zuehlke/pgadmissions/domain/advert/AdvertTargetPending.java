@@ -23,6 +23,10 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "advert_id", nullable = false)
+    private Advert advert;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -44,6 +48,14 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Advert getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public User getUser() {
@@ -76,6 +88,11 @@ public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingRe
 
     public void setAdvertTargetMessage(String advertTargetMessage) {
         this.advertTargetMessage = advertTargetMessage;
+    }
+
+    public AdvertTargetPending withAdvert(Advert advert) {
+        this.advert = advert;
+        return this;
     }
 
     public AdvertTargetPending withUser(User user) {

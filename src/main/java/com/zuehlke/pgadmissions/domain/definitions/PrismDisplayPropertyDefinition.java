@@ -1403,7 +1403,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite employers to join your network to receive opportunities from them."),
     SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite universities to join your network to promote opportunities to their students."),
     SYSTEM_INVITE_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invitation message"),
-    SYSTEM_INVITE_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Please add optional message for invited person receive."),
+    SYSTEM_INVITE_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you wish you can specify a personal message that you would like your contact to receive."),
     SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Another"),
 
     /*
@@ -1681,11 +1681,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Division"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for division, or enter a new one"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Human Resources"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYER_INVITATION_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Your Personal Contact"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup College/University"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for the college/university"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Lookup Department"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Type to search for the department, or enter a new one"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
+    SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_INVITATION_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Your Personal Contact"),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************

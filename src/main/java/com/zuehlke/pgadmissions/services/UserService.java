@@ -77,6 +77,7 @@ import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserSimpleDTO;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -153,6 +154,10 @@ public class UserService {
             return entityService.getById(User.class, user.getId());
         }
         return null;
+    }
+    
+    public User getOrCreateUser(UserDTO userDTO) {
+        return userDTO == null ? null : getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
     }
 
     public User getOrCreateUser(String firstName, String lastName, String email) {

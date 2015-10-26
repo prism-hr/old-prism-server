@@ -25,10 +25,12 @@ public class ResourceCreationDTO {
 
     @NotNull
     private PrismScope scope;
-    
+
     private PrismMotivationContext context;
-    
+
     private PrismState initialState;
+
+    private ResourceDTO parentResource;
 
     public Integer getId() {
         return id;
@@ -63,11 +65,11 @@ public class ResourceCreationDTO {
     }
 
     public ResourceDTO getParentResource() {
-        throw new UnsupportedOperationException();
+        return parentResource;
     }
 
     public void setParentResource(ResourceDTO parentResource) {
-        throw new UnsupportedOperationException();
+        this.parentResource = parentResource;
     }
 
 }

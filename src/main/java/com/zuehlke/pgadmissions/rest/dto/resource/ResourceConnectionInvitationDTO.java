@@ -7,17 +7,17 @@ public class ResourceConnectionInvitationDTO {
 
     @Valid
     @NotNull
-    private ResourceDTO invitingResource;
-    
+    private ResourceCreationDTO invitingResource;
+
     @Valid
     @NotNull
     private ResourceTargetDTO receivingResource;
 
-    public ResourceDTO getInvitingResource() {
+    public ResourceCreationDTO getInvitingResource() {
         return invitingResource;
     }
 
-    public void setInvitingResource(ResourceDTO invitingResource) {
+    public void setInvitingResource(ResourceCreationDTO invitingResource) {
         this.invitingResource = invitingResource;
     }
 
@@ -28,5 +28,5 @@ public class ResourceConnectionInvitationDTO {
     public void setReceivingResource(ResourceTargetDTO receivingResource) {
         this.receivingResource = receivingResource;
     }
-    
+
 }

@@ -7,8 +7,8 @@ import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRelation;
 
 public class UserActivityRepresentation {
 
@@ -157,17 +157,17 @@ public class UserActivityRepresentation {
 
     public static class AppointmentActivityRepresentation {
 
-        private ResourceRepresentationActivity resource;
+        private ResourceRepresentationRelation resource;
 
         private CommentInterviewAppointmentRepresentation appointment;
 
         private CommentInterviewInstructionRepresentation instruction;
 
-        public ResourceRepresentationActivity getResource() {
+        public ResourceRepresentationRelation getResource() {
             return resource;
         }
 
-        public void setResource(ResourceRepresentationActivity resource) {
+        public void setResource(ResourceRepresentationRelation resource) {
             this.resource = resource;
         }
 
@@ -187,7 +187,7 @@ public class UserActivityRepresentation {
             this.instruction = instruction;
         }
 
-        public AppointmentActivityRepresentation withResource(ResourceRepresentationActivity resource) {
+        public AppointmentActivityRepresentation withResource(ResourceRepresentationRelation resource) {
             this.resource = resource;
             return this;
         }

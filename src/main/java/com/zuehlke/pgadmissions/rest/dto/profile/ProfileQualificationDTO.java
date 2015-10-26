@@ -9,7 +9,7 @@ import org.joda.time.LocalDate;
 
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
@@ -21,7 +21,7 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
 
     @Valid
     @NotNull
-    private ResourceRelationInvitationDTO resource;
+    private ResourceRelationCreationDTO resource;
 
     @NotNull
     @DateNotFuture
@@ -46,12 +46,12 @@ public class ProfileQualificationDTO extends ApplicationAdvertRelationSectionDTO
     }
 
     @Override
-    public ResourceRelationInvitationDTO getResource() {
+    public ResourceRelationCreationDTO getResource() {
         return resource;
     }
 
     @Override
-    public void setResource(ResourceRelationInvitationDTO resource) {
+    public void setResource(ResourceRelationCreationDTO resource) {
         this.resource = resource;
     }
 

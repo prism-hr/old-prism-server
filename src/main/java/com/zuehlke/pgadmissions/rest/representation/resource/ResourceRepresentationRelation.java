@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 
 import jersey.repackaged.com.google.common.collect.Sets;
 
-public class ResourceRepresentationActivity extends ResourceRepresentationSimple {
+public class ResourceRepresentationRelation extends ResourceRepresentationSimple {
 
     private UserRepresentationSimple user;
 
@@ -75,37 +75,37 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
         setProperty(this, parentResource.getScope().getLowerCamelName(), parentResource);
     }
 
-    public ResourceRepresentationActivity withScope(PrismScope scope) {
+    public ResourceRepresentationRelation withScope(PrismScope scope) {
         setScope(scope);
         return this;
     }
 
-    public ResourceRepresentationActivity withId(Integer id) {
+    public ResourceRepresentationRelation withId(Integer id) {
         setId(id);
         return this;
     }
 
-    public ResourceRepresentationActivity withCode(String code) {
+    public ResourceRepresentationRelation withCode(String code) {
         setCode(code);
         return this;
     }
 
-    public ResourceRepresentationActivity withProject(ResourceRepresentationSimple project) {
+    public ResourceRepresentationRelation withProject(ResourceRepresentationSimple project) {
         setProject(project);
         return this;
     }
 
-    public ResourceRepresentationActivity withProgram(ResourceRepresentationSimple program) {
+    public ResourceRepresentationRelation withProgram(ResourceRepresentationSimple program) {
         setProgram(program);
         return this;
     }
 
-    public ResourceRepresentationActivity withDepartment(ResourceRepresentationSimple department) {
+    public ResourceRepresentationRelation withDepartment(ResourceRepresentationSimple department) {
         setDepartment(department);
         return this;
     }
 
-    public ResourceRepresentationActivity withInstitution(ResourceRepresentationSimple institution) {
+    public ResourceRepresentationRelation withInstitution(ResourceRepresentationSimple institution) {
         setInstitution(institution);
         return this;
     }
@@ -137,15 +137,15 @@ public class ResourceRepresentationActivity extends ResourceRepresentationSimple
         if (getClass() != object.getClass()) {
             return false;
         }
-        ResourceRepresentationActivity other = (ResourceRepresentationActivity) object;
+        ResourceRepresentationRelation other = (ResourceRepresentationRelation) object;
         return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment()) && Objects.equal(program, other.getProgram())
                 && Objects.equal(project, other.getProject());
     }
 
     @Override
     public int compareTo(ResourceRepresentationIdentity other) {
-        if (ResourceRepresentationActivity.class.isAssignableFrom(other.getClass())) {
-            ResourceRepresentationActivity otherActivity = (ResourceRepresentationActivity) other;
+        if (ResourceRepresentationRelation.class.isAssignableFrom(other.getClass())) {
+            ResourceRepresentationRelation otherActivity = (ResourceRepresentationRelation) other;
             int compare = institution.compareTo(otherActivity.getInstitution());
             compare = compare == 0 ? ObjectUtils.compare(department, otherActivity.getDepartment(), true) : compare;
             compare = compare == 0 ? ObjectUtils.compare(program, otherActivity.getProgram(), true) : compare;

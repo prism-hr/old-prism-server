@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 
-public class ResourceRepresentationStandard extends ResourceRepresentationActivity {
+public class ResourceRepresentationStandard extends ResourceRepresentationRelation {
 
     private boolean raisesUrgentFlag;
 

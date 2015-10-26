@@ -59,9 +59,9 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
-import com.zuehlke.pgadmissions.dto.ResourceActivityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
+import com.zuehlke.pgadmissions.dto.ResourceFlatToNestedDTO;
 import com.zuehlke.pgadmissions.dto.ResourceIdentityDTO;
 import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
@@ -84,17 +84,17 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListFilterR
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationClient;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationRelation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceParentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationChildCreation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRelation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobot;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
@@ -349,27 +349,27 @@ public class ResourceMapper {
         return getResourceRepresentationActivity(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource));
     }
 
-    public <T extends ResourceActivityDTO> ResourceRepresentationActivity getResourceRepresentationActivity(T resource) {
-        ResourceRepresentationActivity representation = new ResourceRepresentationActivity().withScope(resource.getScope()).withId(resource.getId());
-        ResourceActivityDTO project = resource.getEnclosingResource(PROJECT);
+    public <T extends ResourceFlatToNestedDTO> ResourceRepresentationRelation getResourceRepresentationActivity(T resource) {
+        ResourceRepresentationRelation representation = new ResourceRepresentationRelation().withScope(resource.getScope()).withId(resource.getId());
+        ResourceFlatToNestedDTO project = resource.getEnclosingResource(PROJECT);
         if (project != null) {
             representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
                     .withId(resource.getProjectId()).withName(resource.getProjectName()));
         }
 
-        ResourceActivityDTO program = resource.getEnclosingResource(PROGRAM);
+        ResourceFlatToNestedDTO program = resource.getEnclosingResource(PROGRAM);
         if (program != null) {
             representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
                     .withId(resource.getProgramId()).withName(resource.getProgramName()));
         }
 
-        ResourceActivityDTO department = resource.getEnclosingResource(DEPARTMENT);
+        ResourceFlatToNestedDTO department = resource.getEnclosingResource(DEPARTMENT);
         if (department != null) {
             representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
                     .withId(resource.getDepartmentId()).withName(resource.getDepartmentName()));
         }
 
-        ResourceActivityDTO institution = resource.getEnclosingResource(INSTITUTION);
+        ResourceFlatToNestedDTO institution = resource.getEnclosingResource(INSTITUTION);
         if (institution != null) {
             representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                     .withId(resource.getInstitutionId()).withName(resource.getInstitutionName())
@@ -604,12 +604,12 @@ public class ResourceMapper {
         return applicationUrl + "/" + ANGULAR_HASH + "/?" + resource.getResourceScope().getLowerCamelName() + "=" + resource.getId();
     }
 
-    public <T extends Resource> ResourceRepresentationActivity getResourceRepresentationActivity(T resource) {
-        return getResourceRepresentationActivity(resource, ResourceRepresentationActivity.class);
+    public <T extends Resource> ResourceRepresentationRelation getResourceRepresentationRelation(T resource) {
+        return getResourceRepresentationActivity(resource, ResourceRepresentationRelation.class);
     }
 
-    public <T extends Resource> ResourceRepresentationActivity getResourceOpportunityRepresentationActivity(T resource) {
-        return getResourceRepresentationActivity(resource, ResourceOpportunityRepresentationActivity.class);
+    public <T extends Resource> ResourceRepresentationRelation getResourceOpportunityRepresentationRelation(T resource) {
+        return getResourceRepresentationActivity(resource, ResourceOpportunityRepresentationRelation.class);
     }
 
     public List<ResourceListFilterRepresentation> getResourceListFilterRepresentations() {
@@ -656,15 +656,15 @@ public class ResourceMapper {
         }
     }
 
-    private <T extends Resource, V extends ResourceRepresentationActivity> V getResourceRepresentationActivity(T resource, Class<V> returnType) {
+    private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationActivity(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationSimple(resource, returnType);
 
         Advert advert = resource.getAdvert();
         representation.setAdvert(new AdvertRepresentationSimple().withId(advert.getId()).withSummary(advert.getSummary()));
 
-        if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            ((ResourceOpportunityRepresentationActivity) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
-            ((ResourceOpportunityRepresentationActivity) representation).setSummary(((ResourceOpportunity) resource).getAdvert().getSummary());
+        if (ResourceOpportunityRepresentationRelation.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+            ((ResourceOpportunityRepresentationRelation) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
+            ((ResourceOpportunityRepresentationRelation) representation).setSummary(((ResourceOpportunity) resource).getAdvert().getSummary());
         }
 
         if (ResourceRepresentationStandard.class.isAssignableFrom(returnType)) {
@@ -672,10 +672,10 @@ public class ResourceMapper {
         }
 
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(resource.getResourceScope(), INSTITUTION);
-        ResourceActivityDTO resourceWithParents = resourceService.getResourceWithParentResources(resource, parentScopes);
+        ResourceFlatToNestedDTO resourceWithParents = resourceService.getResourceWithParentResources(resource, parentScopes);
 
         for (PrismScope parentScope : parentScopes) {
-            ResourceActivityDTO parentResource = resourceWithParents.getEnclosingResource(parentScope);
+            ResourceFlatToNestedDTO parentResource = resourceWithParents.getEnclosingResource(parentScope);
             if (parentResource != null) {
                 ResourceRepresentationSimple parentRepresentation = new ResourceRepresentationSimple().withScope(parentScope).withId(parentResource.getId())
                         .withName(parentResource.getName());

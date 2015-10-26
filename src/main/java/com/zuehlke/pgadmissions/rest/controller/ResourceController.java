@@ -48,11 +48,11 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceListRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationActivity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationCreation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationLocation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRelation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
@@ -110,9 +110,9 @@ public class ResourceController {
     @Transactional
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=activity")
     @PreAuthorize("permitAll")
-    public ResourceRepresentationActivity getResourceActivity(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public ResourceRepresentationRelation getResourceRelation(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceMapper.getResourceRepresentationActivity(resource);
+        return resourceMapper.getResourceRepresentationRelation(resource);
     }
 
     @Transactional

@@ -6,7 +6,9 @@ import java.util.stream.Stream;
 
 import javax.validation.Valid;
 
-public class ResourceActivityDTO {
+import com.google.common.collect.Iterables;
+
+public class ResourceRelationDTO extends ResourceCreationDTO {
 
     @Valid
     private ResourceCreationDTO institution;
@@ -52,8 +54,12 @@ public class ResourceActivityDTO {
         this.project = project;
     }
 
+    public ResourceCreationDTO getResource() {
+        return Iterables.getLast(getResources());
+    }
+
     public List<ResourceCreationDTO> getResources() {
-        return Stream.of(institution, department, program, project).filter(r -> r != null).collect(Collectors.toList());
+        return Stream.of(institution, department, program, project, this).filter(r -> r != null).collect(Collectors.toList());
     }
 
 }

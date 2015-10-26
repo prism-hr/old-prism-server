@@ -11,7 +11,7 @@ import org.springframework.beans.BeanUtils;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public class ResourceActivityDTO implements Comparable<Object> {
+public class ResourceFlatToNestedDTO implements Comparable<Object> {
 
     private static final String ID = "Id";
 
@@ -164,8 +164,8 @@ public class ResourceActivityDTO implements Comparable<Object> {
         return getScope().equals(INSTITUTION) ? logoImageId : null;
     }
 
-    public ResourceActivityDTO getEnclosingResource(PrismScope scope) {
-        return getEnclosingResource(scope, ResourceActivityDTO.class);
+    public ResourceFlatToNestedDTO getEnclosingResource(PrismScope scope) {
+        return getEnclosingResource(scope, ResourceFlatToNestedDTO.class);
     }
 
     @Override
@@ -181,13 +181,13 @@ public class ResourceActivityDTO implements Comparable<Object> {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final ResourceActivityDTO other = (ResourceActivityDTO) object;
+        final ResourceFlatToNestedDTO other = (ResourceFlatToNestedDTO) object;
         return Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId());
     }
 
     @Override
     public int compareTo(Object object) {
-        ResourceActivityDTO other = (ResourceActivityDTO) object;
+        ResourceFlatToNestedDTO other = (ResourceFlatToNestedDTO) object;
         Integer scopeOrdinal = getScopeOrdinal();
         Integer otherScopeOrdinal = other.getScopeOrdinal();
 
@@ -203,7 +203,7 @@ public class ResourceActivityDTO implements Comparable<Object> {
         return scopeComparison;
     }
 
-    protected <T extends ResourceActivityDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
+    protected <T extends ResourceFlatToNestedDTO> T getEnclosingResource(PrismScope scope, Class<T> returnType) {
         T enclosingResource = BeanUtils.instantiate(returnType);
 
         boolean cloning = false;

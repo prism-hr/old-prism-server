@@ -4,7 +4,7 @@ import java.util.TimeZone;
 
 import org.joda.time.LocalDateTime;
 
-public class ApplicationAppointmentDTO extends ResourceActivityDTO {
+public class ApplicationAppointmentDTO extends ResourceFlatToNestedDTO {
 
     private String applicationCode;
     

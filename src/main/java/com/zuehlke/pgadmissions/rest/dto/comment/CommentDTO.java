@@ -15,7 +15,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 
 public class CommentDTO {
 
@@ -47,9 +48,6 @@ public class CommentDTO {
     private Boolean interested;
 
     @Valid
-    private ResourceRelationInvitationDTO resourceInvitation;
-
-    @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
 
     @Valid
@@ -71,6 +69,12 @@ public class CommentDTO {
 
     @Valid
     private ResourceCreationDTO resource;
+
+    @Valid
+    private ResourceTargetDTO resourceInvitation;
+
+    @Valid
+    private ResourceDTO resourceInvited;
 
     @Valid
     private List<CommentAssignedUserDTO> assignedUsers;
@@ -189,14 +193,6 @@ public class CommentDTO {
         this.rating = rating;
     }
 
-    public ResourceRelationInvitationDTO getResourceInvitation() {
-        return resourceInvitation;
-    }
-
-    public void setResourceInvitation(ResourceRelationInvitationDTO resourceInvitation) {
-        this.resourceInvitation = resourceInvitation;
-    }
-
     public final CommentInterviewAppointmentDTO getInterviewAppointment() {
         return interviewAppointment;
     }
@@ -277,6 +273,22 @@ public class CommentDTO {
         this.resource = resource;
     }
 
+    public ResourceTargetDTO getResourceInvitation() {
+        return resourceInvitation;
+    }
+
+    public void setResourceInvitation(ResourceTargetDTO resourceInvitation) {
+        this.resourceInvitation = resourceInvitation;
+    }
+
+    public ResourceDTO getResourceInvited() {
+        return resourceInvited;
+    }
+
+    public void setResourceInvited(ResourceDTO resourceInvited) {
+        this.resourceInvited = resourceInvited;
+    }
+
     public List<CommentAssignedUserDTO> getAssignedUsers() {
         return assignedUsers;
     }
@@ -336,6 +348,10 @@ public class CommentDTO {
     public CommentDTO withAction(PrismAction action) {
         this.action = action;
         return this;
+    }
+
+    public boolean isActionBypass() {
+        return !(roleContext == null && resourceInvitation == null);
     }
 
 }

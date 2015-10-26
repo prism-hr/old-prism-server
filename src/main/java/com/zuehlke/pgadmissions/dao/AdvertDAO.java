@@ -516,6 +516,13 @@ public class AdvertDAO {
                 .addOrder(Order.asc("id")) //
                 .list();
     }
+    
+    public List<AdvertTarget> getAdvertTargetsLatestFirst(Advert advert) {
+        return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.eq("advert", advert))
+                .addOrder(Order.desc("id")) //
+                .list();
+    }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismMotivationContext context = queryDTO.getContext();

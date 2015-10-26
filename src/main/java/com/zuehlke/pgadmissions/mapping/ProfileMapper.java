@@ -164,7 +164,7 @@ public class ProfileMapper {
         LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
 
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
-                .withResource(resourceMapper.getResourceOpportunityRepresentationActivity(qualification.getAdvert().getResource()));
+                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(qualification.getAdvert().getResource()));
 
         if (qualification.getUser() != null) {
             relation.setUser(userMapper.getUserRepresentationSimple(qualification.getUser()));
@@ -189,7 +189,7 @@ public class ProfileMapper {
         LocalDate endDate = endYear == null ? null : new LocalDate(endYear, employmentPosition.getEndMonth(), 1);
 
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
-                .withResource(resourceMapper.getResourceRepresentationActivity(employmentPosition.getAdvert().getResource()));
+                .withResource(resourceMapper.getResourceRepresentationRelation(employmentPosition.getAdvert().getResource()));
         if (employmentPosition.getUser() != null) {
             relation.setUser(userMapper.getUserRepresentationSimple(employmentPosition.getUser()));
         }
@@ -206,7 +206,7 @@ public class ProfileMapper {
 
     private <T extends ProfileReferee<?>> ProfileRefereeRepresentation getRefereeRepresentation(T referee) {
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
-                .withResource(resourceMapper.getResourceRepresentationActivity(referee.getAdvert().getResource()));
+                .withResource(resourceMapper.getResourceRepresentationRelation(referee.getAdvert().getResource()));
 
         if (referee.getUser() != null) {
             relation.setUser(userMapper.getUserRepresentationSimple(referee.getUser()));

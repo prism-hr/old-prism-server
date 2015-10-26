@@ -1259,7 +1259,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_AUTHENTICATE_SOCIAL_REGISTER(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Register with Social Media"),
     SYSTEM_AUTHENTICATE_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Already Registered?"),
     SYSTEM_AUTHENTICATE_USE_ANOTHER_METHOD(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Use another method"),
-    SYSTEM_AUTHENTICATE_ACCOUNT_ACTIVATED(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Your account has been activated. Click below to sign in."),
+    SYSTEM_AUTHENTICATE_ACCOUNT_ACTIVATED(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Click below to sign in."),
     SYSTEM_AUTHENTICATE_CONFIRM_DETAILS(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Please confirm your details."),
     SYSTEM_AUTHENTICATE_PASSWORD_RESENT_CONFIRMATION(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "An e-mail with the new password will be sent to {{forgottenPasswordEmail}} shortly."),
     SYSTEM_AUTHENTICATE_ASSOCIATE_WITH_CURRENT_USER(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Connect to LinkedIn networks to obtain your profile picture"),

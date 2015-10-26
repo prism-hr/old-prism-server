@@ -188,4 +188,14 @@ public class AdvertRepresentationSimple {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    public AdvertRepresentationSimple withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+
+    public AdvertRepresentationSimple withSummary(String summary) {
+        this.summary = summary;
+        return this;
+    }
+
 }

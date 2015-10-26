@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 
 public class ResourceRepresentationSimple extends ResourceRepresentationIdentity {
@@ -9,6 +10,8 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
     private String code;
 
     private String importedCode;
+
+    private AdvertRepresentationSimple advert;
 
     private StateRepresentationSimple state;
 
@@ -26,6 +29,14 @@ public class ResourceRepresentationSimple extends ResourceRepresentationIdentity
 
     public void setImportedCode(String importedCode) {
         this.importedCode = importedCode;
+    }
+
+    public AdvertRepresentationSimple getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(AdvertRepresentationSimple advert) {
+        this.advert = advert;
     }
 
     public StateRepresentationSimple getState() {

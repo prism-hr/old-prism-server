@@ -1948,7 +1948,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_QUALIFICATION_HEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualifications"),
     PROFILE_QUALIFICATION_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "This section allows you to provide details about your qualifications. Please only provide details of those qualifications that are relevant to your application."),
     PROFILE_QUALIFICATION_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification"),
-    PROFILE_QUALIFICATION_OUTCOME_HEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification outcome"),
+    PROFILE_QUALIFICATION_OUTCOME_HEADER(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Qualification Outcome"),
     PROFILE_QUALIFICATION_PROVIDER_PROGRAM_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Provider & Program"),
     PROFILE_QUALIFICATION_PROVIDER_PROGRAM_HINT(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "The provider of the qualification, and the program that you are following/completed."),
     PROFILE_QUALIFICATION_START_DATE_LABEL(PrismDisplayPropertyCategory.PROFILE_QUALIFICATION, "Start Date"),

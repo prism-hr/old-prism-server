@@ -38,6 +38,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
@@ -74,6 +75,7 @@ import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationE
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ProgramRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceConditionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceCountRepresentation;
@@ -134,7 +136,7 @@ public class ResourceMapper {
 
     @Inject
     private EntityService entityService;
-    
+
     @Inject
     private StateService stateService;
 
@@ -380,7 +382,7 @@ public class ResourceMapper {
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         resourceService.setResourceAdvertIncompleteSection(resource);
         entityService.flush();
-        
+
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setOpportunityCategories(asList(resource.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
@@ -656,6 +658,9 @@ public class ResourceMapper {
 
     private <T extends Resource, V extends ResourceRepresentationActivity> V getResourceRepresentationActivity(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationSimple(resource, returnType);
+
+        Advert advert = resource.getAdvert();
+        representation.setAdvert(new AdvertRepresentationSimple().withId(advert.getId()).withSummary(advert.getSummary()));
 
         if (ResourceOpportunityRepresentationActivity.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ((ResourceOpportunityRepresentationActivity) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());

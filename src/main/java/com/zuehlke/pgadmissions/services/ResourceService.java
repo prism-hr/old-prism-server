@@ -1004,8 +1004,9 @@ public class ResourceService {
             ResourceParent resource = null;
             for (ResourceCreationDTO resourceDTO : resourceRelationInvitationDTO.getResources()) {
                 Integer thisId = resourceDTO.getId();
-
                 PrismScope thisScope = resourceDTO.getScope();
+
+                Integer lastId = resource == null ? systemService.getSystem().getId() : resource.getId();
                 PrismScope lastScope = resource == null ? SYSTEM : resource.getResourceScope();
 
                 ResourceParent duplicateResource = null;
@@ -1017,7 +1018,7 @@ public class ResourceService {
                 if (thisId == null && duplicateResource == null) {
                     resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                     if (resource != null) {
-                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(resource.getId()));
+                        resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastId));
                     }
 
                     if (!assignedUsers && thisScope.getScopeCategory().equals(OPPORTUNITY)) {
@@ -1051,9 +1052,10 @@ public class ResourceService {
                     } else if (duplicateResource != null) {
                         resource = duplicateResource;
                     }
-                    createResourceTarget(resource, resourceDTO);
                     userResource = resource.getUser();
                 }
+
+                createResourceTarget(resource, resourceDTO);
             }
 
             return resource;
@@ -1064,9 +1066,12 @@ public class ResourceService {
 
     private <T extends ResourceCreationDTO> void createResourceTarget(Resource resource, T resourceDTO) {
         if (ResourceParent.class.isAssignableFrom(resource.getClass()) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
-            if (target != null) {
-                advertService.createAdvertTarget(resource.getResourceScope(), resource.getId(), target);
+            AdvertDTO advertDTO = ((ResourceParentDTO) resourceDTO).getAdvert();
+            if (advertDTO != null) {
+                ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
+                if (target != null) {
+                    advertService.createAdvertTarget(resource.getResourceScope(), resource.getId(), target);
+                }
             }
         }
     }

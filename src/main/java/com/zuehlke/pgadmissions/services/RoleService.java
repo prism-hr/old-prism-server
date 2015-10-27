@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -370,17 +371,18 @@ public class RoleService {
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
 
             User owner = resource.getUser();
-            boolean deleteTransition = transitionType.equals(DELETE);
             HashMultimap<User, PrismRole> existingUserRoles = getUserRoles(resource);
             users.forEach(user -> {
-                if (!(user.equals(owner) && deleteTransition)) {
-                    stream(roles).forEach(role -> {
+                boolean delete = transitionType.equals(DELETE);
+                boolean deleteOwnerRole = delete && user.equals(owner);
+                stream(roles).forEach(role -> {
+                    if (!(deleteOwnerRole && role.getRoleCategory().equals(ADMINISTRATOR))) {
                         Set<PrismRole> existingRoles = existingUserRoles.get(user);
-                        if (existingRoles == null || !existingRoles.contains(role)) {
+                        if (existingRoles == null || delete || !existingRoles.contains(role)) {
                             comment.addAssignedUser(user, getById(role), transitionType);
                         }
-                    });
-                }
+                    }
+                });
             });
 
             actionService.executeUserAction(resource, action, comment);

@@ -1,5 +1,5 @@
 alter table state
-	add column ordinal int(2) unsigned after id,
+	add column ordinal int(2) unsigned after id
 ;
 
 alter table state

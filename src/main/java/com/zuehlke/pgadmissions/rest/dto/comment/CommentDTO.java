@@ -70,6 +70,9 @@ public class CommentDTO {
     private ResourceCreationDTO resource;
 
     @Valid
+    private ResourceCreationDTO resourceInviting;
+
+    @Valid
     private ResourceRelationCreationDTO resourceInvitation;
 
     @Valid
@@ -270,6 +273,14 @@ public class CommentDTO {
 
     public void setResource(ResourceCreationDTO resource) {
         this.resource = resource;
+    }
+
+    public ResourceCreationDTO getResourceInviting() {
+        return resourceInviting;
+    }
+
+    public void setResourceInviting(ResourceCreationDTO resourceInviting) {
+        this.resourceInviting = resourceInviting;
     }
 
     public ResourceRelationCreationDTO getResourceInvitation() {

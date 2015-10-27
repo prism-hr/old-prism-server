@@ -230,11 +230,11 @@ public class ResourceService {
         return outcome;
     }
 
-    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
+    public ResourceParent inviteResourceRelation(Resource resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
         return inviteResourceRelation(resource, user, resourceInvitationDTO, resourceInvitationDTO.getMessage());
     }
 
-    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO, String message) {
+    public ResourceParent inviteResourceRelation(Resource resource, User user, ResourceRelationCreationDTO resourceInvitationDTO, String message) {
         if (validateResourceRelationCreation(resourceInvitationDTO)) {
             User childOwner = userService.getOrCreateUser(resourceInvitationDTO.getUser());
 
@@ -242,7 +242,7 @@ public class ResourceService {
             PrismResourceContext context = resourceInvitationDTO.getContext().getContext();
             ResourceParent resourceTarget = createResourceRelation(resourceInvitationDTO.getResource(), context, childOwner);
             if (resource != null) {
-                target = advertService.createAdvertTarget(resource, user, resourceTarget, resourceTarget.getUser(), context, message);
+                target = advertService.createAdvertTarget((ResourceParent) resource, user, resourceTarget, resourceTarget.getUser(), context, message);
             }
 
             notificationService.sendOrganizationInvitationNotification(user, resourceTarget.getUser(), resourceTarget, target, message);
@@ -347,12 +347,12 @@ public class ResourceService {
         if (roleContext != null) {
             joinResource(commentDTO.getResource(), user, roleContext);
         } else if (resourceInvitation != null) {
-            ResourceParent resource = null;
-            ResourceCreationDTO resourceDTO = commentDTO.getResource();
-            if (resourceDTO != null) {
-                resource = (ResourceParent) getById(resourceDTO.getScope(), resourceDTO.getId());
+            Resource resourceInviting = null;
+            ResourceCreationDTO resourceInvitingDTO = commentDTO.getResourceInviting();
+            if (resourceInvitingDTO != null) {
+                resourceInviting = getById(resourceInvitingDTO.getScope(), resourceInvitingDTO.getId());
             }
-            inviteResourceRelation(resource, user, resourceInvitation);
+            inviteResourceRelation(resourceInviting, user, resourceInvitation);
         }
     }
 

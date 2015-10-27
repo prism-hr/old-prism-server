@@ -194,13 +194,13 @@ public class UserController {
         userService.resetPassword(body.get("email"));
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/suggestion", method = RequestMethod.GET, params = "searchTerm")
     public List<UserRepresentationSimple> getSimilarUsers(@RequestParam String searchTerm) {
         return userService.getSimilarUsers(searchTerm);
     }
 
-    @PreAuthorize("permitAll")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
     public UserActivityRepresentation getActivitySummary() {
         return userMapper.getUserActivityRepresentation(userService.getCurrentUser());

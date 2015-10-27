@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.workflow.notification.property;
 
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 
 @Component
@@ -9,7 +10,8 @@ public class TargetResourceOtherNameBuilder implements NotificationPropertyBuild
 
     @Override
     public String build(NotificationPropertyLoader propertyLoader) {
-        return propertyLoader.getNotificationDefinitionDTO().getAdvertTarget().getOtherAdvert().getResource().getDisplayName();
+        AdvertTarget target = propertyLoader.getNotificationDefinitionDTO().getAdvertTarget();
+        return target == null ? null : target.getOtherAdvert().getResource().getDisplayName();
     }
 
 }

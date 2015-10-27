@@ -1,18 +1,18 @@
 package com.zuehlke.pgadmissions.rest.dto.advert;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 
 public class AdvertConnectionDTO {
 
-    private PrismMotivationContext context;
+    private PrismResourceContext context;
 
     private Integer advertId;
 
-    public PrismMotivationContext getContext() {
+    public PrismResourceContext getContext() {
         return context;
     }
 
-    public void setContext(PrismMotivationContext context) {
+    public void setContext(PrismResourceContext context) {
         this.context = context;
     }
 

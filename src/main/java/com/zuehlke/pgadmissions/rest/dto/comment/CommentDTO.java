@@ -15,8 +15,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 
 public class CommentDTO {
 
@@ -71,10 +70,10 @@ public class CommentDTO {
     private ResourceCreationDTO resource;
 
     @Valid
-    private ResourceTargetDTO resourceInvitation;
+    private ResourceRelationCreationDTO resourceInvitation;
 
     @Valid
-    private ResourceDTO resourceInvited;
+    private ResourceCreationDTO resourceInvited;
 
     @Valid
     private List<CommentAssignedUserDTO> assignedUsers;
@@ -273,19 +272,19 @@ public class CommentDTO {
         this.resource = resource;
     }
 
-    public ResourceTargetDTO getResourceInvitation() {
+    public ResourceRelationCreationDTO getResourceInvitation() {
         return resourceInvitation;
     }
 
-    public void setResourceInvitation(ResourceTargetDTO resourceInvitation) {
+    public void setResourceInvitation(ResourceRelationCreationDTO resourceInvitation) {
         this.resourceInvitation = resourceInvitation;
     }
 
-    public ResourceDTO getResourceInvited() {
+    public ResourceCreationDTO getResourceInvited() {
         return resourceInvited;
     }
 
-    public void setResourceInvited(ResourceDTO resourceInvited) {
+    public void setResourceInvited(ResourceCreationDTO resourceInvited) {
         this.resourceInvited = resourceInvited;
     }
 

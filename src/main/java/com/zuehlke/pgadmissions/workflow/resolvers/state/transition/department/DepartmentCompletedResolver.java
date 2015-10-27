@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.department;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL_PARENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
@@ -35,7 +35,7 @@ public class DepartmentCompletedResolver implements StateTransitionResolver<Depa
         User user = comment.getUser();
         if (resourceService.isUnderApproval(resource.getInstitution())) {
             return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVAL_PARENT_APPROVAL);
-        } else if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
+        } else if (roleService.hasUserRole(resource, user, DEPARTMENT_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVED);
         }
         return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVAL);

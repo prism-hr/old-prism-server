@@ -5,8 +5,8 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.MONTH;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.APPLICANT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.APPLICANT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -86,7 +86,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -122,7 +122,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConnectionInvitationsD
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.utils.PrismMappingUtils;
@@ -324,14 +323,25 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
-    public void createAdvertTarget(ResourceCreationDTO resourceDTO, ResourceTargetDTO targetDTO) {
+    public AdvertTarget createAdvertTarget(ResourceCreationDTO resourceDTO, ResourceRelationCreationDTO targetDTO) {
         User user = userService.getCurrentUser();
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceDTO.getScope(), resourceDTO.getId());
-        createAdvertTarget(user, resource, targetDTO, true);
+        return createAdvertTarget(user, resource, targetDTO, true);
     }
 
-    public void createAdvertTarget(ResourceParent resource, ResourceTargetDTO targetDTO) {
-        createAdvertTarget(resource.getUser(), resource, targetDTO, false);
+    public AdvertTarget createAdvertTarget(ResourceParent resource, ResourceRelationCreationDTO targetDTO) {
+        return createAdvertTarget(resource.getUser(), resource, targetDTO, false);
+    }
+    
+    public AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, User userTarget, PrismResourceContext context, String message) {
+        Advert advert = resource.getAdvert();
+        Advert advertTarget = resourceTarget.getAdvert();
+
+        if (context.equals(EMPLOYER)) {
+            return createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message);
+        } else {
+            return createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
+        }
     }
 
     public AdvertTargetPending createAdvertTargetPending(ResourceConnectionInvitationsDTO targets) {
@@ -399,16 +409,6 @@ public class AdvertService {
         }
 
         return performed;
-    }
-
-    public void copyAdvertTargets(ResourceParent resourceSource, ResourceParent resourceTarget) {
-        if (!resourceSource.sameAs(resourceTarget) && resourceSource.getResourceStates().stream().anyMatch(rs -> rs.getState().getId().name().endsWith("_UNSUBMITTED"))) {
-            int counter = 0;
-            List<AdvertTarget> sourceTargets = advertDAO.getAdvertTargetsLatestFirst(resourceTarget.getAdvert());
-            for (AdvertTarget sourceTarget : sourceTargets) {
-
-            }
-        }
     }
 
     public void updateCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) {
@@ -591,7 +591,7 @@ public class AdvertService {
     }
 
     public Set<EntityOpportunityFilterDTO> getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
-        PrismMotivationContext context = query.getContext();
+        PrismResourceContext context = query.getContext();
         Set<EntityOpportunityFilterDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
 
@@ -657,9 +657,9 @@ public class AdvertService {
         String invitationsSerial = advertTargetPending.getAdvertTargetInviteList();
         String connectionsSerial = advertTargetPending.getAdvertTargetConnectList();
         if (invitationsSerial != null) {
-            List<ResourceTargetDTO> invitations = prismMappingUtils.readValue(invitationsSerial, List.class, ResourceTargetDTO.class);
-            for (Iterator<ResourceTargetDTO> iterator = invitations.iterator(); iterator.hasNext();) {
-                ResourceTargetDTO invitation = iterator.next();
+            List<ResourceRelationCreationDTO> invitations = prismMappingUtils.readValue(invitationsSerial, List.class, ResourceRelationCreationDTO.class);
+            for (Iterator<ResourceRelationCreationDTO> iterator = invitations.iterator(); iterator.hasNext();) {
+                ResourceRelationCreationDTO invitation = iterator.next();
                 resourceService.inviteResourceRelation(advertTargetPending.getAdvert().getResource(), advertTargetPending.getUser(), invitation,
                         advertTargetPending.getAdvertTargetMessage());
 
@@ -668,14 +668,13 @@ public class AdvertService {
                 return;
             }
         } else if (connectionsSerial != null) {
-            List<ResourceConnectionInvitationDTO> connections = prismMappingUtils.readValue(connectionsSerial, List.class, ResourceConnectionInvitationDTO.class);
-            for (Iterator<ResourceConnectionInvitationDTO> iterator = connections.iterator(); iterator.hasNext();) {
-                ResourceConnectionInvitationDTO connection = iterator.next();
-                ResourceCreationDTO invitingResourceDTO = connection.getInvitingResource();
-                ResourceParent invitingResource = (ResourceParent) resourceService.getById(invitingResourceDTO.getScope(), invitingResourceDTO.getId());
-                ResourceTargetDTO resourceTargetDTO = connection.getReceivingResource();
-                createAdvertTarget(advertTargetPending.getAdvert().getResource(), advertTargetPending.getUser(), invitingResource, resourceTargetDTO.getUser(),
-                        resourceTargetDTO.getContext(), resourceTargetDTO.getMessage(), false);
+            List<ResourceRelationCreationDTO> connections = prismMappingUtils.readValue(connectionsSerial, List.class, ResourceRelationCreationDTO.class);
+            for (Iterator<ResourceRelationCreationDTO> iterator = connections.iterator(); iterator.hasNext();) {
+                ResourceRelationCreationDTO targetDTO = iterator.next();
+                ResourceCreationDTO ResourceRelationCreationDTO = targetDTO.getResource().getResource();
+                ResourceParent resourceTarget = (ResourceParent) resourceService.getById(ResourceRelationCreationDTO.getScope(), ResourceRelationCreationDTO.getId());
+                createAdvertTarget(advertTargetPending.getAdvert().getResource(), advertTargetPending.getUser(), resourceTarget, targetDTO.getUser(),
+                        ResourceRelationCreationDTO.getContext(), targetDTO.getMessage(), false);
 
                 iterator.remove();
                 advertTargetPending.setAdvertTargetConnectList(connections.isEmpty() ? null : prismMappingUtils.writeValue(connections));
@@ -723,36 +722,32 @@ public class AdvertService {
         return adverts;
     }
 
-    private void createAdvertTarget(User user, ResourceParent resource, ResourceTargetDTO targetDTO, boolean validate) {
-        ResourceCreationDTO resourceTargetDTO = targetDTO.getResource().getResource();
-        ResourceParent resourceTarget = (ResourceParent) resourceService.getById(resourceTargetDTO.getScope(), resourceTargetDTO.getId());
-        createAdvertTarget(resource, user, resourceTarget, targetDTO.getUser(), targetDTO.getContext(), targetDTO.getMessage(), true);
+    private AdvertTarget createAdvertTarget(User user, ResourceParent resource, ResourceRelationCreationDTO targetDTO, boolean validate) {
+        ResourceCreationDTO ResourceRelationCreationDTO = targetDTO.getResource().getResource();
+        ResourceParent resourceTarget = (ResourceParent) resourceService.getById(ResourceRelationCreationDTO.getScope(), ResourceRelationCreationDTO.getId());
+        return createAdvertTarget(resource, user, resourceTarget, targetDTO.getUser(), targetDTO.getContext().getContext(), targetDTO.getMessage(), true);
     }
 
-    private void createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO, PrismMotivationContext context, String message,
-            boolean validate) {
+    private AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO, PrismResourceContext context,
+            String message, boolean validate) {
         if (!(validate && resourceService.getResourceForWhichUserCanConnect(user, resource) == null)) {
-            Advert advert = resource.getAdvert();
-            Advert advertTarget = resourceTarget.getAdvert();
-
             User userTarget = null;
             if (userTargetDTO != null) {
                 userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
             }
-
-            if (context.equals(EMPLOYER)) {
-                createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message);
-            } else {
-                createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
-            }
+            
+            return createAdvertTarget(resource, user, resourceTarget, userTarget, context, message);
         }
+
+        return null;
     }
 
-    private void createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
+    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
+        return entityService
+                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
     }
 
-    private void createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
+    private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
         AdvertTarget targetUser = null;
         if (userTarget != null) {
             targetUser = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
@@ -768,6 +763,8 @@ public class AdvertService {
         if (!updateAdvertTarget(targetAdmin.getId(), true)) {
             targetAdmin.setInvitation(invitation);
         }
+
+        return targetUser == null ? targetAdmin : targetUser;
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,

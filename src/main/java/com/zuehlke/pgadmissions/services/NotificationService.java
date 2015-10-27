@@ -144,25 +144,27 @@ public class NotificationService {
 
     public void sendConnectionRequest(Integer advertTargetId, Set<UserConnectionDTO> sent) {
         AdvertTarget advertTarget = entityService.getById(AdvertTarget.class, advertTargetId);
-        Invitation invitation = advertTarget.getInvitation();
+        if (!advertTarget.getAcceptAdvert().getResource().getResourceStates().stream().allMatch(rs -> rs.getState().getId().name().endsWith("_UNSUBMITTED"))) {
+            Invitation invitation = advertTarget.getInvitation();
 
-        UserConnectionDTO messageIndex = null;
-        User recipient = advertTarget.getAcceptAdvertUser();
-        if (recipient == null) {
-            ResourceParent resource = advertTarget.getAcceptAdvert().getResource();
-            List<User> recipientAdmins = userService.getResourceUsers(resource, PrismRole.valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR"));
-            for (User recipientAdmin : recipientAdmins) {
-                messageIndex = sendConnectionRequest(invitation, recipientAdmin, advertTarget, sent);
+            UserConnectionDTO messageIndex = null;
+            User recipient = advertTarget.getAcceptAdvertUser();
+            if (recipient == null) {
+                ResourceParent resource = advertTarget.getAcceptAdvert().getResource();
+                List<User> recipientAdmins = userService.getResourceUsers(resource, PrismRole.valueOf(resource.getResourceScope().name() + "_ADMINISTRATOR"));
+                for (User recipientAdmin : recipientAdmins) {
+                    messageIndex = sendConnectionRequest(invitation, recipientAdmin, advertTarget, sent);
+                }
+            } else {
+                if (isNotEmpty(roleService.getVerifiedRoles(recipient, advertTarget.getAcceptAdvert().getResource()))) {
+                    messageIndex = sendConnectionRequest(invitation, recipient, advertTarget, sent);
+                }
             }
-        } else {
-            if (isNotEmpty(roleService.getVerifiedRoles(recipient, advertTarget.getAcceptAdvert().getResource()))) {
-                messageIndex = sendConnectionRequest(invitation, recipient, advertTarget, sent);
-            }
-        }
 
-        if (messageIndex != null) {
-            dequeueUserInvitation(invitation, advertTarget);
-            sent.add(messageIndex);
+            if (messageIndex != null) {
+                dequeueUserInvitation(invitation, advertTarget);
+                sent.add(messageIndex);
+            }
         }
     }
 
@@ -177,10 +179,10 @@ public class NotificationService {
                         .withTransitionAction(transitionAction));
     }
 
-    public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource, String personalMessage) {
+    public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource, AdvertTarget advertTarget, String personalMessage) {
         sendNotification(getById(SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION),
-                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
-                        .withInvitationMessage(personalMessage).withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
+                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withInvitationMessage(personalMessage)
+                        .withAdvertTarget(advertTarget).withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
     }
 
     public void sendCompleteRegistrationRequest(User initiator, ActionOutcomeDTO actionOutcome) {

@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
@@ -26,7 +26,7 @@ public class ResourceCreationDTO {
     @NotNull
     private PrismScope scope;
 
-    private PrismMotivationContext context;
+    private PrismResourceContext context;
 
     private PrismState initialState;
 
@@ -48,7 +48,7 @@ public class ResourceCreationDTO {
         this.scope = scope;
     }
 
-    public PrismMotivationContext getContext() {
+    public PrismResourceContext getContext() {
         return context;
     }
 
@@ -60,7 +60,7 @@ public class ResourceCreationDTO {
         this.initialState = initialState;
     }
 
-    public void setContext(PrismMotivationContext context) {
+    public void setContext(PrismResourceContext context) {
         this.context = context;
     }
 

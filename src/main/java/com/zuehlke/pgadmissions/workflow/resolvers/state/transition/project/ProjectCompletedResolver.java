@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.project;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARENT_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
@@ -35,7 +35,7 @@ public class ProjectCompletedResolver implements StateTransitionResolver<Project
         User user = comment.getUser();
         if (resourceService.isUnderApproval(resource)) {
             return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
-        } else if (roleService.hasUserRole(resource, user, PROGRAM_ADMINISTRATOR_GROUP)) {
+        } else if (roleService.hasUserRole(resource, user, PROJECT_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVED);
         }
         return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL);

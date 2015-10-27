@@ -7,7 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
-public enum PrismMotivationContext {
+public enum PrismResourceContext {
 
     APPLICANT(PROJECT, PROGRAM), //
     UNIVERSITY(DEPARTMENT, INSTITUTION), //
@@ -15,7 +15,7 @@ public enum PrismMotivationContext {
 
     private PrismScope[] filterScopes;
 
-    private PrismMotivationContext(PrismScope... filterScopes) {
+    private PrismResourceContext(PrismScope... filterScopes) {
         this.filterScopes = filterScopes;
     }
 

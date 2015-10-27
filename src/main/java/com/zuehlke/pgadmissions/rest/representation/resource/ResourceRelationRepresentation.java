@@ -3,24 +3,24 @@ package com.zuehlke.pgadmissions.rest.representation.resource;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceRelationContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class ResourceRelationRepresentation {
 
-    private PrismScopeRelationContext context;
+    private PrismResourceRelationContext context;
 
     private List<ResourceRelationComponentRepresentation> resourceRelations;
 
-    public ResourceRelationRepresentation(PrismScopeRelationContext context) {
+    public ResourceRelationRepresentation(PrismResourceRelationContext context) {
         this.context = context;
     }
 
-    public PrismScopeRelationContext getContext() {
+    public PrismResourceRelationContext getContext() {
         return context;
     }
 
-    public void setContext(PrismScopeRelationContext creationContext) {
+    public void setContext(PrismResourceRelationContext creationContext) {
         this.context = creationContext;
     }
 

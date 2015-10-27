@@ -24,6 +24,7 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
@@ -618,7 +619,7 @@ public class ResourceService {
         resource.getResourceConditions().clear();
         entityService.flush();
 
-        if (resourceConditions == null) {
+        if (isEmpty(resourceConditions)) {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
             case INSTITUTION:

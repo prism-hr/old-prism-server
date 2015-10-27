@@ -1,6 +1,9 @@
 alter table state
 	add column ordinal int(1) unsigned after id,
-	add index (ordinal)
+;
+
+alter table state
+    add index (ordinal)
 ;
 
 alter table state_group

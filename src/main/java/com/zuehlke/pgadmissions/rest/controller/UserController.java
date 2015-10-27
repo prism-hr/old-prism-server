@@ -200,7 +200,7 @@ public class UserController {
         return userService.getSimilarUsers(searchTerm);
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("permitAll")
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
     public UserActivityRepresentation getActivitySummary() {
         return userMapper.getUserActivityRepresentation(userService.getCurrentUser());

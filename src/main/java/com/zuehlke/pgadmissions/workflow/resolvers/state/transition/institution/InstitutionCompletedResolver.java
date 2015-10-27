@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.workflow.resolvers.state.transition.institution;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVAL;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
 
@@ -26,7 +26,7 @@ public class InstitutionCompletedResolver implements StateTransitionResolver<Ins
 
     @Override
     public StateTransition resolve(Institution resource, Comment comment) {
-        if (roleService.hasUserRole(resource, comment.getUser(), SYSTEM_ADMINISTRATOR)) {
+        if (roleService.hasUserRole(resource, comment.getUser(), INSTITUTION_ADMINISTRATOR_GROUP)) {
             return stateService.getStateTransition(resource, comment.getAction(), INSTITUTION_APPROVED);
         }
         return stateService.getStateTransition(resource, comment.getAction(), INSTITUTION_APPROVAL);

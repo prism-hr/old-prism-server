@@ -57,16 +57,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.comment.CommentState;
 import com.zuehlke.pgadmissions.domain.comment.CommentStateDefinition;
 import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceRelationContext.PrismResourceRelation;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRoleContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.PrismScopeRelation;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
@@ -116,7 +117,6 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationIdentity;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -220,7 +220,7 @@ public class ResourceService {
         if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
             AdvertDTO advertDTO = ((ResourceParentDTO) resourceDTO).getAdvert();
             if (advertDTO != null) {
-                ResourceTargetDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
+                ResourceRelationCreationDTO target = ((ResourceParentDTO) resourceDTO).getAdvert().getTarget();
                 if (target != null) {
                     advertService.createAdvertTarget((ResourceParent) resource, target);
                 }
@@ -230,16 +230,26 @@ public class ResourceService {
         return outcome;
     }
 
-    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceTargetDTO resourceTargetDTO) {
-        return inviteResourceRelation(resource, user, resourceTargetDTO, resourceTargetDTO.getMessage());
+    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
+        return inviteResourceRelation(resource, user, resourceInvitationDTO, resourceInvitationDTO.getMessage());
     }
 
-    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceTargetDTO resourceTargetDTO, String message) {
-        User childOwner = userService.getOrCreateUser(resourceTargetDTO.getUser());
-        ResourceParent invitedResource = createResourceRelation(resourceTargetDTO.getResource(), resourceTargetDTO.getContext(), childOwner);
-        advertService.createAdvertTarget(resource, resourceTargetDTO);
-        notificationService.sendOrganizationInvitationNotification(user, invitedResource.getUser(), invitedResource, message);
-        return invitedResource;
+    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO, String message) {
+        if (validateResourceRelationCreation(resourceInvitationDTO)) {
+            User childOwner = userService.getOrCreateUser(resourceInvitationDTO.getUser());
+
+            AdvertTarget target = null;
+            PrismResourceContext context = resourceInvitationDTO.getContext().getContext();
+            ResourceParent resourceTarget = createResourceRelation(resourceInvitationDTO.getResource(), context, childOwner);
+            if (resource != null) {
+                target = advertService.createAdvertTarget(resource, user, resourceTarget, resourceTarget.getUser(), context, message);
+            }
+
+            notificationService.sendOrganizationInvitationNotification(user, resourceTarget.getUser(), resourceTarget, target, message);
+            return resourceTarget;
+        }
+
+        throw new UnsupportedOperationException("Invalid resource relation invitation attempt");
     }
 
     public ResourceParent createResourceRelation(ResourceRelationCreationDTO resourceRelationCreationDTO) {
@@ -333,12 +343,15 @@ public class ResourceService {
 
     public void executeActionBypass(User user, CommentDTO commentDTO) {
         PrismRoleContext roleContext = commentDTO.getRoleContext();
-        ResourceTargetDTO resourceInvitation = commentDTO.getResourceInvitation();
+        ResourceRelationCreationDTO resourceInvitation = commentDTO.getResourceInvitation();
         if (roleContext != null) {
             joinResource(commentDTO.getResource(), user, roleContext);
         } else if (resourceInvitation != null) {
+            ResourceParent resource = null;
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
-            ResourceParent resource = (ResourceParent) getById(resourceDTO.getScope(), resourceDTO.getId());
+            if (resourceDTO != null) {
+                resource = (ResourceParent) getById(resourceDTO.getScope(), resourceDTO.getId());
+            }
             inviteResourceRelation(resource, user, resourceInvitation);
         }
     }
@@ -1050,7 +1063,7 @@ public class ResourceService {
         }
     }
 
-    private ResourceParent createResourceRelation(ResourceRelationDTO resourceRelationDTO, PrismMotivationContext context, User childOwner) {
+    private ResourceParent createResourceRelation(ResourceRelationDTO resourceRelationDTO, PrismResourceContext context, User childOwner) {
         Resource resource = systemService.getSystem();
         User owner = resource.getUser();
 
@@ -1084,7 +1097,13 @@ public class ResourceService {
                 } else if (duplicateResource != null) {
                     resource = duplicateResource;
                 }
-                owner = resource.getUser();
+
+                if (resource.getResourceScope().equals(finalScope)) {
+                    Role role = roleService.getById(PrismRole.valueOf(finalScope.name() + "_ADMINISTRATOR"));
+                    roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(childOwner).withRole(role).withAssignedTimestamp(now()));
+                } else {
+                    owner = resource.getUser();
+                }
             }
         }
 
@@ -1093,7 +1112,7 @@ public class ResourceService {
 
     private boolean validateResourceRelationCreation(ResourceRelationCreationDTO resourceRelationDTO) {
         List<PrismScope> scopes = resourceRelationDTO.getResources().stream().map(r -> r.getScope()).collect(toList());
-        for (PrismScopeRelation relation : resourceRelationDTO.getContext().getRelations()) {
+        for (PrismResourceRelation relation : resourceRelationDTO.getContext().getRelations()) {
             if (relation.stream().map(creation -> creation.getScope()).collect(Collectors.toList()).containsAll(scopes)) {
                 return true;
             }

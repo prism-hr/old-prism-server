@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -26,7 +26,7 @@ public class NotificationDefinitionDTO {
 
     private ResourceParent invitedResource;
 
-    private PrismMotivationContext invitedResourceContext;
+    private PrismResourceContext invitedResourceContext;
     
     private String invitationMessage;
 
@@ -68,7 +68,7 @@ public class NotificationDefinitionDTO {
         return invitedResource;
     }
 
-    public PrismMotivationContext getInvitedResourceContext() {
+    public PrismResourceContext getInvitedResourceContext() {
         return invitedResourceContext;
     }
 
@@ -126,7 +126,7 @@ public class NotificationDefinitionDTO {
         return this;
     }
 
-    public NotificationDefinitionDTO withInvitedResourceContext(PrismMotivationContext invitedResourceContext) {
+    public NotificationDefinitionDTO withInvitedResourceContext(PrismResourceContext invitedResourceContext) {
         this.invitedResourceContext = invitedResourceContext;
         return this;
     }

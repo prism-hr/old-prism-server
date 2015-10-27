@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.EMPLOYER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext.UNIVERSITY;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -114,7 +114,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private static Map<PrismScope, PrismScope> parentScopes = Maps.newHashMap();
 
-    private static Map<Entry<PrismScope, PrismMotivationContext>, PrismScopeCreationDefault> defaults = Maps.newHashMap();
+    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = Maps.newHashMap();
 
     static {
         PrismScope parentScope = null;
@@ -193,7 +193,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return parentScopes.get(this);
     }
 
-    public PrismScopeCreationDefault getDefault(PrismMotivationContext scopeCreation) {
+    public PrismScopeCreationDefault getDefault(PrismResourceContext scopeCreation) {
         return defaults.get(new SimpleEntry<>(this, scopeCreation));
     }
 

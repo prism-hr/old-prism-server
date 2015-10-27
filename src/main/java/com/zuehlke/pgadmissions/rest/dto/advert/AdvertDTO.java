@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.URL;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceTargetDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
@@ -38,7 +38,7 @@ public class AdvertDTO {
     private AdvertCategoriesDTO categories;
 
     @Valid
-    private ResourceTargetDTO target;
+    private ResourceRelationCreationDTO target;
 
     private Boolean globallyVisible;
 
@@ -98,11 +98,11 @@ public class AdvertDTO {
         this.categories = categories;
     }
 
-    public ResourceTargetDTO getTarget() {
+    public ResourceRelationCreationDTO getTarget() {
         return target;
     }
 
-    public void setTarget(ResourceTargetDTO target) {
+    public void setTarget(ResourceRelationCreationDTO target) {
         this.target = target;
     }
 

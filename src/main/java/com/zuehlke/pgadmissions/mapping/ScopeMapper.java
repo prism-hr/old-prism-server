@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismScopeRelationContext.PrismScopeRelationGroup;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceRelationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceRelationContext.PrismResourceRelationGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -49,12 +49,12 @@ public class ScopeMapper {
 
     public List<ResourceRelationRepresentation> getResourceFamilyCreationRepresentations() {
         List<ResourceRelationRepresentation> representations = Lists.newLinkedList();
-        for (PrismScopeRelationContext relation : PrismScopeRelationContext.values()) {
+        for (PrismResourceRelationContext relation : PrismResourceRelationContext.values()) {
             ResourceRelationRepresentation representation = new ResourceRelationRepresentation(relation);
 
             Map<PrismScope, Integer> occurrences = Maps.newHashMap();
             Map<PrismScope, ResourceRelationComponentRepresentation> scopeRepresentations = Maps.newLinkedHashMap();
-            PrismScopeRelationGroup scopeCreationFamilies = relation.getRelations();
+            PrismResourceRelationGroup scopeCreationFamilies = relation.getRelations();
             scopeCreationFamilies.forEach(scf -> {
                 scf.forEach(s -> {
                     PrismScope scope = s.getScope();

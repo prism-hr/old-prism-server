@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismMotivationContext;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 public class OpportunitiesQueryDTO {
 
     @NotNull
-    private PrismMotivationContext context;
+    private PrismResourceContext context;
 
     private PrismScope resourceScope;
 
@@ -74,11 +74,11 @@ public class OpportunitiesQueryDTO {
         this.resourceId = resourceId;
     }
 
-    public PrismMotivationContext getContext() {
+    public PrismResourceContext getContext() {
         return context;
     }
 
-    public void setContext(PrismMotivationContext context) {
+    public void setContext(PrismResourceContext context) {
         this.context = context;
     }
 

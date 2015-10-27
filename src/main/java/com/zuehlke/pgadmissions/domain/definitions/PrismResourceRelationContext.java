@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -41,7 +41,7 @@ public enum PrismResourceRelationContext {
             .withScopeCreationFamily(new PrismResourceRelation()
                     .withScope(INSTITUTION, true, false, true)
                     .withScope(DEPARTMENT, true, false, true))),
-    UNIVERSITY_RELATION(EMPLOYER, new PrismResourceRelationGroup()
+    UNIVERSITY_RELATION(UNIVERSITY, new PrismResourceRelationGroup()
             .withScopeCreationFamily(new PrismResourceRelation()
                     .withScope(INSTITUTION, true, false, true))
             .withScopeCreationFamily(new PrismResourceRelation()

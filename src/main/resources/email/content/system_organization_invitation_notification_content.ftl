@@ -3,12 +3,9 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} 
-    <#if TARGET_RESOURCE_OTHER_NAME?has_content>
-        of ${TARGET_RESOURCE_OTHER_NAME} 
-    </#if>
-    has invited your  ${TEMPLATE_RESOURCE_SCOPE} to join ${TEMPLATE_SYSTEM_NAME}, the 
-    marketplace for student and graduate careers.
+    ${TEMPLATE_INITIATOR_FULL_NAME} <#if TARGET_RESOURCE_OTHER_NAME?has_content> of 
+    ${TARGET_RESOURCE_OTHER_NAME} </#if>has invited your  ${TEMPLATE_RESOURCE_SCOPE} 
+    to join ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
 </p>
 
 <p>

@@ -383,7 +383,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_STUDY_OPTION_FULL_TIME(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Full Time"),
     SYSTEM_STUDY_OPTION_PART_TIME(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Part Time"),
-    SYSTEM_STUDY_OPTION_BOTH(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Available Full Time or Part Time"),
+    SYSTEM_STUDY_OPTION_BOTH(PrismDisplayPropertyCategory.SYSTEM_STUDY_OPTION, "Available Full or Part Time"),
 
     /*
      * *************** SYSTEM AGE RANGE *********************

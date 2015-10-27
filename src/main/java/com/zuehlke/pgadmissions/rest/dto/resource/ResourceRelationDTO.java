@@ -8,7 +8,7 @@ import javax.validation.Valid;
 
 import com.google.common.collect.Iterables;
 
-public class ResourceRelationDTO extends ResourceCreationDTO {
+public class ResourceRelationDTO {
 
     @Valid
     private ResourceCreationDTO institution;
@@ -59,7 +59,7 @@ public class ResourceRelationDTO extends ResourceCreationDTO {
     }
 
     public List<ResourceCreationDTO> getResources() {
-        return Stream.of(institution, department, program, project, this).filter(r -> r != null).collect(Collectors.toList());
+        return Stream.of(institution, department, program, project).filter(r -> r != null).collect(Collectors.toList());
     }
 
 }

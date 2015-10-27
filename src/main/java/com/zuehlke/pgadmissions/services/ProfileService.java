@@ -29,6 +29,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
 import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
@@ -70,6 +71,8 @@ import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
@@ -655,7 +658,13 @@ public class ProfileService {
             advertRelation.setUser(userService.getUserByEmail(userConnectionDTO.getEmail()));
         }
 
-        advertRelation.setAdvert(resource.getAdvert());
+        Advert advert = resource.getAdvert();
+        ResourceCreationDTO resourceDTO = advertRelationDTO.getResource().getResource().getResource();
+        if (ResourceOpportunityDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+            advert.setSummary(((ResourceOpportunityDTO) resourceDTO).getAdvert().getSummary());
+        }
+        
+        advertRelation.setAdvert(advert);
     }
 
     private <T extends ProfileQualification<?>> T getProfileQualification(Class<T> qualificationClass, Integer qualificationId) {

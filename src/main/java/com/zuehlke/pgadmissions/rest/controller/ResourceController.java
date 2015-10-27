@@ -194,7 +194,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            ResourceUserRolesRepresentation body) {
+            @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
 

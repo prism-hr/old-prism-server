@@ -381,16 +381,15 @@ public class AdvertService {
                     }
                     advertDAO.processAdvertTarget(advertTargetId, partnershipState);
 
-                    PrismPartnershipState oldPartnershipState = null;
+                    Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
                     if (isAdmin) {
-                        AdvertTarget similarAdvertTarget = advertDAO.getSimilarAdvertTarget(advertTarget, user);
-                        if (similarAdvertTarget != null) {
-                            oldPartnershipState = similarAdvertTarget.getPartnershipState();
+                        advertDAO.getSimilarAdvertTarget(advertTarget, user).forEach(similarAdvertTarget -> {
+                            oldPartnershipStates.add(similarAdvertTarget.getPartnershipState());
                             similarAdvertTarget.setPartnershipState(partnershipState);
-                        }
+                        });
                     }
 
-                    if (endorsementProvided && !Objects.equal(oldPartnershipState, ENDORSEMENT_PROVIDED)) {
+                    if (endorsementProvided && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
                         notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
                     }
 
@@ -508,7 +507,6 @@ public class AdvertService {
         }
 
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
-
         String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opprortunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
@@ -737,11 +735,15 @@ public class AdvertService {
             Advert advert = resource.getAdvert();
             Advert advertTarget = resourceTarget.getAdvert();
 
-            User userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            User userTarget = null;
+            if (userTargetDTO != null) {
+                userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            }
+
             if (context.equals(EMPLOYER)) {
-                createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
-            } else {
                 createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message);
+            } else {
+                createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
             }
         }
     }

@@ -490,11 +490,12 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name) {
+    public ResourceParent getActiveResourceByName(Resource parentResource, PrismScope resourceScope, String name) {
         String resourceReference = resourceScope.getLowerCamelName();
         return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property(resourceReference)) //
                 .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource." + parentResource.getResourceScope().getLowerCamelName(), parentResource))
                 .add(Restrictions.eq("resource.name", name)) //
                 .add(getResourceParentManageableStateConstraint(resourceScope.name())) //
                 .addOrder(Order.asc("id")) //

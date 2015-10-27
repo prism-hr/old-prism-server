@@ -435,8 +435,8 @@ public class AdvertDAO {
                 .uniqueResult();
     }
 
-    public AdvertTarget getSimilarAdvertTarget(AdvertTarget advertTarget, User user) {
-        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+    public List<AdvertTarget> getSimilarAdvertTarget(AdvertTarget advertTarget, User user) {
+        return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .add(Restrictions.ne("id", advertTarget.getId())) //
                 .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
                 .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
@@ -444,7 +444,7 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("acceptAdvertUser")) //
                         .add(Restrictions.eq("acceptAdvertUser", user))) //
-                .uniqueResult();
+                .list();
     }
 
     public List<ResourceConnectionDTO> getAdverts(PrismScope resourceScope) {

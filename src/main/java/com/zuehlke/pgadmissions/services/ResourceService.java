@@ -25,6 +25,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
 
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -265,7 +265,7 @@ public class ResourceService {
             }
 
             ResourceParent resource = createResourceRelation(resourceRelationCreationDTO.getResource(), resourceRelationCreationDTO.getContext().getContext(), childOwner);
-            ResourceParent parentResource = ObjectUtils.firstNonNull(resource.getDepartment(), resource.getInstitution());
+            ResourceParent parentResource = firstNonNull(resource.getDepartment(), resource.getInstitution());
 
             if (viewer != null) {
                 joinResource(parentResource, viewer, VIEWER);
@@ -795,10 +795,10 @@ public class ResourceService {
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
-    public ResourceParent getActiveResourceByName(PrismScope resourceScope, String name) {
+    public ResourceParent getActiveResourceByName(Resource parentResource, PrismScope resourceScope, String name) {
         Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return resourceDAO.getActiveResourceByName(resourceScope, name);
+            return resourceDAO.getActiveResourceByName(parentResource, resourceScope, name);
         }
         return null;
     }
@@ -1051,8 +1051,8 @@ public class ResourceService {
     }
 
     private ResourceParent createResourceRelation(ResourceRelationDTO resourceRelationDTO, PrismMotivationContext context, User childOwner) {
-        ResourceParent resource = null;
-        User owner = systemService.getSystem().getUser();
+        Resource resource = systemService.getSystem();
+        User owner = resource.getUser();
 
         List<ResourceCreationDTO> resourceDTOs = resourceRelationDTO.getResources();
         PrismScope finalScope = Iterables.getLast(resourceDTOs).getScope();
@@ -1060,13 +1060,13 @@ public class ResourceService {
             Integer thisId = resourceDTO.getId();
             PrismScope thisScope = resourceDTO.getScope();
 
-            Integer lastId = resource == null ? systemService.getSystem().getId() : resource.getId();
-            PrismScope lastScope = resource == null ? SYSTEM : resource.getResourceScope();
+            Integer lastId = resource.getId();
+            PrismScope lastScope = resource.getResourceScope();
 
             ResourceParent duplicateResource = null;
             owner = finalScope.equals(thisScope) ? childOwner : owner;
             if (thisId == null && thisScope.getScopeCategory().equals(ORGANIZATION) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-                duplicateResource = getActiveResourceByName(thisScope, ((ResourceParentDTO) resourceDTO).getName());
+                duplicateResource = getActiveResourceByName(resource, thisScope, ((ResourceParentDTO) resourceDTO).getName());
             }
 
             resourceDTO.setContext(context);
@@ -1088,7 +1088,7 @@ public class ResourceService {
             }
         }
 
-        return resource;
+        return (ResourceParent) resource;
     }
 
     private boolean validateResourceRelationCreation(ResourceRelationCreationDTO resourceRelationDTO) {

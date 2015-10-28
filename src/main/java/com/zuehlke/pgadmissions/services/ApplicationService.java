@@ -106,7 +106,7 @@ public class ApplicationService {
     private UserService userService;
 
     @Inject
-    private ProfileValidator applicationValidator;
+    private ProfileValidator profileValidator;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -206,7 +206,7 @@ public class ApplicationService {
 
     public <T extends Application> BeanPropertyBindingResult validateApplication(T application) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(application, "application");
-        ValidationUtils.invokeValidator(applicationValidator, application, errors);
+        ValidationUtils.invokeValidator(profileValidator, application, errors);
         return errors;
     }
 

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.rest.validation;
 
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
@@ -122,7 +123,7 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
 
     private void validateDocumentConstraint(ProfileEntity<?, ?, ?, ?, ?, ?, ?> profile, String propertyDocument, PrismWorkflowConstraint constraint, Errors errors) {
         ProfileDocument<?> documents = profile.getDocument();
-        Document document = documents == null ? null : (Document) PrismReflectionUtils.getProperty(documents, propertyDocument);
+        Document document = documents == null ? null : (Document) getProperty(documents, propertyDocument);
         validateRequiredConstraint(document, "document", propertyDocument, constraint, errors);
     }
 

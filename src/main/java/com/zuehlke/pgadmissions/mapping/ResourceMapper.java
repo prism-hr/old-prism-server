@@ -605,11 +605,11 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationRelation getResourceRepresentationRelation(T resource) {
-        return getResourceRepresentationActivity(resource, ResourceRepresentationRelation.class);
+        return getResourceRepresentationRelation(resource, ResourceRepresentationRelation.class);
     }
 
     public <T extends Resource> ResourceRepresentationRelation getResourceOpportunityRepresentationRelation(T resource) {
-        return getResourceRepresentationActivity(resource, ResourceOpportunityRepresentationRelation.class);
+        return getResourceRepresentationRelation(resource, ResourceOpportunityRepresentationRelation.class);
     }
 
     public List<ResourceListFilterRepresentation> getResourceListFilterRepresentations() {
@@ -656,7 +656,7 @@ public class ResourceMapper {
         }
     }
 
-    private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationActivity(T resource, Class<V> returnType) {
+    private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationRelation(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationSimple(resource, returnType);
 
         Advert advert = resource.getAdvert();
@@ -692,7 +692,7 @@ public class ResourceMapper {
     @SuppressWarnings("unchecked")
     private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationActivity(T resource, Class<V> returnType,
             List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
-        V representation = getResourceRepresentationActivity(resource, returnType);
+        V representation = getResourceRepresentationRelation(resource, returnType);
 
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
 

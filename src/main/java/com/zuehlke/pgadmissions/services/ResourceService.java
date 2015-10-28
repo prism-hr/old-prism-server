@@ -17,7 +17,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
@@ -508,6 +507,18 @@ public class ResourceService {
         return properties;
     }
 
+    public List<Resource> getResourcesByUser(PrismScope prismScope, User user) {
+        return resourceDAO.getResourcesByUser(prismScope, user);
+    }
+
+    public List<Integer> getResourcesByMatchingUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
+        return resourceDAO.getResourcesByMatchingUsersAndRole(prismScope, searchTerm, prismRoles);
+    }
+
+    public List<Integer> getSimilarResources(PrismScope enclosingResourceScope, String searchTerm) {
+        return resourceDAO.getSimilarResources(enclosingResourceScope, searchTerm);
+    }
+    
     public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
         return resourceDAO.getResourceForWhichUserHasRoles(user, roles);
     }
@@ -522,18 +533,6 @@ public class ResourceService {
             resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> resources.add(resource));
         }
         return new ArrayList<>(resources);
-    }
-
-    public List<Resource> getResourcesByUser(PrismScope prismScope, User user) {
-        return resourceDAO.getResourcesByUser(prismScope, user);
-    }
-
-    public List<Integer> getResourcesByMatchingUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
-        return resourceDAO.getResourcesByMatchingUsersAndRole(prismScope, searchTerm, prismRoles);
-    }
-
-    public List<Integer> getSimilarResources(PrismScope enclosingResourceScope, String searchTerm) {
-        return resourceDAO.getSimilarResources(enclosingResourceScope, searchTerm);
     }
 
     public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope scope, PrismScope creationScope, String searchTerm) {
@@ -578,6 +577,29 @@ public class ResourceService {
         }
 
         return newLinkedList(resources);
+    }
+    
+    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanAdminister(User user) {
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+
+        List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
+        for (PrismScope scope : visibleScopes) {
+            String scopeReference = scope.name();
+
+            getResources(user, scope, visibleScopes.stream()
+                    .filter(as -> as.ordinal() < scope.ordinal())
+                    .collect(Collectors.toList()), //
+                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionId(PrismAction.valueOf(scopeReference + "_VIEW_EDIT"))
+                            .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
+                    Projections.projectionList() //
+                            .add(Projections.groupProperty("action.scope.id").as("scope")) //
+                            .add(Projections.groupProperty("resource.id").as("id")),
+                    ResourceIdentityDTO.class).forEach(resource -> {
+                        resources.put(resource.getScope(), resource.getId());
+                    });
+        }
+
+        return resources;
     }
 
     public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {
@@ -880,29 +902,6 @@ public class ResourceService {
         return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
     }
 
-    public HashMultimap<PrismScope, Integer> getResourcesUserCanAdminister(User user) {
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-
-        List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
-        for (PrismScope scope : visibleScopes) {
-            String scopeReference = scope.name();
-
-            getResources(user, scope, visibleScopes.stream()
-                    .filter(as -> as.ordinal() < scope.ordinal())
-                    .collect(Collectors.toList()), //
-                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionId(PrismAction.valueOf(scopeReference + "_VIEW_EDIT"))
-                            .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
-                    Projections.projectionList() //
-                            .add(Projections.groupProperty("action.scope.id").as("scope")) //
-                            .add(Projections.groupProperty("resource.id").as("id")),
-                    ResourceIdentityDTO.class).forEach(resource -> {
-                        resources.put(resource.getScope(), resource.getId());
-                    });
-        }
-
-        return resources;
-    }
-
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, filter, //
                 Projections.projectionList() //
@@ -1079,7 +1078,7 @@ public class ResourceService {
 
             ResourceParent duplicateResource = null;
             owner = finalScope.equals(thisScope) ? childOwner : owner;
-            if (thisId == null && thisScope.getScopeCategory().equals(ORGANIZATION)) {
+            if (thisId == null && thisScope.equals(PROJECT)) {
                 duplicateResource = getActiveResourceByName(resource, thisScope, ((ResourceParentDTO) resourceDTO).getName());
             }
 

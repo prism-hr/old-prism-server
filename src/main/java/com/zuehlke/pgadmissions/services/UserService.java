@@ -354,7 +354,7 @@ public class UserService {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesUserCanAdminister(getCurrentUser());
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesForWhichUserCanAdminister(getCurrentUser());
         if (!administratorResources.isEmpty()) {
             HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
             return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
@@ -363,7 +363,7 @@ public class UserService {
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesUserCanAdminister(getCurrentUser());
+        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesForWhichUserCanAdminister(getCurrentUser());
         User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
 
         String email = userCorrectionDTO.getEmail();
@@ -420,7 +420,7 @@ public class UserService {
     }
 
     public List<UnverifiedUserDTO> getUsersToVerify(User user) {
-        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesUserCanAdminister(user);
+        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
         Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
         if (!resources.isEmpty()) {
             for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {

@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.mapping.ResourceMapper;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationStandard;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -33,6 +34,7 @@ public class DeclineController {
     public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode) {
         User user = userService.getUserByActivationCode(activationCode);
         CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setResource(new ResourceCreationDTO().withId(resourceId).withScope(actionId.getScope()));
         commentDTO.setUser(user.getId());
         commentDTO.setAction(actionId);
         commentDTO.setDeclinedResponse(true);

@@ -71,5 +71,15 @@ public class ResourceCreationDTO {
     public void setParentResource(ResourceDTO parentResource) {
         this.parentResource = parentResource;
     }
+    
+    public ResourceCreationDTO withId(Integer id) {
+        this.id = id;
+        return this;
+    }
 
+    public ResourceCreationDTO withScope(PrismScope scope) {
+        this.scope = scope;
+        return this;
+    }
+    
 }

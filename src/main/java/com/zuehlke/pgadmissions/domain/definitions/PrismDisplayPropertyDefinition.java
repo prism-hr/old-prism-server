@@ -1405,7 +1405,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INVITE_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invitation message"),
     SYSTEM_INVITE_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you wish you can specify a personal message that you would like your contact to receive."),
     SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Another"),
-
+    SYSTEM_INVITE_LOGIN_REGISTER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You must be registered and have staff privileges in an organization to invite another organization to join."),
+    SYSTEM_INVITE_CREATE_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You must have staff privileges in an organization to invite another organization to connect."),
+    
     /*
      * *************** SYSTEM RESOURCES SECTION *********************
      */

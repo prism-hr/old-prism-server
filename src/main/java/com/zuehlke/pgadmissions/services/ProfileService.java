@@ -409,6 +409,7 @@ public class ProfileService {
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
             applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
+            applicationDocument.setLastUpdatedTimestamp(new DateTime());
         }
     }
 

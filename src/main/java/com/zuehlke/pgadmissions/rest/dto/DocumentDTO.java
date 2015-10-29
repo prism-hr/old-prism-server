@@ -27,4 +27,15 @@ public class DocumentDTO {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    public DocumentDTO withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public DocumentDTO withFileName(String fileName) {
+        this.fileName = fileName;
+        return this;
+    }
+    
 }

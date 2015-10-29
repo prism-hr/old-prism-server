@@ -175,6 +175,8 @@ public class ProfileService {
         Application application = applicationService.getById(applicationId);
         ApplicationQualification qualification = updateQualification(application, ApplicationQualification.class, qualificationId, qualificationDTO);
 
+        qualificationDTO.setDocument(cloneDocument(qualificationDTO.getDocument()));
+
         UserAccount userAccount = application.getUser().getUserAccount();
         UserQualification userQualification = entityService.getDuplicateEntity(UserQualification.class,
                 new EntitySignature().addProperty("association", userAccount).addProperty("advert", qualification.getAdvert()).addProperty("startYear",
@@ -281,6 +283,9 @@ public class ProfileService {
         Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(), DOCUMENT) : null;
         applicationDocument.setCoveringLetter(coveringLetter);
 
+        documentDTO.setCv(cloneDocument(documentDTO.getCv()));
+        documentDTO.setCoveringLetter(cloneDocument(documentDTO.getCoveringLetter()));
+
         UserAccount userAccount = application.getUser().getUserAccount();
         UserDocument userDocument = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(userDocument);
@@ -300,7 +305,8 @@ public class ProfileService {
 
     public void updateAdditionalInformationApplication(Integer applicationId, ProfileAdditionalInformationDTO additionalInformationDTO) {
         Application application = applicationService.getById(applicationId);
-        ApplicationAdditionalInformation applicationAdditionalInformation = updateAdditionalInformation(application, ApplicationAdditionalInformation.class, additionalInformationDTO);
+        ApplicationAdditionalInformation applicationAdditionalInformation = updateAdditionalInformation(application, ApplicationAdditionalInformation.class,
+                additionalInformationDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAdditionalInformation userAdditionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
@@ -664,7 +670,7 @@ public class ProfileService {
         if (ResourceOpportunityDTO.class.isAssignableFrom(resourceDTO.getClass())) {
             advert.setSummary(((ResourceOpportunityDTO) resourceDTO).getAdvert().getSummary());
         }
-        
+
         advertRelation.setAdvert(advert);
     }
 
@@ -699,6 +705,17 @@ public class ProfileService {
     private CommentAssignedUser getUserAssignmentDelete(User user, PrismRole roleId) {
         Role role = roleService.getById(roleId);
         return new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(DELETE);
+    }
+
+    private DocumentDTO cloneDocument(DocumentDTO documentDTO) {
+        if (documentDTO != null) {
+            Document document = documentService.getById(documentDTO.getId());
+            Document cloneDocument = documentService.cloneDocument(document);
+            entityService.save(cloneDocument);
+            
+            return new DocumentDTO().withId(cloneDocument.getId()).withFileName(cloneDocument.getFileName());
+        }
+        return null;
     }
 
     private static class ProfileRefereeUpdateDTO {

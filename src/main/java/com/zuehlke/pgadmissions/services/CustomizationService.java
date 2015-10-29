@@ -67,8 +67,7 @@ public class CustomizationService {
         return customizationDAO.getActiveConfigurationVersion(configurationType, resource, opportunityType);
     }
 
-    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-            WorkflowDefinition definition) {
+    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
         return customizationDAO.getConfiguration(configurationType, resource, opportunityType, definition);
     }
 
@@ -81,8 +80,8 @@ public class CustomizationService {
         return customizationDAO.getConfigurationWithVersion(configurationType, definition, version);
     }
 
-    public WorkflowConfigurationRepresentation getConfigurationRepresentation(
-            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
+    public WorkflowConfigurationRepresentation getConfigurationRepresentation(PrismConfiguration configurationType, Resource resource,
+            PrismOpportunityType opportunityType, WorkflowDefinition definition) {
         Resource configuredResource = getConfiguredResource(resource);
         PrismOpportunityType configuredOpportunityType = getConfiguredOpportunityType(resource, opportunityType);
 

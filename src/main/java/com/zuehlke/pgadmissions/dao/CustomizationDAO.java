@@ -87,8 +87,7 @@ public class CustomizationDAO {
                 + opportunityTypeCriterion + ")";
     }
 
-    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-                                                     WorkflowDefinition definition) {
+    public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), opportunityType)) //
                 .add(Restrictions.eq("definition", definition));
@@ -106,8 +105,8 @@ public class CustomizationDAO {
                 .uniqueResult();
     }
 
-    public List<WorkflowConfiguration<?>> getConfigurations(PrismConfiguration configurationType, Resource resource,
-                                                            PrismOpportunityType opportunityType, WorkflowDefinition definition) {
+    public List<WorkflowConfiguration<?>> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
+            WorkflowDefinition definition) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), opportunityType)) //
                 .add(Restrictions.eq("definition", definition));
@@ -124,9 +123,8 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public List<WorkflowConfiguration<?>> getConfigurations(
-            PrismConfiguration configurationType, Resource resource, PrismScope scope,
-            PrismOpportunityType opportunityType, Enum<?> category) {
+    public List<WorkflowConfiguration<?>> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType,
+            Enum<?> category) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .createAlias("definition", "definition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("definition.scope.id", scope)) //
@@ -152,8 +150,8 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public List<WorkflowConfiguration<?>> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
-                                                            PrismOpportunityType opportunityType, boolean configurationMode) {
+    public List<WorkflowConfiguration<?>> getConfigurations(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType,
+            boolean configurationMode) {
         return getConfigurations(configurationType, resource, scope, opportunityType, null);
     }
 
@@ -170,8 +168,7 @@ public class CustomizationDAO {
                 .list();
     }
 
-    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-                                            Enum<?> definitionId) {
+    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, Enum<?> definitionId) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
@@ -183,8 +180,7 @@ public class CustomizationDAO {
         query.executeUpdate();
     }
 
-    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope,
-                                            PrismOpportunityType opportunityType) {
+    public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismScope scope, PrismOpportunityType opportunityType) {
         Query query = sessionFactory.getCurrentSession().createQuery( //
                 getUpdateOperation(configurationType) //
                         + "where " + resource.getResourceScope().getLowerCamelName() + " = :resource " //
@@ -196,8 +192,7 @@ public class CustomizationDAO {
         query.executeUpdate();
     }
 
-    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-                                           Enum<?> definitionId) {
+    public void restoreGlobalConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, Enum<?> definitionId) {
         PrismScope resourceScope = resource.getResourceScope();
 
         String updateOperation = getUpdateOperation(configurationType);

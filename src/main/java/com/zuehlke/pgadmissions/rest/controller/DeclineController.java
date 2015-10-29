@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.rest.controller;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +34,7 @@ public class DeclineController {
     private UserService userService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode) {
+    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode, @RequestBody Map<?, ?> undertow) {
         User user = userService.getUserByActivationCode(activationCode);
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setResource(new ResourceCreationDTO().withId(resourceId).withScope(actionId.getScope()));

@@ -10,7 +10,7 @@ public class CommentInterviewInstructionDTO {
     @Size(max = 1000)
     private String interviewerInstructions;
 
-    @Size(max = 100)
+    @Size(max = 2000)
     private String interviewLocation;
 
     public final String getIntervieweeInstructions() {

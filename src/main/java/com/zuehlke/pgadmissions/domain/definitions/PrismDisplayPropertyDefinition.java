@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1241,6 +1241,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM CONNECT SECTION *********************
      */
 
+    SYSTEM_CONNECT_TITLE(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Connect with: {{name}}"),
     SYSTEM_CONNECT_INVITING_RESOURCE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Connect as"),
     SYSTEM_CONNECT_INVITING_RESOURCE_HINT(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Select the organization that you would like to connect as."),
 
@@ -1407,7 +1408,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Another"),
     SYSTEM_INVITE_LOGIN_REGISTER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You must be registered and have staff privileges in an organization to invite another organization to join."),
     SYSTEM_INVITE_CREATE_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You must have staff privileges in an organization to invite another organization to connect."),
-    
+
     /*
      * *************** SYSTEM RESOURCES SECTION *********************
      */

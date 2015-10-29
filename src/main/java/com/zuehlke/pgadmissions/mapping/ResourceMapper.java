@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
+import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -56,6 +57,7 @@ import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
@@ -700,8 +702,8 @@ public class ResourceMapper {
         setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
-        if (ResourceParent.class.isAssignableFrom(resourceClass) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {
-            representation.setApplicationRatingAverage(((ResourceParent) resource).getApplicationRatingAverage());
+        if (!resourceClass.equals(System.class) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {
+            representation.setApplicationRatingAverage((BigDecimal) getProperty(resource, "applicationRatingAverage"));
         }
 
         representation.setPreviousState(stateMapper.getStateRepresentationSimple(resource.getPreviousState()));

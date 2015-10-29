@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.rest.dto.DisplayPropertyConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.NotificationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.dto.StateDurationConfigurationDTO;
 import com.zuehlke.pgadmissions.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.configuration.NotificationConfigurationRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import com.zuehlke.pgadmissions.services.CustomizationService;
 import com.zuehlke.pgadmissions.services.EntityService;
@@ -51,27 +52,23 @@ public class CustomizationController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
-    public WorkflowConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
-                                                                @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                                                @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismNotificationDefinition id) {
+    public NotificationConfigurationRepresentation getConfiguration(@ModelAttribute PrismConfiguration configurationType,
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
+            @PathVariable PrismNotificationDefinition id) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         WorkflowDefinition definition = entityService.getById(configurationType.getDefinitionClass(), id);
-        return customizationService.getConfigurationRepresentation(configurationType, resource, opportunityType, definition);
+        return (NotificationConfigurationRepresentation) customizationService.getConfigurationRepresentation(configurationType, resource, opportunityType, definition);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties}/categories/{category}", method = RequestMethod.GET)
-    public List<DisplayPropertyConfigurationRepresentation> getDisplayPropertyConfigurations(
-            @ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId,
-            @PathVariable PrismDisplayPropertyCategory category,
-            @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismOpportunityType opportunityType,
-            @RequestParam(required = false) Boolean fetchReference) {
+    public List<DisplayPropertyConfigurationRepresentation> getDisplayPropertyConfigurations(@ModelAttribute PrismConfiguration configurationType,
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable PrismDisplayPropertyCategory category,
+            @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType, @RequestParam(required = false) Boolean fetchReference) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (BooleanUtils.isTrue(fetchReference)) {
-            List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category);
+            List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType,
+                    category);
             return sparsifyDisplayPropertyConfigurations(category, translations);
         }
         List<WorkflowConfigurationRepresentation> translations = customizationService.getConfigurationRepresentationsConfigurationMode(configurationType,
@@ -81,27 +78,24 @@ public class CustomizationController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:stateDurations}", method = RequestMethod.GET)
-    public List<WorkflowConfigurationRepresentation> getConfigurations(
-            @ModelAttribute PrismConfiguration configurationType,
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam PrismScope scope,
-            @RequestParam(required = false) PrismOpportunityType opportunityType) {
+    public List<WorkflowConfigurationRepresentation> getConfigurations(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         return customizationService.getConfigurationRepresentations(configurationType, resource, scope, opportunityType);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:customQuestions}", params = "version", method = RequestMethod.GET)
-    public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(
-            @ModelAttribute PrismConfiguration configurationType,
+    public List<WorkflowConfigurationRepresentation> getConfigurationsWithVersion(@ModelAttribute PrismConfiguration configurationType,
             @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @RequestParam Integer version) {
         return customizationService.getConfigurationRepresentationsWithVersion(configurationType, version);
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.DELETE, headers = "Restore-Type")
-    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-                                     @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
-                                     @RequestHeader(value = "Restore-Type") String restoreType, @PathVariable PrismNotificationDefinition id) {
+    public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType, @PathVariable Integer resourceId,
+            @RequestParam(required = false) PrismOpportunityType opportunityType, @RequestHeader(value = "Restore-Type") String restoreType,
+            @PathVariable PrismNotificationDefinition id) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
             customizationService.restoreGlobalConfiguration(configurationType, resource, opportunityType, id);
@@ -113,8 +107,8 @@ public class CustomizationController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties|stateDurations}", method = RequestMethod.DELETE, headers = "Restore-Type")
     public void restoreConfiguration(@ModelAttribute ResourceDescriptor resourceDescriptor, @ModelAttribute PrismConfiguration configurationType,
-                                     @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
-                                     @RequestHeader(value = "Restore-Type") String restoreType) {
+            @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
+            @RequestHeader(value = "Restore-Type") String restoreType) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         if (restoreType.equals("global")) {
             customizationService.restoreGlobalConfiguration(configurationType, resource, scope, opportunityType);
@@ -125,10 +119,8 @@ public class CustomizationController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.PUT)
-    public void updateNotificationConfiguration(
-            @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
-            @PathVariable PrismNotificationDefinition id,
+    public void updateNotificationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismNotificationDefinition id,
             @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         customizationService.createOrUpdateConfigurationUser(configurationType, resource, opportunityType, notificationConfigurationDTO);
@@ -136,8 +128,7 @@ public class CustomizationController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:stateDurations}", method = RequestMethod.PUT)
-    public void updateStateDurationConfiguration(
-            @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public void updateStateDurationConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @PathVariable Integer resourceId, @RequestParam PrismScope scope, @RequestParam(required = false) PrismOpportunityType opportunityType,
             @Valid @RequestBody StateDurationConfigurationDTO stateDurationConfigurationDTO) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
@@ -146,10 +137,9 @@ public class CustomizationController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:displayProperties}/{id}", method = RequestMethod.PUT)
-    public void updateDisplayPropertyConfiguration(
-            @ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType,
-            @PathVariable PrismDisplayPropertyDefinition id, @Valid @RequestBody DisplayPropertyConfigurationDTO displayPropertyConfigurationDTO) {
+    public void updateDisplayPropertyConfiguration(@ModelAttribute PrismConfiguration configurationType, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismDisplayPropertyDefinition id,
+            @Valid @RequestBody DisplayPropertyConfigurationDTO displayPropertyConfigurationDTO) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
         displayPropertyConfigurationDTO.setDefinitionId(id);
         customizationService.createOrUpdateConfiguration(configurationType, resource, opportunityType, displayPropertyConfigurationDTO);

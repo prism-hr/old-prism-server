@@ -155,7 +155,7 @@ public class UserService {
         }
         return null;
     }
-    
+
     public User getOrCreateUser(UserDTO userDTO) {
         return userDTO == null ? null : getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
     }
@@ -465,19 +465,6 @@ public class UserService {
                 }
             }
         });
-
-        for (PrismScope targeterScope : targetScopes) {
-            for (PrismScope targetScope : targetScopes) {
-                List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
-                if (!resources.isEmpty()) {
-                    users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
-
-                    if (targetScope.equals(DEPARTMENT)) {
-                        users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
-                    }
-                }
-            }
-        }
 
         users.addAll(userDAO.getUsersWithAppointmentsForApplications());
 

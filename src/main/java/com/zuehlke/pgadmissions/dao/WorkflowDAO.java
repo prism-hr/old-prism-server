@@ -8,8 +8,10 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -126,11 +128,61 @@ public class WorkflowDAO {
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.eqProperty("ownerAdvert.department", "targetAdvert.department"))
                                         .add(Restrictions.conjunction() //
-                                                .add(Restrictions.eq("role.scope.id", INSTITUTION)) //
+                                                .add(Restrictions.eq("role.scope.id", DEPARTMENT)) //
                                                 .add(Restrictions.eqProperty("ownerAdvert.institution", "targetAdvert.institution")))) //
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.eq("resource.shared", true))))
                         .add(Restrictions.eq("scope.defaultShared", true))) //
+                .add(Restrictions.isNull("state.hidden")) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false));
+    }
+
+    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targetScope, List<Integer> adverts, Projection projection) {
+        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(projection) //
+                .createAlias("advert." + resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert" + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
+                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
+                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
+                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(Restrictions.eqProperty("state", "stateAction.state")) //
+                .add(Restrictions.isNull("state.hidden")) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false));
+    }
+
+    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targetScope, List<Integer> adverts, List<Integer> applications, Projection projection) {
+        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(projection) //
+                .createAlias("advert." + resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert" + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
+                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
+                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
+                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(Restrictions.in("resource.id", applications)) //
+                .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
@@ -248,26 +300,24 @@ public class WorkflowDAO {
     }
 
     public static Junction getResourceParentManageableConstraint(PrismScope resourceScope) {
-        String resourceReferenceUpper = resourceScope.name();
-        return getResourceParentManageableStateConstraint(resourceReferenceUpper)
-                .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceReferenceUpper + "_ADMINISTRATOR")));
+        return Restrictions.conjunction() //
+                .add(getResourceParentManageableStateConstraint(resourceScope))
+                .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR")));
     }
 
-    public static Junction getResourceParentManageableStateConstraint(String resourceReferenceUpper) {
-        return Restrictions.conjunction() //
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_UNSUBMITTED")))
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_WITHDRAWN")))
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_REJECTED")))
-                .add(Restrictions.ne("state.id", PrismState.valueOf(resourceReferenceUpper + "_DISABLED_COMPLETED")));
+    public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
+        return Restrictions.not( //
+                Restrictions.in("state.id", values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
     }
 
     public static Junction getResourceParentManageableConstraint(PrismScope resourceScope, User user) {
         return getResourceParentManageableConstraint(resourceScope)
                 .add(Restrictions.eq("userRole.user", user));
     }
-    
+
     public static Junction getResourceParentConnectableConstraint(PrismScope resourceScope, User user) {
-        return getResourceParentManageableStateConstraint(resourceScope.name()) //
+        return Restrictions.conjunction() //
+                .add(getResourceParentManageableStateConstraint(resourceScope))
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
                         .add(Restrictions.eq("role.roleCategory", RECRUITER))) //

@@ -367,7 +367,7 @@ public class UserDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
 
-        criteria.add(getResourceParentManageableStateConstraint(resourceScope.name()));
+        criteria.add(getResourceParentManageableStateConstraint(resourceScope));
         if (isNotEmpty(resources)) {
             criteria.add(Restrictions.in(resourceReference + ".id", resources));
         }

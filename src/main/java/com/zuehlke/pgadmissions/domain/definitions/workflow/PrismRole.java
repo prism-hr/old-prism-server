@@ -115,7 +115,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
     public Set<PrismRole> getVerifiedRoles() {
         return verifiedRoles;
     }
-    
+
     public Set<PrismScope> getVisibleScopes() {
         return visibleScopes.get(this);
     }

@@ -17,13 +17,17 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
@@ -39,12 +43,15 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.time.StopWatch;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -73,6 +80,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeSectionDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateDurationEvaluation;
@@ -138,6 +146,8 @@ import jersey.repackaged.com.google.common.collect.Sets;
 @Transactional
 public class ResourceService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
+
     @Value("${system.id}")
     private Integer systemId;
 
@@ -149,6 +159,9 @@ public class ResourceService {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private ApplicationService applicationService;
 
     @Inject
     private CommentService commentService;
@@ -518,7 +531,7 @@ public class ResourceService {
     public List<Integer> getSimilarResources(PrismScope enclosingResourceScope, String searchTerm) {
         return resourceDAO.getSimilarResources(enclosingResourceScope, searchTerm);
     }
-    
+
     public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
         return resourceDAO.getResourceForWhichUserHasRoles(user, roles);
     }
@@ -578,7 +591,7 @@ public class ResourceService {
 
         return newLinkedList(resources);
     }
-    
+
     public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanAdminister(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
 
@@ -630,8 +643,7 @@ public class ResourceService {
             setResourceOpportunityType(resourceOpportunity, resourceOpportunityDTO.getOpportunityType());
             setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions());
         } else {
-            setResourceOpportunityCategories(resource, resourceDTO.getOpportunityCategories().stream()
-                    .map(Enum::name).collect(joining("|")));
+            setResourceOpportunityCategories(resource, resourceDTO.getOpportunityCategories().stream().map(Enum::name).collect(joining("|")));
         }
 
         setResourceConditions(resource, resourceDTO.getConditions());
@@ -916,19 +928,42 @@ public class ResourceService {
         Set<T> resources = Sets.newHashSet();
         DateTime baseline = DateTime.now().minusDays(1);
 
+        StopWatch watch = new StopWatch();
+        watch.start();
+
         Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
         addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
+        logger.info("Got resources for " + scope.name() + " in " + watch.getTime());
 
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScope : parentScopes) {
                 addResources(resourceDAO.getResources(user, scope, parentScope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
+                logger.info("Got resources for " + parentScope.name() + " in " + watch.getTime());
             }
 
-            asPartner = asPartner == null ? null : true;
-            for (PrismScope targeterScope : targetScopes) {
-                if (scope.ordinal() > targeterScope.ordinal()) {
-                    for (PrismScope targetScope : targetScopes) {
-                        addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
+            PrismScopeCategory scopeCategory = scope.getScopeCategory();
+            boolean applicationCategory = scopeCategory.equals(APPLICATION);
+            boolean opportunityCategory = scopeCategory.equals(OPPORTUNITY);
+            if (applicationCategory || opportunityCategory) {
+                boolean asPartnerTarget = asPartner == null ? null : true;
+                if (applicationCategory) {
+                    List<Integer> adverts = advertService.getAdvertsForTargets(user, new String[] { "ADMINISTRATOR", "APPROVER" });
+                    if (isNotEmpty(adverts)) {
+                        List<Integer> applications = applicationService.getSharedApplicationsForAdverts(adverts);
+                        if (isNotEmpty(applications)) {
+                            stream(targetScopes).forEach(targetScope -> {
+                                addResources(resourceDAO.getResources(user, scope, targetScope, adverts, applications, filter, columns, conditions, responseClass, baseline),
+                                        resources, asPartnerTarget);
+                            });
+                        }
+                    }
+                } else {
+                    List<Integer> adverts = advertService.getAdvertsForTargets(user, new String[] { "ADMINISTRATOR", "APPROVER", "STUDENT", "VIEWER" });
+                    if (isNotEmpty(adverts)) {
+                        stream(targetScopes).forEach(targetScope -> {
+                            addResources(resourceDAO.getResources(user, scope, targetScope, adverts, filter, columns, conditions, responseClass, baseline), resources,
+                                    asPartnerTarget);
+                        });
                     }
                 }
             }

@@ -70,7 +70,7 @@ public class ActionDAO {
     }
 
     public Action getPermittedAction(Resource resource, Action action, User user) {
-        return (Action) workflowDAO.getWorklflowCriteriaAssignment(resource.getResourceScope(), Projections.property("stateAction.action"))
+        return (Action) workflowDAO.getWorklflowCriteriaAssignment(resource.getResourceScope(), Projections.groupProperty("stateAction.action"))
                 .add(getUserRoleWithTargetConstraint(resource, user)) //
                 .add(getEndorsementActionFilterConstraint())
                 .setMaxResults(1) //

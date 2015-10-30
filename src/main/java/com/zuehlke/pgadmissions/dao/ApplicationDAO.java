@@ -251,6 +251,19 @@ public class ApplicationDAO {
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Integer> getSharedApplicationsForAdverts(List<Integer> adverts) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.in("department.advert.id", adverts))
+                        .add(Restrictions.in("institution.advert.id", adverts))) //
+                .add(Restrictions.eq("shared", true)) //
+                .list();
+    }
+
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 

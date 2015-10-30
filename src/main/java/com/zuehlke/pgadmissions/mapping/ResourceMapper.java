@@ -661,8 +661,10 @@ public class ResourceMapper {
     private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationRelation(T resource, Class<V> returnType) {
         V representation = getResourceRepresentationSimple(resource, returnType);
 
-        Advert advert = resource.getAdvert();
-        representation.setAdvert(new AdvertRepresentationSimple().withId(advert.getId()).withSummary(advert.getSummary()));
+        if (!resource.getResourceScope().equals(SYSTEM)) {
+            Advert advert = resource.getAdvert();
+            representation.setAdvert(new AdvertRepresentationSimple().withId(advert.getId()).withSummary(advert.getSummary()));
+        }
 
         if (ResourceOpportunityRepresentationRelation.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ((ResourceOpportunityRepresentationRelation) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());

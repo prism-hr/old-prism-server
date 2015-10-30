@@ -302,6 +302,10 @@ public class ApplicationService {
         return applicationDAO.getApplicationOnCourse(application);
     }
 
+    public List<Integer> getSharedApplicationsForAdverts(List<Integer> adverts) {
+        return applicationDAO.getSharedApplicationsForAdverts(adverts);
+    }
+
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(opportunityType.getOpportunityCategory().name());

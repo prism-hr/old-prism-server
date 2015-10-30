@@ -332,7 +332,7 @@ public class AdvertService {
     public AdvertTarget createAdvertTarget(ResourceParent resource, ResourceRelationCreationDTO targetDTO) {
         return createAdvertTarget(resource.getUser(), resource, targetDTO, false);
     }
-    
+
     public AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, User userTarget, PrismResourceContext context, String message) {
         Advert advert = resource.getAdvert();
         Advert advertTarget = resourceTarget.getAdvert();
@@ -685,6 +685,10 @@ public class AdvertService {
         }
     }
 
+    public List<Integer> getAdvertsForTargets(User user, String[] roleExtensions) {
+        return advertDAO.getAdvertsForTargets(user, roleExtensions);
+    }
+
     private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
         List<Integer> connectAdverts = Lists.newArrayList();
         for (PrismScope resourceScope : targetScopes) {
@@ -735,7 +739,7 @@ public class AdvertService {
             if (userTargetDTO != null) {
                 userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
             }
-            
+
             return createAdvertTarget(resource, user, resourceTarget, userTarget, context, message);
         }
 

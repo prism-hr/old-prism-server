@@ -421,8 +421,9 @@ public class AdvertDAO {
         return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
     }
 
-    public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope) {
-        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("target.targetAdvert"))
+    public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
+            List<Integer> targeterEntities) {
+        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("target.targetAdvert"))
                 .add(Restrictions.eq("target.advert", advert)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("target.targetAdvertUser", user))
@@ -520,9 +521,14 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<Integer> getAdvertsForTargets(String[] roleExtensions) {
+        return getAdvertsForTargets(null, roleExtensions);
+    }
+
     public List<Integer> getAdvertsForTargets(User user, String[] roleExtensions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("advert.id"));
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN);
 
         Junction networkConstraint = Restrictions.disjunction();
         Arrays.stream(targetScopes).forEach(targetScope -> {
@@ -534,9 +540,12 @@ public class AdvertDAO {
                     .createAlias(scopeReference + ".userRoles", scopeUserRoleReference, JoinType.LEFT_OUTER_JOIN) //
                     .createAlias(scopeReference + ".resourceStates", scopeResourceStateReference, JoinType.LEFT_OUTER_JOIN);
 
-            networkConstraint.add(Restrictions.conjunction() //
-                    .add(Restrictions.eq(scopeUserRoleReference + ".user", user))
-                    .add(Restrictions.in(scopeUserRoleReference, values(PrismRole.class, targetScope, roleExtensions)))
+            Junction permissionConstraint = Restrictions.conjunction();
+            if (user != null) {
+                permissionConstraint.add(Restrictions.eq(scopeUserRoleReference + ".user", user));
+            }
+
+            networkConstraint.add(permissionConstraint.add(Restrictions.in(scopeUserRoleReference + ".role.id", values(PrismRole.class, targetScope, roleExtensions))) //
                     .add(Restrictions.not( //
                             Restrictions.in(scopeResourceStateReference + ".state.id",
                                     values(PrismState.class, targetScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })))));

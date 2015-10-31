@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationRep
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRelationRepresentation.ResourceRelationComponentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 
@@ -40,6 +41,9 @@ public class ScopeMapper {
 
     @Inject
     private ActionMapper actionMapper;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private ResourceService resourceService;
@@ -91,6 +95,7 @@ public class ScopeMapper {
             Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, visibleScopes.stream()
                     .filter(as -> as.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
+                    advertService.getAdvertTargeterEntities(user, scope), //
                     new ResourceListFilterDTO().withMatchMode(ANY).withUrgentOnly(true).withUpdateOnly(true), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("resourceId")) //

@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartners
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -48,11 +49,11 @@ public class WorkflowDAO {
 
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
-    public Criteria getWorklflowCriteriaAssignment(PrismScope resourceScope, Projection projection) {
+    public Criteria getWorklflowAssignmentCriteria(PrismScope resourceScope, Projection projection) {
         return getWorklflowCriteria(resourceScope, projection, ResourceState.class);
     }
 
-    public Criteria getWorklflowCriteriaNotification(PrismScope resourceScope, Projection projection) {
+    public Criteria getWorklflowNotificationCriteria(PrismScope resourceScope, Projection projection) {
         return getWorklflowCriteria(resourceScope, projection, ResourcePreviousState.class);
     }
 
@@ -95,17 +96,15 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, Projection projection) {
+    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities, Projection projection) {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
-                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
+                .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
+                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
                 .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
@@ -116,72 +115,7 @@ public class WorkflowDAO {
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .createAlias("resource.user", "owner", JoinType.INNER_JOIN) //
-                .createAlias("owner.userRoles", "ownerRole", JoinType.LEFT_OUTER_JOIN,
-                        getEndorsementActionJoinConstraint()) //
-                .createAlias("ownerRole.department", "ownerDepartment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("ownerDepartment.advert", "ownerAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(Restrictions.disjunction()//
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eqProperty("ownerAdvert.department", "targetAdvert.department"))
-                                        .add(Restrictions.conjunction() //
-                                                .add(Restrictions.eq("role.scope.id", DEPARTMENT)) //
-                                                .add(Restrictions.eqProperty("ownerAdvert.institution", "targetAdvert.institution")))) //
-                                .add(Restrictions.disjunction() //
-                                        .add(Restrictions.eq("resource.shared", true))))
-                        .add(Restrictions.eq("scope.defaultShared", true))) //
-                .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
-    }
-
-    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targetScope, List<Integer> adverts, Projection projection) {
-        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projection) //
-                .createAlias("advert." + resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert" + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
-                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("advert.id", adverts)) //
-                .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
-    }
-
-    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targetScope, List<Integer> adverts, List<Integer> applications, Projection projection) {
-        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projection) //
-                .createAlias("advert." + resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert" + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
-                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("advert.id", adverts)) //
-                .add(Restrictions.in("resource.id", applications)) //
+                .add(Restrictions.in(resourceScope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities)) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));

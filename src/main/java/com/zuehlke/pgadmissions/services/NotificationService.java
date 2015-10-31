@@ -14,12 +14,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotifica
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.joda.time.LocalDate.now;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -68,6 +68,9 @@ public class NotificationService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private UserService userService;
@@ -228,7 +231,8 @@ public class NotificationService {
         notificationDAO.resetNotifications(user);
         for (PrismScope scope : PrismScope.values()) {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-            List<Integer> resourceIds = resourceService.getResources(user, scope, parentScopes).stream().map(a -> a.getId()).collect(Collectors.toList());
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
+            List<Integer> resourceIds = resourceService.getResources(user, scope, parentScopes, targeterEntities).stream().map(a -> a.getId()).collect(toList());
             if (!resourceIds.isEmpty()) {
                 notificationDAO.resetNotificationsSyndicated(scope, resourceIds);
             }

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Objects;
+
 public class ProfileListRowDTO implements ProfileEntityDTO {
 
     private Integer userId;
@@ -154,6 +156,23 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
 
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(userId);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ProfileListRowDTO other = (ProfileListRowDTO) object;
+        return Objects.equal(userId, other.getUserId());
     }
 
 }

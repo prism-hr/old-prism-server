@@ -230,20 +230,9 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targetScope, List<Integer> adverts, ResourceListFilterDTO filter, ProjectionList columns,
-            Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
-        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targetScope, adverts, columns)
-                .add(Restrictions.eq("userRole.user", user));
-        appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
-        return (List<T>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
-                .list();
-    }
-
-    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targetScope, List<Integer> adverts, List<Integer> applications, ResourceListFilterDTO filter,
-            ProjectionList columns,
-            Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
-        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targetScope, adverts, applications, columns)
+    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities, ResourceListFilterDTO filter,
+            ProjectionList columns, Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
+        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //

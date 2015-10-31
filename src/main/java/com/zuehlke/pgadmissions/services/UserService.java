@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
@@ -386,8 +387,29 @@ public class UserService {
         }
     }
 
-    public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
-        return userDAO.getUsersWithAction(resource, actions);
+    public List<User> getUsersWithActions(Resource resource, PrismAction... actions) {
+        Set<User> users = Sets.newHashSet();
+        PrismScope scope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        users.addAll(userDAO.getUsersWithActions(scope, resource, actions));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                users.addAll(userDAO.getUsersWithActions(scope, parentScope, resource, actions));
+            }
+
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : targetScopes) {
+                    for (PrismScope targetScope : targetScopes) {
+                        users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, targeterEntities, resource, actions));
+                    }
+                }
+            }
+        }
+
+        return newArrayList(users);
     }
 
     public void updateUserCompetence(User user) {

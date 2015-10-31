@@ -1,14 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithTargetConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,6 +12,7 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -50,16 +45,6 @@ public class ActionDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public Action getRedirectAction(Resource resource, User user) {
-        return (Action) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.property("stateAction.action"))
-                .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
-                .add(getUserRoleWithTargetConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraint())
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public List<Action> getActions(Resource resource) {
         return (List<Action>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(Projections.groupProperty("stateAction.action"))
@@ -69,39 +54,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public Action getPermittedAction(Resource resource, Action action, User user) {
-        return (Action) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("stateAction.action"))
-                .add(getUserRoleWithTargetConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraint())
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public List<ActionDTO> getPermittedActions(PrismScope resourceScope, Collection<Integer> resourceIds, List<PrismScope> parentScopes, User user) {
-        return (List<ActionDTO>) workflowDAO.getWorklflowAssignmentCriteria(resourceScope, Projections.projectionList() //
-                .add(Projections.groupProperty("resource.id").as("resourceId")) //
-                .add(Projections.groupProperty("action.id").as("actionId")) //
-                .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                .add(Projections.max("primaryState").as("primaryState")) //
-                .add(Projections.min("stateActionAssignment.externalMode").as("onlyAsPartner")) //
-                .add(Projections.property("action.declinableAction").as("declinable"))) //
-                .add(Restrictions.in("resource.id", resourceIds)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(getUserRoleConstraint(resourceScope, parentScopes)) //
-                                .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                        .add(getTargetUserRoleConstraint())) //
-                .add(getUserEnabledConstraint(user)) //
-                .add(getEndorsementActionFilterConstraint()) //
-                .addOrder(Order.asc("resource.id")) //
-                .addOrder(Order.desc("stateAction.raisesUrgentFlag")) //
-                .addOrder(Order.desc("primaryState")) //
-                .addOrder(Order.asc("action.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
-                .list();
-    }
-
-    public Action getPermittedUnsecuredAction(Resource resource, Action action, boolean userLoggedIn) {
+    public Action getPermittedUnsecuredAction(boolean userLoggedIn, Resource resource, Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action")) //
                 .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
@@ -164,42 +117,39 @@ public class ActionDAO {
                 .list();
     }
 
-    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, User user) {
-        return (List<PrismActionEnhancement>) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("stateAction.actionEnhancement"))
-                .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
-                .add(Restrictions.eq("action.actionCategory", PrismActionCategory.VIEW_EDIT_RESOURCE)) //
-                .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(getUserRoleWithTargetConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraint())
+    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, ProjectionList columns, Class<T> responseClass) {
+        return getActionEntities(user, scope, resources, null, columns, responseClass);
+    }
+
+    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, PrismAction action, ProjectionList columns, Class<T> responseClass) {
+        return workflowDAO.getWorkflowCriteriaList(scope, columns) //
+                .add(getActionConstraint(user, resources, action)) //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
-    public List<PrismActionEnhancement> getGlobalActionEnhancements(Resource resource, PrismAction actionId, User user) {
-        return (List<PrismActionEnhancement>) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("stateAction.actionEnhancement"))
-                .add(Restrictions.isNotNull("stateAction.actionEnhancement")) //
-                .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(getUserRoleWithTargetConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraint())
+    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resources, ProjectionList columns, Class<T> responseClass) {
+        return getActionEntities(user, scope, parentScope, resources, null, columns, responseClass);
+    }
+
+    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resources, PrismAction action, ProjectionList columns,
+            Class<T> responseClass) {
+        return workflowDAO.getWorkflowCriteriaList(scope, parentScope, columns) //
+                .add(getActionConstraint(user, resources, action)) //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
-    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, User user) {
-        return (List<PrismActionEnhancement>) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("stateActionAssignment.actionEnhancement"))
-                .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
-                .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(getUserRoleWithTargetConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraint())
-                .list();
+    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+            Collection<Integer> resources, ProjectionList columns, Class<T> responseClass) {
+        return getActionEntities(user, scope, targeterScope, targetScope, targeterEntities, resources, null, columns, responseClass);
     }
 
-    public List<PrismActionEnhancement> getCustomActionEnhancements(Resource resource, PrismAction actionId, User user) {
-        return (List<PrismActionEnhancement>) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("stateActionAssignment.actionEnhancement"))
-                .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement")) //
-                .add(Restrictions.eq("stateAction.action.id", actionId)) //
-                .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(getUserRoleWithTargetConstraint(resource, user)) //
-                .add(getEndorsementActionFilterConstraint())
+    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+            Collection<Integer> resources, PrismAction action, ProjectionList columns, Class<T> responseClass) {
+        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
+                .add(getActionConstraint(user, resources, action))
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
@@ -315,6 +265,19 @@ public class ActionDAO {
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
                 .list();
+    }
+
+    private static Junction getActionConstraint(User user, Collection<Integer> resources, PrismAction action) {
+        Junction constraint = Restrictions.conjunction() //
+                .add(Restrictions.in("resource.id", resources)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(WorkflowDAO.getUserEnabledConstraint(user)); //
+
+        if (action != null) {
+            constraint.add(Restrictions.eq("action.id", action));
+        }
+
+        return constraint;
     }
 
     private static Junction getUnsecuredActionVisibilityConstraint(boolean userLoggedIn) {

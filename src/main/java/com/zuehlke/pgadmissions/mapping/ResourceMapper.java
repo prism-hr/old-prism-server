@@ -133,7 +133,7 @@ public class ResourceMapper {
 
     @Inject
     private ActionService actionService;
-    
+
     @Inject
     private AdvertService advertService;
 
@@ -205,71 +205,72 @@ public class ResourceMapper {
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
         processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
 
-        resourceService.getResourceList(user, scope, parentScopes, filter, RESOURCE_LIST_PAGE_ROW_COUNT, sequenceId, resourceIds, onlyAsPartnerResourceIds, true).forEach(row -> {
-            ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
-            representation.setScope(scope);
-            representation.setId(row.getResourceId());
+        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, filter, RESOURCE_LIST_PAGE_ROW_COUNT, sequenceId, resourceIds, onlyAsPartnerResourceIds, true)
+                .forEach(row -> {
+                    ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
+                    representation.setScope(scope);
+                    representation.setId(row.getResourceId());
 
-            Integer institutionId = row.getInstitutionId();
-            Integer departmentId = row.getDepartmentId();
-            Integer programId = row.getProgramId();
-            Integer projectId = row.getProjectId();
+                    Integer institutionId = row.getInstitutionId();
+                    Integer departmentId = row.getDepartmentId();
+                    Integer programId = row.getProgramId();
+                    Integer projectId = row.getProjectId();
 
-            if (scope.equals(INSTITUTION)) {
-                representation.setName(row.getInstitutionName());
-                setInstitutionLogoImage(row, representation);
-            } else {
-                representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
-                        .withId(institutionId).withName(row.getInstitutionName()));
+                    if (scope.equals(INSTITUTION)) {
+                        representation.setName(row.getInstitutionName());
+                        setInstitutionLogoImage(row, representation);
+                    } else {
+                        representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+                                .withId(institutionId).withName(row.getInstitutionName()));
 
-                Integer logoImageId = row.getLogoImageId();
-                if (logoImageId != null) {
-                    representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionId));
-                }
-            }
+                        Integer logoImageId = row.getLogoImageId();
+                        if (logoImageId != null) {
+                            representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionId));
+                        }
+                    }
 
-            if (scope.equals(DEPARTMENT)) {
-                representation.setName(row.getDepartmentName());
-            } else if (departmentId != null) {
-                representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
-                        .withId(departmentId).withName(row.getDepartmentName()));
-            }
+                    if (scope.equals(DEPARTMENT)) {
+                        representation.setName(row.getDepartmentName());
+                    } else if (departmentId != null) {
+                        representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
+                                .withId(departmentId).withName(row.getDepartmentName()));
+                    }
 
-            if (scope.equals(PROGRAM)) {
-                representation.setName(row.getProgramName());
-            } else if (programId != null) {
-                representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
-                        .withId(programId).withName(row.getProgramName()));
-            }
+                    if (scope.equals(PROGRAM)) {
+                        representation.setName(row.getProgramName());
+                    } else if (programId != null) {
+                        representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
+                                .withId(programId).withName(row.getProgramName()));
+                    }
 
-            if (scope.equals(PROJECT)) {
-                representation.setName(row.getProjectName());
-            } else if (projectId != null) {
-                representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
-                        .withId(projectId).withName(row.getProjectName()));
-            }
+                    if (scope.equals(PROJECT)) {
+                        representation.setName(row.getProjectName());
+                    } else if (projectId != null) {
+                        representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
+                                .withId(projectId).withName(row.getProjectName()));
+                    }
 
-            representation.setCode(row.getCode());
-            representation.setUser(userMapper.getUserRepresentationSimple(row));
-            representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
+                    representation.setCode(row.getCode());
+                    representation.setUser(userMapper.getUserRepresentationSimple(row));
+                    representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
-            representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
-            representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
+                    representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
+                    representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
 
-            List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
-            DateTime updatedTimestamp = row.getUpdatedTimestamp();
+                    List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
+                    DateTime updatedTimestamp = row.getUpdatedTimestamp();
 
-            representation.setCreatedTimestamp(row.getCreatedTimestamp());
-            representation.setUpdatedTimestamp(updatedTimestamp);
+                    representation.setCreatedTimestamp(row.getCreatedTimestamp());
+                    representation.setUpdatedTimestamp(updatedTimestamp);
 
-            setRaisesUrgentFlag(representation, actions);
-            setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
-            representation.setSequenceIdentifier(row.getSequenceIdentifier());
+                    setRaisesUrgentFlag(representation, actions);
+                    setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
+                    representation.setSequenceIdentifier(row.getSequenceIdentifier());
 
-            representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
-            representation.setActions(actions);
-            representations.add(representation);
-        });
+                    representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
+                    representation.setActions(actions);
+                    representations.add(representation);
+                });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
         Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getRaisesUrgentFlag())).collect(Collectors.toSet());
@@ -657,8 +658,10 @@ public class ResourceMapper {
     }
 
     private <T extends Resource> void validateViewerPermission(T resource) {
+        User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (action == null || !actionService.checkActionVisible(resource, action, userService.getCurrentUser())) {
+        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, resource.getResourceScope());
+        if (action == null || !actionService.checkActionVisible(resource, action, user, targeterEntities)) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
     }

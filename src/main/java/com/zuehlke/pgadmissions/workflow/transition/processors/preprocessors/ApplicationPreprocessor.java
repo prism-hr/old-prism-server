@@ -80,7 +80,7 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
         DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);
 
         User invoker = comment.getUser();
-        List<User> users = userService.getUsersWithAction(application, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
+        List<User> users = userService.getUsersWithActions(application, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
         LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
         for (User user : users) {
             List<LocalDateTime> preferences = commentService.getAppointmentPreferences(application, user);

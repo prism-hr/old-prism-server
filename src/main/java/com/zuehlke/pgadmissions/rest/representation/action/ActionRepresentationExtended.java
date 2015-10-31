@@ -20,8 +20,8 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return actionEnhancements;
     }
 
-    public ActionRepresentationExtended addActionEnhancements(Collection<PrismActionEnhancement> actionEnhancement) {
-        actionEnhancements.addAll(actionEnhancement);
+    public ActionRepresentationExtended addActionEnhancements(Collection<PrismActionEnhancement> actionEnhancements) {
+        actionEnhancements.addAll(actionEnhancements);
         return this;
     }
 

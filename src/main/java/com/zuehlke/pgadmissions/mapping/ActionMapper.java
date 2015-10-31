@@ -65,7 +65,7 @@ public class ActionMapper {
         Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
 
         boolean onlyAsPartner = true;
-        List<ActionDTO> actions = actionService.getPermittedActions(resource, user);
+        List<ActionDTO> actions = actionService.getPermittedActions(user, resource);
         for (ActionDTO action : actions) {
             onlyAsPartner = !onlyAsPartner ? false : isTrue(action.getOnlyAsPartner());
             representations.add(getActionRepresentationExtended(resource, action, user));
@@ -103,9 +103,7 @@ public class ActionMapper {
         PrismAction prismAction = action.getActionId();
         ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class);
 
-        representation.addActionEnhancements(actionService.getGlobalActionEnhancements(resource, prismAction, user));
-        representation.addActionEnhancements(actionService.getCustomActionEnhancements(resource, prismAction, user));
-
+        representation.addActionEnhancements(actionService.getPermittedActionEnhancements(user, resource, action.getActionId()));
         representation.addNextStates(stateMapper.getStateRepresentations(resource, prismAction));
         representation.addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
 

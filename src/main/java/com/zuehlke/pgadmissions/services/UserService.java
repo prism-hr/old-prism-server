@@ -11,13 +11,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.WordUtils.capitalize;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -94,6 +94,9 @@ public class UserService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private RoleService roleService;
@@ -448,10 +451,11 @@ public class UserService {
                 users.addAll(userDAO.getUsersWithActivity(scope, parentScope, updateBaseline, lastNotifiedBaseline));
             });
 
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
             for (PrismScope targeterScope : targetScopes) {
                 if (scope.ordinal() > targeterScope.ordinal()) {
                     for (PrismScope targetScope : targetScopes) {
-                        users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, updateBaseline, lastNotifiedBaseline));
+                        users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, targeterEntities, updateBaseline, lastNotifiedBaseline));
 
                         List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
                         if (!resources.isEmpty()) {
@@ -482,8 +486,15 @@ public class UserService {
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
-        List<Integer> departments = resourceService.getResources(user, DEPARTMENT, asList(INSTITUTION, SYSTEM)).stream().map(d -> d.getId()).collect(toList());
-        return userDAO.getUserProfiles(departments, filter);
+
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+        Arrays.stream(targetScopes).forEach(ts -> resources.putAll(ts,
+                resourceService.getResources(user, ts, scopeService.getParentScopesDescending(ts, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
+
+        Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
+        resources.keySet().forEach(k -> profiles.addAll(userDAO.getUserProfiles(resources.get(k), filter)));
+
+        return newLinkedList(profiles);
     }
 
     @SuppressWarnings("unchecked")

@@ -110,6 +110,7 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlot
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentation;
 import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ResourceService;
@@ -132,6 +133,9 @@ public class ResourceMapper {
 
     @Inject
     private ActionService actionService;
+    
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private ApplicationService applicationService;
@@ -197,7 +201,8 @@ public class ResourceMapper {
         Set<Integer> resourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
-        Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, filter);
+        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
+        Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
         processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
 
         resourceService.getResourceList(user, scope, parentScopes, filter, RESOURCE_LIST_PAGE_ROW_COUNT, sequenceId, resourceIds, onlyAsPartnerResourceIds, true).forEach(row -> {

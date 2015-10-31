@@ -22,11 +22,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -94,6 +96,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -177,6 +180,9 @@ public class AdvertService {
 
     @Inject
     private InvitationService invitationService;
+
+    @Inject
+    private ApplicationService applicationService;
 
     @Inject
     private RestTemplate restTemplate;
@@ -629,12 +635,14 @@ public class AdvertService {
             PrismScope resourceScope = resource.getResourceScope();
 
             Set<Advert> targetAdverts = Sets.newHashSet();
+            List<Integer> targeterEntities = getAdvertTargeterEntities(user, resourceScope);
             for (PrismScope targeterScope : targetScopes) {
                 if (targeterScope.ordinal() < resourceScope.ordinal()) {
                     ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
                     if (targeterResource != null) {
                         for (PrismScope targetScope : targetScopes) {
-                            targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope, targetScope));
+                            targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope, targetScope,
+                                    targeterEntities));
                         }
                     }
                 }
@@ -685,8 +693,8 @@ public class AdvertService {
         }
     }
 
-    public List<Integer> getAdvertsForTargets(User user, String[] roleExtensions) {
-        return advertDAO.getAdvertsForTargets(user, roleExtensions);
+    public List<Integer> getAdvertsForTargets(String[] roleExtensions) {
+        return advertDAO.getAdvertsForTargets(roleExtensions);
     }
 
     private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
@@ -695,6 +703,28 @@ public class AdvertService {
             connectAdverts.addAll(advertDAO.getAdvertsForWhichUserCanManageTargets(resourceScope, user));
         }
         return connectAdverts;
+    }
+
+    public List<Integer> getAdvertTargeterEntities(PrismScope scope) {
+        return getAdvertTargeterEntities(null, scope);
+    }
+
+    public List<Integer> getAdvertTargeterEntities(User user, PrismScope scope) {
+        PrismScopeCategory scopeCategory = scope.getScopeCategory();
+        boolean applicationCategory = scopeCategory.equals(APPLICATION);
+        boolean opportunityCategory = scopeCategory.equals(OPPORTUNITY);
+        if (applicationCategory || opportunityCategory) {
+            List<Integer> targeterEntities;
+            if (user == null) {
+                targeterEntities = advertDAO.getAdvertsForTargets(new String[] { "ADMINISTRATOR", "APPROVER" });
+            } else {
+                targeterEntities = advertDAO.getAdvertsForTargets(user, new String[] { "ADMINISTRATOR", "APPROVER" });
+            }
+            if (isNotEmpty(targeterEntities)) {
+                return applicationCategory ? applicationService.getSharedApplicationsForAdverts(targeterEntities) : targeterEntities;
+            }
+        }
+        return emptyList();
     }
 
     private List<AdvertTargetDTO> getAdvertTargetsReceived(User user, List<Integer> connectAdverts, boolean pending) {

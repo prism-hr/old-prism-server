@@ -306,7 +306,7 @@ public class UserDAO {
     }
 
     public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
-        return (List<User>) workflowDAO.getWorklflowCriteriaAssignment(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
+        return (List<User>) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
                 .add(getUserRoleWithTargetConstraint(resource)) //
@@ -367,7 +367,7 @@ public class UserDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
 
-        criteria.add(getResourceParentManageableStateConstraint(resourceScope.name()));
+        criteria.add(getResourceParentManageableStateConstraint(resourceScope));
         if (isNotEmpty(resources)) {
             criteria.add(Restrictions.in(resourceReference + ".id", resources));
         }
@@ -396,8 +396,9 @@ public class UserDAO {
                 .list();
     }
 
-    public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targeterScope, targetScope, Projections.groupProperty("user.id")) //
+    public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities, DateTime updateBaseline,
+            LocalDate lastNotifiedBaseline) {
+        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("user.id")) //
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
@@ -470,7 +471,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(List<Integer> departments, ProfileListFilterDTO filter) {
+    public List<ProfileListRowDTO> getUserProfiles(Collection<Integer> departments, ProfileListFilterDTO filter) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //

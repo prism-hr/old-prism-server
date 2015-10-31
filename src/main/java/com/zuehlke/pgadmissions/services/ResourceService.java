@@ -61,6 +61,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.TreeMultimap;
 import com.zuehlke.pgadmissions.dao.ResourceDAO;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
@@ -467,29 +468,29 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
     }
 
-    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, ResourceListFilterDTO filter, Integer recordsToRetrieve,
-            String sequenceId, Collection<Integer> resourceIds, Collection<Integer> onlyAsPartnerResourceIds, boolean extended) {
-        if (!resourceIds.isEmpty()) {
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> targeterEntities, ResourceListFilterDTO filter,
+            Integer recordsToRetrieve, String sequenceId, Collection<Integer> resources, Collection<Integer> onlyAsPartnerResources, boolean extended) {
+        if (!resources.isEmpty()) {
             StopWatch watch = new StopWatch();
             watch.start();
 
             boolean hasRedactions = actionService.hasRedactions(user, scope);
-            List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, sequenceId, recordsToRetrieve, hasRedactions);
+            List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resources, filter, sequenceId, recordsToRetrieve, hasRedactions);
             logger.info("Got resources in " + watch.getTime());
 
             if (!rows.isEmpty()) {
                 Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
-                Set<Integer> filteredResourceIds = rowIndex.keySet();
+                Set<Integer> filteredResources = rowIndex.keySet();
 
-                LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResourceIds)
+                LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResources)
                         : LinkedHashMultimap.create();
                 logger.info("Got secondary states in " + watch.getTime());
 
-                LinkedHashMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(scope, filteredResourceIds, user)
-                        : LinkedHashMultimap.create();
+                TreeMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(user, scope, targeterEntities, filteredResources)
+                        : TreeMultimap.create();
                 logger.info("Got permitted actions in " + watch.getTime());
 
-                LinkedHashMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResourceIds);
+                TreeMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResources);
                 logger.info("Got creation actions in " + watch.getTime());
 
                 rowIndex.keySet().forEach(resourceId -> {
@@ -498,7 +499,7 @@ public class ResourceService {
 
                     List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
 
-                    boolean onlyAsPartner = onlyAsPartnerResourceIds.contains(resourceId);
+                    boolean onlyAsPartner = onlyAsPartnerResources.contains(resourceId);
                     creationActions.get(resourceId).forEach(creationAction -> {
                         if (!onlyAsPartner || creationAction.getActionId().name().endsWith("_CREATE_APPLICATION")) {
                             actions.add(creationAction);
@@ -565,12 +566,12 @@ public class ResourceService {
 
                 Set<Integer> resourceIds = Sets.newHashSet();
                 Map<String, Integer> summaries = Maps.newHashMap();
-                Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
-                List<Integer> advertTargeterEntities = advertService.getAdvertTargeterEntities(user, actionScope);
-                Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, actionScope, parentScopes, advertTargeterEntities, filter);
-                processRowDescriptors(scopedResources, resourceIds, onlyAsPartnerResourceIds, summaries);
+                Set<Integer> onlyAsPartnerResources = Sets.newHashSet();
+                List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, actionScope);
+                Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, actionScope, parentScopes, targeterEntities, filter);
+                processRowDescriptors(scopedResources, resourceIds, onlyAsPartnerResources, summaries);
 
-                for (ResourceListRowDTO row : getResourceList(user, actionScope, parentScopes, filter, null, null, resourceIds, onlyAsPartnerResourceIds, false)) {
+                for (ResourceListRowDTO row : getResourceList(user, actionScope, parentScopes, targeterEntities, filter, null, null, resourceIds, onlyAsPartnerResources, false)) {
                     ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
                     resource.setScope(scope);
 

@@ -7,7 +7,6 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageab
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceRecentlyActiveConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserDueNotificationConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleWithTargetConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -273,7 +272,7 @@ public class UserDAO {
         if (userListFilterDTO.isInvalidOnly()) {
             criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
         } else {
-            criteria.add(getUserAccountUnverifiedDisjunction());
+            criteria.add(getUserAccountUnverifiedConstraint());
         }
 
         String searchTerm = userListFilterDTO.getSearchTerm();
@@ -300,20 +299,27 @@ public class UserDAO {
 
         appendAdministratorConditions(criteria, resource, administratorResources, expandedScopes);
 
-        return (User) criteria.add(getUserAccountUnverifiedDisjunction()) //
+        return (User) criteria.add(getUserAccountUnverifiedConstraint()) //
                 .add(Restrictions.eq("user.id", userId)) //
                 .uniqueResult();
     }
 
-    public List<User> getUsersWithAction(Resource resource, PrismAction... actions) {
-        return (List<User>) workflowDAO.getWorklflowAssignmentCriteria(resource.getResourceScope(), Projections.groupProperty("userRole.user"))
-                .add(Restrictions.eq("resource.id", resource.getId())) //
-                .add(Restrictions.in("stateAction.action.id", actions)) //
-                .add(getUserRoleWithTargetConstraint(resource)) //
-                .add(getEndorsementActionFilterConstraint())
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("user.userAccount")) //
-                        .add(Restrictions.eq("userAccount.enabled", true))) //
+    public List<User> getUsersWithActions(PrismScope scope, Resource resource, PrismAction... actions) {
+        return workflowDAO.getWorkflowCriteriaList(scope, Projections.groupProperty("userRole.user")) //
+                .add(getUsersWithActionsConstraint(resource, actions)) //
+                .list();
+    }
+
+    public List<User> getUsersWithActions(PrismScope scope, PrismScope parentScope, Resource resource, PrismAction... actions) {
+        return workflowDAO.getWorkflowCriteriaList(scope, parentScope, Projections.groupProperty("userRole.user")) //
+                .add(getUsersWithActionsConstraint(resource, actions)) //
+                .list();
+    }
+
+    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities, Resource resource,
+            PrismAction... actions) {
+        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
+                .add(getUsersWithActionsConstraint(resource, actions)) //
                 .list();
     }
 
@@ -573,11 +579,21 @@ public class UserDAO {
         }
     }
 
-    private Junction getUserAccountUnverifiedDisjunction() {
+    private Junction getUserAccountUnverifiedConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("user.userAccount")) //
                 .add(Restrictions.eq("userAccount.enabled", false)) //
                 .add(Restrictions.isNotNull("user.emailBouncedMessage"));
+    }
+
+    private Junction getUsersWithActionsConstraint(Resource resource, PrismAction... actions) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.eq("resource.id", resource.getId())) //
+                .add(Restrictions.in("stateAction.action.id", actions)) //
+                .add(getEndorsementActionFilterConstraint())
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("user.userAccount")) //
+                        .add(Restrictions.eq("userAccount.enabled", true)));
     }
 
 }

@@ -227,7 +227,7 @@ public class ApplicationService {
     }
 
     public boolean isCanViewEqualOpportunitiesData(Application application, User user) {
-        List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(application, user);
+        List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(user, application);
         if (actionEnhancements.size() > 0) {
             actionEnhancements.retainAll(asList(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements()));
             return actionEnhancements.size() > 0;

@@ -230,9 +230,9 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, ResourceListFilterDTO filter, ProjectionList columns,
-            Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
-        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, columns)
+    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities, ResourceListFilterDTO filter,
+            ProjectionList columns, Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
+        Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
@@ -497,7 +497,7 @@ public class ResourceDAO {
                 .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource." + parentResource.getResourceScope().getLowerCamelName(), parentResource))
                 .add(Restrictions.eq("resource.name", name)) //
-                .add(getResourceParentManageableStateConstraint(resourceScope.name())) //
+                .add(getResourceParentManageableStateConstraint(resourceScope)) //
                 .addOrder(Order.asc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -540,7 +540,7 @@ public class ResourceDAO {
             criteria.add(Restrictions.like("resource.name", query, MatchMode.ANYWHERE));
         }
 
-        return (List<Integer>) criteria.add(WorkflowDAO.getResourceParentManageableStateConstraint(resourceScope.name()))
+        return (List<Integer>) criteria.add(getResourceParentManageableStateConstraint(resourceScope))
                 .list();
     }
 

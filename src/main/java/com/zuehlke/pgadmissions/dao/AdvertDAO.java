@@ -15,12 +15,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartners
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static com.zuehlke.pgadmissions.utils.PrismEnumUtils.values;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -59,6 +61,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -418,8 +421,9 @@ public class AdvertDAO {
         return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
     }
 
-    public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope) {
-        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("target.targetAdvert"))
+    public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
+            List<Integer> targeterEntities) {
+        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("target.targetAdvert"))
                 .add(Restrictions.eq("target.advert", advert)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("target.targetAdvertUser", user))
@@ -509,18 +513,45 @@ public class AdvertDAO {
         return (List<Integer>) criteria.add(Restrictions.eq("acceptAdvertUser", user)) //
                 .list();
     }
-    
+
     public List<Integer> getAdvertTargetPendings() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTargetPending.class) //
                 .setProjection(Projections.property("id")) //
                 .addOrder(Order.asc("id")) //
                 .list();
     }
-    
-    public List<AdvertTarget> getAdvertTargetsLatestFirst(Advert advert) {
-        return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .add(Restrictions.eq("advert", advert))
-                .addOrder(Order.desc("id")) //
+
+    public List<Integer> getAdvertsForTargets(String[] roleExtensions) {
+        return getAdvertsForTargets(null, roleExtensions);
+    }
+
+    public List<Integer> getAdvertsForTargets(User user, String[] roleExtensions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN);
+
+        Junction networkConstraint = Restrictions.disjunction();
+        Arrays.stream(targetScopes).forEach(targetScope -> {
+            String scopeReference = targetScope.getLowerCamelName();
+            String scopeUserRoleReference = scopeReference + "UserRole";
+            String scopeResourceStateReference = scopeReference + "State";
+
+            criteria.createAlias("targetAdvert." + scopeReference, scopeReference, JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias(scopeReference + ".userRoles", scopeUserRoleReference, JoinType.LEFT_OUTER_JOIN) //
+                    .createAlias(scopeReference + ".resourceStates", scopeResourceStateReference, JoinType.LEFT_OUTER_JOIN);
+
+            Junction permissionConstraint = Restrictions.conjunction();
+            if (user != null) {
+                permissionConstraint.add(Restrictions.eq(scopeUserRoleReference + ".user", user));
+            }
+
+            networkConstraint.add(permissionConstraint.add(Restrictions.in(scopeUserRoleReference + ".role.id", values(PrismRole.class, targetScope, roleExtensions))) //
+                    .add(Restrictions.not( //
+                            Restrictions.in(scopeResourceStateReference + ".state.id",
+                                    values(PrismState.class, targetScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })))));
+        });
+
+        return criteria.add(networkConstraint)
                 .list();
     }
 
@@ -788,7 +819,7 @@ public class AdvertDAO {
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
-                .add(getResourceParentManageableStateConstraint(resourceScope.name()))
+                .add(getResourceParentManageableStateConstraint(resourceScope))
                 .add(permissionsConstraint);
     }
 

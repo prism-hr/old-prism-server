@@ -15,12 +15,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGro
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -82,6 +82,9 @@ public class ApplicationService {
     private ActionService actionService;
 
     @Inject
+    private AdvertService advertService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -126,14 +129,15 @@ public class ApplicationService {
     public DataTable getApplicationReport(ResourceListFilterDTO filter) throws Exception {
         PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
 
-        PrismScope scopeId = APPLICATION;
-        List<PrismScope> parentScopeIds = scopeService.getParentScopesDescending(APPLICATION, SYSTEM);
+        PrismScope scope = APPLICATION;
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(APPLICATION, SYSTEM);
 
         User user = userService.getCurrentUser();
-        boolean hasRedactions = actionService.hasRedactions(user, scopeId);
+        boolean hasRedactions = actionService.hasRedactions(user, scope);
 
-        resourceListFilterService.saveOrGetByUserAndScope(user, scopeId, filter);
-        List<Integer> assignedApplications = resourceService.getResources(user, scopeId, parentScopeIds, filter).stream().map(a -> a.getId()).collect(Collectors.toList());
+        resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
+        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
+        List<Integer> assignedApplications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId()).collect(toList());
 
         DataTable dataTable = new DataTable();
 
@@ -300,6 +304,10 @@ public class ApplicationService {
 
     public Boolean getApplicationOnCourse(Application application) {
         return applicationDAO.getApplicationOnCourse(application);
+    }
+
+    public List<Integer> getSharedApplicationsForAdverts(List<Integer> adverts) {
+        return applicationDAO.getSharedApplicationsForAdverts(adverts);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

@@ -10,11 +10,11 @@ public class ActionDTO implements Comparable<ActionDTO> {
     private PrismAction actionId;
 
     private Boolean raisesUrgentFlag;
-    
+
     private Boolean onlyAsPartner;
 
     private Boolean primaryState;
-    
+
     private Boolean declinable;
 
     public Integer getResourceId() {
@@ -86,7 +86,7 @@ public class ActionDTO implements Comparable<ActionDTO> {
     public int compareTo(ActionDTO other) {
         int resourceComparison = resourceId.compareTo(other.getResourceId());
         if (resourceComparison == 0) {
-            int urgentComparison = raisesUrgentFlag.compareTo(other.getRaisesUrgentFlag());
+            int urgentComparison = other.getRaisesUrgentFlag().compareTo(raisesUrgentFlag);
             return urgentComparison == 0 ? actionId.name().compareTo(other.getActionId().name()) : urgentComparison;
         }
         return resourceComparison;

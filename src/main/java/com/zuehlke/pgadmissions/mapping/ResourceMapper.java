@@ -341,7 +341,7 @@ public class ResourceMapper {
     public <T extends Resource, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        V representation = getResourceRepresentationActivity(resource, returnType, actions, overridingRoles);
+        V representation = getResourceRepresentationRelation(resource, returnType, actions, overridingRoles);
 
         representation.setActions(actions);
         representation.setTimeline(commentMapper.getCommentTimelineRepresentation(resource, currentUser, overridingRoles));
@@ -354,7 +354,7 @@ public class ResourceMapper {
     public <T extends Resource> ResourceRepresentationStandard getResourceRepresentationStandard(T resource) {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        return getResourceRepresentationActivity(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource));
+        return getResourceRepresentationRelation(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource));
     }
 
     public <T extends ResourceFlatToNestedDTO> ResourceRepresentationRelation getResourceRepresentationActivity(T resource) {
@@ -702,7 +702,7 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationActivity(T resource, Class<V> returnType,
+    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationRelation(T resource, Class<V> returnType,
             List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationRelation(resource, returnType);
 

@@ -125,7 +125,7 @@ public class ActionService {
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(User user, Resource resource) {
-        return getPermittedActionEnhancements(user, resource, null);
+        return getPermittedActionEnhancements(user, resource, getViewEditAction(resource).getId());
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(User user, Resource resource, PrismAction action) {
@@ -327,8 +327,8 @@ public class ActionService {
         PrismScope scope = resource.getResourceScope();
         Set<PrismActionEnhancement> enhancements = Sets.newHashSet();
         for (String enhancementProperty : new String[] { "stateAction.actionEnhancement", "stateActionAssignment.actionEnhancement" }) {
-            enhancements.addAll(getPermittedActionEnhancements(user, scope, targeterEntities, Lists.newArrayList(resource.getId()), action, enhancementProperty).stream()
-                    .map(ae -> ae.getActionEnhancement()).collect(toList()));
+            enhancements.addAll(getPermittedActionEnhancements(user, scope, targeterEntities, newArrayList(resource.getId()), action, enhancementProperty).stream()
+                    .filter(ae -> ae.getActionEnhancement() != null).map(ae -> ae.getActionEnhancement()).collect(toList()));
         }
         return Lists.newArrayList(enhancements);
     }

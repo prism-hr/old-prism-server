@@ -5,7 +5,10 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
+import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceListConstraint;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.*;
@@ -335,17 +338,12 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                               List<PrismRole> overridingRoles) {
         V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
-
-        List<PrismStudyOption> studyOptions = Lists.newLinkedList();
-        for (PrismStudyOption studyOption : resourceService.getStudyOptions(resource)) {
-            studyOptions.add(studyOption);
-        }
 
         representation.setOpportunityType(resource.getOpportunityType().getId());
         representation.setOpportunityCategory(PrismOpportunityCategory.valueOf(resource.getOpportunityCategories()));
-        representation.setStudyOptions(studyOptions);
+        representation.setStudyOptions(resourceService.getStudyOptions(resource));
 
         representation.setAvailableDate(resource.getAvailableDate());
         representation.setDurationMinimum(resource.getDurationMinimum());
@@ -354,7 +352,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                                           List<PrismRole> overridingRoles) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
@@ -370,7 +368,8 @@ public class ResourceMapper {
         } else if (Department.class.equals(resourceClass)) {
             return departmentMapper.getDepartmentRepresentationClient((Department) resource, overridingRoles);
         } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-            return getResourceOpportunityRepresentationClient((ResourceOpportunity) resource, ProgramRepresentationClient.class, overridingRoles);
+            Class representationType = Program.class.equals(resourceClass) ? ProgramRepresentationClient.class : ProjectRepresentationClient.class;
+            return getResourceOpportunityRepresentationClient((ResourceOpportunity) resource, representationType, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
             ApplicationRepresentationClient representation = applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
             return representation;
@@ -379,8 +378,8 @@ public class ResourceMapper {
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
     }
 
-    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) throws Exception {
-        validateViewerPermission((T) resource);
+    public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) {
+        validateViewerPermission(resource);
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -484,8 +483,8 @@ public class ResourceMapper {
         return applicationService.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
-            HashMultimap<PrismFilterEntity, String> constraints) {
+    public LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(
+            ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
         LinkedHashMultimap<String, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByMonth(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -494,8 +493,8 @@ public class ResourceMapper {
         return index;
     }
 
-    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
-            HashMultimap<PrismFilterEntity, String> constraints) {
+    public LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(
+            ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
         LinkedHashMultimap<ResourceProcessingMonth, ApplicationProcessingSummaryDTO> index = LinkedHashMultimap.create();
         List<ApplicationProcessingSummaryDTO> processingSummaries = applicationService.getApplicationProcessingSummariesByWeek(resource, constraints);
         for (ApplicationProcessingSummaryDTO processingSummary : processingSummaries) {
@@ -567,13 +566,13 @@ public class ResourceMapper {
         return filters;
     }
 
-    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName) {
+    public ResourceRepresentationConnection getResourceRepresentationConnection(
+            Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId, String departmentName) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null);
     }
 
-    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, Integer backgroundImageId) {
+    public ResourceRepresentationConnection getResourceRepresentationConnection(
+            Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId, String departmentName, Integer backgroundImageId) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 
@@ -612,7 +611,7 @@ public class ResourceMapper {
 
         if (ResourceOpportunityRepresentationRelation.class.isAssignableFrom(returnType) && ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ((ResourceOpportunityRepresentationRelation) representation).setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
-            ((ResourceOpportunityRepresentationRelation) representation).setSummary(((ResourceOpportunity) resource).getAdvert().getSummary());
+            ((ResourceOpportunityRepresentationRelation) representation).setSummary(resource.getAdvert().getSummary());
         }
 
         if (ResourceRepresentationStandard.class.isAssignableFrom(returnType)) {
@@ -638,8 +637,8 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationRelation(T resource, Class<V> returnType,
-            List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
+    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationRelation(
+            T resource, Class<V> returnType, List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles) {
         V representation = getResourceRepresentationRelation(resource, returnType);
 
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();

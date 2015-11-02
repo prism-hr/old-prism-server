@@ -1758,6 +1758,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_ROLES_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_ADD_USER_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add User"),
     SYSTEM_MANAGE_USERS_EXISTING_USERS_SUBHEADER(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Existing users and roles"),
+    SYSTEM_MANAGE_USERS_BULK_CSV_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Users CSV"),
+    SYSTEM_MANAGE_USERS_BULK_CSV_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Paste list of your users"),
+    SYSTEM_MANAGE_USERS_BULK_ROLES_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Roles"),
+    SYSTEM_MANAGE_USERS_BULK_ROLES_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Select the roles that you wish to assign."),
+    SYSTEM_MANAGE_USERS_BULK_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Message"),
+    SYSTEM_MANAGE_USERS_BULK_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Type a message that will be sent along with invitation email"),
 
     /*
      * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *******************

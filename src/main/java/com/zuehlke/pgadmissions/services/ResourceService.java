@@ -706,7 +706,7 @@ public class ResourceService {
         resource.setAvailableDate(resourceDTO.getAvailableDate());
 
         Integer durationMinimum = resourceDTO.getDurationMinimum();
-        Integer durationMaximum = resourceDTO.getDurationMinimum();
+        Integer durationMaximum = resourceDTO.getDurationMaximum();
         if (!(durationMinimum == null && durationMaximum == null)) {
             durationMinimum = durationMinimum == null ? durationMaximum : durationMinimum;
             durationMaximum = durationMaximum == null ? durationMinimum : durationMaximum;

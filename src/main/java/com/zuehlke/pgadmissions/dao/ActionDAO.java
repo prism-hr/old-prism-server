@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
@@ -150,7 +150,7 @@ public class ActionDAO {
             Collection<Integer> resources, PrismAction action, ProjectionList columns, Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(getActionConstraint(user, resources, action))
-                .add(getEndorsementActionFilterConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
@@ -273,7 +273,7 @@ public class ActionDAO {
         Junction constraint = Restrictions.conjunction() //
                 .add(Restrictions.in("resource.id", resources)) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(WorkflowDAO.getUserEnabledConstraint(user)); //
+                .add(Restrictions.eq("userAccount.enabled", true)); //
 
         if (action != null) {
             constraint.add(Restrictions.eq("action.id", action));

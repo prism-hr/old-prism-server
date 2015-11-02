@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
 import java.util.Collection;
@@ -74,7 +74,7 @@ public class NotificationDAO {
             Collection<Integer> targeterEntities, Resource resource) {
         return getIndividualRequestDefinitionCriteria(
                 workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getInvidualRequestDefinitionsProjection()), resource)
-                        .add(getEndorsementActionFilterConstraint())
+                        .add(getTargetActionConstraint())
                         .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                         .list();
     }
@@ -97,7 +97,7 @@ public class NotificationDAO {
             Collection<Integer> targeterEntities, Resource resource, Action action, Collection<User> exclusions) {
         return getIndividualUpdateDefinitionCriteria(
                 workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getIndividualUpdateDefinitionsProjection()), resource, action, exclusions)
-                        .add(getEndorsementActionFilterConstraint())
+                        .add(getTargetActionConstraint())
                         .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                         .list();
     }

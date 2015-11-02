@@ -130,12 +130,6 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public static Junction getUserEnabledConstraint(User user) {
-        return Restrictions.conjunction() //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true));
-    }
-
     public static Junction getSimilarUserConstraint(String searchTerm) {
         return getSimilarUserConstraint(null, searchTerm);
     }
@@ -149,7 +143,7 @@ public class WorkflowDAO {
                 .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
     }
 
-    public static Junction getEndorsementActionFilterConstraint() {
+    public static Junction getTargetActionConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("action.partnershipState")) //
                 .add(Restrictions.conjunction() //

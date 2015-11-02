@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -62,7 +61,7 @@ public class RoleDAO {
             Collection<Integer> resourceIds) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("role.id"))
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
-                .add(getEndorsementActionFilterConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .list();
     }
 
@@ -305,7 +304,7 @@ public class RoleDAO {
         return Restrictions.conjunction() //
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
-                .add(getUserEnabledConstraint(user));
+                .add(Restrictions.eq("userAccount.enabled", true));
     }
 
 }

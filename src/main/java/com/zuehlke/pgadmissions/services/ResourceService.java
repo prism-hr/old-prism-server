@@ -42,15 +42,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang3.time.StopWatch;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -144,8 +141,6 @@ import jersey.repackaged.com.google.common.collect.Sets;
 @Service
 @Transactional
 public class ResourceService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
 
     @Value("${system.id}")
     private Integer systemId;
@@ -471,12 +466,8 @@ public class ResourceService {
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> targeterEntities, ResourceListFilterDTO filter,
             Integer recordsToRetrieve, String sequenceId, Collection<Integer> resources, Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resources.isEmpty()) {
-            StopWatch watch = new StopWatch();
-            watch.start();
-
             boolean hasRedactions = actionService.hasRedactions(user, scope);
             List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resources, filter, sequenceId, recordsToRetrieve, hasRedactions);
-            logger.info("Got resources in " + watch.getTime());
 
             if (!rows.isEmpty()) {
                 Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
@@ -484,20 +475,17 @@ public class ResourceService {
 
                 LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResources)
                         : LinkedHashMultimap.create();
-                logger.info("Got secondary states in " + watch.getTime());
 
                 TreeMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(user, scope, targeterEntities, filteredResources)
                         : TreeMultimap.create();
-                logger.info("Got permitted actions in " + watch.getTime());
 
                 TreeMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResources);
-                logger.info("Got creation actions in " + watch.getTime());
 
                 rowIndex.keySet().forEach(resourceId -> {
                     ResourceListRowDTO row = rowIndex.get(resourceId);
                     row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
 
-                    List<ActionDTO> actions = Lists.newLinkedList(permittedActions.get(resourceId));
+                    Set<ActionDTO> actions = Sets.newTreeSet(permittedActions.get(resourceId));
 
                     boolean onlyAsPartner = onlyAsPartnerResources.contains(resourceId);
                     creationActions.get(resourceId).forEach(creationAction -> {
@@ -506,7 +494,7 @@ public class ResourceService {
                         }
                     });
 
-                    row.setActions(actions);
+                    row.setActions(Lists.newLinkedList(actions));
                 });
             }
 

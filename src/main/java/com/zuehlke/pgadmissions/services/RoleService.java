@@ -1,12 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static java.util.Arrays.stream;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
@@ -55,6 +58,9 @@ public class RoleService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AdvertService advertService;
 
     @Inject
     private EntityService entityService;
@@ -202,8 +208,28 @@ public class RoleService {
         return getRolesOverridingRedactions(user, resourceScope, resourceIds);
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return roleDAO.getRolesOverridingRedactions(user, resourceScope, resourceIds, scopeService.getParentScopesDescending(resourceScope, SYSTEM));
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, Collection<Integer> resourceIds) {
+        Set<PrismRole> roles = Sets.newHashSet();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, resourceIds));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, parentScope, resourceIds));
+            }
+
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : targetScopes) {
+                    for (PrismScope targetScope : targetScopes) {
+                        roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, targeterScope, targetScope, targeterEntities, resourceIds));
+                    }
+                }
+            }
+        }
+
+        return newArrayList(roles);
     }
 
     public List<PrismRole> getRolesForResource(Resource resource, User user) {

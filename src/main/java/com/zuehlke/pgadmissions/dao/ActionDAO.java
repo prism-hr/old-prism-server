@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
@@ -149,6 +150,7 @@ public class ActionDAO {
             Collection<Integer> resources, PrismAction action, ProjectionList columns, Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(getActionConstraint(user, resources, action))
+                .add(getEndorsementActionFilterConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }

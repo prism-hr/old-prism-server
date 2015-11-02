@@ -320,6 +320,7 @@ public class UserDAO {
             PrismAction... actions) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
                 .add(getUsersWithActionsConstraint(resource, actions)) //
+                .add(getEndorsementActionFilterConstraint()) //
                 .list();
     }
 

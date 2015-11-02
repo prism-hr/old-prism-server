@@ -83,11 +83,11 @@ public class ActionDTO implements Comparable<ActionDTO> {
     }
 
     @Override
-    public int compareTo(ActionDTO otherActionDTO) {
-        int resourceComparison = resourceId.compareTo(otherActionDTO.getResourceId());
+    public int compareTo(ActionDTO other) {
+        int resourceComparison = resourceId.compareTo(other.getResourceId());
         if (resourceComparison == 0) {
-            int urgentComparison = raisesUrgentFlag.compareTo(otherActionDTO.getRaisesUrgentFlag());
-            return urgentComparison == 0 ? actionId.name().compareTo(otherActionDTO.getActionId().name()) : urgentComparison;
+            int urgentComparison = raisesUrgentFlag.compareTo(other.getRaisesUrgentFlag());
+            return urgentComparison == 0 ? actionId.name().compareTo(other.getActionId().name()) : urgentComparison;
         }
         return resourceComparison;
     }

@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getEndorsementActionFilterConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetUserRoleConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserEnabledConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserRoleConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -14,6 +12,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -47,17 +46,23 @@ public class RoleDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope resourceScope, Collection<Integer> resourceIds, Collection<PrismScope> parentScopes) {
-        return (List<PrismRole>) workflowDAO.getWorklflowAssignmentCriteria(resourceScope, Projections.groupProperty("role.id"))
-                .add(Restrictions.in("resource.id", resourceIds)) //
-                .add(Restrictions.isEmpty("role.actionRedactions")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(getUserRoleConstraint(resourceScope, parentScopes)) //
-                                .add(Restrictions.eq("stateActionAssignment.externalMode", false))) //
-                        .add(getTargetUserRoleConstraint())) //
-                .add(getUserEnabledConstraint(user)) //
-                .add(getEndorsementActionFilterConstraint())
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, Collection<Integer> resourceIds) {
+        return workflowDAO.getWorkflowCriteriaList(scope, Projections.groupProperty("role.id")) //
+                .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resourceIds) {
+        return workflowDAO.getWorkflowCriteriaList(scope, parentScope, Projections.groupProperty("role.id")) //
+                .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+            Collection<Integer> resourceIds) {
+        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("role.id"))
+                .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
+                .add(getEndorsementActionFilterConstraint()) //
                 .list();
     }
 
@@ -65,7 +70,13 @@ public class RoleDAO {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.eq("user", user)) //
-                .add(getUserRoleConstraint(resource)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
+                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
+                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
+                        .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
+                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
+                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
                 .list();
     }
 
@@ -288,6 +299,13 @@ public class RoleDAO {
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.verified", false)) //
                 .list();
+    }
+
+    private static Junction getRolesOverridingRedactionsConstraint(User user, Collection<Integer> resourceIds) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.in("resource.id", resourceIds)) //
+                .add(Restrictions.isEmpty("role.actionRedactions")) //
+                .add(getUserEnabledConstraint(user));
     }
 
 }

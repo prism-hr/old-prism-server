@@ -75,18 +75,20 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
     }
 
     private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) {
-        PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-        Action action = actionService.getById(prismAction);
-        DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);
-
-        User invoker = comment.getUser();
-        List<User> users = userService.getUsersWithActions(application, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
-        LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
-        for (User user : users) {
-            List<LocalDateTime> preferences = commentService.getAppointmentPreferences(application, user);
-            if (!preferences.contains(interviewDateTime)) {
-                Comment newPreferenceComment = commentService.createInterviewPreferenceComment(application, action, invoker, user, interviewDateTime, baseline);
-                actionService.executeActionSilent(application, action, newPreferenceComment);
+        if (comment.getInterviewAppointment().getInterviewDateTime() != null) {
+            PrismAction prismAction = APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+            Action action = actionService.getById(prismAction);
+            DateTime baseline = comment.getCreatedTimestamp().minusSeconds(1);
+    
+            User invoker = comment.getUser();
+            List<User> users = userService.getUsersWithActions(application, prismAction, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY);
+            LocalDateTime interviewDateTime = comment.getInterviewAppointment().getInterviewDateTime();
+            for (User user : users) {
+                List<LocalDateTime> preferences = commentService.getAppointmentPreferences(application, user);
+                if (!preferences.contains(interviewDateTime)) {
+                    Comment newPreferenceComment = commentService.createInterviewPreferenceComment(application, action, invoker, user, interviewDateTime, baseline);
+                    actionService.executeActionSilent(application, action, newPreferenceComment);
+                }
             }
         }
     }

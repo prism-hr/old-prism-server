@@ -172,7 +172,6 @@ public class NotificationDAO {
 
     private static Criteria getIndividualUpdateDefinitionCriteria(Criteria criteria, Resource resource, Action action, Collection<User> exclusions) {
         criteria.createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("resource.id", resource.getId())); //

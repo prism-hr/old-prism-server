@@ -474,17 +474,19 @@ public class UserService {
             });
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            for (PrismScope targeterScope : targetScopes) {
-                if (scope.ordinal() > targeterScope.ordinal()) {
-                    for (PrismScope targetScope : targetScopes) {
-                        users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, targeterEntities, updateBaseline, lastNotifiedBaseline));
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : targetScopes) {
+                    if (scope.ordinal() > targeterScope.ordinal()) {
+                        for (PrismScope targetScope : targetScopes) {
+                            users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, targeterEntities, updateBaseline, lastNotifiedBaseline));
 
-                        List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
-                        if (!resources.isEmpty()) {
-                            users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
+                            List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
+                            if (!resources.isEmpty()) {
+                                users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
 
-                            if (targetScope.equals(DEPARTMENT)) {
-                                users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
+                                if (targetScope.equals(DEPARTMENT)) {
+                                    users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
+                                }
                             }
                         }
                     }

@@ -235,7 +235,7 @@ public class NotificationService {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
             List<Integer> resourceIds = resourceService.getResources(user, scope, parentScopes, targeterEntities).stream().map(a -> a.getId()).collect(toList());
-            if (!resourceIds.isEmpty()) {
+            if (isNotEmpty(resourceIds)) {
                 notificationDAO.resetNotificationsSyndicated(scope, resourceIds);
             }
         }

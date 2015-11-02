@@ -1,21 +1,14 @@
 package com.zuehlke.pgadmissions.domain.advert;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAssignment;
 import com.zuehlke.pgadmissions.workflow.user.AdvertTargetPendingReassignmentProcessor;
 
+import javax.persistence.*;
+
 @Entity
-@Table(name = "state_action_pending")
+@Table(name = "advert_target_pending")
 public class AdvertTargetPending implements UserAssignment<AdvertTargetPendingReassignmentProcessor>, UniqueEntity {
 
     @Id

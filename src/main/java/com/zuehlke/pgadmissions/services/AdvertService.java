@@ -636,13 +636,15 @@ public class AdvertService {
 
             Set<Advert> targetAdverts = Sets.newHashSet();
             List<Integer> targeterEntities = getAdvertTargeterEntities(user, resourceScope);
-            for (PrismScope targeterScope : targetScopes) {
-                if (targeterScope.ordinal() < resourceScope.ordinal()) {
-                    ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
-                    if (targeterResource != null) {
-                        for (PrismScope targetScope : targetScopes) {
-                            targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope, targetScope,
-                                    targeterEntities));
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : targetScopes) {
+                    if (targeterScope.ordinal() < resourceScope.ordinal()) {
+                        ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
+                        if (targeterResource != null) {
+                            for (PrismScope targetScope : targetScopes) {
+                                targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope,
+                                        targetScope, targeterEntities));
+                            }
                         }
                     }
                 }

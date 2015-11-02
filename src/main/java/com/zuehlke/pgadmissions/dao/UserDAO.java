@@ -591,7 +591,6 @@ public class UserDAO {
         return Restrictions.conjunction() //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.in("stateAction.action.id", actions)) //
-                .add(getTargetActionConstraint())
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true)));

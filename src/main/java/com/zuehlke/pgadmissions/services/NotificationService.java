@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_CONNECTION_LIST;
@@ -121,8 +122,9 @@ public class NotificationService {
 
     public void sendIndividualWorkflowNotifications(Resource resource, Comment comment) {
         LocalDate baseline = new LocalDate();
-        Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, baseline);
-        sendIndividualUpdateNotifications(resource, comment, exclusions, baseline);
+        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(resource.getResourceScope());
+        Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, targeterEntities, baseline);
+        sendIndividualUpdateNotifications(resource, comment, targeterEntities, exclusions, baseline);
         entityService.flush();
     }
 
@@ -248,9 +250,28 @@ public class NotificationService {
         }
     }
 
-    private Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, LocalDate baseline) {
+    public Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, List<Integer> targeterEntities, LocalDate baseline) {
+        PrismScope scope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        Set<UserNotificationDefinitionDTO> requests = Sets.newHashSet();
+        requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, resource));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, parentScope, resource));
+            }
+
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : targetScopes) {
+                    for (PrismScope targetScope : targetScopes) {
+                        requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, targeterScope, targetScope, targeterEntities, resource));
+                    }
+                }
+            }
+        }
+
         Set<User> recipients = Sets.newHashSet();
-        List<UserNotificationDefinitionDTO> requests = notificationDAO.getIndividualRequestDefinitions(resource, baseline);
         if (requests.size() > 0) {
             User initiator = comment.getUser();
             for (UserNotificationDefinitionDTO request : requests) {
@@ -266,17 +287,37 @@ public class NotificationService {
         return recipients;
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<User> userExclusions, LocalDate baseline) {
-        List<UserNotificationDefinitionDTO> updates = notificationDAO.getIndividualUpdateDefinitions(resource, comment.getAction(), userExclusions);
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, List<Integer> targeterEntities, Set<User> exclusions, LocalDate baseline) {
+        PrismScope scope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        Action action = comment.getAction();
+        Set<UserNotificationDefinitionDTO> updates = Sets.newHashSet();
+        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, resource, action, exclusions));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, parentScope, resource, action, exclusions));
+            }
+
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : targetScopes) {
+                    for (PrismScope targetScope : targetScopes) {
+                        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, targeterScope, targetScope, targeterEntities, resource, action, exclusions));
+                    }
+                }
+            }
+        }
+
         if (updates.size() > 0) {
-            Action action = actionService.getViewEditAction(resource);
-            if (action != null) {
+            Action viewEditAction = actionService.getViewEditAction(resource);
+            if (viewEditAction != null) {
                 User initiator = comment.getUser();
                 for (UserNotificationDefinitionDTO update : updates) {
                     User recipient = userService.getById(update.getUserId());
                     NotificationDefinition definition = getById(update.getNotificationDefinitionId());
                     sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withComment(comment)
-                            .withTransitionAction(action.getId()));
+                            .withTransitionAction(viewEditAction.getId()));
                     createOrUpdateUserNotification(resource, recipient, definition, baseline);
                 }
             }

@@ -353,10 +353,10 @@ public class ActionService {
 
     private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
             PrismAction action, String targetColumn) {
-        return Lists.newArrayList(getActionEntities(user, scope, targeterEntities, resources, action,
+        return newArrayList(getActionEntities(user, scope, targeterEntities, resources, action,
                 Projections.projectionList() //
-                        .add(Projections.groupProperty("action.id")) //
-                        .add(Projections.groupProperty(targetColumn)),
+                        .add(Projections.groupProperty("action.id").as("action")) //
+                        .add(Projections.groupProperty(targetColumn).as("actionEnhancement")),
                 ActionEnhancementDTO.class));
     }
 

@@ -214,7 +214,7 @@ public class ResourceService {
                 .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
-        ActionOutcomeDTO outcome = null;
+        ActionOutcomeDTO outcome;
         if (systemInvocation) {
             outcome = actionService.executeAction(resource, action, comment);
         } else {

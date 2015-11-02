@@ -3,6 +3,9 @@ package com.zuehlke.pgadmissions.mapping;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinState.APPROVED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinState.PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinState.UNKNOWN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -48,6 +51,7 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
+import com.zuehlke.pgadmissions.domain.definitions.PrismJoinState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -60,6 +64,7 @@ import com.zuehlke.pgadmissions.domain.resource.Project;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
@@ -118,14 +123,15 @@ public class AdvertMapper {
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
-        PrismScope[] filterScopes = filterScope != null ? new PrismScope[]{filterScope} : query.getContext().getFilterScopes();
+        PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
+        User user = userService.getCurrentUser();
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(userService.getCurrentUser(), query, filterScopes);
+        Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
         processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
 
-        PrismScope[] parentScopes = new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION};
+        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
@@ -182,7 +188,7 @@ public class AdvertMapper {
             }
         }
 
-        List<AdvertRepresentationExtended> representations = Lists.newLinkedList();
+        Map<Integer, AdvertRepresentationExtended> representations = Maps.newLinkedHashMap();
         index.keySet().forEach(advert -> {
             AdvertRepresentationExtended representation = index.get(advert);
             representation.setExternalConditions(newLinkedList(actionConditionIndex.get(advert)));
@@ -194,10 +200,20 @@ public class AdvertMapper {
                 representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries)).withFunctions(newLinkedList(functions)));
             }
 
-            representations.add(representation);
+            representations.put(advert, representation);
         });
 
-        return new AdvertListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries));
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
+        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" });
+        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "STUDENT" });
+        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" });
+
+        representations.keySet().forEach(advert -> {
+            representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
+            representations.get(advert).setJoinStateStudent(getAdvertJoinState(advert, advertsAsStudent, advertsAsStudentPending));
+        });
+
+        return new AdvertListRepresentation().withRows(newLinkedList(representations.values())).withSummaries(getSummaryRepresentations(summaries));
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
@@ -257,7 +273,7 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             ResourceRepresentationSimple resource = getAdvertResourceRepresentation(advert, scope);
             if (resource != null) {
                 setProperty(representation, scope.getLowerCamelName(), resource);
@@ -483,6 +499,15 @@ public class AdvertMapper {
         if (targetOpportunityTypes != null) {
             representation.setTargetOpportunityTypes(asList(targetOpportunityTypes.split("\\|")).stream().map(PrismOpportunityType::valueOf).collect(toList()));
         }
+    }
+
+    private PrismJoinState getAdvertJoinState(Integer advert, List<Integer> advertsUserApprovedFor, List<Integer> advertsUserPendingFor) {
+        if (advertsUserApprovedFor.contains(advert)) {
+            return APPROVED;
+        } else if (advertsUserPendingFor.contains(advert)) {
+            return PENDING;
+        }
+        return UNKNOWN;
     }
 
 }

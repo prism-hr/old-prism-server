@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 
 import java.util.Collection;
 import java.util.List;
@@ -165,6 +166,8 @@ public class RoleService {
             } else {
                 Action action = actionService.getViewEditAction(resource);
                 if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {
+                    getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
+                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED")))).withAssignedTimestamp(now()));
                     entityService.delete(userRole);
                 }
             }

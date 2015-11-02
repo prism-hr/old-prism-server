@@ -729,6 +729,10 @@ public class AdvertService {
         return emptyList();
     }
 
+    public List<Integer> getAdvertsForWhichUserHasRoles(User user, Collection<Integer> adverts, String[] roleExtensions) {
+        return advertDAO.getAdvertsForWhichUserHasRoles(user, adverts, roleExtensions);
+    }
+
     private List<AdvertTargetDTO> getAdvertTargetsReceived(User user, List<Integer> connectAdverts, boolean pending) {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : targetScopes) {

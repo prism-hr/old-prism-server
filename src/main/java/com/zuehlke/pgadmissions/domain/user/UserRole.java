@@ -72,13 +72,13 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     @Column(name = "requested")
     private Boolean requested;
 
-    @Column(name = "assigned_timestamp", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime assignedTimestamp;
-
     @ManyToOne
     @JoinColumn(name = "invitation_id")
     private Invitation invitation;
+    
+    @Column(name = "assigned_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime assignedTimestamp;
 
     @Override
     public Integer getId() {
@@ -174,14 +174,6 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         this.requested = requested;
     }
 
-    public DateTime getAssignedTimestamp() {
-        return assignedTimestamp;
-    }
-
-    public void setAssignedTimestamp(DateTime assignedTimestamp) {
-        this.assignedTimestamp = assignedTimestamp;
-    }
-
     @Override
     public Invitation getInvitation() {
         return invitation;
@@ -190,6 +182,14 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
     @Override
     public void setInvitation(Invitation invitation) {
         this.invitation = invitation;
+    }
+    
+    public DateTime getAssignedTimestamp() {
+        return assignedTimestamp;
+    }
+
+    public void setAssignedTimestamp(DateTime assignedTimestamp) {
+        this.assignedTimestamp = assignedTimestamp;
     }
 
     public UserRole withResource(Resource resource) {
@@ -212,16 +212,16 @@ public class UserRole extends WorkflowResourceExecution implements UserAssignmen
         return this;
     }
 
-    public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
-        this.assignedTimestamp = assignedTimestamp;
-        return this;
-    }
-
     public UserRole withInvitation(Invitation invitation) {
         this.invitation = invitation;
         return this;
     }
-
+    
+    public UserRole withAssignedTimestamp(DateTime assignedTimestamp) {
+        this.assignedTimestamp = assignedTimestamp;
+        return this;
+    }
+    
     @Override
     public Class<UserRoleReassignmentProcessor> getUserReassignmentProcessor() {
         return UserRoleReassignmentProcessor.class;

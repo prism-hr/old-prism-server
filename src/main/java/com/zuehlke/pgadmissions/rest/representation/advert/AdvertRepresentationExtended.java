@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.definitions.PrismJoinState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -37,6 +40,12 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private Integer applicationRatingCount;
 
     private BigDecimal applicationRatingAverage;
+
+    private PrismJoinState joinStateStaff;
+
+    private PrismJoinState joinStateStudent;
+
+    private PrismJoinState connectState;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -140,6 +149,34 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    public PrismJoinState getJoinStateStaff() {
+        return joinStateStaff;
+    }
+
+    public void setJoinStateStaff(PrismJoinState joinStateStaff) {
+        this.joinStateStaff = joinStateStaff;
+    }
+
+    public PrismJoinState getJoinStateStudent() {
+        return joinStateStudent;
+    }
+
+    public void setJoinStateStudent(PrismJoinState joinStateStudent) {
+        this.joinStateStudent = joinStateStudent;
+    }
+
+    public PrismJoinState getConnectState() {
+        return connectState;
+    }
+
+    public void setConnectState(PrismJoinState connectState) {
+        this.connectState = connectState;
+    }
+
+    public ResourceRepresentationSimple getResource() {
+        return firstNonNull(project, program, department, institution);
     }
 
 }

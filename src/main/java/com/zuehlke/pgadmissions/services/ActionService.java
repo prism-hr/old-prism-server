@@ -303,7 +303,7 @@ public class ActionService {
 
             if (duplicate != null) {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
-                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(getViewEditAction(resource));
+                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(getViewEditAction(duplicate));
                 } else if (!Objects.equal(resource.getId(), duplicate.getId())) {
                     throw new WorkflowPermissionException(resource, action);
                 }

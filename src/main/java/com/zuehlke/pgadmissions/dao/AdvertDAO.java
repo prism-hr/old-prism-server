@@ -12,6 +12,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.E
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -487,6 +489,32 @@ public class AdvertDAO {
                 .setParameter("advertTargetId", advertTargetId)
                 .setParameter("partnershipState", partnershipState)
                 .executeUpdate();
+    }
+
+    public List<Integer> getAdvertsForWhichUserHasRoles(User user, Collection<Integer> adverts, String[] roleExtensions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eqProperty("id", "department.advert.id")) //
+                .createAlias("department.userRoles", "departmentUserRole", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("departmentUserRole.user", user))
+                                .add(Restrictions.in("departmentUserRole.role.id", values(PrismRole.class, DEPARTMENT, roleExtensions)))) //
+                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eqProperty("id", "institution.advert.id")) //
+                .createAlias("institution.userRoles", "institutionUserRole", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("institutionUserRole.user", user)) //
+                                .add(Restrictions.in("institutionUserRole.role.id", values(PrismRole.class, INSTITUTION, roleExtensions)))) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNotNull("department.id")) //
+                        .add(Restrictions.isNotNull("institution.id")));
+
+        if (isNotEmpty(adverts)) {
+            criteria.add(Restrictions.in("id", adverts));
+        }
+
+        return (List<Integer>) criteria.list();
     }
 
     public List<Integer> getAdvertsForWhichUserCanManageTargets(PrismScope resourceScope, User user) {

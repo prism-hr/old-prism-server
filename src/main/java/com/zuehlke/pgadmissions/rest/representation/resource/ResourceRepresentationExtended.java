@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
 import com.zuehlke.pgadmissions.rest.representation.resource.institution.InstitutionRepresentationClient;
+
+import java.util.List;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "scope")
 @JsonSubTypes({
@@ -21,8 +20,6 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     private List<ActionRepresentationExtended> actions;
 
-    private CommentTimelineRepresentation timeline;
-
     private List<ResourceUserRolesRepresentation> userRoles;
 
     private List<ResourceConditionRepresentation> conditions;
@@ -33,14 +30,6 @@ public class ResourceRepresentationExtended extends ResourceRepresentationStanda
 
     public void setActions(List<ActionRepresentationExtended> actions) {
         this.actions = actions;
-    }
-
-    public CommentTimelineRepresentation getTimeline() {
-        return timeline;
-    }
-
-    public void setTimeline(CommentTimelineRepresentation timeline) {
-        this.timeline = timeline;
     }
 
     public List<ResourceUserRolesRepresentation> getUserRoles() {

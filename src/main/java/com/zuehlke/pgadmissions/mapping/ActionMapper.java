@@ -1,10 +1,11 @@
 package com.zuehlke.pgadmissions.mapping;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -13,7 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -62,14 +63,17 @@ public class ActionMapper {
 
     public List<ActionRepresentationExtended> getActionRepresentations(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
-        Set<ActionRepresentationExtended> representations = Sets.newLinkedHashSet();
+        Map<PrismAction, ActionRepresentationExtended> representations = Maps.newLinkedHashMap();
 
         boolean onlyAsPartner = true;
         List<ActionDTO> actions = actionService.getPermittedActions(user, resource);
         for (ActionDTO action : actions) {
             onlyAsPartner = !onlyAsPartner ? false : isTrue(action.getOnlyAsPartner());
-            representations.add(getActionRepresentationExtended(resource, action, user));
+            representations.put(action.getActionId(), getActionRepresentationExtended(resource, action, user));
         }
+
+        actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(a -> a.getActionId()).collect(toList()))
+                .forEach(ae -> representations.get(ae.getAction()).addActionEnhancement(ae.getActionEnhancement()));
 
         List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()));
         for (ActionDTO publicAction : publicActions) {
@@ -85,11 +89,11 @@ public class ActionMapper {
                     }
                 }
 
-                representations.add(actionRepresentation);
+                representations.put(publicAction.getActionId(), actionRepresentation);
             }
         }
 
-        return Lists.newLinkedList(representations);
+        return Lists.newLinkedList(representations.values());
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
@@ -103,7 +107,6 @@ public class ActionMapper {
         PrismAction prismAction = action.getActionId();
         ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class);
 
-        representation.addActionEnhancements(actionService.getPermittedActionEnhancements(user, resource, action.getActionId()));
         representation.addNextStates(stateMapper.getStateRepresentations(resource, prismAction));
         representation.addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
 

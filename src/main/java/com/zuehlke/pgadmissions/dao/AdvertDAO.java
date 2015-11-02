@@ -17,12 +17,12 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static com.zuehlke.pgadmissions.utils.PrismEnumUtils.values;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -531,7 +531,7 @@ public class AdvertDAO {
                 .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN);
 
         Junction networkConstraint = Restrictions.disjunction();
-        Arrays.stream(targetScopes).forEach(targetScope -> {
+        stream(targetScopes).forEach(targetScope -> {
             String scopeReference = targetScope.getLowerCamelName();
             String scopeUserRoleReference = scopeReference + "UserRole";
             String scopeResourceStateReference = scopeReference + "State";

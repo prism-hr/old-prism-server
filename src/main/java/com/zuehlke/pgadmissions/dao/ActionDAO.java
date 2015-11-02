@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -118,38 +120,26 @@ public class ActionDAO {
                 .list();
     }
 
-    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, ProjectionList columns, Class<T> responseClass) {
-        return getActionEntities(user, scope, resources, null, columns, responseClass);
-    }
-
-    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, PrismAction action, ProjectionList columns, Class<T> responseClass) {
-        return workflowDAO.getWorkflowCriteriaList(scope, columns) //
-                .add(getActionConstraint(user, resources, action)) //
-                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
-                .list();
-    }
-
-    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resources, ProjectionList columns, Class<T> responseClass) {
-        return getActionEntities(user, scope, parentScope, resources, null, columns, responseClass);
-    }
-
-    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resources, PrismAction action, ProjectionList columns,
+    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, Collection<PrismAction> actions, ProjectionList columns, Criterion restriction,
             Class<T> responseClass) {
+        return workflowDAO.getWorkflowCriteriaList(scope, columns) //
+                .add(getActionConstraint(user, resources, actions, restriction)) //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
+                .list();
+    }
+
+    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resources, Collection<PrismAction> actions,
+            ProjectionList columns, Criterion restriction, Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, parentScope, columns) //
-                .add(getActionConstraint(user, resources, action)) //
+                .add(getActionConstraint(user, resources, actions, restriction)) //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
     public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
-            Collection<Integer> resources, ProjectionList columns, Class<T> responseClass) {
-        return getActionEntities(user, scope, targeterScope, targetScope, targeterEntities, resources, null, columns, responseClass);
-    }
-
-    public <T> List<T> getActionEntities(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
-            Collection<Integer> resources, PrismAction action, ProjectionList columns, Class<T> responseClass) {
+            Collection<Integer> resources, Collection<PrismAction> actions, ProjectionList columns, Criterion restriction, Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
-                .add(getActionConstraint(user, resources, action))
+                .add(getActionConstraint(user, resources, actions, restriction))
                 .add(getTargetActionConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -269,14 +259,18 @@ public class ActionDAO {
                 .list();
     }
 
-    private static Junction getActionConstraint(User user, Collection<Integer> resources, PrismAction action) {
+    private static Junction getActionConstraint(User user, Collection<Integer> resources, Collection<PrismAction> actions, Criterion restriction) {
         Junction constraint = Restrictions.conjunction() //
                 .add(Restrictions.in("resource.id", resources)) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)); //
 
-        if (action != null) {
-            constraint.add(Restrictions.eq("action.id", action));
+        if (isNotEmpty(actions)) {
+            constraint.add(Restrictions.in("action.id", actions));
+        }
+
+        if (restriction != null) {
+            constraint.add(restriction);
         }
 
         return constraint;

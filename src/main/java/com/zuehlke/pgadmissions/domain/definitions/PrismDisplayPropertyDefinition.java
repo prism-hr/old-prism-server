@@ -1577,6 +1577,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_SUMMARY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "A brief description of your opportunity."),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visibility"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visibility that you want for your opportunity."),
+    SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Primary Contact"),
+    SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "To change the primary owner go to Manage User and change the owner fo the project"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_PUBLIC_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_PRIVATE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Use our recruitment engine?"),

@@ -962,6 +962,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Interview Availability Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Interview Feedback Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Reference Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_HAVE_RESPONDED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "All the referees have responded"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REVIEW_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Review Request"),
     SYSTEM_NOTIFICATION_APPLICATION_REVERSE_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Rejection Reversed Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_TERMINATE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Terminate Notification"),

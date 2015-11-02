@@ -135,7 +135,7 @@ public class ApplicationDownloadBuilder {
     private PropertyLoader propertyLoader;
     private ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper;
 
-    @Value("${xml.export.logo.file.width.percentage}")
+    @Value("${export.logo.file.width.percentage}")
     private Float logoFileWidthPercentage;
 
     @Inject

@@ -7,6 +7,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCatego
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import java.io.IOException;
@@ -59,6 +60,9 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     private static Logger logger = LoggerFactory.getLogger(InstitutionServiceHelper.class);
 
+    @Value("${import.on}")
+    private Boolean importOn;
+
     @Value("${auth.facebook.clientId}")
     private String facebookClientId;
 
@@ -87,24 +91,26 @@ public class InstitutionServiceHelper extends PrismServiceHelperAbstract {
 
     @Override
     public void execute() throws Exception {
-        System system = systemService.getSystem();
+        if (isTrue(importOn)) {
+            System system = systemService.getSystem();
 
-        FacebookServiceProvider facebookServiceProvider = new FacebookServiceProvider(facebookClientId, facebookAppSecret, null);
-        AccessGrant accessGrant;
-        try {
-            accessGrant = facebookServiceProvider.getOAuthOperations().authenticateClient();
-        } catch (ResourceAccessException e) {
-            logger.error("Could not obtain Facebook token due to: " + e.getMessage());
-            return;
-        }
-        Facebook facebookApi = facebookServiceProvider.getApi(accessGrant.getAccessToken());
-
-        PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(system);
-        getInstitutionRepresentations().forEach(ii -> {
-            if (isNewInstitution(loader, ii.getUcasIds(), ii.getHesaId())) {
-                importInstitution(system, loader, ii, facebookApi);
+            FacebookServiceProvider facebookServiceProvider = new FacebookServiceProvider(facebookClientId, facebookAppSecret, null);
+            AccessGrant accessGrant;
+            try {
+                accessGrant = facebookServiceProvider.getOAuthOperations().authenticateClient();
+            } catch (ResourceAccessException e) {
+                logger.error("Could not obtain Facebook token due to: " + e.getMessage());
+                return;
             }
-        });
+            Facebook facebookApi = facebookServiceProvider.getApi(accessGrant.getAccessToken());
+
+            PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(system);
+            getInstitutionRepresentations().forEach(ii -> {
+                if (isNewInstitution(loader, ii.getUcasIds(), ii.getHesaId())) {
+                    importInstitution(system, loader, ii, facebookApi);
+                }
+            });
+        }
     }
 
     @Override

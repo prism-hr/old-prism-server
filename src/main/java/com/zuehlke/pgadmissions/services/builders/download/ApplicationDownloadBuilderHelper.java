@@ -33,10 +33,10 @@ public class ApplicationDownloadBuilderHelper {
 
     private PropertyLoader propertyLoader;
 
-    @Value("${xml.export.logo.file.location}")
+    @Value("${export.logo.file.location}")
     private String logoFileLocation;
 
-    @Value("${xml.export.logo.file.width.percentage}")
+    @Value("${export.logo.file.width.percentage}")
     private Float logoFileWidthPercentage;
 
     public Document startDocument() {

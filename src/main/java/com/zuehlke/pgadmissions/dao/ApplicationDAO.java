@@ -252,7 +252,7 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getSharedApplicationsForAdverts(List<Integer> adverts) {
+    public List<Integer> getSharedApplicationsForAdverts(Collection<Integer> adverts) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //

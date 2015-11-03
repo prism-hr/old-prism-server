@@ -58,6 +58,14 @@ public class OpportunitiesQueryDTO {
 
     private String lastSequenceIdentifier;
 
+    public PrismResourceContext getContext() {
+        return context;
+    }
+
+    public void setContext(PrismResourceContext context) {
+        this.context = context;
+    }
+
     public PrismScope getResourceScope() {
         return resourceScope;
     }
@@ -72,14 +80,6 @@ public class OpportunitiesQueryDTO {
 
     public void setResourceId(Integer resourceId) {
         this.resourceId = resourceId;
-    }
-
-    public PrismResourceContext getContext() {
-        return context;
-    }
-
-    public void setContext(PrismResourceContext context) {
-        this.context = context;
     }
 
     public PrismScope getContextScope() {

@@ -5,7 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
@@ -41,11 +41,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private BigDecimal applicationRatingAverage;
 
-    private PrismJoinState joinStateStaff;
+    private PrismConnectionState joinStateStaff;
 
-    private PrismJoinState joinStateStudent;
+    private PrismConnectionState joinStateStudent;
 
-    private PrismJoinState connectState;
+    private PrismConnectionState connectState;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -151,27 +151,27 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public PrismJoinState getJoinStateStaff() {
+    public PrismConnectionState getJoinStateStaff() {
         return joinStateStaff;
     }
 
-    public void setJoinStateStaff(PrismJoinState joinStateStaff) {
+    public void setJoinStateStaff(PrismConnectionState joinStateStaff) {
         this.joinStateStaff = joinStateStaff;
     }
 
-    public PrismJoinState getJoinStateStudent() {
+    public PrismConnectionState getJoinStateStudent() {
         return joinStateStudent;
     }
 
-    public void setJoinStateStudent(PrismJoinState joinStateStudent) {
+    public void setJoinStateStudent(PrismConnectionState joinStateStudent) {
         this.joinStateStudent = joinStateStudent;
     }
 
-    public PrismJoinState getConnectState() {
+    public PrismConnectionState getConnectState() {
         return connectState;
     }
 
-    public void setConnectState(PrismJoinState connectState) {
+    public void setConnectState(PrismConnectionState connectState) {
         this.connectState = connectState;
     }
 

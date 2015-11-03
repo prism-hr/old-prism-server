@@ -21,7 +21,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.collections.ListUtils.removeAll;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +37,7 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -98,7 +99,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.PrismCollectionUtils;
 
 @Service
 @Transactional
@@ -218,7 +218,8 @@ public class AdvertMapper {
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         User user = userService.getCurrentUser();
 
-        if (isNotEmpty(advertService.getVisibleAdverts(user, advert.getResource().getResourceScope()))) {
+        Set<Integer> userAdverts = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
+        if (isTrue(advert.getGloballyVisible()) || (userAdverts != null && userAdverts.contains(advert.getId()))) {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
             ResourceParent resource = advert.getResource();
@@ -511,12 +512,14 @@ public class AdvertMapper {
     }
 
     private void setAdvertCallToActionStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" }, advertIds);
-        setAdvertJoinStates(user, advertIds, representations, advertsAsStaff);
-        setAdvertConnectStates(user, advertIds, advertsAsStaff, representations);
+        if (isNotEmpty(advertIds)) {
+            setAdvertJoinStates(user, advertIds, representations);
+            setAdvertConnectStates(user, advertIds, representations);
+        }
     }
 
-    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations, List<Integer> advertsAsStaff) {
+    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" }, advertIds);
         List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" }, advertIds);
         List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
         List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" }, advertIds);
@@ -536,40 +539,47 @@ public class AdvertMapper {
         return UNKNOWN;
     }
 
-    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, List<Integer> advertsAsStaff, Map<Integer, AdvertRepresentationExtended> representations) {
+    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] {"ADMINISTRATOR", "APPROVER", "VIEWER"});
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        HashMultimap<Integer, PrismPartnershipState> connectionStates = HashMultimap.create();
+        ArrayListMultimap<Integer, PrismPartnershipState> endorsementStates = ArrayListMultimap.create();
         targets.forEach(target -> {
             Integer advertId = target.getAdvert().getId();
-            Integer targetAdvertId = target.getAdvert().getId();
-            if (advertIds.contains(advertId)) {
-                connectionStates.put(targetAdvertId, target.getPartnershipState());
-            } else {
-                connectionStates.put(advertId, target.getPartnershipState());
+            Integer targetAdvertId = target.getTargetAdvert().getId();
+            if (advertsAsStaff.contains(advertId)) {
+                endorsementStates.put(targetAdvertId, target.getPartnershipState());
+            } else if (advertsAsStaff.contains(targetAdvertId)) {
+                endorsementStates.put(advertId, target.getPartnershipState());
             }
         });
 
+        int advertsAsStaffCount = advertsAsStaff.size();
         representations.keySet().forEach(advert -> {
-            List<Integer> advertsPendingFor = Lists.newArrayList();
-            List<Integer> advertsConnectedFor = Lists.newArrayList();
+            Set<Integer> advertsPendingFor = Sets.newHashSet();
+            Set<Integer> advertsConnectedFor = Sets.newHashSet();
 
-            Set<PrismPartnershipState> advertConnectionStates = connectionStates.get(advert);
-            if (advertConnectionStates.contains(ENDORSEMENT_PROVIDED)) {
-                advertsConnectedFor.add(advert);
-            } else if (isNotEmpty(advertConnectionStates)) {
-                advertsPendingFor.add(advert);
-            }
+            endorsementStates.get(advert).forEach(endorsementState -> {
+                if (endorsementState.equals(ENDORSEMENT_PROVIDED)) {
+                    advertsConnectedFor.add(advert);
+                } else {
+                    advertsPendingFor.add(advert);
+                }
+            });
 
-            @SuppressWarnings("unchecked")
-            List<Integer> advertsConnectableFor = removeAll(advertsAsStaff, newArrayList(advert));
-
-            if (PrismCollectionUtils.equals(advertsConnectableFor, advertsConnectedFor)) {
-                representations.get(advert).setConnectState(ACCEPTED);
-            } else if (PrismCollectionUtils.equals(advertsConnectableFor, advertsPendingFor)) {
-                representations.get(advert).setConnectState(PENDING);
+            int advertsPendingForCount = advertsPendingFor.size();
+            int advertsConnectedForCount = advertsConnectedFor.size();
+            if (advertsAsStaffCount > 0) {
+                if (advertsAsStaffCount == advertsConnectedForCount) {
+                    representations.get(advert).setConnectState(ACCEPTED);
+                } else if (advertsAsStaffCount == advertsPendingForCount) {
+                    representations.get(advert).setConnectState(PENDING);
+                } else {
+                    representations.get(advert).setConnectState(UNKNOWN);
+                }
             } else {
                 representations.get(advert).setConnectState(UNKNOWN);
             }
+
         });
     }
 

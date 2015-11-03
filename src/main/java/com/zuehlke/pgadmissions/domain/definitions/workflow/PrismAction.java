@@ -322,7 +322,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     private static PrismActionDefinition getDefaultPartnerActionDefinition(PrismScope scope, PrismPartnershipState partnershipState,
             PrismPartnershipState partnershipTransitionState) {
-        return getDefaultProcessResourceActionDefinitionVisible(scope) //
+        return getDefaultProcessResourceActionDefinition(scope) //
                 .withPartnershipState(partnershipState) //
                 .withPartnershipTransitionState(partnershipTransitionState);
     }

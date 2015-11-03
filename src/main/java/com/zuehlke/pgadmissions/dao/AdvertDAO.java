@@ -4,6 +4,7 @@ import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -425,13 +426,14 @@ public class AdvertDAO {
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             List<Integer> targeterEntities) {
-        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("target.targetAdvert"))
-                .add(Restrictions.eq("target.advert", advert)) //
+        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
+                .add(Restrictions.eq("targeterTarget.advert", advert)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("target.targetAdvertUser", user))
+                        .add(Restrictions.eq("targeterTarget.targetAdvertUser", user))
                         .add(Restrictions.eq("userRole.user", user))) //
                 .add(Restrictions.in("stateAction.action.id",
                         asList("UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList())))
+                .add(getTargetActionConstraint())
                 .list();
     }
 

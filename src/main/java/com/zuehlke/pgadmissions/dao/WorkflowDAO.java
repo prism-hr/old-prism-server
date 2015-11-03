@@ -107,10 +107,12 @@ public class WorkflowDAO {
         return sessionFactory.getCurrentSession().createCriteria(resourceStateClass) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("targeterResource.advert", "targeterAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targeterAdvert.targets", "targeterTarget", JoinType.INNER_JOIN) //
+                .createAlias("targeterTarget.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
                 .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
@@ -130,19 +132,6 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public static Junction getSimilarUserConstraint(String searchTerm) {
-        return getSimilarUserConstraint(null, searchTerm);
-    }
-
-    public static Junction getSimilarUserConstraint(String alias, String searchTerm) {
-        alias = StringUtils.isEmpty(alias) ? "" : alias + ".";
-        return Restrictions.disjunction() //
-                .add(Restrictions.like(alias + "firstName", searchTerm, MatchMode.START)) //
-                .add(Restrictions.like(alias + "lastName", searchTerm, MatchMode.START)) //
-                .add(Restrictions.like(alias + "fullName", searchTerm, MatchMode.START)) //
-                .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
-    }
-
     public static Junction getTargetActionConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("action.partnershipState")) //
@@ -155,6 +144,19 @@ public class WorkflowDAO {
                         .add(Restrictions.disjunction() //
                                 .add(Restrictions.eq("resource.shared", true)) //
                                 .add(Restrictions.eq("scope.defaultShared", true))));
+    }
+    
+    public static Junction getSimilarUserConstraint(String searchTerm) {
+        return getSimilarUserConstraint(null, searchTerm);
+    }
+
+    public static Junction getSimilarUserConstraint(String alias, String searchTerm) {
+        alias = StringUtils.isEmpty(alias) ? "" : alias + ".";
+        return Restrictions.disjunction() //
+                .add(Restrictions.like(alias + "firstName", searchTerm, MatchMode.START)) //
+                .add(Restrictions.like(alias + "lastName", searchTerm, MatchMode.START)) //
+                .add(Restrictions.like(alias + "fullName", searchTerm, MatchMode.START)) //
+                .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
     }
 
     public static Junction getOpportunityCategoryConstraint(PrismOpportunityCategory opportunityCategory) {

@@ -306,7 +306,7 @@ public class ApplicationService {
         return applicationDAO.getApplicationOnCourse(application);
     }
 
-    public List<Integer> getSharedApplicationsForAdverts(List<Integer> adverts) {
+    public List<Integer> getSharedApplicationsForAdverts(Collection<Integer> adverts) {
         return applicationDAO.getSharedApplicationsForAdverts(adverts);
     }
 

@@ -2,10 +2,10 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceRecentlyActiveConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserDueNotificationConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;

@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.ACCEPTED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.UNKNOWN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinState.APPROVED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinState.PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismJoinState.UNKNOWN;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -19,7 +21,9 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections.ListUtils.removeAll;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +38,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -48,14 +53,16 @@ import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
 import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
 import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
 import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismJoinState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -91,6 +98,7 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.PrismCollectionUtils;
 
 @Service
 @Transactional
@@ -203,67 +211,68 @@ public class AdvertMapper {
             representations.put(advert, representation);
         });
 
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
-        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" });
-        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "STUDENT" });
-        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRoles(user, advertIds, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" });
-
-        representations.keySet().forEach(advert -> {
-            representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
-            representations.get(advert).setJoinStateStudent(getAdvertJoinState(advert, advertsAsStudent, advertsAsStudentPending));
-        });
-
+        setAdvertCallToActionStates(user, advertIds, representations);
         return new AdvertListRepresentation().withRows(newLinkedList(representations.values())).withSummaries(getSummaryRepresentations(summaries));
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
-        AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
+        User user = userService.getCurrentUser();
 
-        ResourceParent resource = advert.getResource();
-        representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
+        if (isNotEmpty(advertService.getVisibleAdverts(user, advert.getResource().getResourceScope()))) {
+            AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
-        Institution institution = resource.getInstitution();
-        representation.setInstitution(resourceMapper.getResourceRepresentationSimple(institution));
+            ResourceParent resource = advert.getResource();
+            representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
 
-        Department department = resource.getDepartment();
-        if (department != null) {
-            representation.setDepartment(resourceMapper.getResourceRepresentationSimple(department));
-        }
+            Institution institution = resource.getInstitution();
+            representation.setInstitution(resourceMapper.getResourceRepresentationSimple(institution));
 
-        Program program = resource.getProgram();
-        if (program != null) {
-            representation.setProgram(resourceMapper.getResourceOpportunityRepresentationSimple(program));
-        }
-
-        Project project = resource.getProject();
-        if (project != null) {
-            representation.setProject(resourceMapper.getResourceOpportunityRepresentationSimple(project));
-        }
-
-        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
-
-            String opportunityCategories = resource.getOpportunityCategories();
-            if (opportunityCategories != null) {
-                representation
-                        .setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(Collectors.toList()));
+            Department department = resource.getDepartment();
+            if (department != null) {
+                representation.setDepartment(resourceMapper.getResourceRepresentationSimple(department));
             }
 
-            setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
-            representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
+            Program program = resource.getProgram();
+            if (program != null) {
+                representation.setProgram(resourceMapper.getResourceOpportunityRepresentationSimple(program));
+            }
+
+            Project project = resource.getProject();
+            if (project != null) {
+                representation.setProject(resourceMapper.getResourceOpportunityRepresentationSimple(project));
+            }
+
+            if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+                representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
+
+                String opportunityCategories = resource.getOpportunityCategories();
+                if (opportunityCategories != null) {
+                    representation
+                            .setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(Collectors.toList()));
+                }
+
+                setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
+                representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
+            }
+
+            representation.setName(advert.getName());
+
+            AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
+            Long applicationCount = applicationSummary.getApplicationCount();
+            representation.setApplicationCount(applicationCount == null ? null : applicationCount.intValue());
+
+            Long applicationRatingCount = applicationSummary.getApplicationRatingCount();
+            representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
+            representation.setApplicationRatingAverage(doubleToBigDecimal(applicationSummary.getApplicationRatingAverage(), RATING_PRECISION));
+
+            List<Integer> advertIds = newArrayList(advert.getId());
+            Map<Integer, AdvertRepresentationExtended> representations = ImmutableMap.of(advert.getId(), representation);
+
+            setAdvertCallToActionStates(user, advertIds, representations);
+            return representation;
         }
 
-        representation.setName(advert.getName());
-
-        AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
-        Long applicationCount = applicationSummary.getApplicationCount();
-        representation.setApplicationCount(applicationCount == null ? null : applicationCount.intValue());
-
-        Long applicationRatingCount = applicationSummary.getApplicationRatingCount();
-        representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
-        representation.setApplicationRatingAverage(doubleToBigDecimal(applicationSummary.getApplicationRatingAverage(), RATING_PRECISION));
-
-        return representation;
+        return null;
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(AdvertDTO advert) {
@@ -501,13 +510,67 @@ public class AdvertMapper {
         }
     }
 
-    private PrismJoinState getAdvertJoinState(Integer advert, List<Integer> advertsUserApprovedFor, List<Integer> advertsUserPendingFor) {
+    private void setAdvertCallToActionStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" }, advertIds);
+        setAdvertJoinStates(user, advertIds, representations, advertsAsStaff);
+        setAdvertConnectStates(user, advertIds, advertsAsStaff, representations);
+    }
+
+    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations, List<Integer> advertsAsStaff) {
+        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" }, advertIds);
+        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
+        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" }, advertIds);
+
+        representations.keySet().forEach(advert -> {
+            representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
+            representations.get(advert).setJoinStateStudent(getAdvertJoinState(advert, advertsAsStudent, advertsAsStudentPending));
+        });
+    }
+
+    private PrismConnectionState getAdvertJoinState(Integer advert, List<Integer> advertsUserApprovedFor, List<Integer> advertsUserPendingFor) {
         if (advertsUserApprovedFor.contains(advert)) {
-            return APPROVED;
+            return ACCEPTED;
         } else if (advertsUserPendingFor.contains(advert)) {
             return PENDING;
         }
         return UNKNOWN;
+    }
+
+    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, List<Integer> advertsAsStaff, Map<Integer, AdvertRepresentationExtended> representations) {
+        List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
+        HashMultimap<Integer, PrismPartnershipState> connectionStates = HashMultimap.create();
+        targets.forEach(target -> {
+            Integer advertId = target.getAdvert().getId();
+            Integer targetAdvertId = target.getAdvert().getId();
+            if (advertIds.contains(advertId)) {
+                connectionStates.put(targetAdvertId, target.getPartnershipState());
+            } else {
+                connectionStates.put(advertId, target.getPartnershipState());
+            }
+        });
+
+        representations.keySet().forEach(advert -> {
+            List<Integer> advertsPendingFor = Lists.newArrayList();
+            List<Integer> advertsConnectedFor = Lists.newArrayList();
+
+            Set<PrismPartnershipState> advertConnectionStates = connectionStates.get(advert);
+            if (advertConnectionStates.contains(ENDORSEMENT_PROVIDED)) {
+                advertsConnectedFor.add(advert);
+            } else if (isNotEmpty(advertConnectionStates)) {
+                advertsPendingFor.add(advert);
+            }
+
+            @SuppressWarnings("unchecked")
+            List<Integer> advertsConnectableFor = removeAll(advertsAsStaff, newArrayList(advert));
+
+            if (PrismCollectionUtils.equals(advertsConnectableFor, advertsConnectedFor)) {
+                representations.get(advert).setConnectState(ACCEPTED);
+            } else if (PrismCollectionUtils.equals(advertsConnectableFor, advertsPendingFor)) {
+                representations.get(advert).setConnectState(PENDING);
+            } else {
+                representations.get(advert).setConnectState(UNKNOWN);
+            }
+        });
     }
 
 }

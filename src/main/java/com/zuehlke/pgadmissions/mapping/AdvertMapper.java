@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.utils.PrismCollectionUtils.containsSame;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
@@ -37,7 +38,6 @@ import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -63,7 +63,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -540,38 +539,38 @@ public class AdvertMapper {
     }
 
     private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] {"ADMINISTRATOR", "APPROVER", "VIEWER"});
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        ArrayListMultimap<Integer, PrismPartnershipState> endorsementStates = ArrayListMultimap.create();
+
+        HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
+        HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();
         targets.forEach(target -> {
             Integer advertId = target.getAdvert().getId();
             Integer targetAdvertId = target.getTargetAdvert().getId();
             if (advertsAsStaff.contains(advertId)) {
-                endorsementStates.put(targetAdvertId, target.getPartnershipState());
+                if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
+                    acceptedForIndex.put(targetAdvertId, advertId);
+                } else {
+                    pendingForIndex.put(targetAdvertId, advertId);
+                }
             } else if (advertsAsStaff.contains(targetAdvertId)) {
-                endorsementStates.put(advertId, target.getPartnershipState());
+                if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
+                    acceptedForIndex.put(advertId, targetAdvertId);
+                } else {
+                    pendingForIndex.put(advertId, targetAdvertId);
+                }
             }
         });
 
         int advertsAsStaffCount = advertsAsStaff.size();
         representations.keySet().forEach(advert -> {
-            Set<Integer> advertsPendingFor = Sets.newHashSet();
-            Set<Integer> advertsConnectedFor = Sets.newHashSet();
+            Set<Integer> pendingFor = pendingForIndex.get(advert);
+            Set<Integer> acceptedFor = acceptedForIndex.get(advert);
 
-            endorsementStates.get(advert).forEach(endorsementState -> {
-                if (endorsementState.equals(ENDORSEMENT_PROVIDED)) {
-                    advertsConnectedFor.add(advert);
-                } else {
-                    advertsPendingFor.add(advert);
-                }
-            });
-
-            int advertsPendingForCount = advertsPendingFor.size();
-            int advertsConnectedForCount = advertsConnectedFor.size();
             if (advertsAsStaffCount > 0) {
-                if (advertsAsStaffCount == advertsConnectedForCount) {
+                if (containsSame(acceptedFor, advertsAsStaff)) {
                     representations.get(advert).setConnectState(ACCEPTED);
-                } else if (advertsAsStaffCount == advertsPendingForCount) {
+                } else if (containsSame(pendingFor, advertsAsStaff)) {
                     representations.get(advert).setConnectState(PENDING);
                 } else {
                     representations.get(advert).setConnectState(UNKNOWN);

@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
 import org.apache.commons.beanutils.MethodUtils;
-import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.WordUtils;
 
@@ -33,19 +32,6 @@ public class PrismReflectionUtils {
 
     public static boolean hasProperty(Object bean, String property) {
         return PropertyUtils.isReadable(bean, property);
-    }
-
-    public static Object getNestedProperty(Object bean, String property, boolean suppressIncompletePath) {
-        try {
-            return PropertyUtils.getNestedProperty(bean, property);
-        } catch (NestedNullException e) {
-            if (!suppressIncompletePath) {
-                throw new Error(e);
-            }
-            return null;
-        } catch (Exception e) {
-            throw new Error(e);
-        }
     }
 
     public static Object invokeMethod(Object bean, String methodName, Object... inputs) {

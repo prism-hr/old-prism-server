@@ -541,7 +541,7 @@ public class UserDAO {
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
-                .add(Restrictions.in(scope.getLowerCamelName(), resources)) //
+                .add(Restrictions.in(scope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.in("role.id", roles)) //
                 .list();
     }
@@ -550,7 +550,7 @@ public class UserDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("resource." + parentScope.getLowerCamelName(), resources)) //
+                .add(Restrictions.in("resource." + parentScope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.in("role.id", roles)) //
                 .list();
     }

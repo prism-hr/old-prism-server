@@ -609,7 +609,9 @@ public class AdvertService {
 
                 nodeAdverts.addAll(advertDAO.getAdvertsForEnclosingResource(resourceScope, resourceId, advertScope, advertStates));
                 stream(targetScopes).forEach(targeterScope -> {
-                    nodeAdverts.addAll(advertDAO.getAdvertsForTargetResource(targeterScope, resourceScope, resourceId, advertScope, advertStates));
+                    if (advertScope.ordinal() > targeterScope.ordinal()) {
+                        nodeAdverts.addAll(advertDAO.getAdvertsForTargetResource(targeterScope, resourceScope, resourceId, advertScope, advertStates));
+                    }
                 });
             });
         }

@@ -14,8 +14,10 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.WordUtils.capitalize;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -523,11 +525,11 @@ public class UserService {
     }
 
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
-        return (resources.size() == 0 || roles.length == 0) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
+        return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
     }
 
     public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
-        return (resources.size() == 0 || roles.length == 0) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
+        return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
     }
 
     @SuppressWarnings("unchecked")

@@ -57,7 +57,7 @@ public class ActionDAO {
                 .list();
     }
 
-    public Action getPermittedUnsecuredAction(boolean userLoggedIn, Resource resource, Action action) {
+    public Action getPermittedUnsecuredAction(Resource resource, Action action, boolean userLoggedIn) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action")) //
                 .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
@@ -65,7 +65,7 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
+                .createAlias("action.creationScope", "creationScope", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
@@ -88,7 +88,7 @@ public class ActionDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
+                .createAlias("action.creationScope", "creationScope", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.eq("resourceCondition.internalMode", true)) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
@@ -290,6 +290,7 @@ public class ActionDAO {
         }
 
         return Restrictions.disjunction() //
+                .add(Restrictions.isNull("action.creationScope")) //
                 .add(Restrictions.isNull("resourceCondition.id")) //
                 .add(Restrictions.isNull("stateAction.actionCondition")) //
                 .add(conditionConstraint);

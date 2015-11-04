@@ -279,7 +279,7 @@ public class ActionService {
     public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
         if (action.getDeclinableAction() && toBoolean(declinedResponse)) {
             return true;
-        } else if (actionDAO.getPermittedUnsecuredAction(userService.isUserLoggedIn(), resource, action) != null) {
+        } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isUserLoggedIn()) != null) {
             return true;
         } else if (getPermittedAction(user, resource, action) != null) {
             return true;

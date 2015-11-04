@@ -4,7 +4,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT_UNVERIFIED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
@@ -41,11 +41,11 @@ public class ApplicationConfirmedOfferOutcome implements StateTransitionResolver
             List<Integer> creatorDepartments = resourceService.getResourcesForWhichUserHasRoles(resource.getUser(), DEPARTMENT_STUDENT, DEPARTMENT_STUDENT_UNVERIFIED);
             List<Integer> recruiterDepartment = resourceService.getResourcesForWhichUserHasRoles(comment.getUser(), DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER);
             if (containsAny(creatorDepartments, recruiterDepartment)) {
-                return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
+                return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE);
             }
             return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL);
         }
-        return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
+        return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE);
     }
 
 }

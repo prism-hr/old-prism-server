@@ -15,7 +15,9 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateGro
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 
 import java.math.BigDecimal;
@@ -311,7 +313,7 @@ public class ApplicationService {
     }
 
     public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
-        return applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
+        return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

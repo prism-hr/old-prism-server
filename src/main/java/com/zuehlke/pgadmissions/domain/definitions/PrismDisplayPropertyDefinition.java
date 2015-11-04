@@ -166,7 +166,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_STATE_TRANSITION_APPLICATION_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Request hiring manager approval"),
-    SYSTEM_STATE_TRANSITION_APPLICATION_APPROVED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Confirm an appointment"),
+    SYSTEM_STATE_TRANSITION_APPLICATION_APPROVED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Make an Offer"),
     SYSTEM_STATE_TRANSITION_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Arrange an interview"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REJECTED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Issue a rejection"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Collect references"),

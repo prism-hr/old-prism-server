@@ -1059,17 +1059,23 @@ public class ResourceService {
 
         if (roleContext.equals(STUDENT) && !roleService.hasUserRole(resource, user, PrismRole.valueOf(resourceName + "_STUDENT"))) {
             role = roleService.getById(PrismRole.valueOf(resourceName + "_STUDENT" + (canViewEdit ? "" : "_UNVERIFIED")));
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now()));
         } else if (!roleService.hasUserRole(resource, user, PrismRoleGroup.valueOf(resourceName + "_STAFF_GROUP"))) {
             role = roleService.getById(PrismRole.valueOf(resourceName + "_VIEWER" + (canViewEdit ? "" : "_UNVERIFIED")));
-            roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now()));
+        }
+
+        boolean newRoleCreated = false;
+        UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now());
+        UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
+        if (persistentRole == null) {
+            entityService.save(transientRole);
+            newRoleCreated = true;
         }
 
         if (role != null) {
             if (canViewEdit) {
                 executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
                         new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
-            } else {
+            } else if (newRoleCreated) {
                 userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
                     notificationService.sendJoinRequest(user, admin, resource);
                 });

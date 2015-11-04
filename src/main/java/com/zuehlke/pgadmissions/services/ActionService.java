@@ -101,7 +101,11 @@ public class ActionService {
 
     public ActionDTO getPermittedAction(User user, Resource resource, Action action) {
         PrismAction prismAction = action.getId();
-        return getPermittedActions(user, resource, prismAction).stream().filter(pa -> pa.getActionId().equals(prismAction)).findFirst().get();
+        List<ActionDTO> permittedActions = getPermittedActions(user, resource, prismAction);
+        if (isNotEmpty(permittedActions)) {
+            return permittedActions.stream().filter(pa -> pa.getActionId().equals(prismAction)).findFirst().get();
+        }
+        return null;
     }
 
     public List<ActionDTO> getPermittedActions(User user, Resource resource) {

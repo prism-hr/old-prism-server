@@ -1,9 +1,9 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-public enum PrismJoinState {
+public enum PrismConnectionState {
 
     UNKNOWN, //
     PENDING, //
-    APPROVED;
+    ACCEPTED;
 
 }

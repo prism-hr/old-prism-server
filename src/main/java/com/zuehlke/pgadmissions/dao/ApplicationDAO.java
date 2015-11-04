@@ -4,8 +4,10 @@ import static com.amazonaws.util.StringUtils.isNullOrEmpty;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static com.zuehlke.pgadmissions.utils.PrismEnumUtils.values;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.hibernate.sql.JoinType.INNER_JOIN;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +33,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
@@ -39,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismFilterEntity;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
@@ -252,15 +256,28 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getSharedApplicationsForAdverts(List<Integer> adverts) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
-                .setProjection(Projections.groupProperty("id")) //
-                .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.in("department.advert.id", adverts))
-                        .add(Restrictions.in("institution.advert.id", adverts))) //
-                .add(Restrictions.eq("shared", true)) //
+    public List<Integer> getApplicationsForTargets() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.applications", "application", JoinType.INNER_JOIN) //
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", INNER_JOIN,
+                        Restrictions.eqProperty("advert.id", "targeterResource.advert.id"))
+                .createAlias("targeterResource.applications", "application", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource") //
+                .createAlias("targetResource.userRoles", "targetUserRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("targetUserRole.user", user)) //
+                .add(Restrictions.in("targetUserRole.role.id", values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" }))) //
+                .add(Restrictions.eq("application.shared", true)) //
                 .list();
     }
 

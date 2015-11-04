@@ -265,7 +265,7 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope) {
+    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -275,6 +275,7 @@ public class ApplicationDAO {
                 .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource") //
                 .createAlias("targetResource.userRoles", "targetUserRole", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("application.user.id", students)) //
                 .add(Restrictions.eq("targetUserRole.user", user)) //
                 .add(Restrictions.in("targetUserRole.role.id", values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" }))) //
                 .add(Restrictions.eq("application.shared", true)) //

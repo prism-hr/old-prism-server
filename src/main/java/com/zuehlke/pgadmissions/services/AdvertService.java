@@ -25,6 +25,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static com.zuehlke.pgadmissions.utils.PrismEnumUtils.values;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
@@ -608,7 +609,9 @@ public class AdvertService {
 
                 nodeAdverts.addAll(advertDAO.getAdvertsForEnclosingResource(resourceScope, resourceId, advertScope, advertStates));
                 stream(targetScopes).forEach(targeterScope -> {
-                    nodeAdverts.addAll(advertDAO.getAdvertsForTargetResource(targeterScope, resourceScope, resourceId, advertScope, advertStates));
+                    if (advertScope.ordinal() > targeterScope.ordinal()) {
+                        nodeAdverts.addAll(advertDAO.getAdvertsForTargetResource(targeterScope, resourceScope, resourceId, advertScope, advertStates));
+                    }
                 });
             });
         }
@@ -709,9 +712,26 @@ public class AdvertService {
         if (user == null || roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
             targeterEntities.addAll(applicationCategory ? applicationService.getApplicationsForTargets() : advertDAO.getAdvertsForTargets());
         } else if (applicationCategory) {
+            HashMultimap<PrismScope, Integer> students = HashMultimap.create();
+            for (PrismScope targetScope : targetScopes) {
+                List<PrismRole> roles = values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" });
+                List<Integer> resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
+                if (isNotEmpty(resources)) {
+                    students.putAll(targetScope, userService.getUsersWithRoles(targetScope, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
+                }
+
+                if (targetScope.equals(DEPARTMENT)) {
+                    roles = values(PrismRole.class, INSTITUTION, new String[] { "ADMINISTRATOR", "APPROVER" });
+                    resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
+                    if (isNotEmpty(resources)) {
+                        students.putAll(targetScope, userService.getUsersWithRoles(targetScope, INSTITUTION, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
+                    }
+                }
+            }
+
             for (PrismScope targeterScope : targetScopes) {
                 for (PrismScope targetScope : targetScopes) {
-                    targeterEntities.addAll(applicationService.getApplicationsForTargets(user, targeterScope, targetScope));
+                    targeterEntities.addAll(applicationService.getApplicationsForTargets(user, targeterScope, targetScope, students.get(targetScope)));
                 }
             }
         } else if (opportunityCategory) {

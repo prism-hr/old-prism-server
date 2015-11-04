@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.WordUtils.capitalize;
@@ -519,6 +520,14 @@ public class UserService {
         resources.keySet().forEach(k -> profiles.addAll(userDAO.getUserProfiles(resources.get(k), filter)));
 
         return newLinkedList(profiles);
+    }
+
+    public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
+        return (resources.size() == 0 || roles.length == 0) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
+    }
+
+    public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
+        return (resources.size() == 0 || roles.length == 0) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
     }
 
     @SuppressWarnings("unchecked")

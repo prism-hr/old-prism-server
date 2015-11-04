@@ -310,8 +310,8 @@ public class ApplicationService {
         return applicationDAO.getApplicationsForTargets();
     }
 
-    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope) {
-        return applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope);
+    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
+        return applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

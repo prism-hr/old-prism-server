@@ -538,6 +538,23 @@ public class UserDAO {
                 .list();
     }
 
+    public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .add(Restrictions.in(scope.getLowerCamelName(), resources)) //
+                .add(Restrictions.in("role.id", roles)) //
+                .list();
+    }
+
+    public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("resource." + parentScope.getLowerCamelName(), resources)) //
+                .add(Restrictions.in("role.id", roles)) //
+                .list();
+    }
+
     private void appendAdministratorConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> resources, HashMultimap<PrismScope, PrismScope> scopes) {
         PrismScope resourceScope = resource.getResourceScope();
         String resourceReference = resourceScope.getLowerCamelName();

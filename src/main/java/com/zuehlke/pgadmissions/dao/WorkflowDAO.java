@@ -109,7 +109,7 @@ public class WorkflowDAO {
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("targeterResource.advert", "targeterAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("targeterAdvert.targets", "targeterTarget", JoinType.INNER_JOIN) //
                 .createAlias("targeterTarget.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //

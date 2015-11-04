@@ -500,7 +500,7 @@ public class AdvertDAO {
         return (List<Integer>) criteria.list();
     }
 
-    public List<Integer> getVisibleAdverts(User user, PrismScope scope, Collection<PrismState> states) {
+    public List<Integer> getUserAdverts(User user, PrismScope scope, Collection<PrismState> states) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("resource.advert.id")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
@@ -512,7 +512,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getVisibleAdverts(User user, PrismScope scope, PrismScope advertScope, Collection<PrismState> states) {
+    public List<Integer> getUserAdverts(User user, PrismScope scope, PrismScope advertScope, Collection<PrismState> states) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.property("advertResourceAdvert.id")) //
                 .createAlias(advertScope.getLowerCamelName(), "advertResource", JoinType.INNER_JOIN) //
@@ -526,7 +526,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getVisibleAdverts(User user, PrismScope targeterScope, PrismScope targetScope, PrismScope advertScope,
+    public List<Integer> getUserAdverts(User user, PrismScope targeterScope, PrismScope targetScope, PrismScope advertScope,
             Collection<PrismState> advertResourceStates, List<Integer> revokedAdverts) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("advertResourceAdvert.id")) //
@@ -662,14 +662,26 @@ public class AdvertDAO {
     private void appendVisibilityConstraint(Criteria criteria, Collection<Integer> nodeAdverts, Collection<Integer> userAdverts, boolean recommendation) {
         if (isNotEmpty(nodeAdverts)) {
             criteria.add(Restrictions.in("advert.id", nodeAdverts));
+            appendNetworkConstraint(criteria, userAdverts, recommendation);
+        } else {
+            appendNetworkConstraint(criteria, userAdverts, recommendation);
         }
+    }
 
-        if (isNotEmpty(userAdverts)) {
-            criteria.add(Restrictions.in("advert.id", userAdverts));
-        }
-
+    public void appendNetworkConstraint(Criteria criteria, Collection<Integer> userAdverts, boolean recommendation) {
         if (recommendation) {
-            criteria.add(Restrictions.eq("advert.globallyVisible", true));
+            criteria.add(Restrictions.eq("advert.globallyVisible", false));
+            if (isNotEmpty(userAdverts)) {
+                criteria.add(Restrictions.in("advert.id", userAdverts));
+            }
+        } else {
+            if (isNotEmpty(userAdverts)) {
+                criteria.add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("advert.globallyVisible", true))
+                        .add(Restrictions.in("advert.id", userAdverts)));
+            } else {
+                criteria.add(Restrictions.eq("advert.globallyVisible", true));
+            }
         }
     }
 

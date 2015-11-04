@@ -732,7 +732,7 @@ public class AdvertService {
                 if (displayScope.ordinal() >= advertScope.ordinal()) {
                     Collection<PrismState> advertStates = stateService.getActiveResourceStates(displayScope);
                     states.putAll(displayScope, advertStates);
-                    userAdverts.addAll(advertDAO.getVisibleAdverts(user, advertScope, displayScope, advertStates));
+                    userAdverts.addAll(advertDAO.getUserAdverts(user, advertScope, displayScope, advertStates));
                 }
             });
         });
@@ -741,7 +741,7 @@ public class AdvertService {
         stream(targetScopes).forEach(memberScope -> {
             Collection<PrismState> memberStates = states.get(memberScope);
             memberStates = isEmpty(memberStates) ? stateService.getActiveResourceStates(memberScope) : memberStates;
-            memberAdverts.addAll(advertDAO.getVisibleAdverts(user, memberScope, memberStates));
+            memberAdverts.addAll(advertDAO.getUserAdverts(user, memberScope, memberStates));
         });
 
         if (isNotEmpty(memberAdverts)) {
@@ -752,7 +752,7 @@ public class AdvertService {
                         stream(targetScopes).forEach(targetScope -> {
                             Collection<PrismState> advertStates = states.get(displayScope);
                             advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(displayScope) : advertStates;
-                            userAdverts.addAll(advertDAO.getVisibleAdverts(user, targeterScope, targetScope, displayScope, advertStates, revokedAdverts));
+                            userAdverts.addAll(advertDAO.getUserAdverts(user, targeterScope, targetScope, displayScope, advertStates, revokedAdverts));
                         });
                     });
                 }

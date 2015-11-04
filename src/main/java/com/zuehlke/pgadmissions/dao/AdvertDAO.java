@@ -465,14 +465,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getParentAdvertIds(PrismScope resourceScope, PrismScope parentScope, Collection<Integer> adverts) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("parentResource.advert.id")) //
-                .createAlias(parentScope.getLowerCamelName(), "parentResource") //
-                .add(Restrictions.in("advert.id", adverts)) //
-                .list();
-    }
-
     public void processAdvertTarget(Integer advertTargetId, PrismPartnershipState partnershipState) {
         sessionFactory.getCurrentSession().createQuery(
                 "update AdvertTarget "
@@ -481,17 +473,6 @@ public class AdvertDAO {
                 .setParameter("advertTargetId", advertTargetId)
                 .setParameter("partnershipState", partnershipState)
                 .executeUpdate();
-    }
-
-    public List<Integer> getOrganizationAdvertsUserCanView(User user, List<Integer> userAdverts, boolean systemAdministrator) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class, "advert") //
-                .setProjection(Projections.groupProperty("advert.id"));
-
-        if (!systemAdministrator) {
-
-        }
-
-        return (List<Integer>) criteria.list();
     }
 
     public List<Integer> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
@@ -545,14 +526,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getRevokedAdverts(Collection<Integer> userAdverts) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("advert.id")) //
-                .add(Restrictions.in("acceptAdvert.id", userAdverts)) //
-                .add(Restrictions.eq("partnershipState", PrismPartnershipState.ENDORSEMENT_REVOKED)) //
-                .list();
-    }
-
     public List<Integer> getVisibleAdverts(User user, PrismScope targeterScope, PrismScope targetScope, PrismScope advertScope,
             Collection<PrismState> advertResourceStates, List<Integer> revokedAdverts) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
@@ -579,23 +552,11 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getRevokedAdverts(User user, PrismScope targeterScope, PrismScope targetScope, PrismScope advertScope,
-            Collection<PrismState> advertResourceStates) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("advertResourceAdvert.id")) //
-                .createAlias(advertScope.getLowerCamelName(), "advertResource", JoinType.INNER_JOIN) //
-                .createAlias("advertResource.advert", "advertResourceAdvert", JoinType.INNER_JOIN) //
-                .createAlias("advertResourceAdvert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
-                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("targetResource.advert.id", "targetAdvert.id"))
-                .createAlias("targetResource.userRoles", "targetUserRole", JoinType.INNER_JOIN) //
-                .createAlias("targetUserRole.role", "targetRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("state.id", advertResourceStates)) //
-                .add(Restrictions.eq("targetUserRole.user", user)) //
-                .add(Restrictions.eq("targetRole.verified", true)) //
+    public List<Integer> getRevokedAdverts(Collection<Integer> userAdverts) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .add(Restrictions.in("acceptAdvert.id", userAdverts)) //
+                .add(Restrictions.eq("partnershipState", PrismPartnershipState.ENDORSEMENT_REVOKED)) //
                 .list();
     }
 
@@ -630,18 +591,21 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getAdvertsForTargets(PrismScope targetScope, String[] roleExtensions) {
-        return getAdvertsForTargets(null, targetScope, roleExtensions);
+    public List<Integer> getAdvertsForTargets() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("advert.id")) ///
+                .list();
     }
 
-    public List<Integer> getAdvertsForTargets(User user, PrismScope targetScope, String[] roleExtensions) {
+    public List<Integer> getAdvertsForTargets(User user, PrismScope targetScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert.id")) //
                 .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource") //
                 .createAlias("targetResource.userRoles", "targetUserRole", JoinType.INNER_JOIN) //
+                .createAlias("targetUserRole.role", "targetRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("targetUserRole.user", user)) //
-                .add(Restrictions.in("targetUserRole.role.id", values(PrismRole.class, targetScope, roleExtensions)))
+                .add(Restrictions.eq("targetRole.verified", true)) //
                 .list();
     }
 

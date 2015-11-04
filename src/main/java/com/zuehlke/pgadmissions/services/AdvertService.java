@@ -30,7 +30,6 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -54,7 +53,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -708,15 +706,21 @@ public class AdvertService {
         boolean opportunityCategory = scopeCategory.equals(OPPORTUNITY);
 
         Set<Integer> targeterEntities = Sets.newHashSet();
-        if (applicationCategory || opportunityCategory) {
-            String[] roleExtensions = new String[] { "ADMINISTRATOR", "APPROVER" };
-            targeterEntities.addAll(getAdvertsForTargets(user, roleExtensions));
-
-            if (isNotEmpty(targeterEntities)) {
-                return applicationCategory ? applicationService.getSharedApplicationsForAdverts(targeterEntities) : newArrayList(targeterEntities);
+        if (user == null || roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
+            targeterEntities.addAll(applicationCategory ? applicationService.getApplicationsForTargets() : advertDAO.getAdvertsForTargets());
+        } else if (applicationCategory) {
+            for (PrismScope targeterScope : targetScopes) {
+                for (PrismScope targetScope : targetScopes) {
+                    targeterEntities.addAll(applicationService.getApplicationsForTargets(user, targeterScope, targetScope));
+                }
+            }
+        } else if (opportunityCategory) {
+            for (PrismScope targetScope : targetScopes) {
+                targeterEntities.addAll(advertDAO.getAdvertsForTargets(user, targetScope));
             }
         }
-        return emptyList();
+
+        return newArrayList(targeterEntities);
     }
 
     public Set<Integer> getUserAdverts(User user, PrismScope... displayScopes) {
@@ -732,7 +736,7 @@ public class AdvertService {
                 }
             });
         });
-        
+
         Set<Integer> memberAdverts = Sets.newHashSet();
         stream(targetScopes).forEach(memberScope -> {
             Collection<PrismState> memberStates = states.get(memberScope);
@@ -770,10 +774,6 @@ public class AdvertService {
         return adverts;
     }
 
-    public List<Integer> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions) {
-        return getAdvertsForWhichUserHasRoles(user, roleExtensions, null, false);
-    }
-
     public List<Integer> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
         return getAdvertsForWhichUserHasRoles(user, roleExtensions, null, true);
     }
@@ -783,20 +783,6 @@ public class AdvertService {
     }
 
     public List<Integer> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, Collection<Integer> advertIds, boolean strict) {
-        List<Integer> adverts = Lists.newArrayList();
-        if (user != null) {
-            for (PrismScope scope : advertScopes) {
-                List<PrismState> states = stateService.getActiveResourceStates(scope);
-                roleExtensions = getFilteredRoleExtensions(scope, roleExtensions);
-                if (roleExtensions.length > 0) {
-                    adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, states, roleExtensions, advertIds, strict));
-                }
-            }
-        }
-        return adverts;
-    }
-
-    public List<Integer> getAdvertsForWhichUserHasTargetRoles(User user, String[] roleExtensions, Collection<Integer> advertIds, boolean strict) {
         List<Integer> adverts = Lists.newArrayList();
         if (user != null) {
             for (PrismScope scope : advertScopes) {
@@ -958,14 +944,10 @@ public class AdvertService {
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
             BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
-        try {
-            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
-            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
-            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Minimum" + context, minimumGenerated);
-            PropertyUtils.setSimpleProperty(financialDetails, intervalPrefixGenerated + "Maximum" + context, maximumGenerated);
-        } catch (Exception e) {
-            throw new Error(e);
-        }
+        setProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
+        setProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
+        setProperty(financialDetails, intervalPrefixGenerated + "Minimum" + context, minimumGenerated);
+        setProperty(financialDetails, intervalPrefixGenerated + "Maximum" + context, maximumGenerated);
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
@@ -1212,20 +1194,6 @@ public class AdvertService {
             scopes.putAll(scope, stateService.getActiveResourceStates(scope));
         }
         return scopes;
-    }
-
-    private List<Integer> getAdvertsForTargets(User user, String[] roleExtensions) {
-        boolean userNull = user == null;
-        boolean userSuperAdmin = user == null ? false : roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
-        List<Integer> adverts = Lists.newArrayList();
-        for (PrismScope targetScope : targetScopes) {
-            if (userNull || userSuperAdmin) {
-                adverts = advertDAO.getAdvertsForTargets(targetScope, roleExtensions);
-            } else {
-                adverts = advertDAO.getAdvertsForTargets(user, targetScope, roleExtensions);
-            }
-        }
-        return adverts;
     }
 
 }

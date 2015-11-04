@@ -306,8 +306,12 @@ public class ApplicationService {
         return applicationDAO.getApplicationOnCourse(application);
     }
 
-    public List<Integer> getSharedApplicationsForAdverts(Collection<Integer> adverts) {
-        return applicationDAO.getSharedApplicationsForAdverts(adverts);
+    public List<Integer> getApplicationsForTargets() {
+        return applicationDAO.getApplicationsForTargets();
+    }
+
+    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope) {
+        return applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

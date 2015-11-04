@@ -11,11 +11,13 @@ import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHe
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.NotificationServiceHelperInvitation;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.PrismServiceHelper;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperEscalation;
+import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPending;
 import com.zuehlke.pgadmissions.services.lifecycle.helpers.StateServiceHelperPropagation;
 
 public enum PrismMaintenanceTask {
 
     SYSTEM_IMPORT_UCAS_INSTITUTION(InstitutionServiceHelper.class),
+    SYSTEM_EXECUTE_PENDING_STATE_ACTION(StateServiceHelperPending.class),
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class),
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class),
     SYSTEM_SEND_USER_ACTIVITY_NOTIFICATION(NotificationServiceHelperActivity.class),

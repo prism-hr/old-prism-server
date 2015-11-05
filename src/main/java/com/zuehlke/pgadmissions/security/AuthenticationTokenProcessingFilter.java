@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.security;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collections;
+import com.google.common.base.Charsets;
+import com.zuehlke.pgadmissions.services.UserService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.GenericFilterBean;
 
 import javax.inject.Inject;
 import javax.servlet.FilterChain;
@@ -13,15 +15,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.filter.GenericFilterBean;
-
-import com.google.common.base.Charsets;
-import com.zuehlke.pgadmissions.services.UserService;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collections;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 
@@ -45,7 +42,7 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
                 TokenValidityStatus tokenValidityStatus = authenticationTokenHelper.validateToken(authToken, userDetails);
                 if (tokenValidityStatus.isValid()) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails.getUsername(), null,
-                            Collections.<GrantedAuthority>emptyList());
+                            Collections.emptyList());
                     authentication.setDetails(userDetails);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     if (tokenValidityStatus.getRenewedToken() != null) {
@@ -53,6 +50,11 @@ public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
                     }
                 }
             }
+        }
+
+        if (httpRequest.getHeader("x-auth-required") != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Not authenticated (x-auth-required flag set)");
+            return;
         }
 
         chain.doFilter(request, response);

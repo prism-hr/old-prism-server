@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.apache.commons.lang.WordUtils.uncapitalize;
+
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
@@ -18,7 +20,7 @@ public class ProfileDAO {
             Class<U> applicationSectionClass, Integer applicationSectionId) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete " + userProfileSectionClass.getSimpleName() + " " //
-                        + "where " + applicationSectionClass.getSimpleName().toLowerCase() + ".id = :propertyId") //
+                        + "where " + uncapitalize(applicationSectionClass.getSimpleName()) + ".id = :applicationSectionId") //
                 .setParameter("applicationSectionId", applicationSectionId) //
                 .executeUpdate();
     }

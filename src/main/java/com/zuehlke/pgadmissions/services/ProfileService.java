@@ -265,7 +265,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("association", userAccount).addProperty("user", refereeUpdateDTO.getReferee().getUser()));
         
         userReferee = userReferee == null ? new UserReferee() : userReferee;
-        updateReferee(userAccount, userReferee != null ? userReferee : new UserReferee(), refereeDTO);
+        updateReferee(userAccount, userReferee, refereeDTO);
         ApplicationReferee referee = (ApplicationReferee) refereeUpdateDTO.getReferee();
         userReferee.setApplicationReferee(referee);
 

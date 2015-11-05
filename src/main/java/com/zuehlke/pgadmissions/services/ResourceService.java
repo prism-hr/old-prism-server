@@ -437,11 +437,16 @@ public class ResourceService {
     }
 
     public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
+        executeUpdate(resource, user, messageIndex, null, assignees);
+    }
+
+    public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, PrismState transitionStateId, CommentAssignedUser... assignees) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
+            State transitionState = transitionStateId == null ? null : stateService.getById(transitionStateId);
             Comment comment = new Comment().withUser(user).withAction(action)
                     .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(resource).loadLazy(messageIndex))
-                    .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
+                    .withDeclinedResponse(false).withTransitionState(transitionState).withCreatedTimestamp(new DateTime());
 
             for (CommentAssignedUser assignee : assignees) {
                 comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
@@ -1068,16 +1073,19 @@ public class ResourceService {
         }
 
         boolean newRoleCreated = false;
-        UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now());
-        UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
-        if (persistentRole == null) {
-            entityService.save(transientRole);
-            newRoleCreated = true;
+        if (role != null) {
+            UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now());
+            UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
+            if (persistentRole == null) {
+                entityService.save(transientRole);
+                newRoleCreated = true;
+            }
         }
 
         if (role != null) {
             if (canViewEdit) {
-                executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
+                PrismState transitionState = viewEditAction.getId().name().endsWith("_COMPLETE") ? PrismState.valueOf(resource.getResourceScope().name() + "_UNSUBMITTED") : null;
+                executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"), transitionState,
                         new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
             } else if (newRoleCreated) {
                 userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {

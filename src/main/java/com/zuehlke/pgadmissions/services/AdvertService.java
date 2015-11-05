@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
 import java.io.IOException;
@@ -595,7 +596,6 @@ public class AdvertService {
 
     public Set<EntityOpportunityFilterDTO> getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
         PrismResourceContext context = query.getContext();
-        Set<EntityOpportunityFilterDTO> adverts = Sets.newHashSet();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
 
         Set<Integer> nodeAdverts = Sets.newHashSet();
@@ -616,11 +616,14 @@ public class AdvertService {
             });
         }
 
+        Set<EntityOpportunityFilterDTO> adverts = Sets.newHashSet();
         Set<Integer> userAdverts = getUserAdverts(user, scopes);
-        for (PrismScope scope : scopes) {
-            Collection<PrismState> advertStates = states.get(scope);
-            advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(scope) : advertStates;
-            adverts.addAll(advertDAO.getVisibleAdverts(scope, advertStates, actionCondition, nodeAdverts, userAdverts, query));
+        if (!(resourceScope != null && isEmpty(nodeAdverts) || (isTrue(query.getRecommendation()) && isEmpty(userAdverts)))) {
+            for (PrismScope scope : scopes) {
+                Collection<PrismState> advertStates = states.get(scope);
+                advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(scope) : advertStates;
+                adverts.addAll(advertDAO.getVisibleAdverts(scope, advertStates, actionCondition, nodeAdverts, userAdverts, query));
+            }
         }
 
         return adverts;
@@ -790,7 +793,10 @@ public class AdvertService {
         }
 
         Set<Integer> adverts = Sets.newHashSet();
-        Arrays.stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getVisibleAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
+        if (isNotEmpty(userAdverts)) {
+            Arrays.stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getUserAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
+        }
+
         return adverts;
     }
 

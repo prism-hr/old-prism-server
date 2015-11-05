@@ -1771,6 +1771,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_BULK_ROLES_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_BULK_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Message"),
     SYSTEM_MANAGE_USERS_BULK_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Type a message that will be sent along with invitation email"),
+    SYSTEM_MANAGE_USERS_BULK_MORE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "The users that you specified will receive your invitation with a couple of minutes."),
+    SYSTEM_MANAGE_USERS_BULK_MORE_BUTTON_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add more users"),
 
     /*
      * *************** SYSTEM HTML TRANSLATIONS CONFIGURATION *******************

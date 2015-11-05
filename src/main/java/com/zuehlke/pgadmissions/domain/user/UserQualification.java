@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
 import com.zuehlke.pgadmissions.workflow.user.UserQualificationReassignmentProcessor;
@@ -28,6 +29,10 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     @JoinColumn(name = "user_account_id", nullable = false, insertable = false, updatable = false)
     private UserAccount association;
 
+    @OneToOne
+    @JoinColumn(name = "application_qualification_id")
+    private ApplicationQualification applicationQualification;
+    
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -76,6 +81,14 @@ public class UserQualification extends UserAdvertRelationSection implements Prof
     @Override
     public void setAssociation(UserAccount association) {
         this.association = association;
+    }
+    
+    public ApplicationQualification getApplicationQualification() {
+        return applicationQualification;
+    }
+
+    public void setApplicationQualification(ApplicationQualification applicationQualification) {
+        this.applicationQualification = applicationQualification;
     }
 
     @Override

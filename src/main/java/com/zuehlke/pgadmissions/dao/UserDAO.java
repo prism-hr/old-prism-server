@@ -41,6 +41,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.HashMultimap;
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdvertRelationSection;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismUserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
@@ -51,6 +52,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAdvertRelationSection;
 import com.zuehlke.pgadmissions.domain.user.UserInstitutionIdentity;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.dto.ProfileListRowDTO;
@@ -553,6 +555,15 @@ public class UserDAO {
                 .add(Restrictions.in("resource." + parentScope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.in("role.id", roles)) //
                 .list();
+    }
+
+    public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> void deleteUserProfileSection(Class<T> userProfileSectionClass,
+            Class<U> applicationSectionClass, Integer propertyId) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete " + userProfileSectionClass.getSimpleName() + " " //
+                        + "where " + applicationSectionClass.getSimpleName().toLowerCase() + " = :propertyId") //
+                .setParameter("propertyId", propertyId) //
+                .executeUpdate();
     }
 
     private void appendAdministratorConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> resources, HashMultimap<PrismScope, PrismScope> scopes) {

@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dao.ProfileDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -81,6 +82,9 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 @Service
 @Transactional
 public class ProfileService {
+
+    @Inject
+    private ProfileDAO profileDAO;
 
     @Inject
     private AddressService addressService;
@@ -176,23 +180,25 @@ public class ProfileService {
     public ApplicationQualification updateQualificationApplication(Integer applicationId, Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationQualification qualification = updateQualification(application, ApplicationQualification.class, qualificationId, qualificationDTO);
-
         qualificationDTO.setDocument(cloneDocument(qualificationDTO.getDocument()));
 
         UserAccount userAccount = application.getUser().getUserAccount();
+        profileDAO.deleteUserProfileSection(UserQualification.class, ApplicationQualification.class, qualificationId);
         UserQualification userQualification = entityService.getDuplicateEntity(UserQualification.class,
                 new EntitySignature().addProperty("association", userAccount).addProperty("advert", qualification.getAdvert()).addProperty("startYear",
                         qualification.getStartYear()));
-        updateQualification(userAccount, userQualification == null ? new UserQualification() : userQualification, qualificationDTO);
-        userAccountService.updateUserAccount(userAccount);
 
+        userQualification = userQualification == null ? new UserQualification() : userQualification;
+        updateQualification(userAccount, userQualification, qualificationDTO);
+        userQualification.setApplicationQualification(qualification);
+
+        userAccountService.updateUserAccount(userAccount);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
     }
 
     public void deleteQualificationUser(Integer qualificationId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        ;
         deleteQualification(userAccount, UserQualification.class, qualificationId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -211,17 +217,21 @@ public class ProfileService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
-                                                                             ProfileEmploymentPositionDTO employmentPositionDTO) {
+            ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
+        profileDAO.deleteUserProfileSection(UserEmploymentPosition.class, ApplicationEmploymentPosition.class, employmentPositionId);
         UserEmploymentPosition userEmploymentPosition = entityService.getDuplicateEntity(UserEmploymentPosition.class,
                 new EntitySignature().addProperty("association", userAccount).addProperty("advert", employmentPosition.getAdvert()).addProperty("startYear",
                         employmentPosition.getStartYear()));
-        updateEmploymentPosition(userAccount, userEmploymentPosition == null ? new UserEmploymentPosition() : userEmploymentPosition, employmentPositionDTO);
-        userAccountService.updateUserAccount(userAccount);
 
+        userEmploymentPosition = userEmploymentPosition == null ? new UserEmploymentPosition() : userEmploymentPosition;
+        updateEmploymentPosition(userAccount, userEmploymentPosition, employmentPositionDTO);
+        userEmploymentPosition.setApplicationEmploymentPosition(employmentPosition);
+
+        userAccountService.updateUserAccount(userAccount);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
     }
@@ -247,17 +257,22 @@ public class ProfileService {
 
     public ApplicationReferee updateRefereeApplication(Integer applicationId, Integer refereeId, ProfileRefereeDTO refereeDTO) {
         Application application = applicationService.getById(applicationId);
-        ProfileRefereeUpdateDTO referee = updateReferee(application, ApplicationReferee.class, refereeId, refereeDTO);
+        ProfileRefereeUpdateDTO refereeUpdateDTO = updateReferee(application, ApplicationReferee.class, refereeId, refereeDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
+        profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId);
         UserReferee userReferee = entityService.getDuplicateEntity(UserReferee.class,
-                new EntitySignature().addProperty("association", userAccount).addProperty("user", referee.getReferee().getUser()));
+                new EntitySignature().addProperty("association", userAccount).addProperty("user", refereeUpdateDTO.getReferee().getUser()));
+        
+        userReferee = userReferee == null ? new UserReferee() : userReferee;
         updateReferee(userAccount, userReferee != null ? userReferee : new UserReferee(), refereeDTO);
-        userAccountService.updateUserAccount(userAccount);
+        ApplicationReferee referee = (ApplicationReferee) refereeUpdateDTO.getReferee();
+        userReferee.setApplicationReferee(referee);
 
-        List<CommentAssignedUser> assignees = referee.getAssignments();
+        userAccountService.updateUserAccount(userAccount);
+        List<CommentAssignedUser> assignees = refereeUpdateDTO.getAssignments();
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
-        return (ApplicationReferee) referee.getReferee();
+        return (ApplicationReferee) refereeUpdateDTO.getReferee();
     }
 
     public void deleteRefereeUser(Integer refereeId) {

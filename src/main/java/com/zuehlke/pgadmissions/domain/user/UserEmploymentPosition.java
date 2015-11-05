@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
 import com.zuehlke.pgadmissions.workflow.user.UserEmploymentPositionReassignmentProcessor;
 
@@ -25,6 +26,10 @@ public class UserEmploymentPosition extends UserAdvertRelationSection
     @ManyToOne
     @JoinColumn(name = "user_account_id", nullable = false, insertable = false, updatable = false)
     private UserAccount association;
+
+    @ManyToOne
+    @JoinColumn(name = "application_employment_position_id")
+    private ApplicationEmploymentPosition applicationEmploymentPosition;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -67,6 +72,14 @@ public class UserEmploymentPosition extends UserAdvertRelationSection
     @Override
     public void setAssociation(UserAccount association) {
         this.association = association;
+    }
+
+    public ApplicationEmploymentPosition getApplicationEmploymentPosition() {
+        return applicationEmploymentPosition;
+    }
+
+    public void setApplicationEmploymentPosition(ApplicationEmploymentPosition applicationEmploymentPosition) {
+        this.applicationEmploymentPosition = applicationEmploymentPosition;
     }
 
     @Override

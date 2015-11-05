@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
 import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
 import com.zuehlke.pgadmissions.workflow.user.UserRefereeReassignmentProcessor;
 
@@ -24,6 +25,10 @@ public class UserReferee extends UserAdvertRelationSection implements ProfileRef
     @ManyToOne
     @JoinColumn(name = "user_account_id", nullable = false, insertable = false, updatable = false)
     private UserAccount association;
+
+    @ManyToOne
+    @JoinColumn(name = "application_referee_id")
+    private ApplicationReferee applicationReferee;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -57,6 +62,14 @@ public class UserReferee extends UserAdvertRelationSection implements ProfileRef
     @Override
     public void setAssociation(UserAccount UserAccount) {
         this.association = UserAccount;
+    }
+    
+    public ApplicationReferee getApplicationReferee() {
+        return applicationReferee;
+    }
+
+    public void setApplicationReferee(ApplicationReferee applicationReferee) {
+        this.applicationReferee = applicationReferee;
     }
 
     @Override

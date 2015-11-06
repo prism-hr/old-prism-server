@@ -128,7 +128,7 @@ import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
-import com.zuehlke.pgadmissions.utils.PrismMappingUtils;
+import com.zuehlke.pgadmissions.utils.PrismJsonMappingUtils;
 
 import jersey.repackaged.com.google.common.base.Objects;
 
@@ -189,7 +189,7 @@ public class AdvertService {
     private RestTemplate restTemplate;
 
     @Inject
-    private PrismMappingUtils prismMappingUtils;
+    private PrismJsonMappingUtils prismJsonMappingUtils;
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
@@ -362,11 +362,11 @@ public class AdvertService {
             String invitationsSerial = null;
             String connectionsSerial = null;
             if (isNotEmpty(invitations)) {
-                invitationsSerial = prismMappingUtils.writeValue(invitations);
+                invitationsSerial = prismJsonMappingUtils.writeValue(invitations);
             }
 
             if (isNotEmpty(connections)) {
-                connectionsSerial = prismMappingUtils.writeValue(connections);
+                connectionsSerial = prismJsonMappingUtils.writeValue(connections);
             }
 
             AdvertTargetPending advertTargetPending = new AdvertTargetPending().withAdvert(resource.getAdvert()).withUser(user).withAdvertTargetInviteList(invitationsSerial)
@@ -670,18 +670,18 @@ public class AdvertService {
         String invitationsSerial = advertTargetPending.getAdvertTargetInviteList();
         String connectionsSerial = advertTargetPending.getAdvertTargetConnectList();
         if (invitationsSerial != null) {
-            List<ResourceRelationCreationDTO> invitations = prismMappingUtils.readValue(invitationsSerial, List.class, ResourceRelationCreationDTO.class);
+            List<ResourceRelationCreationDTO> invitations = prismJsonMappingUtils.readCollection(invitationsSerial, List.class, ResourceRelationCreationDTO.class);
             for (Iterator<ResourceRelationCreationDTO> iterator = invitations.iterator(); iterator.hasNext();) {
                 ResourceRelationCreationDTO invitation = iterator.next();
                 resourceService.inviteResourceRelation(advertTargetPending.getAdvert().getResource(), advertTargetPending.getUser(), invitation,
                         advertTargetPending.getAdvertTargetMessage());
 
                 iterator.remove();
-                advertTargetPending.setAdvertTargetInviteList(invitations.isEmpty() ? null : prismMappingUtils.writeValue(invitations));
+                advertTargetPending.setAdvertTargetInviteList(invitations.isEmpty() ? null : prismJsonMappingUtils.writeValue(invitations));
                 return;
             }
         } else if (connectionsSerial != null) {
-            List<ResourceRelationCreationDTO> connections = prismMappingUtils.readValue(connectionsSerial, List.class, ResourceRelationCreationDTO.class);
+            List<ResourceRelationCreationDTO> connections = prismJsonMappingUtils.readCollection(connectionsSerial, List.class, ResourceRelationCreationDTO.class);
             for (Iterator<ResourceRelationCreationDTO> iterator = connections.iterator(); iterator.hasNext();) {
                 ResourceRelationCreationDTO targetDTO = iterator.next();
                 ResourceCreationDTO ResourceRelationCreationDTO = targetDTO.getResource().getResource();
@@ -690,7 +690,7 @@ public class AdvertService {
                         ResourceRelationCreationDTO.getContext(), targetDTO.getMessage(), false);
 
                 iterator.remove();
-                advertTargetPending.setAdvertTargetConnectList(connections.isEmpty() ? null : prismMappingUtils.writeValue(connections));
+                advertTargetPending.setAdvertTargetConnectList(connections.isEmpty() ? null : prismJsonMappingUtils.writeValue(connections));
                 return;
             }
         } else {

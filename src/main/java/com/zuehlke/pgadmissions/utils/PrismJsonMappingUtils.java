@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.utils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Collection;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Inject;
-import java.util.Collection;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class PrismJsonMappingUtils {

@@ -1,17 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
 
 public class ResourceUserRolesRepresentation {
 
     private UserRepresentationSimple user;
 
     private List<PrismRole> roles;
-    
+
     private String message;
+
+    private Boolean pending = false;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -28,7 +30,7 @@ public class ResourceUserRolesRepresentation {
     public void setRoles(List<PrismRole> roles) {
         this.roles = roles;
     }
-    
+
     public String getMessage() {
         return message;
     }
@@ -37,14 +39,33 @@ public class ResourceUserRolesRepresentation {
         this.message = message;
     }
 
-    public ResourceUserRolesRepresentation withUser(UserRepresentationSimple user)  {
+    public Boolean getPending() {
+        return pending;
+    }
+
+    public void setPending(Boolean pending) {
+        this.pending = pending;
+    }
+
+    public ResourceUserRolesRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }
-    
+
     public ResourceUserRolesRepresentation withRoles(List<PrismRole> roles) {
         this.roles = roles;
         return this;
     }
-    
+
+    public ResourceUserRolesRepresentation withMessage(final String message) {
+        this.message = message;
+        return this;
+    }
+
+    public ResourceUserRolesRepresentation withPending(final Boolean pending) {
+        this.pending = pending;
+        return this;
+    }
+
+
 }

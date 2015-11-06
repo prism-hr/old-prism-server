@@ -1,0 +1,292 @@
+package com.zuehlke.pgadmissions.rest.controller;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.visualization.datasource.DataSourceHelper;
+import com.google.visualization.datasource.DataSourceRequest;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
+import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mapping.ActionMapper;
+import com.zuehlke.pgadmissions.mapping.CommentMapper;
+import com.zuehlke.pgadmissions.mapping.ResourceMapper;
+import com.zuehlke.pgadmissions.mapping.UserMapper;
+import com.zuehlke.pgadmissions.rest.PrismRestUtils;
+import com.zuehlke.pgadmissions.rest.ResourceDescriptor;
+import com.zuehlke.pgadmissions.rest.dto.StateActionPendingDTO;
+import com.zuehlke.pgadmissions.rest.dto.UserListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserCorrectionDTO;
+import com.zuehlke.pgadmissions.rest.representation.action.ActionOutcomeRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.*;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationInvitationBounced;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.services.ApplicationService;
+import com.zuehlke.pgadmissions.services.ResourceService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.UserService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+
+@RestController
+@RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")
+public class ResourceController {
+
+    @Inject
+    private ResourceService resourceService;
+
+    @Inject
+    private UserService userService;
+
+    @Inject
+    private RoleService roleService;
+
+    @Inject
+    private ApplicationService applicationService;
+
+    @Inject
+    private ActionMapper actionMapper;
+
+    @Inject
+    private ResourceMapper resourceMapper;
+
+    @Inject
+    private CommentMapper commentMapper;
+
+    @Inject
+    private UserMapper userMapper;
+
+    @Inject
+    private ObjectMapper objectMapper;
+
+    @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
+    public ResourceRepresentationExtended getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationClient(resource);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{resourceId}/timeline", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public CommentTimelineRepresentation getResourceTimeline(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return commentMapper.getCommentTimelineRepresentation(resource);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=simple")
+    @PreAuthorize("permitAll")
+    public ResourceRepresentationSimple getResourceSimple(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationSimple(resource);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=activity")
+    @PreAuthorize("permitAll")
+    public ResourceRepresentationRelation getResourceRelation(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationRelation(resource);
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=location")
+    @PreAuthorize("permitAll")
+    public ResourceRepresentationLocation getResourceLocation(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationLocation(resource);
+    }
+
+    @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
+    @PreAuthorize("permitAll")
+    public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestParam PrismScope propertiesScope) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceService.getDisplayProperties(resource, propertiesScope);
+    }
+
+    @RequestMapping(value = "/{resourceId}/children", method = RequestMethod.GET)
+    @PreAuthorize("permitAll")
+    public List<ResourceRepresentationCreation> getResources(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestParam PrismScope childResourceScope, @RequestParam Optional<String> q) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceService.getResources(resource, childResourceScope, q).stream()
+                .map(resourceMapper::getResourceRepresentationCreation).collect(toList());
+    }
+
+    @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
+    @PreAuthorize("permitAll")
+    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope, @RequestParam Optional<String> q) {
+        Resource enclosingResource = loadResource(resourceId, resourceDescriptor);
+        List<ResourceChildCreationDTO> resources = resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, q.orElse(null));
+        return resources.stream().map(resourceMapper::getResourceRepresentationChildCreation).collect(Collectors.toList());
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public ResourceListRepresentation getResources(
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter,
+            @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+        PrismScope resourceScope = resourceDescriptor.getResourceScope();
+        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
+        ResourceListRepresentation representation = resourceMapper.getResourceListRepresentation(resourceScope, filterDTO, lastSequenceIdentifier);
+        return representation;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, params = "type=report")
+    @PreAuthorize("isAuthenticated()")
+    public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
+            throw new UnsupportedOperationException("Report can only be generated for applications");
+        }
+        ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
+        DataTable reportTable = applicationService.getApplicationReport(filterDTO);
+        DataSourceRequest dataSourceRequest = new DataSourceRequest(request);
+        DataSourceHelper.setServletResponse(reportTable, dataSourceRequest, response);
+        String fileName = response.getHeader("Content-Disposition").replace("attachment; filename=", "");
+        response.setHeader("file-name", fileName);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
+    @PreAuthorize("isAuthenticated()")
+    public ResourceSummaryPlotRepresentation getPlot(
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @RequestParam(required = false) String filter) throws Exception {
+        Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
+        if (!(resource instanceof ResourceParent)) {
+            throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
+        }
+        ResourceReportFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceReportFilterDTO.class) : null;
+        return resourceMapper.getResourceSummaryPlotRepresentation((ResourceParent) resource, filterDTO);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody ResourceUserRolesRepresentation body) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+
+        List<PrismRole> roles = body.getRoles();
+        roleService.createUserRoles(userService.getCurrentUser(), resource, user, body.getMessage(), roles.toArray(new PrismRole[roles.size()]));
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
+    @PreAuthorize("isAuthenticated()")
+    public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        User user = userService.getById(userId);
+        roleService.deleteUserRoles(userService.getCurrentUser(), resource, user, role);
+    }
+
+    @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody ResourceUserRolesRepresentation body) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        UserRepresentationSimple newUser = body.getUser();
+        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
+                body.getMessage(), body.getRoles());
+        return userMapper.getUserRepresentationSimple(user);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/batch", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void addUsers(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody StateActionPendingDTO body) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        userService.getOrCreateUsersWithRoles(resource, body);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}", method = RequestMethod.DELETE)
+    @PreAuthorize("isAuthenticated()")
+    public void deleteUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+        roleService.deleteUserRoles(userService.getCurrentUser(), resource, user);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}/setAsOwner", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void setUserAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestBody Map<?, ?> undertow,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+        roleService.setResourceOwner(resource, user);
+    }
+
+    @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody Map<?, ?> undertow) {
+        boolean accept = decision.equals("accept");
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        User user = userService.getById(userId);
+        roleService.verifyUserRoles(userService.getCurrentUser(), (ResourceParent) resource, user, accept);
+    }
+
+    @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @Valid @RequestBody CommentDTO commentDTO) {
+        ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), commentDTO);
+        return actionOutcome == null ? null : actionMapper.getActionOutcomeRepresentation(actionOutcome);
+    }
+
+    @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)
+    public List<UserRepresentationInvitationBounced> getBouncedOrUnverifiedUsers(
+            @PathVariable Integer resourceId, UserListFilterDTO filterDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return userMapper.getUserUnverifiedRepresentations(resource, filterDTO);
+    }
+
+    @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
+    public void reassignBouncedOrUnverifiedUser(
+            @PathVariable Integer resourceId, @PathVariable Integer userId,
+            @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        userService.reassignBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
+    }
+
+    @ModelAttribute
+    private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
+        return PrismRestUtils.getResourceDescriptor(resourceScope);
+    }
+
+    private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {
+        Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
+        if (resource == null) {
+            throw new ResourceNotFoundException("Resource not found");
+        }
+        return resource;
+    }
+
+}

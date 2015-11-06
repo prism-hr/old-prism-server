@@ -1,23 +1,5 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -25,6 +7,15 @@ import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
+import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "system")
@@ -77,7 +68,7 @@ public class System extends Resource {
 
     @Column(name = "amazon_secret_key")
     private String amazonSecretKey;
-    
+
     @Column(name = "shared", nullable = false)
     private Boolean shared;
 
@@ -115,6 +106,9 @@ public class System extends Resource {
 
     @OneToMany(mappedBy = "system")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "system")
+    private Set<StateActionPending> stateActionPendings = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -297,7 +291,7 @@ public class System extends Resource {
     public final void setAmazonSecretKey(String amazonSecretKey) {
         this.amazonSecretKey = amazonSecretKey;
     }
-    
+
     @Override
     public Boolean getShared() {
         return shared;
@@ -363,6 +357,11 @@ public class System extends Resource {
         return userRoles;
     }
 
+    @Override
+    public Set<StateActionPending> getStateActionPendings() {
+        return stateActionPendings;
+    }
+
     public Set<Project> getProjects() {
         return projects;
     }
@@ -386,7 +385,7 @@ public class System extends Resource {
         this.shared = shared;
         return this;
     }
-    
+
     public System withState(State state) {
         this.state = state;
         return this;

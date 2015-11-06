@@ -20,6 +20,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
@@ -166,6 +167,9 @@ public class Project extends ResourceOpportunity {
 
     @OneToMany(mappedBy = "project")
     private Set<UserRole> userRoles = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "project")
+    private Set<StateActionPending> stateActionPendings = Sets.newHashSet();
 
     @OneToMany(mappedBy = "project")
     private Set<Advert> adverts = Sets.newHashSet();
@@ -400,6 +404,11 @@ public class Project extends ResourceOpportunity {
     @Override
     public Set<UserRole> getUserRoles() {
         return userRoles;
+    }
+
+    @Override
+    public Set<StateActionPending> getStateActionPendings() {
+        return stateActionPendings;
     }
 
     @Override

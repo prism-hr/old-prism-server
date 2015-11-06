@@ -1,5 +1,16 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
@@ -7,15 +18,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.PrismJsonMappingUtils;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -43,6 +45,7 @@ public class RoleMapper {
 
         Stream<ResourceUserRolesRepresentation> pendingUserRepresentations = resource.getStateActionPendings().stream()
                 .flatMap(sa -> {
+                    @SuppressWarnings("unchecked")
                     List<UserRepresentationSimple> userRepresentations = prismJsonMappingUtils.readCollection(sa.getAssignUserList(), List.class, UserRepresentationSimple.class);
                     return userRepresentations.stream()
                             .map(userRepresentation -> new ResourceUserRolesRepresentation()
@@ -52,7 +55,6 @@ public class RoleMapper {
                                     .withPending(true));
                 })
                 .filter(user -> emailSet.add(user.getUser().getEmail()));
-
 
         return Stream.concat(activeUserRepresentations, pendingUserRepresentations).collect(Collectors.toList());
     }

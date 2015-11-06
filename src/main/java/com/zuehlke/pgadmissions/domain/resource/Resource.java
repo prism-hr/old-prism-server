@@ -1,5 +1,16 @@
 package com.zuehlke.pgadmissions.domain.resource;
 
+import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.Set;
+
+import org.apache.commons.lang3.ObjectUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
 import com.google.common.base.Joiner;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
@@ -11,16 +22,6 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
-import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 
 public abstract class Resource implements UniqueEntity {
 

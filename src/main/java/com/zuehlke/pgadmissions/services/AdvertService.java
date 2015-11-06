@@ -298,6 +298,7 @@ public class AdvertService {
                 advert.setClosingDate(null);
             }
             entityService.delete(advertClosingDate);
+            entityService.flush();
             advert.setClosingDate(getNextAdvertClosingDate(advert));
             executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
         } else {

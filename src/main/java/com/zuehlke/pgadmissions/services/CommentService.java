@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -35,6 +36,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentTransitionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
@@ -280,6 +282,15 @@ public class CommentService {
 
     public List<CommentAssignedUser> getResourceOwnerCommentAssignedUsers(Resource resource) {
         return commentDAO.getResourceOwnerCommentAssignedUsers(resource);
+    }
+
+    public void preprocessClaimComment(User user, CommentDTO commentDTO) {
+        if (commentDTO.isClaimAction()) {
+            PrismScope scope = commentDTO.getResource().getScope();
+            commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
+                    .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
+                    .withRole(PrismRole.valueOf(scope.name() + "_ADMINISTRATOR"))));
+        }
     }
 
     private void updateCommentStates(Comment comment) {

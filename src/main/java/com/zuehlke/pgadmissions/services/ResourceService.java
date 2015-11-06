@@ -337,6 +337,7 @@ public class ResourceService {
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO, false);
         } else {
+            commentService.preprocessClaimComment(user, commentDTO);
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);

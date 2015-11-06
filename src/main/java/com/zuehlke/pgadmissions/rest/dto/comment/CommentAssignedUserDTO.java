@@ -31,4 +31,14 @@ public class CommentAssignedUserDTO {
         this.role = role;
     }
 
+    public CommentAssignedUserDTO withUser(UserDTO user) {
+        this.user = user;
+        return this;
+    }
+
+    public CommentAssignedUserDTO withRole(PrismRole role) {
+        this.role = role;
+        return this;
+    }
+
 }

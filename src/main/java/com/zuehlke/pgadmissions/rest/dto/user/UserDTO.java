@@ -52,5 +52,25 @@ public class UserDTO {
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    public UserDTO withId(Integer id) {
+        this.id = id;
+        return this;
+    }
 
+    public UserDTO withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+
+    public UserDTO withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+    }
+
+    public UserDTO withEmail(String email) {
+        this.email = email;
+        return this;
+    }
+    
 }

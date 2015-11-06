@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -359,7 +361,11 @@ public class CommentDTO {
         this.action = action;
         return this;
     }
-
+    
+    public boolean isClaimAction() {
+        return resource.getScope().getScopeCategory().equals(ORGANIZATION) && action.name().endsWith("_COMPLETE");
+    }
+    
     public boolean isActionBypass() {
         return !(roleContext == null && resourceInvitation == null);
     }

@@ -14,6 +14,8 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
 
     private String departmentName;
 
+    private String opportunityCategories;
+
     public Integer getInstitutionId() {
         return institutionId;
     }
@@ -52,6 +54,14 @@ public class ResourceConnectionDTO extends ResourceConnectionAbstractDTO {
 
     public void setDepartmentName(String departmentName) {
         this.departmentName = departmentName;
+    }
+
+    public String getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
     }
 
     @Override

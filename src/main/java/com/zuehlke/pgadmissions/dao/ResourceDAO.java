@@ -430,7 +430,8 @@ public class ResourceDAO {
 
         String resourceReference = resourceScope.getLowerCamelName();
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projections) //
+                .setProjection(projections //
+                        .add(Projections.property(resourceReference + ".opportunityCategory"))) //
                 .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN);
 
         if (isDepartment) {

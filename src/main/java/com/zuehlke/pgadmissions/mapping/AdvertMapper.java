@@ -538,6 +538,7 @@ public class AdvertMapper {
         return UNKNOWN;
     }
 
+    // TODO: take into consideration resource context
     private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
@@ -548,17 +549,9 @@ public class AdvertMapper {
             Integer advertId = target.getAdvert().getId();
             Integer targetAdvertId = target.getTargetAdvert().getId();
             if (advertsAsStaff.contains(advertId)) {
-                if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
-                    acceptedForIndex.put(targetAdvertId, advertId);
-                } else {
-                    pendingForIndex.put(targetAdvertId, advertId);
-                }
+                setAdvertConnectState(pendingForIndex, acceptedForIndex, target, advertId, targetAdvertId);
             } else if (advertsAsStaff.contains(targetAdvertId)) {
-                if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
-                    acceptedForIndex.put(advertId, targetAdvertId);
-                } else {
-                    pendingForIndex.put(advertId, targetAdvertId);
-                }
+                setAdvertConnectState(pendingForIndex, acceptedForIndex, target, targetAdvertId, advertId);
             }
         });
 
@@ -580,6 +573,15 @@ public class AdvertMapper {
             }
 
         });
+    }
+
+    public void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer owerAdvert,
+            Integer targetAdvert) {
+        if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
+            acceptedForIndex.put(targetAdvert, owerAdvert);
+        } else {
+            pendingForIndex.put(targetAdvert, owerAdvert);
+        }
     }
 
 }

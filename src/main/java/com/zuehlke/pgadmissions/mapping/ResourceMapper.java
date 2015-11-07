@@ -621,13 +621,28 @@ public class ResourceMapper {
         return filters;
     }
 
-    public ResourceRepresentationConnection getResourceRepresentationConnection(
-            Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId, String departmentName) {
-        return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null);
+    public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
+        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getInstitutionLogoImageId(), resource.getDepartmentId(),
+                resource.getDepartmentName(), resource.getOpportunityCategories());
     }
 
-    public ResourceRepresentationConnection getResourceRepresentationConnection(
-            Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId, String departmentName, Integer backgroundImageId) {
+    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+            String departmentName) {
+        return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, null);
+    }
+
+    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+            String departmentName, Integer backgroundImageId) {
+        return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, backgroundImageId, null);
+    }
+
+    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+            String departmentName, String opportunityCategories) {
+        return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, opportunityCategories);
+    }
+
+    public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
+            String departmentName, Integer backgroundImageId, String opportunityCategories) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 
@@ -635,16 +650,9 @@ public class ResourceMapper {
             representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId).withName(departmentName));
         }
 
-        if (backgroundImageId != null) {
-            representation.setBackgroundImage(documentMapper.getDocumentRepresentation(backgroundImageId));
-        }
-
+        representation.setBackgroundImage(documentMapper.getDocumentRepresentation(backgroundImageId));
+        representation.setContexts(PrismScope.getResourceContexts(opportunityCategories));
         return representation;
-    }
-
-    public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
-        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getInstitutionLogoImageId(), resource.getDepartmentId(),
-                resource.getDepartmentName());
     }
 
     private <T extends Resource> void validateViewerPermission(T resource) {

@@ -6,10 +6,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.util.Arrays.asList;
 
+import java.util.List;
+
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
@@ -20,6 +23,8 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
     private ResourceRepresentationIdentity department;
 
     private DocumentRepresentation backgroundImage;
+
+    private List<PrismResourceContext> contexts;
 
     public ResourceRepresentationIdentity getInstitution() {
         return institution;
@@ -43,6 +48,14 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
 
     public void setBackgroundImage(DocumentRepresentation backgroundImage) {
         this.backgroundImage = backgroundImage;
+    }
+
+    public List<PrismResourceContext> getContexts() {
+        return contexts;
+    }
+
+    public void setContexts(List<PrismResourceContext> contexts) {
+        this.contexts = contexts;
     }
 
     public ResourceRepresentationConnection withInstitution(ResourceRepresentationSimple institution) {

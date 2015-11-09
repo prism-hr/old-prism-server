@@ -14,6 +14,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DE
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static com.zuehlke.pgadmissions.utils.PrismCollectionUtils.containsSame;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
@@ -21,7 +22,6 @@ import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptor
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -594,7 +594,7 @@ public class AdvertMapper {
     }
 
     private List<PrismResourceContext> getAdvertResourceContexts(String opportunityCategories) {
-        return stream(opportunityCategories.split("\\|")).map(PrismResourceContext::valueOf).collect(toList());
+        return getResourceContexts(opportunityCategories);
     }
 
     private boolean matchAdvertResourceContexts(List<PrismResourceContext> ownerContexts, List<PrismResourceContext> targetContexts) {

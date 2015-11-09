@@ -71,44 +71,44 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             new PrismScopeDefinition() //
                     .withResourceClass(System.class) //
                     .withActionExecutor(SystemExecutor.class)), //
-                    INSTITUTION(PrismScopeCategory.ORGANIZATION, "IN", true, //
-                            new PrismScopeDefinition() //
-                                    .withResourceClass(Institution.class) //
-                                    .withResourceDTOClass(InstitutionDTO.class) //
-                                    .withActionExecutor(InstitutionExecutor.class) //
-                                    .withResourceCreator(InstitutionCreator.class) //
-                                    .withResourcePostprocessor(InstitutionPostprocessor.class)), //
-                                    DEPARTMENT(PrismScopeCategory.ORGANIZATION, "DT", true, //
-                                            new PrismScopeDefinition() //
-                                                    .withResourceClass(Department.class) //
-                                                    .withResourceDTOClass(ResourceParentDTO.class) //
-                                                    .withActionExecutor(DepartmentExecutor.class) //
-                                                    .withResourceCreator(DepartmentCreator.class) //
-                                                    .withResourcePostprocessor(DepartmentPostprocessor.class)), //
-                                                    PROGRAM(PrismScopeCategory.OPPORTUNITY, "PM", true, //
-                                                            new PrismScopeDefinition() //
-                                                                    .withResourceClass(Program.class) //
-                                                                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
-                                                                    .withActionExecutor(ProgramExecutor.class) //
-                                                                    .withResourceCreator(ProgramCreator.class) //
-                                                                    .withResourcePostprocessor(ProgramPostprocessor.class)), //
-                                                                    PROJECT(PrismScopeCategory.OPPORTUNITY, "PT", true, //
-                                                                            new PrismScopeDefinition() //
-                                                                                    .withResourceClass(Project.class) //
-                                                                                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
-                                                                                    .withActionExecutor(ProjectExecutor.class) //
-                                                                                    .withResourceCreator(ProjectCreator.class) //
-                                                                                    .withResourcePostprocessor(ProjectPostprocessor.class)), //
-                                                                                    APPLICATION(PrismScopeCategory.APPLICATION, "AN", false, //
-                                                                                            new PrismScopeDefinition() //
-                                                                                                    .withResourceClass(Application.class) //
-                                                                                                    .withResourceDTOClass(ApplicationDTO.class) //
-                                                                                                    .withActionExecutor(ApplicationExecutor.class) //
-                                                                                                    .withResourceCreator(ApplicationCreator.class) //
-                                                                                                    .withResourcePopulator(ApplicationPopulator.class) //
-                                                                                                    .withResourcePreprocessor(ApplicationPreprocessor.class) //
-                                                                                                    .withResourceProcessor(ApplicationProcessor.class) //
-                                                                                                    .withResourcePostprocessor(ApplicationPostprocessor.class));
+    INSTITUTION(PrismScopeCategory.ORGANIZATION, "IN", true, //
+            new PrismScopeDefinition() //
+                    .withResourceClass(Institution.class) //
+                    .withResourceDTOClass(InstitutionDTO.class) //
+                    .withActionExecutor(InstitutionExecutor.class) //
+                    .withResourceCreator(InstitutionCreator.class) //
+                    .withResourcePostprocessor(InstitutionPostprocessor.class)), //
+    DEPARTMENT(PrismScopeCategory.ORGANIZATION, "DT", true, //
+            new PrismScopeDefinition() //
+                    .withResourceClass(Department.class) //
+                    .withResourceDTOClass(ResourceParentDTO.class) //
+                    .withActionExecutor(DepartmentExecutor.class) //
+                    .withResourceCreator(DepartmentCreator.class) //
+                    .withResourcePostprocessor(DepartmentPostprocessor.class)), //
+    PROGRAM(PrismScopeCategory.OPPORTUNITY, "PM", true, //
+            new PrismScopeDefinition() //
+                    .withResourceClass(Program.class) //
+                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
+                    .withActionExecutor(ProgramExecutor.class) //
+                    .withResourceCreator(ProgramCreator.class) //
+                    .withResourcePostprocessor(ProgramPostprocessor.class)), //
+    PROJECT(PrismScopeCategory.OPPORTUNITY, "PT", true, //
+            new PrismScopeDefinition() //
+                    .withResourceClass(Project.class) //
+                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
+                    .withActionExecutor(ProjectExecutor.class) //
+                    .withResourceCreator(ProjectCreator.class) //
+                    .withResourcePostprocessor(ProjectPostprocessor.class)), //
+    APPLICATION(PrismScopeCategory.APPLICATION, "AN", false, //
+            new PrismScopeDefinition() //
+                    .withResourceClass(Application.class) //
+                    .withResourceDTOClass(ApplicationDTO.class) //
+                    .withActionExecutor(ApplicationExecutor.class) //
+                    .withResourceCreator(ApplicationCreator.class) //
+                    .withResourcePopulator(ApplicationPopulator.class) //
+                    .withResourcePreprocessor(ApplicationPreprocessor.class) //
+                    .withResourceProcessor(ApplicationProcessor.class) //
+                    .withResourcePostprocessor(ApplicationPostprocessor.class));
 
     private PrismScopeCategory scopeCategory;
 

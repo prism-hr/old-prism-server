@@ -7,6 +7,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.A
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.UNKNOWN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -19,6 +21,7 @@ import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptor
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -61,6 +64,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
@@ -73,6 +77,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
+import com.zuehlke.pgadmissions.dto.AdvertCategoryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
@@ -538,21 +543,30 @@ public class AdvertMapper {
         return UNKNOWN;
     }
 
-    // TODO: take into consideration resource context
     private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
+        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
 
         HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
         HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();
         targets.forEach(target -> {
-            Integer advertId = target.getAdvert().getId();
-            Integer targetAdvertId = target.getTargetAdvert().getId();
-            if (advertsAsStaff.contains(advertId)) {
-                setAdvertConnectState(pendingForIndex, acceptedForIndex, target, advertId, targetAdvertId);
-            } else if (advertsAsStaff.contains(targetAdvertId)) {
-                setAdvertConnectState(pendingForIndex, acceptedForIndex, target, targetAdvertId, advertId);
-            }
+            Advert advert = target.getAdvert();
+            Advert targetAdvert = target.getTargetAdvert();
+
+            Integer advertId = advert.getId();
+            Integer targetAdvertId = targetAdvert.getId();
+
+            List<PrismResourceContext> advertContexts = getAdvertResourceContexts(advert);
+            List<PrismResourceContext> targetAdvertContexts = getAdvertResourceContexts(targetAdvert);
+            advertsAsStaff.stream().forEach(advertAsStaff -> {
+                Integer advertAsStaffId = advertAsStaff.getAdvert();
+                List<PrismResourceContext> ownerContexts = getAdvertResourceContexts(advertAsStaff.getOpportunityCategories());
+                if (advertAsStaffId.equals(advertId) && matchAdvertResourceContexts(ownerContexts, advertContexts)) {
+                    setAdvertConnectState(pendingForIndex, acceptedForIndex, target, advertId, targetAdvertId);
+                } else if (advertAsStaffId.equals(targetAdvertId) && matchAdvertResourceContexts(ownerContexts, targetAdvertContexts)) {
+                    setAdvertConnectState(pendingForIndex, acceptedForIndex, target, targetAdvertId, advertId);
+                }
+            });
         });
 
         int advertsAsStaffCount = advertsAsStaff.size();
@@ -575,12 +589,24 @@ public class AdvertMapper {
         });
     }
 
-    public void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer owerAdvert,
+    private List<PrismResourceContext> getAdvertResourceContexts(Advert advert) {
+        return getAdvertResourceContexts(advert.getOpportunityCategories());
+    }
+
+    private List<PrismResourceContext> getAdvertResourceContexts(String opportunityCategories) {
+        return stream(opportunityCategories.split("\\|")).map(PrismResourceContext::valueOf).collect(toList());
+    }
+
+    private boolean matchAdvertResourceContexts(List<PrismResourceContext> ownerContexts, List<PrismResourceContext> targetContexts) {
+        return (ownerContexts.contains(UNIVERSITY) && targetContexts.contains(EMPLOYER)) || (ownerContexts.contains(EMPLOYER) && targetContexts.contains(UNIVERSITY));
+    }
+
+    public void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer ownerAdvert,
             Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
-            acceptedForIndex.put(targetAdvert, owerAdvert);
+            acceptedForIndex.put(targetAdvert, ownerAdvert);
         } else {
-            pendingForIndex.put(targetAdvert, owerAdvert);
+            pendingForIndex.put(targetAdvert, ownerAdvert);
         }
     }
 

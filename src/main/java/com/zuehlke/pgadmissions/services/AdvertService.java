@@ -108,6 +108,7 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
+import com.zuehlke.pgadmissions.dto.AdvertCategoryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
@@ -800,22 +801,22 @@ public class AdvertService {
         return adverts;
     }
 
-    public List<Integer> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
-        return getAdvertsForWhichUserHasRoles(user, roleExtensions, null, true);
+    public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
+        return getAdvertsForWhichUserHasRoles(user, roleExtensions, null, true, AdvertCategoryDTO.class);
     }
 
     public List<Integer> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions, Collection<Integer> advertIds) {
-        return getAdvertsForWhichUserHasRoles(user, roleExtensions, advertIds, true);
+        return getAdvertsForWhichUserHasRoles(user, roleExtensions, advertIds, true, Integer.class);
     }
 
-    public List<Integer> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, Collection<Integer> advertIds, boolean strict) {
-        List<Integer> adverts = Lists.newArrayList();
+    public <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, Collection<Integer> advertIds, boolean strict, Class<T> responseClass) {
+        List<T> adverts = Lists.newArrayList();
         if (user != null) {
             for (PrismScope scope : advertScopes) {
                 List<PrismState> states = stateService.getActiveResourceStates(scope);
                 roleExtensions = getFilteredRoleExtensions(scope, roleExtensions);
                 if (roleExtensions.length > 0) {
-                    adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, states, roleExtensions, advertIds, strict));
+                    adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, states, roleExtensions, advertIds, strict, responseClass));
                 }
             }
         }

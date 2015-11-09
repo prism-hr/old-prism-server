@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1766,9 +1766,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MANAGE_USERS_ROLES_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Roles"),
     SYSTEM_MANAGE_USERS_ROLES_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_ADD_USER_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add User"),
+    SYSTEM_MANAGE_USERS_ADD_USER_BULK_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add users in bulk"),
+    SYSTEM_MANAGE_USERS_ADD_USER_SINGLE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Add single users"),
     SYSTEM_MANAGE_USERS_EXISTING_USERS_SUBHEADER(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Existing users and roles"),
+    SYSTEM_MANAGE_USERS_BULK_CSV_DOWNLOAD_TEMPLATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Download XLS template"),
+    SYSTEM_MANAGE_USERS_BULK_CSV_DRAG_DROP_AREA(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Click to upload or Drag and Drop CSV/Excel file"),
     SYSTEM_MANAGE_USERS_BULK_CSV_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Users CSV"),
     SYSTEM_MANAGE_USERS_BULK_CSV_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Paste list of your users"),
+    SYSTEM_MANAGE_USERS_BULK_CSV_FILE_HEADER_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "First line contains header"),
+    SYSTEM_MANAGE_USERS_BULK_CSV_FILE_HEADER_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "The first line in your file uploaded contains the header of the properties"),
     SYSTEM_MANAGE_USERS_BULK_ROLES_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Roles"),
     SYSTEM_MANAGE_USERS_BULK_ROLES_HINT(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Select the roles that you wish to assign."),
     SYSTEM_MANAGE_USERS_BULK_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_MANAGE_USERS, "Message"),
@@ -2068,6 +2074,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_SELECT_REFEREE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Select the referee that you wish to upload a reference for"),
     APPLICATION_ACTION_PROVIDE_REFERENCE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Are you happy to provide a reference?"),
     APPLICATION_ACTION_PROVIDE_REFERENCE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are happy to provide a reference. You may decline if you wish"),
+    APPLICATION_ACTION_CONFIRM_OFFER_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Are you happy to accept an offer?"),
+    APPLICATION_ACTION_CONFIRM_OFFER_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are happy to accept an offer. You may decline if you wish"),
     APPLICATION_ACTION_TRANSITION_STATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Next Task"),
     APPLICATION_ACTION_TRANSITION_STATE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Select the next task that you wish to perform."),
     APPLICATION_ACTION_SECONDARY_STATES_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Other Tasks"),
@@ -2101,8 +2109,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_INTERVIEW_TIMEZONE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
     APPLICATION_ACTION_INTERVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interview Duration"),
     APPLICATION_ACTION_INTERVIEW_DURATION_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
-    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to provide primary supervision"),
-    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to provide primary supervision. You will be able to suggest amendments to the proposed research programme when you have provided a positive confirmation."),
+    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to approve the hire"),
+    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to approve the hire. You will be able to suggest amendments to the proposed position when you have provided a positive confirmation."),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_CONFIRM(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm"),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_DECLINE(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Decline"),
     APPLICATION_ACTION_DECLINE_SUPERVISION_REASON_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Reason"),

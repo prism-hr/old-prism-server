@@ -1,42 +1,12 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_EARLIEST_BUFFER;
-import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_LATEST_BUFFER;
-import static com.zuehlke.pgadmissions.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
-import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
-import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
-import static java.util.Arrays.asList;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.application.ApplicationProgramDetail;
 import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
@@ -50,21 +20,32 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentatio
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileRefereeRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationRelation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationInterviewRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationOfferRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationClient;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.application.*;
 import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import com.zuehlke.pgadmissions.services.ApplicationService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.UserService;
-
 import jersey.repackaged.com.google.common.collect.Maps;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.zuehlke.pgadmissions.PrismConstants.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
+import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.longToInteger;
+import static com.zuehlke.pgadmissions.utils.PrismDateUtils.getNextMonday;
+import static java.util.Arrays.asList;
 
 @Service
 @Transactional
@@ -258,12 +239,12 @@ public class ApplicationMapper {
             }
 
             if (sourceComment != null) {
-                String positionTitle = null;
+                String positionName = null;
                 String positionDescription = null;
 
                 CommentPositionDetail positionDetail = sourceComment.getPositionDetail();
                 if (positionDetail != null) {
-                    positionTitle = positionDetail.getPositionName();
+                    positionName = positionDetail.getPositionName();
                     positionDescription = positionDetail.getPositionDescription();
                 }
 
@@ -276,7 +257,7 @@ public class ApplicationMapper {
                     appointmentConditions = offerDetail.getAppointmentConditions();
                 }
 
-                offerRepresentation.setPositionTitle(positionTitle);
+                offerRepresentation.setPositionName(positionName);
                 offerRepresentation.setPositionDescription(positionDescription);
                 offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate);
                 offerRepresentation.setAppointmentConditions(appointmentConditions);
@@ -295,7 +276,7 @@ public class ApplicationMapper {
         boolean positionDetailNull = positionDetail == null;
         boolean offerDetailNull = offerDetail == null;
 
-        return new ApplicationOfferRepresentation().withPositionTitle(positionDetailNull ? null : positionDetail.getPositionName())
+        return new ApplicationOfferRepresentation().withPositionName(positionDetailNull ? null : positionDetail.getPositionName())
                 .withPositionDescription(positionDetailNull ? null : positionDetail.getPositionDescription())
                 .withPositionProvisionalStartDate(offerDetailNull ? null : offerDetail.getPositionProvisionalStartDate())
                 .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());

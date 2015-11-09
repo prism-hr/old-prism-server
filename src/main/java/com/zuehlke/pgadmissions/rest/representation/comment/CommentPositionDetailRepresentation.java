@@ -13,7 +13,7 @@ public class CommentPositionDetailRepresentation {
     public void setPositionName(String positionName) {
         this.positionName = positionName;
     }
-    
+
     public String getPositionDescription() {
         return positionDescription;
     }
@@ -21,15 +21,15 @@ public class CommentPositionDetailRepresentation {
     public void setPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
     }
-    
-    public CommentPositionDetailRepresentation withPositionTitle(String positionName) {
+
+    public CommentPositionDetailRepresentation withPositionName(String positionName) {
         this.positionName = positionName;
         return this;
     }
-    
+
     public CommentPositionDetailRepresentation withPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
         return this;
     }
-    
+
 }

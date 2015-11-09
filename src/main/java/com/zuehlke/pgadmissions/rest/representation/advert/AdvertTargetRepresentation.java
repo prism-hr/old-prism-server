@@ -4,7 +4,7 @@ import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
@@ -47,10 +47,12 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         private ResourceRepresentationConnection resource;
 
         private UserRepresentationSimple user;
+        
+        private PrismConnectionState connectState;
 
-        private PrismPartnershipState partnershipState;
-
-        private Boolean canManage;
+        private boolean canAccept;
+        
+        private boolean canRemove;
 
         public Integer getAdvertTargetId() {
             return advertTargetId;
@@ -75,21 +77,29 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         public void setUser(UserRepresentationSimple user) {
             this.user = user;
         }
-
-        public PrismPartnershipState getPartnershipState() {
-            return partnershipState;
+        
+        public PrismConnectionState getConnectState() {
+            return connectState;
         }
 
-        public void setPartnershipState(PrismPartnershipState partnershipState) {
-            this.partnershipState = partnershipState;
+        public void setConnectState(PrismConnectionState connectState) {
+            this.connectState = connectState;
         }
 
-        public Boolean getCanManage() {
-            return canManage;
+        public boolean isCanAccept() {
+            return canAccept;
         }
 
-        public void setCanManage(Boolean canAccept) {
-            this.canManage = canAccept;
+        public void setCanAccept(boolean canAccept) {
+            this.canAccept = canAccept;
+        }
+
+        public boolean isCanRemove() {
+            return canRemove;
+        }
+
+        public void setCanRemove(boolean canRemove) {
+            this.canRemove = canRemove;
         }
 
         public AdvertTargetConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
@@ -104,16 +114,6 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
         public AdvertTargetConnectionRepresentation withUser(UserRepresentationSimple user) {
             this.user = user;
-            return this;
-        }
-
-        public AdvertTargetConnectionRepresentation withPartnershipState(PrismPartnershipState partnershipState) {
-            this.partnershipState = partnershipState;
-            return this;
-        }
-
-        public AdvertTargetConnectionRepresentation withCanManage(Boolean canManage) {
-            this.canManage = canManage;
             return this;
         }
 

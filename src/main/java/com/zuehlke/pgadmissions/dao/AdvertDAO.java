@@ -36,6 +36,7 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -472,10 +473,20 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<Integer> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
-            boolean strict) {
+    public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
+            boolean strict, Class<T> responseClass) {
+        Projection projections;
+        boolean integerResponse = responseClass.equals(Integer.class);
+        if (integerResponse) {
+            projections = Projections.groupProperty("advert.id");
+        } else {
+            projections = Projections.projectionList() //
+                    .add(Projections.groupProperty("advert.id").as("advert")) //
+                    .add(Projections.property("advert.opportunityCategories").as("opportunityCategories"));
+        }
+        
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class, "advert") //
-                .setProjection(Projections.groupProperty("advert.id"));
+                .setProjection(projections);
 
         if (strict) {
             criteria.createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN,
@@ -494,7 +505,13 @@ public class AdvertDAO {
             criteria.add(Restrictions.in("advert.id", advertIds));
         }
 
-        return (List<Integer>) criteria.list();
+        if (integerResponse) {
+            return (List<T>) criteria.list();
+        }
+        
+        return (List<T>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
+                .list();
     }
 
     public List<Integer> getUserAdverts(User user, PrismScope scope, Collection<PrismState> states) {

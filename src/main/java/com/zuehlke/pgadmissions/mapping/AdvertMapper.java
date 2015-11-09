@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -413,8 +412,7 @@ public class AdvertMapper {
             AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
                     .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
                             advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
-                            advertTarget.getOtherBackgroundId()))
-                    .withPartnershipState(advertTarget.getPartnershipState()).withCanManage(BooleanUtils.isTrue(advertTarget.getCanManage()));
+                            advertTarget.getOtherBackgroundId()));
 
             Integer otherUserId = advertTarget.getOtherUserId();
             if (otherUserId != null) {

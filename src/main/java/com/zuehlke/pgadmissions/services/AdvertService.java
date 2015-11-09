@@ -533,16 +533,6 @@ public class AdvertService {
             }
         }
 
-        User user = userService.getCurrentUser();
-        List<Integer> userAdverts = getAdvertsForWhichUserCanManageConnections(user);
-
-        List<Integer> userAdvertTargets = advertDAO.getAdvertTargetsUserCanManage(user, userAdverts);
-        advertTargets.keySet().forEach(at -> {
-            if (userAdvertTargets.contains(at)) {
-                advertTargets.get(at).setCanManage(true);
-            }
-        });
-
         return newArrayList(advertTargets.values());
     }
 
@@ -846,11 +836,6 @@ public class AdvertService {
                 advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts, pending));
             }
         }
-
-        advertTargets.forEach(advertTarget -> {
-            advertTarget.setCanManage(true);
-        });
-
         return advertTargets;
     }
 

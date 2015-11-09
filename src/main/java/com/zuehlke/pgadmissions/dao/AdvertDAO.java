@@ -481,8 +481,8 @@ public class AdvertDAO {
             projections = Projections.groupProperty("advert.id");
         } else {
             projections = Projections.projectionList() //
-                    .add(Projections.groupProperty("advert.id")) //
-                    .add(Projections.property("advert.opportunityCategories"));
+                    .add(Projections.groupProperty("advert.id").as("advert")) //
+                    .add(Projections.property("advert.opportunityCategories").as("opportunityCategories"));
         }
         
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class, "advert") //
@@ -508,6 +508,7 @@ public class AdvertDAO {
         if (integerResponse) {
             return (List<T>) criteria.list();
         }
+        
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();

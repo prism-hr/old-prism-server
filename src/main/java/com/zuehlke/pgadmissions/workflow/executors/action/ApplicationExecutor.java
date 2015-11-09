@@ -86,7 +86,7 @@ public class ApplicationExecutor implements ActionExecutor {
 
         CommentPositionDetailDTO positionDetailDTO = commentDTO.getPositionDetail();
         if (positionDetailDTO != null) {
-            comment.setPositionDetail(new CommentPositionDetail().withPositionTitle(positionDetailDTO.getPositionName()).withPositionDescription(
+            comment.setPositionDetail(new CommentPositionDetail().withPositionName(positionDetailDTO.getPositionName()).withPositionDescription(
                     positionDetailDTO.getPositionDescription()));
         }
 

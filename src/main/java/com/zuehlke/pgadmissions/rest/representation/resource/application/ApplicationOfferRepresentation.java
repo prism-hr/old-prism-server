@@ -4,20 +4,20 @@ import org.joda.time.LocalDate;
 
 public class ApplicationOfferRepresentation {
 
-    private String positionTitle;
-    
+    private String positionName;
+
     private String positionDescription;
-    
+
     private LocalDate positionProvisionalStartDate;
-    
+
     private String appointmentConditions;
 
-    public final String getPositionTitle() {
-        return positionTitle;
+    public final String getPositionName() {
+        return positionName;
     }
 
-    public final void setPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+    public final void setPositionName(String positionName) {
+        this.positionName = positionName;
     }
 
     public final String getPositionDescription() {
@@ -43,25 +43,25 @@ public class ApplicationOfferRepresentation {
     public final void setAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
     }
-    
-    public ApplicationOfferRepresentation withPositionTitle(String positionTitle) {
-        this.positionTitle = positionTitle;
+
+    public ApplicationOfferRepresentation withPositionName(String positionName) {
+        this.positionName = positionName;
         return this;
     }
-    
+
     public ApplicationOfferRepresentation withPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
         return this;
     }
-    
+
     public ApplicationOfferRepresentation withPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
         this.positionProvisionalStartDate = positionProvisionalStartDate;
         return this;
     }
-    
+
     public ApplicationOfferRepresentation withAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
         return this;
     }
-    
+
 }

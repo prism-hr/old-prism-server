@@ -28,7 +28,7 @@ public class CommentPositionDetail {
         this.positionDescription = positionDescription;
     }
 
-    public CommentPositionDetail withPositionTitle(String positionName) {
+    public CommentPositionDetail withPositionName(String positionName) {
         this.positionName = positionName;
         return this;
     }

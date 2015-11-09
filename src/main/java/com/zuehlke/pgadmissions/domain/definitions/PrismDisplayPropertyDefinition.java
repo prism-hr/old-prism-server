@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -2109,8 +2109,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_INTERVIEW_TIMEZONE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
     APPLICATION_ACTION_INTERVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interview Duration"),
     APPLICATION_ACTION_INTERVIEW_DURATION_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
-    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to provide primary supervision"),
-    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to provide primary supervision. You will be able to suggest amendments to the proposed research programme when you have provided a positive confirmation."),
+    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to approve the hire"),
+    APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to approve the hire. You will be able to suggest amendments to the proposed position when you have provided a positive confirmation."),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_CONFIRM(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm"),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_DECLINE(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Decline"),
     APPLICATION_ACTION_DECLINE_SUPERVISION_REASON_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Reason"),

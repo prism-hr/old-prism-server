@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 import java.util.List;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 

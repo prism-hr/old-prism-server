@@ -1,69 +1,42 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
-import static java.time.Month.APRIL;
-import static java.time.Month.OCTOBER;
-import static java.util.Arrays.stream;
-import static org.apache.commons.lang.ArrayUtils.contains;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-
-import java.time.Month;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismLocalizableDefinition;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.resource.*;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.InstitutionDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceParentDTO;
-import com.zuehlke.pgadmissions.workflow.executors.action.ActionExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ApplicationExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.DepartmentExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.InstitutionExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ProgramExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.ProjectExecutor;
-import com.zuehlke.pgadmissions.workflow.executors.action.SystemExecutor;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ApplicationCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.DepartmentCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.InstitutionCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ProgramCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ProjectCreator;
-import com.zuehlke.pgadmissions.workflow.transition.creators.ResourceCreator;
+import com.zuehlke.pgadmissions.workflow.executors.action.*;
+import com.zuehlke.pgadmissions.workflow.transition.creators.*;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ApplicationPopulator;
 import com.zuehlke.pgadmissions.workflow.transition.populators.ResourcePopulator;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ApplicationProcessor;
 import com.zuehlke.pgadmissions.workflow.transition.processors.ResourceProcessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ApplicationPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.DepartmentPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.InstitutionPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProgramPostprocessor;
-import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.ProjectPostprocessor;
+import com.zuehlke.pgadmissions.workflow.transition.processors.postprocessors.*;
 import com.zuehlke.pgadmissions.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+
+import java.time.Month;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static com.google.common.base.CaseFormat.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
+import static java.time.Month.APRIL;
+import static java.time.Month.OCTOBER;
+import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>,PrismLocalizableDefinition {
 
@@ -215,16 +188,17 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
         return ResourceParent.class.isAssignableFrom(definition.getResourceClass());
     }
 
-    public static List<PrismResourceContext> getResourceContexts(String opportunityCategories) {
-        List<PrismResourceContext> contexts = Lists.newArrayList();
+    public static Set<PrismResourceContext> getResourceContexts(String opportunityCategories) {
+        Set<PrismResourceContext> contexts = Sets.newHashSet();
         if (isNotEmpty(opportunityCategories)) {
-            stream(opportunityCategories.split("\\|")).forEach(opportunityCategory -> {
+            for(String categoryString : opportunityCategories.split("\\|")){
+                PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(categoryString);
                 defaults.keySet().forEach(key -> {
                     if (contains(defaults.get(key).getDefaultOpportunityCategories(), opportunityCategory)) {
                         contexts.add(key.getValue());
                     }
                 });
-            });
+            }
         }
         return contexts;
     }

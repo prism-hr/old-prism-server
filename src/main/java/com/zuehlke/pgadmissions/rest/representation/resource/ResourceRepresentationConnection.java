@@ -1,20 +1,19 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
-import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static java.util.Arrays.asList;
-
-import java.util.List;
-
-import org.apache.commons.lang3.ObjectUtils;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import org.apache.commons.lang3.ObjectUtils;
+
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static java.util.Arrays.asList;
 
 public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
 
@@ -24,7 +23,7 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
 
     private DocumentRepresentation backgroundImage;
 
-    private List<PrismResourceContext> contexts;
+    private Set<PrismResourceContext> contexts;
 
     public ResourceRepresentationIdentity getInstitution() {
         return institution;
@@ -50,11 +49,11 @@ public class ResourceRepresentationConnection implements Comparable<ResourceRepr
         this.backgroundImage = backgroundImage;
     }
 
-    public List<PrismResourceContext> getContexts() {
+    public Set<PrismResourceContext> getContexts() {
         return contexts;
     }
 
-    public void setContexts(List<PrismResourceContext> contexts) {
+    public void setContexts(Set<PrismResourceContext> contexts) {
         this.contexts = contexts;
     }
 

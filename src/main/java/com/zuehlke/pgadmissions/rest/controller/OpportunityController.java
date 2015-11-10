@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -33,9 +31,6 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
-        if(query.getContext() == PrismResourceContext.UNIVERSITY && query.getContextScope() == PrismScope.INSTITUTION && query.getResourceId() != null) {
-            throw new PrismForbiddenException("Cannot see university partners");
-        }
         AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
         return representation;
     }

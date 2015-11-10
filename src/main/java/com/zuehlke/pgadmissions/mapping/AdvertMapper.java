@@ -5,11 +5,15 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.ACCEPTED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.PENDING;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.UNKNOWN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -66,6 +70,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
@@ -101,6 +106,8 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.RoleService;
+import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
@@ -112,6 +119,12 @@ public class AdvertMapper {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private RoleService roleService;
+
+    @Inject
+    private SystemService systemService;
 
     @Inject
     private UserService userService;
@@ -397,8 +410,13 @@ public class AdvertMapper {
     }
 
     public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets) {
+        User user = userService.getCurrentUser();
+        boolean userSuperAdmin = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
+        List<Integer> userAdminAdverts = advertService.getAdvertsForWhichUserCanManageConnections(user);
+        Set<Integer> userTargetAdverts = advertService.getAdvertsForWhichUserIsTarget(user);
+
         Map<ResourceRepresentationConnection, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
-        TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> representationFilter = TreeMultimap.create();
+        TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> filteredRepresentations = TreeMultimap.create();
         for (AdvertTargetDTO advertTarget : advertTargets) {
             ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
                     advertTarget.getThisInstitutionName(), advertTarget.getThisInstitutionLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
@@ -409,29 +427,49 @@ public class AdvertMapper {
                 representationIndex.put(thisResourceRepresentation, representation);
             }
 
-            AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
-                    .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
-                            advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
-                            advertTarget.getOtherBackgroundId()));
-
-            Integer otherUserId = advertTarget.getOtherUserId();
-            if (otherUserId != null) {
-                connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
-                        .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
-                        .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
-                        .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
-            }
-
-            representationFilter.put(representation, connectionRepresentation);
+            filteredRepresentations.put(representation, getAdvertTargetConnectionRepresentation(advertTarget, userSuperAdmin, userAdminAdverts, userTargetAdverts));
         }
 
         List<AdvertTargetRepresentation> representations = Lists.newLinkedList();
-        representationFilter.keySet().forEach(representation -> {
-            representation.setConnections(Lists.newLinkedList(representationFilter.get(representation)));
+        filteredRepresentations.keySet().forEach(representation -> {
+            representation.setConnections(newLinkedList(filteredRepresentations.get(representation)));
             representations.add(representation);
         });
 
         return representations;
+    }
+
+    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget, boolean superAdmin, List<Integer> adminAdverts,
+            Set<Integer> targetAdverts) {
+        AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
+                .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
+                        advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
+                        advertTarget.getOtherBackgroundId()));
+
+        Integer otherUserId = advertTarget.getOtherUserId();
+        if (otherUserId != null) {
+            connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
+                    .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
+                    .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
+                    .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
+        }
+
+        Integer otherAdvertId = advertTarget.getOtherAdvertId();
+        if (superAdmin || adminAdverts.contains(advertTarget.getThisAdvertId()) || adminAdverts.contains(otherAdvertId) || targetAdverts.contains(otherAdvertId)) {
+            connectionRepresentation.setCanManage(true);
+            PrismPartnershipState partnershipState = advertTarget.getPartnershipState();
+            if (partnershipState.equals(ENDORSEMENT_PENDING)) {
+                connectionRepresentation.setConnectState(PENDING);
+            } else if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
+                connectionRepresentation.setConnectState(ACCEPTED);
+            } else if (partnershipState.equals(ENDORSEMENT_REVOKED)) {
+                connectionRepresentation.setConnectState(REJECTED);
+            }
+        } else {
+            connectionRepresentation.setCanManage(false);
+        }
+        
+        return connectionRepresentation;
     }
 
     private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(Advert advert) {

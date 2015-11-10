@@ -658,6 +658,14 @@ public class AdvertDAO {
                 .add(Restrictions.eq("targetResource.id", resourceId)) //
                 .list();
     }
+    
+    public List<Integer> getAdvertsForWhichUserIsTarget(User user, String advertProperty) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty(advertProperty + ".id")) //
+                .add(Restrictions.eq("acceptAdvertUser", user)) //
+                .add(Restrictions.neProperty(advertProperty, "acceptAdvert")) //
+                .list();
+    }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismResourceContext context = queryDTO.getContext();
@@ -688,23 +696,6 @@ public class AdvertDAO {
     private void appendNodeVisibilityConstraint(Criteria criteria, Collection<Integer> nodeAdverts, Collection<Integer> userAdverts, boolean recommendation) {
         criteria.add(Restrictions.in("advert.id", nodeAdverts));
         appendVisibilityConstraint(criteria, userAdverts, recommendation);
-    }
-
-    public void appendNetworkVisibilityConstraint(Criteria criteria, Collection<Integer> userAdverts, boolean recommendation) {
-        if (recommendation) {
-            criteria.add(Restrictions.eq("advert.globallyVisible", false));
-            if (isNotEmpty(userAdverts)) {
-                criteria.add(Restrictions.in("advert.id", userAdverts));
-            }
-        } else {
-            if (isNotEmpty(userAdverts)) {
-                criteria.add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("advert.globallyVisible", true))
-                        .add(Restrictions.in("advert.id", userAdverts)));
-            } else {
-                criteria.add(Restrictions.eq("advert.globallyVisible", true));
-            }
-        }
     }
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
@@ -848,11 +839,13 @@ public class AdvertDAO {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("target.id").as("id")) //
+                        .add(Projections.groupProperty("thisAdvert.id").as("thisAdvertId"))
                         .add(Projections.groupProperty("thisInstitution.id").as("thisInstitutionId")) //
                         .add(Projections.property("thisInstitution.name").as("thisInstitutionName")) //
                         .add(Projections.property("thisInstitution.logoImage.id").as("thisInstitutionLogoImageId")) //
                         .add(Projections.groupProperty("thisDepartment.id").as("thisDepartmentId")) //
-                        .add(Projections.property("thisDepartment.name").as("thisDepartmentName"))
+                        .add(Projections.property("thisDepartment.name").as("thisDepartmentName")) //
+                        .add(Projections.groupProperty("otherAdvert.id").as("otherAdvertId"))
                         .add(Projections.groupProperty("otherInstitution.id").as("otherInstitutionId")) //
                         .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
                         .add(Projections.property("otherInstitution.logoImage.id").as("otherInstitutionLogoImageId")) //

@@ -7,6 +7,8 @@ public class AdvertTargetDTO {
 
     private Integer id;
 
+    private Integer thisAdvertId;
+
     private Integer thisInstitutionId;
 
     private String thisInstitutionName;
@@ -16,6 +18,8 @@ public class AdvertTargetDTO {
     private Integer thisDepartmentId;
 
     private String thisDepartmentName;
+
+    private Integer otherAdvertId;
 
     private Integer otherInstitutionId;
 
@@ -53,6 +57,14 @@ public class AdvertTargetDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getThisAdvertId() {
+        return thisAdvertId;
+    }
+
+    public void setThisAdvertId(Integer thisAdvertId) {
+        this.thisAdvertId = thisAdvertId;
     }
 
     public Integer getThisInstitutionId() {
@@ -93,6 +105,14 @@ public class AdvertTargetDTO {
 
     public void setThisDepartmentName(String thisDepartmentName) {
         this.thisDepartmentName = thisDepartmentName;
+    }
+
+    public Integer getOtherAdvertId() {
+        return otherAdvertId;
+    }
+
+    public void setOtherAdvertId(Integer otherAdvertId) {
+        this.otherAdvertId = otherAdvertId;
     }
 
     public Integer getOtherInstitutionId() {

@@ -689,7 +689,7 @@ public class AdvertService {
         }
     }
 
-    private List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
+    public List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
         return getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, null);
     }
 
@@ -815,6 +815,14 @@ public class AdvertService {
 
     public List<AdvertTarget> getAdvertTargetsForAdverts(Collection<Integer> adverts) {
         return advertDAO.getAdvertTargetsForAdverts(adverts);
+    }
+
+    public Set<Integer> getAdvertsForWhichUserIsTarget(User user) {
+        Set<Integer> adverts = Sets.newHashSet();
+        for (String advertProperty : new String[] { "advert", "targetAdvert" }) {
+            adverts.addAll(advertDAO.getAdvertsForWhichUserIsTarget(user, advertProperty));
+        }
+        return adverts;
     }
 
     private String[] getFilteredRoleExtensions(PrismScope scope, String[] roleExtensions) {

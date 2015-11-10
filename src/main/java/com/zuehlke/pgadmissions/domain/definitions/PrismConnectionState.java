@@ -4,6 +4,7 @@ public enum PrismConnectionState {
 
     UNKNOWN, //
     PENDING, //
-    ACCEPTED;
+    ACCEPTED, //
+    REJECTED;
 
 }

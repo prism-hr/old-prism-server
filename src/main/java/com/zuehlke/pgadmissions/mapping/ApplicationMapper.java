@@ -266,9 +266,10 @@ public class ApplicationMapper {
             return offerRepresentation;
         }
 
+        LocalDate startDate = application.getProgramDetail() != null ? application.getProgramDetail().getStartDate() : null;
         return new ApplicationOfferRepresentation().withPositionName(application.getAdvert().getName())
                 .withPositionDescription(application.getAdvert().getSummary())
-                .withPositionProvisionalStartDate(application.getProgramDetail().getStartDate());
+                .withPositionProvisionalStartDate(startDate);
     }
 
     private ApplicationOfferRepresentation getApplicationOfferRecommendationRepresentation(Comment comment) {

@@ -202,7 +202,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_COMPLETE_APPROVED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REJECTED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Arrangements"),
-    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Appointment"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
     SYSTEM_ACTION_APPLICATION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),

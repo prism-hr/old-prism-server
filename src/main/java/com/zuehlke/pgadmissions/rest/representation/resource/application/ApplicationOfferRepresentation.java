@@ -12,35 +12,35 @@ public class ApplicationOfferRepresentation {
 
     private String appointmentConditions;
 
-    public final String getPositionName() {
+    public String getPositionName() {
         return positionName;
     }
 
-    public final void setPositionName(String positionName) {
+    public void setPositionName(String positionName) {
         this.positionName = positionName;
     }
 
-    public final String getPositionDescription() {
+    public String getPositionDescription() {
         return positionDescription;
     }
 
-    public final void setPositionDescription(String positionDescription) {
+    public void setPositionDescription(String positionDescription) {
         this.positionDescription = positionDescription;
     }
 
-    public final LocalDate getPositionProvisionalStartDate() {
+    public LocalDate getPositionProvisionalStartDate() {
         return positionProvisionalStartDate;
     }
 
-    public final void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
+    public void setPositionProvisionalStartDate(LocalDate positionProvisionalStartDate) {
         this.positionProvisionalStartDate = positionProvisionalStartDate;
     }
 
-    public final String getAppointmentConditions() {
+    public String getAppointmentConditions() {
         return appointmentConditions;
     }
 
-    public final void setAppointmentConditions(String appointmentConditions) {
+    public void setAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
     }
 

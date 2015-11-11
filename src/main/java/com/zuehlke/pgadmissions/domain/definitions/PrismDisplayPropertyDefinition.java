@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1240,7 +1240,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
       * *************** SYSTEM ACTIVITY SECTION *********************
       */
 
-    SYSTEM_ACTIVITY_RECENTLY_UPDATED(PrismDisplayPropertyCategory.SYSTEM_CONNECT_SECTION, "Recently Updated"),
+    SYSTEM_ACTIVITY_RECENTLY_UPDATED(PrismDisplayPropertyCategory.SYSTEM_ACTIVITY_SECTION, "Recently Updated"),
 
     /*
      * *************** SYSTEM CONNECT SECTION *********************
@@ -1255,9 +1255,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_AUTHENTICATE_METHOD_OR(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "OR"),
-    SYSTEM_AUTHENTICATE_SOCIAL_SIGN_IN_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Social Sign in"),
-    SYSTEM_AUTHENTICATE_NOT_REGISTERED_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Not Registered?"),
-    SYSTEM_AUTHENTICATE_FORGOT_PASSWORD_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Forgot Password?"),
+    SYSTEM_AUTHENTICATE_SOCIAL_SIGN_IN_BUTTON(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Social Sign in"),
+    SYSTEM_AUTHENTICATE_NOT_REGISTERED_BUTTON(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Not Registered?"),
+    SYSTEM_AUTHENTICATE_FORGOT_PASSWORD_BUTTON(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Forgot Password?"),
     SYSTEM_AUTHENTICATE_REGISTER_BUTTON(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Register"),
     SYSTEM_AUTHENTICATE_SIGN_IN_BUTTON(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Sign In"),
     SYSTEM_AUTHENTICATE_SIGN_IN_WITH_SOCIAL_MEDIA(PrismDisplayPropertyCategory.SYSTEM_AUTHENTICATE, "Sign in with Social Media"),
@@ -1290,16 +1290,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_ORGANIZATIONS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Organizations"),
     SYSTEM_OPPORTUNITIES_EMPLOYERS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Employers"),
     SYSTEM_OPPORTUNITIES_DEPARTMENTS(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Departments"),
-    SYSTEM_OPPORTUNITIES_CONNECT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Connect"),
-    SYSTEM_OPPORTUNITIES_CREATE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Create Employer"),
-    SYSTEM_OPPORTUNITIES_INVITE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Invite Employer"),
-    SYSTEM_OPPORTUNITIES_CREATE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Create University"),
-    SYSTEM_OPPORTUNITIES_INVITE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Invite University"),
-    SYSTEM_OPPORTUNITIES_CREATE_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Create Department"),
-    SYSTEM_OPPORTUNITIES_INVITE_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Invite Department"),
-    SYSTEM_OPPORTUNITIES_JOIN_STAFF(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "I work here"),
-    SYSTEM_OPPORTUNITIES_JOIN_STUDENT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "I study here"),
-    SYSTEM_OPPORTUNITIES_JOIN_GRADUATE(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "I studied here"),
+    SYSTEM_OPPORTUNITIES_CONNECT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Connect"),
+    SYSTEM_OPPORTUNITIES_CREATE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create Employer"),
+    SYSTEM_OPPORTUNITIES_INVITE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Invite Employer"),
+    SYSTEM_OPPORTUNITIES_CREATE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create University"),
+    SYSTEM_OPPORTUNITIES_INVITE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Invite University"),
+    SYSTEM_OPPORTUNITIES_CREATE_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create Department"),
+    SYSTEM_OPPORTUNITIES_INVITE_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Invite Department"),
+    SYSTEM_OPPORTUNITIES_JOIN_STAFF(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "I work here"),
+    SYSTEM_OPPORTUNITIES_JOIN_STUDENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "I study here"),
+    SYSTEM_OPPORTUNITIES_JOIN_GRADUATE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "I studied here"),
     SYSTEM_OPPORTUNITIES_SEARCH(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Search"),
     SYSTEM_OPPORTUNITIES_ADVERTISE_NOW(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create Advert"),
     SYSTEM_OPPORTUNITIES_FILTER_CATEGORY_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Category"),
@@ -1402,17 +1402,17 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM INVITE SECTION *********************
      */
 
-    SYSTEM_INVITE_UNIVERSITY_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite University"),
-    SYSTEM_INVITE_EMPLOYER_HEADER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Employer"),
-    SYSTEM_INVITE_JUST_INVITED_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Thank you. {{name}} has been invited to join PRiSM."),
-    SYSTEM_INVITE_JUST_INVITED_NEXT_STEP(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "We will get back in touch with you to let you know when your invitation has been accepted."),
-    SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite employers to join your network to receive opportunities from them."),
-    SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite universities to join your network to promote opportunities to their students."),
-    SYSTEM_INVITE_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invitation message"),
-    SYSTEM_INVITE_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you wish you can specify a personal message that you would like your contact to receive."),
-    SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Invite Another"),
-    SYSTEM_INVITE_LOGIN_REGISTER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You must be registered and have staff privileges in an organization to invite another organization to join."),
-    SYSTEM_INVITE_CREATE_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You must have staff privileges in an organization to invite another organization to connect."),
+    SYSTEM_INVITE_UNIVERSITY_HEADER(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Invite University"),
+    SYSTEM_INVITE_EMPLOYER_HEADER(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Invite Employer"),
+    SYSTEM_INVITE_JUST_INVITED_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Thank you. {{name}} has been invited to join PRiSM."),
+    SYSTEM_INVITE_JUST_INVITED_NEXT_STEP(PrismDisplayPropertyCategory.SYSTEM_INVITE, "We will get back in touch with you to let you know when your invitation has been accepted."),
+    SYSTEM_INVITE_EMPLOYER_VALUE(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Invite employers to join your network to receive opportunities from them."),
+    SYSTEM_INVITE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Invite universities to join your network to promote opportunities to their students."),
+    SYSTEM_INVITE_MESSAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Invitation message"),
+    SYSTEM_INVITE_MESSAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_INVITE, "If you wish you can specify a personal message that you would like your contact to receive."),
+    SYSTEM_INVITE_ANOTHER(PrismDisplayPropertyCategory.SYSTEM_INVITE, "Invite Another"),
+    SYSTEM_INVITE_LOGIN_REGISTER(PrismDisplayPropertyCategory.SYSTEM_INVITE, "You must be registered and have staff privileges in an organization to invite another organization to join."),
+    SYSTEM_INVITE_CREATE_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_INVITE, "You must have staff privileges in an organization to invite another organization to connect."),
 
     /*
      * *************** SYSTEM RESOURCES SECTION *********************
@@ -1591,18 +1591,18 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_TELEPHONE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Provide us with a telephone number that we can contact you at should we need to."),
     SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Processing Options"),
     SYSTEM_RESOURCE_PARENT_RESOURCE_CONDITIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Configure the processing options that you wish to enable"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Currently Accepting CVs?"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow candidates to forward their CVs"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Enable new Departments?"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow registered users within your organization to create new Departments"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PROGRAM_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Enable new Programs?"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PROGRAM_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow registered users within your organization to create new programs"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Enable new Positions?"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow registered users within your organization to create new positions"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PARTNER_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow partnerships"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PARTNER_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Allow third party organizations to offer positions"),
-    SYSTEM_RESOURCE_PARENT_SOCIAL_LINKS(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Social Links Placement"),
-    SYSTEM_RESOURCE_PARENT_ACCEPT_PUBLIC_MODE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Accept from external organizations"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Currently Accepting CVs?"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_APPLICATION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Allow candidates to forward their CVs"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Enable new Departments?"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Allow registered users within your organization to create new Departments"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PROGRAM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Enable new Programs?"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PROGRAM_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Allow registered users within your organization to create new programs"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Enable new Positions?"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Allow registered users within your organization to create new positions"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PARTNER_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Allow partnerships"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PARTNER_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Allow third party organizations to offer positions"),
+    SYSTEM_RESOURCE_PARENT_SOCIAL_LINKS(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Social Links Placement"),
+    SYSTEM_RESOURCE_PARENT_ACCEPT_PUBLIC_MODE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Accept from external organizations"),
     SYSTEM_RESOURCE_PARENT_POSITION_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Position Options"),
     SYSTEM_RESOURCE_PARENT_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Specify the type of position that you are offering (e.g. permanent/fixed-term, full-time/part-time."),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Permanent"),
@@ -1637,7 +1637,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_RESOURCE_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Select your preferred opportunity type."),
     SYSTEM_RESOURCE_OPPORTUNITY_POSITION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Accept the terms and conditions and specify the nature of your position."),
-
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Rate Opportunity"),
     SYSTEM_RESOURCE_OPPORTUNITY_RATING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "To help your students decide whether to pursue this opportunity, tell us how you rate it."),
     SYSTEM_RESOURCE_OPPORTUNITY_PROVIDE_ENDORSEMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Endorse Opportunity"),
@@ -1670,10 +1669,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. A new Classification for Inorganic Compounds"),
     SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Qualification Type"),
     SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your qualification"),
-    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
-    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your qualification."),
-    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_USER_HEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Supervisor details"),
-    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_USER_HEADER(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Referee details"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description"),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description of your qualification."),
+    SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Supervisor details"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Referee details"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Employer"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your employer"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Position"),
@@ -1681,8 +1680,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Software Engineer"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Employment Type"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your employment"),
-    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description"),
-    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Description of your employment."),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description"),
+    SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description of your employment."),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Referee Employer"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your referee's employer"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Position"),
@@ -1747,6 +1746,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the job functions that your advert is relevant to."),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Closing Date"),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "The closing date for applications."),
+
+    /*
+     * *************** SYSTEM RESOURCE ADVERT *********************
+     */
 
     SYSTEM_FINANCIAL_DETAILS_SPECIFY_PAY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS, "Would you like to specify pay?"),
     SYSTEM_FINANCIAL_DETAILS_SPECIFY_PAY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_FINANCIAL_DETAILS, "If you are offering a salary, specify it here"),
@@ -1829,10 +1832,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_DISPLAY_PROPERTY(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization display property configuration"),
     INSTITUTION_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Restored system default display property configuration"),
     INSTITUTION_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Restored organization global display property configuration"),
-    INSTITUTION_COMMENT_UPDATED_ADVERT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated organization advert"),
-    INSTITUTION_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated organization categories"),
-    INSTITUTION_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated organization targets"),
-    INSTITUTION_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated organizations competences"),
+    INSTITUTION_COMMENT_UPDATED_ADVERT(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization advert"),
+    INSTITUTION_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization categories"),
+    INSTITUTION_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization targets"),
+    INSTITUTION_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organizations competences"),
     INSTITUTION_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated email lists"),
 
     /*
@@ -1843,7 +1846,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_APPROVED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are pleased to tell you that your Department has been approved. You may now login to create users, programs and positions, and manage your recruitmemt"),
     DEPARTMENT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Further information is required to activate your Department. Please login to address the reviewers comments"),
     DEPARTMENT_COMMENT_REJECTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are sorry to inform you that your Department has been rejected"),
-    DEPARTMENT_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Initialized Department"),
+    DEPARTMENT_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Initialized Department"),
     DEPARTMENT_COMMENT_UPDATED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department"),
     DEPARTMENT_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department user roles"),
     DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department notification configuration"),
@@ -1856,8 +1859,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Restored organization default display property configuration"),
     DEPARTMENT_COMMENT_UPDATED_ADVERT(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department advert"),
     DEPARTMENT_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department categories"),
-    DEPARTMENT_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated Department targets"),
-    DEPARTMENT_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated Department competences"),
+    DEPARTMENT_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department targets"),
+    DEPARTMENT_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department competences"),
     DEPARTMENT_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated email lists"),
 
     /*
@@ -1896,20 +1899,20 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are sorry to inform you that your position has been rejected"),
     PROJECT_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position"),
     PROJECT_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position user roles"),
-    PROJECT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated position notification configuration"),
-    PROJECT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored program default notification configuration"),
-    PROJECT_COMMENT_UPDATED_STATE_DURATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated position state duration configuration"),
-    PROJECT_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored program default state duration configuration"),
-    PROJECT_COMMENT_UPDATED_WORKFLOW_PROPERTY(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated position workflow property configuration"),
-    PROJECT_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored program default workflow property configuration"),
-    PROJECT_COMMENT_UPDATED_DISPLAY_PROPERTY(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated position display property configuration"),
-    PROJECT_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored program default display property configuration"),
+    PROJECT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position notification configuration"),
+    PROJECT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Restored program default notification configuration"),
+    PROJECT_COMMENT_UPDATED_STATE_DURATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position state duration configuration"),
+    PROJECT_COMMENT_RESTORED_STATE_DURATION_DEFAULT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Restored program default state duration configuration"),
+    PROJECT_COMMENT_UPDATED_WORKFLOW_PROPERTY(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position workflow property configuration"),
+    PROJECT_COMMENT_RESTORED_WORKFLOW_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Restored program default workflow property configuration"),
+    PROJECT_COMMENT_UPDATED_DISPLAY_PROPERTY(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position display property configuration"),
+    PROJECT_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Restored program default display property configuration"),
     PROJECT_COMMENT_UPDATED_ADVERT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position advert"),
     PROJECT_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position categories"),
     PROJECT_COMMENT_UPDATED_FEE_AND_PAYMENT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position salary"),
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position closing dates"),
     PROJECT_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position targets"),
-    PROJECT_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated position competences"),
+    PROJECT_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position competences"),
     PROJECT_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated email lists"),
 
     /*
@@ -2019,10 +2022,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_REFEREE_POSITION_CONTACT_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Contact Details"),
     PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Position & Employer"),
     PROFILE_REFEREE_POSITION_EMPLOYER_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The position that your referee holds, and the organization that employs them."),
-    PROFILE_REFEREE_PHONE_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Telephone"),
-    PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The employer telephone number of the referee."),
-    PROFILE_REFEREE_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Skype user name"),
-    PROFILE_REFEREE_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "The Skype address of the referee."),
+    PROFILE_REFEREE_PHONE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Telephone"),
+    PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The employer telephone number of the referee."),
+    PROFILE_REFEREE_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Skype user name"),
+    PROFILE_REFEREE_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The Skype address of the referee."),
     PROFILE_REFEREE_REFERENCE_APPENDIX(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference"),
     PROFILE_REFEREE_REFERENCE_COMMENT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference Comment"),
 

@@ -554,7 +554,7 @@ public class AdvertMapper {
         });
 
         int advertsAsStaffCount = advertsAsStaff.size();
-        List<Integer> advertAsStaffIds = advertsAsStaff.stream().map(a -> a.getAdvert()).collect(Collectors.toList());
+        List<Integer> advertAsStaffIds = advertsAsStaff.stream().map(AdvertCategoryDTO::getAdvert).collect(Collectors.toList());
         representations.keySet().forEach(advert -> {
             Set<Integer> pendingFor = pendingForIndex.get(advert);
             Set<Integer> acceptedFor = acceptedForIndex.get(advert);

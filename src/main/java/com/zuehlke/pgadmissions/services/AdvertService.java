@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.dto.AdvertCategoryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
@@ -357,8 +356,6 @@ public class AdvertService {
                     }
 
                     performed = true;
-                } else {
-                    throw new PrismForbiddenException("Cannot update advert target");
                 }
             }
         }

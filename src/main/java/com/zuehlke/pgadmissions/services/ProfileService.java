@@ -6,6 +6,13 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDe
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_QUALIFICATION_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_UPDATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -128,7 +135,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserPersonalDetail personalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
         userAccount.setPersonalDetail(personalDetail);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_PERSONAL_DETAIL_UPDATE);
     }
 
     public void updatePersonalDetailApplication(Integer applicationId, ProfilePersonalDetailDTO personalDetailDTO) {
@@ -142,7 +149,7 @@ public class ProfileService {
         applicationPersonalDetail.setAgeRange(prismService.getAgeRangeFromAge(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
 
         userAccount.setPersonalDetail(userPersonalDetail);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_PERSONAL_DETAIL_UPDATE);
 
         applicationPersonalDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setPersonalDetail(applicationPersonalDetail);
@@ -153,7 +160,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserAddress address = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(address);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDRESS_UPDATE);
     }
 
     public void updateAddressApplication(Integer applicationId, ProfileAddressDTO addressDTO) {
@@ -163,7 +170,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAddress userAddress = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(userAddress);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDRESS_UPDATE);
 
         address.setLastUpdatedTimestamp(DateTime.now());
         application.setAddress(address);
@@ -173,7 +180,7 @@ public class ProfileService {
     public UserQualification updateQualificationUser(Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserQualification userQualification = updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
         return userQualification;
     }
 
@@ -192,7 +199,7 @@ public class ProfileService {
         updateQualification(userAccount, userQualification, qualificationDTO);
         userQualification.setApplicationQualification(qualification);
 
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
     }
@@ -200,11 +207,15 @@ public class ProfileService {
     public void deleteQualificationUser(Integer qualificationId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteQualification(userAccount, UserQualification.class, qualificationId);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
     }
 
     public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) {
         Application application = applicationService.getById(applicationId);
+        if (profileDAO.deleteUserProfileSection(UserQualification.class, ApplicationQualification.class, qualificationId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_QUALIFICATION_UPDATE);
+        }
+
         deleteQualification(application, ApplicationQualification.class, qualificationId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
@@ -212,7 +223,7 @@ public class ProfileService {
     public UserEmploymentPosition updateEmploymentPositionUser(Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
         return employmentPosition;
     }
 
@@ -231,7 +242,7 @@ public class ProfileService {
         updateEmploymentPosition(userAccount, userEmploymentPosition, employmentPositionDTO);
         userEmploymentPosition.setApplicationEmploymentPosition(employmentPosition);
 
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
     }
@@ -239,11 +250,15 @@ public class ProfileService {
     public void deleteEmploymentPositionUser(Integer employmentPositionId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
     }
 
     public void deleteEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId) {
         Application application = applicationService.getById(applicationId);
+        if (profileDAO.deleteUserProfileSection(UserEmploymentPosition.class, ApplicationEmploymentPosition.class, employmentPositionId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_EMPLOYMENT_POSITION_UPDATE);
+        }
+
         deleteEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
@@ -251,7 +266,7 @@ public class ProfileService {
     public UserReferee updateRefereeUser(Integer refereeId, ProfileRefereeDTO refereeDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserReferee userReferee = (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_REFEREE_UPDATE);
         return userReferee;
     }
 
@@ -263,13 +278,13 @@ public class ProfileService {
         profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId);
         UserReferee userReferee = entityService.getDuplicateEntity(UserReferee.class,
                 new EntitySignature().addProperty("association", userAccount).addProperty("user", refereeUpdateDTO.getReferee().getUser()));
-        
+
         userReferee = userReferee == null ? new UserReferee() : userReferee;
         updateReferee(userAccount, userReferee, refereeDTO);
         ApplicationReferee referee = (ApplicationReferee) refereeUpdateDTO.getReferee();
         userReferee.setApplicationReferee(referee);
 
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_REFEREE_UPDATE);
         List<CommentAssignedUser> assignees = refereeUpdateDTO.getAssignments();
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
         return (ApplicationReferee) refereeUpdateDTO.getReferee();
@@ -278,11 +293,15 @@ public class ProfileService {
     public void deleteRefereeUser(Integer refereeId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteReferee(userAccount, UserReferee.class, refereeId);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_REFEREE_UPDATE);
     }
 
     public void deleteRefereeApplication(Integer applicationId, Integer refereeId) {
         Application application = applicationService.getById(applicationId);
+        if (profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_REFEREE_UPDATE);
+        }
+
         ApplicationReferee referee = deleteReferee(application, ApplicationReferee.class, refereeId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
@@ -291,7 +310,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserDocument document = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(document);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_DOCUMENT_UPDATE);
     }
 
     public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) {
@@ -306,7 +325,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserDocument userDocument = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(userDocument);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_DOCUMENT_UPDATE);
 
         applicationDocument.setLastUpdatedTimestamp(DateTime.now());
         application.setDocument(applicationDocument);
@@ -317,7 +336,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserAdditionalInformation additionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(additionalInformation);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDITIONAL_INFORMATION_UPDATE);
     }
 
     public void updateAdditionalInformationApplication(Integer applicationId, ProfileAdditionalInformationDTO additionalInformationDTO) {
@@ -328,7 +347,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAdditionalInformation userAdditionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(userAdditionalInformation);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDITIONAL_INFORMATION_UPDATE);
 
         applicationAdditionalInformation.setLastUpdatedTimestamp(DateTime.now());
         application.setAdditionalInformation(applicationAdditionalInformation);

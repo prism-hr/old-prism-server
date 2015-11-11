@@ -121,6 +121,7 @@ public class CommentService {
         transientCompetences.clear();
 
         entityService.save(comment);
+        comment.setSequenceIdentifier(Long.toString(comment.getCreatedTimestamp().getMillis()) + String.format("%010d", comment.getId()));
 
         comment.getAssignedUsers().addAll(persistentAssignees.stream().map(assignee -> assignee.withRoleTransitionType( //
                 assignee.getRoleTransitionType() == null ? CREATE : assignee.getRoleTransitionType())).collect(Collectors.toSet()));

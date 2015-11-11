@@ -53,6 +53,7 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.Activity;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
@@ -78,7 +79,7 @@ import com.zuehlke.pgadmissions.workflow.user.CommentReassignmentProcessor;
 
 @Entity
 @Table(name = "comment")
-public class Comment extends WorkflowResourceExecution implements UserAssignment<CommentReassignmentProcessor> {
+public class Comment extends WorkflowResourceExecution implements Activity, UserAssignment<CommentReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -180,6 +181,9 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
+
     @OrderBy(clause = "role_id, id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "comment_id", nullable = false)
@@ -218,10 +222,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
     @Transient
     private Set<State> secondaryTransitionStates = Sets.newHashSet();
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -318,10 +324,12 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         this.declinedResponse = declinedResponse;
     }
 
+    @Override
     public String getContent() {
         return content;
     }
 
+    @Override
     public void setContent(String content) {
         this.content = content;
     }
@@ -474,12 +482,24 @@ public class Comment extends WorkflowResourceExecution implements UserAssignment
         return documents;
     }
 
+    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
+    @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+    }
+
+    @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
     public Set<State> getSecondaryTransitionStates() {

@@ -1,12 +1,17 @@
 package com.zuehlke.pgadmissions.services;
 
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_SHARED;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_UNSHARED;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.social.linkedin.api.LinkedInProfile;
 import org.springframework.social.linkedin.api.impl.LinkedInTemplate;
@@ -16,8 +21,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+import com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAccountUpdate;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ActionOutcomeDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -26,6 +33,7 @@ import com.zuehlke.pgadmissions.rest.dto.auth.OauthLoginDTO;
 import com.zuehlke.pgadmissions.rest.dto.auth.OauthUserDefinition;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserRegistrationDTO;
+import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
 import com.zuehlke.pgadmissions.utils.PrismEncryptionUtils;
 
 @Service
@@ -69,6 +77,9 @@ public class UserAccountService {
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public User getOrCreateUserAccountExternal(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
@@ -126,14 +137,25 @@ public class UserAccountService {
         return user;
     }
 
-    public void updateUserAccount(UserAccount userAccount) {
+    public void updateUserAccount(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
         DateTime baseline = DateTime.now();
         userAccount.setUpdatedTimestamp(baseline);
         userAccount.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
+        createUserAccountUpdate(userAccount, message);
     }
 
     public void shareUserProfile(Boolean shareProfile) {
-        userService.getCurrentUser().getUserAccount().setShared(shareProfile);
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
+        userAccount.setShared(shareProfile);
+        createUserAccountUpdate(userAccount, isTrue(shareProfile) ? PROFILE_SHARED : PROFILE_UNSHARED);
+    }
+
+    private void createUserAccountUpdate(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
+        UserAccountUpdate update = new UserAccountUpdate().withUserAccount(userAccount)
+                .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(message)).withCreatedTimestamp(now());
+        entityService.save(update);
+        userAccount.getUpdates().add(update);
+        update.setSequenceIdentifier(Long.toString(update.getCreatedTimestamp().getMillis()) + String.format("%010d", update.getId()));
     }
 
     private OauthUserDefinition getLinkedinUserDefinition(OauthLoginDTO oauthLoginDTO) {

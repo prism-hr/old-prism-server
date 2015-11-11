@@ -2044,6 +2044,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_ADDITIONAL_INFORMATION_EMPTY(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
     PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and support staff in your university.</em>"),
+    
+    PROFILE_PERSONAL_DETAIL_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated personal details"), 
+    PROFILE_ADDRESS_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated address details"),
+    PROFILE_QUALIFICATION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated qualification history"), 
+    PROFILE_EMPLOYMENT_POSITION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated employment history"),
+    PROFILE_REFEREE_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated referees"), 
+    PROFILE_DOCUMENT_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated supporting documentation"),
+    PROFILE_ADDITIONAL_INFORMATION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated additional information"),
+    PROFILE_SHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Shared profile"),
+    PROFILE_UNSHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Hid profile"),
 
     APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
     APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "On course placement.<br/><em>Check this if you want your department to consider your application as counting towards a mandatory on cource placement."),

@@ -1,30 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.springframework.beans.BeanUtils.instantiate;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -32,52 +7,41 @@ import com.zuehlke.pgadmissions.dao.ProfileDAO;
 import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
 import com.zuehlke.pgadmissions.domain.address.Address;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
-import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
-import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
-import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
-import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.application.*;
 import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
-import com.zuehlke.pgadmissions.domain.profile.ProfileAdvertRelationSection;
-import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
-import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
-import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
-import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
-import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
+import com.zuehlke.pgadmissions.domain.profile.*;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.user.UserAccount;
-import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
-import com.zuehlke.pgadmissions.domain.user.UserAddress;
-import com.zuehlke.pgadmissions.domain.user.UserDocument;
-import com.zuehlke.pgadmissions.domain.user.UserEmploymentPosition;
-import com.zuehlke.pgadmissions.domain.user.UserPersonalDetail;
-import com.zuehlke.pgadmissions.domain.user.UserQualification;
-import com.zuehlke.pgadmissions.domain.user.UserReferee;
+import com.zuehlke.pgadmissions.domain.user.*;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
 import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.*;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMENT;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.springframework.beans.BeanUtils.instantiate;
 
 @Service
 @Transactional
@@ -205,6 +169,7 @@ public class ProfileService {
 
     public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) {
         Application application = applicationService.getById(applicationId);
+        profileDAO.deleteUserProfileSection(UserQualification.class, ApplicationQualification.class, qualificationId);
         deleteQualification(application, ApplicationQualification.class, qualificationId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
@@ -238,6 +203,7 @@ public class ProfileService {
 
     public void deleteEmploymentPositionUser(Integer employmentPositionId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
+        profileDAO.deleteUserProfileSection(UserEmploymentPosition.class, ApplicationEmploymentPosition.class, employmentPositionId);
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -263,7 +229,7 @@ public class ProfileService {
         profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId);
         UserReferee userReferee = entityService.getDuplicateEntity(UserReferee.class,
                 new EntitySignature().addProperty("association", userAccount).addProperty("user", refereeUpdateDTO.getReferee().getUser()));
-        
+
         userReferee = userReferee == null ? new UserReferee() : userReferee;
         updateReferee(userAccount, userReferee, refereeDTO);
         ApplicationReferee referee = (ApplicationReferee) refereeUpdateDTO.getReferee();
@@ -277,6 +243,7 @@ public class ProfileService {
 
     public void deleteRefereeUser(Integer refereeId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
+        profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId);
         deleteReferee(userAccount, UserReferee.class, refereeId);
         userAccountService.updateUserAccount(userAccount);
     }
@@ -545,6 +512,9 @@ public class ProfileService {
             T profile, Class<U> qualificationClass, Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
         profile.getQualifications().remove(qualification);
+        if(qualificationClass == ApplicationQualification.class) {
+
+        }
         entityService.flush();
     }
 

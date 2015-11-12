@@ -63,6 +63,12 @@ public class CommentService {
     private CommentDAO commentDAO;
 
     @Inject
+    private ActivityService activityService;
+
+    @Inject
+    private DocumentService documentService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -70,9 +76,6 @@ public class CommentService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private DocumentService documentService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -121,7 +124,7 @@ public class CommentService {
         transientCompetences.clear();
 
         entityService.save(comment);
-        comment.setSequenceIdentifier(Long.toString(comment.getCreatedTimestamp().getMillis()) + String.format("%010d", comment.getId()));
+        activityService.setSequenceIdentifier(comment, comment.getCreatedTimestamp());
 
         comment.getAssignedUsers().addAll(persistentAssignees.stream().map(assignee -> assignee.withRoleTransitionType( //
                 assignee.getRoleTransitionType() == null ? CREATE : assignee.getRoleTransitionType())).collect(Collectors.toSet()));

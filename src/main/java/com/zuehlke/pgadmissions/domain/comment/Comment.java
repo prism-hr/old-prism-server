@@ -324,12 +324,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.declinedResponse = declinedResponse;
     }
 
-    @Override
     public String getContent() {
         return content;
     }
 
-    @Override
     public void setContent(String content) {
         this.content = content;
     }
@@ -482,12 +480,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return documents;
     }
 
-    @Override
     public DateTime getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
     }

@@ -37,10 +37,12 @@ public class UserAccountUpdate implements Activity {
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -69,10 +71,12 @@ public class UserAccountUpdate implements Activity {
         this.createdTimestamp = createdTimestamp;
     }
 
+    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
+    @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }

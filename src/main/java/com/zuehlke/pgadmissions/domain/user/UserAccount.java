@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.Activity;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
@@ -28,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 @Entity
 @Table(name = "user_account")
 public class UserAccount
-        implements ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
+        implements Activity, ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -277,10 +278,12 @@ public class UserAccount
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
+    @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }

@@ -181,7 +181,7 @@ public class UserController {
         if (user.getUserAccount() == null) {
             status = "NOT_REGISTERED";
         } else {
-            userService.activateUser(user.getId());
+            userService.enableUser(user.getId());
             status = "ACTIVATED";
             loginProvider = user.getUserAccount().getLinkedinId() != null ? "linkedin" : null;
         }

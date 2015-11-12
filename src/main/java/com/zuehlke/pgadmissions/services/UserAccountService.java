@@ -64,6 +64,9 @@ public class UserAccountService {
     private ActionService actionService;
 
     @Inject
+    private ActivityService activityService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -140,7 +143,7 @@ public class UserAccountService {
     public void updateUserAccount(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
         DateTime baseline = DateTime.now();
         userAccount.setUpdatedTimestamp(baseline);
-        userAccount.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
+        activityService.setSequenceIdentifier(userAccount, baseline);
         createUserAccountUpdate(userAccount, message);
     }
 
@@ -148,6 +151,12 @@ public class UserAccountService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         userAccount.setShared(shareProfile);
         createUserAccountUpdate(userAccount, isTrue(shareProfile) ? PROFILE_SHARED : PROFILE_UNSHARED);
+    }
+
+    public void enableUserAccount(UserAccount userAccount) {
+        DateTime baseline = now();
+        userAccount.setEnabled(true);
+        userAccount.getUser().getUserRoles().stream().forEach(userRole -> activityService.setSequenceIdentifier(userRole, baseline));
     }
 
     private void createUserAccountUpdate(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
@@ -219,7 +228,7 @@ public class UserAccountService {
         if (userAccount == null) {
             userAccount = createUserAccount(user, password, enableAccount);
         } else {
-            userAccount.setEnabled(enableAccount);
+            enableUserAccount(userAccount);
         }
 
         if (oauthUserDefinition != null) {

@@ -153,7 +153,6 @@ public class ProfileService {
 
         applicationPersonalDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setPersonalDetail(applicationPersonalDetail);
-
     }
 
     public void updateAddressUser(ProfileAddressDTO addressDTO) {

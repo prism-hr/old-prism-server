@@ -16,6 +16,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 
@@ -124,6 +125,9 @@ public class UserService {
     private SystemService systemService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private ApplicationContext applicationContext;
 
     @Inject
@@ -198,10 +202,10 @@ public class UserService {
         return userAssignments.get(userAssignmentClass);
     }
 
-    public boolean activateUser(Integer userId) {
-        User user = getById(userId);
-        boolean wasEnabled = user.getUserAccount().getEnabled();
-        user.getUserAccount().setEnabled(true);
+    public boolean enableUser(Integer userId) {
+        UserAccount userAccount = getById(userId).getUserAccount();
+        boolean wasEnabled = toBoolean(userAccount.getEnabled());
+        userAccountService.enableUserAccount(userAccount);
         return !wasEnabled;
     }
 

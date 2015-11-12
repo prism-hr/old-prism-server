@@ -37,6 +37,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.joda.time.DateTime.now;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -154,6 +155,9 @@ public class AdvertService {
     private AdvertDAO advertDAO;
 
     @Inject
+    private ActivityService activityService;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -198,6 +202,10 @@ public class AdvertService {
 
     public AdvertClosingDate getClosingDateById(Integer id) {
         return entityService.getById(AdvertClosingDate.class, id);
+    }
+
+    public AdvertTarget getAdvertTargetById(Integer id) {
+        return entityService.getById(AdvertTarget.class, id);
     }
 
     public AdvertTargetPending getAdvertTargetPendingById(Integer id) {
@@ -381,8 +389,7 @@ public class AdvertService {
 
     public boolean updateAdvertTarget(Integer advertTargetId, Boolean accept) {
         boolean performed = false;
-
-        AdvertTarget advertTarget = advertDAO.getAdvertTargetById(advertTargetId);
+        AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
 
@@ -397,13 +404,15 @@ public class AdvertService {
                     if (endorsementProvided) {
                         resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
                     }
-                    advertDAO.processAdvertTarget(advertTargetId, partnershipState);
+
+                    DateTime baseline = now();
+                    setAdvertTargetPartnershipState(advertTarget, partnershipState, baseline);
 
                     Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
                     if (isAdmin) {
                         advertDAO.getSimilarAdvertTarget(advertTarget, user).forEach(similarAdvertTarget -> {
                             oldPartnershipStates.add(similarAdvertTarget.getPartnershipState());
-                            similarAdvertTarget.setPartnershipState(partnershipState);
+                            setAdvertTargetPartnershipState(similarAdvertTarget, partnershipState, baseline);
                         });
                     }
 
@@ -868,8 +877,10 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        return entityService
+        AdvertTarget advertTarget = entityService
                 .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
+        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
+        return advertTarget;
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
@@ -1214,6 +1225,17 @@ public class AdvertService {
             scopes.putAll(scope, stateService.getActiveResourceStates(scope));
         }
         return scopes;
+    }
+
+    private void setAdvertTargetPartnershipState(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline) {
+        advertTarget.setPartnershipState(partnershipState);
+        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, baseline);
+    }
+
+    private void setAdvertTargetSequenceIdentifier(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline) {
+        if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
+            activityService.setSequenceIdentifier(advertTarget, baseline);
+        }
     }
 
 }

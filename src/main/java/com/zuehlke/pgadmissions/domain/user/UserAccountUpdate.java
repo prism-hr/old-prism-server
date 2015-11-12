@@ -1,17 +1,21 @@
 package com.zuehlke.pgadmissions.domain.user;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.Activity;
 
+@Entity
+@Table(name = "user_account_update")
 public class UserAccountUpdate implements Activity {
 
     @Id

@@ -332,11 +332,11 @@ public class AdvertService {
 
             if (user != null) {
                 ResourceParent acceptResource = advertTarget.getAcceptAdvert().getResource();
-                User advertUser = advertTarget.getAdvertUser();
+                User acceptUser = advertTarget.getAcceptAdvertUser();
 
                 PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
                 boolean isAdmin = roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResource.getResourceScope().name() + "_ADMINISTRATOR"));
-                if (Objects.equal(user, advertUser) || isAdmin) {
+                if (Objects.equal(user, acceptUser) || isAdmin) {
                     boolean endorsementProvided = partnershipState.equals(ENDORSEMENT_PROVIDED);
                     if (endorsementProvided) {
                         resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());

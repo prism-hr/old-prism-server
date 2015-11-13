@@ -1,40 +1,18 @@
 package com.zuehlke.pgadmissions.services;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.zuehlke.pgadmissions.dao.ProfileDAO;
-import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
-import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.application.*;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.document.Document;
-import com.zuehlke.pgadmissions.domain.profile.*;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.*;
-import com.zuehlke.pgadmissions.domain.workflow.Role;
-import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
-import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
-import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import com.zuehlke.pgadmissions.rest.dto.profile.*;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
-import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
-import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_QUALIFICATION_UPDATE;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_UPDATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -42,6 +20,71 @@ import static com.zuehlke.pgadmissions.domain.document.PrismFileCategory.DOCUMEN
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.springframework.beans.BeanUtils.instantiate;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.zuehlke.pgadmissions.dao.ProfileDAO;
+import com.zuehlke.pgadmissions.domain.UniqueEntity.EntitySignature;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.advert.Advert;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.application.ApplicationAddress;
+import com.zuehlke.pgadmissions.domain.application.ApplicationDocument;
+import com.zuehlke.pgadmissions.domain.application.ApplicationEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.application.ApplicationPersonalDetail;
+import com.zuehlke.pgadmissions.domain.application.ApplicationQualification;
+import com.zuehlke.pgadmissions.domain.application.ApplicationReferee;
+import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
+import com.zuehlke.pgadmissions.domain.document.Document;
+import com.zuehlke.pgadmissions.domain.profile.ProfileAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.profile.ProfileAddress;
+import com.zuehlke.pgadmissions.domain.profile.ProfileAdvertRelationSection;
+import com.zuehlke.pgadmissions.domain.profile.ProfileDocument;
+import com.zuehlke.pgadmissions.domain.profile.ProfileEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
+import com.zuehlke.pgadmissions.domain.profile.ProfilePersonalDetail;
+import com.zuehlke.pgadmissions.domain.profile.ProfileQualification;
+import com.zuehlke.pgadmissions.domain.profile.ProfileReferee;
+import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
+import com.zuehlke.pgadmissions.domain.user.UserAdditionalInformation;
+import com.zuehlke.pgadmissions.domain.user.UserAddress;
+import com.zuehlke.pgadmissions.domain.user.UserDocument;
+import com.zuehlke.pgadmissions.domain.user.UserEmploymentPosition;
+import com.zuehlke.pgadmissions.domain.user.UserPersonalDetail;
+import com.zuehlke.pgadmissions.domain.user.UserQualification;
+import com.zuehlke.pgadmissions.domain.user.UserReferee;
+import com.zuehlke.pgadmissions.domain.workflow.Role;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.DocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
+import com.zuehlke.pgadmissions.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileDocumentDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileEmploymentPositionDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfilePersonalDetailDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileQualificationDTO;
+import com.zuehlke.pgadmissions.rest.dto.profile.ProfileRefereeDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceOpportunityDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 
 @Service
 @Transactional
@@ -92,7 +135,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserPersonalDetail personalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
         userAccount.setPersonalDetail(personalDetail);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_PERSONAL_DETAIL_UPDATE);
     }
 
     public void updatePersonalDetailApplication(Integer applicationId, ProfilePersonalDetailDTO personalDetailDTO) {
@@ -106,18 +149,17 @@ public class ProfileService {
         applicationPersonalDetail.setAgeRange(prismService.getAgeRangeFromAge(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
 
         userAccount.setPersonalDetail(userPersonalDetail);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_PERSONAL_DETAIL_UPDATE);
 
         applicationPersonalDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setPersonalDetail(applicationPersonalDetail);
-
     }
 
     public void updateAddressUser(ProfileAddressDTO addressDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserAddress address = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(address);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDRESS_UPDATE);
     }
 
     public void updateAddressApplication(Integer applicationId, ProfileAddressDTO addressDTO) {
@@ -127,7 +169,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAddress userAddress = updateAddress(userAccount, UserAddress.class, addressDTO);
         userAccount.setAddress(userAddress);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDRESS_UPDATE);
 
         address.setLastUpdatedTimestamp(DateTime.now());
         application.setAddress(address);
@@ -137,7 +179,7 @@ public class ProfileService {
     public UserQualification updateQualificationUser(Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserQualification userQualification = updateQualification(userAccount, UserQualification.class, qualificationId, qualificationDTO);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
         return userQualification;
     }
 
@@ -156,7 +198,7 @@ public class ProfileService {
         updateQualification(userAccount, userQualification, qualificationDTO);
         userQualification.setApplicationQualification(qualification);
 
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
         return qualification;
     }
@@ -164,12 +206,15 @@ public class ProfileService {
     public void deleteQualificationUser(Integer qualificationId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         deleteQualification(userAccount, UserQualification.class, qualificationId);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
     }
 
     public void deleteQualificationApplication(Integer applicationId, Integer qualificationId) {
         Application application = applicationService.getById(applicationId);
-        profileDAO.deleteUserProfileSection(UserQualification.class, ApplicationQualification.class, qualificationId);
+        if (profileDAO.deleteUserProfileSection(UserQualification.class, ApplicationQualification.class, qualificationId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_QUALIFICATION_UPDATE);
+        }
+
         deleteQualification(application, ApplicationQualification.class, qualificationId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
     }
@@ -177,7 +222,7 @@ public class ProfileService {
     public UserEmploymentPosition updateEmploymentPositionUser(Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
         return employmentPosition;
     }
 
@@ -196,20 +241,23 @@ public class ProfileService {
         updateEmploymentPosition(userAccount, userEmploymentPosition, employmentPositionDTO);
         userEmploymentPosition.setApplicationEmploymentPosition(employmentPosition);
 
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
         return employmentPosition;
     }
 
     public void deleteEmploymentPositionUser(Integer employmentPositionId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        profileDAO.deleteUserProfileSection(UserEmploymentPosition.class, ApplicationEmploymentPosition.class, employmentPositionId);
         deleteEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
     }
 
     public void deleteEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId) {
         Application application = applicationService.getById(applicationId);
+        if (profileDAO.deleteUserProfileSection(UserEmploymentPosition.class, ApplicationEmploymentPosition.class, employmentPositionId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_EMPLOYMENT_POSITION_UPDATE);
+        }
+
         deleteEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_EMPLOYMENT);
     }
@@ -217,7 +265,7 @@ public class ProfileService {
     public UserReferee updateRefereeUser(Integer refereeId, ProfileRefereeDTO refereeDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserReferee userReferee = (UserReferee) updateReferee(userAccount, UserReferee.class, refereeId, refereeDTO).getReferee();
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_REFEREE_UPDATE);
         return userReferee;
     }
 
@@ -235,7 +283,7 @@ public class ProfileService {
         ApplicationReferee referee = (ApplicationReferee) refereeUpdateDTO.getReferee();
         userReferee.setApplicationReferee(referee);
 
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_REFEREE_UPDATE);
         List<CommentAssignedUser> assignees = refereeUpdateDTO.getAssignments();
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, assignees.toArray(new CommentAssignedUser[assignees.size()]));
         return (ApplicationReferee) refereeUpdateDTO.getReferee();
@@ -243,13 +291,16 @@ public class ProfileService {
 
     public void deleteRefereeUser(Integer refereeId) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId);
         deleteReferee(userAccount, UserReferee.class, refereeId);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_REFEREE_UPDATE);
     }
 
     public void deleteRefereeApplication(Integer applicationId, Integer refereeId) {
         Application application = applicationService.getById(applicationId);
+        if (profileDAO.deleteUserProfileSection(UserReferee.class, ApplicationReferee.class, refereeId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_REFEREE_UPDATE);
+        }
+
         ApplicationReferee referee = deleteReferee(application, ApplicationReferee.class, refereeId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_REFEREE, getUserAssignmentDelete(referee.getUser(), APPLICATION_REFEREE));
     }
@@ -258,7 +309,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserDocument document = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(document);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_DOCUMENT_UPDATE);
     }
 
     public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) {
@@ -273,7 +324,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserDocument userDocument = updateDocument(userAccount, UserDocument.class, documentDTO);
         userAccount.setDocument(userDocument);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_DOCUMENT_UPDATE);
 
         applicationDocument.setLastUpdatedTimestamp(DateTime.now());
         application.setDocument(applicationDocument);
@@ -284,7 +335,7 @@ public class ProfileService {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
         UserAdditionalInformation additionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(additionalInformation);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDITIONAL_INFORMATION_UPDATE);
     }
 
     public void updateAdditionalInformationApplication(Integer applicationId, ProfileAdditionalInformationDTO additionalInformationDTO) {
@@ -295,7 +346,7 @@ public class ProfileService {
         UserAccount userAccount = application.getUser().getUserAccount();
         UserAdditionalInformation userAdditionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
         userAccount.setAdditionalInformation(userAdditionalInformation);
-        userAccountService.updateUserAccount(userAccount);
+        userAccountService.updateUserAccount(userAccount, PROFILE_ADDITIONAL_INFORMATION_UPDATE);
 
         applicationAdditionalInformation.setLastUpdatedTimestamp(DateTime.now());
         application.setAdditionalInformation(applicationAdditionalInformation);
@@ -512,9 +563,6 @@ public class ProfileService {
             T profile, Class<U> qualificationClass, Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
         profile.getQualifications().remove(qualification);
-        if(qualificationClass == ApplicationQualification.class) {
-
-        }
         entityService.flush();
     }
 

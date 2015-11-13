@@ -11,6 +11,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
+import com.zuehlke.pgadmissions.domain.Activity;
 import com.zuehlke.pgadmissions.domain.Invitation;
 import com.zuehlke.pgadmissions.domain.InvitationEntity;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
@@ -23,7 +27,7 @@ import jersey.repackaged.com.google.common.base.Objects;
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "advert_id", "advert_user_id", "target_advert_id", "target_advert_user_id", "accept_advert_id", "accept_advert_user_id" }) })
-public class AdvertTarget extends AdvertAttribute implements UserAssignment<AdvertConnectionReassignmentProcessor>, InvitationEntity {
+public class AdvertTarget extends AdvertAttribute implements Activity, UserAssignment<AdvertConnectionReassignmentProcessor>, InvitationEntity {
 
     @Id
     @GeneratedValue
@@ -60,6 +64,13 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
     @Enumerated(EnumType.STRING)
     @Column(name = "partnership_state", nullable = false)
     private PrismPartnershipState partnershipState;
+
+    @Column(name = "accepted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime acceptedTimestamp;
+
+    @Column(name = "sequence_identifier", unique = true)
+    private String sequenceIdentifier;
 
     @Override
     public Integer getId() {
@@ -137,6 +148,24 @@ public class AdvertTarget extends AdvertAttribute implements UserAssignment<Adve
 
     public void setPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
+    }
+
+    public DateTime getAcceptedTimestamp() {
+        return acceptedTimestamp;
+    }
+
+    public void setAcceptedTimestamp(DateTime acceptedTimestamp) {
+        this.acceptedTimestamp = acceptedTimestamp;
+    }
+
+    @Override
+    public String getSequenceIdentifier() {
+        return sequenceIdentifier;
+    }
+
+    @Override
+    public void setSequenceIdentifier(String sequenceIdentifier) {
+        this.sequenceIdentifier = sequenceIdentifier;
     }
 
     public AdvertTarget withAdvert(Advert advert) {

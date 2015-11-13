@@ -11,6 +11,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SY
 import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.joda.time.DateTime.now;
 
 import java.util.Collection;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.domain.user.UserAccount;
 import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.domain.workflow.Role;
@@ -59,6 +61,9 @@ public class RoleService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private ActivityService activityService;
 
     @Inject
     private AdvertService advertService;
@@ -117,7 +122,19 @@ public class RoleService {
     }
 
     public UserRole getOrCreateUserRole(UserRole transientUserRole) {
-        return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
+        UserRole persistentUserRole = entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
+        if (persistentUserRole.getAcceptedTimestamp() == null) {
+            UserAccount userAccount = persistentUserRole.getUser().getUserAccount();
+            if (!(userAccount == null || isNotTrue(userAccount.getEnabled()))) {
+                acceptUserRole(persistentUserRole, now());
+            }
+        }
+        return persistentUserRole;
+    }
+
+    public void acceptUserRole(UserRole persistentUserRole, DateTime baseline) {
+        persistentUserRole.setAcceptedTimestamp(baseline);
+        activityService.setSequenceIdentifier(persistentUserRole, baseline);
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {

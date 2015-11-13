@@ -16,13 +16,13 @@ public class ProfileDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> void deleteUserProfileSection(Class<T> userProfileSectionClass,
+    public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> boolean deleteUserProfileSection(Class<T> userProfileSectionClass,
             Class<U> applicationSectionClass, Integer applicationSectionId) {
-        sessionFactory.getCurrentSession().createQuery( //
+        return sessionFactory.getCurrentSession().createQuery( //
                 "delete " + userProfileSectionClass.getSimpleName() + " " //
                         + "where " + uncapitalize(applicationSectionClass.getSimpleName()) + ".id = :applicationSectionId") //
                 .setParameter("applicationSectionId", applicationSectionId) //
-                .executeUpdate();
+                .executeUpdate() > 0;
     }
 
 }

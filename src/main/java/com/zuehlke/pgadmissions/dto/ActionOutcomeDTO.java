@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -17,6 +18,8 @@ public class ActionOutcomeDTO {
     private Resource transitionResource;
 
     private Action transitionAction;
+    
+    private PrismConnectionState connectState;
 
     public User getUser() {
         return user;
@@ -32,6 +35,10 @@ public class ActionOutcomeDTO {
 
     public Action getTransitionAction() {
         return transitionAction;
+    }
+
+    public PrismConnectionState getConnectState() {
+        return connectState;
     }
 
     public ActionOutcomeDTO withUser(User user) {
@@ -54,6 +61,11 @@ public class ActionOutcomeDTO {
         return this;
     }
 
+    public ActionOutcomeDTO withConnectState(PrismConnectionState connectState) {
+        this.connectState = connectState;
+        return this;
+    }
+    
     public String createRedirectionUrl() {
         Map<String, String> params = Maps.newLinkedHashMap();
         params.put("resource", transitionResource.getId().toString());

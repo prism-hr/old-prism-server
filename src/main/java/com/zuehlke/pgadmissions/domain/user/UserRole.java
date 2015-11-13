@@ -81,7 +81,7 @@ public class UserRole extends WorkflowResourceExecution implements Activity, Use
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime assignedTimestamp;
 
-    @Column(name = "assigned_timestamp")
+    @Column(name = "accepted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime acceptedTimestamp;
 

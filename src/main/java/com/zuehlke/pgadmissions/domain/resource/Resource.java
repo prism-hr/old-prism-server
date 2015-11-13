@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Joiner;
+import com.zuehlke.pgadmissions.domain.Activity;
 import com.zuehlke.pgadmissions.domain.UniqueEntity;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.application.Application;
@@ -23,10 +24,12 @@ import com.zuehlke.pgadmissions.domain.workflow.State;
 import com.zuehlke.pgadmissions.domain.workflow.StateActionPending;
 import com.zuehlke.pgadmissions.utils.PrismReflectionUtils;
 
-public abstract class Resource implements UniqueEntity {
+public abstract class Resource implements Activity, UniqueEntity {
 
+    @Override
     public abstract Integer getId();
 
+    @Override
     public abstract void setId(Integer id);
 
     public abstract User getUser();
@@ -91,8 +94,10 @@ public abstract class Resource implements UniqueEntity {
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
 
+    @Override
     public abstract String getSequenceIdentifier();
 
+    @Override
     public abstract void setSequenceIdentifier(String sequenceIdentifier);
 
     public abstract Set<ResourceState> getResourceStates();

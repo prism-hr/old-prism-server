@@ -15,6 +15,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 
 public class OpportunitiesQueryDTO {
 
+    private Integer advertId;
+    
     @NotNull
     private PrismResourceContext context;
 
@@ -57,6 +59,14 @@ public class OpportunitiesQueryDTO {
     private BigDecimal swLon;
 
     private String lastSequenceIdentifier;
+    
+    public Integer getAdvertId() {
+        return advertId;
+    }
+
+    public void setAdvertId(Integer advertId) {
+        this.advertId = advertId;
+    }
 
     public PrismResourceContext getContext() {
         return context;

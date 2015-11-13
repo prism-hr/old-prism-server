@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.zuehlke.pgadmissions.domain.Activity;
 import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.profile.ProfileEntity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceListFilter;
@@ -28,7 +29,7 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 @Entity
 @Table(name = "user_account")
 public class UserAccount
-        implements ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
+        implements Activity, ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -49,7 +50,7 @@ public class UserAccount
 
     @Column(name = "send_application_recommendation_notification", nullable = false)
     private Boolean sendApplicationRecommendationNotification;
-    
+
     @Column(name = "linkedin_id")
     private String linkedinId;
 
@@ -62,7 +63,7 @@ public class UserAccount
     @OneToOne
     @JoinColumn(name = "portrait_image_id")
     private Document portraitImage;
-    
+
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
@@ -111,6 +112,9 @@ public class UserAccount
     @MapKeyJoinColumn(name = "scope_id")
     private Map<Scope, ResourceListFilter> filters = Maps.newHashMap();
 
+    @OneToMany(mappedBy = "userAccount")
+    private Set<UserAccountUpdate> updates = Sets.newHashSet();
+
     @Override
     public Integer getId() {
         return id;
@@ -152,7 +156,7 @@ public class UserAccount
     public void setTemporaryPasswordExpiryTimestamp(DateTime temporaryPasswordExpiryTimestamp) {
         this.temporaryPasswordExpiryTimestamp = temporaryPasswordExpiryTimestamp;
     }
-    
+
     public Boolean getSendApplicationRecommendationNotification() {
         return sendApplicationRecommendationNotification;
     }
@@ -200,7 +204,7 @@ public class UserAccount
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     @Override
     public UserPersonalDetail getPersonalDetail() {
         return personalDetail;
@@ -274,16 +278,22 @@ public class UserAccount
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
 
+    @Override
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
     public Map<Scope, ResourceListFilter> getFilters() {
         return filters;
+    }
+
+    public Set<UserAccountUpdate> getUpdates() {
+        return updates;
     }
 
     public UserAccount withPassword(String password) {

@@ -152,6 +152,9 @@ public class ResourceService {
     private ActionService actionService;
 
     @Inject
+    private ActivityService activityService;
+
+    @Inject
     private AdvertService advertService;
 
     @Inject
@@ -310,8 +313,7 @@ public class ResourceService {
             entityService.save(resource);
             entityService.flush();
 
-            resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
-
+            activityService.setSequenceIdentifier(resource, baseline);
             Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();
             if (populator != null) {
                 applicationContext.getBean(populator).populate(resource);
@@ -321,7 +323,7 @@ public class ResourceService {
             entityService.flush();
         } else if (comment.isUserComment() || resource.getSequenceIdentifier() == null) {
             resource.setUpdatedTimestamp(baseline);
-            resource.setSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", resource.getId()));
+            activityService.setSequenceIdentifier(resource, baseline);
             entityService.flush();
         }
     }

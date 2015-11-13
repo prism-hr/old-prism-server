@@ -445,13 +445,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public AdvertTarget getAdvertTargetById(Integer advertTargetId) {
-        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .add(Restrictions.eq("id", advertTargetId)) //
-                .uniqueResult();
-    }
-
-    public List<AdvertTarget> getSimilarAdvertTarget(AdvertTarget advertTarget, User user) {
+    public List<AdvertTarget> getSimilarAdvertTargets(AdvertTarget advertTarget, User user) {
         return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .add(Restrictions.ne("id", advertTarget.getId())) //
                 .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
@@ -461,16 +455,6 @@ public class AdvertDAO {
                         .add(Restrictions.isNull("acceptAdvertUser")) //
                         .add(Restrictions.eq("acceptAdvertUser", user))) //
                 .list();
-    }
-
-    public void processAdvertTarget(Integer advertTargetId, PrismPartnershipState partnershipState) {
-        sessionFactory.getCurrentSession().createQuery(
-                "update AdvertTarget "
-                        + "set partnershipState = :partnershipState "
-                        + "where id = :advertTargetId")
-                .setParameter("advertTargetId", advertTargetId)
-                .setParameter("partnershipState", partnershipState)
-                .executeUpdate();
     }
 
     public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,

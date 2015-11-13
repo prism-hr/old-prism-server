@@ -1,19 +1,20 @@
 package com.zuehlke.pgadmissions.rest.representation.resource;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import org.apache.commons.lang3.ObjectUtils;
-
-import java.util.Set;
-
 import static com.zuehlke.pgadmissions.PrismConstants.HYPHEN;
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.util.Arrays.asList;
+
+import java.util.Set;
+
+import org.apache.commons.lang3.ObjectUtils;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 
 public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
 

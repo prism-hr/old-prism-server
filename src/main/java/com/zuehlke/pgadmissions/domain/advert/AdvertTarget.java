@@ -65,7 +65,7 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @Column(name = "partnership_state", nullable = false)
     private PrismPartnershipState partnershipState;
 
-    @Column(name = "assigned_timestamp")
+    @Column(name = "accepted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime acceptedTimestamp;
 

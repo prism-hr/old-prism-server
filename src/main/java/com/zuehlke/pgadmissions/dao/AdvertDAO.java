@@ -445,7 +445,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertTarget> getSimilarAdvertTarget(AdvertTarget advertTarget, User user) {
+    public List<AdvertTarget> getSimilarAdvertTargets(AdvertTarget advertTarget, User user) {
         return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .add(Restrictions.ne("id", advertTarget.getId())) //
                 .add(Restrictions.eq("advert", advertTarget.getAdvert())) //

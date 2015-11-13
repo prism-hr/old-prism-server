@@ -1,0 +1,51 @@
+package com.zuehlke.pgadmissions.dto;
+
+import org.joda.time.DateTime;
+
+import com.google.common.base.Objects;
+import com.zuehlke.pgadmissions.domain.user.User;
+
+public class UserSelectionDTO {
+
+    private User user;
+
+    private DateTime eventTimestamp;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public DateTime getEventTimestamp() {
+        return eventTimestamp;
+    }
+
+    public void setEventTimestamp(DateTime eventTimestamp) {
+        this.eventTimestamp = eventTimestamp;
+    }
+
+    public String getIndexName() {
+        return user.getFullName();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(user.getId());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        final UserSelectionDTO other = (UserSelectionDTO) object;
+        return Objects.equal(user.getId(), other.getUser().getId());
+    }
+
+}

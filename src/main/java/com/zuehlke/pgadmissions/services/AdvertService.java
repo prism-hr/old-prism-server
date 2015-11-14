@@ -132,8 +132,6 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
 import com.zuehlke.pgadmissions.utils.PrismJsonMappingUtils;
 
-import jersey.repackaged.com.google.common.base.Objects;
-
 @Service
 @Transactional
 public class AdvertService {
@@ -393,35 +391,33 @@ public class AdvertService {
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
 
+            Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
             if (user != null) {
-                ResourceParent acceptResource = advertTarget.getAcceptAdvert().getResource();
-                User acceptUser = advertTarget.getAcceptAdvertUser();
-
-                PrismPartnershipState partnershipState = toBoolean(accept) ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
-                boolean isAdmin = roleService.hasUserRole(acceptResource, user, PrismRole.valueOf(acceptResource.getResourceScope().name() + "_ADMINISTRATOR"));
-                if (Objects.equal(user, acceptUser) || isAdmin) {
-                    boolean endorsementProvided = partnershipState.equals(ENDORSEMENT_PROVIDED);
-                    if (endorsementProvided) {
-                        resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
-                    }
-
-                    DateTime baseline = now();
-                    setAdvertTargetPartnershipState(advertTarget, partnershipState, baseline);
-
-                    Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
-                    if (isAdmin) {
-                        advertDAO.getSimilarAdvertTargets(advertTarget, user).forEach(similarAdvertTarget -> {
-                            oldPartnershipStates.add(similarAdvertTarget.getPartnershipState());
-                            setAdvertTargetPartnershipState(similarAdvertTarget, partnershipState, baseline);
-                        });
-                    }
-
-                    if (endorsementProvided && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
-                        notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
-                    }
-
-                    performed = true;
+                boolean acceptBoolean = toBoolean(accept);
+                PrismPartnershipState partnershipState = acceptBoolean ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
+                if (acceptBoolean) {
+                    resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
                 }
+
+                DateTime baseline = now();
+                Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
+                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
+                    AdvertTarget advertTargetAdmin = advertDAO.getAdvertTargetAdmin(advertTarget);
+                    oldPartnershipStates.add(advertTargetAdmin.getPartnershipState());
+                    setAdvertTargetPartnershipState(advertTargetAdmin, partnershipState, baseline);
+                }
+
+                AdvertTarget advertTargetAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
+                if (advertTargetAccept != null) {
+                    oldPartnershipStates.add(advertTargetAccept.getPartnershipState());
+                    setAdvertTargetPartnershipState(advertTargetAccept, partnershipState, baseline);
+                }
+
+                if (acceptBoolean && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
+                    notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
+                }
+
+                performed = true;
             }
         }
 
@@ -837,7 +833,7 @@ public class AdvertService {
         }
         return adverts;
     }
-    
+
     private String[] getFilteredRoleExtensions(PrismScope scope, String[] roleExtensions) {
         String scopeName = scope.name();
         List<String> permittedRoleExtensions = Lists.newArrayList();

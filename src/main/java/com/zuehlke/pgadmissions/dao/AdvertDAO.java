@@ -445,16 +445,22 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertTarget> getSimilarAdvertTargets(AdvertTarget advertTarget, User user) {
-        return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .add(Restrictions.ne("id", advertTarget.getId())) //
+    public AdvertTarget getAdvertTargetAdmin(AdvertTarget advertTarget) {
+        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
                 .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
                 .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("acceptAdvertUser")) //
-                        .add(Restrictions.eq("acceptAdvertUser", user))) //
-                .list();
+                .add(Restrictions.isNull("acceptAdvertUser")) //
+                .uniqueResult();
+    }
+
+    public AdvertTarget getAdvertTargetAccept(AdvertTarget advertTarget, User acceptUser) {
+        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
+                .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
+                .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
+                .add(Restrictions.eq("acceptAdvertUser", acceptUser)) //
+                .uniqueResult();
     }
 
     public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
@@ -468,7 +474,7 @@ public class AdvertDAO {
                     .add(Projections.groupProperty("advert.id").as("advert")) //
                     .add(Projections.property("advert.opportunityCategories").as("opportunityCategories"));
         }
-        
+
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class, "advert") //
                 .setProjection(projections);
 
@@ -492,7 +498,7 @@ public class AdvertDAO {
         if (integerResponse) {
             return (List<T>) criteria.list();
         }
-        
+
         return (List<T>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
@@ -642,7 +648,7 @@ public class AdvertDAO {
                 .add(Restrictions.eq("targetResource.id", resourceId)) //
                 .list();
     }
-    
+
     public List<Integer> getAdvertsForWhichUserIsTarget(User user, String advertProperty) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty(advertProperty + ".id")) //

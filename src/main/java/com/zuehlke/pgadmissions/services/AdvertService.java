@@ -105,7 +105,6 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Department;
 import com.zuehlke.pgadmissions.domain.resource.Institution;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
@@ -507,33 +506,45 @@ public class AdvertService {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(Advert advert) {
-        ResourceParent resource = advert.getResource();
         List<Integer> connectAdverts = Lists.newArrayList();
-        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
-            Department department = resource.getDepartment();
-            if (department != null) {
-                connectAdverts.add(department.getAdvert().getId());
-            }
-            connectAdverts.add(resource.getInstitution().getAdvert().getId());
-        } else {
-            connectAdverts.add(resource.getAdvert().getId());
+        
+        boolean showRevoked = false;
+        User user = userService.getCurrentUser();
+        Department department = advert.getDepartment();
+        if (department != null) {
+            Integer departmentAdvertId = department.getAdvert().getId();
+            connectAdverts.add(departmentAdvertId);
+            
+            List<PrismRole> departmentRoles = values(PrismRole.class, DEPARTMENT, "ADMINISTRATOR", "APPROVER", "VIEWER");
+            showRevoked = roleService.hasUserRole(department, user, departmentRoles.toArray(new PrismRole[departmentRoles.size()]));
         }
 
+        Integer institutionAdvertId = advert.getInstitution().getAdvert().getId();
+        connectAdverts.add(institutionAdvertId);
+        if (showRevoked) {
+            List<PrismRole> institutionRoles = values(PrismRole.class, INSTITUTION, "ADMINISTRATOR", "APPROVER", "VIEWER");
+            showRevoked = roleService.hasUserRole(department, user, institutionRoles.toArray(new PrismRole[institutionRoles.size()]));
+        }
+        
+        if (showRevoked) {
+            showRevoked = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
+        }
+        
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
-        String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
+        String[] opprortunityCategoriesSplit = advert.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opprortunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
-                advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts, null).forEach(at -> {
-                    advertTargets.put(at.getId(), at);
+                advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts, null, showRevoked).forEach(advertTarget -> {
+                    advertTargets.put(advertTarget.getId(), advertTarget);
                 });
             }
         }
 
-        if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
+        if (containsAny(asList(PERSONAL_DEVELOPMENT, STUDY), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
-                advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts, null).forEach(at -> {
-                    advertTargets.put(at.getId(), at);
+                advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts, null, showRevoked).forEach(advertTarget -> {
+                    advertTargets.put(advertTarget.getId(), advertTarget);
                 });
             }
         }
@@ -1234,6 +1245,7 @@ public class AdvertService {
 
     private void setAdvertTargetSequenceIdentifier(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline) {
         if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
+            advertTarget.setAcceptedTimestamp(baseline);
             activityService.setSequenceIdentifier(advertTarget, baseline);
         }
     }

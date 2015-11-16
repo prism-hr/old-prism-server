@@ -411,14 +411,19 @@ public class AdvertDAO {
 
     public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
             Collection<Integer> connectAdverts, List<Integer> exclusions) {
+        return getAdvertTargets(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts, exclusions, true);
+    }
+
+    public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
+            Collection<Integer> connectAdverts, List<Integer> exclusions, boolean showRevoked) {
         Criteria criteria = getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts);
 
         if (isNotEmpty(exclusions)) {
             criteria.add(Restrictions.not(Restrictions.in("target.id", exclusions)));
         }
 
-        return (List<AdvertTargetDTO>) criteria.add(Restrictions.ne("target.partnershipState", ENDORSEMENT_REVOKED))
-                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+        return (List<AdvertTargetDTO>) completeAdvertTargetCriteria(criteria, showRevoked) //
+                .list();
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
@@ -429,7 +434,8 @@ public class AdvertDAO {
             criteria.add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING));
         }
 
-        return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+        return (List<AdvertTargetDTO>) completeAdvertTargetCriteria(criteria, false)
+                .list();
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
@@ -879,6 +885,17 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
                         .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
+    }
+
+    private Criteria completeAdvertTargetCriteria(Criteria criteria, boolean showRevoked) {
+        if (!showRevoked) {
+            criteria.add(Restrictions.ne("target.partnershipState", ENDORSEMENT_REVOKED));
+        }
+
+        return criteria.addOrder(Order.asc("thisAdvert.id")) //
+                .addOrder(Order.asc("otherAdvert.id")) //
+                .addOrder(Order.asc("otherUser.id"))
+                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class));
     }
 
 }

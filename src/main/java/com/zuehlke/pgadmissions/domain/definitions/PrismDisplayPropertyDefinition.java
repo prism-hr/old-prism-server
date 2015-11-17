@@ -1376,6 +1376,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup Organization"),
+    SYSTEM_ADVERTISE_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Find your organization within the list"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup Organization"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Start typing the name of your organization"),
@@ -1383,6 +1384,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERTISE_SELECT_PARENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Select Department"),
     SYSTEM_ADVERTISE_SELECT_PARENT_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Select your preferred Department"),
     SYSTEM_ADVERTISE_CANNOT_FIND_MY_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find my organization"),
+    SYSTEM_ADVERTISE_CANNOT_FIND_THE_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
     SYSTEM_ADVERTISE_ALREADY_REGISTERED_ORGANIZATION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "My organization is registered"),
     SYSTEM_ADVERTISE_CONNECTING(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Connecting with"),
     SYSTEM_ADVERTISE_REGISTER_INSTITUTION_TITLE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Register your Organization"),

@@ -12,7 +12,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
     private ResourceRepresentationConnection resource;
 
-    private List<AdvertTargetConnectionRepresentation> connections;
+    private List<AdvertTargetConnectionsRepresentation> connections;
 
     public ResourceRepresentationConnection getResource() {
         return resource;
@@ -22,11 +22,11 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         this.resource = resource;
     }
 
-    public List<AdvertTargetConnectionRepresentation> getConnections() {
+    public List<AdvertTargetConnectionsRepresentation> getConnections() {
         return connections;
     }
 
-    public void setConnections(List<AdvertTargetConnectionRepresentation> connections) {
+    public void setConnections(List<AdvertTargetConnectionsRepresentation> connections) {
         this.connections = connections;
     }
 
@@ -37,28 +37,20 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
     @Override
     public int compareTo(AdvertTargetRepresentation other) {
-        return resource.compareTo(other.getResource());
+        return compare(resource, other.getResource());
     }
 
-    public static class AdvertTargetConnectionRepresentation implements Comparable<AdvertTargetConnectionRepresentation> {
-
-        private Integer advertTargetId;
+    public static class AdvertTargetConnectionsRepresentation implements Comparable<AdvertTargetConnectionsRepresentation> {
 
         private ResourceRepresentationConnection resource;
 
-        private UserRepresentationSimple user;
-        
         private PrismConnectionState connectState;
 
+        private boolean canAccept;
+        
         private boolean canManage;
 
-        public Integer getAdvertTargetId() {
-            return advertTargetId;
-        }
-
-        public void setAdvertTargetId(Integer advertTargetId) {
-            this.advertTargetId = advertTargetId;
-        }
+        private List<AdvertTargetConnectionRepresentation> connections;
 
         public ResourceRepresentationConnection getResource() {
             return resource;
@@ -68,20 +60,20 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.resource = resource;
         }
 
-        public UserRepresentationSimple getUser() {
-            return user;
-        }
-
-        public void setUser(UserRepresentationSimple user) {
-            this.user = user;
-        }
-        
         public PrismConnectionState getConnectState() {
             return connectState;
         }
 
         public void setConnectState(PrismConnectionState connectState) {
             this.connectState = connectState;
+        }
+        
+        public boolean isCanAccept() {
+            return canAccept;
+        }
+
+        public void setCanAccept(boolean canAccept) {
+            this.canAccept = canAccept;
         }
 
         public boolean isCanManage() {
@@ -92,25 +84,101 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.canManage = canManage;
         }
 
-        public AdvertTargetConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
-            this.advertTargetId = advertTargetId;
-            return this;
+        public List<AdvertTargetConnectionRepresentation> getConnections() {
+            return connections;
         }
 
-        public AdvertTargetConnectionRepresentation withResource(ResourceRepresentationConnection resource) {
+        public void setConnections(List<AdvertTargetConnectionRepresentation> connections) {
+            this.connections = connections;
+        }
+
+        public AdvertTargetConnectionsRepresentation withResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
             return this;
         }
 
-        public AdvertTargetConnectionRepresentation withUser(UserRepresentationSimple user) {
-            this.user = user;
+        public AdvertTargetConnectionsRepresentation withCanAccept(boolean canAccept) {
+            this.canAccept = canAccept;
+            return this;
+        }
+        
+        public AdvertTargetConnectionsRepresentation withCanManage(boolean canManage) {
+            this.canManage = canManage;
             return this;
         }
 
         @Override
-        public int compareTo(AdvertTargetConnectionRepresentation other) {
-            int compare = compare(resource, other.getResource());
-            return compare == 0 ? compare(user, other.getUser()) : compare;
+        public int compareTo(AdvertTargetConnectionsRepresentation other) {
+            return compare(resource, other.getResource());
+        }
+
+        public static class AdvertTargetConnectionRepresentation implements Comparable<AdvertTargetConnectionRepresentation> {
+
+            private Integer advertTargetId;
+
+            private UserRepresentationSimple user;
+
+            private PrismConnectionState connectState;
+
+            private boolean canAccept;
+
+            private boolean canManage;
+
+            public Integer getAdvertTargetId() {
+                return advertTargetId;
+            }
+
+            public void setAdvertTargetId(Integer advertTargetId) {
+                this.advertTargetId = advertTargetId;
+            }
+
+            public UserRepresentationSimple getUser() {
+                return user;
+            }
+
+            public void setUser(UserRepresentationSimple user) {
+                this.user = user;
+            }
+
+            public PrismConnectionState getConnectState() {
+                return connectState;
+            }
+
+            public void setConnectState(PrismConnectionState connectState) {
+                this.connectState = connectState;
+            }
+
+            public boolean isCanAccept() {
+                return canAccept;
+            }
+
+            public void setCanAccept(boolean canAccept) {
+                this.canAccept = canAccept;
+            }
+
+            public boolean isCanManage() {
+                return canManage;
+            }
+
+            public void setCanManage(boolean canManage) {
+                this.canManage = canManage;
+            }
+
+            public AdvertTargetConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
+                this.advertTargetId = advertTargetId;
+                return this;
+            }
+
+            public AdvertTargetConnectionRepresentation withUser(UserRepresentationSimple user) {
+                this.user = user;
+                return this;
+            }
+
+            @Override
+            public int compareTo(AdvertTargetConnectionRepresentation other) {
+                return compare(user, other.getUser());
+            }
+
         }
 
     }

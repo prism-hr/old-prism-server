@@ -409,27 +409,31 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts, List<Integer> exclusions) {
-        Criteria criteria = getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts);
-
-        if (isNotEmpty(exclusions)) {
-            criteria.add(Restrictions.not(Restrictions.in("target.id", exclusions)));
-        }
-
-        return (List<AdvertTargetDTO>) criteria.add(Restrictions.ne("target.partnershipState", ENDORSEMENT_REVOKED))
-                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+    public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user, Collection<Integer> nodeAdverts,
+            boolean canManage) {
+        Criterion permissionsConstraint = Restrictions.in("thisAdvert.id", nodeAdverts);
+        return (List<AdvertTargetDTO>) completeAdvertTargetCriteria(getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, permissionsConstraint),
+                canManage).list();
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts, boolean pending) {
-        Criteria criteria = getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts);
-
-        if (pending) {
-            criteria.add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING));
+            Collection<Integer> connectAdverts) {
+        Criterion permissionsConstraint;
+        if (user != null && isNotEmpty(connectAdverts)) {
+            permissionsConstraint = Restrictions.disjunction() //
+                    .add(getAdvertTargetAcceptUserConstraint(user))
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.isNull("thisUser.id"))
+                            .add(Restrictions.in("thisAdvert.id", connectAdverts)));
+        } else if (user != null) {
+            permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
+        } else {
+            permissionsConstraint = Restrictions.in("thisAdvert.id", connectAdverts);
         }
 
-        return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+        return (List<AdvertTargetDTO>) completeAdvertTargetCriteria(getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, permissionsConstraint) //
+                .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING)), false)
+                        .list();
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
@@ -809,20 +813,7 @@ public class AdvertDAO {
         return conjunction;
     }
 
-    private Criteria getAdvertTargetCriteria(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user, Collection<Integer> connectAdverts) {
-        Criterion permissionsConstraint;
-        if (user != null && isNotEmpty(connectAdverts)) {
-            permissionsConstraint = Restrictions.disjunction() //
-                    .add(getAdvertTargetAcceptUserConstraint(user))
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.isNull("thisUser.id"))
-                            .add(Restrictions.in("thisAdvert.id", connectAdverts)));
-        } else if (user != null) {
-            permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
-        } else {
-            permissionsConstraint = Restrictions.in("thisAdvert.id", connectAdverts);
-        }
-
+    private Criteria getAdvertTargetCriteria(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, Criterion permissionsConstraint) {
         thisAdvertReference = "target." + thisAdvertReference;
         otherAdvertReference = "target." + otherAdvertReference;
 
@@ -879,6 +870,14 @@ public class AdvertDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
                         .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
+    }
+
+    private Criteria completeAdvertTargetCriteria(Criteria criteria, boolean canManage) {
+        if (canManage) {
+            criteria.add(Restrictions.ne("target.partnershipState", ENDORSEMENT_REVOKED));
+        }
+
+        return criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class));
     }
 
 }

@@ -10,6 +10,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.A
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_APPROVER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
@@ -183,10 +184,10 @@ public class PrismApplicationWorkflow {
                 .withAssignments(PrismRole.PROJECT_VIEWER, APPLICATION_VIEW_AS_RECRUITER)
                 .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_AS_CREATOR) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
-                .withPartnerAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_RECRUITER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_RECRUITER) //
-                .withPartnerAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_AS_RECRUITER);
+                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_PARTNER) //
+                .withPartnerAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_PARTNER) //
+                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_PARTNER) //
+                .withPartnerAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_AS_PARTNER);
     }
 
     public static PrismStateAction applicationViewEditWithViewerRecruiter(PrismState state) {

@@ -303,6 +303,7 @@ public class RoleDAO {
     private static Junction getRolesOverridingRedactionsConstraint(User user, Collection<Integer> resourceIds) {
         return Restrictions.conjunction() //
                 .add(Restrictions.in("resource.id", resourceIds)) //
+                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.eq("userAccount.enabled", true));
     }

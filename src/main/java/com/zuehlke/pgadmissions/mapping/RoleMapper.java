@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceUserRolesRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.PrismJsonMappingUtils;
@@ -27,6 +28,9 @@ public class RoleMapper {
     private UserMapper userMapper;
 
     @Inject
+    private ResourceService resourceService;
+    
+    @Inject
     private RoleService roleService;
 
     @Inject
@@ -36,6 +40,8 @@ public class RoleMapper {
     private PrismJsonMappingUtils prismJsonMappingUtils;
 
     public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource) {
+        resourceService.validateViewResource(resource);
+
         HashSet<String> emailSet = new HashSet<>();
         List<User> users = userService.getResourceUsers(resource);
 

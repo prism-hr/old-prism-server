@@ -410,15 +410,12 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts, List<Integer> exclusions) {
+            Collection<Integer> connectAdverts) {
         Criteria criteria = getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts);
 
-        if (isNotEmpty(exclusions)) {
-            criteria.add(Restrictions.not(Restrictions.in("target.id", exclusions)));
-        }
-
         return (List<AdvertTargetDTO>) criteria.add(Restrictions.ne("target.partnershipState", ENDORSEMENT_REVOKED))
-                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+                .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
+                .list();
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
@@ -429,7 +426,8 @@ public class AdvertDAO {
             criteria.add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING));
         }
 
-        return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class)).list();
+        return (List<AdvertTargetDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
+                .list();
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
@@ -443,24 +441,6 @@ public class AdvertDAO {
                         asList("UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList())))
                 .add(getTargetActionConstraint())
                 .list();
-    }
-
-    public AdvertTarget getAdvertTargetAdmin(AdvertTarget advertTarget) {
-        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
-                .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
-                .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
-                .add(Restrictions.isNull("acceptAdvertUser")) //
-                .uniqueResult();
-    }
-
-    public AdvertTarget getAdvertTargetAccept(AdvertTarget advertTarget, User acceptUser) {
-        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
-                .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
-                .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
-                .add(Restrictions.eq("acceptAdvertUser", acceptUser)) //
-                .uniqueResult();
     }
 
     public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
@@ -655,6 +635,24 @@ public class AdvertDAO {
                 .add(Restrictions.eq("acceptAdvertUser", user)) //
                 .add(Restrictions.neProperty(advertProperty, "acceptAdvert")) //
                 .list();
+    }
+    
+    public AdvertTarget getAdvertTargetAdmin(AdvertTarget advertTarget) {
+        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
+                .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
+                .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
+                .add(Restrictions.isNull("acceptAdvertUser")) //
+                .uniqueResult();
+    }
+
+    public AdvertTarget getAdvertTargetAccept(AdvertTarget advertTarget, User acceptUser) {
+        return (AdvertTarget) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.eq("advert", advertTarget.getAdvert())) //
+                .add(Restrictions.eq("targetAdvert", advertTarget.getTargetAdvert())) //
+                .add(Restrictions.eq("acceptAdvert", advertTarget.getAcceptAdvert())) //
+                .add(Restrictions.eq("acceptAdvertUser", acceptUser)) //
+                .uniqueResult();
     }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

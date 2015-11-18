@@ -122,7 +122,10 @@ import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDetailsDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertFinancialDetailDTO.AdvertFinancialDetailPayDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConnectionInvitationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceConnectionInvitationsDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceCreationDTO;
+import com.zuehlke.pgadmissions.rest.dto.resource.ResourceDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceRelationCreationDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.rest.representation.CompetenceRepresentation;
@@ -352,6 +355,33 @@ public class AdvertService {
         } else {
             return createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
         }
+    }
+    
+    public AdvertTargetPending createAdvertTargetPending(ResourceConnectionInvitationsDTO targets) {
+        User user = userService.getCurrentUser();
+        ResourceDTO resourceDTO = targets.getResourceDTO();
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceDTO.getScope(), resourceDTO.getId());
+        if (resourceService.getResourceForWhichUserCanConnect(user, resource) != null) {
+            List<ResourceRelationCreationDTO> invitations = targets.getInvitations();
+            List<ResourceConnectionInvitationDTO> connections = targets.getConnections();
+
+            String invitationsSerial = null;
+            String connectionsSerial = null;
+            if (isNotEmpty(invitations)) {
+                invitationsSerial = prismJsonMappingUtils.writeValue(invitations);
+            }
+
+            if (isNotEmpty(connections)) {
+                connectionsSerial = prismJsonMappingUtils.writeValue(connections);
+            }
+
+            AdvertTargetPending advertTargetPending = new AdvertTargetPending().withAdvert(resource.getAdvert()).withUser(user).withAdvertTargetInviteList(invitationsSerial)
+                    .withAdvertTargetConnectList(connectionsSerial).withAdvertTargetMessage(targets.getMessage());
+            entityService.save(advertTargetPending);
+            return advertTargetPending;
+        }
+
+        return null;
     }
 
     public boolean updateAdvertTarget(Integer advertTargetId, boolean accept) {

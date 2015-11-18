@@ -395,22 +395,19 @@ public class AdvertService {
             if (user != null) {
                 boolean acceptBoolean = toBoolean(accept);
                 PrismPartnershipState partnershipState = acceptBoolean ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
-                if (acceptBoolean) {
-                    resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
-                }
 
                 DateTime baseline = now();
                 Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
                 if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
                     AdvertTarget advertTargetAdmin = advertDAO.getAdvertTargetAdmin(advertTarget);
                     oldPartnershipStates.add(advertTargetAdmin.getPartnershipState());
-                    setAdvertTargetPartnershipState(advertTargetAdmin, partnershipState, baseline);
+                    setAdvertTargetPartnershipState(advertTargetAdmin, partnershipState, baseline, acceptBoolean);
                 }
 
                 AdvertTarget advertTargetAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
                 if (advertTargetAccept != null) {
                     oldPartnershipStates.add(advertTargetAccept.getPartnershipState());
-                    setAdvertTargetPartnershipState(advertTargetAccept, partnershipState, baseline);
+                    setAdvertTargetPartnershipState(advertTargetAccept, partnershipState, baseline, acceptBoolean);
                 }
 
                 if (acceptBoolean && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
@@ -1227,9 +1224,13 @@ public class AdvertService {
         return scopes;
     }
 
-    private void setAdvertTargetPartnershipState(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline) {
+    private void setAdvertTargetPartnershipState(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline, boolean activateResource) {
         advertTarget.setPartnershipState(partnershipState);
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, baseline);
+
+        if (activateResource) {
+            resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
+        }
     }
 
     private void setAdvertTargetSequenceIdentifier(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline) {

@@ -50,6 +50,8 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         
         private PrismConnectionState connectState;
 
+        private boolean canAccept;
+        
         private boolean canManage;
 
         public Integer getAdvertTargetId() {
@@ -84,6 +86,14 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.connectState = connectState;
         }
 
+        public boolean isCanAccept() {
+            return canAccept;
+        }
+
+        public void setCanAccept(boolean canAccept) {
+            this.canAccept = canAccept;
+        }
+
         public boolean isCanManage() {
             return canManage;
         }
@@ -102,6 +112,16 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             return this;
         }
 
+        public AdvertTargetConnectionRepresentation withCanAccept(boolean canAccept) {
+            this.canAccept = canAccept;
+            return this;
+        }
+
+        public AdvertTargetConnectionRepresentation withCanManage(boolean canManage) {
+            this.canManage = canManage;
+            return this;
+        }
+        
         public AdvertTargetConnectionRepresentation withUser(UserRepresentationSimple user) {
             this.user = user;
             return this;

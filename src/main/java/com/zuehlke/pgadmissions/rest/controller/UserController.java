@@ -34,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.user.UserQualification;
 import com.zuehlke.pgadmissions.domain.user.UserReferee;
 import com.zuehlke.pgadmissions.domain.workflow.Scope;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mapping.AdvertMapper;
 import com.zuehlke.pgadmissions.mapping.ProfileMapper;
 import com.zuehlke.pgadmissions.mapping.UserMapper;
 import com.zuehlke.pgadmissions.rest.dto.profile.ProfileAdditionalInformationDTO;
@@ -50,7 +49,6 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserAccountDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserActivateDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserEmailDTO;
 import com.zuehlke.pgadmissions.rest.dto.user.UserLinkingDTO;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileListRowRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.profile.ProfileQualificationRepresentation;
@@ -63,7 +61,6 @@ import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimpl
 import com.zuehlke.pgadmissions.rest.validation.UserLinkingValidator;
 import com.zuehlke.pgadmissions.rest.validation.UserRegistrationValidator;
 import com.zuehlke.pgadmissions.security.AuthenticationTokenHelper;
-import com.zuehlke.pgadmissions.services.AdvertService;
 import com.zuehlke.pgadmissions.services.EntityService;
 import com.zuehlke.pgadmissions.services.ProfileService;
 import com.zuehlke.pgadmissions.services.ResourceListFilterService;
@@ -81,12 +78,6 @@ public class UserController {
 
     @Resource(name = "prismUserDetailsService")
     private UserDetailsService userDetailsService;
-
-    @Inject
-    private AdvertMapper advertMapper;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private EntityService entityService;
@@ -212,12 +203,6 @@ public class UserController {
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
     public UserActivityRepresentation getActivitySummary() {
         return userMapper.getUserActivityRepresentation(userService.getCurrentUser());
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/connection", method = RequestMethod.GET)
-    public List<AdvertTargetRepresentation> getConnectionRepresentations() {
-        return advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargets(userService.getCurrentUser()));
     }
 
     @PreAuthorize("isAuthenticated()")

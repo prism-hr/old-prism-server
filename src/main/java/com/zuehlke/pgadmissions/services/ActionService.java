@@ -193,14 +193,14 @@ public class ActionService {
     }
 
     public boolean hasRedactions(User user, PrismScope resourceScope) {
-        if (roleService.getVisibleScopes(user).get(0).ordinal() == resourceScope.ordinal()) {
-            List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
-            List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
-
-            userRoles.removeAll(rolesWithRedactions);
-            return userRoles.isEmpty();
+        List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
+        if (userRoles.isEmpty()) {
+            return false;
         }
-        return false;
+        
+        List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
+        userRoles.removeAll(rolesWithRedactions);
+        return userRoles.isEmpty();
     }
 
     public List<Action> getCustomizableActions() {

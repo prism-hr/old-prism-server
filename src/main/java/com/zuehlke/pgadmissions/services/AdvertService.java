@@ -35,7 +35,6 @@ import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 
 import java.io.IOException;
@@ -383,7 +382,11 @@ public class AdvertService {
         return null;
     }
 
-    public boolean updateAdvertTarget(Integer advertTargetId, Boolean accept) {
+    public boolean updateAdvertTarget(Integer advertTargetId, boolean accept) {
+        return updateAdvertTarget(advertTargetId, accept, true);
+    }
+
+    public boolean updateAdvertTarget(Integer advertTargetId, boolean accept, boolean notify) {
         boolean performed = false;
         AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
         if (advertTarget != null) {
@@ -391,28 +394,27 @@ public class AdvertService {
 
             Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
             if (user != null) {
-                boolean acceptBoolean = toBoolean(accept);
-                PrismPartnershipState partnershipState = acceptBoolean ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
+                PrismPartnershipState partnershipState = accept ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
 
                 DateTime baseline = now();
                 Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
                 if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
-                    AdvertTarget advertTargetAdmin = advertDAO.getAdvertTargetAdmin(advertTarget);
-                    oldPartnershipStates.add(advertTargetAdmin.getPartnershipState());
-                    setAdvertTargetPartnershipState(advertTargetAdmin, partnershipState, baseline, acceptBoolean);
+                    AdvertTarget targetAdmin = advertDAO.getAdvertTargetAdmin(advertTarget);
+                    oldPartnershipStates.add(targetAdmin.getPartnershipState());
+                    setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
+                    performed = true;
                 }
 
-                AdvertTarget advertTargetAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
-                if (advertTargetAccept != null) {
-                    oldPartnershipStates.add(advertTargetAccept.getPartnershipState());
-                    setAdvertTargetPartnershipState(advertTargetAccept, partnershipState, baseline, acceptBoolean);
+                AdvertTarget targetUserAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
+                if (targetUserAccept != null) {
+                    oldPartnershipStates.add(targetUserAccept.getPartnershipState());
+                    setAdvertTargetPartnershipState(targetUserAccept, partnershipState, baseline, accept);
+                    performed = true;
                 }
 
-                if (acceptBoolean && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
+                if (performed && accept && notify && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
                     notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
                 }
-
-                performed = true;
             }
         }
 
@@ -871,23 +873,24 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
-        AdvertTarget targetUser = null;
+        AdvertTarget targetAdmin = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
+
+        AdvertTarget targetUserAccept = null;
         if (userTarget != null) {
-            targetUser = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
+            targetUserAccept = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
         }
 
-        AdvertTarget targetAdmin = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
         Invitation invitation = invitationService.createInvitation(targetAdmin.getOtherUser(), message);
 
-        if (!(targetUser == null || updateAdvertTarget(targetUser.getId(), true))) {
-            targetUser.setInvitation(invitation);
-        }
-
-        if (!updateAdvertTarget(targetAdmin.getId(), true)) {
+        if (!updateAdvertTarget(targetAdmin.getId(), true, false)) {
             targetAdmin.setInvitation(invitation);
         }
 
-        return targetUser == null ? targetAdmin : targetUser;
+        if (!(targetUserAccept == null || updateAdvertTarget(targetUserAccept.getId(), true, false))) {
+            targetUserAccept.setInvitation(invitation);
+        }
+
+        return targetUserAccept == null ? targetAdmin : targetUserAccept;
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
@@ -1217,7 +1220,7 @@ public class AdvertService {
     private void setAdvertTargetPartnershipState(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline, boolean activateResource) {
         advertTarget.setPartnershipState(partnershipState);
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, baseline);
-        
+
         if (activateResource) {
             resourceService.activateResource(systemService.getSystem().getUser(), advertTarget.getOtherAdvert().getResource());
         }

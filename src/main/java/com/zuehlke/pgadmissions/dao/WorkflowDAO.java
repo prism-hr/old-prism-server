@@ -145,7 +145,7 @@ public class WorkflowDAO {
                                 .add(Restrictions.eq("resource.shared", true)) //
                                 .add(Restrictions.eq("scope.defaultShared", true))));
     }
-
+    
     public static Junction getSimilarUserConstraint(String searchTerm) {
         return getSimilarUserConstraint(null, searchTerm);
     }
@@ -190,7 +190,6 @@ public class WorkflowDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
                         .add(Restrictions.eq("role.roleCategory", RECRUITER))) //
-                .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.eq("userRole.user", user));
     }
 

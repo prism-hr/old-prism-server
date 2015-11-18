@@ -193,14 +193,14 @@ public class ActionService {
     }
 
     public boolean hasRedactions(User user, PrismScope resourceScope) {
-        if (roleService.getVisibleScopes(user).get(0).ordinal() == resourceScope.ordinal()) {
-            List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
-            List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
-
-            userRoles.removeAll(rolesWithRedactions);
-            return userRoles.isEmpty();
+        List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
+        if (userRoles.isEmpty()) {
+            return false;
         }
-        return false;
+        
+        List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
+        userRoles.removeAll(rolesWithRedactions);
+        return userRoles.isEmpty();
     }
 
     public List<Action> getCustomizableActions() {
@@ -258,13 +258,13 @@ public class ActionService {
         return actionDAO.getExternalConditions(resource);
     }
 
-    public boolean checkActionVisible(Resource resource, Action action, User user, List<Integer> targeterEntities) {
-        boolean available = true;
+    public boolean checkActionVisible(Resource resource, Action action, User user) {
+        boolean visible = true;
         Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);
         if (expectedActionEnhancements.size() > 0) {
-            available = getPermittedActionEnhancements(user, resource, action.getId()).stream().anyMatch(ae -> ae.name().contains("_VIEW"));
+            visible = getPermittedActionEnhancements(user, resource, action.getId()).stream().anyMatch(ae -> ae.name().contains("_VIEW"));
         }
-        return available ? checkActionAvailable(resource, action, user, false) : false;
+        return visible ? checkActionAvailable(resource, action, user, false) : false;
     }
 
     public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {

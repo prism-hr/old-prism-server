@@ -354,7 +354,7 @@ public class AdvertService {
             return createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
         }
     }
-
+    
     public AdvertTargetPending createAdvertTargetPending(ResourceConnectionInvitationsDTO targets) {
         User user = userService.getCurrentUser();
         ResourceDTO resourceDTO = targets.getResourceDTO();

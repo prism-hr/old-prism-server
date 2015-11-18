@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.user.UserRole;
 import com.zuehlke.pgadmissions.domain.workflow.*;
 import com.zuehlke.pgadmissions.dto.*;
 import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
+import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.exceptions.WorkflowEngineException;
 import com.zuehlke.pgadmissions.rest.dto.advert.AdvertDTO;
 import com.zuehlke.pgadmissions.rest.dto.comment.CommentDTO;
@@ -863,6 +864,14 @@ public class ResourceService {
     public boolean isUnderApproval(ResourceParent resource) {
         List<PrismState> states = stateService.getResourceStates(resource);
         return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
+    }
+    
+    public <T extends Resource> void validateViewResource(T resource) {
+        User user = userService.getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        if (action == null || !actionService.checkActionVisible(resource, action, user)) {
+            throw new PrismForbiddenException("User cannot view or edit the given resource");
+        }
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

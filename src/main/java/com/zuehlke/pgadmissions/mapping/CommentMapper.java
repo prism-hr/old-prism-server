@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
 import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
 import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.document.Document;
@@ -44,6 +46,7 @@ import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepre
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.ResourceService;
 import com.zuehlke.pgadmissions.services.RoleService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -52,24 +55,29 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class CommentMapper {
 
     @Inject
-    private ActionService actionService;
-
-    @Inject
-    private CommentService commentService;
-
-    @Inject
     private DocumentMapper documentMapper;
 
     @Inject
     private UserMapper userMapper;
 
     @Inject
-    private UserService userService;
+    private ActionService actionService;
+
+    @Inject
+    private CommentService commentService;
+
+    @Inject
+    private ResourceService resourceService;
 
     @Inject
     private RoleService roleService;
 
+    @Inject
+    private UserService userService;
+
     public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource resource) {
+        resourceService.validateViewResource(resource);
+
         List<Comment> comments = commentService.getTimelineComments(resource);
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
         User user = userService.getCurrentUser();
@@ -79,18 +87,20 @@ public class CommentMapper {
             CommentGroupRepresentation groupRepresentation = null;
 
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
+            List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(user, resource);
             HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles);
             for (Comment comment : commentService.getTimelineComments(resource)) {
+                Set<PrismActionRedactionType> actionRedactions = redactions.get(comment.getAction().getId());
                 if (groupRepresentation == null) {
                     groupRepresentation = new CommentGroupRepresentation().withStateGroup(comment.getTransitionState().getStateGroup().getId());
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, overridingRoles, redactions.get(comment.getAction().getId()), creatableRoles));
+                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, actionRedactions));
                     timelineRepresentation.addCommentGroup(groupRepresentation);
                 } else if (comment.isStateGroupTransitionComment() && !comment.isSecondaryStateGroupTransitionComment()) {
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, overridingRoles, redactions.get(comment.getAction().getId()), creatableRoles));
+                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, actionRedactions));
                     groupRepresentation = new CommentGroupRepresentation().withStateGroup(comment.getTransitionState().getStateGroup().getId());
                     timelineRepresentation.addCommentGroup(groupRepresentation);
                 } else {
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, overridingRoles, redactions.get(comment.getAction().getId()), creatableRoles));
+                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, actionRedactions));
                 }
             }
         }
@@ -157,20 +167,22 @@ public class CommentMapper {
     public CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles) {
         Resource resource = comment.getResource();
         List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
+        List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(user, resource);
         Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles).get(comment.getAction().getId());
-        return getCommentRepresentation(user, comment, overridingRoles, redactions, creatableRoles);
+        return getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, redactions);
     }
 
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions,
-            List<PrismRole> creatableRoles) {
-        if (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user)) {
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles, List<PrismActionEnhancement> actionEnhancements,
+            List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
+        boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
+        if (!onlyAsPartner && (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user))) {
             CommentRepresentation representation = getCommentRepresentationExtended(comment);
             representation.setAssignedUsers(getCommentAssignedUserRepresentations(comment, creatableRoles));
             return representation;
         } else {
             CommentRepresentation representation = getCommentRepresentationSimple(comment);
 
-            if (redactions.contains(ALL_ASSESSMENT_CONTENT)) {
+            if (!onlyAsPartner && redactions.contains(ALL_ASSESSMENT_CONTENT)) {
                 representation.setInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment));
                 representation.setInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, false));
                 representation.setAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()));

@@ -59,7 +59,6 @@ import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.resource.System;
 import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.domain.workflow.Action;
 import com.zuehlke.pgadmissions.dto.ApplicationProcessingSummaryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceChildCreationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceConnectionDTO;
@@ -69,7 +68,6 @@ import com.zuehlke.pgadmissions.dto.ResourceListRowDTO;
 import com.zuehlke.pgadmissions.dto.ResourceLocationDTO;
 import com.zuehlke.pgadmissions.dto.ResourceOpportunityCategoryDTO;
 import com.zuehlke.pgadmissions.dto.ResourceSimpleDTO;
-import com.zuehlke.pgadmissions.exceptions.PrismForbiddenException;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceListFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO;
 import com.zuehlke.pgadmissions.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
@@ -413,7 +411,8 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource) {
-        validateViewerPermission(resource);
+        resourceService.validateViewResource(resource);
+
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -434,7 +433,8 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource) {
-        validateViewerPermission(resource);
+        resourceService.validateViewResource(resource);
+
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
@@ -653,15 +653,6 @@ public class ResourceMapper {
         representation.setBackgroundImage(documentMapper.getDocumentRepresentation(backgroundImageId));
         representation.setContexts(PrismScope.getResourceContexts(opportunityCategories));
         return representation;
-    }
-
-    private <T extends Resource> void validateViewerPermission(T resource) {
-        User user = userService.getCurrentUser();
-        Action action = actionService.getViewEditAction(resource);
-        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, resource.getResourceScope());
-        if (action == null || !actionService.checkActionVisible(resource, action, user, targeterEntities)) {
-            throw new PrismForbiddenException("User cannot view or edit the given resource");
-        }
     }
 
     private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationRelation(T resource, Class<V> returnType) {

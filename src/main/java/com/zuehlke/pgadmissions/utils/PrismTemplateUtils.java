@@ -1,16 +1,19 @@
 package com.zuehlke.pgadmissions.utils;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import freemarker.template.Template;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import javax.inject.Inject;
-import java.util.Map;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+
+import freemarker.template.Template;
 
 @Component
 public class PrismTemplateUtils {
@@ -36,7 +39,8 @@ public class PrismTemplateUtils {
             Template template = new Template(templateName, templateSource, freemarkerConfig.getConfiguration());
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (Exception e) {
-            throw new Error("Unable to process template", e);
+            logger.error("Unable to process template", e);
+            return null;
         }
     }
 

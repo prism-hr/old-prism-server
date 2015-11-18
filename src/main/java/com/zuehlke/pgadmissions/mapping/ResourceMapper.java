@@ -9,6 +9,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.IN
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.processRowDescriptors;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
@@ -651,7 +652,7 @@ public class ResourceMapper {
         }
 
         representation.setBackgroundImage(documentMapper.getDocumentRepresentation(backgroundImageId));
-        representation.setContexts(PrismScope.getResourceContexts(opportunityCategories));
+        representation.setContexts(getResourceContexts(opportunityCategories));
         return representation;
     }
 

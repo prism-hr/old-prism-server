@@ -24,12 +24,14 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PR
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static com.zuehlke.pgadmissions.utils.PrismEnumUtils.values;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -406,7 +408,7 @@ public class AdvertService {
                         setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
                     });
 
-                    advertDAO.updateAdvertTarget(advertTarget, accept);
+                    advertDAO.updateAdvertTargetGroup(advertTarget, accept);
                     performed = true;
                 }
 
@@ -522,7 +524,8 @@ public class AdvertService {
         }
 
         User user = userService.getCurrentUser();
-        List<Integer> manageAdverts = getAdvertsForWhichUserCanManageConnections(user);
+        PrismScopeCategory scopeCategory = advert.getResource().getResourceScope().getScopeCategory();
+        List<Integer> manageAdverts = scopeCategory.equals(ORGANIZATION) ? getAdvertsForWhichUserCanManageConnections(user) : emptyList();
 
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
         String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
@@ -871,14 +874,6 @@ public class AdvertService {
         return null;
     }
 
-    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        AdvertTarget advertTarget = entityService
-                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState))
-                .withSevered(false);
-        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
-        return advertTarget;
-    }
-
     private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
         AdvertTarget targetAdmin = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
 
@@ -905,6 +900,14 @@ public class AdvertService {
         return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
                 .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState))
                 .withSevered(false);
+    }
+
+    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
+        AdvertTarget advertTarget = entityService
+                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState))
+                .withSevered(false);
+        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
+        return advertTarget;
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

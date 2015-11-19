@@ -47,9 +47,9 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         private ResourceRepresentationConnection resource;
 
         private UserRepresentationSimple user;
-        
+
         private PrismConnectionState connectState;
-        
+
         private boolean canManage;
 
         public Integer getAdvertTargetId() {
@@ -75,7 +75,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         public void setUser(UserRepresentationSimple user) {
             this.user = user;
         }
-        
+
         public PrismConnectionState getConnectState() {
             return connectState;
         }
@@ -106,7 +106,7 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.canManage = canManage;
             return this;
         }
-        
+
         public AdvertTargetConnectionRepresentation withUser(UserRepresentationSimple user) {
             this.user = user;
             return this;

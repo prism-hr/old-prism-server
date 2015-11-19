@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1584,8 +1584,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visibility that you want for your opportunity."),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Primary Contact"),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "To change the primary owner go to Manage User and change the owner fo the project"),
-    SYSTEM_RESOURCE_PARENT_VISIBILITY_PUBLIC_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
-    SYSTEM_RESOURCE_PARENT_VISIBILITY_PRIVATE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
+    SYSTEM_RESOURCE_PARENT_VISIBILITY_EVERYONE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
+    SYSTEM_RESOURCE_PARENT_VISIBILITY_MY_CONNECTIONS_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
+    SYSTEM_RESOURCE_PARENT_VISIBILITY_CUSTOM_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Use our recruitment engine?"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Specify whether you wish to use our recruitment engine, or link to your own."),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Application Page URL"),
@@ -2050,12 +2051,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_ADDITIONAL_INFORMATION_EMPTY(PrismDisplayPropertyCategory.PROFILE_ADDITIONAL_INFORMATION, "No additional information is been provided for this Application"),
 
     PROFILE_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.PROFILE_FORM, "Share my profile.<br/><em>Uncheck this if you do not want your profile to be shared with employers and support staff in your university.</em>"),
-    
-    PROFILE_PERSONAL_DETAIL_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated personal details"), 
+
+    PROFILE_PERSONAL_DETAIL_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated personal details"),
     PROFILE_ADDRESS_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated address details"),
-    PROFILE_QUALIFICATION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated qualification history"), 
+    PROFILE_QUALIFICATION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated qualification history"),
     PROFILE_EMPLOYMENT_POSITION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated employment history"),
-    PROFILE_REFEREE_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated referees"), 
+    PROFILE_REFEREE_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated referees"),
     PROFILE_DOCUMENT_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated supporting documentation"),
     PROFILE_ADDITIONAL_INFORMATION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated additional information"),
     PROFILE_SHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Shared profile"),

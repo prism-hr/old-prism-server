@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+
+import java.util.List;
 
 public class AdvertRepresentationSimple {
 
@@ -35,8 +35,6 @@ public class AdvertRepresentationSimple {
     private List<AdvertClosingDateRepresentation> closingDates;
 
     private AdvertCategoriesRepresentation categories;
-
-    private List<AdvertTargetRepresentation> targets;
 
     private List<AdvertCompetenceRepresentation> competences;
 
@@ -154,14 +152,6 @@ public class AdvertRepresentationSimple {
 
     public void setCategories(AdvertCategoriesRepresentation categories) {
         this.categories = categories;
-    }
-
-    public List<AdvertTargetRepresentation> getTargets() {
-        return targets;
-    }
-
-    public void setTargets(List<AdvertTargetRepresentation> targets) {
-        this.targets = targets;
     }
 
     public List<AdvertCompetenceRepresentation> getCompetences() {

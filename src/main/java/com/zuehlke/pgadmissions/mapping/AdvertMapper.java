@@ -12,8 +12,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.E
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
@@ -27,6 +25,7 @@ import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.getProperty;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.setProperty;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
@@ -40,6 +39,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -84,6 +84,7 @@ import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertCategoryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
+import com.zuehlke.pgadmissions.dto.AdvertUserDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.ResourceFlatToNestedDTO;
 import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
@@ -106,8 +107,6 @@ import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentat
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 import com.zuehlke.pgadmissions.services.ActionService;
 import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.SystemService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
@@ -119,12 +118,6 @@ public class AdvertMapper {
 
     @Inject
     private AdvertService advertService;
-
-    @Inject
-    private RoleService roleService;
-
-    @Inject
-    private SystemService systemService;
 
     @Inject
     private UserService userService;
@@ -410,14 +403,11 @@ public class AdvertMapper {
     }
 
     public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets) {
-        User user = userService.getCurrentUser();
-        boolean superAdmin = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
-        List<Integer> adminAdverts = advertService.getAdvertsForWhichUserCanManageConnections(user);
-        Set<Integer> targetAdverts = advertService.getAdvertsForWhichUserIsTarget(user);
-
-        Set<Integer> otherAdvertIds = Sets.newHashSet();
         Map<ResourceRepresentationConnection, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
         TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> filteredRepresentations = TreeMultimap.create();
+
+        Set<Integer> otherAdvertIds = advertTargets.stream().filter(at -> at.getOtherUserId() == null).map(at -> at.getOtherAdvertId()).collect(toSet());
+        Map<Integer, AdvertUserDTO> advertUsers = advertService.getAdvertUsers(otherAdvertIds);
 
         for (AdvertTargetDTO advertTarget : advertTargets) {
             ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
@@ -429,20 +419,20 @@ public class AdvertMapper {
                 representationIndex.put(thisResourceRepresentation, representation);
             }
 
-            Integer otherAdvertId = advertTarget.getOtherAdvertId();
-            boolean canAccept = adminAdverts.contains(otherAdvertId) || targetAdverts.contains(otherAdvertId);
-            boolean canManage = superAdmin || adminAdverts.contains(advertTarget.getThisAdvertId());
-
-            PrismPartnershipState partnershipState = advertTarget.getPartnershipState();
-            boolean canBrowse = partnershipState.equals(ENDORSEMENT_PROVIDED);
-
-            if (canAccept || canManage || (canBrowse && !otherAdvertIds.contains(otherAdvertId))) {
-                AdvertTargetConnectionRepresentation targetRepresentation = getAdvertTargetConnectionRepresentation(advertTarget, canAccept, canManage, partnershipState);
-                if (targetRepresentation != null) {
-                    filteredRepresentations.put(representation, targetRepresentation);
-                    otherAdvertIds.add(otherAdvertId);
-                }
+            Integer otherUserId = advertTarget.getOtherUserId();
+            if (otherUserId == null) {
+                AdvertUserDTO advertUser = advertUsers.get(advertTarget.getOtherAdvertId());
+                advertTarget.setOtherUserId(advertUser.getUserId());
+                advertTarget.setOtherUserFirstName(advertUser.getUserFirstName());
+                advertTarget.setOtherUserLastName(advertUser.getUserLastName());
+                advertTarget.setOtherUserEmail(advertUser.getUserEmail());
+                advertTarget.setOtherUserLinkedinProfileUrl(advertUser.getUserLinkedinProfileUrl());
+                advertTarget.setOtherUserLinkedinImageUrl(advertUser.getUserLinkedinImageUrl());
+                advertTarget.setOtherUserPortraitImageId(advertUser.getUserPortraitImageId());
             }
+
+            AdvertTargetConnectionRepresentation targetRepresentation = getAdvertTargetConnectionRepresentation(advertTarget);
+            filteredRepresentations.put(representation, targetRepresentation);
         }
 
         List<AdvertTargetRepresentation> representations = Lists.newLinkedList();
@@ -454,13 +444,13 @@ public class AdvertMapper {
         return representations;
     }
 
-    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget, boolean canAccept, boolean canManage,
-            PrismPartnershipState partnershipState) {
+    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget) {
+        boolean canManage = advertTarget.getCanManage();
         AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
                 .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
                         advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
                         advertTarget.getOtherBackgroundId()))
-                .withCanAccept(canAccept).withCanManage(canManage);
+                .withCanManage(canManage);
 
         Integer otherUserId = advertTarget.getOtherUserId();
         if (otherUserId != null) {
@@ -470,16 +460,13 @@ public class AdvertMapper {
                     .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
         }
 
-        if (canAccept || canManage) {
-            if (partnershipState.equals(ENDORSEMENT_PENDING)) {
-                connectionRepresentation.setConnectState(PENDING);
-            } else if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
-                connectionRepresentation.setConnectState(ACCEPTED);
-            } else if (partnershipState.equals(ENDORSEMENT_REVOKED)) {
-                connectionRepresentation.setConnectState(canAccept ? REJECTED : UNKNOWN);
-            }
-        } else {
+        PrismPartnershipState partnershipState = advertTarget.getPartnershipState();
+        if (partnershipState.equals(ENDORSEMENT_PENDING)) {
+            connectionRepresentation.setConnectState(PENDING);
+        } else if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
             connectionRepresentation.setConnectState(ACCEPTED);
+        } else if (BooleanUtils.isTrue(advertTarget.getSevered())) {
+            connectionRepresentation.setConnectState(canManage ? REJECTED : UNKNOWN);
         }
 
         return connectionRepresentation;

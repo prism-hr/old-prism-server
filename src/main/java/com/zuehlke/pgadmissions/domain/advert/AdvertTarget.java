@@ -65,6 +65,9 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @Column(name = "partnership_state", nullable = false)
     private PrismPartnershipState partnershipState;
 
+    @Column(name = "severed", nullable = false)
+    private Boolean severed;
+
     @Column(name = "accepted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime acceptedTimestamp;
@@ -150,6 +153,14 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.partnershipState = partnershipState;
     }
 
+    public Boolean getSevered() {
+        return severed;
+    }
+
+    public void setSevered(Boolean severed) {
+        this.severed = severed;
+    }
+
     public DateTime getAcceptedTimestamp() {
         return acceptedTimestamp;
     }
@@ -205,6 +216,11 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
 
     public AdvertTarget withPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
+        return this;
+    }
+    
+    public AdvertTarget withSevered(Boolean severed) {
+        this.severed = severed;
         return this;
     }
 

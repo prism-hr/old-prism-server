@@ -109,6 +109,7 @@ import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertCategoryDTO;
 import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
+import com.zuehlke.pgadmissions.dto.AdvertUserDTO;
 import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
 import com.zuehlke.pgadmissions.dto.json.ExchangeRateLookupResponseDTO;
 import com.zuehlke.pgadmissions.mapping.AdvertMapper;
@@ -400,9 +401,12 @@ public class AdvertService {
                 DateTime baseline = now();
                 Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
                 if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
-                    AdvertTarget targetAdmin = advertDAO.getAdvertTargetAdmin(advertTarget);
-                    oldPartnershipStates.add(targetAdmin.getPartnershipState());
-                    setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
+                    advertDAO.getAdvertTargetAdmin(advertTarget).stream().forEach(targetAdmin -> {
+                        oldPartnershipStates.add(targetAdmin.getPartnershipState());
+                        setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
+                    });
+
+                    advertDAO.updateAdvertTarget(advertTarget, accept);
                     performed = true;
                 }
 
@@ -517,12 +521,15 @@ public class AdvertService {
             connectAdverts.add(resource.getAdvert().getId());
         }
 
+        User user = userService.getCurrentUser();
+        List<Integer> manageAdverts = getAdvertsForWhichUserCanManageConnections(user);
+
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
         String[] opprortunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opprortunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
-                advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", null, connectAdverts).forEach(at -> {
+                advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", user, connectAdverts, manageAdverts).forEach(at -> {
                     advertTargets.put(at.getId(), at);
                 });
             }
@@ -530,18 +537,26 @@ public class AdvertService {
 
         if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
-                advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", null, connectAdverts).forEach(at -> {
+                advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", user, connectAdverts, manageAdverts).forEach(at -> {
                     advertTargets.put(at.getId(), at);
                 });
             }
         }
 
+        boolean superAdmin = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
+        advertTargets.values().stream().filter(at -> manageAdverts.contains(at.getThisAdvertId()) || superAdmin).forEach(at -> at.setCanManage(true));
         return newArrayList(advertTargets.values());
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(User user) {
         List<Integer> connectAdverts = getAdvertsForWhichUserCanManageConnections(user);
-        return getAdvertTargetsReceived(user, connectAdverts, true);
+        List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
+        for (PrismScope resourceScope : targetScopes) {
+            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
+                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts));
+            }
+        }
+        return advertTargets;
     }
 
     public Integer getBackgroundImage(Advert advert) {
@@ -814,6 +829,16 @@ public class AdvertService {
         return adverts;
     }
 
+    public Map<Integer, AdvertUserDTO> getAdvertUsers(Collection<Integer> adverts) {
+        Map<Integer, AdvertUserDTO> advertUsers = Maps.newHashMap();
+        if (isNotEmpty(adverts)) {
+            for (PrismScope targetScope : targetScopes) {
+                advertDAO.getAdvertUsers(targetScope, adverts).stream().forEach(advertUser -> advertUsers.put(advertUser.getAdvertId(), advertUser));
+            }
+        }
+        return advertUsers;
+    }
+
     private String[] getFilteredRoleExtensions(PrismScope scope, String[] roleExtensions) {
         String scopeName = scope.name();
         List<String> permittedRoleExtensions = Lists.newArrayList();
@@ -824,16 +849,6 @@ public class AdvertService {
 
         List<String> filteredRoleExtensions = stream(roleExtensions).filter(roleExtension -> permittedRoleExtensions.contains(roleExtension)).collect(toList());
         return filteredRoleExtensions.toArray(new String[filteredRoleExtensions.size()]);
-    }
-
-    private List<AdvertTargetDTO> getAdvertTargetsReceived(User user, List<Integer> connectAdverts, boolean pending) {
-        List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
-        for (PrismScope resourceScope : targetScopes) {
-            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts, pending));
-            }
-        }
-        return advertTargets;
     }
 
     private AdvertTarget createAdvertTarget(User user, ResourceParent resource, ResourceRelationCreationDTO targetDTO, boolean validate) {
@@ -858,7 +873,8 @@ public class AdvertService {
 
     private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
         AdvertTarget advertTarget = entityService
-                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState));
+                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState))
+                .withSevered(false);
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
     }
@@ -887,7 +903,8 @@ public class AdvertService {
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
             PrismPartnershipState partnershipState) {
         return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
-                .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState));
+                .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState))
+                .withSevered(false);
     }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {

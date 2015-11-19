@@ -51,6 +51,10 @@ public class AdvertTargetDTO {
 
     private PrismPartnershipState partnershipState;
 
+    private Boolean severed;
+    
+    private Boolean canManage;
+
     public Integer getId() {
         return id;
     }
@@ -233,6 +237,22 @@ public class AdvertTargetDTO {
 
     public void setPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
+    }
+
+    public Boolean getSevered() {
+        return severed;
+    }
+
+    public void setSevered(Boolean severed) {
+        this.severed = severed;
+    }
+
+    public Boolean getCanManage() {
+        return canManage;
+    }
+
+    public void setCanManage(Boolean canManage) {
+        this.canManage = canManage;
     }
 
     public Integer getOtherBackgroundId() {

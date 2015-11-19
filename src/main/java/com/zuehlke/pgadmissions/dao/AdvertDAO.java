@@ -435,7 +435,7 @@ public class AdvertDAO {
             Collection<Integer> connectAdverts) {
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts, true)
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING)) //
-                .add(Restrictions.eq("target.severed", true)) //
+                .add(Restrictions.eq("target.severed", false)) //
                 .addOrder(Order.desc("thisUser.id")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
                 .list();
@@ -657,7 +657,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public void updateAdvertTarget(AdvertTarget advertTarget, boolean enable) {
+    public void updateAdvertTargetGroup(AdvertTarget advertTarget, boolean enable) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTarget " //
                         + "set severed = :enable " //

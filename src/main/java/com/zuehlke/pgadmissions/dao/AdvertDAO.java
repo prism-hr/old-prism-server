@@ -425,8 +425,8 @@ public class AdvertDAO {
         }
 
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts, false)
-                .add(visibilityConstraint) //
-                .addOrder(Order.desc("thisUser.id")) //
+                .add(visibilityConstraint)
+                .addOrder(Order.desc("thisUser.id"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
                 .list();
     }
@@ -678,19 +678,20 @@ public class AdvertDAO {
     }
 
     public List<AdvertUserDTO> getAdvertUsers(PrismScope scope, Collection<Integer> adverts) {
-        return (List<AdvertUserDTO>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("advert.id").as("advertId")) //
-                        .add(Projections.groupProperty("user.id").as("userId")) //
-                        .add(Projections.property("user.firstName").as("userFirstName")) //
-                        .add(Projections.property("user.lastName").as("userLastName")) //
-                        .add(Projections.property("user.email").as("userEmail")) //
-                        .add(Projections.property("userAccount.linkedinProfileUrl").as("userLinkedinProfileUrl")) //
-                        .add(Projections.property("userAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
+        return (List<AdvertUserDTO>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass())
+                .setProjection(Projections.projectionList()
+                        .add(Projections.property("advert.id").as("advertId"))
+                        .add(Projections.property("user.id").as("userId"))
+                        .add(Projections.property("user.firstName").as("userFirstName"))
+                        .add(Projections.property("user.lastName").as("userLastName"))
+                        .add(Projections.property("user.email").as("userEmail"))
+                        .add(Projections.property("userAccount.linkedinProfileUrl").as("userLinkedinProfileUrl"))
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("userLinkedinImageUrl"))
                         .add(Projections.property("userAccount.portraitImage.id").as("userPortraitImageId")))
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("advert.id", adverts)) //
+                .createAlias("user", "user", JoinType.INNER_JOIN)
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN)
+                .add(Restrictions.in("advert.id", adverts))
+                .setResultTransformer(Transformers.aliasToBean(AdvertUserDTO.class))
                 .list();
     }
 

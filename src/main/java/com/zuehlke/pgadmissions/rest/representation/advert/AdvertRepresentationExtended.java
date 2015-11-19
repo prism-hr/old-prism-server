@@ -1,10 +1,5 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -12,6 +7,11 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
@@ -40,6 +40,8 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private Integer applicationRatingCount;
 
     private BigDecimal applicationRatingAverage;
+
+    private List<AdvertTargetRepresentation> targets;
 
     private PrismConnectionState joinStateStaff;
 
@@ -149,6 +151,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    public List<AdvertTargetRepresentation> getTargets() {
+        return targets;
+    }
+
+    public void setTargets(List<AdvertTargetRepresentation> targets) {
+        this.targets = targets;
     }
 
     public PrismConnectionState getJoinStateStaff() {

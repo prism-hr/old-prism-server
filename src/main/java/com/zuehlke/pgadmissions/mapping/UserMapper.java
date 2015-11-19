@@ -206,11 +206,10 @@ public class UserMapper {
     }
 
     public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
-        List<UserRepresentationSimple> representations = Lists.newLinkedList();
-        for (UserSelectionDTO user : users) {
-            representations.add(getUserRepresentationSimple(user.getUser()));
-        }
-        return representations;
+        return users.stream()
+                .map(UserSelectionDTO::getUser)
+                .map(this::getUserRepresentationSimple)
+                .collect(Collectors.toList());
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(User user) {

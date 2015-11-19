@@ -1,5 +1,10 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
@@ -7,11 +12,6 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 

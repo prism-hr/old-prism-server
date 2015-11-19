@@ -1,22 +1,54 @@
 package com.zuehlke.pgadmissions.mapping;
 
+import com.google.common.collect.*;
+import com.zuehlke.pgadmissions.domain.Domicile;
+import com.zuehlke.pgadmissions.domain.address.Address;
+import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
+import com.zuehlke.pgadmissions.domain.advert.*;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+import com.zuehlke.pgadmissions.domain.resource.*;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.*;
+import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.advert.*;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import com.zuehlke.pgadmissions.services.ActionService;
+import com.zuehlke.pgadmissions.services.AdvertService;
+import com.zuehlke.pgadmissions.services.UserService;
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.ACCEPTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.REJECTED;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.UNKNOWN;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.*;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.getResourceContexts;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.*;
 import static com.zuehlke.pgadmissions.utils.PrismCollectionUtils.containsSame;
 import static com.zuehlke.pgadmissions.utils.PrismConversionUtils.doubleToBigDecimal;
 import static com.zuehlke.pgadmissions.utils.PrismListUtils.getSummaryRepresentations;
@@ -29,85 +61,6 @@ import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
-import com.zuehlke.pgadmissions.domain.Domicile;
-import com.zuehlke.pgadmissions.domain.address.Address;
-import com.zuehlke.pgadmissions.domain.address.AddressCoordinates;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertCategories;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFinancialDetail;
-import com.zuehlke.pgadmissions.domain.advert.AdvertFunction;
-import com.zuehlke.pgadmissions.domain.advert.AdvertIndustry;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
-import com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.resource.Department;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.Program;
-import com.zuehlke.pgadmissions.domain.resource.Project;
-import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
-import com.zuehlke.pgadmissions.dto.AdvertCategoryDTO;
-import com.zuehlke.pgadmissions.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.dto.AdvertUserDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
-import com.zuehlke.pgadmissions.dto.ResourceFlatToNestedDTO;
-import com.zuehlke.pgadmissions.rest.dto.AddressDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
-import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressCoordinatesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.address.AddressRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCategoriesRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertClosingDateRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertFinancialDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationExtended;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.AdvertService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @Service
 @Transactional
@@ -140,7 +93,7 @@ public class AdvertMapper {
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
-        PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
+        PrismScope[] filterScopes = filterScope != null ? new PrismScope[]{filterScope} : query.getContext().getFilterScopes();
 
         User user = userService.getCurrentUser();
         Set<Integer> advertIds = Sets.newHashSet();
@@ -148,7 +101,7 @@ public class AdvertMapper {
         Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
         processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
 
-        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
+        PrismScope[] parentScopes = new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION};
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
@@ -265,6 +218,8 @@ public class AdvertMapper {
                 representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
             }
 
+            representation.setTargets(getAdvertTargetRepresentations(advertService.getAdvertTargets(advert)));
+
             representation.setName(advert.getName());
 
             AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
@@ -292,7 +247,7 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
+        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
             ResourceRepresentationSimple resource = getAdvertResourceRepresentation(advert, scope);
             if (resource != null) {
                 setProperty(representation, scope.getLowerCamelName(), resource);
@@ -365,7 +320,6 @@ public class AdvertMapper {
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
-        representation.setTargets(getAdvertTargetRepresentations(advertService.getAdvertTargets(advert)));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setExternalConditions(actionService.getExternalConditions(advert.getResource()));
 
@@ -559,10 +513,10 @@ public class AdvertMapper {
     }
 
     public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" }, advertIds);
-        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" }, advertIds);
-        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
-        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" }, advertIds);
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"ADMINISTRATOR", "APPROVER", "VIEWER"}, advertIds);
+        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"VIEWER_UNVERIFIED", "VIEWER_REJECTED"}, advertIds);
+        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"STUDENT"}, advertIds);
+        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"STUDENT_UNVERIFIED", "STUDENT_REJECTED"}, advertIds);
 
         representations.keySet().forEach(advert -> {
             representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
@@ -581,7 +535,7 @@ public class AdvertMapper {
 
     private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
+        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"ADMINISTRATOR", "APPROVER", "VIEWER"});
 
         HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
         HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();
@@ -639,7 +593,7 @@ public class AdvertMapper {
     }
 
     public void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer ownerAdvert,
-            Integer targetAdvert) {
+                                      Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
             acceptedForIndex.put(targetAdvert, ownerAdvert);
         } else {

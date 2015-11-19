@@ -424,7 +424,12 @@ public class AdvertDAO {
                             .add(Restrictions.eq("target.severed", true)));
         }
 
-        return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts, false)
+        return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, false)
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.in("thisAdvert.id", connectAdverts))
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.isNull("thisUser.id"))
+                                .add(getAdvertTargetAcceptUserConstraint(user))))
                 .add(visibilityConstraint) //
                 .addOrder(Order.desc("thisUser.id")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
@@ -433,7 +438,21 @@ public class AdvertDAO {
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
             Collection<Integer> connectAdverts) {
-        return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, connectAdverts, true)
+        Criterion permissionsConstraint;
+        if (user != null && isNotEmpty(connectAdverts)) {
+            permissionsConstraint = Restrictions.disjunction() //
+                    .add(getAdvertTargetAcceptUserConstraint(user))
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.isNull("thisUser.id"))
+                            .add(Restrictions.in("thisAdvert.id", connectAdverts)));
+        } else if (user != null) {
+            permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
+        } else {
+            permissionsConstraint = Restrictions.in("thisAdvert.id", connectAdverts);
+        }
+
+        return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, true)
+                .add(permissionsConstraint) //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING)) //
                 .add(Restrictions.eq("target.severed", false)) //
                 .addOrder(Order.desc("thisUser.id")) //
@@ -657,11 +676,11 @@ public class AdvertDAO {
                 .list();
     }
 
-    public void updateAdvertTargetGroup(AdvertTarget advertTarget, boolean enable) {
+    public void updateAdvertTargetGroup(AdvertTarget advertTarget, Boolean enable) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTarget " //
                         + "set severed = :enable " //
-                        + "where advert = :advert" //
+                        + "where advert = :advert " //
                         + "and targetAdvert = :targetAdvert") //
                 .setParameter("enable", enable) //
                 .setParameter("advert", advertTarget.getAdvert()) //
@@ -691,6 +710,7 @@ public class AdvertDAO {
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("advert.id", adverts)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertUserDTO.class)) //
                 .list();
     }
 
@@ -846,21 +866,7 @@ public class AdvertDAO {
         return conjunction;
     }
 
-    private Criteria getAdvertTargetCriteria(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user, Collection<Integer> connectAdverts,
-            boolean received) {
-        Criterion permissionsConstraint;
-        if (user != null && isNotEmpty(connectAdverts)) {
-            permissionsConstraint = Restrictions.disjunction() //
-                    .add(getAdvertTargetAcceptUserConstraint(user))
-                    .add(Restrictions.conjunction() //
-                            .add(Restrictions.isNull("thisUser.id"))
-                            .add(Restrictions.in("thisAdvert.id", connectAdverts)));
-        } else if (user != null) {
-            permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
-        } else {
-            permissionsConstraint = Restrictions.in("thisAdvert.id", connectAdverts);
-        }
-
+    private Criteria getAdvertTargetCriteria(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user, boolean received) {
         thisAdvertReference = "target." + thisAdvertReference;
         otherAdvertReference = "target." + otherAdvertReference;
 
@@ -913,8 +919,7 @@ public class AdvertDAO {
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
-                .add(getResourceParentManageableStateConstraint(resourceScope))
-                .add(permissionsConstraint);
+                .add(getResourceParentManageableStateConstraint(resourceScope));
     }
 
     private Junction getAdvertTargetAcceptUserConstraint(User user) {

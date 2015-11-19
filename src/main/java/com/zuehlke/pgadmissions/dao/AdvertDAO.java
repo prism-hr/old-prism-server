@@ -700,7 +700,7 @@ public class AdvertDAO {
         return (List<AdvertUserDTO>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("advert.id").as("advertId")) //
-                        .add(Projections.groupProperty("user.id").as("userId")) //
+                        .add(Projections.property("user.id").as("userId")) //
                         .add(Projections.property("user.firstName").as("userFirstName")) //
                         .add(Projections.property("user.lastName").as("userLastName")) //
                         .add(Projections.property("user.email").as("userEmail")) //

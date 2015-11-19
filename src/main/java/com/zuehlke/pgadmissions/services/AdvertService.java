@@ -402,13 +402,13 @@ public class AdvertService {
 
                 DateTime baseline = now();
                 Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
-                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[]{"ADMINISTRATOR", "APPROVER"}, newArrayList(acceptAdvertId)))) {
+                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
                     advertDAO.getAdvertTargetAdmin(advertTarget).stream().forEach(targetAdmin -> {
                         oldPartnershipStates.add(targetAdmin.getPartnershipState());
                         setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
                     });
 
-                    advertDAO.updateAdvertTargetGroup(advertTarget, accept);
+                    advertDAO.updateAdvertTargetGroup(advertTarget, !accept);
                     performed = true;
                 }
 
@@ -555,7 +555,7 @@ public class AdvertService {
         List<Integer> connectAdverts = getAdvertsForWhichUserCanManageConnections(user);
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : targetScopes) {
-            for (String advertReference : new String[]{"advert", "targetAdvert"}) {
+            for (String advertReference : new String[] { "advert", "targetAdvert" }) {
                 advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts));
             }
         }
@@ -669,7 +669,7 @@ public class AdvertService {
         String connectionsSerial = advertTargetPending.getAdvertTargetConnectList();
         if (invitationsSerial != null) {
             List<ResourceRelationCreationDTO> invitations = prismJsonMappingUtils.readCollection(invitationsSerial, List.class, ResourceRelationCreationDTO.class);
-            for (Iterator<ResourceRelationCreationDTO> iterator = invitations.iterator(); iterator.hasNext(); ) {
+            for (Iterator<ResourceRelationCreationDTO> iterator = invitations.iterator(); iterator.hasNext();) {
                 ResourceRelationCreationDTO invitation = iterator.next();
                 resourceService.inviteResourceRelation(advertTargetPending.getAdvert().getResource(), advertTargetPending.getUser(), invitation,
                         advertTargetPending.getAdvertTargetMessage());
@@ -680,7 +680,7 @@ public class AdvertService {
             }
         } else if (connectionsSerial != null) {
             List<ResourceRelationCreationDTO> connections = prismJsonMappingUtils.readCollection(connectionsSerial, List.class, ResourceRelationCreationDTO.class);
-            for (Iterator<ResourceRelationCreationDTO> iterator = connections.iterator(); iterator.hasNext(); ) {
+            for (Iterator<ResourceRelationCreationDTO> iterator = connections.iterator(); iterator.hasNext();) {
                 ResourceRelationCreationDTO targetDTO = iterator.next();
                 ResourceCreationDTO ResourceRelationCreationDTO = targetDTO.getResource().getResource();
                 ResourceParent resourceTarget = (ResourceParent) resourceService.getById(ResourceRelationCreationDTO.getScope(), ResourceRelationCreationDTO.getId());
@@ -697,7 +697,7 @@ public class AdvertService {
     }
 
     public List<Integer> getAdvertsForWhichUserCanManageConnections(User user) {
-        return getAdvertsForWhichUserHasRolesStrict(user, new String[]{"ADMINISTRATOR", "APPROVER"}, null);
+        return getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, null);
     }
 
     public List<Integer> getAdvertTargeterEntities(PrismScope scope) {
@@ -715,14 +715,14 @@ public class AdvertService {
         } else if (applicationCategory) {
             HashMultimap<PrismScope, Integer> students = HashMultimap.create();
             for (PrismScope targetScope : targetScopes) {
-                List<PrismRole> roles = values(PrismRole.class, targetScope, new String[]{"ADMINISTRATOR", "APPROVER"});
+                List<PrismRole> roles = values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" });
                 List<Integer> resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
                 if (isNotEmpty(resources)) {
                     students.putAll(targetScope, userService.getUsersWithRoles(targetScope, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
                 }
 
                 if (targetScope.equals(DEPARTMENT)) {
-                    roles = values(PrismRole.class, INSTITUTION, new String[]{"ADMINISTRATOR", "APPROVER"});
+                    roles = values(PrismRole.class, INSTITUTION, new String[] { "ADMINISTRATOR", "APPROVER" });
                     resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
                     if (isNotEmpty(resources)) {
                         students.putAll(targetScope, userService.getUsersWithRoles(targetScope, INSTITUTION, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
@@ -826,7 +826,7 @@ public class AdvertService {
 
     public Set<Integer> getAdvertsForWhichUserIsTarget(User user) {
         Set<Integer> adverts = Sets.newHashSet();
-        for (String advertProperty : new String[]{"advert", "targetAdvert"}) {
+        for (String advertProperty : new String[] { "advert", "targetAdvert" }) {
             adverts.addAll(advertDAO.getAdvertsForWhichUserIsTarget(user, advertProperty));
         }
         return adverts;
@@ -863,7 +863,7 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO, PrismResourceContext context, String message,
-                                            boolean validate) {
+            boolean validate) {
         if (!(validate && resourceService.getResourceForWhichUserCanConnect(user, resource) == null)) {
             User userTarget = null;
             if (userTargetDTO != null) {
@@ -898,7 +898,7 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
-                                            PrismPartnershipState partnershipState) {
+            PrismPartnershipState partnershipState) {
         return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
                 .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState)
                 .withSevered(false));
@@ -977,7 +977,7 @@ public class AdvertService {
     }
 
     private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                   BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
         setProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
         setProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
         setProperty(financialDetails, intervalPrefixGenerated + "Minimum" + context, minimumGenerated);
@@ -985,8 +985,8 @@ public class AdvertService {
     }
 
     private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-                                            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
+                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (rate.compareTo(new BigDecimal(0)) == 1) {
             minimumSpecified = minimumSpecified.multiply(rate).setScale(2, HALF_UP);
             maximumSpecified = maximumSpecified.multiply(rate).setScale(2, HALF_UP);
@@ -1093,7 +1093,7 @@ public class AdvertService {
     }
 
     private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
-                                        LocalDate baseline) {
+            LocalDate baseline) {
         AdvertFinancialDetailPayDTO payDTO = financialDetailsDTO.getPay();
         if (payDTO != null) {
             PrismDurationUnit interval = payDTO.getInterval();
@@ -1224,7 +1224,7 @@ public class AdvertService {
 
     private HashMultimap<PrismScope, PrismState> getAdvertScopes() {
         HashMultimap<PrismScope, PrismState> scopes = HashMultimap.create();
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             scopes.putAll(scope, stateService.getActiveResourceStates(scope));
         }
         return scopes;

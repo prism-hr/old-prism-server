@@ -799,7 +799,7 @@ public class AdvertService {
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
-        return getAdvertsForWhichUserHasRoles(user, roleExtensions, null, true, AdvertCategoryDTO.class);
+        return getAdvertsForWhichUserHasRoles(user, roleExtensions, targetScopes, null, true, AdvertCategoryDTO.class);
     }
 
     public List<Integer> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions, Collection<Integer> advertIds) {
@@ -807,17 +807,7 @@ public class AdvertService {
     }
 
     public <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, Collection<Integer> advertIds, boolean strict, Class<T> responseClass) {
-        List<T> adverts = Lists.newArrayList();
-        if (user != null) {
-            for (PrismScope scope : advertScopes) {
-                List<PrismState> states = stateService.getActiveResourceStates(scope);
-                roleExtensions = getFilteredRoleExtensions(scope, roleExtensions);
-                if (roleExtensions.length > 0) {
-                    adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, states, roleExtensions, advertIds, strict, responseClass));
-                }
-            }
-        }
-        return adverts;
+        return getAdvertsForWhichUserHasRoles(user, roleExtensions, advertScopes, advertIds, strict, responseClass);
     }
 
     public List<AdvertTarget> getAdvertTargetsForAdverts(Collection<Integer> adverts) {
@@ -842,6 +832,21 @@ public class AdvertService {
             }
         }
         return advertUsers;
+    }
+
+    private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,
+            Class<T> responseClass) {
+        List<T> adverts = Lists.newArrayList();
+        if (user != null) {
+            for (PrismScope scope : advertScopes) {
+                List<PrismState> states = stateService.getActiveResourceStates(scope);
+                roleExtensions = getFilteredRoleExtensions(scope, roleExtensions);
+                if (roleExtensions.length > 0) {
+                    adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, states, roleExtensions, advertIds, strict, responseClass));
+                }
+            }
+        }
+        return adverts;
     }
 
     private String[] getFilteredRoleExtensions(PrismScope scope, String[] roleExtensions) {

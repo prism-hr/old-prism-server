@@ -60,7 +60,7 @@ public class CommentRepresentation {
 
     private List<CommentAssignedUserRepresentation> assignedUsers;
 
-    private List<CommentCompetenceGroupRepresentation> competences;
+    private List<CommentCompetenceGroupRepresentation> competenceGroups;
 
     private List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots;
 
@@ -252,12 +252,12 @@ public class CommentRepresentation {
         this.assignedUsers = assignedUsers;
     }
 
-    public List<CommentCompetenceGroupRepresentation> getCompetences() {
-        return competences;
+    public List<CommentCompetenceGroupRepresentation> getCompetenceGroups() {
+        return competenceGroups;
     }
 
-    public void setCompetences(List<CommentCompetenceGroupRepresentation> competences) {
-        this.competences = competences;
+    public void setCompetenceGroups(List<CommentCompetenceGroupRepresentation> competenceGroups) {
+        this.competenceGroups = competenceGroups;
     }
 
     public List<CommentAppointmentTimeslotRepresentation> getAppointmentTimeslots() {
@@ -394,8 +394,8 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withCompetences(List<CommentCompetenceGroupRepresentation> competences) {
-        this.competences = competences;
+    public CommentRepresentation withCompetenceGroups(final List<CommentCompetenceGroupRepresentation> competenceGroups) {
+        this.competenceGroups = competenceGroups;
         return this;
     }
 

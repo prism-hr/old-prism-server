@@ -1,17 +1,16 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CommentRepresentation {
 
@@ -61,7 +60,7 @@ public class CommentRepresentation {
 
     private List<CommentAssignedUserRepresentation> assignedUsers;
 
-    private List<CommentCompetenceRepresentation> competences;
+    private List<CommentCompetenceGroupRepresentation> competences;
 
     private List<CommentAppointmentTimeslotRepresentation> appointmentTimeslots;
 
@@ -253,11 +252,11 @@ public class CommentRepresentation {
         this.assignedUsers = assignedUsers;
     }
 
-    public List<CommentCompetenceRepresentation> getCompetences() {
+    public List<CommentCompetenceGroupRepresentation> getCompetences() {
         return competences;
     }
 
-    public void setCompetences(List<CommentCompetenceRepresentation> competences) {
+    public void setCompetences(List<CommentCompetenceGroupRepresentation> competences) {
         this.competences = competences;
     }
 
@@ -395,7 +394,7 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withCompetences(List<CommentCompetenceRepresentation> competences) {
+    public CommentRepresentation withCompetences(List<CommentCompetenceGroupRepresentation> competences) {
         this.competences = competences;
         return this;
     }

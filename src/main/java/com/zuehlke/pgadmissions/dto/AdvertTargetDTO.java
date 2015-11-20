@@ -52,7 +52,9 @@ public class AdvertTargetDTO {
     private PrismPartnershipState partnershipState;
 
     private Boolean severed;
-    
+
+    private Boolean selected;
+
     private Boolean canManage;
 
     public Integer getId() {
@@ -245,6 +247,14 @@ public class AdvertTargetDTO {
 
     public void setSevered(Boolean severed) {
         this.severed = severed;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
     }
 
     public Boolean getCanManage() {

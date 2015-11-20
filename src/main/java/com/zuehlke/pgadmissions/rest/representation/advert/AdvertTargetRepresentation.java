@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
-import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
-import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
+import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
+import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
+import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
 
 public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepresentation> {
 
@@ -53,6 +53,8 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
         private boolean canManage;
 
         private boolean severed;
+
+        private boolean selected;
 
         public Integer getAdvertTargetId() {
             return advertTargetId;
@@ -102,6 +104,14 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.severed = severed;
         }
 
+        public boolean isSelected() {
+            return selected;
+        }
+
+        public void setSelected(boolean selected) {
+            this.selected = selected;
+        }
+
         public AdvertTargetConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
             this.advertTargetId = advertTargetId;
             return this;
@@ -119,6 +129,11 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
         public AdvertTargetConnectionRepresentation withSevered(boolean severed) {
             this.severed = severed;
+            return this;
+        }
+
+        public AdvertTargetConnectionRepresentation withSelected(boolean selected) {
+            this.selected = selected;
             return this;
         }
 

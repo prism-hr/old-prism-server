@@ -31,10 +31,10 @@ public class AdvertServiceHelperClosingDate extends PrismServiceHelperAbstract {
     public AtomicBoolean getShuttingDown() {
         return shuttingDown;
     }
-    
+
     private void refreshClosingDate(LocalDate baseline, Integer advert) {
         if (!isShuttingDown()) {
-            advertService.refreshClosingDate(advert, baseline);
+            advertService.refreshClosingDate(advert);
         }
     }
 

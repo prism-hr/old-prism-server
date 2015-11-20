@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.rest.representation.advert;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
-
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationConnection;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
+
+import java.util.List;
+
+import static org.apache.commons.lang3.ObjectUtils.compare;
 
 public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepresentation> {
 
@@ -52,6 +52,8 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
         private boolean canManage;
 
+        private boolean severed;
+
         public Integer getAdvertTargetId() {
             return advertTargetId;
         }
@@ -92,6 +94,14 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
             this.canManage = canManage;
         }
 
+        public boolean isSevered() {
+            return severed;
+        }
+
+        public void setSevered(boolean severed) {
+            this.severed = severed;
+        }
+
         public AdvertTargetConnectionRepresentation withAdvertTargetId(Integer advertTargetId) {
             this.advertTargetId = advertTargetId;
             return this;
@@ -104,6 +114,11 @@ public class AdvertTargetRepresentation implements Comparable<AdvertTargetRepres
 
         public AdvertTargetConnectionRepresentation withCanManage(boolean canManage) {
             this.canManage = canManage;
+            return this;
+        }
+
+        public AdvertTargetConnectionRepresentation withSevered(boolean severed) {
+            this.severed = severed;
             return this;
         }
 

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1205,6 +1205,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_COMMON_EDIT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Edit"),
     SYSTEM_HTML_COMMON_SAVE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Save"),
     SYSTEM_HTML_COMMON_UPDATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Update"),
+    SYSTEM_HTML_COMMON_OK_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "OK"),
     SYSTEM_HTML_COMMON_CANCEL_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Cancel"),
     SYSTEM_HTML_COMMON_CLEAR_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Clear"),
     SYSTEM_HTML_COMMON_CLOSE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Close"),
@@ -1723,6 +1724,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TARGETS_ACCEPT_BUTTON(SYSTEM_RESOURCE_TARGETS, "Accept"),
     SYSTEM_RESOURCE_TARGETS_REJECT_BUTTON(SYSTEM_RESOURCE_TARGETS, "Reject"),
     SYSTEM_RESOURCE_TARGETS_REMOVE_BUTTON(SYSTEM_RESOURCE_TARGETS, "Remove"),
+    SYSTEM_RESOURCE_TARGETS_RESTORE_BUTTON(SYSTEM_RESOURCE_TARGETS, "Restore"),
 
     /*
      * *************** SYSTEM RESOURCE COMPETENCES *********************

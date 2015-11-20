@@ -1,18 +1,37 @@
 package com.zuehlke.pgadmissions.dao;
 
+import com.google.common.collect.HashMultimap;
+import com.zuehlke.pgadmissions.domain.Competence;
+import com.zuehlke.pgadmissions.domain.advert.*;
+import com.zuehlke.pgadmissions.domain.application.Application;
+import com.zuehlke.pgadmissions.domain.definitions.*;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.*;
+import com.zuehlke.pgadmissions.domain.resource.Institution;
+import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
+import com.zuehlke.pgadmissions.domain.resource.ResourceState;
+import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.dto.*;
+import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.*;
+import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Repository;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.STUDY;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.WORK;
+import static com.zuehlke.pgadmissions.dao.WorkflowDAO.*;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory.*;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.*;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROGRAM;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
@@ -23,63 +42,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Repository;
-
-import com.google.common.collect.HashMultimap;
-import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.advert.Advert;
-import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
-import com.zuehlke.pgadmissions.domain.advert.AdvertClosingDate;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
-import com.zuehlke.pgadmissions.domain.advert.AdvertTargetPending;
-import com.zuehlke.pgadmissions.domain.application.Application;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertFunction;
-import com.zuehlke.pgadmissions.domain.definitions.PrismAdvertIndustry;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
-import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
-import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
-import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
-import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
-import com.zuehlke.pgadmissions.domain.resource.Institution;
-import com.zuehlke.pgadmissions.domain.resource.ResourceOpportunity;
-import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.user.User;
-import com.zuehlke.pgadmissions.dto.AdvertApplicationSummaryDTO;
-import com.zuehlke.pgadmissions.dto.AdvertDTO;
-import com.zuehlke.pgadmissions.dto.AdvertFunctionDTO;
-import com.zuehlke.pgadmissions.dto.AdvertIndustryDTO;
-import com.zuehlke.pgadmissions.dto.AdvertPartnerActionDTO;
-import com.zuehlke.pgadmissions.dto.AdvertStudyOptionDTO;
-import com.zuehlke.pgadmissions.dto.AdvertTargetDTO;
-import com.zuehlke.pgadmissions.dto.AdvertUserDTO;
-import com.zuehlke.pgadmissions.dto.EntityOpportunityFilterDTO;
-import com.zuehlke.pgadmissions.rest.dto.OpportunitiesQueryDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -207,7 +169,7 @@ public class AdvertDAO {
     }
 
     public List<EntityOpportunityFilterDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> states, PrismActionCondition actionCondition,
-            Collection<Integer> nodeAdverts, Collection<Integer> userAdverts, OpportunitiesQueryDTO query) {
+                                                              Collection<Integer> nodeAdverts, Collection<Integer> userAdverts, OpportunitiesQueryDTO query) {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("advert.id").as("id")) //
                 .add(Projections.property("resource.opportunityCategories").as("opportunityCategories"));
@@ -412,7 +374,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargets(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
+                                                  Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
         Criterion visibilityConstraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED))
                 .add(Restrictions.eq("target.severed", false));
@@ -437,7 +399,7 @@ public class AdvertDAO {
     }
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
-            Collection<Integer> connectAdverts) {
+                                                          Collection<Integer> connectAdverts) {
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
@@ -461,7 +423,7 @@ public class AdvertDAO {
     }
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            List<Integer> targeterEntities) {
+                                                                List<Integer> targeterEntities) {
         return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
                 .add(Restrictions.eq("targeterTarget.advert", advert)) //
                 .add(Restrictions.disjunction() //
@@ -474,7 +436,7 @@ public class AdvertDAO {
     }
 
     public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
-            boolean strict, Class<T> responseClass) {
+                                                      boolean strict, Class<T> responseClass) {
         Projection projections;
         boolean integerResponse = responseClass.equals(Integer.class);
         if (integerResponse) {
@@ -541,7 +503,7 @@ public class AdvertDAO {
     }
 
     public List<Integer> getUserAdverts(User user, PrismScope targeterScope, PrismScope targetScope, PrismScope advertScope,
-            Collection<PrismState> advertResourceStates, List<Integer> revokedAdverts) {
+                                        Collection<PrismState> advertResourceStates, List<Integer> revokedAdverts) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("advertResourceAdvert.id")) //
                 .createAlias(advertScope.getLowerCamelName(), "advertResource", JoinType.INNER_JOIN) //
@@ -644,7 +606,7 @@ public class AdvertDAO {
     }
 
     public List<Integer> getAdvertsForTargetResource(PrismScope targeterScope, PrismScope resourceScope, Integer resourceId, PrismScope advertScope,
-            Collection<PrismState> advertResourceStates) {
+                                                     Collection<PrismState> advertResourceStates) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advertResource.advert.id")) //
                 .createAlias("advert", "targeterAdvert", JoinType.INNER_JOIN) //
@@ -923,13 +885,17 @@ public class AdvertDAO {
     }
 
     private Junction getAdvertTargetAcceptUserConstraint(User user) {
-        return Restrictions.conjunction()
-                .add(Restrictions.eq("thisRole.verified", true)) //
-                .add(Restrictions.ne("thisRole.roleCategory", STUDENT)) //
-                .add(Restrictions.eq("thisUser.id", user.getId())) //
-                .add(Restrictions.disjunction() //
+        Junction conjunction = Restrictions.conjunction()
+                .add(Restrictions.eq("thisRole.verified", true))
+                .add(Restrictions.ne("thisRole.roleCategory", STUDENT))
+                .add(Restrictions.disjunction()
                         .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
                         .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
+        if (user != null) {
+            conjunction
+                    .add(Restrictions.eq("thisUser.id", user.getId()));
+        }
+        return conjunction;
     }
 
 }

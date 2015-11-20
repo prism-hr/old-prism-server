@@ -425,11 +425,7 @@ public class AdvertDAO {
         }
 
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, false)
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.in("thisAdvert.id", connectAdverts))
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.isNull("thisUser.id"))
-                                .add(getAdvertTargetAcceptUserConstraint(user))))
+                .add(Restrictions.in("thisAdvert.id", connectAdverts))
                 .add(visibilityConstraint) //
                 .addOrder(Order.desc("thisUser.id")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))

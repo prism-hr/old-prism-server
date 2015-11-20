@@ -265,8 +265,7 @@ public class AdvertMapper {
                 representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
             }
 
-            representation.setTargets(getAdvertTargetRepresentations(advertService.getAdvertTargets(advert)));
-
+            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert)));
             representation.setName(advert.getName());
 
             AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
@@ -443,6 +442,14 @@ public class AdvertMapper {
         });
 
         return representations;
+    }
+
+    public List<AdvertTargetConnectionRepresentation> getAdvertTargetConnectionRepresentations(List<AdvertTargetDTO> advertTargets) {
+        Set<AdvertTargetConnectionRepresentation> representations = Sets.newTreeSet();
+        getAdvertTargetRepresentations(advertTargets).forEach(advertTarget -> {
+            representations.addAll(advertTarget.getConnections());
+        });
+        return newLinkedList(representations);
     }
 
     private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget) {

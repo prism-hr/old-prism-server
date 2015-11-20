@@ -923,13 +923,17 @@ public class AdvertDAO {
     }
 
     private Junction getAdvertTargetAcceptUserConstraint(User user) {
-        return Restrictions.conjunction()
+        Junction constraint = Restrictions.conjunction()
                 .add(Restrictions.eq("thisRole.verified", true)) //
-                .add(Restrictions.ne("thisRole.roleCategory", STUDENT)) //
-                .add(Restrictions.eq("thisUser.id", user.getId())) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
-                        .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
+                .add(Restrictions.ne("thisRole.roleCategory", STUDENT));
+
+        if (user != null) {
+            constraint.add(Restrictions.eq("thisUser.id", user.getId()));
+        }
+
+        return constraint.add(Restrictions.disjunction() //
+                .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
+                .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
     }
 
 }

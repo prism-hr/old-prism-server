@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityType;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.resource.ResourceRepresentationSimple;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
@@ -41,7 +42,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private BigDecimal applicationRatingAverage;
 
-    private List<AdvertTargetRepresentation> targets;
+    private List<AdvertTargetConnectionRepresentation> targets;
 
     private PrismConnectionState joinStateStaff;
 
@@ -153,11 +154,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public List<AdvertTargetRepresentation> getTargets() {
+    public List<AdvertTargetConnectionRepresentation> getTargets() {
         return targets;
     }
 
-    public void setTargets(List<AdvertTargetRepresentation> targets) {
+    public void setTargets(List<AdvertTargetConnectionRepresentation> targets) {
         this.targets = targets;
     }
 

@@ -1586,7 +1586,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "To change the primary owner go to Manage User and change the owner fo the project"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_EVERYONE_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to everybody"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_MY_CONNECTIONS_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
-    SYSTEM_RESOURCE_PARENT_VISIBILITY_CUSTOM_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visible to my connections"),
+    SYSTEM_RESOURCE_PARENT_VISIBILITY_CUSTOM_OPTION(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Custom"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Use our recruitment engine?"),
     SYSTEM_RESOURCE_PARENT_USE_OUR_ENGINE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Specify whether you wish to use our recruitment engine, or link to your own."),
     SYSTEM_RESOURCE_PARENT_APPLY_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Application Page URL"),

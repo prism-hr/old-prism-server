@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
+import org.hibernate.validator.constraints.Range;
+
 import javax.validation.constraints.NotNull;
 
 public class CommentCompetenceDTO {
@@ -8,6 +10,7 @@ public class CommentCompetenceDTO {
     private Integer competenceId;
 
     @NotNull
+    @Range(min = 1, max = 3)
     private Integer importance;
 
     @NotNull

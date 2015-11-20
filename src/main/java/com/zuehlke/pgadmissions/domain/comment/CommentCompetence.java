@@ -1,16 +1,9 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.Competence;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "comment_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "competence_id" }) })
@@ -27,6 +20,9 @@ public class CommentCompetence {
     @ManyToOne
     @JoinColumn(name = "competence_id", nullable = false)
     private Competence competence;
+
+    @Column(name = "importance", nullable = false)
+    private Integer importance;
 
     @Column(name = "rating", nullable = false)
     private Integer rating;
@@ -58,6 +54,14 @@ public class CommentCompetence {
         this.competence = competence;
     }
 
+    public Integer getImportance() {
+        return importance;
+    }
+
+    public void setImportance(Integer importance) {
+        this.importance = importance;
+    }
+
     public Integer getRating() {
         return rating;
     }
@@ -81,6 +85,11 @@ public class CommentCompetence {
 
     public CommentCompetence withCompetence(Competence competence) {
         this.competence = competence;
+        return this;
+    }
+
+    public CommentCompetence withImportance(final Integer importance) {
+        this.importance = importance;
         return this;
     }
 

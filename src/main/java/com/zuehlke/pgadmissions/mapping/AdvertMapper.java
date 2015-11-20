@@ -257,8 +257,7 @@ public class AdvertMapper {
 
                 String opportunityCategories = resource.getOpportunityCategories();
                 if (opportunityCategories != null) {
-                    representation
-                            .setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(Collectors.toList()));
+                    representation.setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
                 }
 
                 setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());

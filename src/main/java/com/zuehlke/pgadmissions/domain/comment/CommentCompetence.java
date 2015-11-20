@@ -1,9 +1,16 @@
 package com.zuehlke.pgadmissions.domain.comment;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import com.google.common.base.Objects;
 import com.zuehlke.pgadmissions.domain.Competence;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "comment_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "competence_id" }) })

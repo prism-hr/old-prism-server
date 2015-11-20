@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.rest.dto.comment;
 
-import org.hibernate.validator.constraints.Range;
-
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Range;
 
 public class CommentCompetenceDTO {
 

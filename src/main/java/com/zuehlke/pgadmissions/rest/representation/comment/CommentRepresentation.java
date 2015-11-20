@@ -1,16 +1,17 @@
 package com.zuehlke.pgadmissions.rest.representation.comment;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+
 import com.zuehlke.pgadmissions.domain.definitions.PrismRejectionReason;
 import com.zuehlke.pgadmissions.domain.definitions.PrismYesNoUnsureResponse;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 public class CommentRepresentation {
 

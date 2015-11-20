@@ -1,29 +1,9 @@
 package com.zuehlke.pgadmissions.mapping;
 
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Service;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.zuehlke.pgadmissions.domain.Competence;
-import com.zuehlke.pgadmissions.domain.comment.Comment;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentPreference;
-import com.zuehlke.pgadmissions.domain.comment.CommentAppointmentTimeslot;
-import com.zuehlke.pgadmissions.domain.comment.CommentAssignedUser;
-import com.zuehlke.pgadmissions.domain.comment.CommentCompetence;
-import com.zuehlke.pgadmissions.domain.comment.CommentInterviewAppointment;
-import com.zuehlke.pgadmissions.domain.comment.CommentInterviewInstruction;
-import com.zuehlke.pgadmissions.domain.comment.CommentOfferDetail;
-import com.zuehlke.pgadmissions.domain.comment.CommentPositionDetail;
+import com.zuehlke.pgadmissions.domain.comment.*;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
@@ -32,23 +12,21 @@ import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentAssignedUserRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentCompetenceRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewAppointmentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentInterviewInstructionRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentOfferDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentPositionDetailRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentRepresentation;
-import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.comment.*;
 import com.zuehlke.pgadmissions.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.user.UserRepresentationSimple;
-import com.zuehlke.pgadmissions.services.ActionService;
-import com.zuehlke.pgadmissions.services.CommentService;
-import com.zuehlke.pgadmissions.services.ResourceService;
-import com.zuehlke.pgadmissions.services.RoleService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.services.*;
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
 @Service
 @Transactional
@@ -117,7 +95,7 @@ public class CommentMapper {
     }
 
     public List<CommentAppointmentPreferenceRepresentation> getCommentAppointmentPreferenceRepresentations(Comment schedulingComment,
-            Set<CommentAppointmentTimeslot> timeslots) {
+                                                                                                           Set<CommentAppointmentTimeslot> timeslots) {
         List<CommentAppointmentPreferenceRepresentation> representations = Lists.newLinkedList();
 
         for (User user : commentService.getAppointmentInvitees(schedulingComment)) {
@@ -173,7 +151,7 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles, List<PrismActionEnhancement> actionEnhancements,
-            List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
+                                                           List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
         if (!onlyAsPartner && (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user))) {
             CommentRepresentation representation = getCommentRepresentationExtended(comment);
@@ -237,15 +215,23 @@ public class CommentMapper {
         return delegate == null ? null : userMapper.getUserRepresentationSimple(delegate);
     }
 
-    private List<CommentCompetenceRepresentation> getCommentCompetenceRepresentations(Set<CommentCompetence> commentCompetences) {
-        List<CommentCompetenceRepresentation> representations = Lists.newLinkedList();
+    private List<CommentCompetenceGroupRepresentation> getCommentCompetenceRepresentations(Set<CommentCompetence> commentCompetences) {
+        Map<Integer, CommentCompetenceGroupRepresentation> groups = new HashMap<>();
+        for (int i = 1; i <= 3; i++) {
+            groups.put(i, new CommentCompetenceGroupRepresentation().withImportance(i).withCompetences(new LinkedList<>()));
+        }
+
         for (CommentCompetence commentCompetence : commentCompetences) {
             Competence competence = commentCompetence.getCompetence();
-            representations.add(new CommentCompetenceRepresentation().withName(competence.getName())
+            CommentCompetenceGroupRepresentation group = groups.get(commentCompetence.getImportance());
+            group.getCompetences().add(new CommentCompetenceRepresentation().withName(competence.getName())
                     .withDescription(competence.getDescription()).withRating(commentCompetence.getRating())
                     .withRemark(commentCompetence.getRemark()));
         }
-        return representations;
+        return Stream.of(3, 2, 1)
+                .map(importance -> groups.get(importance))
+                .filter(group -> !group.getCompetences().isEmpty())
+                .collect(Collectors.toList());
     }
 
     private CommentPositionDetailRepresentation getCommentPositionDetailRepresentation(Comment comment) {

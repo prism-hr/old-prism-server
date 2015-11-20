@@ -405,8 +405,8 @@ public class AdvertService {
                 PrismPartnershipState partnershipState = accept ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
 
                 DateTime baseline = now();
-                Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
-                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
+                Integer otherAdvertId = advertTarget.getOtherAdvert().getId();
+                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(otherAdvertId)))) {
                     advertDAO.getAdvertTargetAdmin(advertTarget).stream().forEach(targetAdmin -> {
                         oldPartnershipStates.add(targetAdmin.getPartnershipState());
                         setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
@@ -1278,6 +1278,7 @@ public class AdvertService {
 
     private void setAdvertTargetSequenceIdentifier(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline) {
         if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
+            advertTarget.setAcceptedTimestamp(baseline);
             activityService.setSequenceIdentifier(advertTarget, baseline);
         }
     }

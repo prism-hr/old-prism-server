@@ -526,7 +526,9 @@ public class AdvertService {
 
         User user = userService.getCurrentUser();
         PrismScopeCategory scopeCategory = advert.getResource().getResourceScope().getScopeCategory();
-        List<Integer> manageAdverts = scopeCategory.equals(ORGANIZATION) ? getAdvertsForWhichUserCanManageConnections(user) : emptyList();
+
+        boolean isOrganization = scopeCategory.equals(ORGANIZATION);
+        List<Integer> manageAdverts = isOrganization ? getAdvertsForWhichUserCanManageConnections(user) : emptyList();
 
         Map<Integer, AdvertTargetDTO> advertTargets = Maps.newHashMap();
         String[] opportunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
@@ -548,7 +550,32 @@ public class AdvertService {
         }
 
         boolean superAdmin = roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR);
-        advertTargets.values().stream().filter(at -> manageAdverts.contains(at.getThisAdvertId()) || superAdmin).forEach(at -> at.setCanManage(true));
+        advertTargets.values().stream()
+                .filter(at -> (isOrganization ? manageAdverts : getAdvertsForWhichUserCanManageConnections(user)).contains(at.getThisAdvertId()) || superAdmin)
+                .forEach(at -> at.setCanManage(true));
+
+        if (!isOrganization) {
+            Set<Integer> customDepartments = Sets.newHashSet();
+            Set<Integer> customInstitutions = Sets.newHashSet();
+
+            advertDAO.getCustomAdvertTargets(advert).forEach(customTarget -> {
+                Resource customResource = customTarget.getAdvert().getResource();
+                Resource customTargetResource = customTarget.getTargetAdvert().getResource();
+
+                if (customResource.getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
+                    reconcileCustomTargetResources(customResource, customDepartments, customInstitutions);
+                } else if (customTargetResource.getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
+                    reconcileCustomTargetResources(customTargetResource, customDepartments, customInstitutions);
+                }
+            });
+
+            advertTargets.values().forEach(advertTarget -> {
+                if (customDepartments.contains(advertTarget.getOtherDepartmentId()) || customInstitutions.contains(advertTarget.getOtherInstitutionId())) {
+                    advertTarget.setSelected(true);
+                }
+            });
+        }
+
         return newArrayList(advertTargets.values());
     }
 
@@ -1280,6 +1307,19 @@ public class AdvertService {
         if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
             advertTarget.setAcceptedTimestamp(baseline);
             activityService.setSequenceIdentifier(advertTarget, baseline);
+        }
+    }
+
+    private void reconcileCustomTargetResources(Resource customResource, Set<Integer> customDepartments, Set<Integer> customInstitutions) {
+        Department customDepartment = customResource.getDepartment();
+        Institution customInstitution = customResource.getInstitution();
+
+        if (customDepartment != null) {
+            customDepartments.add(customDepartment.getId());
+        }
+
+        if (customInstitution != null) {
+            customInstitutions.add(customInstitution.getId());
         }
     }
 

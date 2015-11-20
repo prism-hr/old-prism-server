@@ -395,7 +395,7 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withCompetenceGroups(final List<CommentCompetenceGroupRepresentation> competenceGroups) {
+    public CommentRepresentation withCompetenceGroups(List<CommentCompetenceGroupRepresentation> competenceGroups) {
         this.competenceGroups = competenceGroups;
         return this;
     }

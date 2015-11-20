@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.math.BigDecimal;
-
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.user.User;
 
@@ -13,7 +11,7 @@ public class UserCompetenceDTO {
 
     public Long ratingCount;
 
-    public BigDecimal ratingSum;
+    public Long ratingSum;
 
     public User getUser() {
         return user;
@@ -39,11 +37,11 @@ public class UserCompetenceDTO {
         this.ratingCount = ratingCount;
     }
 
-    public BigDecimal getRatingSum() {
+    public Long getRatingSum() {
         return ratingSum;
     }
 
-    public void setRatingSum(BigDecimal ratingSum) {
+    public void setRatingSum(Long ratingSum) {
         this.ratingSum = ratingSum;
     }
 

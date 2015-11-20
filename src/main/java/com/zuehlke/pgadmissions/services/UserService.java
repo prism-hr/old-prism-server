@@ -423,7 +423,7 @@ public class UserService {
         userDAO.getUserCompetences(user).forEach(uc -> {
             Integer ratingCount = uc.getRatingCount().intValue();
             entityService.createOrUpdate(new UserCompetence().withUser(uc.getUser()).withCompetence(uc.getCompetence()).withRatingCount(ratingCount)
-                    .withRatingAverage(uc.getRatingSum().divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
+                    .withRatingAverage(new BigDecimal(uc.getRatingSum()).divide(new BigDecimal(ratingCount), RATING_PRECISION, HALF_UP)));
         });
     }
 

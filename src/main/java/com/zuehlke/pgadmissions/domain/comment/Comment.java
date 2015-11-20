@@ -772,7 +772,7 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isRatingComment(PrismScope scope) {
-        return action.getId().getScope().equals(scope) && !(rating == null || competences.isEmpty());
+        return action.getId().getScope().equals(scope) && !(rating == null && competences.isEmpty());
     }
 
     public String getApplicationRatingDisplay() {

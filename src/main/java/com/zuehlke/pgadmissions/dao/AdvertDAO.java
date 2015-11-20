@@ -719,6 +719,16 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<AdvertTarget> getCustomAdvertTargets(Advert advert) {
+        return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("advert", advert)) //
+                        .add(Restrictions.eq("targetAdvert", advert))) //
+                .add(Restrictions.eq("partnershipState", PrismPartnershipState.ENDORSEMENT_PROVIDED)) //
+                .add(Restrictions.eq("severed", false)) //
+                .list();
+    }
+
     public void deleteCustomAdvertTargets(Advert advert) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete AdvertTarget " //

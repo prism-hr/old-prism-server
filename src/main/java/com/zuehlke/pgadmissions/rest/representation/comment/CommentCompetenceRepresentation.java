@@ -6,8 +6,6 @@ public class CommentCompetenceRepresentation {
 
     private String description;
 
-    private Integer importance;
-
     private Integer rating;
 
     private String remark;
@@ -26,14 +24,6 @@ public class CommentCompetenceRepresentation {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getImportance() {
-        return importance;
-    }
-
-    public void setImportance(Integer importance) {
-        this.importance = importance;
     }
 
     public Integer getRating() {
@@ -59,11 +49,6 @@ public class CommentCompetenceRepresentation {
 
     public CommentCompetenceRepresentation withDescription(String description) {
         this.description = description;
-        return this;
-    }
-
-    public CommentCompetenceRepresentation withImportance(final Integer importance) {
-        this.importance = importance;
         return this;
     }
 

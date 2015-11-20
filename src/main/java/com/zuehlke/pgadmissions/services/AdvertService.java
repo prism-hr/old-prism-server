@@ -301,6 +301,11 @@ public class AdvertService {
         if (categoriesDTO != null) {
             updateCategories(advert, categoriesDTO);
         }
+
+        List<Integer> customTargetIds = advertDTO.getCustomTargets();
+        if (isNotEmpty(customTargetIds)) {
+            updateAdvertTargets(advert, customTargetIds);
+        }
     }
 
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) {
@@ -906,9 +911,12 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, PrismPartnershipState partnershipState) {
-        AdvertTarget advertTarget = entityService
-                .createOrUpdate(new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(targetAdvert).withPartnershipState(partnershipState)
-                        .withSevered(false));
+        return createAdvertTarget(targetAdvert, targetAdvert, targetAdvert, partnershipState);
+    }
+
+    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, Advert acceptAdvert, PrismPartnershipState partnershipState) {
+        AdvertTarget advertTarget = entityService.createOrUpdate(
+                new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(acceptAdvert).withPartnershipState(partnershipState).withSevered(false));
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
     }
@@ -940,6 +948,34 @@ public class AdvertService {
             AdvertFunction category = new AdvertFunction().withAdvert(advert).withFunction(categoryDTO);
             entityService.save(category);
             functions.add(category);
+        });
+    }
+
+    private void updateAdvertTargets(Advert advert, List<Integer> customTargetIds) {
+        advertDAO.deleteCustomAdvertTargets(advert);
+
+        Advert departmentAdvert = advert.getDepartment().getAdvert();
+        Advert institutionAdvert = advert.getInstitution().getAdvert();
+
+        Integer departmentAdvertId = departmentAdvert == null ? null : departmentAdvert.getId();
+        Integer institutionAdvertId = institutionAdvert == null ? null : institutionAdvert.getId();
+
+        List<AdvertTarget> customTargets = advertDAO.getActiveAdvertTargets(customTargetIds);
+        customTargets.stream().forEach(customTarget -> {
+            Advert customAdvert = customTarget.getAdvert();
+            Advert customTargetAdvert = customTarget.getTargetAdvert();
+            Advert customAcceptAdvert = customTarget.getAcceptAdvert();
+
+            Integer customAdvertId = customAdvert.getId();
+            Integer customTargetAdvertId = customTargetAdvert.getId();
+
+            if (customAdvertId.equals(departmentAdvertId) || customAdvertId.equals(institutionAdvertId)) {
+                customAdvert = advert;
+            } else if (customTargetAdvertId.equals(departmentAdvertId) || customTargetAdvertId.equals(institutionAdvertId)) {
+                customTargetAdvert = advert;
+            }
+
+            createAdvertTarget(customAdvert, customTargetAdvert, customAcceptAdvert, ENDORSEMENT_PROVIDED);
         });
     }
 

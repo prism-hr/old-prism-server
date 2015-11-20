@@ -39,6 +39,8 @@ public class AdvertDTO {
 
     @Valid
     private ResourceRelationCreationDTO target;
+    
+    private List<Integer> customTargets;
 
     private Boolean globallyVisible;
 
@@ -104,6 +106,14 @@ public class AdvertDTO {
 
     public void setTarget(ResourceRelationCreationDTO target) {
         this.target = target;
+    }
+
+    public List<Integer> getCustomTargets() {
+        return customTargets;
+    }
+
+    public void setCustomTargets(List<Integer> customTargets) {
+        this.customTargets = customTargets;
     }
 
     public Boolean getGloballyVisible() {

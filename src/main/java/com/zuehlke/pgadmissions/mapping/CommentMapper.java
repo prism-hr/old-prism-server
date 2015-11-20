@@ -33,7 +33,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionEnhancement;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionRedactionType;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
-import com.zuehlke.pgadmissions.domain.document.Document;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.rest.representation.DocumentRepresentation;
@@ -115,11 +114,9 @@ public class CommentMapper {
     }
 
     public List<CommentAppointmentTimeslotRepresentation> getCommentAppointmentTimeslotRepresentations(Set<CommentAppointmentTimeslot> timeslots) {
-        List<CommentAppointmentTimeslotRepresentation> representations = Lists.newLinkedList();
-        for (CommentAppointmentTimeslot timeslot : timeslots) {
-            representations.add(new CommentAppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()));
-        }
-        return representations;
+        return timeslots.stream()
+                .map(timeslot -> new CommentAppointmentTimeslotRepresentation().withId(timeslot.getId()).withDateTime(timeslot.getDateTime()))
+                .collect(Collectors.toList());
     }
 
     public List<CommentAppointmentPreferenceRepresentation> getCommentAppointmentPreferenceRepresentations(Comment schedulingComment,
@@ -229,13 +226,10 @@ public class CommentMapper {
     }
 
     private List<CommentAssignedUserRepresentation> getCommentAssignedUserRepresentations(Comment comment, List<PrismRole> creatableRoles) {
-        List<CommentAssignedUserRepresentation> representations = Lists.newLinkedList();
-        for (CommentAssignedUser commentAssignedUser : comment.getAssignedUsers()) {
-            if (creatableRoles.contains(commentAssignedUser.getRole().getId())) {
-                representations.add(getCommentAssignedUserRepresentation(commentAssignedUser));
-            }
-        }
-        return representations;
+        return comment.getAssignedUsers().stream()
+                .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
+                .map(this::getCommentAssignedUserRepresentation)
+                .collect(Collectors.toList());
     }
 
     private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {
@@ -257,7 +251,7 @@ public class CommentMapper {
                     .withRemark(commentCompetence.getRemark()));
         }
         return Stream.of(3, 2, 1)
-                .map(importance -> groups.get(importance))
+                .map(groups::get)
                 .filter(group -> !group.getCompetences().isEmpty())
                 .collect(Collectors.toList());
     }
@@ -275,19 +269,15 @@ public class CommentMapper {
     }
 
     private List<LocalDateTime> getCommentAppointmentPreferenceRepresentations(Comment comment) {
-        List<LocalDateTime> representations = Lists.newLinkedList();
-        for (CommentAppointmentPreference preference : comment.getAppointmentPreferences()) {
-            representations.add(preference.getDateTime());
-        }
-        return representations;
+        return comment.getAppointmentPreferences().stream()
+                .map(CommentAppointmentPreference::getDateTime)
+                .collect(Collectors.toList());
     }
 
     private List<DocumentRepresentation> getCommentDocumentRepresentations(Comment comment) {
-        List<DocumentRepresentation> representations = Lists.newLinkedList();
-        for (Document document : comment.getDocuments()) {
-            representations.add(documentMapper.getDocumentRepresentation(document));
-        }
-        return representations;
+        return comment.getDocuments().stream()
+                .map(documentMapper::getDocumentRepresentation)
+                .collect(Collectors.toList());
     }
 
 }

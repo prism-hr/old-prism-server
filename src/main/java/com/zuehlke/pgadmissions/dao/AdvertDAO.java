@@ -63,6 +63,7 @@ import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
 import com.zuehlke.pgadmissions.domain.definitions.PrismStudyOption;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition;
+import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
@@ -708,6 +709,23 @@ public class AdvertDAO {
                 .add(Restrictions.in("advert.id", adverts)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertUserDTO.class)) //
                 .list();
+    }
+
+    public List<AdvertTarget> getActiveAdvertTargets(List<Integer> advertTargets) {
+        return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .add(Restrictions.eq("id", advertTargets)) //
+                .add(Restrictions.eq("partnershipState", PrismPartnershipState.ENDORSEMENT_PROVIDED)) //
+                .add(Restrictions.eq("severed", false)) //
+                .list();
+    }
+
+    public void deleteCustomAdvertTargets(Advert advert) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete AdvertTarget " //
+                        + "where advert = :advert " //
+                        + "or targetAdvert = : advert") //
+                .setParameter("advert", advert) //
+                .executeUpdate();
     }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

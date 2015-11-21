@@ -2026,7 +2026,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Specify your referee(s) here. Should you be considered for appointment, each referee will be asked to provide a statement in support of your application."),
     PROFILE_REFEREE_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referee"),
     PROFILE_REFEREE_POSITION_CONTACT_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Contact Details"),
-    PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Position & Employer"),
+    PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Employer & Position"),
     PROFILE_REFEREE_POSITION_EMPLOYER_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The position that your referee holds, and the organization that employs them."),
     PROFILE_REFEREE_PHONE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Telephone"),
     PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The employer telephone number of the referee."),

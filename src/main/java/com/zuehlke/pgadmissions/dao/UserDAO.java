@@ -480,7 +480,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(Collection<Integer> departments, ProfileListFilterDTO filter) {
+    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //
@@ -509,7 +509,7 @@ public class UserDAO {
                 .createAlias("userDocument", "userDocument", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("userRole.department.id", departments)) //
+                .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.eq("shared", true));
 
         String keyword = filter.getKeyword();

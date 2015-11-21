@@ -46,7 +46,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -302,6 +301,7 @@ public class AdvertService {
             updateCategories(advert, categoriesDTO);
         }
 
+        advertDAO.deleteCustomAdvertTargets(advert);
         List<Integer> customTargetIds = advertDTO.getCustomTargets();
         if (isNotEmpty(customTargetIds)) {
             updateAdvertTargets(advert, customTargetIds);
@@ -794,14 +794,21 @@ public class AdvertService {
         });
 
         if (isNotEmpty(memberAdverts)) {
-            List<Integer> revokedAdverts = advertDAO.getRevokedAdverts(memberAdverts);
+            stream(displayScopes).forEach(displayScope -> {
+                stream(targetScopes).forEach(targetScope -> {
+                    Collection<PrismState> advertStates = states.get(displayScope);
+                    advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(displayScope) : advertStates;
+                    userAdverts.addAll(advertDAO.getUserTargetAdverts(user, targetScope, displayScope, advertStates));
+                });
+            });
+
             stream(displayScopes).forEach(displayScope -> {
                 if (displayScope.getScopeCategory().equals(OPPORTUNITY)) {
                     stream(targetScopes).forEach(targeterScope -> {
                         stream(targetScopes).forEach(targetScope -> {
                             Collection<PrismState> advertStates = states.get(displayScope);
                             advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(displayScope) : advertStates;
-                            userAdverts.addAll(advertDAO.getUserAdverts(user, targeterScope, targetScope, displayScope, advertStates, revokedAdverts));
+                            userAdverts.addAll(advertDAO.getUserTargetAdverts(user, targeterScope, targetScope, displayScope, advertStates));
                         });
                     });
                 }
@@ -820,7 +827,7 @@ public class AdvertService {
 
         Set<Integer> adverts = Sets.newHashSet();
         if (isNotEmpty(userAdverts)) {
-            Arrays.stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getUserAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
+            stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getUserAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
         }
 
         return adverts;
@@ -979,8 +986,6 @@ public class AdvertService {
     }
 
     private void updateAdvertTargets(Advert advert, List<Integer> customTargetIds) {
-        advertDAO.deleteCustomAdvertTargets(advert);
-
         Advert departmentAdvert = advert.getDepartment().getAdvert();
         Advert institutionAdvert = advert.getInstitution().getAdvert();
 

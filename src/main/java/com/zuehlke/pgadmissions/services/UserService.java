@@ -523,7 +523,7 @@ public class UserService {
                 resourceService.getResources(user, ts, scopeService.getParentScopesDescending(ts, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
 
         Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
-        resources.keySet().forEach(k -> profiles.addAll(userDAO.getUserProfiles(resources.get(k), filter)));
+        resources.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resources.get(scope), filter)));
 
         return newLinkedList(profiles);
     }

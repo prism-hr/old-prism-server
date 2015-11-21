@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.workflow.State;
-import com.zuehlke.pgadmissions.dto.StateSelectableDTO;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationExtended;
 import com.zuehlke.pgadmissions.rest.representation.state.StateRepresentationSimple;
 import com.zuehlke.pgadmissions.services.StateService;
@@ -51,8 +50,7 @@ public class StateMapper {
     }
 
     public List<StateRepresentationExtended> getStateRepresentations(Resource resource, PrismAction action) {
-        List<StateSelectableDTO> states = stateService.getSelectableTransitionStates(resource.getState(), action);
-        return states.stream()
+        return stateService.getSelectableTransitionStates(resource, action).stream()
                 .map(state -> getStateRepresentationExtended(state.getState(), BooleanUtils.toBoolean(state.getParallelizable())))
                 .collect(Collectors.toList());
     }

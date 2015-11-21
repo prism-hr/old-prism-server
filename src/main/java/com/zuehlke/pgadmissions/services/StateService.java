@@ -57,6 +57,7 @@ import com.zuehlke.pgadmissions.rest.dto.user.UserDTO;
 import com.zuehlke.pgadmissions.utils.PrismJsonMappingUtils;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.termination.StateTerminationResolver;
 import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.StateTransitionResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
 
 @Service
 @Transactional
@@ -304,8 +305,15 @@ public class StateService {
         return secondaryResourceStates;
     }
 
-    public List<StateSelectableDTO> getSelectableTransitionStates(State state, PrismAction actionId) {
-        return stateDAO.getSelectableTransitionStates(state, actionId);
+    public List<StateSelectableDTO> getSelectableTransitionStates(Resource resource, PrismAction actionId) {
+        List<StateSelectableDTO> transitionStates = Lists.newLinkedList();
+        stateDAO.getSelectableTransitionStates(resource.getState(), actionId).stream().forEach(transitionState -> {
+            Class<? extends StateTransitionSelectionResolver> resolver = transitionState.getState().getStateTransitionSelectionResolver();
+            if (resolver == null || applicationContext.getBean(resolver).resolve(resource)) {
+                transitionStates.add(transitionState);
+            }
+        });
+        return transitionStates;
     }
 
     public void setRepeatableStateGroups() {
@@ -375,7 +383,8 @@ public class StateService {
     public StateActionPending createStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
         StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
                 .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))
-                .withAssignUserList(prismJsonMappingUtils.writeValue(stateActionPendingDTO.getAssignUserList())).withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
+                .withAssignUserList(prismJsonMappingUtils.writeValue(stateActionPendingDTO.getAssignUserList()))
+                .withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
         entityService.save(stateActionPending);
         return stateActionPending;
     }

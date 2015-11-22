@@ -12,6 +12,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.P
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismStateTransition;
@@ -27,7 +28,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                 .withRaisesUrgentFlag()); //
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
-        stateActions.add(PrismApplicationWorkflow.applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,
                 APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP));
 
         stateActions.add(applicationProvideInterviewFeedback() //

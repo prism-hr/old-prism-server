@@ -9,6 +9,8 @@ import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APP
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWEE;
+import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_RECRUITER;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.APPLICATION_VIEWER_REFEREE;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
@@ -113,13 +115,26 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWER) //
                     .withPropertyDefinition(APPLICATION_INTERVIEWER_ASSIGNMENT)),
 
-    APPLICATION_CREATE_INTERVIEWEE_GROUP( //
+    APPLICATION_CREATE_SCHEDULED_INTERVIEWEE_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_CREATOR) //
+                    .withTransitionType(BRANCH) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWEE)), //
+
+    APPLICATION_CREATE_SCHEDULED_INTERVIEWER_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWER) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWER) //
+                    .withPropertyDefinition(APPLICATION_INTERVIEWER_ASSIGNMENT)),
+
+    APPLICATION_CREATE_CONFIRMED_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_CREATOR) //
                     .withTransitionType(BRANCH) //
                     .withTransitionRole(APPLICATION_INTERVIEWEE)), //
 
-    APPLICATION_CREATE_INTERVIEWER_GROUP( //
+    APPLICATION_CREATE_CONFIRMED_INTERVIEWER_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_INTERVIEWER) //
                     .withTransitionType(CREATE) //
@@ -128,23 +143,29 @@ public enum PrismRoleTransitionGroup {
 
     APPLICATION_RETIRE_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
-                    .withRole(APPLICATION_INTERVIEWEE) //
-                    .withTransitionType(RETIRE) //
-                    .withTransitionRole(APPLICATION_INTERVIEWEE), //
-            new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWEE) //
                     .withTransitionType(RETIRE) //
-                    .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
+                    .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE),
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWEE) //
+                    .withTransitionType(RETIRE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWEE)),
 
     APPLICATION_RETIRE_INTERVIEWER_GROUP( //
             new PrismRoleTransition() //
-                    .withRole(APPLICATION_INTERVIEWER) //
-                    .withTransitionType(UPDATE) //
-                    .withTransitionRole(APPLICATION_VIEWER_RECRUITER), //
-            new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
                     .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_VIEWER_RECRUITER),
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWER) //
+                    .withTransitionType(UPDATE) //
                     .withTransitionRole(APPLICATION_VIEWER_RECRUITER)), //
+
+    APPLICATION_UPDATE_POTENTIAL_INTERVIEWEE_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_POTENTIAL_INTERVIEWEE) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWEE)),
 
     APPLICATION_RETIRE_POTENTIAL_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
@@ -152,17 +173,53 @@ public enum PrismRoleTransitionGroup {
                     .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_POTENTIAL_INTERVIEWEE)),
 
+    APPLICATION_RETIRE_SCHEDULED_INTERVIEWEE_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWEE) //
+                    .withTransitionType(RETIRE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWEE)),
+
+    APPLICATION_REVIVE_SCHEDULED_INTERVIEWEE_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_INTERVIEWEE) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWEE)), //
+
     APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_INTERVIEWEE) //
                     .withTransitionType(RETIRE) //
                     .withTransitionRole(APPLICATION_INTERVIEWEE)),
 
-    APPLICATION_RETIRE_POTENTIAL_INTERVIEWER_GROUP( //
+    APPLICATION_UPDATE_POTENTIAL_INTERVIEWER_GROUP_SCHEDULED( //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
                     .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWER)), //
+
+    APPLICATION_UPDATE_POTENTIAL_INTERVIEWER_GROUP_CONFIRMED( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_INTERVIEWER)), //
+
+    APPLICATION_UPDATE_SCHEDULED_INTERVIEWER_GROUP_CONFIRMED( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWER) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_INTERVIEWER)), //
+
+    APPLICATION_RETIRE_SCHEDULED_INTERVIEWER_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWER) //
+                    .withTransitionType(UPDATE) //
                     .withTransitionRole(APPLICATION_VIEWER_RECRUITER)), //
+
+    APPLICATION_REVIVE_SCHEDULED_INTERVIEWER_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_INTERVIEWER) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWER)), //
 
     APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP( //
             new PrismRoleTransition() //
@@ -174,10 +231,22 @@ public enum PrismRoleTransitionGroup {
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWEE) //
                     .withTransitionType(UPDATE) //
-                    .withTransitionRole(APPLICATION_INTERVIEWEE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWEE) //
                     .withRestrictToOwner(), //
             new PrismRoleTransition() //
                     .withRole(APPLICATION_POTENTIAL_INTERVIEWER) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_SCHEDULED_INTERVIEWER) //
+                    .withRestrictToOwner()), //
+
+    APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_GROUP( //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWEE) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_INTERVIEWEE) //
+                    .withRestrictToOwner(), //
+            new PrismRoleTransition() //
+                    .withRole(APPLICATION_SCHEDULED_INTERVIEWER) //
                     .withTransitionType(UPDATE) //
                     .withTransitionRole(APPLICATION_INTERVIEWER) //
                     .withRestrictToOwner()), //

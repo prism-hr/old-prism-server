@@ -35,7 +35,9 @@
 
 ${APPLICATION_INTERVIEW_LOCATION}
 
-${ACTION_VIEW_EDIT}
+Please follow the link below to confirm that you are able to attend:
+
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

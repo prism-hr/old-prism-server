@@ -202,6 +202,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_COMPLETE_APPROVED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REJECTED_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Move to Different Stage"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Arrangements"),
+    SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Availability"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
@@ -309,6 +310,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_APPLICATION_INTERVIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Interviewer"),
     SYSTEM_ROLE_APPLICATION_POTENTIAL_INTERVIEWEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Potential Interviewee"),
     SYSTEM_ROLE_APPLICATION_POTENTIAL_INTERVIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Potential Interviewer"),
+    SYSTEM_ROLE_APPLICATION_SCHEDULED_INTERVIEWEE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Scheduled Interviewee"),
+    SYSTEM_ROLE_APPLICATION_SCHEDULED_INTERVIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Scheduled Interviewer"),
     SYSTEM_ROLE_APPLICATION_HIRING_MANAGER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Hiring Manager"),
     SYSTEM_ROLE_APPLICATION_REFEREE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Referee"),
     SYSTEM_ROLE_APPLICATION_REVIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Reviewer"),
@@ -957,7 +960,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Arrangements Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Availability Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Availability Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Rejection Notification"),

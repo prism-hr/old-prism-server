@@ -339,6 +339,7 @@ public class ResourceService {
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO, false);
+            updateCustomAdvertTargets(actionOutcome.getResource(), resourceDTO);
         } else {
             commentService.preprocessClaimComment(user, commentDTO);
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
@@ -745,6 +746,7 @@ public class ResourceService {
 
         advert.setGloballyVisible(advertDTO.getGloballyVisible());
         advertService.updateAdvert(resource.getParentResource(), advert, advertDTO, resourceDTO.getName());
+        updateCustomAdvertTargets(resource, resourceDTO);
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
@@ -927,7 +929,7 @@ public class ResourceService {
         List<PrismState> states = stateService.getResourceStates(resource);
         return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
     }
-    
+
     public <T extends Resource> void validateViewResource(T resource) {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
@@ -1162,6 +1164,12 @@ public class ResourceService {
             }
         }
         return false;
+    }
+
+    private <T extends Resource, U extends ResourceCreationDTO> void updateCustomAdvertTargets(T resource, U resourceDTO) {
+        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+            advertService.updateCustomAdvertTargets(resource.getAdvert(), ((ResourceParentDTO) resourceDTO).getAdvert());
+        }
     }
 
 }

@@ -563,14 +563,14 @@ public class AdvertService {
                 Resource customTargetResource = customTarget.getTargetAdvert().getResource();
 
                 if (customResource.getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
-                    reconcileCustomTargetResources(customResource, customDepartments, customInstitutions);
-                } else if (customTargetResource.getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
                     reconcileCustomTargetResources(customTargetResource, customDepartments, customInstitutions);
+                } else if (customTargetResource.getResourceScope().getScopeCategory().equals(OPPORTUNITY)) {
+                    reconcileCustomTargetResources(customResource, customDepartments, customInstitutions);
                 }
             });
 
             advertTargets.values().forEach(advertTarget -> {
-                if (customDepartments.contains(advertTarget.getThisDepartmentId()) || customInstitutions.contains(advertTarget.getThisInstitutionId())) {
+                if (customDepartments.contains(advertTarget.getOtherDepartmentId()) || customInstitutions.contains(advertTarget.getOtherInstitutionId())) {
                     advertTarget.setSelected(true);
                 }
             });
@@ -978,8 +978,11 @@ public class AdvertService {
     }
 
     private void updateAdvertTargets(Advert advert, List<Integer> customTargetIds) {
-        Advert departmentAdvert = advert.getDepartment().getAdvert();
-        Advert institutionAdvert = advert.getInstitution().getAdvert();
+        Department department = advert.getDepartment();
+        Institution institution = advert.getInstitution();
+
+        Advert departmentAdvert = department == null ? null : department.getAdvert();
+        Advert institutionAdvert = institution == null ? null : institution.getAdvert();
 
         Integer departmentAdvertId = departmentAdvert == null ? null : departmentAdvert.getId();
         Integer institutionAdvertId = institutionAdvert == null ? null : institutionAdvert.getId();
@@ -1313,9 +1316,7 @@ public class AdvertService {
 
         if (customDepartment != null) {
             customDepartments.add(customDepartment.getId());
-        }
-
-        if (customInstitution != null) {
+        } else if (customInstitution != null) {
             customInstitutions.add(customInstitution.getId());
         }
     }

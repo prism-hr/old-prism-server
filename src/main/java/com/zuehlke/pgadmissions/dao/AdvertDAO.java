@@ -719,7 +719,7 @@ public class AdvertDAO {
                         .add(Projections.property("userAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
                         .add(Projections.property("userAccount.portraitImage.id").as("userPortraitImageId")))
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("advert.id", adverts)) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertUserDTO.class)) //
                 .list();

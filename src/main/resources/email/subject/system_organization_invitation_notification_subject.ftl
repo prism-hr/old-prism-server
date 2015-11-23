@@ -1,0 +1,1 @@
+Invitation to join ${TEMPLATE_SYSTEM_NAME}

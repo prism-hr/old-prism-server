@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1708,6 +1708,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select of enter the name of the department you wish to connect with"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Your Personal Contact"),
+    SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
+    SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
@@ -1846,7 +1848,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization categories"),
     INSTITUTION_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization targets"),
     INSTITUTION_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organizations competences"),
-    INSTITUTION_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated email lists"),
 
     /*
      * *************** DEPARTMENT COMMENT *********************
@@ -1871,7 +1872,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department categories"),
     DEPARTMENT_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department targets"),
     DEPARTMENT_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated Department competences"),
-    DEPARTMENT_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated email lists"),
 
     /*
      * *************** PROGRAM COMMENT *********************
@@ -1897,7 +1897,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program closing dates"),
     PROGRAM_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program targets"),
     PROGRAM_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program competences"),
-    PROGRAM_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated email lists"),
 
     /*
      * *************** PROJECT COMMENT *********************
@@ -1923,7 +1922,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_UPDATED_CLOSING_DATE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position closing dates"),
     PROJECT_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position targets"),
     PROJECT_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position competences"),
-    PROJECT_COMMENT_UPDATED_EMAIL_LIST(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated email lists"),
 
     /*
      * *************** APPLICATION GLOBAL *********************

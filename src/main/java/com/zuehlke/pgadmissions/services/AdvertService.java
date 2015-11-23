@@ -396,19 +396,29 @@ public class AdvertService {
         User user = userService.getCurrentUser();
         AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
 
-        Integer advertId = advertTarget.getAdvert().getId();
-        Integer targetAdvertId = advertTarget.getTargetAdvert().getId();
+        Advert advert = advertTarget.getAdvert();
+        Advert targetAdvert = advertTarget.getTargetAdvert();
+
+        Integer advertId = advert.getId();
+        Integer targetAdvertId = targetAdvert.getId();
 
         Set<String> properties = Sets.newHashSet();
+        List<Advert> processedAdverts = Lists.newArrayList();
         if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(advertId)))) {
             properties.add("advert");
+            processedAdverts.add(advert);
         }
 
         if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(targetAdvertId)))) {
             properties.add("targetAdvert");
+            processedAdverts.add(targetAdvert);
         }
 
         advertDAO.updateAdvertTargetGroup(advertTarget, properties, severed);
+        processedAdverts.stream().forEach(processedAdvert -> {
+            ResourceParent resource = (ResourceParent) processedAdvert.getResource();
+            executeUpdate(resource, "COMMENT_UPDATED_TARGET");
+        });
     }
 
     public boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {

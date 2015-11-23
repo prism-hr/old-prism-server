@@ -120,7 +120,7 @@ public class CommentMapper {
     }
 
     public List<CommentAppointmentPreferenceRepresentation> getCommentAppointmentPreferenceRepresentations(Comment schedulingComment,
-                                                                                                           Set<CommentAppointmentTimeslot> timeslots) {
+            Set<CommentAppointmentTimeslot> timeslots) {
         List<CommentAppointmentPreferenceRepresentation> representations = Lists.newLinkedList();
 
         for (User user : commentService.getAppointmentInvitees(schedulingComment)) {
@@ -176,7 +176,7 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles, List<PrismActionEnhancement> actionEnhancements,
-                                                           List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
+            List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
         if (!onlyAsPartner && (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user))) {
             CommentRepresentation representation = getCommentRepresentationExtended(comment);
@@ -212,10 +212,11 @@ public class CommentMapper {
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
                 .withTransitionState(comment.getTransitionState().getId()).withRating(comment.getRating()).withEligible(comment.getEligible())
                 .withInterested(comment.getInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
-                .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withPositionDetail(getCommentPositionDetailRepresentation(comment))
-                .withOfferDetail(getCommentOfferDetailRepresentation(comment)).withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment())
-                .withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment()).withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment())
-                .withRejectionReason(comment.getRejectionReason()).withCompetenceGroups(getCommentCompetenceRepresentations(comment.getCompetences()))
+                .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
+                .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
+                .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())
+                .withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment()).withRejectionReason(comment.getRejectionReason())
+                .withCompetenceGroups(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }

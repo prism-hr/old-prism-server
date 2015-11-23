@@ -45,6 +45,8 @@ public class CommentRepresentation {
 
     private CommentInterviewInstructionRepresentation interviewInstruction;
 
+    private Boolean interviewAvailable;
+
     private CommentPositionDetailRepresentation positionDetail;
 
     private CommentOfferDetailRepresentation offerDetail;
@@ -179,6 +181,14 @@ public class CommentRepresentation {
 
     public void setInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
+    }
+
+    public Boolean getInterviewAvailable() {
+        return interviewAvailable;
+    }
+
+    public void setInterviewAvailable(Boolean interviewAvailable) {
+        this.interviewAvailable = interviewAvailable;
     }
 
     public CommentPositionDetailRepresentation getPositionDetail() {
@@ -357,6 +367,11 @@ public class CommentRepresentation {
 
     public CommentRepresentation withInterviewInstruction(CommentInterviewInstructionRepresentation interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
+        return this;
+    }
+
+    public CommentRepresentation withInterviewAvailable(Boolean interviewAvailable) {
+        this.interviewAvailable = interviewAvailable;
         return this;
     }
 

@@ -54,6 +54,8 @@ public class CommentDTO {
     @Valid
     private CommentInterviewInstructionDTO interviewInstruction;
 
+    private Boolean interviewAvailable;
+
     @Valid
     private CommentPositionDetailDTO positionDetail;
 
@@ -133,11 +135,11 @@ public class CommentDTO {
         this.roleContext = roleContext;
     }
 
-    public final Boolean getRecommend() {
+    public Boolean getRecommend() {
         return recommend;
     }
 
-    public final void setRecommend(Boolean applicationRecommend) {
+    public void setRecommend(Boolean applicationRecommend) {
         this.recommend = applicationRecommend;
     }
 
@@ -157,11 +159,11 @@ public class CommentDTO {
         this.transitionState = transitionState;
     }
 
-    public final Boolean getShared() {
+    public Boolean getShared() {
         return shared;
     }
 
-    public final void setShared(Boolean shared) {
+    public void setShared(Boolean shared) {
         this.shared = shared;
     }
 
@@ -197,35 +199,43 @@ public class CommentDTO {
         this.rating = rating;
     }
 
-    public final CommentInterviewAppointmentDTO getInterviewAppointment() {
+    public CommentInterviewAppointmentDTO getInterviewAppointment() {
         return interviewAppointment;
     }
 
-    public final void setInterviewAppointment(CommentInterviewAppointmentDTO interviewAppointment) {
+    public void setInterviewAppointment(CommentInterviewAppointmentDTO interviewAppointment) {
         this.interviewAppointment = interviewAppointment;
     }
 
-    public final CommentInterviewInstructionDTO getInterviewInstruction() {
+    public CommentInterviewInstructionDTO getInterviewInstruction() {
         return interviewInstruction;
     }
 
-    public final void setInterviewInstruction(CommentInterviewInstructionDTO interviewInstruction) {
+    public void setInterviewInstruction(CommentInterviewInstructionDTO interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
     }
 
-    public final CommentPositionDetailDTO getPositionDetail() {
+    public Boolean getInterviewAvailable() {
+        return interviewAvailable;
+    }
+
+    public void setInterviewAvailable(Boolean interviewAvailable) {
+        this.interviewAvailable = interviewAvailable;
+    }
+
+    public CommentPositionDetailDTO getPositionDetail() {
         return positionDetail;
     }
 
-    public final void setPositionDetail(CommentPositionDetailDTO positionDetail) {
+    public void setPositionDetail(CommentPositionDetailDTO positionDetail) {
         this.positionDetail = positionDetail;
     }
 
-    public final CommentOfferDetailDTO getOfferDetail() {
+    public CommentOfferDetailDTO getOfferDetail() {
         return offerDetail;
     }
 
-    public final void setOfferDetail(CommentOfferDetailDTO offerDetail) {
+    public void setOfferDetail(CommentOfferDetailDTO offerDetail) {
         this.offerDetail = offerDetail;
     }
 
@@ -361,11 +371,11 @@ public class CommentDTO {
         this.action = action;
         return this;
     }
-    
+
     public boolean isClaimAction() {
         return resource.getScope().getScopeCategory().equals(ORGANIZATION) && action.name().endsWith("_COMPLETE");
     }
-    
+
     public boolean isActionBypass() {
         return !(roleContext == null && resourceInvitation == null);
     }

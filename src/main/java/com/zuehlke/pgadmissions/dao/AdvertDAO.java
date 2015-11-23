@@ -426,7 +426,7 @@ public class AdvertDAO {
                     .add(visibilityConstraint) //
                     .add(Restrictions.conjunction() //
                             .add(Restrictions.in("thisAdvert.id", manageAdverts)) //
-                            .add(Restrictions.eq("thisAdvertSevered", true)));
+                            .add(Restrictions.eq(thisAdvertReference + "Severed", true)));
         }
 
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, false)
@@ -439,6 +439,9 @@ public class AdvertDAO {
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
             Collection<Integer> connectAdverts) {
+        thisAdvertReference = "target." + thisAdvertReference;
+        otherAdvertReference = "target." + otherAdvertReference;
+
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
@@ -914,9 +917,6 @@ public class AdvertDAO {
     }
 
     private Criteria getAdvertTargetCriteria(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user, boolean received) {
-        thisAdvertReference = "target." + thisAdvertReference;
-        otherAdvertReference = "target." + otherAdvertReference;
-
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.property("target.id").as("id")) //
                 .add(Projections.groupProperty("thisAdvert.id").as("thisAdvertId")) //
@@ -987,7 +987,7 @@ public class AdvertDAO {
     private Junction getAdvertTargetActiveConstraint() {
         return Restrictions.conjunction() //
                 .add(Restrictions.eq("target.advertSevered", false))
-                .add(Restrictions.eq("target.targetAdvert.severed", false));
+                .add(Restrictions.eq("target.targetAdvertSevered", false));
     }
 
 }

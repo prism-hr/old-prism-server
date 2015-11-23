@@ -548,7 +548,7 @@ public class AdvertService {
         List<PrismOpportunityCategory> opportunityCategories = asList(opportunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
-                advertDAO.getAdvertTargets(targetScope, "advert", "targetAdvert", user, connectAdverts, manageAdverts).forEach(at -> {
+                advertDAO.getAdvertTargets(targetScope, "target.advert", "target.targetAdvert", user, connectAdverts, manageAdverts).forEach(at -> {
                     advertTargets.put(at.getOtherAdvertId(), at);
                 });
             }
@@ -556,7 +556,7 @@ public class AdvertService {
 
         if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
             for (PrismScope targetScope : targetScopes) {
-                advertDAO.getAdvertTargets(targetScope, "targetAdvert", "advert", user, connectAdverts, manageAdverts).forEach(at -> {
+                advertDAO.getAdvertTargets(targetScope, "target.targetAdvert", "target.advert", user, connectAdverts, manageAdverts).forEach(at -> {
                     advertTargets.put(at.getOtherAdvertId(), at);
                 });
             }
@@ -597,7 +597,8 @@ public class AdvertService {
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
         for (PrismScope resourceScope : targetScopes) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
-                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "acceptAdvert", advertReference, user, connectAdverts));
+                String targetAdvertReference = advertReference.equals("advert") ? "targetAdvert" : "advert";
+                advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "target." + targetAdvertReference, "target." + advertReference, user, connectAdverts));
             }
         }
         return advertTargets;

@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
+
+import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1708,6 +1708,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select of enter the name of the department you wish to connect with"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Your Personal Contact"),
+    SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
+    SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************

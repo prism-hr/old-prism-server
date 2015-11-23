@@ -76,8 +76,9 @@ public class ApplicationExecutor implements ActionExecutor {
         Comment comment = new Comment().withUser(user).withResource(application).withContent(commentDTO.getContent()).withDelegateUser(delegateUser)
                 .withAction(action).withTransitionState(transitionState).withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withEligible(commentDTO.getEligible()).withInterested(commentDTO.getInterested())
-                .withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment())
-                .withApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment()).withRejectionReason(commentDTO.getRejectionReason());
+                .withInterviewAvailable(commentDTO.getInterviewAvailable()).withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment())
+                .withPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment()).withApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment())
+                .withRejectionReason(commentDTO.getRejectionReason());
 
         if (isCompleteAction) {
             comment.setShared(commentDTO.getShared());

@@ -1513,6 +1513,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_TIMELINE_MORE_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "More Actions"),
     SYSTEM_RESOURCE_TIMELINE_NOW(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Now"),
     SYSTEM_RESOURCE_TIMELINE_ON_BEHALF_OF(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "{{user}} on behalf of {{delegateUser}}"),
+    SYSTEM_RESOURCE_TIMELINE_CAN_ATTEND(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Available to attend interview"),
+    SYSTEM_RESOURCE_TIMELINE_CANNOT_ATTEND(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Not available to attend interview"),
     SYSTEM_RESOURCE_APPLICATION_FORM_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Form"),
     SYSTEM_RESOURCE_APPROVAL_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "is currently under approval. We aim to get back to you with a decision in 48 hours."),
 
@@ -2130,6 +2132,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_INTERVIEW_TIMEZONE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
     APPLICATION_ACTION_INTERVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interview Duration"),
     APPLICATION_ACTION_INTERVIEW_DURATION_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify what timezone the interview will take place in."),
+    APPLICATION_ACTION_INTERVIEW_AVAILABLE_INFO(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interview date/time: "),
+    APPLICATION_ACTION_INTERVIEW_AVAILABLE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Can you attend for interview at the data and time allocated?"),
+    APPLICATION_ACTION_INTERVIEW_AVAILABLE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are able to attend for interview at the date and time allocated"),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to approve the hire"),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are willing to approve the hire. You will be able to suggest amendments to the proposed position when you have provided a positive confirmation."),
     APPLICATION_ACTION_RECRUITER_ACCEPT_APPOINTMENT_CONFIRM(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm"),

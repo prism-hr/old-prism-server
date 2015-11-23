@@ -158,6 +158,9 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @Embedded
     private CommentInterviewInstruction interviewInstruction;
 
+    @Column(name = "application_interview_available")
+    private Boolean interviewAvailable;
+
     @Embedded
     private CommentPositionDetail positionDetail;
 
@@ -404,6 +407,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.interviewInstruction = interviewInstruction;
     }
 
+    public Boolean getInterviewAvailable() {
+        return interviewAvailable;
+    }
+
+    public void setInterviewAvailable(Boolean interviewAvailable) {
+        this.interviewAvailable = interviewAvailable;
+    }
+
     public CommentPositionDetail getPositionDetail() {
         return positionDetail;
     }
@@ -603,6 +614,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public Comment withInterviewInstruction(CommentInterviewInstruction interviewInstruction) {
         this.interviewInstruction = interviewInstruction;
+        return this;
+    }
+
+    public Comment withInterviewAvailable(Boolean interviewAvailable) {
+        this.interviewAvailable = interviewAvailable;
         return this;
     }
 

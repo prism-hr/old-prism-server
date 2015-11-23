@@ -36,10 +36,10 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @Column(name = "verified", nullable = false)
     private Boolean verified;
-    
+
     @Column(name = "directly_assignable", nullable = false)
     private Boolean directlyAssignable;
-    
+
     @Column(name = "scope_creator")
     private Boolean scopeCreator;
 
@@ -52,6 +52,9 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
 
     @OneToMany(mappedBy = "role")
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "role")
+    private Set<StateActionNotification> stateActionNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")
     private Set<ActionRedaction> actionRedactions = Sets.newHashSet();
@@ -72,7 +75,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     public void setRoleCategory(PrismRoleCategory roleCategory) {
         this.roleCategory = roleCategory;
     }
-    
+
     public Boolean getVerified() {
         return verified;
     }
@@ -88,7 +91,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     public void setDirectlyAssignable(Boolean directlyAssignable) {
         this.directlyAssignable = directlyAssignable;
     }
-    
+
     public Boolean getScopeCreator() {
         return scopeCreator;
     }
@@ -115,6 +118,10 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return stateActionAssignments;
     }
 
+    public Set<StateActionNotification> getStateActionNotifications() {
+        return stateActionNotifications;
+    }
+
     public final Set<ActionRedaction> getActionRedactions() {
         return actionRedactions;
     }
@@ -133,17 +140,17 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         this.verified = verified;
         return this;
     }
-    
+
     public Role withDirectlyAssignable(Boolean directlyAssignable) {
         this.directlyAssignable = directlyAssignable;
         return this;
     }
-    
+
     public Role withScopeCreator(Boolean scopeCreator) {
         this.scopeCreator = scopeCreator;
         return this;
     }
-    
+
     public Role withScope(Scope scope) {
         this.scope = scope;
         return this;

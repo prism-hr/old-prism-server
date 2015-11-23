@@ -122,9 +122,8 @@ public class NotificationService {
 
     public void sendIndividualWorkflowNotifications(Resource resource, Comment comment) {
         LocalDate baseline = new LocalDate();
-        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(resource.getResourceScope());
-        Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, targeterEntities, baseline);
-        sendIndividualUpdateNotifications(resource, comment, targeterEntities, exclusions, baseline);
+        Set<User> exclusions = sendIndividualRequestNotifications(resource, comment, baseline);
+        sendIndividualUpdateNotifications(resource, comment, exclusions, baseline);
         entityService.flush();
     }
 
@@ -250,7 +249,7 @@ public class NotificationService {
         }
     }
 
-    public Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, List<Integer> targeterEntities, LocalDate baseline) {
+    public Set<User> sendIndividualRequestNotifications(Resource resource, Comment comment, LocalDate baseline) {
         PrismScope scope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
@@ -262,6 +261,7 @@ public class NotificationService {
                 requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, parentScope, resource));
             }
 
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(resource.getResourceScope());
             if (isNotEmpty(targeterEntities)) {
                 for (PrismScope targeterScope : targetScopes) {
                     for (PrismScope targetScope : targetScopes) {
@@ -287,7 +287,7 @@ public class NotificationService {
         return recipients;
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, List<Integer> targeterEntities, Set<User> exclusions, LocalDate baseline) {
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<User> exclusions, LocalDate baseline) {
         PrismScope scope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
@@ -297,14 +297,6 @@ public class NotificationService {
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScope : parentScopes) {
                 updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, parentScope, comment, exclusions));
-            }
-
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    for (PrismScope targetScope : targetScopes) {
-                        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, targeterScope, targetScope, targeterEntities, comment, exclusions));
-                    }
-                }
             }
         }
 

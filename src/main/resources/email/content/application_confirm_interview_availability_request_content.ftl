@@ -35,7 +35,9 @@
 
 ${APPLICATION_INTERVIEW_LOCATION}
 
-Please follow the link below to confirm that you are able to attend:
+<p>
+    Follow the link below to confirm that you are able to attend:
+</p>
 
 ${ACTION_COMPLETE}
 

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
+import com.zuehlke.pgadmissions.domain.resource.ResourcePreviousState;
 import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.domain.user.UserNotification;
 import com.zuehlke.pgadmissions.domain.workflow.Action;
@@ -80,26 +82,22 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, Resource resource, Action action, Collection<User> exclusions) {
-        return getIndividualUpdateDefinitionCriteria(workflowDAO.getWorkflowCriteriaList(scope, getIndividualUpdateDefinitionsProjection()), resource, action, exclusions)
-                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
-                .list();
+        return getIndividualUpdateDefinitionCriteria(workflowDAO.getWorkflowCriteriaList(scope, getIndividualUpdateDefinitionsProjection(), ResourcePreviousState.class), resource,
+                action, exclusions).setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Resource resource, Action action,
             Collection<User> exclusions) {
-        return getIndividualUpdateDefinitionCriteria(workflowDAO.getWorkflowCriteriaList(scope, parentScope, getIndividualUpdateDefinitionsProjection()), resource, action,
-                exclusions)
-                        .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
-                        .list();
+        return getIndividualUpdateDefinitionCriteria(
+                workflowDAO.getWorkflowCriteriaList(scope, parentScope, getIndividualUpdateDefinitionsProjection(), ResourcePreviousState.class), resource, action, exclusions)
+                        .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             Collection<Integer> targeterEntities, Resource resource, Action action, Collection<User> exclusions) {
         return getIndividualUpdateDefinitionCriteria(
-                workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getIndividualUpdateDefinitionsProjection()), resource, action, exclusions)
-                        .add(getTargetActionConstraint())
-                        .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
-                        .list();
+                workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getIndividualUpdateDefinitionsProjection(), ResourcePreviousState.class),
+                resource, action, exclusions).add(getTargetActionConstraint()).setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
     public UserNotification getUserNotification(Resource resource, User user, NotificationDefinition notificationDefinition) {
@@ -177,7 +175,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("resource.id", resource.getId())); //
 
-        if (!exclusions.isEmpty()) {
+        if (isNotEmpty(exclusions)) {
             criteria.add(Restrictions.not( //
                     Restrictions.in("userRole.user", exclusions))); //
         }

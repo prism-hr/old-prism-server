@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ActionViewEditBui
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCreatorEmailBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationCreatorFullNameBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewAvailableBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewDateTimeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewLocationBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationInterviewTimeZoneBuilder;
@@ -123,6 +124,7 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_INTERVIEWER_INSTRUCTIONS(APPLICATION_INTERVIEW_SCHEDULED, true, ApplicationInterviewerInstructionsBuilder.class), //
     APPLICATION_INTERVIEWEE_INSTRUCTIONS(APPLICATION_INTERVIEW_SCHEDULED, true, ApplicationIntervieweeInstructionsBuilder.class), //
     APPLICATION_INTERVIEW_LOCATION(APPLICATION_INTERVIEW_SCHEDULED, false, ApplicationInterviewLocationBuilder.class), //
+    APPLICATION_INTERVIEW_AVAILABLE(APPLICATION_INTERVIEW_SCHEDULED, false, ApplicationInterviewAvailableBuilder.class), //
     APPLICATION_POSITION_NAME(APPLICATION_APPROVED, true, ApplicationPositionNameBuilder.class), //
     APPLICATION_POSITION_DESCRIPTION(APPLICATION_APPROVED, true, ApplicationPositionDescriptionBuilder.class), //
     APPLICATION_START_DATE(APPLICATION_APPROVED, true, ApplicationStartDateBuilder.class), //

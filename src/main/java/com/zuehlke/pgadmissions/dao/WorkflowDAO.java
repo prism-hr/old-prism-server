@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismState;
 import com.zuehlke.pgadmissions.domain.resource.ResourceState;
-import com.zuehlke.pgadmissions.domain.resource.ResourceStateDefinition;
 import com.zuehlke.pgadmissions.domain.user.User;
 
 @Component
@@ -46,11 +45,7 @@ public class WorkflowDAO {
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     public Criteria getWorkflowCriteriaList(PrismScope resourceScope, Projection projection) {
-        return getWorkflowCriteriaList(resourceScope, projection, ResourceState.class);
-    }
-
-    public <T extends ResourceStateDefinition> Criteria getWorkflowCriteriaList(PrismScope resourceScope, Projection projection, Class<T> resourceStateClass) {
-        return sessionFactory.getCurrentSession().createCriteria(resourceStateClass)
+        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
@@ -71,12 +66,7 @@ public class WorkflowDAO {
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope parentScope, Projection projection) {
-        return getWorkflowCriteriaList(resourceScope, parentScope, projection, ResourceState.class);
-    }
-
-    public <T extends ResourceStateDefinition> Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope parentScope, Projection projection,
-            Class<T> resourceStateClass) {
-        return sessionFactory.getCurrentSession().createCriteria(resourceStateClass) //
+        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
@@ -97,14 +87,9 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
-            Projection projection) {
-        return getWorkflowCriteriaList(resourceScope, targeterScope, targetScope, targeterEntities, projection, ResourceState.class);
-    }
-
-    public <T extends ResourceStateDefinition> Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope,
-            Collection<Integer> targeterEntities, Projection projection, Class<T> resourceStateClass) {
-        return sessionFactory.getCurrentSession().createCriteria(resourceStateClass) //
+    public Criteria getWorkflowCriteriaList(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope,
+            Collection<Integer> targeterEntities, Projection projection) {
+        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projection) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
@@ -145,7 +130,7 @@ public class WorkflowDAO {
                                 .add(Restrictions.eq("resource.shared", true)) //
                                 .add(Restrictions.eq("scope.defaultShared", true))));
     }
-    
+
     public static Junction getSimilarUserConstraint(String searchTerm) {
         return getSimilarUserConstraint(null, searchTerm);
     }

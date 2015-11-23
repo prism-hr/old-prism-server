@@ -45,13 +45,8 @@ public class WorkflowDAO {
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, Projection projection) {
-        Criteria criteria = getWorkflowCriteriaListResource(scope, projection);
-        appendWorkflowCriteriaList(criteria, scope);
-        return criteria;
-    }
-
-    public static void appendWorkflowCriteriaList(Criteria criteria, PrismScope scope) {
-        criteria.createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
+        return getWorkflowCriteriaListResource(scope, projection)
+                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
@@ -69,13 +64,8 @@ public class WorkflowDAO {
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope parentScope, Projection projection) {
-        Criteria criteria = getWorkflowCriteriaListResource(scope, projection);
-        appendWorkflowCriteriaList(criteria, scope, parentScope);
-        return criteria;
-    }
-
-    public static void appendWorkflowCriteriaList(Criteria criteria, PrismScope scope, PrismScope parentScope) {
-        criteria.createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
+        return getWorkflowCriteriaListResource(scope, projection)
+                .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
                 .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
@@ -95,13 +85,8 @@ public class WorkflowDAO {
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             Collection<Integer> targeterEntities, Projection projection) {
-        Criteria criteria = getWorkflowCriteriaListResource(scope, projection);
-        appendWorkflowCriteriaList(criteria, scope, targeterScope, targetScope, targeterEntities);
-        return criteria;
-    }
-
-    public static void appendWorkflowCriteriaList(Criteria criteria, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities) {
-        criteria.createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+        return getWorkflowCriteriaListResource(scope, projection)
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("targeterResource.advert", "targeterAdvert", JoinType.LEFT_OUTER_JOIN) //

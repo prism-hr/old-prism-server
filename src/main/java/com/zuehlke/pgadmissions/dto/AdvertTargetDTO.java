@@ -9,6 +9,8 @@ public class AdvertTargetDTO {
 
     private Integer thisAdvertId;
 
+    private Boolean thisAdvertSevered;
+
     private Integer thisInstitutionId;
 
     private String thisInstitutionName;
@@ -20,6 +22,8 @@ public class AdvertTargetDTO {
     private String thisDepartmentName;
 
     private Integer otherAdvertId;
+
+    private Boolean otherAdvertSevered;
 
     private Integer otherInstitutionId;
 
@@ -51,8 +55,6 @@ public class AdvertTargetDTO {
 
     private PrismPartnershipState partnershipState;
 
-    private Boolean severed;
-
     private Boolean selected;
 
     private Boolean canManage;
@@ -71,6 +73,14 @@ public class AdvertTargetDTO {
 
     public void setThisAdvertId(Integer thisAdvertId) {
         this.thisAdvertId = thisAdvertId;
+    }
+
+    public Boolean getThisAdvertSevered() {
+        return thisAdvertSevered;
+    }
+
+    public void setThisAdvertSevered(Boolean thisAdvertSevered) {
+        this.thisAdvertSevered = thisAdvertSevered;
     }
 
     public Integer getThisInstitutionId() {
@@ -119,6 +129,14 @@ public class AdvertTargetDTO {
 
     public void setOtherAdvertId(Integer otherAdvertId) {
         this.otherAdvertId = otherAdvertId;
+    }
+
+    public Boolean getOtherAdvertSevered() {
+        return otherAdvertSevered;
+    }
+
+    public void setOtherAdvertSevered(Boolean otherAdvertSevered) {
+        this.otherAdvertSevered = otherAdvertSevered;
     }
 
     public Integer getOtherInstitutionId() {
@@ -239,14 +257,6 @@ public class AdvertTargetDTO {
 
     public void setPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
-    }
-
-    public Boolean getSevered() {
-        return severed;
-    }
-
-    public void setSevered(Boolean severed) {
-        this.severed = severed;
     }
 
     public Boolean getSelected() {

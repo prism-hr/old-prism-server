@@ -41,6 +41,9 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @JoinColumn(name = "advert_user_id")
     private User advertUser;
 
+    @Column(name = "advert_severed", nullable = false)
+    private Boolean advertSevered;
+    
     @ManyToOne
     @JoinColumn(name = "target_advert_id", nullable = false)
     private Advert targetAdvert;
@@ -49,6 +52,9 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @JoinColumn(name = "target_advert_user_id")
     private User targetAdvertUser;
 
+    @Column(name = "target_advert_severed", nullable = false)
+    private Boolean targetAdvertSevered;
+    
     @ManyToOne
     @JoinColumn(name = "accept_advert_id", nullable = false)
     private Advert acceptAdvert;
@@ -64,9 +70,6 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @Enumerated(EnumType.STRING)
     @Column(name = "partnership_state", nullable = false)
     private PrismPartnershipState partnershipState;
-
-    @Column(name = "severed", nullable = false)
-    private Boolean severed;
 
     @Column(name = "accepted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -103,6 +106,14 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.advertUser = advertUser;
     }
 
+    public Boolean getAdvertSevered() {
+        return advertSevered;
+    }
+
+    public void setAdvertSevered(Boolean advertSevered) {
+        this.advertSevered = advertSevered;
+    }
+
     public Advert getTargetAdvert() {
         return targetAdvert;
     }
@@ -117,6 +128,14 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
 
     public void setTargetAdvertUser(User targetAdvertUser) {
         this.targetAdvertUser = targetAdvertUser;
+    }
+
+    public Boolean getTargetAdvertSevered() {
+        return targetAdvertSevered;
+    }
+
+    public void setTargetAdvertSevered(Boolean targetAdvertSevered) {
+        this.targetAdvertSevered = targetAdvertSevered;
     }
 
     public Advert getAcceptAdvert() {
@@ -153,14 +172,6 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.partnershipState = partnershipState;
     }
 
-    public Boolean getSevered() {
-        return severed;
-    }
-
-    public void setSevered(Boolean severed) {
-        this.severed = severed;
-    }
-
     public DateTime getAcceptedTimestamp() {
         return acceptedTimestamp;
     }
@@ -188,6 +199,11 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.advertUser = advertUser;
         return this;
     }
+    
+    public AdvertTarget withAdvertSevered(Boolean advertSevered) {
+        this.advertSevered = advertSevered;
+        return this;
+    }
 
     public AdvertTarget withTargetAdvert(Advert targetAdvert) {
         this.targetAdvert = targetAdvert;
@@ -199,6 +215,11 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         return this;
     }
 
+    public AdvertTarget withTargetAdvertSevered(Boolean targetAdvertSevered) {
+        this.targetAdvertSevered = targetAdvertSevered;
+        return this;
+    }
+    
     public AdvertTarget withAcceptAdvert(Advert acceptAdvert) {
         this.acceptAdvert = acceptAdvert;
         return this;
@@ -216,11 +237,6 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
 
     public AdvertTarget withPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
-        return this;
-    }
-    
-    public AdvertTarget withSevered(Boolean severed) {
-        this.severed = severed;
         return this;
     }
 

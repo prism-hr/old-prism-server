@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
@@ -27,6 +28,7 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -47,7 +49,9 @@ import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 import com.zuehlke.pgadmissions.domain.Competence;
 import com.zuehlke.pgadmissions.domain.advert.Advert;
 import com.zuehlke.pgadmissions.domain.advert.AdvertAttribute;
@@ -416,13 +420,13 @@ public class AdvertDAO {
             Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
         Criterion visibilityConstraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED))
-                .add(Restrictions.eq("target.severed", false));
+                .add(getAdvertTargetActiveConstraint());
         if (isNotEmpty(manageAdverts)) {
             visibilityConstraint = Restrictions.disjunction()
                     .add(visibilityConstraint) //
                     .add(Restrictions.conjunction() //
                             .add(Restrictions.in("thisAdvert.id", manageAdverts)) //
-                            .add(Restrictions.eq("target.severed", true)));
+                            .add(Restrictions.eq("thisAdvertSevered", true)));
         }
 
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, false)
@@ -451,7 +455,7 @@ public class AdvertDAO {
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, true)
                 .add(permissionsConstraint) //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING)) //
-                .add(Restrictions.eq("target.severed", false)) //
+                .add(getAdvertTargetActiveConstraint()) //
                 .addOrder(Order.desc("thisUser.id")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertTargetDTO.class))
                 .list();
@@ -550,7 +554,7 @@ public class AdvertDAO {
                 .createAlias("targetUserRole.role", "targetRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED)) //
-                .add(Restrictions.eq("target.severed", false)) //
+                .add(getAdvertTargetActiveConstraint()) //
                 .add(Restrictions.eq("targetUserRole.user", user)) //
                 .add(Restrictions.eq("targetRole.verified", true)) //
                 .list();
@@ -572,7 +576,7 @@ public class AdvertDAO {
                 .add(Restrictions.in("state.id", states)) //
                 .add(Restrictions.isEmpty("advertResourceAdvert.targets")) //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED)) //
-                .add(Restrictions.eq("target.severed", false)) //
+                .add(getAdvertTargetActiveConstraint()) //
                 .add(Restrictions.eq("targetUserRole.user", user)) //
                 .add(Restrictions.eq("targetRole.verified", true)) //
                 .list();
@@ -687,13 +691,18 @@ public class AdvertDAO {
                 .list();
     }
 
-    public void updateAdvertTargetGroup(AdvertTarget advertTarget, Boolean enable) {
+    public void updateAdvertTargetGroup(AdvertTarget advertTarget, Collection<String> properties, Boolean severed) {
+        Set<String> updates = Sets.newHashSet();
+        for (String property : properties) {
+            updates.add("set " + property + "Severed = :severed");
+        }
+
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTarget " //
-                        + "set severed = :enable " //
+                        + Joiner.on(SPACE).join(updates) //
                         + "where advert = :advert " //
                         + "and targetAdvert = :targetAdvert") //
-                .setParameter("enable", enable) //
+                .setParameter("severed", severed) //
                 .setParameter("advert", advertTarget.getAdvert()) //
                 .setParameter("targetAdvert", advertTarget.getTargetAdvert()) //
                 .executeUpdate();
@@ -729,7 +738,7 @@ public class AdvertDAO {
         return (List<AdvertTarget>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .add(Restrictions.in("id", advertTargets)) //
                 .add(Restrictions.eq("partnershipState", PrismPartnershipState.ENDORSEMENT_PROVIDED)) //
-                .add(Restrictions.eq("severed", false)) //
+                .add(getAdvertTargetActiveConstraint()) //
                 .list();
     }
 
@@ -739,7 +748,7 @@ public class AdvertDAO {
                         .add(Restrictions.eq("advert", advert)) //
                         .add(Restrictions.eq("targetAdvert", advert))) //
                 .add(Restrictions.eq("partnershipState", PrismPartnershipState.ENDORSEMENT_PROVIDED)) //
-                .add(Restrictions.eq("severed", false)) //
+                .add(getAdvertTargetActiveConstraint()) //
                 .list();
     }
 
@@ -910,13 +919,15 @@ public class AdvertDAO {
 
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.property("target.id").as("id")) //
-                .add(Projections.groupProperty("thisAdvert.id").as("thisAdvertId"))
+                .add(Projections.groupProperty("thisAdvert.id").as("thisAdvertId")) //
+                .add(Projections.property(thisAdvertReference + "Severed").as("thisAdvertSevered")) //
                 .add(Projections.groupProperty("thisInstitution.id").as("thisInstitutionId")) //
                 .add(Projections.property("thisInstitution.name").as("thisInstitutionName")) //
                 .add(Projections.property("thisInstitution.logoImage.id").as("thisInstitutionLogoImageId")) //
                 .add(Projections.groupProperty("thisDepartment.id").as("thisDepartmentId")) //
                 .add(Projections.property("thisDepartment.name").as("thisDepartmentName")) //
-                .add(Projections.groupProperty("otherAdvert.id").as("otherAdvertId"))
+                .add(Projections.groupProperty("otherAdvert.id").as("otherAdvertId")) //
+                .add(Projections.property(otherAdvertReference + "Severed").as("otherAdvertSevered")) //
                 .add(Projections.groupProperty("otherInstitution.id").as("otherInstitutionId")) //
                 .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
                 .add(Projections.property("otherInstitution.logoImage.id").as("otherInstitutionLogoImageId")) //
@@ -935,8 +946,7 @@ public class AdvertDAO {
                     .add(Projections.property("otherUserAccount.portraitImage.id").as("otherUserPortraitImageId"));
         }
 
-        projections.add(Projections.property("target.partnershipState").as("partnershipState")) //
-                .add(Projections.property("target.severed").as("severed"));
+        projections.add(Projections.property("target.partnershipState").as("partnershipState"));
 
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections) //
@@ -972,6 +982,12 @@ public class AdvertDAO {
         return constraint.add(Restrictions.disjunction() //
                 .add(Restrictions.eqProperty("thisDepartment.id", "thisUserRole.department.id"))
                 .add(Restrictions.eqProperty("thisInstitution.id", "thisUserRole.institution.id")));
+    }
+
+    private Junction getAdvertTargetActiveConstraint() {
+        return Restrictions.conjunction() //
+                .add(Restrictions.eq("target.advertSevered", false))
+                .add(Restrictions.eq("target.targetAdvert.severed", false));
     }
 
 }

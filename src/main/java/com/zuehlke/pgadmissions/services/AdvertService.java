@@ -392,13 +392,27 @@ public class AdvertService {
         return null;
     }
 
-    public boolean updateAdvertTarget(Integer advertTargetId, boolean accept) {
-        return updateAdvertTarget(advertTargetId, accept, true);
+    public void updateAdvertTarget(Integer advertTargetId, boolean severed) {
+        User user = userService.getCurrentUser();
+        AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
+
+        Integer advertId = advertTarget.getAdvert().getId();
+        Integer targetAdvertId = advertTarget.getTargetAdvert().getId();
+
+        Set<String> properties = Sets.newHashSet();
+        if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(advertId)))) {
+            properties.add("advert");
+        }
+
+        if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(targetAdvertId)))) {
+            properties.add("targetAdvert");
+        }
+
+        advertDAO.updateAdvertTargetGroup(advertTarget, properties, severed);
     }
 
-    public boolean updateAdvertTarget(Integer advertTargetId, boolean accept, boolean notify) {
+    public boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {
         boolean performed = false;
-        AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
         if (advertTarget != null) {
             User user = userService.getCurrentUser();
 
@@ -408,14 +422,11 @@ public class AdvertService {
 
                 DateTime baseline = now();
                 Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
-                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER" }, newArrayList(acceptAdvertId)))) {
+                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(acceptAdvertId)))) {
                     advertDAO.getAdvertTargetAdmin(advertTarget).stream().forEach(targetAdmin -> {
                         oldPartnershipStates.add(targetAdmin.getPartnershipState());
                         setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
                     });
-
-                    advertDAO.updateAdvertTargetGroup(advertTarget, !accept);
-                    performed = true;
                 }
 
                 AdvertTarget targetUserAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
@@ -745,14 +756,14 @@ public class AdvertService {
         } else if (applicationCategory) {
             HashMultimap<PrismScope, Integer> students = HashMultimap.create();
             for (PrismScope targetScope : targetScopes) {
-                List<PrismRole> roles = values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" });
+                List<PrismRole> roles = values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR" });
                 List<Integer> resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
                 if (isNotEmpty(resources)) {
                     students.putAll(targetScope, userService.getUsersWithRoles(targetScope, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
                 }
 
                 if (targetScope.equals(DEPARTMENT)) {
-                    roles = values(PrismRole.class, INSTITUTION, new String[] { "ADMINISTRATOR", "APPROVER" });
+                    roles = values(PrismRole.class, INSTITUTION, new String[] { "ADMINISTRATOR" });
                     resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
                     if (isNotEmpty(resources)) {
                         students.putAll(targetScope, userService.getUsersWithRoles(targetScope, INSTITUTION, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
@@ -920,11 +931,11 @@ public class AdvertService {
 
         Invitation invitation = invitationService.createInvitation(targetAdmin.getOtherUser(), message);
 
-        if (!updateAdvertTarget(targetAdmin.getId(), true, false)) {
+        if (!acceptAdvertTarget(targetAdmin, true, false)) {
             targetAdmin.setInvitation(invitation);
         }
 
-        if (!(targetUserAccept == null || updateAdvertTarget(targetUserAccept.getId(), true, false))) {
+        if (!(targetUserAccept == null || acceptAdvertTarget(targetUserAccept, true, false))) {
             targetUserAccept.setInvitation(invitation);
         }
 
@@ -933,9 +944,9 @@ public class AdvertService {
 
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert, User acceptAdvertUser,
             PrismPartnershipState partnershipState) {
-        return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withTargetAdvert(targetAdvert)
-                .withTargetAdvertUser(targetAdvertUser).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser).withPartnershipState(partnershipState)
-                .withSevered(false));
+        return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withAdvertSevered(false).withTargetAdvert(targetAdvert)
+                .withTargetAdvertUser(targetAdvertUser).withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser)
+                .withPartnershipState(partnershipState));
     }
 
     private AdvertTarget createAdvertTarget(Advert targetAdvert, PrismPartnershipState partnershipState) {
@@ -943,8 +954,8 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, Advert acceptAdvert, PrismPartnershipState partnershipState) {
-        AdvertTarget advertTarget = entityService.createOrUpdate(
-                new AdvertTarget().withAdvert(advert).withTargetAdvert(targetAdvert).withAcceptAdvert(acceptAdvert).withPartnershipState(partnershipState).withSevered(false));
+        AdvertTarget advertTarget = entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withAdvertSevered(false).withTargetAdvert(targetAdvert)
+                .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withPartnershipState(partnershipState));
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
     }

@@ -39,7 +39,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -453,11 +452,12 @@ public class AdvertMapper {
 
     private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget) {
         boolean canManage = isTrue(advertTarget.getCanManage());
+        boolean severed = isTrue(advertTarget.getThisAdvertSevered()) || isTrue(advertTarget.getOtherAdvertSevered());
         AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
                 .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
                         advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
                         advertTarget.getOtherBackgroundId()))
-                .withCanManage(canManage).withSevered(isTrue(advertTarget.getSevered())).withSelected(isTrue(advertTarget.getSelected()));
+                .withCanManage(canManage).withSevered(severed).withSelected(isTrue(advertTarget.getSelected()));
 
         Integer otherUserId = advertTarget.getOtherUserId();
         if (otherUserId != null) {
@@ -472,7 +472,7 @@ public class AdvertMapper {
             connectionRepresentation.setConnectState(PENDING);
         } else if (partnershipState.equals(ENDORSEMENT_PROVIDED)) {
             connectionRepresentation.setConnectState(ACCEPTED);
-        } else if (BooleanUtils.isTrue(advertTarget.getSevered())) {
+        } else if (severed) {
             connectionRepresentation.setConnectState(canManage ? REJECTED : UNKNOWN);
         }
 

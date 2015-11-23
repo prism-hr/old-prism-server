@@ -42,8 +42,8 @@ public class TargetingController {
 
     @RequestMapping(value = "/targets/{targetId}/{decision:accept|reject}", method = POST)
     public void updateTarget(@PathVariable Integer targetId, @PathVariable String decision, @RequestBody Map<?, ?> undertow) {
-        boolean accept = decision.equals("accept");
-        advertService.updateAdvertTarget(targetId, accept);
+        boolean severed = decision.equals("reject");
+        advertService.updateAdvertTarget(targetId, severed);
     }
 
     @RequestMapping(value = "/competences", method = GET)

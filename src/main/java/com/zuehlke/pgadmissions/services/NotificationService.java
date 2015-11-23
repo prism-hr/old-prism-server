@@ -291,19 +291,18 @@ public class NotificationService {
         PrismScope scope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-        Action action = comment.getAction();
         Set<UserNotificationDefinitionDTO> updates = Sets.newHashSet();
-        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, resource, action, exclusions));
+        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, comment, exclusions));
 
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScope : parentScopes) {
-                updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, parentScope, resource, action, exclusions));
+                updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, parentScope, comment, exclusions));
             }
 
             if (isNotEmpty(targeterEntities)) {
                 for (PrismScope targeterScope : targetScopes) {
                     for (PrismScope targetScope : targetScopes) {
-                        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, targeterScope, targetScope, targeterEntities, resource, action, exclusions));
+                        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, targeterScope, targetScope, targeterEntities, comment, exclusions));
                     }
                 }
             }

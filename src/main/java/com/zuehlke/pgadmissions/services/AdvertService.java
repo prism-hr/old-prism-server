@@ -300,7 +300,9 @@ public class AdvertService {
         if (categoriesDTO != null) {
             updateCategories(advert, categoriesDTO);
         }
+    }
 
+    public void updateCustomAdvertTargets(Advert advert, AdvertDTO advertDTO) {
         advertDAO.deleteCustomAdvertTargets(advert);
         List<Integer> customTargetIds = advertDTO.getCustomTargets();
         if (isNotEmpty(customTargetIds)) {

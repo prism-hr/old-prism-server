@@ -6,6 +6,8 @@ public class PrismConstants {
 
     public static final String DOT = ".";
 
+    public static final String COMMA = ",";
+
     public static final String SPACE = " ";
 
     public static final String HYPHEN = "-";

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static com.zuehlke.pgadmissions.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
+import static com.zuehlke.pgadmissions.PrismConstants.COMMA;
 import static com.zuehlke.pgadmissions.PrismConstants.SPACE;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.advertScopes;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getOpportunityCategoryConstraint;
@@ -439,9 +440,6 @@ public class AdvertDAO {
 
     public List<AdvertTargetDTO> getAdvertTargetsReceived(PrismScope resourceScope, String thisAdvertReference, String otherAdvertReference, User user,
             Collection<Integer> connectAdverts) {
-        thisAdvertReference = "target." + thisAdvertReference;
-        otherAdvertReference = "target." + otherAdvertReference;
-
         Criterion permissionsConstraint;
         if (user != null && isNotEmpty(connectAdverts)) {
             permissionsConstraint = Restrictions.disjunction() //
@@ -702,7 +700,7 @@ public class AdvertDAO {
 
         sessionFactory.getCurrentSession().createQuery( //
                 "update AdvertTarget " //
-                        + Joiner.on(SPACE).join(updates) //
+                        + Joiner.on(COMMA + SPACE).join(updates) + " " //
                         + "where advert = :advert " //
                         + "and targetAdvert = :targetAdvert") //
                 .setParameter("severed", severed) //

@@ -87,7 +87,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
 
-    @Column(name = "last_logged_in_timestamp", nullable = false)
+    @Column(name = "last_logged_in_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastLoggedInTimestamp;
 

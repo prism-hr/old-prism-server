@@ -9,7 +9,7 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   <listener>
-    <listener-class>com.zuehlke.pgadmissions.interceptors.PortalSessionListener</listener-class>
+    <listener-class>uk.co.alumeni.prism.interceptors.PortalSessionListener</listener-class>
   </listener>
   <servlet>
     <servlet-name>Spring</servlet-name>

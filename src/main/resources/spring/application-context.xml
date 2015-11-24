@@ -11,7 +11,7 @@
 
     <context:property-placeholder location="classpath:environment.properties"/>
 
-    <context:component-scan base-package="com.zuehlke.pgadmissions"/>
+    <context:component-scan base-package="uk.co.alumeni.prism"/>
     <context:annotation-config/>
     <cache:annotation-driven cache-manager="cacheManager" />
 

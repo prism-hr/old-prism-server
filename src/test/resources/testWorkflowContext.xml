@@ -20,7 +20,7 @@
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.zuehlke.pgadmissions.domain" />
+		<property name="packagesToScan" value="uk.co.alumeni.prism.domain" />
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
@@ -47,17 +47,17 @@
 		<property name="transactionManager" ref="transactionManager" />
 	</bean>
 
-	<context:component-scan base-package="com.zuehlke.pgadmissions" />
+	<context:component-scan base-package="uk.co.alumeni.prism" />
 
 	<!-- bean definitions -->
 
-	<bean id="webServiceTemplate" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean"
+	<bean id="webServiceTemplate" class="uk.co.alumeni.prism.utils.EasyMockFactoryBean"
 		primary="true">
 		<constructor-arg
 			value="org.springframework.ws.client.core.WebServiceTemplate" />
 	</bean>
 
-	<bean id="authenticationManager" class="com.zuehlke.pgadmissions.utils.EasyMockFactoryBean"
+	<bean id="authenticationManager" class="uk.co.alumeni.prism.utils.EasyMockFactoryBean"
 		primary="true">
 		<constructor-arg
 			value="org.springframework.security.authentication.AuthenticationManager" />
@@ -66,11 +66,11 @@
 	<bean id="validator"
 		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
-	<bean id="mailSender" class="com.zuehlke.pgadmissions.mail.MailSenderMock"
+	<bean id="mailSender" class="uk.co.alumeni.prism.mail.MailSenderMock"
 		primary="true" />
 
 	<bean id="authenticationProvider"
-		class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider" />
+		class="uk.co.alumeni.prism.security.PrismAuthenticationProvider" />
 
 	<bean id="jacksonObjectMapper"
 		class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">

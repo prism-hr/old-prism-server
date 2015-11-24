@@ -7,9 +7,9 @@
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <mvc:interceptors>
-        <bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor"/>
-        <bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor"/>
-        <bean class="com.zuehlke.pgadmissions.interceptors.ErrorLogHandlerInterceptor"/>
+        <bean class="uk.co.alumeni.prism.interceptors.Utf8Interceptor"/>
+        <bean class="uk.co.alumeni.prism.interceptors.EncryptionKeyInterceptor"/>
+        <bean class="uk.co.alumeni.prism.interceptors.ErrorLogHandlerInterceptor"/>
         <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
             <property name="sessionFactory" ref="sessionFactory"/>
         </bean>

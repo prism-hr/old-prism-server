@@ -28,19 +28,19 @@
         <security:authentication-provider ref="authenticationProvider"/>
     </security:authentication-manager>
 
-    <bean id="unauthorizedEntryPoint" class="com.zuehlke.pgadmissions.security.UnauthorizedEntryPoint"/>
+    <bean id="unauthorizedEntryPoint" class="uk.co.alumeni.prism.security.UnauthorizedEntryPoint"/>
 
     <bean id="authenticationTokenProcessingFilter"
-          class="com.zuehlke.pgadmissions.security.AuthenticationTokenProcessingFilter">
+          class="uk.co.alumeni.prism.security.AuthenticationTokenProcessingFilter">
     </bean>
     <bean id="basicAuthenticationFilter"
           class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
         <constructor-arg ref="authenticationManager"/>
     </bean>
 
-    <bean id="authenticationProvider" class="com.zuehlke.pgadmissions.security.PrismAuthenticationProvider"/>
-    <bean id="userDetailsService" class="com.zuehlke.pgadmissions.security.PrismUserDetailsService"/>
-    <bean id="authenticationEncryptionUtils" class="com.zuehlke.pgadmissions.utils.PrismEncryptionUtils"
+    <bean id="authenticationProvider" class="uk.co.alumeni.prism.security.PrismAuthenticationProvider"/>
+    <bean id="userDetailsService" class="uk.co.alumeni.prism.security.PrismUserDetailsService"/>
+    <bean id="authenticationEncryptionUtils" class="uk.co.alumeni.prism.utils.PrismEncryptionUtils"
           autowire-candidate="false"/>
 
 </beans>

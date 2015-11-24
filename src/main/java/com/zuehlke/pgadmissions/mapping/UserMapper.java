@@ -130,7 +130,7 @@ public class UserMapper {
 
     public UserRepresentationExtended getUserRepresentationExtended(User user) {
         UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
-        representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendApplicationRecommendationNotification());
+        representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendActivityNotification());
         representation.setVisibleScopes(roleService.getVisibleScopes(user));
         representation.setUserRoles(getUserRoleRepresentations(user));
 
@@ -210,6 +210,10 @@ public class UserMapper {
                 .map(UserSelectionDTO::getUser)
                 .map(this::getUserRepresentationSimple)
                 .collect(Collectors.toList());
+    }
+
+    public UserActivityRepresentation getUserActivityRepresentation(Integer user) {
+        return getUserActivityRepresentation(userService.getById(user));
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(User user) {

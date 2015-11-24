@@ -914,10 +914,6 @@ public class ResourceService {
         return resourceDAO.getResourcesWithUsersToVerify(resourceScope);
     }
 
-    public List<Integer> getResourcesWithNewOpportunities(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime createdBaseline) {
-        return resourceDAO.getResourcesWithNewOpportunities(resourceScope, targeterScope, targetScope, createdBaseline);
-    }
-
     public ResourceParent getResourceParent(ResourceParent resource) {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             return getResourceParent(resource.getParentResource());

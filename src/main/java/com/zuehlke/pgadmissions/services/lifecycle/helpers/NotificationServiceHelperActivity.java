@@ -6,6 +6,10 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.mapping.AdvertMapper;
+import com.zuehlke.pgadmissions.mapping.UserMapper;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 import com.zuehlke.pgadmissions.services.NotificationService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -18,11 +22,17 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
     @Inject
     private UserService userService;
 
+    @Inject
+    private AdvertMapper advertMapper;
+
+    @Inject
+    private UserMapper userMapper;
+
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersWithActivity().forEach(user -> {
+        userService.getUsersForActivityRepresentation().forEach(user -> {
             sendUserActivityNotification(user);
         });
     }
@@ -34,7 +44,9 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
 
     private void sendUserActivityNotification(Integer user) {
         if (!isShuttingDown()) {
-            notificationService.sendUserActivityNotification(user);
+            UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentation(user);
+            AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user, true);
+            notificationService.sendUserActivityNotification(user, userActivityRepresentation, advertListRepresentation);
         }
     }
 

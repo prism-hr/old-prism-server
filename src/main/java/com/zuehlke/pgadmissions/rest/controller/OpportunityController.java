@@ -32,8 +32,7 @@ public class OpportunityController {
 
     @RequestMapping(method = RequestMethod.GET)
     public AdvertListRepresentation getAdverts(OpportunitiesQueryDTO query) {
-        AdvertListRepresentation representation = advertMapper.getAdvertExtendedRepresentations(query);
-        return representation;
+        return advertMapper.getAdvertExtendedRepresentations(query);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "{resourceScope:projects|programs|departments|institutions}/{resourceId}")

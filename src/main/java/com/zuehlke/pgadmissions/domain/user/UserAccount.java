@@ -48,8 +48,8 @@ public class UserAccount
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime temporaryPasswordExpiryTimestamp;
 
-    @Column(name = "send_application_recommendation_notification", nullable = false)
-    private Boolean sendApplicationRecommendationNotification;
+    @Column(name = "send_activity_notification", nullable = false)
+    private Boolean sendActivityNotification;
 
     @Column(name = "linkedin_id")
     private String linkedinId;
@@ -157,12 +157,12 @@ public class UserAccount
         this.temporaryPasswordExpiryTimestamp = temporaryPasswordExpiryTimestamp;
     }
 
-    public Boolean getSendApplicationRecommendationNotification() {
-        return sendApplicationRecommendationNotification;
+    public Boolean getSendActivityNotification() {
+        return sendActivityNotification;
     }
 
-    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
-        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    public void setSendActivityNotification(Boolean sendActivityNotification) {
+        this.sendActivityNotification = sendActivityNotification;
     }
 
     public String getLinkedinId() {
@@ -301,8 +301,8 @@ public class UserAccount
         return this;
     }
 
-    public UserAccount withSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
-        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    public UserAccount withSendActivityNotification(Boolean sendActivityNotification) {
+        this.sendActivityNotification = sendActivityNotification;
         return this;
     }
 

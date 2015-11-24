@@ -575,23 +575,6 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesWithNewOpportunities(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, DateTime createdBaseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("targetResource.id")) //
-                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
-                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
-                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("targetAdvert.id", "targetResource.advert.id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .add(Restrictions.ge("resource.createdTimestamp", createdBaseline)) //
-                .add(Restrictions.eq("stateAction.action.id", PrismAction.valueOf(resourceScope.name() + "_CREATE_APPLICATION")))
-                .list();
-    }
-
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {

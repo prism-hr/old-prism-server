@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
+import org.joda.time.DateTime;
 
 import com.zuehlke.pgadmissions.domain.application.Application;
 import com.zuehlke.pgadmissions.domain.resource.Department;
@@ -69,9 +69,9 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
     @JoinColumn(name = "notification_definition_id", nullable = false)
     private NotificationDefinition notificationDefinition;
 
-    @Column(name = "last_notified_date", nullable = false)
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastNotifiedDate;
+    @Column(name = "last_notified_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastNotifiedTimestamp;
 
     public Integer getId() {
         return id;
@@ -157,12 +157,12 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
         this.notificationDefinition = notificationDefinition;
     }
 
-    public LocalDate getLastNotifiedDate() {
-        return lastNotifiedDate;
+    public DateTime getLastNotifiedTimestamp() {
+        return lastNotifiedTimestamp;
     }
 
-    public void setLastNotifiedDate(LocalDate lastNotifiedDate) {
-        this.lastNotifiedDate = lastNotifiedDate;
+    public void setLastNotifiedTimestamp(DateTime lastNotifiedTimestamp) {
+        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
     }
 
     public UserNotification withResource(Resource resource) {
@@ -180,8 +180,8 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
         return this;
     }
 
-    public UserNotification withLastNotifiedDate(LocalDate lastNotifiedDate) {
-        this.lastNotifiedDate = lastNotifiedDate;
+    public UserNotification withLastNotifiedTimestamp(DateTime lastNotifiedTimestamp) {
+        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
         return this;
     }
 

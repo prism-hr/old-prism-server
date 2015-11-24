@@ -29,8 +29,6 @@ public class CommentDTO {
 
     private PrismRoleContext roleContext;
 
-    private Boolean recommend;
-
     private Boolean declinedResponse;
 
     @Size(max = 50000)
@@ -133,14 +131,6 @@ public class CommentDTO {
 
     public void setRoleContext(PrismRoleContext roleContext) {
         this.roleContext = roleContext;
-    }
-
-    public Boolean getRecommend() {
-        return recommend;
-    }
-
-    public void setRecommend(Boolean applicationRecommend) {
-        this.recommend = applicationRecommend;
     }
 
     public String getContent() {

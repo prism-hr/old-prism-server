@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>UCL Postgraduate Admissions</name>
-    <groupId>com.zuehlke</groupId>
+    <groupId>uk.co.alumeni</groupId>
     <artifactId>prism</artifactId>
     <packaging>war</packaging>
     <version>4.0.2-SNAPSHOT</version>
@@ -70,21 +70,21 @@
             <artifactId>hibernate-validator-annotation-processor</artifactId>
             <version>4.3.2.Final</version>
         </dependency>
-        
+
         <!-- Lucene -->
         <dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>5.3.1</version>
 		</dependency>
-        
+
         <dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
 			<version>5.3.1</version>
 		</dependency>
-        
-        
+
+
         <!-- Spring -->
         <dependency>
             <groupId>cglib</groupId>
@@ -447,7 +447,7 @@
                 <configuration>
                     <id>wildfly-prod</id>
                     <port>${wildfly.management.port}</port>
-                    <groupId>com.zuehlke</groupId>
+                    <groupId>uk.co.alumeni</groupId>
                     <artifactId>prism</artifactId>
                     <name>prism.war</name>
                 </configuration>

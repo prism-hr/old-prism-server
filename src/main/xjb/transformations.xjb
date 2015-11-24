@@ -4,7 +4,7 @@
     <jaxb:globalBindings>
         <jaxb:javaType xmlns="http://java.sun.com/xml/ns/jaxb"
             name="org.joda.time.DateTime" xmlType="xs:gMonth"
-            parseMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.parse" 
-            printMethod="com.zuehlke.pgadmissions.jaxb.GMonthAdapter.print" />
-    </jaxb:globalBindings>       
+            parseMethod="uk.co.alumeni.prism.jaxb.GMonthAdapter.parse"
+            printMethod="uk.co.alumeni.prism.jaxb.GMonthAdapter.print" />
+    </jaxb:globalBindings>
 </jaxb:bindings>

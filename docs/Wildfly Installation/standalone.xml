@@ -113,7 +113,7 @@
             <logger category="jacorb.config">
                 <level name="ERROR"/>
             </logger>
-            <logger category="com.zuehlke.pgadmissions" use-parent-handlers="true">
+            <logger category="uk.co.alumeni.prism" use-parent-handlers="true">
                 <level name="INFO"/>
             </logger>
             <root-logger>

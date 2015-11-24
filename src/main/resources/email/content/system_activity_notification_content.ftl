@@ -39,10 +39,10 @@
 
 <p>
 	If you do not wish to receive these messages any more, or wish to take a break, 
-	let us know us by updating your user preferences.
+	let us know us by logging in and updating your user preferences.
 </p>
 
-${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+${TEMPLATE_SYSTEM_HOMEPAGE}
 
 <p>
     Yours sincerely,

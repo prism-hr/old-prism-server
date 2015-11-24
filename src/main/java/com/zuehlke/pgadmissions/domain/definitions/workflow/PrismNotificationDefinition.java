@@ -105,7 +105,7 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL)), //
     SYSTEM_ACTIVITY_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
-            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_ACTIVITY));
+            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_ACTIVITY, SYSTEM_USER_ACTIVATION));
 
     private final PrismNotificationType notificationType;
 

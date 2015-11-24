@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.rest.representation.resource;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 

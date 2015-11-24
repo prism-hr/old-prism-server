@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceAdvertCategoriesEvaluator;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceAdvertCompetencesEvaluator;

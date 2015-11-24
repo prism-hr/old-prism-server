@@ -12,10 +12,10 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
-import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceInstanceGroupDefinition;
+import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 
 @Entity
 @Table(name = "resource_study_option", uniqueConstraints = { @UniqueConstraint(columnNames = { "program_id", "study_option" }),

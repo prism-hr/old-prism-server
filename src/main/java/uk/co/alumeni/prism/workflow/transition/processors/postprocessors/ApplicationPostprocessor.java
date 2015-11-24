@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.workflow.transition.processors.postprocessors;
 
+import static java.math.RoundingMode.HALF_UP;
 import static uk.co.alumeni.prism.PrismConstants.CONFIDENCE_MEDIUM;
 import static uk.co.alumeni.prism.PrismConstants.DEFAULT_RATING;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
@@ -8,7 +9,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICAT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static java.math.RoundingMode.HALF_UP;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;

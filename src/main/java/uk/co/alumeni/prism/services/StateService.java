@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.dao.StateDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;

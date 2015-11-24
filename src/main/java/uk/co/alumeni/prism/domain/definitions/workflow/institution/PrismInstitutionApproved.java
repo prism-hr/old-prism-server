@@ -1,6 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.institution;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionApproved extends PrismWorkflowState {
 

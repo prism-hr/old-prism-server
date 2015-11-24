@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
+
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.document.PrismFileCategory.PrismImageCategory;

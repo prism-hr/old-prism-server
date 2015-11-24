@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.co.alumeni.prism.PrismConstants.SEQUENCE_IDENTIFIER;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getOpportunityCategoryConstraint;
@@ -18,8 +20,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
-import static java.util.Arrays.asList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -46,6 +46,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;

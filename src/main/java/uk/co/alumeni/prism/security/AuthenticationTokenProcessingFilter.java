@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.GenericFilterBean;
 
 import com.google.common.base.Charsets;
+
 import uk.co.alumeni.prism.services.UserService;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {

@@ -1,13 +1,13 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.application;
 
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT_UNVERIFIED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import java.util.List;
 

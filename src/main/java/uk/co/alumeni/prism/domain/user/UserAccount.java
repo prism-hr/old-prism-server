@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;

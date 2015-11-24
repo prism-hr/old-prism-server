@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
 import java.util.List;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {

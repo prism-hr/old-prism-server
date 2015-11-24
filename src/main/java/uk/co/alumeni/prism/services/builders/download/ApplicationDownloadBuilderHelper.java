@@ -23,6 +23,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;

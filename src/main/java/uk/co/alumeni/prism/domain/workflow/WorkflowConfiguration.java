@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-
 import java.util.Arrays;
+
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public abstract class WorkflowConfiguration<T> extends WorkflowResource {
 

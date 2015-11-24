@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import static uk.co.alumeni.prism.utils.PrismWordUtils.pluralize;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
+import static uk.co.alumeni.prism.utils.PrismWordUtils.pluralize;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +25,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;

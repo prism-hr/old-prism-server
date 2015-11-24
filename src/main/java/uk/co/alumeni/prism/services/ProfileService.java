@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.services;
 
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
@@ -17,9 +20,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICAT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.springframework.beans.BeanUtils.instantiate;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.dao.ProfileDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.address.Address;

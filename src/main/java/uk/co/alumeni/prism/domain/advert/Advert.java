@@ -23,6 +23,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.application.Application;

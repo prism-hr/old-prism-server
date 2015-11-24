@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.io.ByteStreams;
+
 import uk.co.alumeni.prism.dao.InstitutionDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.document.PrismFileCategory;

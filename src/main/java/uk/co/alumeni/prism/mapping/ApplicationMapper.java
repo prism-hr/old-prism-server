@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static java.util.Arrays.asList;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
@@ -11,7 +12,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICAT
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 import static uk.co.alumeni.prism.utils.PrismDateUtils.getNextMonday;
-import static java.util.Arrays.asList;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
@@ -63,8 +65,6 @@ import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
-
-import jersey.repackaged.com.google.common.collect.Maps;
 
 @Service
 @Transactional

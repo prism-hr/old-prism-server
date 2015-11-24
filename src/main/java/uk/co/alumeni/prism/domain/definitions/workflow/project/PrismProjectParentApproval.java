@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 
 public class PrismProjectParentApproval extends PrismWorkflowState {
 

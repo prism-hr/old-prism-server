@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.services;
 
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_SHARED;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_UNSHARED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.joda.time.DateTime.now;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Preconditions;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;

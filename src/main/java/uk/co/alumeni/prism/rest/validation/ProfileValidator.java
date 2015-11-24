@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.rest.validation;
 
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 import java.util.Collection;
 import java.util.List;

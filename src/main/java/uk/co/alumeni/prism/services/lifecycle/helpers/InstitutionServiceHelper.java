@@ -1,14 +1,14 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_HESA;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_UCAS;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_SPECIFIED;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -40,6 +40,8 @@ import org.springframework.web.client.ResourceAccessException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.google.common.base.Joiner;
+
+import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.exceptions.WorkflowDuplicateResourceException;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
@@ -52,8 +54,6 @@ import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.PrismService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-
-import jersey.repackaged.com.google.common.base.Objects;
 
 @Component
 public class InstitutionServiceHelper extends PrismServiceHelperAbstract {

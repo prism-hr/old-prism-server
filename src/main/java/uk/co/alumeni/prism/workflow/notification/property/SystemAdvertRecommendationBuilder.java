@@ -1,8 +1,18 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.jboss.util.Strings.EMPTY;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
@@ -10,14 +20,6 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
-
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.jboss.util.Strings.EMPTY;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPLY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
 @Component
 public class SystemAdvertRecommendationBuilder implements NotificationPropertyBuilder {

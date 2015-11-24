@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
+import java.util.List;
+
 import org.apache.commons.collections.CollectionUtils;
+
 import uk.co.alumeni.prism.rest.representation.ListRepresentation;
 import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
-
-import java.util.List;
 
 public class AdvertListRepresentation extends ListRepresentation<AdvertRepresentationExtended> {
 

@@ -2,6 +2,16 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
@@ -20,16 +30,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang.BooleanUtils.toBoolean;
-import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
-import static org.joda.time.DateTime.now;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +59,9 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
+
+import jersey.repackaged.com.google.common.collect.Iterables;
+import jersey.repackaged.com.google.common.collect.Sets;
 import uk.co.alumeni.prism.dao.ResourceDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
@@ -135,9 +138,6 @@ import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolv
 import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
 import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
-
-import jersey.repackaged.com.google.common.collect.Iterables;
-import jersey.repackaged.com.google.common.collect.Sets;
 
 @Service
 @Transactional

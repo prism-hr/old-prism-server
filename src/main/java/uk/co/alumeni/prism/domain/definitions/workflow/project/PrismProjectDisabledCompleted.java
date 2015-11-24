@@ -8,10 +8,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditAbstract;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 
 public class PrismProjectDisabledCompleted extends PrismWorkflowState {
 

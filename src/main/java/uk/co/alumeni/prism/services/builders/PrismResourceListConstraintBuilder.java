@@ -18,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;

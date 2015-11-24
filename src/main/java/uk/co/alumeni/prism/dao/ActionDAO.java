@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.dao;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;

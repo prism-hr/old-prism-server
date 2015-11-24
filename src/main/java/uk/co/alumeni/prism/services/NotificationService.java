@@ -1,11 +1,38 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_ACTIVITY_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_CONNECTION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_JOIN_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.dao.NotificationDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
@@ -25,24 +52,16 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
+import uk.co.alumeni.prism.dto.MailMessageDTO;
+import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
+import uk.co.alumeni.prism.dto.UserConnectionDTO;
+import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
+import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
 import uk.co.alumeni.prism.mail.MailSender;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional

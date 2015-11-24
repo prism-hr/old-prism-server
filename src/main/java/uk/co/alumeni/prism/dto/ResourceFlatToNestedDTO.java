@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 import org.springframework.beans.BeanUtils;
 
 import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public class ResourceFlatToNestedDTO implements Comparable<Object> {

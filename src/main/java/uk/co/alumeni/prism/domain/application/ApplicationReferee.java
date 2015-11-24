@@ -14,12 +14,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
-import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.workflow.user.ApplicationRefereeReassignmentProcessor;
 
 @Entity

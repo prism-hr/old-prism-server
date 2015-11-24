@@ -15,6 +15,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
+
+import jersey.repackaged.com.google.common.collect.Maps;
+import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
@@ -54,9 +57,6 @@ import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.Institu
 import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import uk.co.alumeni.prism.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
-
-import jersey.repackaged.com.google.common.collect.Maps;
-import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>,PrismLocalizableDefinition {
 

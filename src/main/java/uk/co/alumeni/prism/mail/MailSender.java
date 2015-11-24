@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.mail;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -29,6 +29,7 @@ import com.amazonaws.services.simpleemail.model.Destination;
 import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import uk.co.alumeni.prism.domain.document.Document;
@@ -42,8 +43,8 @@ import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 import uk.co.alumeni.prism.utils.PrismConversionUtils;
+import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)

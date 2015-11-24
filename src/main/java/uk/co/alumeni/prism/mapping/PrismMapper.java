@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getOpportunityTypes;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableMap;
+
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;

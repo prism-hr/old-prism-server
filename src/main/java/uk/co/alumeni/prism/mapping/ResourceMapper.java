@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
@@ -14,8 +16,6 @@ import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,6 +40,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;

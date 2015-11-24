@@ -15,6 +15,7 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -24,7 +25,6 @@ import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 import uk.co.alumeni.prism.workflow.user.UserFeedbackReassignmentProcessor;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 
 @Entity
 @Table(name = "user_feedback")

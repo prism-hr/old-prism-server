@@ -16,8 +16,6 @@ import org.joda.time.LocalDate;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.workflow.State;
 
-import java.lang.*;
-
 @Entity
 @Table(name = "resource_state", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "state_id" }),
         @UniqueConstraint(columnNames = { "institution_id", "state_id" }), @UniqueConstraint(columnNames = { "department_id", "state_id" }),

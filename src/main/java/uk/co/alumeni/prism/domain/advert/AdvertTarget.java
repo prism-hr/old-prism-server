@@ -14,6 +14,7 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
@@ -21,8 +22,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.AdvertConnectionReassignmentProcessor;
-
-import jersey.repackaged.com.google.common.base.Objects;
 
 @Entity
 @Table(name = "advert_target", uniqueConstraints = {

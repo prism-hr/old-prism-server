@@ -1,13 +1,37 @@
 package uk.co.alumeni.prism.dao;
 
-import com.google.common.collect.HashMultimap;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.HashMultimap;
+
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationAdvertRelationSection;
@@ -20,7 +44,11 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
-import uk.co.alumeni.prism.domain.user.*;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.domain.user.UserAdvertRelationSection;
+import uk.co.alumeni.prism.domain.user.UserInstitutionIdentity;
+import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserCompetenceDTO;
@@ -28,21 +56,6 @@ import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Collections.emptyList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
-import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -244,7 +257,7 @@ public class UserDAO {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-                                                  HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
+            HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -274,7 +287,7 @@ public class UserDAO {
     }
 
     public User getBouncedOrUnverifiedUser(Integer userId, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-                                           HashMultimap<PrismScope, PrismScope> expandedScopes) {
+            HashMultimap<PrismScope, PrismScope> expandedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -300,7 +313,7 @@ public class UserDAO {
     }
 
     public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities, Resource resource,
-                                          PrismAction... actions) {
+            PrismAction... actions) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
                 .add(getUsersWithActionsConstraint(resource, actions)) //
                 .add(WorkflowDAO.getTargetActionConstraint()) //
@@ -515,7 +528,8 @@ public class UserDAO {
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.disjunction() //

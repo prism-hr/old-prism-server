@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;

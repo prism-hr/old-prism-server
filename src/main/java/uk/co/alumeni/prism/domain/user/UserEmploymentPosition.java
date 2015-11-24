@@ -9,10 +9,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
-import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.workflow.user.UserEmploymentPositionReassignmentProcessor;
 
 @Entity

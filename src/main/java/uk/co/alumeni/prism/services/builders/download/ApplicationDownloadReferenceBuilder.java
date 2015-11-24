@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.services.builders.download;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DECLINED_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_REFERENCE_APPENDIX;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_SUBHEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RATING;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,6 +22,7 @@ import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.PdfDocumentBuilderException;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;

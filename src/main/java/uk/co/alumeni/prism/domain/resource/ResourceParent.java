@@ -5,10 +5,9 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
 

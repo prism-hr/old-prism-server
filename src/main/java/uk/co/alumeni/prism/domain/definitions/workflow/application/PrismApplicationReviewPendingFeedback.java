@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationReviewPendingFeedback extends PrismWorkflowState {
 

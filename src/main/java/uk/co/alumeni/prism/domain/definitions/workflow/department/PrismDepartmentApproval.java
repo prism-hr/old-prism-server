@@ -1,9 +1,15 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
 
 public class PrismDepartmentApproval extends PrismWorkflowState {
 

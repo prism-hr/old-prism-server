@@ -1,11 +1,11 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.dao.CommentDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;

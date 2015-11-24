@@ -1,12 +1,30 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+
+import java.util.Collection;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -14,14 +32,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.utils.PrismEnumUtils;
-
-import javax.inject.Inject;
-import java.util.Collection;
-
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 @Component
 public class WorkflowDAO {

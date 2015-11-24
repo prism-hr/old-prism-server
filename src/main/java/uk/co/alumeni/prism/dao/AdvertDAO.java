@@ -1,5 +1,10 @@
 package uk.co.alumeni.prism.dao;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
@@ -16,11 +21,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -49,6 +49,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertAttribute;

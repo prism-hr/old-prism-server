@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.workflow.transition.processors.preprocessors;
 
+import static org.joda.time.DateTimeConstants.MONDAY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
-import static org.joda.time.DateTimeConstants.MONDAY;
 
 import java.util.List;
 

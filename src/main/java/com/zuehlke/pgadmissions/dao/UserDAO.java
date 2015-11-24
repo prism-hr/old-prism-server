@@ -527,7 +527,7 @@ public class UserDAO {
 
     public List<Integer> getUsersForActivityNotification(DateTime baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .setProjection(Projections.groupProperty("user.id")) //
+                .setProjection(Projections.groupProperty("id")) //
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN) //
@@ -536,7 +536,11 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
                         .add(Restrictions.lt("userNotification.lastNotifiedTimestamp", baseline))) //
-                .add(Restrictions.lt("user.lastLoggedInTimestamp", baseline)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.conjunction() //
+                                .add(Restrictions.isNull("lastLoggedInTimestamp")) //
+                                .add(Restrictions.lt("userRole.assignedTimestamp", baseline)))
+                        .add(Restrictions.lt("lastLoggedInTimestamp", baseline)))
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.eq("userAccount.sendActivityNotification", true)) //
                 .list();

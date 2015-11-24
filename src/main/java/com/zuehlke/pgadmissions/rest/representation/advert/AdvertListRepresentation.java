@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.advert;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.zuehlke.pgadmissions.rest.representation.ListRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.ListSummaryRepresentation;
 
@@ -25,6 +27,10 @@ public class AdvertListRepresentation extends ListRepresentation<AdvertRepresent
     public AdvertListRepresentation withSummaries(List<ListSummaryRepresentation> summaries) {
         setSummaries(summaries);
         return this;
+    }
+
+    public boolean isNotEmpty() {
+        return CollectionUtils.isNotEmpty(rows);
     }
 
 }

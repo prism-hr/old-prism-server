@@ -129,12 +129,15 @@ public class NotificationService {
     }
 
     public void sendUserActivityNotification(Integer user, UserActivityRepresentation userActivityRepresentation, AdvertListRepresentation advertListRepresentation) {
-        User recipient = userService.getById(user);
-        System resource = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
-        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient).withResource(resource)
-                .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation).withAdvertListRepresentation(advertListRepresentation));
-        createOrUpdateUserNotification(resource, recipient, definition);
+        if (userActivityRepresentation.isNotEmpty() || advertListRepresentation.isNotEmpty()) {
+            User recipient = userService.getById(user);
+            System resource = systemService.getSystem();
+            NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
+            sendNotification(definition, new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient).withResource(resource)
+                    .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation)
+                    .withAdvertListRepresentation(advertListRepresentation));
+            createOrUpdateUserNotification(resource, recipient, definition);
+        }
     }
 
     public void sendInvitationRequest(Integer userRoleId, Set<UserRoleCategoryDTO> sent) {

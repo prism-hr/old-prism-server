@@ -10,7 +10,6 @@ import org.joda.time.LocalDate;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
-
 import uk.co.alumeni.prism.utils.validation.DateNotAfterDate;
 import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 

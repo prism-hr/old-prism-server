@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.services.helpers;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;

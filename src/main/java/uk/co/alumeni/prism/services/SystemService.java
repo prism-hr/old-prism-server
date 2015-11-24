@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static java.util.Arrays.asList;
 import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
 import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
@@ -11,7 +12,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static java.util.Arrays.asList;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -33,6 +33,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.dao.SystemDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;

@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
-
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ProfileRefereeDTO extends ApplicationAdvertRelationSectionDTO {

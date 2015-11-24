@@ -2,11 +2,11 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static java.math.RoundingMode.HALF_UP;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
-import static java.math.RoundingMode.HALF_UP;
 
 import java.util.List;
 import java.util.Map;
@@ -28,6 +28,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;

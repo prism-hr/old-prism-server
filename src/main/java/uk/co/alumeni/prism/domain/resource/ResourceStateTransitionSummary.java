@@ -16,8 +16,6 @@ import org.joda.time.DateTime;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResource;
 
-import java.lang.*;
-
 @Entity
 @Table(name = "resource_state_transition_summary", uniqueConstraints = {
         @UniqueConstraint(columnNames = { "system_id", "state_group_id", "transition_state_selection" }),

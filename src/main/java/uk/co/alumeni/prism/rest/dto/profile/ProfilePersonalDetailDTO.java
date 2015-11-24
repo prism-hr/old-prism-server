@@ -10,7 +10,6 @@ import org.joda.time.LocalDate;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
-
 import uk.co.alumeni.prism.utils.validation.DatePast;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 

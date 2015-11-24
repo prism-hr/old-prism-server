@@ -10,7 +10,6 @@ import org.hibernate.validator.constraints.URL;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
-
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class AdvertDTO {

@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.io.OutputStream;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Program;

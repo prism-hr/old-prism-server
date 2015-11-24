@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.dto;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 
 public class ResourceActionDTO {

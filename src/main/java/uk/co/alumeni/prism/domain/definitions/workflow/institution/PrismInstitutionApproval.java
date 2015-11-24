@@ -10,7 +10,14 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismI
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionWithdraw;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionApproval extends PrismWorkflowState {
 

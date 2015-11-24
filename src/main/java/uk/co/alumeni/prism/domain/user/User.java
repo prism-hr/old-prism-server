@@ -24,6 +24,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;

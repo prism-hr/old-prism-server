@@ -1,9 +1,17 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import com.google.common.base.Joiner;
+import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.Set;
+
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+
+import com.google.common.base.Joiner;
+
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -15,12 +23,6 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
-
-import java.util.Set;
-
-import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
-import static uk.co.alumeni.prism.PrismConstants.SPACE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 public abstract class Resource implements Activity, UniqueEntity {
 

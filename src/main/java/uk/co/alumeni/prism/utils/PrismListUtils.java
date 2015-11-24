@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.dto.EntityOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;

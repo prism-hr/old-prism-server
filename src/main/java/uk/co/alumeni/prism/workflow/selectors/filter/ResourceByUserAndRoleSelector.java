@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.workflow.selectors.filter;
 
+import static java.util.Arrays.asList;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
-import static java.util.Arrays.asList;
 
 import java.util.List;
 

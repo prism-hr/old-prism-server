@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentationClient;

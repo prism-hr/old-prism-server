@@ -1,6 +1,16 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.containsAny;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.MONTH;
@@ -28,16 +38,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.containsAny;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.joda.time.DateTime.now;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -72,6 +72,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.dao.AdvertDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.Invitation;

@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
+import static java.util.Arrays.asList;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static java.util.Arrays.asList;
 
 import java.util.Set;
 
@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;

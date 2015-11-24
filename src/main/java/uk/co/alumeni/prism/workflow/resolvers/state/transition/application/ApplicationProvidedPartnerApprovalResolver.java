@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.application;
 
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
 import javax.inject.Inject;
 

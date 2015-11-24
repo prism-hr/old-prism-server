@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.visualization.datasource.DataSourceHelper;
 import com.google.visualization.datasource.DataSourceRequest;
 import com.google.visualization.datasource.datatable.DataTable;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;

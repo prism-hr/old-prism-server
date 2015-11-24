@@ -7,11 +7,10 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 
 public class ResourceOpportunityDTO extends ResourceParentDTO implements ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType> {
 

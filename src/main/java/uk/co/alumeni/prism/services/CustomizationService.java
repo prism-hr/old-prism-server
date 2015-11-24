@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.dao.CustomizationDAO;
 import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;

@@ -1,5 +1,13 @@
 package uk.co.alumeni.prism.dao;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.ProjectionList;
@@ -8,9 +16,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -20,13 +28,6 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
 @Repository
 @SuppressWarnings("unchecked")

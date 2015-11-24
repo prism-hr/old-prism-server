@@ -1,13 +1,13 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.amazonaws.util.StringUtils.isNullOrEmpty;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
-import static org.hibernate.sql.JoinType.INNER_JOIN;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +33,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;

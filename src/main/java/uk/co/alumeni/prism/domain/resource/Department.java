@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import java.lang.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -24,6 +23,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;

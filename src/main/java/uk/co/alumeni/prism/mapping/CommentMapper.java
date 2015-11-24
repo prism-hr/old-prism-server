@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;

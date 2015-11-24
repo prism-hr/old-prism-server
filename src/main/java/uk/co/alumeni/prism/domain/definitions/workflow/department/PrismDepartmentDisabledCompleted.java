@@ -4,11 +4,11 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEP
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVED;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 
 public class PrismDepartmentDisabledCompleted extends PrismWorkflowState {
 

@@ -3,11 +3,18 @@ package uk.co.alumeni.prism.domain.definitions.workflow.application;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationApproval extends PrismWorkflowState {
 

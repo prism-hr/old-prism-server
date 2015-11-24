@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;

@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
-import uk.co.alumeni.prism.PrismConstants;
-
 import java.math.BigDecimal;
+
+import uk.co.alumeni.prism.PrismConstants;
 
 public class PrismGeocodingUtils {
 

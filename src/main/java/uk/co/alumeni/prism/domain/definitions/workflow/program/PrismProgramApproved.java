@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.program;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProgramApproved extends PrismWorkflowState {
 

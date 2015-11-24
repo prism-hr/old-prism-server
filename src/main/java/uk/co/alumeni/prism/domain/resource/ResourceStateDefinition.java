@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.resource;
 import org.joda.time.LocalDate;
 
 import com.google.common.base.Objects;
+
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 

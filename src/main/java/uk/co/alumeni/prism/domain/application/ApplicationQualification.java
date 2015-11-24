@@ -14,13 +14,13 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.ApplicationQualificationReassignmentProcessor;
-import uk.co.alumeni.prism.domain.UniqueEntity;
 
 @Entity
 @Table(name = "application_qualification", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "advert_id", "start_year" }) })

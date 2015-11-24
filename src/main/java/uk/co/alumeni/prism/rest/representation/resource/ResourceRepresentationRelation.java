@@ -14,10 +14,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 import jersey.repackaged.com.google.common.collect.Sets;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class ResourceRepresentationRelation extends ResourceRepresentationSimple {
 

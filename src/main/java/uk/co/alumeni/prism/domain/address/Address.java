@@ -15,6 +15,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.Domicile;
 
 @Entity

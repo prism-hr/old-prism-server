@@ -4,15 +4,14 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkflowState {
 

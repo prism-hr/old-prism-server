@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.workflow.notification.property;
 
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_APPLICANT_DECLINED;
-import static org.apache.commons.lang.BooleanUtils.toBoolean;
 
 import org.springframework.stereotype.Component;
 

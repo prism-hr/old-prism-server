@@ -1,12 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationReferencePendingCompletion extends PrismWorkflowState {
 

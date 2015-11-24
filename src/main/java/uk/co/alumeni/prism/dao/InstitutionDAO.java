@@ -18,6 +18,7 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Institution;

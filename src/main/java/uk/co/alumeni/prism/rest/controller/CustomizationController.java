@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;

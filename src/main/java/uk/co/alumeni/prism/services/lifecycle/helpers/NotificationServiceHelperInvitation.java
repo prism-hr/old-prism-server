@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.UserConnectionDTO;

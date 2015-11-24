@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;

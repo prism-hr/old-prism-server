@@ -1,6 +1,11 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
@@ -14,11 +19,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang3.text.WordUtils.capitalize;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -41,6 +41,7 @@ import com.google.common.collect.Lists;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
+
 import uk.co.alumeni.prism.dao.ApplicationDAO;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;

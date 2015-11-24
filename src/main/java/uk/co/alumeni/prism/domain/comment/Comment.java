@@ -31,12 +31,18 @@ import org.joda.time.LocalDateTime;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;

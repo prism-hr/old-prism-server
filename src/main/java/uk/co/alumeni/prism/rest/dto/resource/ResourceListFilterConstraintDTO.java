@@ -9,6 +9,7 @@ import org.joda.time.LocalDate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;

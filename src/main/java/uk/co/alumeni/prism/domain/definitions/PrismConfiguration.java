@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.definitions;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;

@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.google.common.collect.Sets;
+
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;

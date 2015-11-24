@@ -6,10 +6,9 @@ import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
-
-import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 
 public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition<AdvertDTO> {
 

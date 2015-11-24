@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.rest.representation.user;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;

@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.workflow.transition.creators;
 
-import static uk.co.alumeni.prism.PrismConstants.SYSTEM_CURRENCY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static uk.co.alumeni.prism.PrismConstants.SYSTEM_CURRENCY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 import java.util.List;
 

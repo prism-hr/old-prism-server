@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.workflow.transition.creators;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 
 import java.util.List;
 

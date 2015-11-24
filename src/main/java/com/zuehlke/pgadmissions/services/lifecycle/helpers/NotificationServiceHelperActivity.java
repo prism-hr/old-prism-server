@@ -45,7 +45,7 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
     private void sendUserActivityNotification(Integer user) {
         if (!isShuttingDown()) {
             UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentation(user);
-            AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user, true);
+            AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user);
             notificationService.sendUserActivityNotification(user, userActivityRepresentation, advertListRepresentation);
         }
     }

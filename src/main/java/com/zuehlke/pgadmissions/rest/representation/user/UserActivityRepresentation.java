@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.rest.representation.user;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope;
 import com.zuehlke.pgadmissions.rest.representation.action.ActionRepresentation;
 import com.zuehlke.pgadmissions.rest.representation.advert.AdvertTargetRepresentation;
@@ -70,6 +72,11 @@ public class UserActivityRepresentation {
     public UserActivityRepresentation withAdvertTargetActivities(List<AdvertTargetRepresentation> advertTargetActivities) {
         this.advertTargetActivities = advertTargetActivities;
         return this;
+    }
+
+    public boolean isNotEmpty() {
+        return CollectionUtils.isNotEmpty(resourceActivities) || CollectionUtils.isNotEmpty(appointmentActivities) || CollectionUtils.isNotEmpty(unverifiedUserActivities)
+                || CollectionUtils.isNotEmpty(advertTargetActivities);
     }
 
     public static class ResourceActivityRepresentation {

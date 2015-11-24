@@ -8,6 +8,7 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.P
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.REJECTED;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismConnectionState.UNKNOWN;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDurationUnit.YEAR;
+import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.APPLICANT;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.EMPLOYER;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -141,8 +142,8 @@ public class AdvertMapper {
         return getAdvertExtendedRepresentations(userService.getCurrentUser(), query);
     }
 
-    public AdvertListRepresentation getAdvertExtendedRepresentations(Integer user, boolean recommendation) {
-        return getAdvertExtendedRepresentations(userService.getById(user), new OpportunitiesQueryDTO().withRecommendation(recommendation));
+    public AdvertListRepresentation getAdvertExtendedRepresentations(Integer user) {
+        return getAdvertExtendedRepresentations(userService.getById(user), new OpportunitiesQueryDTO().withContext(APPLICANT).withRecommendation(true));
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {

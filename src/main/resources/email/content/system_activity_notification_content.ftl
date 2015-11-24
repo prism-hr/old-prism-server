@@ -3,37 +3,39 @@
 </h1>
 
 <p>
-    Here's your daily summary of activity from ${TEMPLATE_SYSTEM_NAME}.
+    We notice that you haven't logged in for a few days. Here's a quick summary of 
+    what's been happening since the last time you visited us.
 </p>
 
-<p>
-    You currently have waiting for you:
-    <br/>
-    <ul>
-    	<li><b>N outstanding tasks that require your attention</b></li>
-    	<li>N updates to applications, opportunities and organizations that you are following</li>
-    	<li>N requests to join organizations that you manage</li>
-    	<li>N new connection requests from organizations in your network</li>
-    </ul>
-</p>
+<#if SYSTEM_ACTIVITY_SUMMARY?has_content>
+    <p>
+        You currently have waiting for you:
+        <br/>
+        <ul>
+            ${SYSTEM_ACTIVITY_SUMMARY}
+        </ul>
+    </p>
+    
+    <p>
+        Follow the link below to see full details.
+    </p>
 
-<p>
-	Login to see the details.
-</p>
+    ${ACTION_COMPLETE}
+</#if>
 
-${TEMPLATE_SYSTEM_HOMEPAGE}
-
-<p>
-    The following new opportunities have also been posted within your network:
-</p>
-
-${SYSTEM_APPLICATION_RECOMMENDATION}
-
-<p>
-	Login to browse opportunities.
-</p>
-
-${TEMPLATE_SYSTEM_HOMEPAGE}
+<#if SYSTEM_ADVERT_RECOMMENDATION?has_content>
+    <p>
+        The following new opportunities have been posted within your network:
+    </p>
+    
+    ${SYSTEM_ADVERT_RECOMMENDATION}
+    
+    <p>
+    	Login to browse all opportunities and employers.
+    </p>
+    
+    ${TEMPLATE_SYSTEM_HOMEPAGE}
+</#if>
 
 <p>
 	If you do not wish to receive these messages any more, or wish to take a break, 

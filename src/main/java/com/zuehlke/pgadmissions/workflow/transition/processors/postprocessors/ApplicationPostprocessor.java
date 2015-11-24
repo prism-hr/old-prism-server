@@ -164,7 +164,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         if (offerDetail != null) {
             application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
         }
-        application.getUser().getUserAccount().setSendApplicationRecommendationNotification(false);
     }
 
 }

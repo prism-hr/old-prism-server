@@ -24,7 +24,6 @@ import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.definitions.PrismOpportunityCategory;
@@ -176,12 +175,6 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
                 .add(Restrictions.gt("resource.updatedTimestamp", baseline));
-    }
-
-    public static Junction getUserDueNotificationConstraint(LocalDate baseline) {
-        return Restrictions.disjunction() //
-                .add(Restrictions.isNull("userNotification.id")) //
-                .add(Restrictions.lt("userNotification.lastNotifiedDate", baseline));
     }
 
     public static Criterion getLikeConstraint(String property, String query) {

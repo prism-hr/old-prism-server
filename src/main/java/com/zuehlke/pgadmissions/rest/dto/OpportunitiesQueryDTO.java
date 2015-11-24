@@ -235,5 +235,10 @@ public class OpportunitiesQueryDTO {
     public void setLastSequenceIdentifier(String lastSequenceIdentifier) {
         this.lastSequenceIdentifier = lastSequenceIdentifier;
     }
+    
+    public OpportunitiesQueryDTO withRecommendation(Boolean recommendation) {
+        this.recommendation = recommendation;
+        return this;
+    }
 
 }

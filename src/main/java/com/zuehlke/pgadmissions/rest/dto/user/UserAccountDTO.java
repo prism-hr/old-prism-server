@@ -6,17 +6,17 @@ import javax.validation.constraints.Size;
 public class UserAccountDTO {
 
     @NotNull
-    private Boolean sendApplicationRecommendationNotification;
+    private Boolean sendActivityNotification;
 
     @Size(min = 8, max = 15)
     private String password;
 
-    public Boolean getSendApplicationRecommendationNotification() {
-        return sendApplicationRecommendationNotification;
+    public Boolean getSendActivityNotification() {
+        return sendActivityNotification;
     }
 
-    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
-        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    public void setSendActivityNotification(Boolean sendActivityNotification) {
+        this.sendActivityNotification = sendActivityNotification;
     }
 
     public String getPassword() {

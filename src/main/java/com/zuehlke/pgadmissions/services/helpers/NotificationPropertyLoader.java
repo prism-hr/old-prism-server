@@ -125,7 +125,11 @@ public class NotificationPropertyLoader {
         return Joiner.on(", ").join(assigneeStrings);
     }
 
-    public String getRedirectionUrl(Resource resource, PrismAction actionId, User user) {
+    public String getRedirectionUrl(Integer resourceId, PrismAction actionId, User user) {
+        return applicationApiUrl + "/mail/activate?resourceId=" + resourceId + "&actionId=" + actionId.name() + "&activationCode=" + user.getActivationCode();
+    }
+
+    private String getRedirectionUrl(Resource resource, PrismAction actionId, User user) {
         Resource operative = (Resource) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();

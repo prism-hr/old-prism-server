@@ -2,13 +2,12 @@ package com.zuehlke.pgadmissions.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.zuehlke.pgadmissions.PrismConstants.ACTIVITY_REPRESENTATION_INTERVAL;
 import static com.zuehlke.pgadmissions.PrismConstants.RATING_PRECISION;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.targetScopes;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.APPLICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.PROJECT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismScope.SYSTEM;
 import static com.zuehlke.pgadmissions.utils.PrismReflectionUtils.invokeMethod;
 import static java.math.RoundingMode.HALF_UP;
@@ -19,6 +18,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
+import static org.joda.time.DateTime.now;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -39,7 +39,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
@@ -162,7 +161,11 @@ public class UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getDetails() instanceof User) {
             User user = (User) authentication.getDetails();
-            return entityService.getById(User.class, user.getId());
+            user = getById(user.getId());
+            if (user != null) {
+                user.setLastLoggedInTimestamp(now());
+            }
+            return user;
         }
         return null;
     }
@@ -229,7 +232,7 @@ public class UserService {
 
     public void updateUserAccount(UserAccountDTO userAccountDTO) {
         UserAccount userAccount = getCurrentUser().getUserAccount();
-        userAccount.setSendApplicationRecommendationNotification(userAccountDTO.getSendApplicationRecommendationNotification());
+        userAccount.setSendActivityNotification(userAccountDTO.getSendActivityNotification());
 
         String password = userAccountDTO.getPassword();
         if (password != null) {
@@ -469,50 +472,8 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public Set<Integer> getUsersWithActivity() {
-        Set<Integer> users = Sets.newHashSet();
-        DateTime updateBaseline = new DateTime().minusDays(1);
-        LocalDate lastNotifiedBaseline = updateBaseline.toLocalDate().minusDays(1);
-
-        scopeService.getEnclosingScopesDescending(APPLICATION, SYSTEM).forEach(scope -> {
-            users.addAll(userDAO.getUsersWithActivity(scope, updateBaseline, lastNotifiedBaseline));
-            scopeService.getParentScopesDescending(scope, SYSTEM).forEach(parentScope -> {
-                users.addAll(userDAO.getUsersWithActivity(scope, parentScope, updateBaseline, lastNotifiedBaseline));
-            });
-
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    if (scope.ordinal() > targeterScope.ordinal()) {
-                        for (PrismScope targetScope : targetScopes) {
-                            users.addAll(userDAO.getUsersWithActivity(scope, targeterScope, targetScope, targeterEntities, updateBaseline, lastNotifiedBaseline));
-
-                            List<Integer> resources = resourceService.getResourcesWithNewOpportunities(PROJECT, targeterScope, targetScope, updateBaseline);
-                            if (!resources.isEmpty()) {
-                                users.addAll(userDAO.getUsersWithVerifiedRoles(targetScope, resources));
-
-                                if (targetScope.equals(DEPARTMENT)) {
-                                    users.addAll(userDAO.getUsersWithVerifiedRolesForChildResource(INSTITUTION, targetScope, resources));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        users.addAll(userDAO.getUsersWithAppointmentsForApplications());
-
-        users.addAll(userDAO.getUsersWithConnectionsToVerify());
-        for (PrismScope parentScope : targetScopes) {
-            List<Integer> resources = resourceService.getResourcesWithUsersToVerify(parentScope);
-            if (!resources.isEmpty()) {
-                users.addAll(userDAO.getUsersWithUsersToVerify(parentScope, resources));
-            }
-            users.addAll(userDAO.getUsersWithConnectionsToVerify(parentScope));
-        }
-
-        return users;
+    public List<Integer> getUsersForActivityRepresentation() {
+        return userDAO.getUsersForActivityNotification(now().minusDays(ACTIVITY_REPRESENTATION_INTERVAL));
     }
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {

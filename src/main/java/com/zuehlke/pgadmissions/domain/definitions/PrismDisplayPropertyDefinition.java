@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS;
-
 import java.util.List;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -1004,6 +1002,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),
     SYSTEM_NOTIFICATION_AVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are available to attend"),
     SYSTEM_NOTIFICATION_UNAVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are unavailable to attend"),
+    SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding tasks that require your attention"), 
+    SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "updates to applications, opportunities and organizations that you are following"), 
+    SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointments"),
+    SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to join organizations that you manage"),
+    SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to connect from organizations in your network"),
 
     /*
      * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************
@@ -1528,8 +1531,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACCOUNT_MANAGE_ACCOUNT(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Manage Account"),
     SYSTEM_ACCOUNT_SOCIAL_CONNECTIONS_SUBHEADER(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Social networks connections"),
     SYSTEM_ACCOUNT_SOCIAL_CHANGE_PASSWORD_SUBHEADER(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Change password"),
-    SYSTEM_ACCOUNT_DETAILS_SEND_RECOMMENDATIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Send recommendation notifications?"),
-    SYSTEM_ACCOUNT_DETAILS_SEND_RECOMMENDATIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Opt into receiving recommendation notifications from us"),
+    SYSTEM_ACCOUNT_SEND_ACTIVITY_LABEL(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Send me summaries of activity within my network?"),
+    SYSTEM_ACCOUNT_SEND_ACTIVITY_HINT(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Opt in to receive regular summaries of activities and opportunities within your network via email."),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_LABEL(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Link account to Social Networks"),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_HINT(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Link your account to social networks that you use. This helps you to share information about your activities within PRiSM with friends and colleagues."),
     SYSTEM_ACCOUNT_LINK_WITH_EXTERNAL_ACCOUNT_LINKED(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Linked"),
@@ -1730,11 +1733,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM RESOURCE TARGETS *********************
      */
 
-    SYSTEM_RESOURCE_TARGETS_RESOURCES_LABEL(SYSTEM_RESOURCE_TARGETS, "Targeted Resources"),
-    SYSTEM_RESOURCE_TARGETS_ACCEPT_BUTTON(SYSTEM_RESOURCE_TARGETS, "Accept"),
-    SYSTEM_RESOURCE_TARGETS_REJECT_BUTTON(SYSTEM_RESOURCE_TARGETS, "Reject"),
-    SYSTEM_RESOURCE_TARGETS_REMOVE_BUTTON(SYSTEM_RESOURCE_TARGETS, "Remove"),
-    SYSTEM_RESOURCE_TARGETS_RESTORE_BUTTON(SYSTEM_RESOURCE_TARGETS, "Restore"),
+    SYSTEM_RESOURCE_TARGETS_RESOURCES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Targeted Resources"),
+    SYSTEM_RESOURCE_TARGETS_ACCEPT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Accept"),
+    SYSTEM_RESOURCE_TARGETS_REJECT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Reject"),
+    SYSTEM_RESOURCE_TARGETS_REMOVE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Remove"),
+    SYSTEM_RESOURCE_TARGETS_RESTORE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_TARGETS, "Restore"),
 
     /*
      * *************** SYSTEM RESOURCE COMPETENCES *********************
@@ -2073,7 +2076,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_FORM_FOOTER_CONFIRM_TRUE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),
     APPLICATION_FORM_FOOTER_ON_COURSE(PrismDisplayPropertyCategory.APPLICATION_FORM, "On course placement.<br/><em>Check this if you want your department to consider your application as counting towards a mandatory on cource placement."),
     APPLICATION_FORM_FOOTER_SHARE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Share my application.<br/><em>Uncheck this if you do not want your application to be shared with support staff in your university.</em>"),
-    APPLICATION_FORM_FOOTER_SEND_RECOMMENDATIONS(PrismDisplayPropertyCategory.APPLICATION_FORM, "Send me recommendations.<br/><em>Uncheck this if you do not want us to send you recommendations about other opportunities.</em>"),
     APPLICATION_FORM_GO_TO_TIMELINE(PrismDisplayPropertyCategory.APPLICATION_FORM, "Go to Timeline"),
     APPLICATION_FORM_SAVE_FOR_LATER(PrismDisplayPropertyCategory.APPLICATION_FORM, "Save for later"),
     APPLICATION_FORM_SUBMIT_APPLICATION(PrismDisplayPropertyCategory.APPLICATION_FORM, "Submit Application"),

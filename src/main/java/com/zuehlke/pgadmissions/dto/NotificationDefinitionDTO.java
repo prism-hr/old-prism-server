@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.dto;
 
-import java.util.List;
-
 import com.zuehlke.pgadmissions.domain.advert.AdvertTarget;
 import com.zuehlke.pgadmissions.domain.comment.Comment;
 import com.zuehlke.pgadmissions.domain.definitions.PrismResourceContext;
@@ -9,6 +7,8 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismAction;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
 import com.zuehlke.pgadmissions.domain.resource.ResourceParent;
 import com.zuehlke.pgadmissions.domain.user.User;
+import com.zuehlke.pgadmissions.rest.representation.advert.AdvertListRepresentation;
+import com.zuehlke.pgadmissions.rest.representation.user.UserActivityRepresentation;
 
 public class NotificationDefinitionDTO {
 
@@ -27,14 +27,16 @@ public class NotificationDefinitionDTO {
     private ResourceParent invitedResource;
 
     private PrismResourceContext invitedResourceContext;
-    
+
     private String invitationMessage;
 
     private PrismAction transitionAction;
 
     private String newPassword;
 
-    List<AdvertRecommendationDTO> advertRecommendations;
+    private UserActivityRepresentation userActivityRepresentation;
+
+    private AdvertListRepresentation advertListRepresentation;
 
     public User getInitiator() {
         return initiator;
@@ -92,8 +94,12 @@ public class NotificationDefinitionDTO {
         return newPassword;
     }
 
-    public List<AdvertRecommendationDTO> getAdvertRecommendations() {
-        return advertRecommendations;
+    public UserActivityRepresentation getUserActivityRepresentation() {
+        return userActivityRepresentation;
+    }
+
+    public AdvertListRepresentation getAdvertListRepresentation() {
+        return advertListRepresentation;
     }
 
     public NotificationDefinitionDTO withInitiator(User initiator) {
@@ -130,7 +136,7 @@ public class NotificationDefinitionDTO {
         this.invitedResourceContext = invitedResourceContext;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withInvitationMessage(String invitationMessage) {
         this.invitationMessage = invitationMessage;
         return this;
@@ -146,8 +152,13 @@ public class NotificationDefinitionDTO {
         return this;
     }
 
-    public NotificationDefinitionDTO withAdvertRecommendations(List<AdvertRecommendationDTO> advertRecommendations) {
-        this.advertRecommendations = advertRecommendations;
+    public NotificationDefinitionDTO withUserActivityRepresentation(UserActivityRepresentation userActivityRepresentation) {
+        this.userActivityRepresentation = userActivityRepresentation;
+        return this;
+    }
+
+    public NotificationDefinitionDTO withAdvertListRepresentation(AdvertListRepresentation advertListRepresentation) {
+        this.advertListRepresentation = advertListRepresentation;
         return this;
     }
 

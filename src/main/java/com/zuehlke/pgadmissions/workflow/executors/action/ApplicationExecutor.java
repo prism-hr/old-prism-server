@@ -66,7 +66,6 @@ public class ApplicationExecutor implements ActionExecutor {
 
             application.setShared(commentDTO.getShared());
             application.setOnCourse(commentDTO.getOnCourse());
-            user.getUserAccount().setSendApplicationRecommendationNotification(commentDTO.getRecommend());
         }
 
         Action action = actionService.getById(actionId);

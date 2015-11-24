@@ -3,12 +3,9 @@ package com.zuehlke.pgadmissions.dao;
 import static com.zuehlke.pgadmissions.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getResourceRecentlyActiveConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getSimilarUserConstraint;
 import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getTargetActionConstraint;
-import static com.zuehlke.pgadmissions.dao.WorkflowDAO.getUserDueNotificationConstraint;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismOauthProvider.LINKEDIN;
-import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRole.DEPARTMENT_STUDENT;
 import static com.zuehlke.pgadmissions.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
@@ -35,7 +32,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.HashMultimap;
@@ -387,34 +383,6 @@ public class UserDAO {
                 .list();
     }
 
-    public List<Integer> getUsersWithActivity(PrismScope resourceScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, Projections.groupProperty("user.id"))
-                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
-                .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
-                .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
-                .list();
-    }
-
-    public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope parentScope, DateTime updateBaseline, LocalDate lastNotifiedBaseline) {
-        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, parentScope, Projections.groupProperty("user.id")) //
-                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
-                .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
-                .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
-                .list();
-    }
-
-    public List<Integer> getUsersWithActivity(PrismScope resourceScope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities, DateTime updateBaseline,
-            LocalDate lastNotifiedBaseline) {
-        return (List<Integer>) workflowDAO.getWorkflowCriteriaList(resourceScope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("user.id")) //
-                .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
-                .add(getResourceRecentlyActiveConstraint(updateBaseline)) //
-                .add(getUserDueNotificationConstraint(lastNotifiedBaseline)) //
-                .list();
-    }
-
     public List<Integer> getUsersWithAppointmentsForApplications() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
@@ -554,6 +522,23 @@ public class UserDAO {
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("resource." + parentScope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.in("role.id", roles)) //
+                .list();
+    }
+
+    public List<Integer> getUsersForActivityNotification(DateTime baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("userNotification.lastNotifiedTimestamp", baseline))) //
+                .add(Restrictions.lt("user.lastLoggedInTimestamp", baseline)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.eq("userAccount.sendActivityNotification", true)) //
                 .list();
     }
 

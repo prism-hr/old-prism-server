@@ -17,6 +17,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -84,6 +86,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
+
+    @Column(name = "last_logged_in_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastLoggedInTimestamp;
 
     @OrderBy(clause = "last_name asc, first_name asc")
     @OneToMany(mappedBy = "parentUser")
@@ -256,6 +262,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public void setParentUser(User parentUser) {
         this.parentUser = parentUser;
+    }
+
+    public DateTime getLastLoggedInTimestamp() {
+        return lastLoggedInTimestamp;
+    }
+
+    public void setLastLoggedInTimestamp(DateTime lastLoggedInTimestamp) {
+        this.lastLoggedInTimestamp = lastLoggedInTimestamp;
     }
 
     public Set<User> getChildUsers() {

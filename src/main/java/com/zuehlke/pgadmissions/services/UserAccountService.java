@@ -156,7 +156,9 @@ public class UserAccountService {
     public void enableUserAccount(UserAccount userAccount) {
         DateTime baseline = now();
         userAccount.setEnabled(true);
-        userAccount.getUser().getUserRoles().stream().forEach(userRole -> activityService.setSequenceIdentifier(userRole, baseline));
+        User user = userAccount.getUser();
+        user.setLastLoggedInTimestamp(now());
+        user.getUserRoles().stream().forEach(userRole -> activityService.setSequenceIdentifier(userRole, baseline));
     }
 
     private void createUserAccountUpdate(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
@@ -245,10 +247,13 @@ public class UserAccountService {
     private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
         DateTime baseline = DateTime.now();
         String encryptedPassword = password != null ? PrismEncryptionUtils.getMD5(password) : null;
-        UserAccount userAccount = new UserAccount().withSendApplicationRecommendationNotification(false).withPassword(encryptedPassword).withUpdatedTimestamp(baseline)
+        UserAccount userAccount = new UserAccount().withSendActivityNotification(true).withPassword(encryptedPassword).withUpdatedTimestamp(baseline)
                 .withEnabled(enableAccount).withShared(true);
         entityService.save(userAccount);
         user.setUserAccount(userAccount);
+        if (enableAccount) {
+            user.setLastLoggedInTimestamp(now());
+        }
         return userAccount.withSequenceIdentifier(Long.toString(baseline.getMillis()) + String.format("%010d", userAccount.getId()));
     }
 

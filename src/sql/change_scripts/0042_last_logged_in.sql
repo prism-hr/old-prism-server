@@ -10,3 +10,7 @@ alter table user_notification
 alter table user_account
     change column send_application_recommendation_notification send_activity_notification int(1) unsigned not null
 ;
+
+update user_account
+set send_activity_notification = true
+;

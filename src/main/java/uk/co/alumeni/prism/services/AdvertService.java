@@ -393,6 +393,10 @@ public class AdvertService {
         return null;
     }
 
+    public boolean acceptAdvertTarget(Integer advertTargetId, boolean accept) {
+        return acceptAdvertTarget(getAdvertTargetById(advertTargetId), accept, true);
+    }
+
     public void updateAdvertTarget(Integer advertTargetId, boolean severed) {
         User user = userService.getCurrentUser();
         AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
@@ -420,40 +424,6 @@ public class AdvertService {
             ResourceParent resource = (ResourceParent) processedAdvert.getResource();
             executeUpdate(resource, "COMMENT_UPDATED_TARGET");
         });
-    }
-
-    public boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {
-        boolean performed = false;
-        if (advertTarget != null) {
-            User user = userService.getCurrentUser();
-
-            Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
-            if (user != null) {
-                PrismPartnershipState partnershipState = accept ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
-
-                DateTime baseline = now();
-                Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
-                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(acceptAdvertId)))) {
-                    advertDAO.getAdvertTargetAdmin(advertTarget).stream().forEach(targetAdmin -> {
-                        oldPartnershipStates.add(targetAdmin.getPartnershipState());
-                        setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
-                    });
-                }
-
-                AdvertTarget targetUserAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
-                if (targetUserAccept != null) {
-                    oldPartnershipStates.add(targetUserAccept.getPartnershipState());
-                    setAdvertTargetPartnershipState(targetUserAccept, partnershipState, baseline, accept);
-                    performed = true;
-                }
-
-                if (performed && accept && notify && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
-                    notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
-                }
-            }
-        }
-
-        return performed;
     }
 
     public void updateCompetences(PrismScope resourceScope, Integer resourceId, List<AdvertCompetenceDTO> competencesDTO) {
@@ -1000,6 +970,40 @@ public class AdvertService {
             entityService.save(category);
             functions.add(category);
         });
+    }
+
+    public boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {
+        boolean performed = false;
+        if (advertTarget != null) {
+            User user = userService.getCurrentUser();
+
+            Set<PrismPartnershipState> oldPartnershipStates = Sets.newHashSet();
+            if (user != null) {
+                PrismPartnershipState partnershipState = accept ? ENDORSEMENT_PROVIDED : ENDORSEMENT_REVOKED;
+
+                DateTime baseline = now();
+                Integer acceptAdvertId = advertTarget.getAcceptAdvert().getId();
+                if (isNotEmpty(getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, newArrayList(acceptAdvertId)))) {
+                    advertDAO.getAdvertTargetAdmin(advertTarget).stream().forEach(targetAdmin -> {
+                        oldPartnershipStates.add(targetAdmin.getPartnershipState());
+                        setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
+                    });
+                }
+
+                AdvertTarget targetUserAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);
+                if (targetUserAccept != null) {
+                    oldPartnershipStates.add(targetUserAccept.getPartnershipState());
+                    setAdvertTargetPartnershipState(targetUserAccept, partnershipState, baseline, accept);
+                    performed = true;
+                }
+
+                if (performed && accept && notify && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
+                    notificationService.sendConnectionNotification(userService.getCurrentUser(), advertTarget.getOtherUser(), advertTarget);
+                }
+            }
+        }
+
+        return performed;
     }
 
     private void updateAdvertTargets(Advert advert, List<Integer> customTargetIds) {

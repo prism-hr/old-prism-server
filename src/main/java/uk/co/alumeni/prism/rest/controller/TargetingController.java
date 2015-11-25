@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import static java.util.Arrays.asList;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -40,10 +41,15 @@ public class TargetingController {
         advertService.createAdvertTargetPending(resourceConnections);
     }
 
-    @RequestMapping(value = "/targets/{targetId}/{decision:accept|reject}", method = POST)
+    @RequestMapping(value = "/targets/{targetId}/{decision:accept|reject|suspend|restore}", method = POST)
     public void updateTarget(@PathVariable Integer targetId, @PathVariable String decision, @RequestBody Map<?, ?> undertow) {
-        boolean severed = decision.equals("reject");
-        advertService.updateAdvertTarget(targetId, severed);
+        if (asList("accept", "reject").contains(decision)) {
+            boolean accept = decision.equals("accept");
+            advertService.acceptAdvertTarget(targetId, accept);
+        } else {
+            boolean suspend = decision.equals("suspend");
+            advertService.updateAdvertTarget(targetId, suspend);
+        }
     }
 
     @RequestMapping(value = "/competences", method = GET)

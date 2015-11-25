@@ -130,7 +130,7 @@ public class UserAccountService {
         if (commentDTO != null) {
             Action transitionAction = actionService.getById(SYSTEM_MANAGE_ACCOUNT);
             ActionOutcomeDTO outcome = new ActionOutcomeDTO().withTransitionResource(systemService.getSystem()).withTransitionAction(transitionAction);
-            if (commentDTO.isActionBypass()) {
+            if (commentDTO.isBypassComment()) {
                 resourceService.executeActionBypass(user, commentDTO);
             } else {
                 outcome = actionService.executeRegistrationAction(user, userRegistrationDTO);

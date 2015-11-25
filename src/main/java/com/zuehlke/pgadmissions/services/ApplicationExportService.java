@@ -124,7 +124,7 @@ public class ApplicationExportService {
             outputStream = sendDocumentExportRequest(application, exportId);
             executeExportAction(application, exportRequest, exportId, exportUserId, null);
         } catch (RuntimeException e) {
-            logger.error("Error exporting application: " + application.getCode(), e);
+            throw new Error("Error exporting application: " + application.getCode(), e);
         } catch (Exception e) {
             logger.error("Error exporting application: " + application.getCode(), e);
             executeExportAction(application, exportRequest, exportId, exportUserId, ExceptionUtils.getStackTrace(e));

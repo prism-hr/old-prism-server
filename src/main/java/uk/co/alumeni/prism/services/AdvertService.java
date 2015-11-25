@@ -896,7 +896,6 @@ public class AdvertService {
             if (userTargetDTO != null) {
                 userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
             }
-
             return createAdvertTarget(resource, user, resourceTarget, userTarget, context, message);
         }
 

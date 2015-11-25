@@ -332,19 +332,25 @@ public class ResourceService {
     @SuppressWarnings("unchecked")
     public <T extends ResourceCreationDTO> ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = null;
-        if (commentDTO.isActionBypass()) {
+        if (commentDTO.isBypassComment()) {
             executeActionBypass(user, commentDTO);
-        } else if (commentDTO.getAction().getActionCategory().equals(CREATE_RESOURCE)) {
+        } else if (commentDTO.isCreateComment()) {
             T resourceDTO = (T) commentDTO.getResource();
             Action action = actionService.getById(commentDTO.getAction());
             resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
             actionOutcome = createResource(user, action, resourceDTO, false);
-            updateCustomAdvertTargets(actionOutcome.getResource(), resourceDTO);
         } else {
-            commentService.preprocessClaimComment(user, commentDTO);
+            if (commentDTO.isClaimComment()) {
+                commentService.preprocessClaimComment(user, commentDTO);
+            }
+            
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
+            }
+            
+            if (commentDTO.isViewEditComment()) {
+                updateCustomAdvertTargets(actionOutcome.getResource(), commentDTO.getResource());
             }
         }
         return actionOutcome;

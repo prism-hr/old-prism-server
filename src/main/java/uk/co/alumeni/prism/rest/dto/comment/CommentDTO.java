@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 
 import java.math.BigDecimal;
@@ -362,11 +364,19 @@ public class CommentDTO {
         return this;
     }
 
-    public boolean isClaimAction() {
+    public boolean isCreateComment() {
+        return action.getActionCategory().equals(CREATE_RESOURCE);
+    }
+
+    public boolean isViewEditComment() {
+        return action.getActionCategory().equals(VIEW_EDIT_RESOURCE);
+    }
+
+    public boolean isClaimComment() {
         return resource.getScope().getScopeCategory().equals(ORGANIZATION) && action.name().endsWith("_COMPLETE");
     }
 
-    public boolean isActionBypass() {
+    public boolean isBypassComment() {
         return !(roleContext == null && resourceInvitation == null);
     }
 

@@ -290,12 +290,10 @@ public class CommentService {
     }
 
     public void preprocessClaimComment(User user, CommentDTO commentDTO) {
-        if (commentDTO.isClaimAction()) {
-            PrismScope scope = commentDTO.getResource().getScope();
-            commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
-                    .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
-                    .withRole(PrismRole.valueOf(scope.name() + "_ADMINISTRATOR"))));
-        }
+        PrismScope scope = commentDTO.getResource().getScope();
+        commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
+                .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
+                .withRole(PrismRole.valueOf(scope.name() + "_ADMINISTRATOR"))));
     }
 
     private void updateCommentStates(Comment comment) {

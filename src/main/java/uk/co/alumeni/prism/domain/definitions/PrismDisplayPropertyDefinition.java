@@ -1008,6 +1008,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointments"),
     SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to join organizations that you manage"),
     SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to connect from organizations in your network"),
+    SYSTEM_NOTIFICATION_BUFFERED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We have been sending you lots of these requests today! So that you do not feel spammed, we are going to stop sending new requests like this until tomorrow. In the meantime, you can always log in to see whether you have any new tasks."), 
 
     /*
      * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************

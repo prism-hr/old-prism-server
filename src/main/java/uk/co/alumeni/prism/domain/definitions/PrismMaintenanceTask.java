@@ -9,6 +9,7 @@ import uk.co.alumeni.prism.services.lifecycle.helpers.EmailBounceServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.InstitutionServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperActivity;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperInvitation;
+import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperUser;
 import uk.co.alumeni.prism.services.lifecycle.helpers.PrismServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperEscalation;
 import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperPending;
@@ -27,7 +28,8 @@ public enum PrismMaintenanceTask {
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class),
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class),
     SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class),
-    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class);
+    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class),
+    SYSTEM_DELETE_USER_NOTIFICATION(NotificationServiceHelperUser.class);
 
     private Class<? extends PrismServiceHelper> executor;
 

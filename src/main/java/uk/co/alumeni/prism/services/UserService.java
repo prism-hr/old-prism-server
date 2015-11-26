@@ -11,7 +11,7 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.PrismConstants.ACTIVITY_REPRESENTATION_INTERVAL;
+import static uk.co.alumeni.prism.PrismConstants.ACTIVITY_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -390,7 +390,7 @@ public class UserService {
             user.setFullName(user.getFirstName() + " " + user.getLastName());
             user.setEmail(userCorrectionDTO.getEmail());
             user.setEmailBouncedMessage(null);
-            notificationService.resetNotifications(user);
+            notificationService.resetUserNotifications(user);
         } else if (userDuplicate != null) {
             mergeUsers(user, userDuplicate);
         } else {
@@ -474,7 +474,7 @@ public class UserService {
     }
 
     public List<Integer> getUsersForActivityRepresentation() {
-        return userDAO.getUsersForActivityNotification(now().minusDays(ACTIVITY_REPRESENTATION_INTERVAL));
+        return userDAO.getUsersForActivityNotification(now().minusDays(ACTIVITY_NOTIFICATION_INTERVAL));
     }
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {

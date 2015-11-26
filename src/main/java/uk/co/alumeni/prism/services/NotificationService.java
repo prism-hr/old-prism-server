@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.services;
 
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_CONNECTION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_JOIN_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
@@ -21,6 +22,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRol
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.dao.NotificationDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
@@ -56,6 +59,7 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserConnectionDTO;
+import uk.co.alumeni.prism.dto.UserNotificationDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
 import uk.co.alumeni.prism.mail.MailSender;
@@ -79,9 +83,6 @@ public class NotificationService {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private ResourceService resourceService;
 
     @Inject
     private SystemService systemService;
@@ -138,7 +139,7 @@ public class NotificationService {
             sendNotification(definition, new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient).withResource(resource)
                     .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation)
                     .withAdvertListRepresentation(advertListRepresentation));
-            createOrUpdateUserNotification(resource, recipient, definition);
+            createUserNotification(resource, recipient, definition);
         }
     }
 
@@ -201,13 +202,19 @@ public class NotificationService {
     }
 
     public void sendCompleteRegistrationRequest(User initiator, ActionOutcomeDTO actionOutcome) {
-        sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
-                .withResource(actionOutcome.getTransitionResource()).withTransitionAction(actionOutcome.getTransitionAction().getId()));
+        Resource resource = actionOutcome.getResource();
+        NotificationDefinition definition = getById(SYSTEM_COMPLETE_REGISTRATION_REQUEST);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
+                .withResource(resource).withTransitionAction(actionOutcome.getTransitionAction().getId());
+        sendIndividualRequestNotification(resource, initiator, definition, definitionDTO);
     }
 
     public void sendCompleteRegistrationForgottenRequest(User initiator) {
-        sendNotification(SYSTEM_COMPLETE_REGISTRATION_REQUEST, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
-                .withResource(systemService.getSystem()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+        System system = systemService.getSystem();
+        NotificationDefinition definition = getById(SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
+                .withResource(systemService.getSystem()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
+        sendIndividualRequestNotification(system, initiator, definition, definitionDTO);
     }
 
     public void sendResetPasswordNotification(User initiator, String newPassword) {
@@ -217,11 +224,10 @@ public class NotificationService {
     }
 
     public void sendJoinRequest(User initiator, User recipient, ResourceParent resource) {
-        System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_JOIN_REQUEST);
-        sendNotification(definition,
-                new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withTransitionAction(SYSTEM_VIEW_JOIN_LIST));
-        createOrUpdateUserNotification(system, recipient, definition);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
+                .withTransitionAction(SYSTEM_VIEW_JOIN_LIST);
+        sendIndividualRequestNotification(resource, recipient, definition, definitionDTO);
     }
 
     public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
@@ -239,24 +245,20 @@ public class NotificationService {
         return (List<PrismNotificationDefinition>) (List<?>) customizationService.getDefinitions(NOTIFICATION, scope);
     }
 
-    public void resetNotifications(User user) {
-        notificationDAO.resetNotifications(user);
-        for (PrismScope scope : PrismScope.values()) {
-            List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
-            List<Integer> resourceIds = resourceService.getResources(user, scope, parentScopes, targeterEntities).stream().map(a -> a.getId()).collect(toList());
-            if (isNotEmpty(resourceIds)) {
-                notificationDAO.resetNotificationsSyndicated(scope, resourceIds);
-            }
-        }
+    public void resetUserNotifications() {
+        notificationDAO.resetUserNotifications(DateTime.now().minusDays(1));
     }
 
-    public void resetNotifications(UserRole userRole) {
+    public void resetUserNotifications(User user) {
+        notificationDAO.resetUserNotifications(user);
+    }
+
+    public void resetUserNotifications(UserRole userRole) {
         User user = userRole.getUser();
         Role role = userRole.getRole();
         List<NotificationDefinition> individualDefinitions = notificationDAO.getNotificationDefinitionsIndividual(role);
         if (isNotEmpty(individualDefinitions)) {
-            notificationDAO.resetNotifications(user, individualDefinitions);
+            notificationDAO.resetUserNotifications(user, individualDefinitions);
         }
     }
 
@@ -285,13 +287,21 @@ public class NotificationService {
         Set<User> recipients = Sets.newHashSet();
         if (requests.size() > 0) {
             User initiator = comment.getUser();
+            Map<UserNotificationDTO, Long> recentRequests = Maps.newHashMap();
+            notificationDAO.getRecentRequestCounts(requests, DateTime.now().minusDays(1)).forEach(rr -> recentRequests.put(rr, rr.getSentCount()));
+
             for (UserNotificationDefinitionDTO request : requests) {
                 User recipient = userService.getById(request.getUserId());
+                Long recentRequestCount = recentRequests
+                        .get(new UserNotificationDTO().withUserId(request.getUserId()).withNotificationDefinitionId(request.getNotificationDefinitionId()));
                 NotificationDefinition definition = getById(request.getNotificationDefinitionId());
-                sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withComment(comment)
-                        .withTransitionAction(request.getActionId()));
-                createOrUpdateUserNotification(resource, recipient, definition);
-                recipients.add(recipient);
+                NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
+                        .withComment(comment).withTransitionAction(request.getActionId());
+
+                recipient = sendIndividualRequestNotification(resource, recipient, definition, definitionDTO, recentRequestCount);
+                if (recentRequestCount != null) {
+                    recipients.add(recipient);
+                }
             }
         }
 
@@ -320,7 +330,7 @@ public class NotificationService {
                     NotificationDefinition definition = getById(update.getNotificationDefinitionId());
                     sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource).withComment(comment)
                             .withTransitionAction(viewEditAction.getId()));
-                    createOrUpdateUserNotification(resource, recipient, definition);
+                    createUserNotification(resource, recipient, definition);
                 }
             }
         }
@@ -330,7 +340,8 @@ public class NotificationService {
         UserConnectionDTO messageIndex;
         messageIndex = new UserConnectionDTO(recipient, advertTarget.getOtherAdvert().getId());
         if (!sent.contains(messageIndex)) {
-            sendConnectionRequest(invitation.getUser(), recipient, advertTarget);
+            User initiator = invitation.getUser();
+            sendConnectionRequest(initiator, recipient, advertTarget);
         }
         return messageIndex;
     }
@@ -338,9 +349,9 @@ public class NotificationService {
     private void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
         System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
-        sendNotification(definition, new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system).withAdvertTarget(advertTarget)
-                .withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST));
-        createOrUpdateUserNotification(system, recipient, definition);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system)
+                .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST);
+        sendIndividualRequestNotification(system, recipient, definition, definitionDTO);
     }
 
     private void sendNotification(NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
@@ -355,10 +366,6 @@ public class NotificationService {
         applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
     }
 
-    private void createOrUpdateUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
-        entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withLastNotifiedTimestamp(DateTime.now()));
-    }
-
     private <T extends InvitationEntity> void dequeueUserInvitation(Invitation invitation, T invitationEntity) {
         invitationEntity.setInvitation(null);
         entityService.flush();
@@ -366,6 +373,27 @@ public class NotificationService {
         if (invitation.getUserRoles().isEmpty() && invitation.getAdvertTargets().isEmpty()) {
             entityService.delete(invitation);
         }
+    }
+
+    private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
+        Long recentRequestCount = notificationDAO.getRecentRequestCount(recipient, definition, DateTime.now().minusDays(1));
+        return sendIndividualRequestNotification(resource, recipient, definition, definitionDTO, recentRequestCount);
+    }
+
+    private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition, NotificationDefinitionDTO definitionDTO,
+            Long recentRequestCount) {
+        recentRequestCount = recentRequestCount == null ? 0 : recentRequestCount;
+        if (recentRequestCount < REQUEST_BUFFER) {
+            sendNotification(definition, definitionDTO.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));
+            createUserNotification(resource, recipient, definition);
+            return recipient;
+        }
+        return null;
+    }
+
+    private void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
+        entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
+                .withNotifiedTimestamp(DateTime.now()));
     }
 
 }

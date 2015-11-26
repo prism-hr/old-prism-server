@@ -52,6 +52,8 @@ public class PrismConstants {
 
     public static final String SYSTEM_CURRENCY = "GBP";
 
-    public static final Integer ACTIVITY_REPRESENTATION_INTERVAL = 3;
+    public static final Integer REQUEST_BUFFER = 2;
+
+    public static final Integer ACTIVITY_NOTIFICATION_INTERVAL = 3;
 
 }

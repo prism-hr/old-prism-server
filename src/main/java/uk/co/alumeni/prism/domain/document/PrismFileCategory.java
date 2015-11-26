@@ -1,6 +1,12 @@
 package uk.co.alumeni.prism.domain.document;
 
-import uk.co.alumeni.prism.services.helpers.persisters.*;
+import uk.co.alumeni.prism.services.helpers.persisters.DepartmentBackgroundPersister;
+import uk.co.alumeni.prism.services.helpers.persisters.ImageDocumentPersister;
+import uk.co.alumeni.prism.services.helpers.persisters.InstitutionBackgroundPersister;
+import uk.co.alumeni.prism.services.helpers.persisters.InstitutionLogoPersister;
+import uk.co.alumeni.prism.services.helpers.persisters.ProgramBackgroundPersister;
+import uk.co.alumeni.prism.services.helpers.persisters.ProjectBackgroundPersister;
+import uk.co.alumeni.prism.services.helpers.persisters.UserPortraitPersister;
 
 public enum PrismFileCategory {
 

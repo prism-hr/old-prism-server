@@ -1,14 +1,16 @@
 package uk.co.alumeni.prism.services.helpers.processors;
 
-import org.imgscalr.Scalr;
-import org.springframework.stereotype.Component;
-import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+
+import javax.imageio.ImageIO;
+
+import org.imgscalr.Scalr;
+import org.springframework.stereotype.Component;
+
+import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
 
 @Component
 public class InstitutionEmailLogoProcessor {

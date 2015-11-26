@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -25,12 +24,7 @@ import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 import uk.co.alumeni.prism.workflow.user.UserNotificationReassignmentProcessor;
 
 @Entity
-@Table(name = "user_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "department_id", "user_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "program_id", "user_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "project_id", "user_id", "notification_definition_id" }),
-        @UniqueConstraint(columnNames = { "application_id", "user_id", "notification_definition_id" }) })
+@Table(name = "user_notification")
 public class UserNotification extends WorkflowResourceExecution implements UserAssignment<UserNotificationReassignmentProcessor> {
 
     @Id
@@ -69,9 +63,12 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
     @JoinColumn(name = "notification_definition_id", nullable = false)
     private NotificationDefinition notificationDefinition;
 
-    @Column(name = "last_notified_timestamp", nullable = false)
+    @Column(name = "active", nullable = false)
+    private Boolean active;
+
+    @Column(name = "notified_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime lastNotifiedTimestamp;
+    private DateTime notifiedTimestamp;
 
     public Integer getId() {
         return id;
@@ -157,12 +154,20 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
         this.notificationDefinition = notificationDefinition;
     }
 
-    public DateTime getLastNotifiedTimestamp() {
-        return lastNotifiedTimestamp;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setLastNotifiedTimestamp(DateTime lastNotifiedTimestamp) {
-        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public DateTime getNotifiedTimestamp() {
+        return notifiedTimestamp;
+    }
+
+    public void setNotifiedTimestamp(DateTime notifiedTimestamp) {
+        this.notifiedTimestamp = notifiedTimestamp;
     }
 
     public UserNotification withResource(Resource resource) {
@@ -180,8 +185,13 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
         return this;
     }
 
-    public UserNotification withLastNotifiedTimestamp(DateTime lastNotifiedTimestamp) {
-        this.lastNotifiedTimestamp = lastNotifiedTimestamp;
+    public UserNotification withActive(Boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public UserNotification withNotifiedTimestamp(DateTime notifiedTimestamp) {
+        this.notifiedTimestamp = notifiedTimestamp;
         return this;
     }
 
@@ -197,7 +207,7 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("user", user).addProperty("notificationDefinition", notificationDefinition);
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

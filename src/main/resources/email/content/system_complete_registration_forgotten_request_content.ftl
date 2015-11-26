@@ -23,6 +23,10 @@ ${SYSTEM_USER_ACCOUNT_ACTIVATION}
 	Welcome to ${TEMPLATE_SYSTEM_NAME}.
 </p>
 
+<#if TEMPLATE_BUFFERED?has_content>  
+    <p>${TEMPLATE_BUFFERED}</p>
+</#if>
+
 <p>
     Yours sincerely,
     <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}

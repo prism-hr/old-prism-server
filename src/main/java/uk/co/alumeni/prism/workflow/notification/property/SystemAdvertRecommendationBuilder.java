@@ -43,10 +43,10 @@ public class SystemAdvertRecommendationBuilder implements NotificationPropertyBu
                 String applyHomepage = advertRepresentation.getApplyHomepage();
                 applyHomepage = applyHomepage == null ? propertyLoader.getRedirectionUrl(resource.getId(),
                         createResourceActions.get(resource.getScope()), notificationDefinitionDTO.getRecipient()) : applyHomepage;
-                recommendations.add(Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.getRedirectionControl(applyHomepage, SYSTEM_APPLY)));
+                recommendations.add("<div class='position'>"+Joiner.on("<br/>").skipNulls().join(title, summary, propertyLoader.getRedirectionControl(applyHomepage, SYSTEM_APPLY))+"</div>");
             }
 
-            return "<p>" + Joiner.on("<p></p>").join(recommendations) + "</p>";
+            return "<p>" + Joiner.on(" ").join(recommendations) + "</p>";
         }
 
         return EMPTY;

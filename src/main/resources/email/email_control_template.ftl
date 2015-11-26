@@ -1,10 +1,9 @@
-<p>
-    <a style="text-decoration:none;" href="${link.url}">
+    <a class="link" style="text-decoration:none;" href="${link.url}">
     ${link.label}
-    </a>&nbsp;
+    </a>&nbsp;&nbsp;&nbsp;
 <#if declineLink??>
-    <a style="text-decoration:none;" href="${declineLink.url}">
+    <a class="link" style="text-decoration:none;" href="${declineLink.url}">
     ${declineLink.label}
     </a>
 </#if>
-</p>
+

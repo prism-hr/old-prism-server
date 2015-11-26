@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions;
 
 import uk.co.alumeni.prism.services.lifecycle.helpers.*;
+import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperUser;
 
 public enum PrismMaintenanceTask {
 
@@ -14,7 +15,8 @@ public enum PrismMaintenanceTask {
     SYSTEM_UPDATE_ADVERT_EXCHANGE_RATE(AdvertServiceHelperExchangeRate.class),
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class),
     SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class),
-    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class);
+    SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class),
+    SYSTEM_DELETE_USER_NOTIFICATION(NotificationServiceHelperUser.class);
 
     private Class<? extends PrismServiceHelper> executor;
 

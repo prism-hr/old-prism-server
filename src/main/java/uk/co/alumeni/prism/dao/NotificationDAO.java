@@ -10,15 +10,18 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -27,6 +30,7 @@ import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
+import uk.co.alumeni.prism.dto.UserNotificationDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 
 @Repository
@@ -131,32 +135,32 @@ public class NotificationDAO {
                 .uniqueResult();
     }
 
-    public void resetNotifications(User user) {
+    public void resetUserNotifications(DateTime baseline) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete UserNotification "
+                        + "where active = 0 "
+                        + "and notifiedTimestamp < :baseline") //
+                .setParameter("baseline", baseline) //
+                .executeUpdate();
+    }
+
+    public void resetUserNotifications(User user) {
         sessionFactory.getCurrentSession().createQuery(
-                "delete from UserNotification " //
+                "update UserNotification "
+                        + "set active = 0 " //
                         + "where user = :user")
                 .setParameter("user", user)
                 .executeUpdate();
     }
 
-    public void resetNotifications(User user, List<NotificationDefinition> definitions) {
+    public void resetUserNotifications(User user, List<NotificationDefinition> definitions) {
         sessionFactory.getCurrentSession().createQuery(
-                "delete from UserNotification " //
+                "update UserNotification "
+                        + "set active = 0 " //
                         + "where user = :user " //
                         + "and notificationDefinition in (:definitions)") //
                 .setParameter("user", user) //
                 .setParameterList("definitions", definitions) //
-                .executeUpdate();
-    }
-
-    public void resetNotificationsSyndicated(PrismScope resourceScope, Collection<Integer> assignedResources) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update " + resourceScope.getResourceClass().getSimpleName() + " " //
-                        + "set lastRemindedRequestIndividual = null, " //
-                        + "lastRemindedRequestSyndicated = null, " //
-                        + "lastNotifiedUpdateSyndicated = null " //
-                        + "where id in (:assignedResources)") //
-                .setParameterList("assignedResources", assignedResources) //
                 .executeUpdate();
     }
 
@@ -166,6 +170,38 @@ public class NotificationDAO {
                 .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .createAlias("stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("stateActionAssignment.role", role)) //
+                .list();
+    }
+
+    public Long getRecentRequestCount(User user, NotificationDefinition definition, DateTime baseline) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
+                .setProjection(Projections.countDistinct("id")) //
+                .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("notificationDefinition", definition)) //
+                .add(Restrictions.ge("notifiedTimestamp", baseline)) //
+                .add(Restrictions.eq("notificationDefinition.notificationPurpose", PrismNotificationPurpose.REQUEST)) //
+                .uniqueResult();
+    }
+
+    public List<UserNotificationDTO> getRecentRequestCounts(Collection<UserNotificationDefinitionDTO> requests, DateTime baseline) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("user.id").as("userId"))
+                        .add(Projections.groupProperty("notificationDefinition.id").as("notificationDefinitionId")) //
+                        .add(Projections.countDistinct("id").as("sentCount"))) //
+                .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN);
+
+        Junction recipientConstraint = Restrictions.disjunction();
+        requests.forEach(notification -> {
+            recipientConstraint.add(Restrictions.conjunction() //
+                    .add(Restrictions.eq("user.id", notification.getUserId())) //
+                    .add(Restrictions.eq("notificationDefinition.id", notification.getNotificationDefinitionId())));
+        });
+
+        return criteria.add(Restrictions.ge("notifiedTimestamp", baseline)) //
+                .add(Restrictions.eq("notificationDefinition.notificationPurpose", PrismNotificationPurpose.REQUEST)) //
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDTO.class)) //
                 .list();
     }
 
@@ -185,7 +221,8 @@ public class NotificationDAO {
                 .createAlias("user.userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
-                                .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id"))) //
+                                .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id")) //
+                                .add(Restrictions.eq("userNotification.active", true))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.isNull("userNotification.id"));

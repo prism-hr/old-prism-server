@@ -534,7 +534,7 @@ public class UserDAO {
                 .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userNotification.id")) //
-                        .add(Restrictions.lt("userNotification.lastNotifiedTimestamp", baseline))) //
+                        .add(Restrictions.lt("userNotification.notifiedTimestamp", baseline))) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
                                 .add(Restrictions.isNull("lastLoggedInTimestamp")) //

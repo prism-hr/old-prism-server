@@ -1,22 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import uk.co.alumeni.prism.services.lifecycle.helpers.AdvertServiceHelperAdvertTargetPending;
-import uk.co.alumeni.prism.services.lifecycle.helpers.AdvertServiceHelperClosingDate;
-import uk.co.alumeni.prism.services.lifecycle.helpers.AdvertServiceHelperExchangeRate;
-import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperDelete;
-import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperExport;
-import uk.co.alumeni.prism.services.lifecycle.helpers.EmailBounceServiceHelper;
-import uk.co.alumeni.prism.services.lifecycle.helpers.InstitutionServiceHelper;
-import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperActivity;
-import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperInvitation;
-import uk.co.alumeni.prism.services.lifecycle.helpers.PrismServiceHelper;
-import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperEscalation;
-import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperPending;
-import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperPropagation;
+import uk.co.alumeni.prism.services.lifecycle.helpers.*;
 
 public enum PrismMaintenanceTask {
 
-    SYSTEM_IMPORT_UCAS_INSTITUTION(InstitutionServiceHelper.class),
     SYSTEM_EXECUTE_PENDING_STATE_ACTION(StateServiceHelperPending.class),
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class),
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class),

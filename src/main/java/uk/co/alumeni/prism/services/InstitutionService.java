@@ -1,97 +1,34 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_CREATE_INSTITUTION;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.social.facebook.api.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.io.ByteStreams;
-
 import uk.co.alumeni.prism.dao.InstitutionDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.document.PrismFileCategory;
 import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
+
+import javax.inject.Inject;
+import java.util.List;
 
 @Service
 @Transactional
 public class InstitutionService {
 
-    private static Logger logger = LoggerFactory.getLogger(InstitutionService.class);
-
     @Inject
     private InstitutionDAO institutionDAO;
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private AdvertService advertService;
 
     @Inject
-    private DocumentService documentService;
-
-    @Inject
     private EntityService entityService;
-
-    @Inject
-    private AddressService geocodableLocationService;
 
     @Inject
     private ResourceService resourceService;
 
     public Institution getById(Integer id) {
         return entityService.getById(Institution.class, id);
-    }
-
-    public Institution getInstitutionByImportedCode(String importedCode) {
-        return institutionDAO.getInstitutionByImportedCode(importedCode);
-    }
-
-    public Institution createInstitution(User user, InstitutionDTO institutionDTO, String facebookId, Page facebookPage) {
-        ActionOutcomeDTO outcome = resourceService.createResource(user, actionService.getById(SYSTEM_CREATE_INSTITUTION), institutionDTO, true);
-        Institution institution = (Institution) outcome.getResource();
-        Integer institutionId = institution.getId();
-        if (facebookId != null) {
-            try {
-                CloseableHttpClient httpclient = HttpClients.createDefault();
-                HttpEntity logoEntity = httpclient.execute(new HttpGet("http://graph.facebook.com/" + facebookId + "/picture?type=large")).getEntity();
-                byte[] logoImageContent = ByteStreams.toByteArray(logoEntity.getContent());
-                documentService.createImage("" + institutionId + "_logo", logoImageContent, logoEntity.getContentType().getValue(), institutionId,
-                        PrismFileCategory.PrismImageCategory.INSTITUTION_LOGO);
-
-                if (facebookPage.getCover() != null) {
-                    HttpEntity backgroundEntity = httpclient.execute(new HttpGet(facebookPage.getCover().getSource())).getEntity();
-                    byte[] backgroundImageContent = ByteStreams.toByteArray(backgroundEntity.getContent());
-                    documentService.createImage("" + institutionId + "_background", backgroundImageContent, backgroundEntity.getContentType().getValue(),
-                            institutionId, PrismFileCategory.PrismImageCategory.INSTITUTION_BACKGROUND);
-                }
-            } catch (IOException e) {
-                logger.error("Could not load facebook image for institution ID: " + institutionId, e);
-            }
-        }
-
-        try {
-            geocodableLocationService.geocodeAddressAsLocation(institution.getAdvert().getAddress(), institution.getName());
-        } catch (Exception e) {
-            logger.error("Could not set geocoded location for institution ID: " + institutionId, e);
-        }
-        return institution;
     }
 
     public void update(Institution institution, InstitutionDTO institutionDTO) {

@@ -1,16 +1,12 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
-import static uk.co.alumeni.prism.domain.document.PrismFileCategory.IMAGE;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.Part;
-
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
+import com.itextpdf.text.pdf.PdfReader;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.joda.time.DateTime;
@@ -19,23 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ListObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import com.itextpdf.text.pdf.PdfReader;
-
 import uk.co.alumeni.prism.dao.DocumentDAO;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.document.PrismFileCategory;
@@ -47,7 +26,16 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
-import uk.co.alumeni.prism.services.helpers.processors.ImageDocumentProcessor;
+
+import javax.inject.Inject;
+import javax.servlet.http.Part;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
+import static uk.co.alumeni.prism.domain.document.PrismFileCategory.IMAGE;
 
 @Service
 @Transactional
@@ -85,7 +73,7 @@ public class DocumentService {
     }
 
     public Document getById(Integer id, PrismFileCategory category) {
-        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object> of("id", id, "category", category));
+        return entityService.getByProperties(Document.class, ImmutableMap.<String, Object>of("id", id, "category", category));
     }
 
     public Document createDocument(Part uploadStream) throws IOException {
@@ -96,12 +84,8 @@ public class DocumentService {
 
     public Document createImage(Part uploadStream, Integer institutionId, PrismImageCategory imageCategory) throws IOException {
         try (InputStream iStream = uploadStream.getInputStream()) {
-            return createImage(getFileName(uploadStream), Streams.readAll(iStream), uploadStream.getContentType(), institutionId, imageCategory);
+            return create(IMAGE, getFileName(uploadStream), Streams.readAll(iStream), uploadStream.getContentType(), institutionId, imageCategory);
         }
-    }
-
-    public Document createImage(String fileName, byte[] content, String contentType, Integer institutionId, PrismImageCategory imageCategory) {
-        return create(IMAGE, fileName, content, contentType, institutionId, imageCategory);
     }
 
     public Document create(PrismFileCategory category, String fileName, byte[] content, String contentType, Integer entityId, PrismImageCategory imageCategory) {
@@ -110,16 +94,12 @@ public class DocumentService {
         boolean image = category == IMAGE;
         User user = userService.getCurrentUser();
         if (image) {
-            Class<? extends ImageDocumentProcessor> processor = imageCategory.getImageProcessor();
-            if (processor != null) {
-                content = applicationContext.getBean(processor).process(content, contentType);
-            }
             contentType = "image/jpeg";
         } else if (category == DOCUMENT) {
             Preconditions.checkNotNull(user);
             validatePdfDocument(content);
         }
-        Document document = new Document().withContent(content).withContentType(contentType).withExported(false).withFileName(fileName)
+        Document document = new Document().withContent(content).withContentType(contentType).withExported(false).withFileName(fileName + "")
                 .withUser(user).withCreatedTimestamp(new DateTime()).withCategory(category);
         entityService.save(document);
 

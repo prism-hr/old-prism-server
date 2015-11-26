@@ -1,15 +1,11 @@
 package uk.co.alumeni.prism.mail;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
-
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.mail.internet.InternetAddress;
-
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
+import com.amazonaws.services.simpleemail.model.*;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -18,18 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
-import com.amazonaws.services.simpleemail.model.Body;
-import com.amazonaws.services.simpleemail.model.Content;
-import com.amazonaws.services.simpleemail.model.Destination;
-import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import uk.co.alumeni.prism.domain.document.Document;
@@ -45,6 +29,15 @@ import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismConversionUtils;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
+
+import javax.inject.Inject;
+import javax.mail.internet.InternetAddress;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -128,7 +121,7 @@ public class MailSender {
 
         Institution institution = resource.getInstitution();
         if (institution != null) {
-            Document institutionLogoImage = institution.getLogoImage();
+            Document institutionLogoImage = institution.getLogoImageEmail();
             if (institutionLogoImage != null) {
                 model.put("LOGO_URL", applicationApiUrl + "/images/" + institutionLogoImage.getId());
             }

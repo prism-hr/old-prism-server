@@ -1,21 +1,18 @@
 package uk.co.alumeni.prism.services.helpers.processors;
 
-import java.awt.Graphics;
+import org.imgscalr.Scalr;
+import org.springframework.stereotype.Component;
+import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import javax.imageio.ImageIO;
-
-import org.imgscalr.Scalr;
-import org.springframework.stereotype.Component;
-
-import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
-
 @Component
-public class InstitutionLogoProcessor implements ImageDocumentProcessor {
+public class InstitutionEmailLogoProcessor {
 
-    @Override
     public byte[] process(byte[] content, String contentType) {
         try {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(content));
@@ -23,8 +20,8 @@ public class InstitutionLogoProcessor implements ImageDocumentProcessor {
                 throw new PrismBadRequestException("Uploaded file is not valid image file");
             }
 
-            final int WIDTH = 320;
-            final int HEIGHT = 250;
+            final int WIDTH = 94;
+            final int HEIGHT = 60;
             boolean fitToWidth = (float) image.getWidth() / WIDTH >= (float) image.getHeight() / HEIGHT;
             if (fitToWidth) {
                 image = Scalr.resize(image, Scalr.Mode.FIT_TO_WIDTH, WIDTH, HEIGHT);

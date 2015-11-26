@@ -32,6 +32,9 @@ ${ACTION_COMPLETE}
 	We hope that you will accept and we look forward to welcoming you.
 </p>
 
+<#if TEMPLATE_BUFFERED?has_content>  
+    <p>${TEMPLATE_BUFFERED}</p>
+</#if>
 <p>
     Yours sincerely,
     <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}

@@ -674,7 +674,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isApplicationCreatedComment() {
-        return Arrays.asList(PrismAction.INSTITUTION_CREATE_APPLICATION, PrismAction.DEPARTMENT_CREATE_APPLICATION, PrismAction.PROJECT_CREATE_APPLICATION).contains(action.getId());
+        return Arrays.asList(PrismAction.INSTITUTION_CREATE_APPLICATION, PrismAction.DEPARTMENT_CREATE_APPLICATION, PrismAction.PROJECT_CREATE_APPLICATION)
+                .contains(action.getId());
     }
 
     public boolean isApplicationCompleteComment() {
@@ -759,14 +760,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public boolean isApplicationInterviewScheduledComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
-        return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
-                .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isAfter(baseline);
+        return interviewDateTime == null ? false
+                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isAfter(baseline);
     }
 
     public boolean isApplicationInterviewRecordedComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
-        return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
-                .toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
+        return interviewDateTime == null ? false
+                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
     }
 
     public boolean isRatingComment(PrismScope scope) {

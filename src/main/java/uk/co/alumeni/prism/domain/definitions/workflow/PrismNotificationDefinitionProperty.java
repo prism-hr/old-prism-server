@@ -73,6 +73,7 @@ import uk.co.alumeni.prism.workflow.notification.property.SystemUserAccountActiv
 import uk.co.alumeni.prism.workflow.notification.property.SystemUserNewPasswordBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TargetResourceAcceptNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TargetResourceOtherNameBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.TemplateBufferedBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TemplateInitiatorEmailBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TemplateInitiatorFullNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TemplateInvitationMessageBuilder;
@@ -110,6 +111,7 @@ public enum PrismNotificationDefinitionProperty {
     TEMPLATE_PARENT_RESOURCE_NAME(TEMPLATE_GLOBAL, true, TemplateParentResourceNameBuilder.class), //
     TEMPLATE_PARENT_RESOURCE_CODE(TEMPLATE_GLOBAL, true, TemplateParentResourceCodeBuilder.class), //
     TEMPLATE_INVITATION_MESSAGE(TEMPLATE_GLOBAL, true, TemplateInvitationMessageBuilder.class), //
+    TEMPLATE_BUFFERED(TEMPLATE_GLOBAL, true, TemplateBufferedBuilder.class), //
     ACTION_COMPLETE(ACTION_GLOBAL, false, ActionCompleteBuilder.class), //
     ACTION_VIEW_EDIT(ACTION_GLOBAL, false, ActionViewEditBuilder.class), //
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //

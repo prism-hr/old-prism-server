@@ -29,7 +29,7 @@ public class DeleteResolver implements RoleTransitionResolver {
     public void resolve(UserRole userRole, UserRole transitionUserRole, Comment comment) throws DeduplicationException {
         UserRole persistentRole = entityService.getDuplicateEntity(transitionUserRole);
         if (persistentRole != null) {
-            notificationService.resetNotifications(persistentRole);
+            notificationService.resetUserNotifications(persistentRole);
             roleService.deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
             comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), DELETE);
         }

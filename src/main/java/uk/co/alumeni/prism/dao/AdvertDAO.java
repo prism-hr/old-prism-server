@@ -444,7 +444,7 @@ public class AdvertDAO {
             permissionsConstraint = Restrictions.disjunction() //
                     .add(getAdvertTargetAcceptUserConstraint(user))
                     .add(Restrictions.conjunction() //
-                            .add(Restrictions.isNull("thisUser.id"))
+                            .add(Restrictions.isNull("target.acceptAdvertUser.id"))
                             .add(Restrictions.in("thisAdvert.id", connectAdverts)));
         } else if (user != null) {
             permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
@@ -983,7 +983,7 @@ public class AdvertDAO {
                 .add(Restrictions.ne("thisRole.roleCategory", STUDENT));
 
         if (user != null) {
-            constraint.add(Restrictions.eq("thisUser.id", user.getId()));
+            constraint.add(Restrictions.eq("target.acceptAdvertUser.id", user.getId()));
         }
 
         return constraint.add(Restrictions.disjunction() //

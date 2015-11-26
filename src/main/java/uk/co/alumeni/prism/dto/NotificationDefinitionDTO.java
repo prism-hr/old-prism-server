@@ -38,6 +38,8 @@ public class NotificationDefinitionDTO {
 
     private AdvertListRepresentation advertListRepresentation;
 
+    private Boolean buffered;
+
     public User getInitiator() {
         return initiator;
     }
@@ -102,6 +104,10 @@ public class NotificationDefinitionDTO {
         return advertListRepresentation;
     }
 
+    public Boolean getBuffered() {
+        return buffered;
+    }
+
     public NotificationDefinitionDTO withInitiator(User initiator) {
         this.initiator = initiator;
         return this;
@@ -159,6 +165,11 @@ public class NotificationDefinitionDTO {
 
     public NotificationDefinitionDTO withAdvertListRepresentation(AdvertListRepresentation advertListRepresentation) {
         this.advertListRepresentation = advertListRepresentation;
+        return this;
+    }
+
+    public NotificationDefinitionDTO withBuffered(Boolean buffered) {
+        this.buffered = buffered;
         return this;
     }
 

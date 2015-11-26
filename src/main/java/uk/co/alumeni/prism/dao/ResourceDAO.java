@@ -11,8 +11,6 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableSta
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.getOrderExpression;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.RESOURCE_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -69,7 +67,6 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
-import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
@@ -449,28 +446,6 @@ public class ResourceDAO {
 
         return (List<ResourceConnectionDTO>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(ResourceConnectionDTO.class)) //
-                .list();
-    }
-
-    public List<ResourceIdentityDTO> getUserAdministratorResources(User user, PrismScope resourceScope) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        PrismActionEnhancement[] administratorEnhancements = RESOURCE_ADMINISTRATOR.getActionEnhancements();
-
-        return (List<ResourceIdentityDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("resource.id").as("id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
-                .createAlias("stateActionAssignment.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.in("stateActionAssignment.actionEnhancement", administratorEnhancements)) //
-                        .add(Restrictions.in("stateAction.actionEnhancement", administratorEnhancements))) //
-                .add(Restrictions.isNotNull(resourceReference)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceIdentityDTO.class)) //
                 .list();
     }
 

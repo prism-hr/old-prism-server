@@ -31,7 +31,7 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     @OneToOne(mappedBy = "personalDetail")
     private Application association;
 
-    @Column(name = "gender_id")
+    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private PrismGender gender;
 

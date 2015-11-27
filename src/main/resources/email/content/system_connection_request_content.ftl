@@ -3,15 +3,15 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TARGET_RESOURCE_OTHER_NAME} has invited you to connect 
-    in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers. 
+    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TARGET_RESOURCE_OTHER_NAME} has invited you to connect
+    in ${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
 </p>
 
-<#if TEMPLATE_INVITATION_MESSAGE?has_content>
+[#if TEMPLATE_INVITATION_MESSAGE?has_content]
     <p>
         Personal message from ${TEMPLATE_INITIATOR_FULL_NAME}: "${TEMPLATE_INVITATION_MESSAGE}".
     </p>
-</#if>
+[/#if]
 
 <p>
 	Follow the link below to accept or reject this invitation.
@@ -23,9 +23,9 @@ ${ACTION_COMPLETE}
     Thank you in advance for your time.
 </p>
 
-<#if TEMPLATE_BUFFERED?has_content>  
+[#if TEMPLATE_BUFFERED?has_content]
     <p>${TEMPLATE_BUFFERED}</p>
-</#if>
+[/#if]
 
 <p>
     Yours sincerely,

@@ -11,8 +11,8 @@
 </p>
 
 <p>
-    We now need you to login at your earliest convenience to confirm that you are happy to accept our 
-    terms of offer. <b>Please do this quickly, so that we have the opportunity to offer the opportunity to 
+    We now need you to login at your earliest convenience to confirm that you are happy to accept our
+    terms of offer. <b>Please do this quickly, so that we have the opportunity to offer the opportunity to
     another applicant should you wish to decline.</b>
 </p>
 
@@ -32,9 +32,9 @@ ${ACTION_COMPLETE}
 	We hope that you will accept and we look forward to welcoming you.
 </p>
 
-<#if TEMPLATE_BUFFERED?has_content>  
+[#if TEMPLATE_BUFFERED?has_content]
     <p>${TEMPLATE_BUFFERED}</p>
-</#if>
+[/#if]
 <p>
     Yours sincerely,
     <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}

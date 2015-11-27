@@ -3,17 +3,17 @@
 </h1>
 
 <p><b>
-	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of: 
+	${APPLICATION_CREATOR_FULL_NAME} application for ${APPLICATION_OPPORTUNITY_TYPE} in the position of:
 	${TEMPLATE_PARENT_RESOURCE_NAME}.
 </b></p>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has nominated you to review the suitability of the applicant and we would 
+    ${TEMPLATE_INITIATOR_FULL_NAME} has nominated you to review the suitability of the applicant and we would
     very much appreciate your feedback.
 </p>
 
 <p>
-	Follow the proceed link below to provide your feedback. You can also use the decline link to quickly 
+	Follow the proceed link below to provide your feedback. You can also use the decline link to quickly
 	decline the request if you do not feel able to comment.
 </p>
 
@@ -23,9 +23,9 @@ ${ACTION_COMPLETE}
     Thank you in advance for your time.
 </p>
 
-<#if TEMPLATE_BUFFERED?has_content>  
+[#if TEMPLATE_BUFFERED?has_content]
     <p>${TEMPLATE_BUFFERED}</p>
-</#if>
+[/#if]
 
 <p>
     Yours sincerely,

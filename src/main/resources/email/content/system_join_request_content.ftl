@@ -16,9 +16,9 @@ ${ACTION_COMPLETE}
     Thank you in advance for your time.
 </p>
 
-<#if TEMPLATE_BUFFERED?has_content>  
+[#if TEMPLATE_BUFFERED?has_content]
     <p>${TEMPLATE_BUFFERED}</p>
-</#if>
+[/#if]
 
 <p>
     Yours sincerely,

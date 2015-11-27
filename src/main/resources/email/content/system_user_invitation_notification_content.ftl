@@ -3,18 +3,18 @@
 </h1>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TEMPLATE_RESOURCE_NAME} has invited you to join 
+    ${TEMPLATE_INITIATOR_FULL_NAME} of ${TEMPLATE_RESOURCE_NAME} has invited you to join
 	${TEMPLATE_SYSTEM_NAME}, the marketplace for student and graduate careers.
 </p>
 
-<#if TEMPLATE_INVITATION_MESSAGE?has_content>
+[#if TEMPLATE_INVITATION_MESSAGE?has_content]
     <p>
         Personal message from ${TEMPLATE_INITIATOR_FULL_NAME}: "${TEMPLATE_INVITATION_MESSAGE}".
     </p>
-</#if>
+[/#if]
 
 <p>
-	Follow the link below to create your user profile and join our community.	
+	Follow the link below to create your user profile and join our community.
 </p>
 
 ${ACTION_COMPLETE}

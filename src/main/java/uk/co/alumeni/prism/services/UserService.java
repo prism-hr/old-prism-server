@@ -369,32 +369,37 @@ public class UserService {
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesForWhichUserCanAdminister(getCurrentUser());
-        if (!administratorResources.isEmpty()) {
-            HashMultimap<PrismScope, PrismScope> expandedScopes = scopeService.getExpandedScopes(resource.getResourceScope());
-            return userDAO.getBouncedOrUnverifiedUsers(resource, administratorResources, expandedScopes, userListFilterDTO);
+        User user = getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+            HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
+            return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
         return Lists.<User> newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
-        HashMultimap<PrismScope, Integer> administratorResources = resourceService.getResourcesForWhichUserCanAdminister(getCurrentUser());
-        User user = userDAO.getBouncedOrUnverifiedUser(userId, resource, administratorResources, scopeService.getExpandedScopes(resource.getResourceScope()));
+        User user = getCurrentUser();
+        Action action = actionService.getViewEditAction(resource);
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+            HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
+            User bouncedOrUnverifiedUser = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
 
-        String email = userCorrectionDTO.getEmail();
-        User userDuplicate = getUserByEmail(email);
+            String email = userCorrectionDTO.getEmail();
+            User userDuplicate = getUserByEmail(email);
 
-        if (user != null && userDuplicate == null) {
-            user.setFirstName(userCorrectionDTO.getFirstName());
-            user.setLastName(userCorrectionDTO.getLastName());
-            user.setFullName(user.getFirstName() + " " + user.getLastName());
-            user.setEmail(userCorrectionDTO.getEmail());
-            user.setEmailBouncedMessage(null);
-            notificationService.resetUserNotifications(user);
-        } else if (userDuplicate != null) {
-            mergeUsers(user, userDuplicate);
-        } else {
-            throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
+            if (bouncedOrUnverifiedUser != null && userDuplicate == null) {
+                bouncedOrUnverifiedUser.setFirstName(userCorrectionDTO.getFirstName());
+                bouncedOrUnverifiedUser.setLastName(userCorrectionDTO.getLastName());
+                bouncedOrUnverifiedUser.setFullName(bouncedOrUnverifiedUser.getFirstName() + " " + bouncedOrUnverifiedUser.getLastName());
+                bouncedOrUnverifiedUser.setEmail(userCorrectionDTO.getEmail());
+                bouncedOrUnverifiedUser.setEmailBouncedMessage(null);
+                notificationService.resetUserNotifications(bouncedOrUnverifiedUser);
+            } else if (userDuplicate != null) {
+                mergeUsers(bouncedOrUnverifiedUser, userDuplicate);
+            } else {
+                throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
+            }
         }
     }
 

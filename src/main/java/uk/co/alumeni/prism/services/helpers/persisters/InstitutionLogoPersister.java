@@ -1,14 +1,15 @@
 package uk.co.alumeni.prism.services.helpers.persisters;
 
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.helpers.processors.InstitutionEmailLogoProcessor;
-
-import javax.inject.Inject;
 
 @Component
 public class InstitutionLogoPersister implements ImageDocumentPersister {

@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-
 import java.util.List;
 
 import javax.inject.Inject;
@@ -10,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.dao.ScopeDAO;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -56,22 +53,6 @@ public class ScopeService {
             childScopes.putAll(childScope, stateService.getActiveResourceStates(childScope));
         }
         return childScopes;
-    }
-
-    public HashMultimap<PrismScope, PrismScope> getExpandedScopes(PrismScope prismScope) {
-        HashMultimap<PrismScope, PrismScope> enclosedScopes = HashMultimap.create();
-        List<PrismScope> scopes = Lists.newLinkedList(getEnclosingScopesDescending(APPLICATION, prismScope));
-
-        int scopeCount = scopes.size();
-        for (int i = 0; i < scopeCount; i++) {
-            if (i < (scopeCount - 1)) {
-                enclosedScopes.putAll(scopes.get(i), scopes.subList(0, (i + 1)));
-            } else {
-                enclosedScopes.putAll(scopes.get(i), scopes);
-            }
-        }
-
-        return enclosedScopes;
     }
 
 }

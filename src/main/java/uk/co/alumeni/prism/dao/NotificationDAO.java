@@ -173,17 +173,6 @@ public class NotificationDAO {
                 .list();
     }
 
-    public Long getRecentRequestCount(User user, NotificationDefinition definition, DateTime baseline) {
-        return (Long) sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
-                .setProjection(Projections.countDistinct("id")) //
-                .createAlias("notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("notificationDefinition", definition)) //
-                .add(Restrictions.ge("notifiedTimestamp", baseline)) //
-                .add(Restrictions.eq("notificationDefinition.notificationPurpose", PrismNotificationPurpose.REQUEST)) //
-                .uniqueResult();
-    }
-
     public List<UserNotificationDTO> getRecentRequestCounts(Collection<UserNotificationDefinitionDTO> requests, DateTime baseline) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserNotification.class) //
                 .setProjection(Projections.projectionList() //

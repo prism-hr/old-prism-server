@@ -3,6 +3,8 @@ package uk.co.alumeni.prism.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -10,7 +12,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.Domicile;
@@ -30,12 +31,8 @@ import uk.co.alumeni.prism.domain.workflow.State;
 @Component
 public class TestObjectProvider {
 
+    @Inject
     private SessionFactory sessionFactory;
-
-    @Autowired
-    public TestObjectProvider(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public Action getAction(Action action) {
         return (Action) sessionFactory.getCurrentSession().createCriteria(Action.class).add(Restrictions.eq("id", action)).uniqueResult();

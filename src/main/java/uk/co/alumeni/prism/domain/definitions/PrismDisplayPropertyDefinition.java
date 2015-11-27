@@ -409,8 +409,45 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_GENDER_FEMALE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Female"),
     SYSTEM_GENDER_MALE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Male"),
-    SYSTEM_GENDER_UNDISCLOSED(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Prefer not to say"),
+    SYSTEM_GENDER_INDETERMINATE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Indeterminate"),
 
+    /*
+     * *************** SYSTEM ETHNICITY *********************
+     */
+
+    SYSTEM_ETHNICITY_WHITE_BRITISH(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "White - English/Welsh/Scottish/Northern Irish/British"), //
+    SYSTEM_ETHNICITY_WHITE_IRISH(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "White - Irish"), //
+    SYSTEM_ETHNICITY_WHITE_GYPSY(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "White - Gypsy or Irish Traveller"), //
+    SYSTEM_ETHNICITY_WHITE_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "White - other White background"), //
+    SYSTEM_ETHNICITY_MULTI_WHITE_BLACK_CARIBBEAN(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Mixed/Multiple - White and Black Caribbean"), //
+    SYSTEM_ETHNICITY_MULTI_WHITE_BLACK_AFRICAN(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Mixed/Multiple - White and Black African"), //
+    SYSTEM_ETHNICITY_MULTI_WHITE_ASIAN(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Mixed/Multiple - White and Asian"), //
+    SYSTEM_ETHNICITY_MULTI_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Mixed/Multiple - other Mixed/Multiple ethnic background"), //
+    SYSTEM_ETHNICITY_ASIAN_INDIAN(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Asian/Asian British - Indian"), //
+    SYSTEM_ETHNICITY_ASIAN_PAKISTANI(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Asian/Asian British - Pakistani"), //
+    SYSTEM_ETHNICITY_ASIAN_BANGLADESHI(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Asian/Asian British - Bangladeshi"), //
+    SYSTEM_ETHNICITY_ASIAN_CHINESE(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Asian/Asian British - Chinese"), //
+    SYSTEM_ETHNICITY_ASIAN_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Asian/Asian British - other Asian background"), //
+    SYSTEM_ETHNICITY_BLACK_AFRICAN(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Black - African"), //
+    SYSTEM_ETHNICITY_BLACK_CARIBBEAN(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Black - Caribbean"), //
+    SYSTEM_ETHNICITY_BLACK_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Black - Other"), //
+    SYSTEM_ETHNICITY_ARAB(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Other - Arab"), //
+    SYSTEM_ETHNICITY_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Other - any other ethnic group"), //
+    
+    /*
+     * *************** SYSTEM DISABILITY *********************
+     */
+
+    SYSTEM_DISABILITY_AUTISM(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Autism Spectrum Disorder"), //
+    SYSTEM_DISABILITY_HEARING(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Hearing Impairment"), //
+    SYSTEM_DISABILITY_LEARNING(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Learning Impairment"), //
+    SYSTEM_DISABILITY_MENTAL(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Mental Health Condition"), //
+    SYSTEM_DISABILITY_MOBILITY(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Mobility Impairment"), //
+    SYSTEM_DISABILITY_MULTIPLE(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Multiple Impairments"), //
+    SYSTEM_DISABILITY_OTHER(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Other Impairment"), //
+    SYSTEM_DISABILITY_UNSEEN(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Unseen Impairment"), //
+    SYSTEM_DISABILITY_VISION(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Visual Impairment"), 
+    
     /*
      * *************** SYSTEM DOMICILE *********************
      */

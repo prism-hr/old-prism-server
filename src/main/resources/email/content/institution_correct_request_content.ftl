@@ -15,7 +15,7 @@
 </p>
 
 <p>
-	In order to approve your organization we would need you to provide clarification on the above. Please follow 
+	In order to approve your organization we would need you to provide clarification on the above. Please follow
 	the link below to do so.
 </p>
 
@@ -25,9 +25,9 @@ ${ACTION_COMPLETE}
     Thank you in advance for your time.
 </p>
 
-<#if TEMPLATE_BUFFERED?has_content>  
+[#if TEMPLATE_BUFFERED?has_content]
     <p>${TEMPLATE_BUFFERED}</p>
-</#if>
+[/#if]
 <p>
     Yours sincerely,
     <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}

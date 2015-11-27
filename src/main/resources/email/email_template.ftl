@@ -19,11 +19,11 @@
                 <td class="header-logo" align="left"><img src="${IMAGES_PATH}/prism.png" class="image_fix" alt=""/></td>
                 <td></td>
                 <td width="100">
-                    <#if LOGO_URL??>
+                    [#if LOGO_URL??]
                         <div style="background: white; display: block; padding: 2px; text-align: center;  height:61px ;  border: 1px solid rgb(83, 171, 214); margin-bottom: -50px;">
                             <img src="${LOGO_URL}" style="margin: 0 auto; height: 60px; max-width: 94px;" alt=""/>
                         </div>
-                    </#if>
+                    [/#if]
                 </td>
             </tr>
             <tr>

@@ -256,14 +256,13 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getBouncedOrUnverifiedUsers(Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-            HashMultimap<PrismScope, PrismScope> expandedScopes, UserListFilterDTO userListFilterDTO) {
+    public List<User> getBouncedOrUnverifiedUsers(HashMultimap<PrismScope, Integer> enclosedResources, UserListFilterDTO userListFilterDTO) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        appendAdministratorConditions(criteria, resource, administratorResources, expandedScopes);
+        appendAdministratorConditions(criteria, enclosedResources);
 
         if (userListFilterDTO.isInvalidOnly()) {
             criteria.add(Restrictions.isNotNull("user.emailBouncedMessage"));
@@ -286,14 +285,13 @@ public class UserDAO {
                 .list();
     }
 
-    public User getBouncedOrUnverifiedUser(Integer userId, Resource resource, HashMultimap<PrismScope, Integer> administratorResources,
-            HashMultimap<PrismScope, PrismScope> expandedScopes) {
+    public User getBouncedOrUnverifiedUser(Integer userId, HashMultimap<PrismScope, Integer> enclosedResources) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
-        appendAdministratorConditions(criteria, resource, administratorResources, expandedScopes);
+        appendAdministratorConditions(criteria, enclosedResources);
 
         return (User) criteria.add(getUserAccountUnverifiedConstraint()) //
                 .add(Restrictions.eq("user.id", userId)) //
@@ -554,46 +552,11 @@ public class UserDAO {
                 .executeUpdate();
     }
 
-    private void appendAdministratorConditions(Criteria criteria, Resource resource, HashMultimap<PrismScope, Integer> resources, HashMultimap<PrismScope, PrismScope> scopes) {
-        PrismScope resourceScope = resource.getResourceScope();
-        String resourceReference = resourceScope.getLowerCamelName();
-
-        Junction exclusionsDisjunction = Restrictions.disjunction();
-        for (PrismScope expandedScope : scopes.keySet()) {
-            Junction expandedConjunction = Restrictions.conjunction();
-
-            String expandedReference = expandedScope.getLowerCamelName();
-            if (resourceScope.equals(expandedScope)) {
-                expandedConjunction.add(Restrictions.eq(resourceReference + ".id", resource.getId()));
-            } else {
-                expandedConjunction.add(Restrictions.eq(expandedReference + "." + resourceReference + ".id", resource.getId()));
-            }
-
-            Junction enclosingDisjunction = Restrictions.disjunction();
-            for (PrismScope enclosingScope : scopes.get(expandedScope)) {
-                Set<Integer> enclosingResources = resources.get(enclosingScope);
-                if (!enclosingResources.isEmpty()) {
-
-                    if (expandedScope.equals(enclosingScope)) {
-                        enclosingDisjunction.add(Restrictions.in(expandedReference + ".id", enclosingResources));
-                    } else {
-                        enclosingDisjunction
-                                .add(Restrictions.in(expandedReference + "." + enclosingScope.getLowerCamelName() + ".id", enclosingResources));
-                    }
-
-                }
-            }
-
-            if (enclosingDisjunction.conditions().iterator().hasNext()) {
-                criteria.createAlias(expandedReference, expandedReference, JoinType.LEFT_OUTER_JOIN, //
-                        expandedConjunction.add(enclosingDisjunction));
-                exclusionsDisjunction.add(Restrictions.isNotNull(expandedReference + ".id"));
-            }
-        }
-
-        if (exclusionsDisjunction.conditions().iterator().hasNext()) {
-            criteria.add(exclusionsDisjunction);
-        }
+    private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
+        Junction resourceConstraint = Restrictions.disjunction();
+        enclosedResources.keySet()
+                .forEach(enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
+        criteria.add(resourceConstraint);
     }
 
     private Junction getUserAccountUnverifiedConstraint() {

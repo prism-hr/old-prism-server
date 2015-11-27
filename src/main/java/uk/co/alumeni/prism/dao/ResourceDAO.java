@@ -551,6 +551,14 @@ public class ResourceDAO {
                 .list();
     }
 
+    public List<Integer> getEnclosedResources(PrismScope resourceScope, Integer resourceId, PrismScope enclosedScope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.property("resource.id")) //
+                .createAlias(enclosedScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource." + resourceScope.getLowerCamelName() + ".id", resourceId)) //
+                .list();
+    }
+
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {

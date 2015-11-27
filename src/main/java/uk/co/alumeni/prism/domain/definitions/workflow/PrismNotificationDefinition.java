@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.ACTION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_APPROVED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_GLOBAL;
@@ -88,11 +87,11 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     INSTITUTION_CORRECT_REQUEST(INDIVIDUAL, REQUEST, INSTITUTION, //
             Lists.newArrayList(INSTITUTION_GLOBAL, ACTION_GLOBAL, COMMENT_GLOBAL, COMMENT_TRANSITION, TEMPLATE_GLOBAL)), //
 
-    SYSTEM_CONNECTION_REQUEST(INDIVIDUAL, REQUEST, SYSTEM,//
+    SYSTEM_CONNECTION_REQUEST(INDIVIDUAL, UPDATE, SYSTEM,//
             Lists.newArrayList(TARGET_GLOBAL, TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_CONNECTION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
             Lists.newArrayList(TARGET_GLOBAL, TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
-    SYSTEM_JOIN_REQUEST(INDIVIDUAL, REQUEST, SYSTEM,//
+    SYSTEM_JOIN_REQUEST(INDIVIDUAL, UPDATE, SYSTEM,//
             Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_JOIN_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
             Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
@@ -100,9 +99,9 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
             Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
             Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, TARGET_GLOBAL)), //
-    SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, REQUEST, SYSTEM, //
+    SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, UPDATE, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
-    SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(INDIVIDUAL, REQUEST, SYSTEM, //
+    SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(INDIVIDUAL, UPDATE, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
     SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL)), //

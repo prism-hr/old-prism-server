@@ -30,7 +30,7 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @OneToOne(mappedBy = "personalDetail")
     private UserAccount association;
 
-    @Column(name = "gender_id")
+    @Column(name = "gender")
     @Enumerated(EnumType.STRING)
     private PrismGender gender;
 

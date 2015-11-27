@@ -32,6 +32,7 @@ import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
@@ -343,12 +345,12 @@ public class ResourceService {
             if (commentDTO.isClaimComment()) {
                 commentService.preprocessClaimComment(user, commentDTO);
             }
-            
+
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
             }
-            
+
             if (commentDTO.isViewEditComment()) {
                 updateCustomAdvertTargets(actionOutcome.getResource(), commentDTO.getResource());
             }
@@ -938,6 +940,23 @@ public class ResourceService {
         if (action == null || !actionService.checkActionVisible(resource, action, user)) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
+    }
+
+    public HashMultimap<PrismScope, Integer> getEnclosedResources(Resource resource) {
+        Integer resourceId = resource.getId();
+        PrismScope resourceScope = resource.getResourceScope();
+
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+        resources.put(resourceScope, resourceId);
+
+        Arrays.stream(PrismScope.values()).filter(scope -> scope.ordinal() > resourceScope.ordinal()).forEach(enclosedScope -> {
+            List<Integer> enclosedResources = resourceDAO.getEnclosedResources(resourceScope, resourceId, enclosedScope);
+            if (CollectionUtils.isNotEmpty(enclosedResources)) {
+                resources.putAll(enclosedScope, enclosedResources);
+            }
+        });
+
+        return resources;
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

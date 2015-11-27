@@ -582,7 +582,7 @@
                 <sql.db>prism</sql.db>
                 <sql.userid>prism</sql.userid>
                 <sql.password>pgadmissions</sql.password>
-                <wildfly.management.port>9992</wildfly.management.port>
+                <wildfly.management.port>9993</wildfly.management.port>
             </properties>
             <build>
                 <plugins>

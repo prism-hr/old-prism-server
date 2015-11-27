@@ -207,7 +207,7 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("id", id);
+        return super.getEntitySignature().addProperty("user", user).addProperty("notificationDefinition", notificationDefinition);
     }
 
 }

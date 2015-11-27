@@ -17,6 +17,8 @@ public enum PrismDisplayPropertyCategory {
     SYSTEM_OPPORTUNITY_TYPE(PrismScope.SYSTEM),
     SYSTEM_STUDY_OPTION(PrismScope.SYSTEM),
     SYSTEM_AGE_RANGE(PrismScope.SYSTEM),
+    SYSTEM_ETHNICITY(PrismScope.SYSTEM),
+    SYSTEM_DISABILITY(PrismScope.SYSTEM),
     SYSTEM_GENDER(PrismScope.SYSTEM),
     SYSTEM_DOMICILE(PrismScope.SYSTEM),
     SYSTEM_REJECTION_REASON(PrismScope.SYSTEM),

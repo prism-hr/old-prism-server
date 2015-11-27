@@ -445,15 +445,16 @@ public class AdvertDAO {
                     .add(getAdvertTargetAcceptUserConstraint(user))
                     .add(Restrictions.conjunction() //
                             .add(Restrictions.isNull("target.acceptAdvertUser.id"))
-                            .add(Restrictions.in("thisAdvert.id", connectAdverts)));
+                            .add(Restrictions.in("target.acceptAdvert.id", connectAdverts)));
         } else if (user != null) {
             permissionsConstraint = getAdvertTargetAcceptUserConstraint(user);
         } else {
-            permissionsConstraint = Restrictions.in("thisAdvert.id", connectAdverts);
+            permissionsConstraint = Restrictions.in("target.acceptAdvert.id", connectAdverts);
         }
 
         return (List<AdvertTargetDTO>) getAdvertTargetCriteria(resourceScope, thisAdvertReference, otherAdvertReference, user, true)
                 .add(permissionsConstraint) //
+                .add(Restrictions.eqProperty("thisAdvert.id", "target.acceptAdvert.id")) //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PENDING)) //
                 .add(Restrictions.conjunction() //
                         .add(Restrictions.eq("target.advertSevered", false))

@@ -27,8 +27,6 @@ import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserAdditionalInformation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
@@ -38,8 +36,6 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepr
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
-import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.UserService;
 
 @Service
 @Transactional
@@ -47,9 +43,6 @@ public class ProfileMapper {
 
     @Inject
     private AddressMapper addressMapper;
-
-    @Inject
-    private ApplicationService applicationService;
 
     @Inject
     private DocumentMapper documentMapper;
@@ -60,10 +53,7 @@ public class ProfileMapper {
     @Inject
     private UserMapper userMapper;
 
-    @Inject
-    private UserService userService;
-
-    public <T extends ProfilePersonalDetail<?>> ProfilePersonalDetailRepresentation getPersonalDetailRepresentation(T personalDetail) {
+    public <T extends ProfilePersonalDetail<?>> ProfilePersonalDetailRepresentation getPersonalDetailRepresentation(T personalDetail, boolean viewEqualOpportunities) {
         if (personalDetail != null) {
             Domicile nationality = personalDetail.getNationality();
             Domicile domicile = personalDetail.getDomicile();
@@ -72,6 +62,11 @@ public class ProfileMapper {
                     .withDateOfBirth(personalDetail.getAssociation().getUser().getUserAccount().getPersonalDetail().getDateOfBirth())
                     .withNationality(nationality == null ? null : nationality.getId()).withDomicile(domicile == null ? null : domicile.getId())
                     .withVisaRequired(personalDetail.getVisaRequired()).withPhone(personalDetail.getPhone()).withSkype(personalDetail.getSkype());
+
+            if (viewEqualOpportunities) {
+                representation.setEthnicity(personalDetail.getEthnicity());
+                representation.setDisability(personalDetail.getDisability());
+            }
 
             if (personalDetail.getClass().equals(ApplicationPersonalDetail.class)) {
                 representation.setLastUpdatedTimestamp(((ApplicationPersonalDetail) personalDetail).getLastUpdatedTimestamp());
@@ -105,7 +100,7 @@ public class ProfileMapper {
 
     public <T extends ProfileEmploymentPosition<?>> List<ProfileEmploymentPositionRepresentation> getEmploymentPositionRepresentations(Set<T> employmentPositions) {
         return employmentPositions.stream()
-                .map(this::getApplicationEmploymentPositionRepresentation)
+                .map(this::getEmploymentPositionRepresentation)
                 .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
                 .collect(Collectors.toList());
     }
@@ -138,19 +133,17 @@ public class ProfileMapper {
         return null;
     }
 
-    public <T extends ProfileAdditionalInformation<?>> ProfileAdditionalInformationRepresentation getAdditionalInformationRepresentation(T additionalInformation) {
-        if (additionalInformation != null) {
-            User user = userService.getCurrentUser();
-            if (additionalInformation.getClass().equals(ApplicationAdditionalInformation.class)
-                    && applicationService.isCanViewEqualOpportunitiesData(((ApplicationAdditionalInformation) additionalInformation).getAssociation(), user)) {
-                return new ProfileAdditionalInformationRepresentation().withRequirements(additionalInformation.getRequirements())
-                        .withConvictions(additionalInformation.getConvictions())
-                        .withLastUpdatedTimestamp(((ApplicationAdditionalInformation) additionalInformation).getLastUpdatedTimestamp());
-            } else if (additionalInformation.getClass().equals(UserAdditionalInformation.class) && user.equals(additionalInformation.getAssociation().getUser())) {
-                return new ProfileAdditionalInformationRepresentation().withRequirements(additionalInformation.getRequirements())
-                        .withConvictions(additionalInformation.getConvictions());
+    public <T extends ProfileAdditionalInformation<?>> ProfileAdditionalInformationRepresentation getAdditionalInformationRepresentation(T additionalInformation,
+            boolean viewEqualOpportunities) {
+        if (additionalInformation != null && viewEqualOpportunities) {
+            ProfileAdditionalInformationRepresentation representation = new ProfileAdditionalInformationRepresentation().withRequirements(additionalInformation.getRequirements())
+                    .withConvictions(additionalInformation.getConvictions());
+
+            if (additionalInformation.getClass().equals(ApplicationAdditionalInformation.class)) {
+                representation.setLastUpdatedTimestamp(((ApplicationAdditionalInformation) additionalInformation).getLastUpdatedTimestamp());
             }
-            return null;
+
+            return representation;
         }
 
         return null;
@@ -190,7 +183,7 @@ public class ProfileMapper {
         return representation;
     }
 
-    private <T extends ProfileEmploymentPosition<?>> ProfileEmploymentPositionRepresentation getApplicationEmploymentPositionRepresentation(T employmentPosition) {
+    private <T extends ProfileEmploymentPosition<?>> ProfileEmploymentPositionRepresentation getEmploymentPositionRepresentation(T employmentPosition) {
         Integer startYear = employmentPosition.getStartYear();
         LocalDate startDate = startYear == null ? null : new LocalDate(startYear, employmentPosition.getStartMonth(), 1);
 

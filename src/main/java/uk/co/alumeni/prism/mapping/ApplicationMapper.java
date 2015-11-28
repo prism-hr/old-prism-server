@@ -180,22 +180,21 @@ public class ApplicationMapper {
                 .withLatestDate(getNextMonday(baseline.plusYears(START_DATE_LATEST_BUFFER)));
     }
 
-    public <T extends ApplicationRepresentationSimple> void fillApplicationProfileRepresentation(Application application, T representation, List<PrismRole> overridingRoles) {
-        representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail()));
+    private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Class<T> returnType, List<PrismRole> overridingRoles) {
+        T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles);
+        representation.setClosingDate(application.getClosingDate());
+        representation.setSubmittedTimestamp(application.getSubmittedTimestamp());
+
+        boolean viewEqualOpportunities = applicationService.isCanViewEqualOpportunities(application, userService.getCurrentUser());
+
+        representation.setProgramDetail(getApplicationProgramDetailRepresentation(application));
+        representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
         representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications()));
         representation.setEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions()));
         representation.setReferees(getApplicationRefereeRepresentations(application.getReferees(), overridingRoles));
         representation.setDocument(profileMapper.getDocumentRepresentation(application.getDocument()));
-        representation.setAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(application.getAdditionalInformation()));
-    }
-
-    private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Class<T> returnType, List<PrismRole> overridingRoles) {
-        T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles);
-        representation.setClosingDate(application.getClosingDate());
-        representation.setSubmittedTimestamp(application.getSubmittedTimestamp());
-        representation.setProgramDetail(getApplicationProgramDetailRepresentation(application));
-        fillApplicationProfileRepresentation(application, representation, overridingRoles);
+        representation.setAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(application.getAdditionalInformation(), viewEqualOpportunities));
         return representation;
     }
 

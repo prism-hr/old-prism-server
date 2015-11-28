@@ -102,6 +102,11 @@ public class Application extends Resource implements
     @JoinColumn(name = "application_program_detail_id", unique = true)
     private ApplicationProgramDetail programDetail;
 
+    @OrderBy(clause = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
+    private Set<ApplicationTheme> themes = Sets.newHashSet();
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetail personalDetail;
@@ -327,6 +332,10 @@ public class Application extends Resource implements
 
     public void setProgramDetail(ApplicationProgramDetail programDetail) {
         this.programDetail = programDetail;
+    }
+
+    public Set<ApplicationTheme> getThemes() {
+        return themes;
     }
 
     @Override

@@ -76,6 +76,7 @@ import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.dao.AdvertDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.Invitation;
+import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
@@ -86,6 +87,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertFunction;
 import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
+import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
@@ -116,6 +118,7 @@ import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.TagDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertClosingDateDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
@@ -178,6 +181,9 @@ public class AdvertService {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private TagService tagService;
 
     @Inject
     private UserService userService;
@@ -338,6 +344,13 @@ public class AdvertService {
         updateFinancialDetails(resource.getResourceScope(), resource.getId(), financialDetailDTO);
     }
 
+    public void updateThemes(PrismScope resourceScope, Integer resourceId, List<TagDTO> themeDTOs) {
+        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
+        Advert advert = resource.getAdvert();
+        updateThemes(advert, themeDTOs);
+        executeUpdate(resource, "COMMENT_UPDATED_THEME");
+    }
+    
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
@@ -940,6 +953,33 @@ public class AdvertService {
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
     }
+    
+    private void updateThemes(Advert advert, List<TagDTO> themeDTOs) {
+        Set<AdvertTheme> themes = advert.getThemes();
+
+        for (AdvertTheme advertTheme : themes) {
+            Theme theme = advertTheme.getTheme();
+            theme.setAdoptedCount(theme.getAdoptedCount() - 1);
+            entityService.delete(advertTheme);
+        }
+
+        themes.clear();
+        entityService.flush();
+
+        for (TagDTO themeDTO : themeDTOs) {
+            Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
+            String customDescription = null;
+            if (!theme.getDescription().equals(themeDTO.getDescription())) {
+                customDescription = themeDTO.getDescription();
+            }
+            AdvertTheme advertTheme = new AdvertTheme();
+            advertTheme.setAdvert(advert);
+            advertTheme.setTheme(theme);
+            advertTheme.setDescription(customDescription);
+            advert.getThemes().add(advertTheme);
+            entityService.save(advertTheme);
+        }
+    }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
@@ -1047,7 +1087,7 @@ public class AdvertService {
         entityService.flush();
 
         for (AdvertCompetenceDTO competenceDTO : competenceDTOs) {
-            Competence competence = getOrCreateCompetence(competenceDTO);
+            Competence competence = tagService.createOrUpdateTag(Competence.class, competenceDTO);
             String customDescription = null;
             if (!competence.getDescription().equals(competenceDTO.getDescription())) {
                 customDescription = competenceDTO.getDescription();
@@ -1297,21 +1337,6 @@ public class AdvertService {
         advertClosingDate.setAdvert(advert);
         advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
         return advertClosingDate;
-    }
-
-    private Competence getOrCreateCompetence(AdvertCompetenceDTO competenceDTO) {
-        DateTime baseline = new DateTime();
-        Competence transientCompetence = new Competence().withName(competenceDTO.getName()).withDescription(competenceDTO.getDescription()).withAdoptedCount(1)
-                .withCreatedTimestamp(baseline).withUpdatedTimestamp(baseline);
-        Competence persistentCompetence = entityService.getDuplicateEntity(transientCompetence);
-        if (persistentCompetence == null) {
-            entityService.save(transientCompetence);
-            return transientCompetence;
-        } else {
-            persistentCompetence.setAdoptedCount(persistentCompetence.getAdoptedCount() + 1);
-            persistentCompetence.setUpdatedTimestamp(baseline);
-            return persistentCompetence;
-        }
     }
 
     private HashMultimap<PrismScope, PrismState> getAdvertScopes() {

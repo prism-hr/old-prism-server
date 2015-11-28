@@ -129,6 +129,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
+    @OneToMany(mappedBy = "advert")
+    @OrderBy(clause = "name")
+    private Set<AdvertTheme> themes = Sets.newHashSet();
+
     @Embedded
     private AdvertCategories categories;
 
@@ -330,6 +334,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+    }
+
+    public Set<AdvertTheme> getThemes() {
+        return themes;
     }
 
     public AdvertCategories getCategories() {

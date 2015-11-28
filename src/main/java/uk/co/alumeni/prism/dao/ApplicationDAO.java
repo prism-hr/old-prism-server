@@ -283,6 +283,25 @@ public class ApplicationDAO {
                 .list();
     }
 
+    public void togglePrimaryApplicationTheme(Integer applicationId, Integer primaryThemeId) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update ApplicationTheme " //
+                        + "set preference = 0 " //
+                        + "where application.id = :applicationId " //
+                        + "and theme.id != :primaryThemeId") //
+                .setParameter("applicationId", applicationId) //
+                .setParameter("primaryThemeId", primaryThemeId) //
+                .executeUpdate();
+    }
+
+    public void deleteApplicationTheme(Integer id) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ApplicationTheme " //
+                        + "where id = :id") //
+                .setParameter("id", id) //
+                .executeUpdate();
+    }
+
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 

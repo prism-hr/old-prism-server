@@ -20,9 +20,11 @@ import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
+import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.mapping.ApplicationMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationProgramDetailDTO;
+import uk.co.alumeni.prism.rest.dto.application.ApplicationThemeDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
@@ -38,7 +40,7 @@ import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ProfileService;
 
 @RestController
-@RequestMapping(value = {"api/applications"})
+@RequestMapping(value = { "api/applications" })
 @PreAuthorize("isAuthenticated()")
 public class ApplicationController {
 
@@ -64,6 +66,23 @@ public class ApplicationController {
         applicationService.updateProgramDetail(applicationId, programDetailDTO);
     }
 
+    @RequestMapping(value = "/{applicationId}/themes", method = RequestMethod.POST)
+    public Map<String, Object> createTheme(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationThemeDTO themeDTO) {
+        ApplicationTheme theme = applicationService.updateTheme(applicationId, null, themeDTO);
+        return ImmutableMap.of("id", (Object) theme.getId());
+    }
+
+    @RequestMapping(value = "/{applicationId}/themes/{applicationThemeId}", method = RequestMethod.PUT)
+    public Map<String, Object> updateTheme(@PathVariable Integer applicationId, @PathVariable Integer applicationThemeId, @Valid @RequestBody ApplicationThemeDTO themeDTO) {
+        ApplicationTheme theme = applicationService.updateTheme(applicationId, applicationThemeId, themeDTO);
+        return ImmutableMap.of("id", (Object) theme.getId());
+    }
+
+    @RequestMapping(value = "/{applicationId}/themes/{applicationThemeId}", method = RequestMethod.DELETE)
+    public void deleteTheme(@PathVariable Integer applicationId, @PathVariable Integer applicationThemeId) {
+        applicationService.deleteTheme(applicationId, applicationThemeId);
+    }
+
     @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)
     public void savePersonalDetail(@PathVariable Integer applicationId, @Valid @RequestBody ProfilePersonalDetailDTO personalDetailDTO) {
         profileService.updatePersonalDetailApplication(applicationId, personalDetailDTO);
@@ -87,8 +106,7 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
-    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
-                                    @Valid @RequestBody ProfileQualificationDTO qualificationDTO) {
+    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId, @Valid @RequestBody ProfileQualificationDTO qualificationDTO) {
         profileService.updateQualificationApplication(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -112,7 +130,7 @@ public class ApplicationController {
 
     @RequestMapping(value = "/{applicationId}/employmentPositions/{employmentPositionId}", method = RequestMethod.PUT)
     public void updateEmploymentPosition(@PathVariable Integer applicationId, @PathVariable Integer employmentPositionId,
-                                         @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) {
+            @Valid @RequestBody ProfileEmploymentPositionDTO employmentPositionDTO) {
         profileService.updateEmploymentPositionApplication(applicationId, employmentPositionId, employmentPositionDTO);
     }
 

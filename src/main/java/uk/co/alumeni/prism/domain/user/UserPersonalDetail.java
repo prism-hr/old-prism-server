@@ -16,6 +16,8 @@ import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.definitions.PrismDisability;
+import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 
@@ -34,7 +36,7 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Enumerated(EnumType.STRING)
     private PrismGender gender;
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate dateOfBirth;
 
@@ -49,13 +51,21 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Column(name = "visa_required")
     private Boolean visaRequired;
 
-    @Column(name = "skype")
-    @Size(min = 6, max = 32)
-    private String skype;
-
     @Column(name = "phone", nullable = false)
     @Size(max = 50)
     private String phone;
+    
+    @Column(name = "skype")
+    @Size(min = 6, max = 32)
+    private String skype;
+    
+    @Column(name = "ethnicity")
+    @Enumerated(EnumType.STRING)
+    private PrismEthnicity ethnicity;
+    
+    @Column(name = "disability")
+    @Enumerated(EnumType.STRING)
+    private PrismDisability disability;
 
     @Override
     public Integer getId() {
@@ -143,6 +153,26 @@ public class UserPersonalDetail implements ProfilePersonalDetail<UserAccount> {
     @Override
     public void setSkype(String skype) {
         this.skype = skype;
+    }
+    
+    @Override
+    public PrismEthnicity getEthnicity() {
+        return ethnicity;
+    }
+
+    @Override
+    public void setEthnicity(PrismEthnicity ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    @Override
+    public PrismDisability getDisability() {
+        return disability;
+    }
+
+    @Override
+    public void setDisability(PrismDisability disability) {
+        this.disability = disability;
     }
 
 }

@@ -9,6 +9,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
@@ -41,7 +42,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private BigDecimal applicationRatingAverage;
 
-    private List<AdvertTargetRepresentation.AdvertTargetConnectionRepresentation> targets;
+    private List<AdvertTargetConnectionRepresentation> targets;
 
     private PrismConnectionState joinStateStaff;
 
@@ -153,11 +154,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 
-    public List<AdvertTargetRepresentation.AdvertTargetConnectionRepresentation> getTargets() {
+    public List<AdvertTargetConnectionRepresentation> getTargets() {
         return targets;
     }
 
-    public void setTargets(List<AdvertTargetRepresentation.AdvertTargetConnectionRepresentation> targets) {
+    public void setTargets(List<AdvertTargetConnectionRepresentation> targets) {
         this.targets = targets;
     }
 

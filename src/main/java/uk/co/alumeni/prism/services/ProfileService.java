@@ -362,7 +362,6 @@ public class ProfileService {
             applicationPersonalDetail.setAssociation(application);
 
             applicationPersonalDetail.setGender(userPersonalDetail.getGender());
-
             applicationPersonalDetail.setNationality(userPersonalDetail.getNationality());
             applicationPersonalDetail.setDomicile(userPersonalDetail.getDomicile());
             applicationPersonalDetail.setVisaRequired(userPersonalDetail.getVisaRequired());
@@ -370,6 +369,8 @@ public class ProfileService {
             applicationPersonalDetail.setPhone(userPersonalDetail.getPhone());
             applicationPersonalDetail.setSkype(userPersonalDetail.getSkype());
 
+            applicationPersonalDetail.setEthnicity(userPersonalDetail.getEthnicity());
+            applicationPersonalDetail.setDisability(userPersonalDetail.getDisability());
             applicationPersonalDetail.setLastUpdatedTimestamp(new DateTime());
         }
     }
@@ -484,6 +485,9 @@ public class ProfileService {
 
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
+
+        personalDetail.setEthnicity(personalDetailDTO.getEthnicity());
+        personalDetail.setDisability(personalDetailDTO.getDisability());
 
         if (personalDetailClass.equals(UserPersonalDetail.class)) {
             ((UserPersonalDetail) personalDetail).setDateOfBirth(personalDetailDTO.getDateOfBirth());

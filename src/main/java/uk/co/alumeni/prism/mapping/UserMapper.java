@@ -225,12 +225,12 @@ public class UserMapper {
 
     public UserProfileRepresentation getUserProfileRepresentation() {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        return new UserProfileRepresentation().withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail()))
+        return new UserProfileRepresentation().withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
                 .withAddress(profileMapper.getAddressRepresentation(userAccount.getAddress()))
                 .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications()))
                 .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions()))
                 .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees())).withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
-                .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation()))
+                .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
                 .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
     }
 

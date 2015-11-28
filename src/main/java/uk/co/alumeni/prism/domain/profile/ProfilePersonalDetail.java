@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.domain.profile;
 
 import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.definitions.PrismDisability;
+import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 
 public interface ProfilePersonalDetail<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> extends ProfileSection<T> {
@@ -28,5 +30,13 @@ public interface ProfilePersonalDetail<T extends ProfileEntity<?, ?, ?, ?, ?, ?,
     String getSkype();
 
     void setSkype(String skype);
+    
+    PrismEthnicity getEthnicity();
+    
+    void setEthnicity(PrismEthnicity ethnicity);
+    
+    PrismDisability getDisability();
+    
+    void setDisability(PrismDisability disability);
 
 }

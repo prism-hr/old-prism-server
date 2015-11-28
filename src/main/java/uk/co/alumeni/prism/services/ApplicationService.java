@@ -9,6 +9,7 @@ import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_THEME;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -43,10 +45,12 @@ import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 
 import uk.co.alumeni.prism.dao.ApplicationDAO;
+import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.application.ApplicationSection;
+import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.definitions.PrismApplicationReportColumn;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -67,6 +71,7 @@ import uk.co.alumeni.prism.dto.ApplicationReportListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationProgramDetailDTO;
+import uk.co.alumeni.prism.rest.dto.application.ApplicationThemeDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.validation.ProfileValidator;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
@@ -107,6 +112,9 @@ public class ApplicationService {
 
     @Inject
     private SystemService systemService;
+
+    @Inject
+    private TagService tagService;
 
     @Inject
     private UserService userService;
@@ -229,7 +237,7 @@ public class ApplicationService {
         return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
     }
 
-    public boolean isCanViewEqualOpportunitiesData(Application application, User user) {
+    public boolean isCanViewEqualOpportunities(Application application, User user) {
         List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(user, application);
         if (actionEnhancements.size() > 0) {
             actionEnhancements.retainAll(asList(APPLICATION_EQUAL_OPPORTUNITIES_VIEWER.getActionEnhancements()));
@@ -283,6 +291,31 @@ public class ApplicationService {
 
         application.setProgramDetail(programDetail);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
+    }
+
+    public ApplicationTheme updateTheme(Integer applicationId, Integer applicationThemeId, ApplicationThemeDTO themeDTO) {
+        Application application = getById(applicationId);
+        Integer themeId = themeDTO.getThemeId();
+        boolean preference = BooleanUtils.isTrue(themeDTO.getPreference());
+
+        ApplicationTheme theme = entityService
+                .createOrUpdate(new ApplicationTheme().withApplication(application).withTheme(tagService.getById(Theme.class, themeId)).withPreference(preference));
+        if (!(applicationThemeId == null || applicationThemeId.equals(theme.getId()))) {
+            applicationDAO.deleteApplicationTheme(applicationThemeId);
+        }
+
+        if (preference) {
+            applicationDAO.togglePrimaryApplicationTheme(applicationId, themeId);
+        }
+
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_THEME);
+        return theme;
+    }
+
+    public void deleteTheme(Integer applicationId, Integer applicationThemeId) {
+        Application application = getById(applicationId);
+        applicationDAO.deleteApplicationTheme(applicationThemeId);
+        executeUpdate(application, APPLICATION_COMMENT_UPDATED_THEME);
     }
 
     public void executeUpdate(Application application, PrismDisplayPropertyDefinition message, CommentAssignedUser... assignees) {

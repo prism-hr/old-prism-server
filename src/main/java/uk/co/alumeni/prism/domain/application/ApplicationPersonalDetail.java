@@ -17,6 +17,8 @@ import org.joda.time.DateTime;
 
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.definitions.PrismDisability;
+import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 
@@ -50,13 +52,21 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     @Column(name = "visa_required")
     private Boolean visaRequired;
 
-    @Column(name = "skype")
-    @Size(min = 6, max = 32)
-    private String skype;
-
     @Column(name = "phone", nullable = false)
     @Size(max = 50)
     private String phone;
+    
+    @Column(name = "skype")
+    @Size(min = 6, max = 32)
+    private String skype;
+    
+    @Column(name = "ethnicity")
+    @Enumerated(EnumType.STRING)
+    private PrismEthnicity ethnicity;
+    
+    @Column(name = "disability")
+    @Enumerated(EnumType.STRING)
+    private PrismDisability disability;
 
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -148,6 +158,26 @@ public class ApplicationPersonalDetail extends ApplicationSection implements Pro
     @Override
     public void setSkype(String skype) {
         this.skype = skype;
+    }
+
+    @Override
+    public PrismEthnicity getEthnicity() {
+        return ethnicity;
+    }
+
+    @Override
+    public void setEthnicity(PrismEthnicity ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    @Override
+    public PrismDisability getDisability() {
+        return disability;
+    }
+
+    @Override
+    public void setDisability(PrismDisability disability) {
+        this.disability = disability;
     }
 
     @Override

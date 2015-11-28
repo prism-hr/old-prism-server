@@ -27,7 +27,6 @@ create table application_theme (
     id int(10) unsigned not null auto_increment,
     application_id int(10) unsigned not null,
     theme_id int(10) unsigned not null,
-    description text not null,
     preference int(1) unsigned not null,
     primary key (id),
     unique index (application_id, theme_id),

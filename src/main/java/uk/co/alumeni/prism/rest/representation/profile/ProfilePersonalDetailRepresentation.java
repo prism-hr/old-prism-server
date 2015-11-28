@@ -3,7 +3,9 @@ package uk.co.alumeni.prism.rest.representation.profile;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.domain.definitions.PrismDisability;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationSectionRepresentation;
 
@@ -22,6 +24,10 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
     private String skype;
 
     private String phone;
+
+    private PrismEthnicity ethnicity;
+
+    private PrismDisability disability;
 
     public PrismGender getGender() {
         return gender;
@@ -63,6 +69,14 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         this.visaRequired = visaRequired;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getSkype() {
         return skype;
     }
@@ -71,12 +85,20 @@ public class ProfilePersonalDetailRepresentation extends ApplicationSectionRepre
         this.skype = skype;
     }
 
-    public String getPhone() {
-        return phone;
+    public PrismEthnicity getEthnicity() {
+        return ethnicity;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setEthnicity(PrismEthnicity ethnicity) {
+        this.ethnicity = ethnicity;
+    }
+
+    public PrismDisability getDisability() {
+        return disability;
+    }
+
+    public void setDisability(PrismDisability disability) {
+        this.disability = disability;
     }
 
     public ProfilePersonalDetailRepresentation withGender(PrismGender gender) {

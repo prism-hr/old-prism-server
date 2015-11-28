@@ -10,8 +10,8 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 @Entity
-@Table(name = "competence")
-public class Competence extends Tag {
+@Table(name = "theme")
+public class Theme extends Tag {
 
     @Id
     @GeneratedValue
@@ -92,6 +92,31 @@ public class Competence extends Tag {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+
+    public Theme withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public Theme withDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public Theme withAdoptedCount(Integer adoptedCount) {
+        this.adoptedCount = adoptedCount;
+        return this;
+    }
+
+    public Theme withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public Theme withUpdatedTimestamp(DateTime updatedTimestamp) {
+        this.updatedTimestamp = updatedTimestamp;
+        return this;
     }
 
 }

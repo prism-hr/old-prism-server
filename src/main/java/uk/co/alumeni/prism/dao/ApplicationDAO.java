@@ -34,6 +34,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
+import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
@@ -283,22 +284,22 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public void togglePrimaryApplicationTheme(Integer applicationId, Integer primaryThemeId) {
+    public void togglePrimaryApplicationTheme(Application application, Theme primaryTheme) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update ApplicationTheme " //
                         + "set preference = 0 " //
-                        + "where application.id = :applicationId " //
-                        + "and theme.id != :primaryThemeId") //
-                .setParameter("applicationId", applicationId) //
-                .setParameter("primaryThemeId", primaryThemeId) //
+                        + "where application.id = :application " //
+                        + "and theme.id != :primaryTheme") //
+                .setParameter("application", application) //
+                .setParameter("primaryTheme", primaryTheme) //
                 .executeUpdate();
     }
 
-    public void deleteApplicationTheme(Integer id) {
+    public void deleteApplicationTheme(Integer applicationThemeId) {
         sessionFactory.getCurrentSession().createQuery( //
                 "delete ApplicationTheme " //
-                        + "where id = :id") //
-                .setParameter("id", id) //
+                        + "where id = :applicationThemeId") //
+                .setParameter("applicationThemeId", applicationThemeId) //
                 .executeUpdate();
     }
 

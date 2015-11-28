@@ -9,12 +9,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
+
 import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
 @Entity
 @Table(name = "application_theme", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "theme_id" }) })
-public class ApplicationTheme implements UniqueEntity {
+public class ApplicationTheme extends ApplicationSection implements UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -30,6 +33,10 @@ public class ApplicationTheme implements UniqueEntity {
 
     @Column(name = "preference", nullable = false)
     private Boolean preference;
+    
+    @Column(name = "last_updated_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime lastUpdatedTimestamp;
 
     public Integer getId() {
         return id;
@@ -63,19 +70,12 @@ public class ApplicationTheme implements UniqueEntity {
         this.preference = preference;
     }
 
-    public ApplicationTheme withApplication(Application application) {
-        this.application = application;
-        return this;
+    public DateTime getLastUpdatedTimestamp() {
+        return lastUpdatedTimestamp;
     }
 
-    public ApplicationTheme withTheme(Theme theme) {
-        this.theme = theme;
-        return this;
-    }
-
-    public ApplicationTheme withPreference(Boolean preference) {
-        this.preference = preference;
-        return this;
+    public void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
+        this.lastUpdatedTimestamp = lastUpdatedTimestamp;
     }
 
     @Override

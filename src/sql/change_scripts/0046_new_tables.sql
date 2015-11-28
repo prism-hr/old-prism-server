@@ -116,3 +116,12 @@ create table application_award (
 collate = utf8_general_ci
 engine = innodb
 ;
+
+alter table application_location
+    add column last_updated_timestamp datetime
+;
+
+alter table application_theme
+    add column last_updated_timestamp datetime
+;
+

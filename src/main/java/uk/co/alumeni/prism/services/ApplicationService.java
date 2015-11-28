@@ -44,8 +44,10 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 
+import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.dao.ApplicationDAO;
 import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
@@ -127,6 +129,10 @@ public class ApplicationService {
 
     public Application getById(Integer id) {
         return entityService.getById(Application.class, id);
+    }
+
+    public ApplicationTheme getApplicationThemeById(Integer id) {
+        return entityService.getById(ApplicationTheme.class, id);
     }
 
     public Application getByCode(String code) {
@@ -295,21 +301,33 @@ public class ApplicationService {
 
     public ApplicationTheme updateTheme(Integer applicationId, Integer applicationThemeId, ApplicationThemeDTO themeDTO) {
         Application application = getById(applicationId);
-        Integer themeId = themeDTO.getThemeId();
+        Theme theme = tagService.getById(Theme.class, themeDTO.getThemeId());
         boolean preference = BooleanUtils.isTrue(themeDTO.getPreference());
 
-        ApplicationTheme theme = entityService
-                .createOrUpdate(new ApplicationTheme().withApplication(application).withTheme(tagService.getById(Theme.class, themeId)).withPreference(preference));
-        if (!(applicationThemeId == null || applicationThemeId.equals(theme.getId()))) {
-            applicationDAO.deleteApplicationTheme(applicationThemeId);
+        ApplicationTheme duplicateApplicationTheme = entityService.getDuplicateEntity(ApplicationTheme.class,
+                new EntitySignature().addProperty("application", application).addProperty("theme", theme));
+        if (!(duplicateApplicationTheme == null || Objects.equal(applicationThemeId, duplicateApplicationTheme.getId()))) {
+            entityService.delete(duplicateApplicationTheme);
         }
 
+        ApplicationTheme applicationTheme;
+        if (applicationThemeId == null) {
+            applicationTheme = new ApplicationTheme();
+        } else {
+            applicationTheme = getApplicationThemeById(applicationThemeId);
+        }
+
+        duplicateApplicationTheme.setApplication(application);
+        duplicateApplicationTheme.setTheme(theme);
+        duplicateApplicationTheme.setPreference(preference);
+        duplicateApplicationTheme.setLastUpdatedTimestamp(DateTime.now());
+
         if (preference) {
-            applicationDAO.togglePrimaryApplicationTheme(applicationId, themeId);
+            applicationDAO.togglePrimaryApplicationTheme(application, theme);
         }
 
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_THEME);
-        return theme;
+        return applicationTheme;
     }
 
     public void deleteTheme(Integer applicationId, Integer applicationThemeId) {

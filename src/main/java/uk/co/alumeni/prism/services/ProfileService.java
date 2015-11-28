@@ -37,6 +37,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.dao.ProfileDAO;
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -559,6 +560,13 @@ public class ProfileService {
             ((ApplicationQualification) qualification).setLastUpdatedTimestamp(DateTime.now());
         }
 
+        U duplicateQualification = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) qualification.getClass(),
+                new EntitySignature().addProperty("association", qualification.getAssociation()).addProperty("advert", qualification.getAdvert()).addProperty("startYear",
+                        qualification.getStartYear()));
+        if (!(duplicateQualification == null || Objects.equal(qualification.getId(), duplicateQualification.getId()))) {
+            entityService.delete(duplicateQualification);
+        }
+
         if (qualification.getId() == null) {
             ((Set<U>) profile.getQualifications()).add(qualification);
         }
@@ -604,6 +612,13 @@ public class ProfileService {
             ((ApplicationEmploymentPosition) employmentPosition).setLastUpdatedTimestamp(DateTime.now());
         }
 
+        U duplicateEmploymentPosition = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) employmentPosition.getClass(),
+                new EntitySignature().addProperty("association", employmentPosition.getAssociation()).addProperty("advert", employmentPosition.getAdvert()).addProperty("startYear",
+                        employmentPosition.getStartYear()).addProperty("startMonth", employmentPosition.getStartMonth()));
+        if (!(duplicateEmploymentPosition == null || Objects.equal(employmentPosition.getId(), duplicateEmploymentPosition.getId()))) {
+            entityService.delete(duplicateEmploymentPosition);
+        }
+
         if (employmentPosition.getId() == null) {
             ((Set<U>) profile.getEmploymentPositions()).add(employmentPosition);
         }
@@ -642,9 +657,16 @@ public class ProfileService {
             ((ApplicationReferee) referee).setLastUpdatedTimestamp(DateTime.now());
         }
 
+        U duplicateReferee = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) referee.getClass(),
+                new EntitySignature().addProperty("association", referee.getAssociation()).addProperty("advert", referee.getAdvert()).addProperty("user", referee.getUser()));
+        if (!(duplicateReferee == null || Objects.equal(referee.getId(), duplicateReferee.getId()))) {
+            entityService.delete(duplicateReferee);
+        }
+
         if (referee.getId() == null) {
             ((Set<U>) profile.getReferees()).add(referee);
         }
+
         return refereeAssignments;
     }
 

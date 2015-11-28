@@ -16,7 +16,7 @@ public interface UniqueEntity {
 
     EntitySignature getEntitySignature();
 
-    class EntitySignature {
+    public class EntitySignature {
 
         private final HashMap<String, Object> properties = Maps.newHashMap();
 

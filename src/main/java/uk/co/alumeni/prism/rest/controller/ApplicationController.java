@@ -1,45 +1,27 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
+import com.google.common.collect.ImmutableMap;
 import org.joda.time.LocalDate;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.google.common.collect.ImmutableMap;
-
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationAward;
-import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
-import uk.co.alumeni.prism.domain.application.ApplicationQualification;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.application.ApplicationTheme;
+import org.springframework.web.bind.annotation.*;
+import uk.co.alumeni.prism.domain.application.*;
 import uk.co.alumeni.prism.mapping.ApplicationMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationProgramDetailDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationThemeDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileQualificationDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileRefereeDTO;
+import uk.co.alumeni.prism.rest.dto.profile.*;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ProfileService;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = { "api/applications" })
@@ -115,6 +97,12 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
     public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
         profileService.deleteQualificationApplication(applicationId, qualificationId);
+    }
+
+    @RequestMapping(value = "/{applicationId}/awards", method = RequestMethod.GET)
+    public List<ProfileAwardRepresentation> getAwards(@PathVariable Integer applicationId) {
+        Application application = applicationService.getById(applicationId);
+        return profileMapper.getAwardRepresentations(application.getAwards());
     }
 
     @RequestMapping(value = "/{applicationId}/awards", method = RequestMethod.POST)

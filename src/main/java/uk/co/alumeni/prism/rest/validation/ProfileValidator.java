@@ -79,6 +79,9 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
             case APPLICATION_QUALIFICATION:
                 validateRangeConstraint(profile, "qualifications", constraint, errors);
                 break;
+            case APPLICATION_AWARD:
+                validateRangeConstraint(profile, "awards", constraint, errors);
+                break;
             default:
                 break;
             }

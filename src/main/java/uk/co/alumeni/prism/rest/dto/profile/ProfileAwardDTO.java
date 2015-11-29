@@ -1,17 +1,22 @@
-package uk.co.alumeni.prism.rest.representation.profile;
+package uk.co.alumeni.prism.rest.dto.profile;
+
+import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationSectionRepresentation;
+import uk.co.alumeni.prism.utils.validation.DateNotFuture;
 
-public class ProfileAwardRepresentation extends ApplicationSectionRepresentation {
+public class ProfileAwardDTO {
 
     private Integer id;
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String description;
 
+    @DateNotFuture
     private LocalDate awardDate;
 
     public Integer getId() {
@@ -44,26 +49,6 @@ public class ProfileAwardRepresentation extends ApplicationSectionRepresentation
 
     public void setAwardDate(LocalDate awardDate) {
         this.awardDate = awardDate;
-    }
-
-    public ProfileAwardRepresentation withId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public ProfileAwardRepresentation withName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public ProfileAwardRepresentation withDescription(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public ProfileAwardRepresentation withAwardDate(LocalDate awardDate) {
-        this.awardDate = awardDate;
-        return this;
     }
 
 }

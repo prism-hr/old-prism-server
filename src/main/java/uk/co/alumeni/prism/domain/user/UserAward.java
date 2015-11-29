@@ -10,12 +10,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.application.ApplicationAward;
 import uk.co.alumeni.prism.domain.profile.ProfileAward;
 
 @Entity
 @Table(name = "user_award", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "name", "award_year", "award_month" }) })
-public class UserAward implements ProfileAward<UserAccount> {
+public class UserAward extends UserSection implements ProfileAward<UserAccount> {
 
     @Id
     @GeneratedValue
@@ -107,6 +108,11 @@ public class UserAward implements ProfileAward<UserAccount> {
     @Override
     public void setAwardMonth(Integer awardMonth) {
         this.awardMonth = awardMonth;
+    }
+
+    @Override
+    public UniqueEntity.EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("name", name).addProperty("awardYear", awardYear).addProperty("awardMonth", awardMonth);
     }
 
 }

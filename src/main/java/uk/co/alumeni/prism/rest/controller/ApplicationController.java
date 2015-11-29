@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.collect.ImmutableMap;
 
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.application.ApplicationAward;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
@@ -27,6 +28,7 @@ import uk.co.alumeni.prism.rest.dto.application.ApplicationProgramDetailDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationThemeDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
@@ -113,6 +115,22 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.DELETE)
     public void deleteQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId) {
         profileService.deleteQualificationApplication(applicationId, qualificationId);
+    }
+
+    @RequestMapping(value = "/{applicationId}/awards", method = RequestMethod.POST)
+    public Map<String, Object> createAward(@PathVariable Integer applicationId, @Valid @RequestBody ProfileAwardDTO awardDTO) {
+        ApplicationAward award = profileService.updateAwardApplication(applicationId, null, awardDTO);
+        return ImmutableMap.of("id", (Object) award.getId());
+    }
+
+    @RequestMapping(value = "/{applicationId}/awards/{awardId}", method = RequestMethod.PUT)
+    public void updateAward(@PathVariable Integer applicationId, @PathVariable Integer awardId, @Valid @RequestBody ProfileAwardDTO awardDTO) {
+        profileService.updateAwardApplication(applicationId, awardId, awardDTO);
+    }
+
+    @RequestMapping(value = "/{applicationId}/awards/{awardId}", method = RequestMethod.DELETE)
+    public void deleteAward(@PathVariable Integer applicationId, @PathVariable Integer awardId) {
+        profileService.deleteAwardApplication(applicationId, awardId);
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.GET)

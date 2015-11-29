@@ -7,8 +7,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.Tag;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
+import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
 
 @Service
 @Transactional
@@ -26,7 +28,11 @@ public class TagService {
 
         T transientTag = BeanUtils.instantiate(tagClass);
         transientTag.setName(tagDTO.getName());
-        transientTag.setDescription(tagDTO.getDescription());
+
+        if (tagClass.equals(Competence.class)) {
+            ((Competence) transientTag).setDescription(((AdvertCompetenceDTO) tagDTO).getDescription());
+        }
+
         transientTag.setAdoptedCount(1);
         transientTag.setCreatedTimestamp(baseline);
         transientTag.setUpdatedTimestamp(baseline);

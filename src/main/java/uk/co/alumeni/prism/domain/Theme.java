@@ -20,9 +20,6 @@ public class Theme extends Tag {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-
     @Column(name = "adopted_count", nullable = false)
     private Integer adoptedCount;
 
@@ -52,16 +49,6 @@ public class Theme extends Tag {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     @Override
@@ -96,11 +83,6 @@ public class Theme extends Tag {
 
     public Theme withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public Theme withDescription(String description) {
-        this.description = description;
         return this;
     }
 

@@ -125,3 +125,10 @@ alter table application_theme
     add column last_updated_timestamp datetime
 ;
 
+alter table theme
+    drop column description
+;
+
+alter table advert_theme
+    drop column description
+;

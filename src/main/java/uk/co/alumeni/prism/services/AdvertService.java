@@ -968,14 +968,9 @@ public class AdvertService {
 
         for (TagDTO themeDTO : themeDTOs) {
             Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
-            String customDescription = null;
-            if (!theme.getDescription().equals(themeDTO.getDescription())) {
-                customDescription = themeDTO.getDescription();
-            }
             AdvertTheme advertTheme = new AdvertTheme();
             advertTheme.setAdvert(advert);
             advertTheme.setTheme(theme);
-            advertTheme.setDescription(customDescription);
             advert.getThemes().add(advertTheme);
             entityService.save(advertTheme);
         }

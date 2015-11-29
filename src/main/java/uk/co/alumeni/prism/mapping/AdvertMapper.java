@@ -525,8 +525,7 @@ public class AdvertMapper {
     public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(Advert advert) {
         return advert.getThemes().stream()
                 .map(theme -> new AdvertThemeRepresentation().withThemeId(theme.getTheme().getId())
-                        .withName(theme.getTheme().getName())
-                        .withDescription(Objects.firstNonNull(theme.getDescription(), theme.getTheme().getDescription())))
+                        .withName(theme.getTheme().getName()))
                 .collect(toList());
     }
 

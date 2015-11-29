@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,9 +25,6 @@ public class AdvertTheme extends AdvertAttribute {
     @ManyToOne
     @JoinColumn(name = "theme_id", nullable = false)
     private Theme theme;
-
-    @Column(name = "description")
-    private String description;
 
     @Override
     public Integer getId() {
@@ -57,15 +53,7 @@ public class AdvertTheme extends AdvertAttribute {
     public void setTheme(Theme theme) {
         this.theme = theme;
     }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+    
     @Override
     public EntitySignature getEntitySignature() {
         return super.getEntitySignature().addProperty("theme", theme);

@@ -22,6 +22,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
+import uk.co.alumeni.prism.domain.profile.ProfileAward;
 import uk.co.alumeni.prism.domain.profile.ProfileDocument;
 import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
@@ -30,6 +31,7 @@ import uk.co.alumeni.prism.domain.profile.ProfileReferee;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
@@ -95,6 +97,13 @@ public class ProfileMapper {
         return qualifications.stream()
                 .map(this::getQualificationRepresentation)
                 .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
+                .collect(Collectors.toList());
+    }
+
+    public <T extends ProfileAward<?>> List<ProfileAwardRepresentation> getAwardRepresentations(Set<T> awards) {
+        return awards.stream()
+                .map(this::getAwardRepresentation)
+                .sorted((o1, o2) -> o1.getAwardDate().compareTo(o2.getAwardDate()))
                 .collect(Collectors.toList());
     }
 
@@ -181,6 +190,12 @@ public class ProfileMapper {
         }
 
         return representation;
+    }
+
+    private <T extends ProfileAward<?>> ProfileAwardRepresentation getAwardRepresentation(T award) {
+        Integer awardYear = award.getAwardYear();
+        return new ProfileAwardRepresentation().withId(award.getId()).withName(award.getName()).withDescription(award.getDescription())
+                .withAwardDate(awardYear == null ? null : new LocalDate(awardYear, award.getAwardMonth(), 1));
     }
 
     private <T extends ProfileEmploymentPosition<?>> ProfileEmploymentPositionRepresentation getEmploymentPositionRepresentation(T employmentPosition) {

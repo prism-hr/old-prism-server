@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
-import uk.co.alumeni.prism.domain.application.ApplicationAdvertRelationSection;
-import uk.co.alumeni.prism.domain.user.UserAdvertRelationSection;
+import uk.co.alumeni.prism.domain.application.ApplicationSection;
+import uk.co.alumeni.prism.domain.user.UserSection;
 
 @Repository
 public class ProfileDAO {
@@ -16,7 +16,7 @@ public class ProfileDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> boolean deleteUserProfileSection(Class<T> userProfileSectionClass,
+    public <T extends UserSection, U extends ApplicationSection> boolean deleteUserProfileSection(Class<T> userProfileSectionClass,
             Class<U> applicationSectionClass, Integer applicationSectionId) {
         return sessionFactory.getCurrentSession().createQuery( //
                 "delete " + userProfileSectionClass.getSimpleName() + " " //

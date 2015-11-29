@@ -7,6 +7,7 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
@@ -29,6 +30,8 @@ public class ApplicationRepresentationSimple extends ResourceRepresentationExten
     private ProfileAddressRepresentation address;
 
     private List<ProfileQualificationRepresentation> qualifications;
+
+    private List<ProfileAwardRepresentation> awards;
 
     private List<ProfileEmploymentPositionRepresentation> employmentPositions;
 
@@ -92,6 +95,14 @@ public class ApplicationRepresentationSimple extends ResourceRepresentationExten
 
     public void setQualifications(List<ProfileQualificationRepresentation> qualifications) {
         this.qualifications = qualifications;
+    }
+
+    public List<ProfileAwardRepresentation> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(List<ProfileAwardRepresentation> awards) {
+        this.awards = awards;
     }
 
     public List<ProfileEmploymentPositionRepresentation> getEmploymentPositions() {

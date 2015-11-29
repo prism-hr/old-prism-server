@@ -5,12 +5,14 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_AWARD;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_UPDATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_UPDATE;
@@ -44,6 +46,7 @@ import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationAdditionalInformation;
 import uk.co.alumeni.prism.domain.application.ApplicationAddress;
+import uk.co.alumeni.prism.domain.application.ApplicationAward;
 import uk.co.alumeni.prism.domain.application.ApplicationDocument;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
@@ -55,6 +58,7 @@ import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
 import uk.co.alumeni.prism.domain.profile.ProfileAdvertRelationSection;
+import uk.co.alumeni.prism.domain.profile.ProfileAward;
 import uk.co.alumeni.prism.domain.profile.ProfileDocument;
 import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
@@ -66,6 +70,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAdditionalInformation;
 import uk.co.alumeni.prism.domain.user.UserAddress;
+import uk.co.alumeni.prism.domain.user.UserAward;
 import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
 import uk.co.alumeni.prism.domain.user.UserPersonalDetail;
@@ -78,6 +83,7 @@ import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
@@ -127,6 +133,7 @@ public class ProfileService {
         fillApplicationPersonalDetail(application, userAccount);
         fillApplicationAddress(application, userAccount);
         fillApplicationQualifications(application, userAccount);
+        fillApplicationAwards(application, userAccount);
         fillApplicationEmploymentPositions(application, userAccount);
         fillApplicationReferees(application, userAccount);
         fillApplicationDocument(application, userAccount);
@@ -219,6 +226,48 @@ public class ProfileService {
 
         deleteQualification(application, ApplicationQualification.class, qualificationId);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
+    }
+
+    public UserAward updateAwardUser(Integer awardId, ProfileAwardDTO awardDTO) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
+        UserAward userQualification = updateAward(userAccount, UserAward.class, awardId, awardDTO);
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
+        return userQualification;
+    }
+
+    public ApplicationAward updateAwardApplication(Integer applicationId, Integer awardId, ProfileAwardDTO awardDTO) {
+        Application application = applicationService.getById(applicationId);
+        ApplicationAward award = updateAward(application, ApplicationAward.class, awardId, awardDTO);
+
+        UserAccount userAccount = application.getUser().getUserAccount();
+        profileDAO.deleteUserProfileSection(UserQualification.class, ApplicationQualification.class, awardId);
+        UserAward userAward = entityService.getDuplicateEntity(UserAward.class,
+                new EntitySignature().addProperty("association", userAccount).addProperty("name", award.getName()).addProperty("awardYear",
+                        award.getAwardYear()).addProperty("awardMonth", award.getAwardMonth()));
+
+        userAward = userAward == null ? new UserAward() : userAward;
+        updateAward(userAccount, userAward, awardDTO);
+        userAward.setApplicationAward(award);
+
+        userAccountService.updateUserAccount(userAccount, PROFILE_QUALIFICATION_UPDATE);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_QUALIFICATION);
+        return award;
+    }
+
+    public void deleteAwardUser(Integer awardId) {
+        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
+        deleteAward(userAccount, UserAward.class, awardId);
+        userAccountService.updateUserAccount(userAccount, PROFILE_AWARD_UPDATE);
+    }
+
+    public void deleteAwardApplication(Integer applicationId, Integer awardId) {
+        Application application = applicationService.getById(applicationId);
+        if (profileDAO.deleteUserProfileSection(UserAward.class, ApplicationAward.class, awardId)) {
+            userAccountService.updateUserAccount(userService.getCurrentUser().getUserAccount(), PROFILE_QUALIFICATION_UPDATE);
+        }
+
+        deleteAward(application, ApplicationAward.class, awardId);
+        applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_AWARD);
     }
 
     public UserEmploymentPosition updateEmploymentPositionUser(Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
@@ -397,6 +446,15 @@ public class ProfileService {
         }
     }
 
+    private void fillApplicationAwards(Application application, UserAccount userAccount) {
+        for (UserAward userAward : userAccount.getAwards()) {
+            ApplicationAward applicationAward = new ApplicationAward();
+            application.getAwards().add(applicationAward);
+            applicationAward.setAssociation(application);
+            fillAward(applicationAward, userAward);
+        }
+    }
+
     private void fillQualification(ApplicationQualification applicationQualification, UserQualification userQualification) {
         applicationQualification.setAdvert(userQualification.getAdvert());
         applicationQualification.setStartYear(userQualification.getStartYear());
@@ -407,6 +465,14 @@ public class ProfileService {
         applicationQualification.setCompleted(userQualification.getCompleted());
         applicationQualification.setDocument(documentService.cloneDocument(userQualification.getDocument()));
         applicationQualification.setLastUpdatedTimestamp(new DateTime());
+    }
+
+    private void fillAward(ApplicationAward applicationAward, UserAward userAward) {
+        applicationAward.setName(userAward.getName());
+        applicationAward.setDescription(userAward.getDescription());
+        applicationAward.setAwardYear(userAward.getAwardYear());
+        applicationAward.setAwardMonth(userAward.getAwardMonth());
+        applicationAward.setLastUpdatedTimestamp(new DateTime());
     }
 
     private void fillApplicationEmploymentPositions(Application application, UserAccount userAccount) {
@@ -572,10 +638,58 @@ public class ProfileService {
         }
     }
 
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileAward<T>> U updateAward(
+            T profile, Class<U> awardClass, Integer awardId, ProfileAwardDTO awardDTO) {
+        U award;
+        if (awardId == null) {
+            award = instantiate(awardClass);
+        } else {
+            award = getProfileAward(awardClass, awardId);
+        }
+
+        updateAward(profile, award, awardDTO);
+        return award;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileAward<T>> void updateAward(
+            T profile, U award, ProfileAwardDTO awardDTO) {
+        award.setName(awardDTO.getName());
+        award.setDescription(awardDTO.getDescription());
+
+        LocalDate awardDate = awardDTO.getAwardDate();
+        if (awardDate != null) {
+            award.setAwardYear(awardDate.getYear());
+            award.setAwardMonth(awardDate.getMonthOfYear());
+        }
+
+        if (award.getClass().equals(ApplicationAward.class)) {
+            ((ApplicationAward) award).setLastUpdatedTimestamp(DateTime.now());
+        }
+
+        U duplicateAward = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) award.getClass(),
+                new EntitySignature().addProperty("association", award.getAssociation()).addProperty("name", award.getName()).addProperty("awardYear",
+                        award.getAwardYear()).addProperty("awardMonth", award.getAwardMonth()));
+        if (!(duplicateAward == null || Objects.equal(award.getId(), duplicateAward.getId()))) {
+            entityService.delete(duplicateAward);
+        }
+
+        if (award.getId() == null) {
+            ((Set<U>) profile.getAwards()).add(award);
+        }
+    }
+
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void deleteQualification(
             T profile, Class<U> qualificationClass, Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
         profile.getQualifications().remove(qualification);
+        entityService.flush();
+    }
+
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileAward<T>> void deleteAward(
+            T profile, Class<U> awardClass, Integer awardId) {
+        U award = getProfileAward(awardClass, awardId);
+        profile.getAwards().remove(award);
         entityService.flush();
     }
 
@@ -739,6 +853,10 @@ public class ProfileService {
 
     private <T extends ProfileQualification<?>> T getProfileQualification(Class<T> qualificationClass, Integer qualificationId) {
         return entityService.getById(qualificationClass, qualificationId);
+    }
+
+    private <T extends ProfileAward<?>> T getProfileAward(Class<T> awardClass, Integer awardId) {
+        return entityService.getById(awardClass, awardId);
     }
 
     private <T extends ProfileEmploymentPosition<?>> T getProfileEmploymentPosition(Class<T> employmentPositionClass, Integer employmentPositionId) {

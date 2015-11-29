@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -409,7 +408,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_GENDER_FEMALE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Female"),
     SYSTEM_GENDER_MALE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Male"),
-    SYSTEM_GENDER_INDETERMINATE(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Indeterminate"),
+    SYSTEM_GENDER_UNDISCLOSED(PrismDisplayPropertyCategory.SYSTEM_GENDER, "Prefer not to say"),
 
     /*
      * *************** SYSTEM ETHNICITY *********************
@@ -433,7 +432,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ETHNICITY_BLACK_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Black - Other"), //
     SYSTEM_ETHNICITY_ARAB(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Other - Arab"), //
     SYSTEM_ETHNICITY_OTHER(PrismDisplayPropertyCategory.SYSTEM_ETHNICITY, "Other - any other ethnic group"), //
-    
+
     /*
      * *************** SYSTEM DISABILITY *********************
      */
@@ -446,8 +445,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISABILITY_MULTIPLE(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Multiple Impairments"), //
     SYSTEM_DISABILITY_OTHER(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Other Impairment"), //
     SYSTEM_DISABILITY_UNSEEN(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Unseen Impairment"), //
-    SYSTEM_DISABILITY_VISION(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Visual Impairment"), 
-    
+    SYSTEM_DISABILITY_VISION(PrismDisplayPropertyCategory.SYSTEM_DISABILITY, "Visual Impairment"),
+
     /*
      * *************** SYSTEM DOMICILE *********************
      */
@@ -1040,12 +1039,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),
     SYSTEM_NOTIFICATION_AVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are available to attend"),
     SYSTEM_NOTIFICATION_UNAVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are unavailable to attend"),
-    SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding tasks that require your attention"), 
-    SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "updates to applications, opportunities and organizations that you are following"), 
+    SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding tasks that require your attention"),
+    SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "updates to applications, opportunities and organizations that you are following"),
     SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointments"),
     SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to join organizations that you manage"),
     SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to connect from organizations in your network"),
-    SYSTEM_NOTIFICATION_BUFFERED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We have been sending you lots of these requests today! So that you do not feel spammed, we are going to stop sending new requests like this until tomorrow. In the meantime, you can always log in to see whether you have any new tasks."), 
+    SYSTEM_NOTIFICATION_BUFFERED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We have been sending you lots of these requests today! So that you do not feel spammed, we are going to stop sending new requests like this until tomorrow. In the meantime, you can always log in to see whether you have any new tasks."),
 
     /*
      * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************
@@ -2023,6 +2022,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_PERSONAL_DETAIL_TELEPHONE_HINT(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Your contact telephone number."),
     PROFILE_PERSONAL_DETAIL_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Skype"),
     PROFILE_PERSONAL_DETAIL_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Your Skype address. We may you skype to contact you."),
+
+    PROFILE_PERSONAL_DETAIL_EQUAL_OPPORTUNITIES_HEADER(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Equal Opportunities"),
+    PROFILE_PERSONAL_DETAIL_ETHNICITY_LABEL(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Ethnicity"),
+    PROFILE_PERSONAL_DETAIL_ETHNICITY_HINT(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Please specify your ethnic background. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
+    PROFILE_PERSONAL_DETAIL_DISABILITY_LABEL(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Disability"),
+    PROFILE_PERSONAL_DETAIL_DISABILITY_HINT(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Please let us know if you have a recognised disability. We have to ask you for this to comply with UK equal opportunities legislation. The information that you provide will not be considered during shortlisting and will not affect the outcome of your application."),
 
     PROFILE_ADDRESS_HEADER(PrismDisplayPropertyCategory.PROFILE_ADDRESS, "Address Detail"),
     PROFILE_ADDRESS_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_ADDRESS, "Your current residence and contact address(es)."),

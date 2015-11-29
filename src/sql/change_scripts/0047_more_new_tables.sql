@@ -6,6 +6,7 @@ create table user_award (
     description text not null,
     award_year int(4) not null,
     award_month int(2) not null,
+    last_updated_timestamp DATETIME NULL DEFAULT NULL,
     primary key (id),
     unique index (user_account_id, name, award_year, award_month),
     index (application_award_id),

@@ -47,7 +47,7 @@ import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 @Entity
 @Table(name = "application")
 public class Application extends Resource implements
-        ProfileEntity<ApplicationPersonalDetail, ApplicationAddress, ApplicationQualification, ApplicationEmploymentPosition, ApplicationReferee, ApplicationDocument, ApplicationAdditionalInformation> {
+        ProfileEntity<ApplicationPersonalDetail, ApplicationAddress, ApplicationQualification, ApplicationAward, ApplicationEmploymentPosition, ApplicationReferee, ApplicationDocument, ApplicationAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -119,6 +119,11 @@ public class Application extends Resource implements
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationQualification> qualifications = Sets.newHashSet();
+    
+    @OrderBy(clause = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
+    private Set<ApplicationAward> awards = Sets.newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -361,6 +366,11 @@ public class Application extends Resource implements
     @Override
     public Set<ApplicationQualification> getQualifications() {
         return qualifications;
+    }
+
+    @Override
+    public Set<ApplicationAward> getAwards() {
+        return awards;
     }
 
     @Override

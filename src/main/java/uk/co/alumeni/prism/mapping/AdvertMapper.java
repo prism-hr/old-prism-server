@@ -376,6 +376,10 @@ public class AdvertMapper {
         });
         return newLinkedList(representations);
     }
+    
+    public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(Advert advert) {
+        return getAdvertCategoriesRepresentation(advert).getThemes();
+    }
 
     private AdvertListRepresentation getAdvertExtendedRepresentations(User user, OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();

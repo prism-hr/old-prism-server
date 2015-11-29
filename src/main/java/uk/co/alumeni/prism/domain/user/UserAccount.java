@@ -30,7 +30,8 @@ import uk.co.alumeni.prism.domain.workflow.Scope;
 @Entity
 @Table(name = "user_account")
 public class UserAccount
-        implements Activity, ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
+        implements Activity,
+        ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserAward, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -80,6 +81,11 @@ public class UserAccount
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_account_id", nullable = false)
     private Set<UserQualification> qualifications = Sets.newHashSet();
+
+    @OrderBy(clause = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_account_id", nullable = false)
+    private Set<UserAward> awards = Sets.newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -224,6 +230,11 @@ public class UserAccount
     @Override
     public void setAddress(UserAddress address) {
         this.address = address;
+    }
+
+    @Override
+    public Set<UserAward> getAwards() {
+        return awards;
     }
 
     @Override

@@ -50,7 +50,6 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 
-import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
 import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
@@ -397,12 +396,6 @@ public class AdvertDAO {
                         .add(Restrictions.eq("program.institution", institution)) //
                         .add(Restrictions.eq("institution.id", institution.getId()))) //
                 .add(Restrictions.eq("pay.currencySpecified", currency)) //
-                .list();
-    }
-
-    public List<Competence> searchCompetences(String searchTerm) {
-        return sessionFactory.getCurrentSession().createCriteria(Competence.class)
-                .add(Restrictions.like("name", searchTerm, MatchMode.ANYWHERE))
                 .list();
     }
 

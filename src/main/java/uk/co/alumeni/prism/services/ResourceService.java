@@ -301,6 +301,53 @@ public class ResourceService {
         throw new UnsupportedOperationException("Invalid resource relation creation attempt");
     }
 
+    public ResourceParent createResourceRelation(ResourceRelationDTO resourceRelationDTO, PrismResourceContext context, User childOwner) {
+        Resource resource = systemService.getSystem();
+        User owner = resource.getUser();
+
+        List<ResourceCreationDTO> resourceDTOs = resourceRelationDTO.getResources();
+        PrismScope finalScope = Iterables.getLast(resourceDTOs).getScope();
+        for (ResourceCreationDTO resourceDTO : resourceDTOs) {
+            Integer thisId = resourceDTO.getId();
+            PrismScope thisScope = resourceDTO.getScope();
+
+            Integer lastId = resource.getId();
+            PrismScope lastScope = resource.getResourceScope();
+
+            ResourceParent duplicateResource = null;
+            owner = finalScope.equals(thisScope) ? childOwner : owner;
+            if (thisId == null && thisScope.equals(PROJECT)) {
+                duplicateResource = getActiveResourceByName(resource, thisScope, ((ResourceParentDTO) resourceDTO).getName());
+            }
+
+            resourceDTO.setContext(context);
+            if (thisId == null && duplicateResource == null) {
+                resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
+                if (resource != null) {
+                    resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastId));
+                }
+
+                Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
+                resource = (ResourceParent) createResource(owner, action, resourceDTO, true).getResource();
+            } else {
+                if (thisId != null) {
+                    resource = (ResourceParent) getById(thisScope, thisId);
+                } else if (duplicateResource != null) {
+                    resource = duplicateResource;
+                }
+
+                if (resource.getResourceScope().equals(finalScope)) {
+                    Role role = roleService.getById(PrismRole.valueOf(finalScope.name() + "_ADMINISTRATOR"));
+                    roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(childOwner).withRole(role).withAssignedTimestamp(now()));
+                } else {
+                    owner = resource.getUser();
+                }
+            }
+        }
+
+        return (ResourceParent) resource;
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends Resource> void persistResource(T resource, Comment comment) {
         DateTime baseline = new DateTime();
@@ -1128,53 +1175,6 @@ public class ResourceService {
                 });
             }
         }
-    }
-
-    private ResourceParent createResourceRelation(ResourceRelationDTO resourceRelationDTO, PrismResourceContext context, User childOwner) {
-        Resource resource = systemService.getSystem();
-        User owner = resource.getUser();
-
-        List<ResourceCreationDTO> resourceDTOs = resourceRelationDTO.getResources();
-        PrismScope finalScope = Iterables.getLast(resourceDTOs).getScope();
-        for (ResourceCreationDTO resourceDTO : resourceDTOs) {
-            Integer thisId = resourceDTO.getId();
-            PrismScope thisScope = resourceDTO.getScope();
-
-            Integer lastId = resource.getId();
-            PrismScope lastScope = resource.getResourceScope();
-
-            ResourceParent duplicateResource = null;
-            owner = finalScope.equals(thisScope) ? childOwner : owner;
-            if (thisId == null && thisScope.equals(PROJECT)) {
-                duplicateResource = getActiveResourceByName(resource, thisScope, ((ResourceParentDTO) resourceDTO).getName());
-            }
-
-            resourceDTO.setContext(context);
-            if (thisId == null && duplicateResource == null) {
-                resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
-                if (resource != null) {
-                    resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastId));
-                }
-
-                Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
-                resource = (ResourceParent) createResource(owner, action, resourceDTO, true).getResource();
-            } else {
-                if (thisId != null) {
-                    resource = (ResourceParent) getById(thisScope, thisId);
-                } else if (duplicateResource != null) {
-                    resource = duplicateResource;
-                }
-
-                if (resource.getResourceScope().equals(finalScope)) {
-                    Role role = roleService.getById(PrismRole.valueOf(finalScope.name() + "_ADMINISTRATOR"));
-                    roleService.getOrCreateUserRole(new UserRole().withResource(resource).withUser(childOwner).withRole(role).withAssignedTimestamp(now()));
-                } else {
-                    owner = resource.getUser();
-                }
-            }
-        }
-
-        return (ResourceParent) resource;
     }
 
     private boolean validateResourceRelationCreation(ResourceRelationCreationDTO resourceRelationDTO) {

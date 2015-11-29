@@ -19,7 +19,6 @@ import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
-import uk.co.alumeni.prism.rest.dto.TagDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertClosingDateDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
@@ -64,11 +63,6 @@ public class AdvertController {
     public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody AdvertFinancialDetailDTO financialDetailDTO) {
         advertService.updateFinancialDetails(resourceDescriptor.getResourceScope(), resourceId, financialDetailDTO);
-    }
-
-    @RequestMapping(value = "/themes", method = RequestMethod.PUT)
-    public void updateThemes(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody List<TagDTO> themeDTOs) {
-        advertService.updateThemes(resourceDescriptor.getResourceScope(), resourceId, themeDTOs);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)

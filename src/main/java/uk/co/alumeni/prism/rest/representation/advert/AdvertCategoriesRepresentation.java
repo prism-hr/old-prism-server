@@ -10,6 +10,8 @@ public class AdvertCategoriesRepresentation {
     private List<PrismAdvertIndustry> industries;
 
     private List<PrismAdvertFunction> functions;
+    
+    private List<AdvertThemeRepresentation> themes;
 
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
@@ -27,6 +29,14 @@ public class AdvertCategoriesRepresentation {
         this.functions = functions;
     }
 
+    public List<AdvertThemeRepresentation> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<AdvertThemeRepresentation> themes) {
+        this.themes = themes;
+    }
+
     public AdvertCategoriesRepresentation withIndustries(List<PrismAdvertIndustry> industries) {
         this.industries = industries;
         return this;
@@ -37,4 +47,9 @@ public class AdvertCategoriesRepresentation {
         return this;
     }
 
+    public AdvertCategoriesRepresentation withThemes(List<AdvertThemeRepresentation> themes) {
+        this.themes = themes;
+        return this;
+    }
+    
 }

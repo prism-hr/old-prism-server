@@ -34,8 +34,6 @@ public class AdvertRepresentationSimple {
 
     private List<AdvertClosingDateRepresentation> closingDates;
 
-    private List<AdvertThemeRepresentation> themes;
-
     private AdvertCategoriesRepresentation categories;
 
     private List<AdvertCompetenceRepresentation> competences;
@@ -146,14 +144,6 @@ public class AdvertRepresentationSimple {
 
     public void setClosingDates(List<AdvertClosingDateRepresentation> closingDates) {
         this.closingDates = closingDates;
-    }
-
-    public List<AdvertThemeRepresentation> getThemes() {
-        return themes;
-    }
-
-    public void setThemes(List<AdvertThemeRepresentation> themes) {
-        this.themes = themes;
     }
 
     public AdvertCategoriesRepresentation getCategories() {

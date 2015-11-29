@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 
 @Embeddable
 public class AdvertCategories {
-
+    
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "industry")
     private Set<AdvertIndustry> industries = Sets.newHashSet();
@@ -19,7 +19,11 @@ public class AdvertCategories {
     @OneToMany(mappedBy = "advert")
     @OrderBy(clause = "function")
     private Set<AdvertFunction> functions = Sets.newHashSet();
-
+    
+    @OneToMany(mappedBy = "advert")
+    @OrderBy(clause = "name")
+    private Set<AdvertTheme> themes = Sets.newHashSet();
+    
     public Set<AdvertIndustry> getIndustries() {
         return industries;
     }
@@ -34,6 +38,14 @@ public class AdvertCategories {
 
     public void setFunctions(Set<AdvertFunction> functions) {
         this.functions = functions;
+    }
+
+    public Set<AdvertTheme> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(Set<AdvertTheme> themes) {
+        this.themes = themes;
     }
 
 }

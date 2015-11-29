@@ -118,7 +118,6 @@ import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
-import uk.co.alumeni.prism.rest.dto.TagDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertClosingDateDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
@@ -344,13 +343,6 @@ public class AdvertService {
         updateFinancialDetails(resource.getResourceScope(), resource.getId(), financialDetailDTO);
     }
 
-    public void updateThemes(PrismScope resourceScope, Integer resourceId, List<TagDTO> themeDTOs) {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-        updateThemes(advert, themeDTOs);
-        executeUpdate(resource, "COMMENT_UPDATED_THEME");
-    }
-    
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
@@ -953,28 +945,6 @@ public class AdvertService {
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
     }
-    
-    private void updateThemes(Advert advert, List<TagDTO> themeDTOs) {
-        Set<AdvertTheme> themes = advert.getThemes();
-
-        for (AdvertTheme advertTheme : themes) {
-            Theme theme = advertTheme.getTheme();
-            theme.setAdoptedCount(theme.getAdoptedCount() - 1);
-            entityService.delete(advertTheme);
-        }
-
-        themes.clear();
-        entityService.flush();
-
-        for (TagDTO themeDTO : themeDTOs) {
-            Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
-            AdvertTheme advertTheme = new AdvertTheme();
-            advertTheme.setAdvert(advert);
-            advertTheme.setTheme(theme);
-            advert.getThemes().add(advertTheme);
-            entityService.save(advertTheme);
-        }
-    }
 
     private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
         AdvertCategories categories = advert.getCategories();
@@ -988,21 +958,38 @@ public class AdvertService {
             advertDAO.deleteAdvertAttributes(advert, AdvertFunction.class);
             categories.getFunctions().clear();
 
+            Set<AdvertTheme> themes = categories.getThemes();
+            for (AdvertTheme advertTheme : themes) {
+                Theme theme = advertTheme.getTheme();
+                theme.setAdoptedCount(theme.getAdoptedCount() - 1);
+                entityService.delete(advertTheme);
+            }
+
             entityService.flush();
         }
 
-        Set<AdvertIndustry> subjectAreas = categories.getIndustries();
-        categoriesDTO.getIndustries().stream().forEach(categoryDTO -> {
-            AdvertIndustry category = new AdvertIndustry().withAdvert(advert).withIndustry(categoryDTO);
-            entityService.save(category);
-            subjectAreas.add(category);
+        Set<AdvertIndustry> advertIndustries = categories.getIndustries();
+        categoriesDTO.getIndustries().stream().forEach(industryDTO -> {
+            AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(industryDTO);
+            entityService.save(advertIndustry);
+            advertIndustries.add(advertIndustry);
         });
 
-        Set<AdvertFunction> functions = categories.getFunctions();
-        categoriesDTO.getFunctions().stream().forEach(categoryDTO -> {
-            AdvertFunction category = new AdvertFunction().withAdvert(advert).withFunction(categoryDTO);
-            entityService.save(category);
-            functions.add(category);
+        Set<AdvertFunction> advertFunctions = categories.getFunctions();
+        categoriesDTO.getFunctions().stream().forEach(functionDTO -> {
+            AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(functionDTO);
+            entityService.save(advertFunction);
+            advertFunctions.add(advertFunction);
+        });
+
+        Set<AdvertTheme> advertThemes = categories.getThemes();
+        categoriesDTO.getThemes().stream().forEach(themeDTO -> {
+            Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
+            AdvertTheme advertTheme = new AdvertTheme();
+            advertTheme.setAdvert(advert);
+            advertTheme.setTheme(theme);
+            entityService.save(advertTheme);
+            advertThemes.add(advertTheme);
         });
     }
 

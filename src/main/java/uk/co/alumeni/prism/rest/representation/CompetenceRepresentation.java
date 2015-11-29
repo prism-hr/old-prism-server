@@ -1,28 +1,8 @@
 package uk.co.alumeni.prism.rest.representation;
 
-public class CompetenceRepresentation {
-
-    private Integer id;
-
-    private String name;
+public class CompetenceRepresentation extends TagRepresentation {
 
     private String description;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getDescription() {
         return description;
@@ -33,12 +13,12 @@ public class CompetenceRepresentation {
     }
 
     public CompetenceRepresentation withId(final Integer id) {
-        this.id = id;
+        setId(id);
         return this;
     }
 
     public CompetenceRepresentation withName(final String name) {
-        this.name = name;
+        setName(name);
         return this;
     }
 

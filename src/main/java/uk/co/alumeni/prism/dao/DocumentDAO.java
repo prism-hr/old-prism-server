@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
@@ -10,9 +8,10 @@ import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Resource;
+
+import java.util.List;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -47,6 +46,7 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("userCv.id")) //
                 .add(Restrictions.isNull("portraitImage.id")) //
                 .add(Restrictions.isNull("logoImage.id")) //
+                .add(Restrictions.isNull("logoImageEmail.id")) //
                 .add(Restrictions.isNull("backgroundImage.id")) //
                 .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
                 .list();
@@ -82,6 +82,7 @@ public class DocumentDAO {
                 .createAlias("userCv", "userCv", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("logoImageEmail", "logoImageEmail", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("backgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);
     }
 

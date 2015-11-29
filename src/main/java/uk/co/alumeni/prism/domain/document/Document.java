@@ -1,20 +1,7 @@
 package uk.co.alumeni.prism.domain.document;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationDocument;
@@ -22,12 +9,10 @@ import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserAccount;
-import uk.co.alumeni.prism.domain.user.UserAssignment;
-import uk.co.alumeni.prism.domain.user.UserDocument;
-import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.domain.user.*;
 import uk.co.alumeni.prism.workflow.user.DocumentReassignmentProcessor;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "document")
@@ -87,6 +72,9 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     @OneToOne(mappedBy = "logoImage")
     private Institution logoImage;
+
+    @OneToOne(mappedBy = "logoImageEmail")
+    private Institution logoImageEmail;
 
     @OneToOne(mappedBy = "backgroundImage")
     private Advert backgroundImage;

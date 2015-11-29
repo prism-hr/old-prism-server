@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
@@ -19,6 +20,8 @@ public class UserProfileRepresentation {
     private ProfileAddressRepresentation address;
 
     private List<ProfileQualificationRepresentation> qualifications;
+
+    private List<ProfileAwardRepresentation> awards;
 
     private List<ProfileEmploymentPositionRepresentation> employmentPositions;
 
@@ -54,6 +57,14 @@ public class UserProfileRepresentation {
 
     public void setQualifications(List<ProfileQualificationRepresentation> qualifications) {
         this.qualifications = qualifications;
+    }
+
+    public List<ProfileAwardRepresentation> getAwards() {
+        return awards;
+    }
+
+    public void setAwards(List<ProfileAwardRepresentation> awards) {
+        this.awards = awards;
     }
 
     public List<ProfileEmploymentPositionRepresentation> getEmploymentPositions() {
@@ -119,6 +130,11 @@ public class UserProfileRepresentation {
         return this;
     }
 
+    public UserProfileRepresentation withAwards(List<ProfileAwardRepresentation> awards) {
+        this.awards = awards;
+        return this;
+    }
+
     public UserProfileRepresentation withEmploymentPositions(List<ProfileEmploymentPositionRepresentation> employmentPositions) {
         this.employmentPositions = employmentPositions;
         return this;
@@ -148,6 +164,5 @@ public class UserProfileRepresentation {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }
-
 
 }

@@ -25,7 +25,7 @@ public class ApplicationTheme extends ApplicationSection implements UniqueEntity
 
     @ManyToOne
     @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
-    private Application application;
+    private Application association;
 
     @ManyToOne
     @JoinColumn(name = "theme_id", nullable = false)
@@ -33,25 +33,29 @@ public class ApplicationTheme extends ApplicationSection implements UniqueEntity
 
     @Column(name = "preference", nullable = false)
     private Boolean preference;
-    
+
     @Column(name = "last_updated_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public Application getApplication() {
-        return application;
+    @Override
+    public Application getAssociation() {
+        return association;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    @Override
+    public void setAssociation(Application association) {
+        this.association = association;
     }
 
     public Theme getTheme() {
@@ -80,7 +84,7 @@ public class ApplicationTheme extends ApplicationSection implements UniqueEntity
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("application", application).addProperty("theme", theme);
+        return super.getEntitySignature().addProperty("theme", theme);
     }
 
 }

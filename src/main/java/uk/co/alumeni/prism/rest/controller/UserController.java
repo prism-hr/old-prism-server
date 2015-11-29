@@ -30,6 +30,7 @@ import com.google.common.collect.Maps;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.domain.user.UserAward;
 import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
 import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.domain.user.UserReferee;
@@ -39,6 +40,7 @@ import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
@@ -279,6 +281,25 @@ public class UserController {
     @RequestMapping(value = "/qualifications/{qualificationId}", method = RequestMethod.DELETE)
     public void deleteQualification(@PathVariable Integer qualificationId) {
         profileService.deleteQualificationUser(qualificationId);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/awards", method = RequestMethod.POST)
+    public Map<String, Object> createAward(@Valid @RequestBody ProfileAwardDTO awardDTO) {
+        UserAward award = profileService.updateAwardUser(null, awardDTO);
+        return ImmutableMap.of("id", (Object) award.getId());
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/awards/{awardId}", method = RequestMethod.PUT)
+    public void updateAward(@PathVariable Integer awardId, @Valid @RequestBody ProfileAwardDTO awardDTO) {
+        profileService.updateAwardUser(awardId, awardDTO);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/awards/{awardId}", method = RequestMethod.DELETE)
+    public void deleteAward(@PathVariable Integer awardId) {
+        profileService.deleteAwardUser(awardId);
     }
 
     @PreAuthorize("isAuthenticated()")

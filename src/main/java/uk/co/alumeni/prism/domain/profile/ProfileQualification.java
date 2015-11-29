@@ -2,7 +2,7 @@ package uk.co.alumeni.prism.domain.profile;
 
 import uk.co.alumeni.prism.domain.document.Document;
 
-public interface ProfileQualification<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> extends ProfileAdvertRelationSection<T> {
+public interface ProfileQualification<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> extends ProfileAdvertRelationSection<T> {
 
     Integer getStartYear();
 

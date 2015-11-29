@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.domain.profile;
 
-public interface ProfileEmploymentPosition<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> extends ProfileAdvertRelationSection<T> {
+public interface ProfileEmploymentPosition<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> extends ProfileAdvertRelationSection<T> {
 
     Integer getStartYear();
 

@@ -4,7 +4,7 @@ import java.util.Set;
 
 import uk.co.alumeni.prism.domain.user.User;
 
-public interface ProfileEntity<T extends ProfilePersonalDetail<?>, U extends ProfileAddress<?>, V extends ProfileQualification<?>, W extends ProfileEmploymentPosition<?>, X extends ProfileReferee<?>, Y extends ProfileDocument<?>, Z extends ProfileAdditionalInformation<?>> {
+public interface ProfileEntity<T extends ProfilePersonalDetail<?>, U extends ProfileAddress<?>, V extends ProfileQualification<?>, W extends ProfileAward<?>, X extends ProfileEmploymentPosition<?>, Y extends ProfileReferee<?>, Z extends ProfileDocument<?>, A extends ProfileAdditionalInformation<?>> {
 
     Integer getId();
 
@@ -24,17 +24,19 @@ public interface ProfileEntity<T extends ProfilePersonalDetail<?>, U extends Pro
 
     Set<V> getQualifications();
 
-    Set<W> getEmploymentPositions();
+    Set<W> getAwards();
 
-    Set<X> getReferees();
+    Set<X> getEmploymentPositions();
 
-    Y getDocument();
+    Set<Y> getReferees();
 
-    void setDocument(Y document);
+    Z getDocument();
 
-    Z getAdditionalInformation();
+    void setDocument(Z document);
 
-    void setAdditionalInformation(Z additionalInformation);
+    A getAdditionalInformation();
+
+    void setAdditionalInformation(A additionalInformation);
 
     Boolean getShared();
 

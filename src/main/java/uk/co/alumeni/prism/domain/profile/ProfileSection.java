@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.domain.profile;
 
-public interface ProfileSection<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> {
+public interface ProfileSection<T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> {
 
     Integer getId();
 

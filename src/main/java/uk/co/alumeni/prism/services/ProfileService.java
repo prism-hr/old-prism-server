@@ -470,7 +470,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfilePersonalDetail<T>> U updatePersonalDetail(
             T profile, Class<U> personalDetailClass, ProfilePersonalDetailDTO personalDetailDTO) {
         userService.updateUser(personalDetailDTO.getUser());
         U personalDetail = (U) profile.getPersonalDetail();
@@ -498,7 +498,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileAddress<T>> U updateAddress(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileAddress<T>> U updateAddress(
             T profile, Class<U> addressClass, ProfileAddressDTO addressDTO) {
         U address = (U) profile.getAddress();
         if (address == null) {
@@ -524,7 +524,7 @@ public class ProfileService {
         return address;
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> U updateQualification(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> U updateQualification(
             T profile, Class<U> qualificationClass, Integer qualificationId, ProfileQualificationDTO qualificationDTO) {
         U qualification;
         if (qualificationId == null) {
@@ -538,7 +538,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(
             T profile, U qualification, ProfileQualificationDTO qualificationDTO) {
         createAdvertRelation(profile.getUser(), qualification, qualificationDTO);
 
@@ -572,14 +572,14 @@ public class ProfileService {
         }
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void deleteQualification(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void deleteQualification(
             T profile, Class<U> qualificationClass, Integer qualificationId) {
         U qualification = getProfileQualification(qualificationClass, qualificationId);
         profile.getQualifications().remove(qualification);
         entityService.flush();
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> U updateEmploymentPosition(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> U updateEmploymentPosition(
             T profile, Class<U> employmentPositionClass, Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         U employmentPosition;
         if (employmentPositionId == null) {
@@ -593,7 +593,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(
             T profile, U employmentPosition, ProfileEmploymentPositionDTO employmentPositionDTO) {
         createAdvertRelation(profile.getUser(), employmentPosition, employmentPositionDTO);
 
@@ -624,14 +624,14 @@ public class ProfileService {
         }
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void deleteEmploymentPosition(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void deleteEmploymentPosition(
             T profile, Class<U> employmentPositionClass, Integer employmentPositionId) {
         U employmentPosition = getProfileEmploymentPosition(employmentPositionClass, employmentPositionId);
         profile.getEmploymentPositions().remove(employmentPosition);
         entityService.flush();
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> ProfileRefereeUpdateDTO updateReferee(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> ProfileRefereeUpdateDTO updateReferee(
             T profile, Class<U> refereeClass, Integer refereeId, ProfileRefereeDTO refereeDTO) {
         U referee;
         if (refereeId == null) {
@@ -645,7 +645,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(
+    private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(
             T profile, U referee, ProfileRefereeDTO refereeDTO) {
         List<CommentAssignedUser> refereeAssignments = assignReferee(profile, referee, refereeDTO);
         createAdvertRelation(profile.getUser(), referee, refereeDTO);
@@ -671,7 +671,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileDocument<T>> U updateDocument(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileDocument<T>> U updateDocument(
             T profile, Class<U> documentClass, ProfileDocumentDTO documentDTO) {
         U document = (U) profile.getDocument();
         if (document == null) {
@@ -684,7 +684,7 @@ public class ProfileService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileAdditionalInformation<T>> U updateAdditionalInformation(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileAdditionalInformation<T>> U updateAdditionalInformation(
             T profile, Class<U> additionalInformationClass, ProfileAdditionalInformationDTO additionalInformationDTO) {
         U additionalInformation = (U) profile.getAdditionalInformation();
         if (additionalInformation == null) {
@@ -696,7 +696,7 @@ public class ProfileService {
         return additionalInformation;
     }
 
-    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> U deleteReferee(
+    private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileReferee<T>> U deleteReferee(
             T profile, Class<U> refereeClass, Integer refereeId) {
         U referee = getProfileReferee(refereeClass, refereeId);
         profile.getReferees().remove(referee);
@@ -704,7 +704,7 @@ public class ProfileService {
         return referee;
     }
 
-    private <T extends ProfileReferee<U>, U extends ProfileEntity<?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> assignReferee(
+    private <T extends ProfileReferee<U>, U extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> assignReferee(
             U profile, T referee, ProfileRefereeDTO refereeDTO) {
         User oldUser = referee.getUser();
         UserDTO userDTO = refereeDTO.getResource().getUser();

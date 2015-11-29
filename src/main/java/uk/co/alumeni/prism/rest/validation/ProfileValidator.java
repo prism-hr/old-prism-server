@@ -52,7 +52,7 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
     @Override
     public void validate(Object target, Errors errors, Object... validationHints) {
         super.validate(target, errors, validationHints);
-        ProfileEntity<?, ?, ?, ?, ?, ?, ?> profile = (ProfileEntity<?, ?, ?, ?, ?, ?, ?>) target;
+        ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?> profile = (ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>) target;
 
         if (profile.getClass().equals(Application.class)) {
             ValidationUtils.rejectIfEmpty(errors, "programDetail", "notNull");
@@ -116,12 +116,12 @@ public class ProfileValidator extends LocalValidatorFactoryBean implements Valid
         }
     }
 
-    private void validateRangeConstraint(ProfileEntity<?, ?, ?, ?, ?, ?, ?> profile, String property, PrismWorkflowConstraint constraint, Errors errors) {
+    private void validateRangeConstraint(ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?> profile, String property, PrismWorkflowConstraint constraint, Errors errors) {
         Collection<?> properties = (Collection<?>) PrismReflectionUtils.getProperty(profile, property);
         validateRangeConstraint(constraint, property, properties.size(), errors);
     }
 
-    private void validateDocumentConstraint(ProfileEntity<?, ?, ?, ?, ?, ?, ?> profile, String propertyDocument, PrismWorkflowConstraint constraint, Errors errors) {
+    private void validateDocumentConstraint(ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?> profile, String propertyDocument, PrismWorkflowConstraint constraint, Errors errors) {
         ProfileDocument<?> documents = profile.getDocument();
         Document document = documents == null ? null : (Document) getProperty(documents, propertyDocument);
         validateRequiredConstraint(document, "document", propertyDocument, constraint, errors);

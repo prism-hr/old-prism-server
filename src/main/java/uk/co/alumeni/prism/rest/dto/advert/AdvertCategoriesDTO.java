@@ -5,6 +5,7 @@ import java.util.List;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 
 public class AdvertCategoriesDTO {
 
@@ -13,6 +14,8 @@ public class AdvertCategoriesDTO {
     private List<PrismAdvertFunction> functions;
 
     private List<TagDTO> themes;
+
+    private List<ResourceRelationDTO> locations;
 
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
@@ -36,6 +39,14 @@ public class AdvertCategoriesDTO {
 
     public void setThemes(List<TagDTO> themes) {
         this.themes = themes;
+    }
+
+    public List<ResourceRelationDTO> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<ResourceRelationDTO> locations) {
+        this.locations = locations;
     }
 
 }

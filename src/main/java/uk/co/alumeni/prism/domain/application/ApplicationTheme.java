@@ -24,7 +24,7 @@ public class ApplicationTheme extends ApplicationSection implements UniqueEntity
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false)
+    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
     private Application application;
 
     @ManyToOne

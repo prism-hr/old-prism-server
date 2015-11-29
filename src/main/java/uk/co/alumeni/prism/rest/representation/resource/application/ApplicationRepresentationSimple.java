@@ -22,6 +22,8 @@ public class ApplicationRepresentationSimple extends ResourceRepresentationExten
 
     private ApplicationProgramDetailRepresentation programDetail;
 
+    private List<ApplicationThemeRepresentation> themes;
+
     private ProfilePersonalDetailRepresentation personalDetail;
 
     private ProfileAddressRepresentation address;
@@ -62,6 +64,14 @@ public class ApplicationRepresentationSimple extends ResourceRepresentationExten
 
     public ProfilePersonalDetailRepresentation getPersonalDetail() {
         return personalDetail;
+    }
+
+    public List<ApplicationThemeRepresentation> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<ApplicationThemeRepresentation> themes) {
+        this.themes = themes;
     }
 
     public void setPersonalDetail(ProfilePersonalDetailRepresentation personalDetail) {

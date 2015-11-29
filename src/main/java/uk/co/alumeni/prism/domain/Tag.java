@@ -14,8 +14,6 @@ public abstract class Tag implements UniqueEntity {
 
     public abstract void setName(String name);
 
-    public abstract String getDescription();
-
     public abstract Integer getAdoptedCount();
 
     public abstract void setAdoptedCount(Integer adoptedCount);
@@ -27,8 +25,6 @@ public abstract class Tag implements UniqueEntity {
     public abstract DateTime getUpdatedTimestamp();
 
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
-
-    public abstract void setDescription(String description);
 
     @Override
     public int hashCode() {

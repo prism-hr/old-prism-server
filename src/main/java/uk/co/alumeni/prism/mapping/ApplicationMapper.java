@@ -60,6 +60,7 @@ import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationR
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
@@ -188,6 +189,7 @@ public class ApplicationMapper {
         boolean viewEqualOpportunities = applicationService.isCanViewEqualOpportunities(application, userService.getCurrentUser());
 
         representation.setProgramDetail(getApplicationProgramDetailRepresentation(application));
+        representation.setThemes(getApplicationThemeRepresentations(application));
         representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
         representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications()));
@@ -205,6 +207,14 @@ public class ApplicationMapper {
                     .withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
         }
         return null;
+    }
+
+    private List<ApplicationThemeRepresentation> getApplicationThemeRepresentations(Application application) {
+        List<ApplicationThemeRepresentation> representations = Lists.newLinkedList();
+        application.getThemes().forEach(applicationTheme -> representations
+                .add(new ApplicationThemeRepresentation().withId(applicationTheme.getId()).withName(applicationTheme.getTheme().getName())
+                        .withPreference(applicationTheme.getPreference())));
+        return representations;
     }
 
     private List<ProfileRefereeRepresentation> getApplicationRefereeRepresentations(Set<ApplicationReferee> referees, List<PrismRole> overridingRoles) {

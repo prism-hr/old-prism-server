@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.co.alumeni.prism.mapping.TagMapper;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.representation.CompetenceRepresentation;
+import uk.co.alumeni.prism.rest.representation.TagRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
 
 @RestController
@@ -29,6 +31,9 @@ public class TargetingController {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private TagMapper tagMapper;
 
     @RequestMapping(value = "/targets", method = POST)
     public void createTarget(@RequestBody ResourceConnectionInvitationDTO resourceConnection) {
@@ -52,9 +57,14 @@ public class TargetingController {
         }
     }
 
+    @RequestMapping(value = "/themes", method = GET)
+    public List<TagRepresentation> searchThemes(@RequestParam String q) {
+        return tagMapper.getThemes(q);
+    }
+
     @RequestMapping(value = "/competences", method = GET)
     public List<CompetenceRepresentation> searchCompetences(@RequestParam String q) {
-        return advertService.getCompetences(q);
+        return tagMapper.getCompetences(q);
     }
 
 }

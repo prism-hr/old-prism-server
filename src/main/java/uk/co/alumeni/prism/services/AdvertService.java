@@ -85,6 +85,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertCompetence;
 import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
 import uk.co.alumeni.prism.domain.advert.AdvertFunction;
 import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
+import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
@@ -130,8 +131,8 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
-import uk.co.alumeni.prism.rest.representation.CompetenceRepresentation;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 @Service
@@ -602,12 +603,6 @@ public class AdvertService {
         return backgroundImage.getId();
     }
 
-    public List<CompetenceRepresentation> getCompetences(String searchTerm) {
-        return advertDAO.searchCompetences(searchTerm).stream()
-                .map(competence -> new CompetenceRepresentation().withId(competence.getId()).withName(competence.getName()).withDescription(competence.getDescription()))
-                .collect(toList());
-    }
-
     public Map<Integer, Integer> getCompetenceImportances(Advert advert) {
         Map<Integer, Integer> importances = Maps.newHashMap();
         advert.getCompetences().forEach(c -> {
@@ -965,6 +960,9 @@ public class AdvertService {
                 entityService.delete(advertTheme);
             }
 
+            advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
+            categories.getLocations().clear();
+
             entityService.flush();
         }
 
@@ -991,6 +989,18 @@ public class AdvertService {
             entityService.save(advertTheme);
             advertThemes.add(advertTheme);
         });
+
+        Set<AdvertLocation> advertLocations = categories.getLocations();
+        List<ResourceRelationDTO> locationDTOs = categoriesDTO.getLocations();
+        if (CollectionUtils.isNotEmpty(locationDTOs)) {
+            Resource resource = advert.getResource();
+            PrismResourceContext context = PrismScope.getResourceContexts(resource.getOpportunityCategories()).iterator().next();
+            User user = resource.getUser();
+            locationDTOs.forEach(locationDTO -> {
+                ResourceParent locationResource = resourceService.createResourceRelation(locationDTO, context, user);
+                advertLocations.add(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationResource.getAdvert()));
+            });
+        }
     }
 
     public boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {

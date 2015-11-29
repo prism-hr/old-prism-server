@@ -27,7 +27,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     private Integer id;
 
     @OneToOne(mappedBy = "programDetail")
-    private Application application;
+    private Application association;
 
     @ManyToOne
     @JoinColumn(name = "opportunity_type_id")
@@ -45,20 +45,24 @@ public class ApplicationProgramDetail extends ApplicationSection {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdatedTimestamp;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public Application getApplication() {
-        return application;
+    @Override
+    public Application getAssociation() {
+        return association;
     }
 
-    public void setApplication(Application application) {
-        this.application = application;
+    @Override
+    public void setAssociation(Application association) {
+        this.association = association;
     }
 
     public OpportunityType getOpportunityType() {
@@ -116,7 +120,7 @@ public class ApplicationProgramDetail extends ApplicationSection {
     }
 
     public ApplicationProgramDetail withApplication(Application application) {
-        this.application = application;
+        this.association = application;
         return this;
     }
 

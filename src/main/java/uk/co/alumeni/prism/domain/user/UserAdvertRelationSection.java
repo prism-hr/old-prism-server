@@ -1,16 +1,9 @@
 package uk.co.alumeni.prism.domain.user;
 
-import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.profile.ProfileAdvertRelationSection;
 
-public abstract class UserAdvertRelationSection implements ProfileAdvertRelationSection<UserAccount>, UniqueEntity {
-
-    @Override
-    public abstract UserAccount getAssociation();
-
-    @Override
-    public abstract void setAssociation(UserAccount association);
+public abstract class UserAdvertRelationSection extends UserSection implements ProfileAdvertRelationSection<UserAccount> {
 
     @Override
     public abstract User getUser();
@@ -26,7 +19,7 @@ public abstract class UserAdvertRelationSection implements ProfileAdvertRelation
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("association", getAssociation()).addProperty("advert", getAdvert());
+        return super.getEntitySignature().addProperty("advert", getAdvert());
     }
 
 }

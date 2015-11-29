@@ -317,7 +317,7 @@ public class ApplicationService {
             applicationTheme = getApplicationThemeById(applicationThemeId);
         }
 
-        duplicateApplicationTheme.setApplication(application);
+        duplicateApplicationTheme.setAssociation(application);
         duplicateApplicationTheme.setTheme(theme);
         duplicateApplicationTheme.setPreference(preference);
         duplicateApplicationTheme.setLastUpdatedTimestamp(DateTime.now());

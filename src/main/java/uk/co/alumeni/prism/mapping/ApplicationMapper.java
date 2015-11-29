@@ -193,6 +193,7 @@ public class ApplicationMapper {
         representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
         representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications()));
+        representation.setAwards(profileMapper.getAwardRepresentations(application.getAwards()));
         representation.setEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions()));
         representation.setReferees(getApplicationRefereeRepresentations(application.getReferees(), overridingRoles));
         representation.setDocument(profileMapper.getDocumentRepresentation(application.getDocument()));

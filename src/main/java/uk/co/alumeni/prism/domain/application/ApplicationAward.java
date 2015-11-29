@@ -12,11 +12,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.profile.ProfileAward;
 
 @Entity
 @Table(name = "application_award", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "name", "award_year", "award_month" }) })
-public class ApplicationAward extends ApplicationSection implements ProfileAward<Application> {
+public class ApplicationAward extends ApplicationSection implements ProfileAward<Application>, UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -110,6 +111,11 @@ public class ApplicationAward extends ApplicationSection implements ProfileAward
     @Override
     public void setLastUpdatedTimestamp(DateTime lastUpdatedTimestamp) {
         this.lastUpdatedTimestamp = lastUpdatedTimestamp;
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return super.getEntitySignature().addProperty("name", name).addProperty("awardYear", awardYear).addProperty("awardMonth", awardMonth);
     }
 
 }

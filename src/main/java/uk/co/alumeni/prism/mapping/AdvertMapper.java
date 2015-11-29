@@ -54,6 +54,7 @@ import com.google.common.collect.TreeMultimap;
 
 import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -289,7 +290,6 @@ public class AdvertMapper {
         representation.setClosingDate(getAdvertClosingDateRepresentation(advert));
         representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
 
-        representation.setThemes(getAdvertThemeRepresentations(advert));
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setExternalConditions(actionService.getExternalConditions(advert.getResource()));
@@ -522,18 +522,21 @@ public class AdvertMapper {
         return advert.getClosingDates().stream().map(this::getAdvertClosingDateRepresentation).collect(Collectors.toList());
     }
 
-    public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(Advert advert) {
-        return advert.getThemes().stream()
-                .map(theme -> new AdvertThemeRepresentation().withThemeId(theme.getTheme().getId())
-                        .withName(theme.getTheme().getName()))
-                .collect(toList());
-    }
-
     private AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
         AdvertCategories categories = advertService.getAdvertCategories(advert);
-        List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
-        List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
-        return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions);
+        if (categories != null) {
+            List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
+            List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
+
+            List<AdvertThemeRepresentation> themes = Lists.newLinkedList();
+            categories.getThemes().forEach(advertTheme -> {
+                Theme theme = advertTheme.getTheme();
+                themes.add(new AdvertThemeRepresentation().withThemeId(theme.getId()).withName(theme.getName()));
+            });
+
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes);
+        }
+        return null;
     }
 
     public List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Advert advert) {

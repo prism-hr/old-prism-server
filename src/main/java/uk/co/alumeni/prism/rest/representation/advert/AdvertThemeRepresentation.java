@@ -6,8 +6,6 @@ public class AdvertThemeRepresentation {
 
     private String name;
 
-    private String description;
-
     public Integer getThemeId() {
         return themeId;
     }
@@ -24,14 +22,6 @@ public class AdvertThemeRepresentation {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public AdvertThemeRepresentation withThemeId(Integer themeId) {
         this.themeId = themeId;
         return this;
@@ -39,11 +29,6 @@ public class AdvertThemeRepresentation {
 
     public AdvertThemeRepresentation withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public AdvertThemeRepresentation withDescription(String description) {
-        this.description = description;
         return this;
     }
 

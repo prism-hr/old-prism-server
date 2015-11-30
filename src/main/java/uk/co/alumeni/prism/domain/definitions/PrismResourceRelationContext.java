@@ -1,13 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 import java.util.LinkedList;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.*;
 
 public enum PrismResourceRelationContext {
 
@@ -46,7 +43,12 @@ public enum PrismResourceRelationContext {
                     .withScope(PrismScope.INSTITUTION, true, false, false))
             .withScopeCreationFamily(new PrismResourceRelation()
                     .withScope(PrismScope.INSTITUTION, true, false, false)
-                    .withScope(PrismScope.DEPARTMENT, true, false, false)));
+                    .withScope(PrismScope.DEPARTMENT, true, false, false))),
+    APPLICATION_LOCATION(null, new PrismResourceRelationGroup()
+            .withScopeCreationFamily(new PrismResourceRelation()
+                    .withScope(PrismScope.INSTITUTION, true, false, false)
+                    .withScope(PrismScope.DEPARTMENT, true, false, false)
+                    .withScope(PrismScope.PROGRAM, true, false, false, STUDY)));
 
     private PrismResourceContext context;
 

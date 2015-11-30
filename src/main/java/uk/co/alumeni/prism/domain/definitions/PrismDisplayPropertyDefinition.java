@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -766,7 +765,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_PROPERTY_INSTITUTION_USER(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Role Holder"),
     SYSTEM_FILTER_PROPERTY_THEME(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Theme"),
     SYSTEM_FILTER_PROPERTY_LOCATION(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Location"),
-    
+
     /*
      * *************** SYSTEM FILTER EXPRESSION *********************
      */
@@ -1142,8 +1141,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MAX(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at most {1}."),
     SYSTEM_VALIDATION_MINLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
-    SYSTEM_VALIDATION_ARRAY_MINLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least {1} element(s)."),
-    SYSTEM_VALIDATION_ARRAY_MAXLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at most {1} element(s)."),
+    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least {1} element(s)."),
+    SYSTEM_VALIDATION_MAX_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at most {1} element(s)."),
     SYSTEM_VALIDATION_PATTERN(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_URL(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be a valid URL."),
     SYSTEM_VALIDATION_TA_MAX_TEXT(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field is too long."),
@@ -1762,6 +1761,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Division"),
     SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Specify the relevant division with the organization"),
     SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Organization"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Specify the relevant organization"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Division"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Specify the relevant division with the organization"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_PROGRAM_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Program"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_PROGRAM_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your program"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_PROGRAM_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. MSci Chemistry"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Qualification Type"),
+    SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your qualification"),
     SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
     SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
 
@@ -2020,8 +2029,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PROGRAM_DETAIL_LOCATIONS_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Locations"),
     APPLICATION_PROGRAM_DETAIL_PRIMARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Preferred Location"),
     APPLICATION_PROGRAM_DETAIL_PRIMARY_LOCATION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify your preferred primary location"),
-    APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Themes"),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Location"),
     APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify any alternate locations that you wish to be considered for, should we not able to allocate you to your preferred location"),
+    APPLICATION_PROGRAM_DETAIL_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Study Application ID"),
+    APPLICATION_PROGRAM_DETAIL_DESCRIPTION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please enter the ID of your study application"),
+    APPLICATION_PROGRAM_DETAIL_DESCRIPTION_DATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Study Start Date"),
+    APPLICATION_PROGRAM_DETAIL_DESCRIPTION_DATE_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please enter your study start date (past or present)"),
 
     PROFILE_PERSONAL_DETAIL_HEADER(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Personal Details"),
     PROFILE_PERSONAL_DETAIL_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "This section allows you to provide details about yourself."),

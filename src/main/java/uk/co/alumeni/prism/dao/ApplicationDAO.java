@@ -292,7 +292,7 @@ public class ApplicationDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + applicationTagClass.getSimpleName() + " " //
                         + "set preference = 0 " //
-                        + "where application.id = :application " //
+                        + "where association = :application " //
                         + "and tag != :tag") //
                 .setParameter("application", application) //
                 .setParameter("tag", tag) //

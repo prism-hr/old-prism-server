@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -14,7 +15,8 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
         stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter()); //
 
         stateActions.add(PrismApplicationReview.applicationCompleteReview(state) //
-                .withRaisesUrgentFlag()); //
+                .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST)); //
 
         stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter()); //
 

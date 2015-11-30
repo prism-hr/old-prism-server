@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -12,7 +14,8 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
         stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter()); //
 
         stateActions.add(PrismApplicationApproval.applicationCompleteApproval(state) //
-                .withRaisesUrgentFlag()); //
+                .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST)); //
 
         stateActions.add(PrismApplicationApproval.applicationProvideHiringManagerApproval() //
                 .withStateTransitions(new PrismStateTransition() //

@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 public enum PrismWorkflowConstraint {
 
     APPLICATION_QUALIFICATION(1, 10),
+    APPLICATION_AWARD(1, 10),
     APPLICATION_EMPLOYMENT_POSITION(0, 10),
     APPLICATION_REFEREE_ASSIGNMENT(2, 3),
     APPLICATION_DOCUMENT_CV(1, 1),

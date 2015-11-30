@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-public class ApplicationThemeRepresentation {
+import org.joda.time.DateTime;
+
+public class ApplicationThemeRepresentation extends ApplicationSectionRepresentation {
 
     Integer id;
 
@@ -31,12 +33,12 @@ public class ApplicationThemeRepresentation {
     public void setPreference(Boolean preference) {
         this.preference = preference;
     }
-    
+
     public ApplicationThemeRepresentation withId(Integer id) {
         this.id = id;
         return this;
     }
-    
+
     public ApplicationThemeRepresentation withName(String name) {
         this.name = name;
         return this;
@@ -46,5 +48,10 @@ public class ApplicationThemeRepresentation {
         this.preference = preference;
         return this;
     }
-    
+
+    public ApplicationThemeRepresentation withLastUpdateTimestamp(DateTime lastUpdatedTimestamp) {
+        setLastUpdatedTimestamp(lastUpdatedTimestamp);
+        return this;
+    }
+
 }

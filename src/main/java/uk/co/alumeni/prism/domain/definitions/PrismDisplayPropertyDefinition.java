@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
+import java.util.List;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import java.util.List;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -2214,7 +2215,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_COMMENT_DIRECTIONS(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Directions"),
     APPLICATION_COMMENT_DIRECTIONS_NOT_PROVIDED(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "No directions provided. Please contact the interviewer for further information"),
     APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Updated the application details section"),
-    APPLICATION_COMMENT_UPDATED_THEME(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Updated the application theme section"),
     APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Updated the personal detail section"),
     APPLICATION_COMMENT_UPDATED_ADDRESS(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Updated the address section"),
     APPLICATION_COMMENT_UPDATED_QUALIFICATION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Updated the qualification section"),

@@ -12,12 +12,12 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.advert.Advert;
 
 @Entity
-@Table(name = "application_theme", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "theme_id" }) })
-public class ApplicationTheme extends ApplicationTagSection<Theme> implements UniqueEntity {
+@Table(name = "application_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "location_advert_id" }) })
+public class ApplicationLocation extends ApplicationTagSection<Advert> implements UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -28,8 +28,11 @@ public class ApplicationTheme extends ApplicationTagSection<Theme> implements Un
     private Application association;
 
     @ManyToOne
-    @JoinColumn(name = "theme_id", nullable = false)
-    private Theme tag;
+    @JoinColumn(name = "location_advert_id", nullable = false)
+    private Advert tag;
+
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "preference", nullable = false)
     private Boolean preference;
@@ -59,13 +62,21 @@ public class ApplicationTheme extends ApplicationTagSection<Theme> implements Un
     }
 
     @Override
-    public Theme getTag() {
+    public Advert getTag() {
         return tag;
     }
 
     @Override
-    public void setTag(Theme tag) {
+    public void setTag(Advert tag) {
         this.tag = tag;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Boolean getPreference() {

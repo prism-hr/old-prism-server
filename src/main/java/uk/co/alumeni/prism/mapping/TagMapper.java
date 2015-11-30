@@ -5,10 +5,13 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.rest.representation.CompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.TagRepresentation;
 import uk.co.alumeni.prism.services.TagService;
 
+@Component
 public class TagMapper {
 
     @Inject

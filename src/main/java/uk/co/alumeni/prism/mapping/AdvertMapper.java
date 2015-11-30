@@ -107,6 +107,7 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
@@ -376,7 +377,7 @@ public class AdvertMapper {
         });
         return newLinkedList(representations);
     }
-    
+
     public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(Advert advert) {
         return getAdvertCategoriesRepresentation(advert).getThemes();
     }
@@ -538,7 +539,10 @@ public class AdvertMapper {
                 themes.add(new AdvertThemeRepresentation().withThemeId(theme.getId()).withName(theme.getName()));
             });
 
-            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes);
+            List<ResourceRepresentationRelation> locations = categories.getLocations().stream()
+                    .map(al -> resourceMapper.getResourceRepresentationRelation(al.getLocationAdvert().getResource())).collect(Collectors.toList());
+
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
         }
         return null;
     }

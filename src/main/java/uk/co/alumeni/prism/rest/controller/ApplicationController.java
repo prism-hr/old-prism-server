@@ -21,11 +21,9 @@ import uk.co.alumeni.prism.domain.application.ApplicationAward;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.mapping.ApplicationMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationProgramDetailDTO;
-import uk.co.alumeni.prism.rest.dto.application.ApplicationThemeDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
@@ -66,23 +64,6 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/programDetail", method = RequestMethod.PUT)
     public void saveProgramDetail(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationProgramDetailDTO programDetailDTO) {
         applicationService.updateProgramDetail(applicationId, programDetailDTO);
-    }
-
-    @RequestMapping(value = "/{applicationId}/themes", method = RequestMethod.POST)
-    public Map<String, Object> createTheme(@PathVariable Integer applicationId, @Valid @RequestBody ApplicationThemeDTO themeDTO) {
-        ApplicationTheme theme = applicationService.updateTheme(applicationId, null, themeDTO);
-        return ImmutableMap.of("id", (Object) theme.getId());
-    }
-
-    @RequestMapping(value = "/{applicationId}/themes/{applicationThemeId}", method = RequestMethod.PUT)
-    public Map<String, Object> updateTheme(@PathVariable Integer applicationId, @PathVariable Integer applicationThemeId, @Valid @RequestBody ApplicationThemeDTO themeDTO) {
-        ApplicationTheme theme = applicationService.updateTheme(applicationId, applicationThemeId, themeDTO);
-        return ImmutableMap.of("id", (Object) theme.getId());
-    }
-
-    @RequestMapping(value = "/{applicationId}/themes/{applicationThemeId}", method = RequestMethod.DELETE)
-    public void deleteTheme(@PathVariable Integer applicationId, @PathVariable Integer applicationThemeId) {
-        applicationService.deleteTheme(applicationId, applicationThemeId);
     }
 
     @RequestMapping(value = "/{applicationId}/personalDetail", method = RequestMethod.PUT)

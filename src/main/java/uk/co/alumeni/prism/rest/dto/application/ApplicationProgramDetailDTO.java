@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.rest.dto.application;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.LocalDate;
@@ -19,6 +21,10 @@ public class ApplicationProgramDetailDTO {
 
     @NotNull
     private LocalDate startDate;
+
+    private List<ApplicationThemeDTO> themes;
+
+    private List<ApplicationLocationDTO> locations;
 
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
@@ -50,6 +56,22 @@ public class ApplicationProgramDetailDTO {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public List<ApplicationThemeDTO> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<ApplicationThemeDTO> themes) {
+        this.themes = themes;
+    }
+
+    public List<ApplicationLocationDTO> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<ApplicationLocationDTO> locations) {
+        this.locations = locations;
     }
 
 }

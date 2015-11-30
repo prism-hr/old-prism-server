@@ -34,12 +34,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
-import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
+import uk.co.alumeni.prism.domain.application.ApplicationTagSection;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
@@ -284,22 +285,22 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public void togglePrimaryApplicationTheme(Application application, Theme primaryTheme) {
+    public <T extends ApplicationTagSection<U>, U extends UniqueEntity> void togglePrimaryApplicationTag(Class<T> tagClass, Application application, U tag) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update ApplicationTheme " //
+                "update " + tagClass.getSimpleName() + " " //
                         + "set preference = 0 " //
                         + "where application.id = :application " //
-                        + "and theme.id != :primaryTheme") //
+                        + "and tag != :tag") //
                 .setParameter("application", application) //
-                .setParameter("primaryTheme", primaryTheme) //
+                .setParameter("tag", tag) //
                 .executeUpdate();
     }
 
-    public void deleteApplicationTheme(Integer applicationThemeId) {
+    public <T extends ApplicationTagSection<?>> void deleteApplicationTag(Class<T> tagClass, Integer tagId) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete ApplicationTheme " //
-                        + "where id = :applicationThemeId") //
-                .setParameter("applicationThemeId", applicationThemeId) //
+                "delete " + tagClass.getSimpleName() + " " //
+                        + "where id = :tagId") //
+                .setParameter("tagId", tagId) //
                 .executeUpdate();
     }
 

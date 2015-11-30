@@ -9,13 +9,13 @@ import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_THEME;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
@@ -44,11 +44,12 @@ import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
 import com.google.visualization.datasource.datatable.TableRow;
 
-import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.dao.ApplicationDAO;
 import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.application.ApplicationLocation;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.application.ApplicationSection;
@@ -72,9 +73,12 @@ import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
 import uk.co.alumeni.prism.dto.ApplicationReportListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.rest.dto.application.ApplicationLocationDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationProgramDetailDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationThemeDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.validation.ProfileValidator;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
@@ -133,6 +137,10 @@ public class ApplicationService {
 
     public ApplicationTheme getApplicationThemeById(Integer id) {
         return entityService.getById(ApplicationTheme.class, id);
+    }
+
+    public ApplicationLocation getApplicationLocationById(Integer id) {
+        return entityService.getById(ApplicationLocation.class, id);
     }
 
     public Application getByCode(String code) {
@@ -293,47 +301,22 @@ public class ApplicationService {
 
         programDetail.setStudyOption(programDetailDTO.getStudyOption());
         programDetail.setStartDate(programDetailDTO.getStartDate());
-        programDetail.setLastUpdatedTimestamp(DateTime.now());
 
+        application.getThemes().clear();
+        application.getLocations().clear();
+        entityService.flush();
+
+        programDetailDTO.getThemes().forEach(themeDTO -> {
+            getOrCreateTheme(application, themeDTO);
+        });
+
+        programDetailDTO.getLocations().forEach(locationDTO -> {
+            getOrCreateLocation(application, locationDTO);
+        });
+
+        programDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setProgramDetail(programDetail);
         executeUpdate(application, APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL);
-    }
-
-    public ApplicationTheme updateTheme(Integer applicationId, Integer applicationThemeId, ApplicationThemeDTO themeDTO) {
-        Application application = getById(applicationId);
-        Theme theme = tagService.getById(Theme.class, themeDTO.getThemeId());
-        boolean preference = BooleanUtils.isTrue(themeDTO.getPreference());
-
-        ApplicationTheme duplicateApplicationTheme = entityService.getDuplicateEntity(ApplicationTheme.class,
-                new EntitySignature().addProperty("application", application).addProperty("theme", theme));
-        if (!(duplicateApplicationTheme == null || Objects.equal(applicationThemeId, duplicateApplicationTheme.getId()))) {
-            entityService.delete(duplicateApplicationTheme);
-        }
-
-        ApplicationTheme applicationTheme;
-        if (applicationThemeId == null) {
-            applicationTheme = new ApplicationTheme();
-        } else {
-            applicationTheme = getApplicationThemeById(applicationThemeId);
-        }
-
-        duplicateApplicationTheme.setAssociation(application);
-        duplicateApplicationTheme.setTheme(theme);
-        duplicateApplicationTheme.setPreference(preference);
-        duplicateApplicationTheme.setLastUpdatedTimestamp(DateTime.now());
-
-        if (preference) {
-            applicationDAO.togglePrimaryApplicationTheme(application, theme);
-        }
-
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_THEME);
-        return applicationTheme;
-    }
-
-    public void deleteTheme(Integer applicationId, Integer applicationThemeId) {
-        Application application = getById(applicationId);
-        applicationDAO.deleteApplicationTheme(applicationThemeId);
-        executeUpdate(application, APPLICATION_COMMENT_UPDATED_THEME);
     }
 
     public void executeUpdate(Application application, PrismDisplayPropertyDefinition message, CommentAssignedUser... assignees) {
@@ -371,6 +354,65 @@ public class ApplicationService {
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(opportunityType.getOpportunityCategory().name());
+    }
+
+    private ApplicationTheme getOrCreateTheme(Application application, ApplicationThemeDTO themeDTO) {
+        Theme theme = tagService.getById(Theme.class, themeDTO.getThemeId());
+        boolean preference = BooleanUtils.isTrue(themeDTO.getPreference());
+
+        ApplicationTheme duplicateApplicationTheme = entityService.getDuplicateEntity(ApplicationTheme.class,
+                new EntitySignature().addProperty("application", application).addProperty("theme", theme));
+        if (duplicateApplicationTheme == null) {
+            ApplicationTheme applicationTheme = new ApplicationTheme();
+            applicationTheme.setAssociation(application);
+            applicationTheme.setTag(theme);
+            applicationTheme.setPreference(preference);
+            applicationTheme.setLastUpdatedTimestamp(DateTime.now());
+
+            if (preference) {
+                applicationDAO.togglePrimaryApplicationTag(ApplicationTheme.class, application, theme);
+            }
+
+            return applicationTheme;
+        }
+
+        return duplicateApplicationTheme;
+    }
+
+    private ApplicationLocation getOrCreateLocation(Application application, ApplicationLocationDTO locationDTO) {
+        Integer organizationId = null;
+        PrismScope organizationScope = null;
+        ResourceRelationDTO resourceRelation = locationDTO.getResource();
+        for (ResourceCreationDTO organization : resourceRelation.getOrganizations()) {
+            organizationId = organization.getId();
+            if (organizationId == null) {
+                break;
+            }
+            organizationScope = organization.getScope();
+        }
+        ResourceParent organization = (ResourceParent) resourceService.getById(organizationScope, organizationId);
+        Advert locationAdvert = resourceService.createResourceRelation(resourceRelation, PrismScope.getResourceContexts(organization.getOpportunityCategories()).iterator().next(),
+                resourceRelation.getResource().getScope().getScopeCategory().equals(OPPORTUNITY) ? userService.getCurrentUser() : organization.getUser()).getAdvert();
+        boolean preference = BooleanUtils.isTrue(locationDTO.getPreference());
+
+        ApplicationLocation duplicateApplicationLocation = entityService.getDuplicateEntity(ApplicationLocation.class,
+                new EntitySignature().addProperty("application", application).addProperty("locationAdvert", locationAdvert));
+        if (duplicateApplicationLocation == null) {
+            ApplicationLocation applicationLocation = new ApplicationLocation();
+            applicationLocation.setAssociation(application);
+            applicationLocation.setTag(locationAdvert);
+            applicationLocation.setDescription(locationDTO.getDescription());
+            applicationLocation.setPreference(preference);
+            applicationLocation.setLastUpdatedTimestamp(DateTime.now());
+
+            if (preference) {
+                applicationDAO.togglePrimaryApplicationTag(ApplicationLocation.class, application, locationAdvert);
+            }
+
+            return applicationLocation;
+        }
+
+        return duplicateApplicationLocation;
     }
 
 }

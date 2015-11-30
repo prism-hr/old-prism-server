@@ -107,6 +107,11 @@ public class Application extends Resource implements
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationTheme> themes = Sets.newHashSet();
 
+    @OrderBy(clause = "id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", nullable = false)
+    private Set<ApplicationLocation> locations = Sets.newHashSet();
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_personal_detail_id", unique = true)
     private ApplicationPersonalDetail personalDetail;
@@ -119,7 +124,7 @@ public class Application extends Resource implements
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
     private Set<ApplicationQualification> qualifications = Sets.newHashSet();
-    
+
     @OrderBy(clause = "id")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "application_id", nullable = false)
@@ -341,6 +346,10 @@ public class Application extends Resource implements
 
     public Set<ApplicationTheme> getThemes() {
         return themes;
+    }
+
+    public Set<ApplicationLocation> getLocations() {
+        return locations;
     }
 
     @Override

@@ -54,6 +54,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRe
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationAssignedHiringManagerRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationInterviewRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationLocationRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationOfferRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
@@ -189,7 +190,6 @@ public class ApplicationMapper {
         boolean viewEqualOpportunities = applicationService.isCanViewEqualOpportunities(application, userService.getCurrentUser());
 
         representation.setProgramDetail(getApplicationProgramDetailRepresentation(application));
-        representation.setThemes(getApplicationThemeRepresentations(application));
         representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
         representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications()));
@@ -205,6 +205,7 @@ public class ApplicationMapper {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         if (applicationProgramDetail != null) {
             return new ApplicationProgramDetailRepresentation().withStudyOption(applicationProgramDetail.getStudyOption()).withStartDate(applicationProgramDetail.getStartDate())
+                    .withThemes(getApplicationThemeRepresentations(application)).withLocations(getApplicationLocationRepresentations(application))
                     .withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
         }
         return null;
@@ -213,8 +214,18 @@ public class ApplicationMapper {
     private List<ApplicationThemeRepresentation> getApplicationThemeRepresentations(Application application) {
         List<ApplicationThemeRepresentation> representations = Lists.newLinkedList();
         application.getThemes().forEach(applicationTheme -> representations
-                .add(new ApplicationThemeRepresentation().withId(applicationTheme.getId()).withName(applicationTheme.getTheme().getName())
-                        .withPreference(applicationTheme.getPreference())));
+                .add(new ApplicationThemeRepresentation().withId(applicationTheme.getId()).withName(applicationTheme.getTag().getName())
+                        .withPreference(applicationTheme.getPreference()).withLastUpdateTimestamp(applicationTheme.getLastUpdatedTimestamp())));
+        return representations;
+    }
+
+    private List<ApplicationLocationRepresentation> getApplicationLocationRepresentations(Application application) {
+        List<ApplicationLocationRepresentation> representations = Lists.newLinkedList();
+        application.getLocations().forEach(applicationLocation -> representations
+                .add(new ApplicationLocationRepresentation().withId(applicationLocation.getId())
+                        .withResource(resourceMapper.getResourceRepresentationRelation(applicationLocation.getTag().getResource()))
+                        .withDescription(applicationLocation.getDescription()).withPreference(applicationLocation.getPreference())
+                        .withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp())));
         return representations;
     }
 

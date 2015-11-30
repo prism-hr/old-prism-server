@@ -58,6 +58,10 @@ public class ResourceRelationDTO {
         return Iterables.getLast(getResources());
     }
 
+    public List<ResourceCreationDTO> getOrganizations() {
+        return Stream.of(institution, department).filter(r -> r != null).collect(Collectors.toList());
+    }
+
     public List<ResourceCreationDTO> getResources() {
         return Stream.of(institution, department, program, project).filter(r -> r != null).collect(Collectors.toList());
     }

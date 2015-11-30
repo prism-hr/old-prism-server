@@ -98,6 +98,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -110,6 +111,7 @@ import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
@@ -154,6 +156,9 @@ public class AdvertService {
 
     @Inject
     private AdvertDAO advertDAO;
+
+    @Inject
+    private ActionService actionService;
 
     @Inject
     private ActivityService activityService;
@@ -477,6 +482,15 @@ public class AdvertService {
     public void refreshClosingDate(Integer advertId) {
         Advert advert = getById(advertId);
         advert.setClosingDate(getNextAdvertClosingDate(advert));
+
+        if (advert.getClosingDate() == null) {
+            Resource resource = advert.getResource();
+            PrismScope resourceScope = resource.getResourceScope();
+
+            Action action = actionService.getById(PrismAction.valueOf(resourceScope.name() + "_TERMINATE"));
+            actionService.executeAction(advert.getResource(), action,
+                    new Comment().withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(DateTime.now()));
+        }
     }
 
     public void updateCurrencyConversion(Integer advertId) {

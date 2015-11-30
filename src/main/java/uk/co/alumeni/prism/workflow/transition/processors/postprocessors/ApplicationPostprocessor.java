@@ -102,7 +102,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             comment.setRating(new BigDecimal(DEFAULT_RATING));
         }
 
-        applicationService.syncronizeApplicationRating(application);
+        applicationService.synchronizeApplicationRating(application);
         entityService.flush();
 
         for (PrismScope scope : scopeService.getParentScopesDescending(APPLICATION, INSTITUTION)) {

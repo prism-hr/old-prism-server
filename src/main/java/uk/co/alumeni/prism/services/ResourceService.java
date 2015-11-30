@@ -582,8 +582,8 @@ public class ResourceService {
         return resourceDAO.getResourcesByUser(prismScope, user);
     }
 
-    public List<Integer> getResourcesByMatchingUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
-        return resourceDAO.getResourcesByMatchingUsersAndRole(prismScope, searchTerm, prismRoles);
+    public List<Integer> getResourcesByUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
+        return resourceDAO.getResourcesByUserAndRole(prismScope, searchTerm, prismRoles);
     }
 
     public List<Integer> getSimilarResources(PrismScope enclosingResourceScope, String searchTerm) {
@@ -1004,6 +1004,14 @@ public class ResourceService {
         });
 
         return resources;
+    }
+
+    public List<Integer> getResourcesByTheme(PrismScope resourceScope, String theme) {
+        return resourceDAO.getResourcesByTheme(resourceScope, theme);
+    }
+
+    public List<Integer> getResourcesByLocation(PrismScope resourceScope, String location) {
+        return resourceDAO.getResourcesByLocation(resourceScope, location);
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

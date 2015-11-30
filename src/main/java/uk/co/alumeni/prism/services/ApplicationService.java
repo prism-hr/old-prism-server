@@ -358,6 +358,14 @@ public class ApplicationService {
         return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
     }
 
+    public List<Integer> getApplicationsByTheme(String theme) {
+        return applicationDAO.getApplicationsByTheme(theme);
+    }
+
+    public List<Integer> getApplicationsByLocation(String location) {
+        return applicationDAO.getApplicationsByLocation(location);
+    }
+
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(opportunityType.getOpportunityCategory().name());

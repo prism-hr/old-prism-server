@@ -29,9 +29,9 @@ public class ResourceByUserAndRoleSelector implements PrismResourceListFilterSel
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
         PrismResourceListConstraint filter = constraint.getFilterProperty();
         if (filter.equals(USER)) {
-            return resourceService.getResourcesByMatchingUserAndRole(scope, constraint.getValueString(), asList(APPLICATION_CREATOR));
+            return resourceService.getResourcesByUserAndRole(scope, constraint.getValueString(), asList(APPLICATION_CREATOR));
         } else {
-            return resourceService.getResourcesByMatchingUserAndRole(scope, constraint.getValueString(),
+            return resourceService.getResourcesByUserAndRole(scope, constraint.getValueString(),
                     roleService.getRolesByScope(PrismScope.valueOf(constraint.getFilterProperty().name().replace("_USER", ""))));
         }
     }

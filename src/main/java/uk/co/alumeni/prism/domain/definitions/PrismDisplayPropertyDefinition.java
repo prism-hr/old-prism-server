@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
+import java.util.List;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import java.util.List;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1739,8 +1740,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your employment"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description of your employment."),
-    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Referee Employer"),
-    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your referee's employer"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Supervisor Instiution"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your referee's institution"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Position"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Enter the title of your referee's position"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Business Unit Leader"),
@@ -2122,14 +2123,14 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_EMPLOYMENT_POSITION_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This tells us that the position is an ongoing one."),
     PROFILE_EMPLOYMENT_POSITION_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Period"),
 
-    PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referees"),
-    PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Specify your referee(s) here. Should you be considered for appointment, each referee will be asked to provide a statement in support of your application."),
+    PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Supervisor"),
+    PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Specify your supervisor here. Should we progress your application for a scholarship, your supervisor will be contacted to provide a supporting statement."),
     PROFILE_REFEREE_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referee"),
     PROFILE_REFEREE_POSITION_CONTACT_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Contact Details"),
     PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Employer & Position"),
     PROFILE_REFEREE_POSITION_EMPLOYER_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The position that your referee holds, and the organization that employs them."),
     PROFILE_REFEREE_PHONE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Telephone"),
-    PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The employer telephone number of the referee."),
+    PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The work telephone number of the referee."),
     PROFILE_REFEREE_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Skype user name"),
     PROFILE_REFEREE_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The Skype address of the referee."),
     PROFILE_REFEREE_REFERENCE_APPENDIX(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference"),

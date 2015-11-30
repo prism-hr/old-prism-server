@@ -1019,6 +1019,7 @@ public class AdvertService {
                         oldPartnershipStates.add(targetAdmin.getPartnershipState());
                         setAdvertTargetPartnershipState(targetAdmin, partnershipState, baseline, accept);
                     });
+                    performed = true;
                 }
 
                 AdvertTarget targetUserAccept = advertDAO.getAdvertTargetAccept(advertTarget, user);

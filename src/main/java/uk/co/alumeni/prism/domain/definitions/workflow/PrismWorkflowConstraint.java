@@ -2,6 +2,8 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 
 public enum PrismWorkflowConstraint {
 
+    APPLICATION_THEME(1, 3),
+    APPLICATION_LOCATION(1, 3),
     APPLICATION_QUALIFICATION(1, 10),
     APPLICATION_AWARD(1, 10),
     APPLICATION_EMPLOYMENT_POSITION(0, 10),

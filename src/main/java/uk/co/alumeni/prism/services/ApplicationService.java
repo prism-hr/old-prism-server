@@ -378,7 +378,6 @@ public class ApplicationService {
         ApplicationTheme duplicateApplicationTheme = getDuplicateApplicationTag(ApplicationTheme.class, application, theme);
         if (duplicateApplicationTheme == null) {
             ApplicationTheme applicationTheme = new ApplicationTheme();
-            applicationTheme.setAssociation(application);
             applicationTheme.setTag(theme);
             applicationTheme.setPreference(preference);
             applicationTheme.setLastUpdatedTimestamp(DateTime.now());
@@ -412,7 +411,6 @@ public class ApplicationService {
         ApplicationLocation duplicateApplicationLocation = getDuplicateApplicationTag(ApplicationLocation.class, application, locationAdvert);
         if (duplicateApplicationLocation == null) {
             ApplicationLocation applicationLocation = new ApplicationLocation();
-            applicationLocation.setAssociation(application);
             applicationLocation.setTag(locationAdvert);
             applicationLocation.setDescription(locationDTO.getDescription());
 

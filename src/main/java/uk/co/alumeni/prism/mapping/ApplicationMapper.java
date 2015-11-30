@@ -31,6 +31,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import jersey.repackaged.com.google.common.collect.Maps;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
@@ -46,6 +47,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
@@ -113,6 +115,11 @@ public class ApplicationMapper {
 
         representation.setPossibleStudyOptions(studyOptions);
 
+        Advert advert = application.getAdvert();
+        AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert);
+        representation.setPossibleThemes(advertCategories.getThemes());
+        representation.setPossibleLocations(advertCategories.getLocations());
+
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
         representation.setUsersPotentiallyInterestedInApplication(
@@ -121,7 +128,7 @@ public class ApplicationMapper {
         representation.setInterview(getApplicationInterviewRepresentation(application));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
-        representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(application.getAdvert()));
+        representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(advert));
         return representation;
     }
 

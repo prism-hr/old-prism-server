@@ -378,8 +378,33 @@ public class AdvertMapper {
         return newLinkedList(representations);
     }
 
-    public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(Advert advert) {
-        return getAdvertCategoriesRepresentation(advert).getThemes();
+    public AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
+        AdvertCategories categories = advertService.getAdvertCategories(advert);
+        if (categories != null) {
+            List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
+            List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
+
+            List<AdvertThemeRepresentation> themes = Lists.newLinkedList();
+            categories.getThemes().forEach(advertTheme -> {
+                Theme theme = advertTheme.getTheme();
+                themes.add(new AdvertThemeRepresentation().withThemeId(theme.getId()).withName(theme.getName()));
+            });
+
+            List<ResourceRepresentationRelation> locations = categories.getLocations().stream()
+                    .map(al -> resourceMapper.getResourceRepresentationRelation(al.getLocationAdvert().getResource())).collect(Collectors.toList());
+
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
+        }
+        return null;
+    }
+
+    public List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Advert advert) {
+        return advert.getCompetences().stream()
+                .map(competence -> new AdvertCompetenceRepresentation().withCompetenceId(competence.getCompetence().getId())
+                        .withName(competence.getCompetence().getName())
+                        .withDescription(Objects.firstNonNull(competence.getDescription(), competence.getCompetence().getDescription()))
+                        .withImportance(competence.getImportance()))
+                .collect(toList());
     }
 
     private AdvertListRepresentation getAdvertExtendedRepresentations(User user, OpportunitiesQueryDTO query) {
@@ -525,35 +550,6 @@ public class AdvertMapper {
 
     private List<AdvertClosingDateRepresentation> getAdvertClosingDateRepresentations(Advert advert) {
         return advert.getClosingDates().stream().map(this::getAdvertClosingDateRepresentation).collect(Collectors.toList());
-    }
-
-    private AdvertCategoriesRepresentation getAdvertCategoriesRepresentation(Advert advert) {
-        AdvertCategories categories = advertService.getAdvertCategories(advert);
-        if (categories != null) {
-            List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
-            List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
-
-            List<AdvertThemeRepresentation> themes = Lists.newLinkedList();
-            categories.getThemes().forEach(advertTheme -> {
-                Theme theme = advertTheme.getTheme();
-                themes.add(new AdvertThemeRepresentation().withThemeId(theme.getId()).withName(theme.getName()));
-            });
-
-            List<ResourceRepresentationRelation> locations = categories.getLocations().stream()
-                    .map(al -> resourceMapper.getResourceRepresentationRelation(al.getLocationAdvert().getResource())).collect(Collectors.toList());
-
-            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
-        }
-        return null;
-    }
-
-    public List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Advert advert) {
-        return advert.getCompetences().stream()
-                .map(competence -> new AdvertCompetenceRepresentation().withCompetenceId(competence.getCompetence().getId())
-                        .withName(competence.getCompetence().getName())
-                        .withDescription(Objects.firstNonNull(competence.getDescription(), competence.getCompetence().getDescription()))
-                        .withImportance(competence.getImportance()))
-                .collect(toList());
     }
 
     @SuppressWarnings("unchecked")

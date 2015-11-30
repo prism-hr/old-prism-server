@@ -25,7 +25,6 @@ import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDetailsDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
 
 @RestController
@@ -38,13 +37,6 @@ public class AdvertController {
 
     @Inject
     private AdvertMapper advertMapper;
-
-    @RequestMapping(value = "/themes", method = RequestMethod.GET)
-    public List<AdvertThemeRepresentation> getThemes(@PathVariable Integer resourceId,
-            @ModelAttribute ResourceDescriptor resourceDescriptor) {
-        Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
-        return advertMapper.getAdvertThemeRepresentations(advert);
-    }
 
     @RequestMapping(value = "/targets", method = RequestMethod.GET)
     public List<AdvertTargetConnectionRepresentation> getTargets(@PathVariable Integer resourceId,

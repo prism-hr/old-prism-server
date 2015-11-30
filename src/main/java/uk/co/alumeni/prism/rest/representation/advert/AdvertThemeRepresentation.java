@@ -2,16 +2,16 @@ package uk.co.alumeni.prism.rest.representation.advert;
 
 public class AdvertThemeRepresentation {
 
-    private Integer themeId;
+    private Integer id;
 
     private String name;
 
-    public Integer getThemeId() {
-        return themeId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setThemeId(Integer themeId) {
-        this.themeId = themeId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -22,8 +22,8 @@ public class AdvertThemeRepresentation {
         this.name = name;
     }
 
-    public AdvertThemeRepresentation withThemeId(Integer themeId) {
-        this.themeId = themeId;
+    public AdvertThemeRepresentation withId(Integer id) {
+        this.id = id;
         return this;
     }
 

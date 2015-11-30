@@ -13,6 +13,7 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import jersey.repackaged.com.google.common.collect.Sets;
@@ -121,7 +122,7 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
     }
 
     public String getDisplayName() {
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getOrganizationDisplayName(), getPositionDisplayName());
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(Strings.emptyToNull(getOrganizationDisplayName()), Strings.emptyToNull(getPositionDisplayName()));
     }
 
     @Override

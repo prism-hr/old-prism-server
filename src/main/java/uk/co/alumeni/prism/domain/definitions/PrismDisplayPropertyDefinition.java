@@ -103,6 +103,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DURATION(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Duration"),
     SYSTEM_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preview"),
     SYSTEM_NO_POSITION_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "no position specified"),
+    SYSTEM_PREFERRED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preferred"),
 
     /*
      * *************** SYSTEM COMMENT *********************

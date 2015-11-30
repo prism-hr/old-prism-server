@@ -8,11 +8,17 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_THEMES_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SUBMISSION_DATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_CONVICTION_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_CONTACT_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_CURRENT_HEADER;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_DATE_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_DESCRIPTION_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_HEADER;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_NAME_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_SUBHEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_COVERING_LETTER_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_CV_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_HEADER;
@@ -23,7 +29,9 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_START_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_SUBHEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DISABILITY_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_ETHNICITY_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_GENDER_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL;
@@ -59,6 +67,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LAST_NAME;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PAGE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PREFERRED;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_SEE;
@@ -71,9 +80,11 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -83,7 +94,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -104,8 +117,11 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.events.PdfPageEventForwarder;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.PrismDisability;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
+import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.PdfDocumentBuilderException;
@@ -114,15 +130,18 @@ import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationLocationRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationOfferRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.DocumentService;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
@@ -153,6 +172,7 @@ public class ApplicationDownloadBuilder {
             addPersonalDetailSection(application, pdfDocument);
             addAddressSection(application, pdfDocument);
             addQualificationSection(application, pdfDocument);
+            addAwardSection(application, pdfDocument);
             addEmploymentSection(application, pdfDocument);
             addReferencesSection(application, pdfDocument);
             addDocumentSection(application, pdfDocument);
@@ -211,11 +231,60 @@ public class ApplicationDownloadBuilder {
                     propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL, APPLICATION_CONFIRMED_START_DATE,
                             confirmedStartDate == null),
                     confirmedStartDate == null ? startDate.toString(dateFormat) : confirmedStartDate.toString(dateFormat), body);
+            
+            addThemeSection(programDetail, body);
+            addLocationSection(programDetail, body);
         }
 
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
+    public void addThemeSection(ApplicationProgramDetailRepresentation programDetail, PdfPTable body) {
+        List<ApplicationThemeRepresentation> themes = programDetail.getThemes();
+        if (CollectionUtils.isNotEmpty(themes)) {
+            String preferredTheme = null;
+            Set<String> secondaryThemes = Sets.newTreeSet();
+            
+            for (ApplicationThemeRepresentation theme : themes) {
+                if (BooleanUtils.isTrue(theme.getPreference())) {
+                    preferredTheme = theme.getName();
+                } else {
+                    secondaryThemes.add(theme.getName());
+                }
+            }
+            
+            String themeContent = preferredTheme + " (" + propertyLoader.loadLazy(SYSTEM_PREFERRED) + ")";
+            if (CollectionUtils.isNotEmpty(secondaryThemes)) {
+                themeContent = themeContent + " " + Joiner.on(", ").join(secondaryThemes);
+            }
+            
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_THEMES_HEADER), themeContent, body);
+        }
+    }
+
+    public void addLocationSection(ApplicationProgramDetailRepresentation programDetail, PdfPTable body) {
+        List<ApplicationLocationRepresentation> locations = programDetail.getLocations();
+        if (CollectionUtils.isNotEmpty(locations)) {
+            String preferredLocation = null;
+            Set<String> secondaryLocations = Sets.newTreeSet();
+            
+            for (ApplicationLocationRepresentation location : locations) {
+                if (BooleanUtils.isTrue(location.getPreference())) {
+                    preferredLocation = location.getDisplayName();
+                } else {
+                    secondaryLocations.add(location.getDisplayName());
+                }
+            }
+            
+            String locationContent = preferredLocation + " (" + propertyLoader.loadLazy(SYSTEM_PREFERRED) + ")";
+            if (CollectionUtils.isNotEmpty(secondaryLocations)) {
+                locationContent = locationContent + " " + Joiner.on(", ").join(secondaryLocations);
+            }
+            
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_THEMES_HEADER), locationContent, body);
+        }
+    }
+    
     private void addPersonalDetailSection(ApplicationRepresentationExtended application, Document pdfDocument)
             throws Exception {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_HEADER));
@@ -233,15 +302,34 @@ public class ApplicationDownloadBuilder {
                     .addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_TELEPHONE_LABEL), personalDetail.getPhone(), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_SKYPE_LABEL), personalDetail.getSkype(), body);
 
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_GENDER_LABEL),
-                    propertyLoader.loadLazy(personalDetail.getGender().getDisplayProperty()), body);
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL),
-                    personalDetail.getDateOfBirth().toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)), body);
+            PrismGender gender = personalDetail.getGender();
+            if (gender != null) {
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_GENDER_LABEL),
+                        propertyLoader.loadLazy(gender.getDisplayProperty()), body);
+            }
+
+            LocalDate dateOfBirth = personalDetail.getDateOfBirth();
+            if (dateOfBirth != null) {
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL),
+                        dateOfBirth.toString(propertyLoader.loadLazy(SYSTEM_DATE_FORMAT)), body);
+            }
 
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL),
                     propertyLoader.loadLazy(personalDetail.getNationality().getDisplayProperty()), body);
             applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL),
                     propertyLoader.loadLazy(personalDetail.getDomicile().getDisplayProperty()), body);
+
+            PrismEthnicity ethnicity = personalDetail.getEthnicity();
+            if (ethnicity != null) {
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_ETHNICITY_LABEL),
+                        propertyLoader.loadLazy(ethnicity.getDisplayProperty()), body);
+            }
+
+            PrismDisability disability = personalDetail.getDisability();
+            if (disability != null) {
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_DISABILITY_LABEL),
+                        propertyLoader.loadLazy(disability.getDisplayProperty()), body);
+            }
 
             applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
         }
@@ -308,6 +396,25 @@ public class ApplicationDownloadBuilder {
                     addBookmark(application, new Bookmark<DocumentRepresentation>().withLabel(PROFILE_QUALIFICATION_APPENDIX).withContent(proofOfAward),
                             subBody, propertyLoader.loadLazy(PROFILE_QUALIFICATION_DOCUMENT_LABEL));
                 }
+
+                applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
+            }
+        }
+    }
+
+    private void addAwardSection(ApplicationRepresentationExtended application, Document pdfDocument) throws Exception {
+        List<ProfileAwardRepresentation> awards = application.getAwards();
+
+        if (!awards.isEmpty()) {
+            applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(PROFILE_AWARD_HEADER));
+
+            int counter = 1;
+            for (ProfileAwardRepresentation award : awards) {
+                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(PROFILE_AWARD_SUBHEADER) + "(" + counter++ + ")");
+
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_AWARD_NAME_LABEL), award.getName(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_AWARD_DESCRIPTION_LABEL), award.getDescription(), subBody);
+                applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_AWARD_DATE_LABEL), award.getAwardDateDisplay(), subBody);
 
                 applicationDownloadBuilderHelper.closeSection(pdfDocument, subBody);
             }

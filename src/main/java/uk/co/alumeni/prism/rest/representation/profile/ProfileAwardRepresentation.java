@@ -66,4 +66,8 @@ public class ProfileAwardRepresentation extends ApplicationSectionRepresentation
         return this;
     }
 
+    public String getAwardDateDisplay() {
+        return awardDate != null ? "" + awardDate.getMonthOfYear() + '/' + awardDate.getYear() : null;
+    }
+
 }

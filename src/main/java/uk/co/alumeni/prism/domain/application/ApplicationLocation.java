@@ -17,7 +17,7 @@ import uk.co.alumeni.prism.domain.advert.Advert;
 
 @Entity
 @Table(name = "application_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "location_advert_id" }) })
-public class ApplicationLocation extends ApplicationTagSection<Advert> implements UniqueEntity {
+public class ApplicationLocation extends ApplicationTagSection<Advert>implements UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -33,6 +33,12 @@ public class ApplicationLocation extends ApplicationTagSection<Advert> implement
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "description_year", nullable = false)
+    private Integer descriptionYear;
+
+    @Column(name = "description_month", nullable = false)
+    private Integer descriptionMonth;
 
     @Column(name = "preference", nullable = false)
     private Boolean preference;
@@ -77,6 +83,22 @@ public class ApplicationLocation extends ApplicationTagSection<Advert> implement
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Integer getDescriptionYear() {
+        return descriptionYear;
+    }
+
+    public void setDescriptionYear(Integer descriptionYear) {
+        this.descriptionYear = descriptionYear;
+    }
+
+    public Integer getDescriptionMonth() {
+        return descriptionMonth;
+    }
+
+    public void setDescriptionMonth(Integer descriptionMonth) {
+        this.descriptionMonth = descriptionMonth;
     }
 
     public Boolean getPreference() {

@@ -8,7 +8,9 @@ import com.google.common.collect.LinkedHashMultimap;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.workflow.selectors.filter.PrismResourceListFilterSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByLocationSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByParentResourceSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByThemeSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByUserAndRoleSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.StateByStateGroupSelector;
 
@@ -51,7 +53,11 @@ public enum PrismResourceListConstraint {
     DEPARTMENT_USER("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
             Arrays.asList(PrismScope.DEPARTMENT)), //
     INSTITUTION_USER("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
-            Arrays.asList(PrismScope.INSTITUTION));
+            Arrays.asList(PrismScope.INSTITUTION)), //
+    THEME("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByThemeSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
+            Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION)), //
+    LOCATION("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByLocationSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
+            Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION));
 
     private String propertyName;
 

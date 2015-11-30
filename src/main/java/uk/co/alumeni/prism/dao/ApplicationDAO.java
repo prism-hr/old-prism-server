@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -38,9 +39,11 @@ import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
+import uk.co.alumeni.prism.domain.application.ApplicationLocation;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.application.ApplicationTagSection;
+import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
@@ -302,6 +305,32 @@ public class ApplicationDAO {
                         + "where id = :tagId") //
                 .setParameter("tagId", tagId) //
                 .executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByTheme(String theme) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationTheme.class) //
+                .setProjection(Projections.groupProperty("association.id")) //
+                .createAlias("tag", "theme") //
+                .add(Restrictions.like("theme.name", theme, MatchMode.ANYWHERE)) //
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Integer> getApplicationsByLocation(String location) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationLocation.class) //
+                .setProjection(Projections.groupProperty("association.id")) //
+                .createAlias("tag", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.institution", "locationInstitution", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.department", "locationDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.program", "locationProgram", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.project", "locationProject", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.like("locationInstitution.name", location, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("locationDepartment.name", location, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
+                .list();
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {

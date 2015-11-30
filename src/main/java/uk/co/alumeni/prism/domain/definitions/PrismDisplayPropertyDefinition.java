@@ -764,7 +764,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_FILTER_PROPERTY_PROGRAM_USER(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Role Holder"),
     SYSTEM_FILTER_PROPERTY_DEPARTMENT_USER(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Role Holder"),
     SYSTEM_FILTER_PROPERTY_INSTITUTION_USER(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Role Holder"),
-
+    SYSTEM_FILTER_PROPERTY_THEME(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Theme"),
+    SYSTEM_FILTER_PROPERTY_LOCATION(PrismDisplayPropertyCategory.SYSTEM_FILTER_PROPERTY, "Location"),
+    
     /*
      * *************** SYSTEM FILTER EXPRESSION *********************
      */

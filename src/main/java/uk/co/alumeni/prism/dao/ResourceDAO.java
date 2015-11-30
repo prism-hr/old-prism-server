@@ -253,7 +253,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesByMatchingUsersAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
+    public List<Integer> getResourcesByUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property(prismScope.getLowerCamelName() + ".id")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
@@ -556,6 +556,33 @@ public class ResourceDAO {
                 .setProjection(Projections.property("resource.id")) //
                 .createAlias(enclosedScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource." + resourceScope.getLowerCamelName() + ".id", resourceId)) //
+                .list();
+    }
+
+    public List<Integer> getResourcesByTheme(PrismScope resourceScope, String theme) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN)
+                .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.like("theme.name", theme, MatchMode.ANYWHERE)) //
+                .list();
+    }
+
+    public List<Integer> getResourcesByLocation(PrismScope resourceScope, String location) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("categories.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.institution", "locationInstitution", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.department", "locationDepartment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.program", "locationProgram", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.project", "locationProject", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.like("locationInstitution.name", location, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("locationDepartment.name", location, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
+                        .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
                 .list();
     }
 

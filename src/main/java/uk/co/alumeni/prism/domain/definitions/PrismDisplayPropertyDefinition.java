@@ -1754,6 +1754,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select of enter the name of the department you wish to connect with"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
     SYSTEM_HTML_RESOURCE_FAMILY_UNIVERSITY_RELATION_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Your Personal Contact"),
+    SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Institution"),
+    SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of the institution"),
+    SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_DEPARTMENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Division/Department"),
+    SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_DEPARTMENT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select of enter the name of the division/department"),
+    SYSTEM_HTML_RESOURCE_FAMILY_ADVERT_LOCATION_DEPARTMENT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Department of Chemistry"),
     SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
     SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
 
@@ -1804,6 +1809,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the job functions that your advert is relevant to."),
     SYSTEM_ADVERT_CATEGORIES_THEMES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Themes"),
     SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the themes."),
+    SYSTEM_ADVERT_CATEGORIES_LOCATIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Locations"),
+    SYSTEM_ADVERT_CATEGORIES_LOCATIONS_ADD_NEW_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Add New Location"),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Closing Date"),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "The closing date for applications."),
 

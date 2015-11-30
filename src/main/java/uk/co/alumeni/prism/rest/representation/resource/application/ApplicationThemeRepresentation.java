@@ -4,7 +4,7 @@ import org.joda.time.DateTime;
 
 public class ApplicationThemeRepresentation extends ApplicationSectionRepresentation {
 
-    Integer id;
+    private Integer id;
 
     private String name;
 

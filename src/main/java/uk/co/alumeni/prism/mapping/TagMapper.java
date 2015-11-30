@@ -1,14 +1,16 @@
 package uk.co.alumeni.prism.mapping;
 
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.rest.representation.CompetenceRepresentation;
-import uk.co.alumeni.prism.rest.representation.TagRepresentation;
-import uk.co.alumeni.prism.services.TagService;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.rest.representation.CompetenceRepresentation;
+import uk.co.alumeni.prism.rest.representation.TagRepresentation;
+import uk.co.alumeni.prism.services.TagService;
 
 @Service
 @Transactional

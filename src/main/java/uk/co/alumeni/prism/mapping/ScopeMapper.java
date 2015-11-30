@@ -1,12 +1,25 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.Sets;
-import jersey.repackaged.com.google.common.collect.Lists;
-import jersey.repackaged.com.google.common.collect.Maps;
+import static com.google.common.collect.Lists.newLinkedList;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.hibernate.criterion.Projections;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Sets;
+
+import jersey.repackaged.com.google.common.collect.Lists;
+import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelationGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -21,16 +34,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.R
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 
 @Service
 @Transactional

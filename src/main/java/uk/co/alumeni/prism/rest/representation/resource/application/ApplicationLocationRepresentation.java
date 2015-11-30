@@ -12,8 +12,6 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRe
 
 public class ApplicationLocationRepresentation extends ApplicationSectionRepresentation {
 
-    private Integer id;
-
     private ResourceRepresentationRelation resource;
 
     private String description;
@@ -21,14 +19,6 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
     private LocalDate descriptionDate;
 
     private Boolean preference;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public ResourceRepresentationRelation getResource() {
         return resource;
@@ -52,11 +42,6 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
 
     public void setPreference(Boolean preference) {
         this.preference = preference;
-    }
-
-    public ApplicationLocationRepresentation withId(Integer id) {
-        this.id = id;
-        return this;
     }
 
     public ApplicationLocationRepresentation withResource(ResourceRepresentationRelation resource) {

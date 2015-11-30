@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 import static uk.co.alumeni.prism.utils.PrismDateUtils.getNextMonday;
@@ -221,18 +222,23 @@ public class ApplicationMapper {
     private List<ApplicationThemeRepresentation> getApplicationThemeRepresentations(Application application) {
         List<ApplicationThemeRepresentation> representations = Lists.newLinkedList();
         application.getThemes().forEach(applicationTheme -> representations
-                .add(new ApplicationThemeRepresentation().withId(applicationTheme.getId()).withName(applicationTheme.getTag().getName())
+                .add(new ApplicationThemeRepresentation().withId(applicationTheme.getTag().getId()).withName(applicationTheme.getTag().getName())
                         .withPreference(applicationTheme.getPreference()).withLastUpdateTimestamp(applicationTheme.getLastUpdatedTimestamp())));
         return representations;
     }
 
     private List<ApplicationLocationRepresentation> getApplicationLocationRepresentations(Application application) {
         List<ApplicationLocationRepresentation> representations = Lists.newLinkedList();
-        application.getLocations().forEach(applicationLocation -> representations
-                .add(new ApplicationLocationRepresentation().withId(applicationLocation.getId())
-                        .withResource(resourceMapper.getResourceRepresentationRelation(applicationLocation.getTag().getResource()))
-                        .withDescription(applicationLocation.getDescription()).withPreference(applicationLocation.getPreference())
-                        .withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp())));
+        application.getLocations().forEach(applicationLocation -> {
+            Resource resource = applicationLocation.getTag().getResource();
+            Integer descriptionYear = applicationLocation.getDescriptionYear();
+            representations.add(new ApplicationLocationRepresentation()
+                    .withResource(resource.getResourceScope().getScopeCategory().equals(ORGANIZATION) ? resourceMapper.getResourceRepresentationRelation(resource)
+                            : resourceMapper.getResourceOpportunityRepresentationRelation(resource))
+                    .withDescription(applicationLocation.getDescription())
+                    .withDescriptionDate(descriptionYear == null ? null : new LocalDate(descriptionYear, applicationLocation.getDescriptionMonth(), 1))
+                    .withPreference(applicationLocation.getPreference()).withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp()));
+        });
         return representations;
     }
 

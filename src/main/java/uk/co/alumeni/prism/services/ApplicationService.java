@@ -46,6 +46,7 @@ import com.google.visualization.datasource.datatable.TableRow;
 
 import uk.co.alumeni.prism.dao.ApplicationDAO;
 import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -53,6 +54,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationLocation;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.application.ApplicationSection;
+import uk.co.alumeni.prism.domain.application.ApplicationTagSection;
 import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.definitions.PrismApplicationReportColumn;
@@ -360,8 +362,7 @@ public class ApplicationService {
         Theme theme = tagService.getById(Theme.class, themeDTO.getThemeId());
         boolean preference = BooleanUtils.isTrue(themeDTO.getPreference());
 
-        ApplicationTheme duplicateApplicationTheme = entityService.getDuplicateEntity(ApplicationTheme.class,
-                new EntitySignature().addProperty("application", application).addProperty("theme", theme));
+        ApplicationTheme duplicateApplicationTheme = getDuplicateApplicationTag(ApplicationTheme.class, application, theme);
         if (duplicateApplicationTheme == null) {
             ApplicationTheme applicationTheme = new ApplicationTheme();
             applicationTheme.setAssociation(application);
@@ -395,8 +396,7 @@ public class ApplicationService {
                 resourceRelation.getResource().getScope().getScopeCategory().equals(OPPORTUNITY) ? userService.getCurrentUser() : organization.getUser()).getAdvert();
         boolean preference = BooleanUtils.isTrue(locationDTO.getPreference());
 
-        ApplicationLocation duplicateApplicationLocation = entityService.getDuplicateEntity(ApplicationLocation.class,
-                new EntitySignature().addProperty("application", application).addProperty("locationAdvert", locationAdvert));
+        ApplicationLocation duplicateApplicationLocation = getDuplicateApplicationTag(ApplicationLocation.class, application, locationAdvert);
         if (duplicateApplicationLocation == null) {
             ApplicationLocation applicationLocation = new ApplicationLocation();
             applicationLocation.setAssociation(application);
@@ -413,6 +413,10 @@ public class ApplicationService {
         }
 
         return duplicateApplicationLocation;
+    }
+
+    private <T extends ApplicationTagSection<U>, U extends UniqueEntity> T getDuplicateApplicationTag(Class<T> applicationTagClass, Application application, U tag) {
+        return entityService.getDuplicateEntity(applicationTagClass, new EntitySignature().addProperty("association", application).addProperty("tag", tag));
     }
 
 }

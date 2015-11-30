@@ -285,9 +285,9 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public <T extends ApplicationTagSection<U>, U extends UniqueEntity> void togglePrimaryApplicationTag(Class<T> tagClass, Application application, U tag) {
+    public <T extends ApplicationTagSection<U>, U extends UniqueEntity> void togglePrimaryApplicationTag(Class<T> applicationTagClass, Application application, U tag) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update " + tagClass.getSimpleName() + " " //
+                "update " + applicationTagClass.getSimpleName() + " " //
                         + "set preference = 0 " //
                         + "where application.id = :application " //
                         + "and tag != :tag") //
@@ -296,9 +296,9 @@ public class ApplicationDAO {
                 .executeUpdate();
     }
 
-    public <T extends ApplicationTagSection<?>> void deleteApplicationTag(Class<T> tagClass, Integer tagId) {
+    public <T extends ApplicationTagSection<?>> void deleteApplicationTag(Class<T> applicationTagClass, Integer tagId) {
         sessionFactory.getCurrentSession().createQuery( //
-                "delete " + tagClass.getSimpleName() + " " //
+                "delete " + applicationTagClass.getSimpleName() + " " //
                         + "where id = :tagId") //
                 .setParameter("tagId", tagId) //
                 .executeUpdate();

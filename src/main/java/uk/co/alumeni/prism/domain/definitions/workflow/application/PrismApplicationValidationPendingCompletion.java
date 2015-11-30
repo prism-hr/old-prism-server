@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationValidationPendingCompletion extends PrismWorkflowState {
@@ -9,7 +11,8 @@ public class PrismApplicationValidationPendingCompletion extends PrismWorkflowSt
         stateActions.add(PrismApplicationWorkflow.applicationComment()); //
 
         stateActions.add(PrismApplicationValidation.applicationCompleteValidation(state) //
-                .withRaisesUrgentFlag()); //
+                .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST)); //
 
         stateActions.add(PrismApplicationWorkflow.applicationEmailCreator()); //
         stateActions.add(PrismApplicationWorkflow.applicationEscalate()); //

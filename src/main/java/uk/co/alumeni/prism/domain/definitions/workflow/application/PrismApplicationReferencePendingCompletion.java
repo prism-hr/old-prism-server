@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -13,7 +15,8 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
         stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter()); //
 
         stateActions.add(PrismApplicationReference.applicationCompleteReference(state) //
-                .withRaisesUrgentFlag());
+                .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST));
 
         stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(PrismApplicationWorkflow.applicationEscalate(PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP));

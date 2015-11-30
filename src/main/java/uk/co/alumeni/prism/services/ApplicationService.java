@@ -269,7 +269,7 @@ public class ApplicationService {
                 && !application.getState().equals(APPLICATION_APPROVED);
     }
 
-    public <T extends Application> void syncronizeApplicationRating(T application) {
+    public <T extends Application> void synchronizeApplicationRating(T application) {
         ResourceRatingSummaryDTO ratingSummary = getApplicationRatingSummary(application);
         application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
@@ -311,13 +311,13 @@ public class ApplicationService {
 
         if (programDetailDTO.getThemes() != null) {
             for (ApplicationThemeDTO themeDTO : programDetailDTO.getThemes()) {
-                getOrCreateTheme(application, themeDTO);
+                application.getThemes().add(getOrCreateTheme(application, themeDTO));
             }
         }
 
         if (programDetailDTO.getLocations() != null) {
             for (ApplicationLocationDTO locationDTO : programDetailDTO.getLocations()) {
-                getOrCreateLocation(application, locationDTO);
+                application.getLocations().add(getOrCreateLocation(application, locationDTO));
             }
         }
 

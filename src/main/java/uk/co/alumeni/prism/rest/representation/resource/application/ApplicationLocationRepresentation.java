@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import java.util.List;
-
+import com.google.common.base.Joiner;
+import jersey.repackaged.com.google.common.collect.Lists;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-
-import com.google.common.base.Joiner;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+
+import java.util.List;
 
 public class ApplicationLocationRepresentation extends ApplicationSectionRepresentation {
 
@@ -34,6 +32,14 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getDescriptionDate() {
+        return descriptionDate;
+    }
+
+    public void setDescriptionDate(LocalDate descriptionDate) {
+        this.descriptionDate = descriptionDate;
     }
 
     public Boolean getPreference() {

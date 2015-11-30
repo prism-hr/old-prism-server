@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_INTERVIEW_STAGE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
@@ -25,7 +26,8 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
         stateActions.add(applicationCommentWithViewerRecruiter()); //
 
         stateActions.add(applicationCompleteInterviewScheduled(state) //
-                .withRaisesUrgentFlag()); //
+                .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST)); //
 
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,

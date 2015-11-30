@@ -155,7 +155,9 @@ public class ProfileService {
         UserPersonalDetail userPersonalDetail = updatePersonalDetail(userAccount, UserPersonalDetail.class, personalDetailDTO);
 
         LocalDate dateOfBirth = userPersonalDetail.getDateOfBirth();
-        applicationPersonalDetail.setAgeRange(prismService.getAgeRangeFromAge(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
+        if (dateOfBirth != null) {
+            applicationPersonalDetail.setAgeRange(prismService.getAgeRangeFromAge(application.getCreatedTimestamp().getYear() - dateOfBirth.getYear()));
+        }
 
         userAccount.setPersonalDetail(userPersonalDetail);
         userAccountService.updateUserAccount(userAccount, PROFILE_PERSONAL_DETAIL_UPDATE);

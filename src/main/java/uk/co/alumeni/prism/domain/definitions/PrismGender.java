@@ -4,7 +4,7 @@ public enum PrismGender implements PrismLocalizableDefinition {
 
     FEMALE, //
     MALE, //
-    UNDISCLOSED;
+    INDETERMINATE;
 
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {

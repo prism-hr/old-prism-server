@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
@@ -550,7 +551,7 @@ public class ProfileService {
 
         personalDetail.setNationality(prismService.getDomicileById(personalDetailDTO.getNationality()));
         personalDetail.setDomicile(prismService.getDomicileById(personalDetailDTO.getDomicile()));
-        personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
+        personalDetail.setVisaRequired(BooleanUtils.isTrue(personalDetailDTO.getVisaRequired()));
 
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));

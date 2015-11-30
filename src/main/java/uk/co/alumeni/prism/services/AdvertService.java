@@ -998,7 +998,7 @@ public class AdvertService {
             User user = resource.getUser();
             locationDTOs.forEach(locationDTO -> {
                 ResourceParent locationResource = resourceService.createResourceRelation(locationDTO, context, user);
-                advertLocations.add(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationResource.getAdvert()));
+                advertLocations.add(entityService.getOrCreate(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationResource.getAdvert())));
             });
         }
     }

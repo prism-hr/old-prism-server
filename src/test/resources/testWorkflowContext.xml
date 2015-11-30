@@ -49,6 +49,12 @@
 
 	<context:component-scan base-package="uk.co.alumeni.prism" />
 
+	<bean id="authenticationManager" class="uk.co.alumeni.prism.utils.EasyMockFactoryBean"
+		  primary="true">
+		<constructor-arg
+				value="org.springframework.security.authentication.AuthenticationManager" />
+	</bean>
+
 	<bean id="validator"
 		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 

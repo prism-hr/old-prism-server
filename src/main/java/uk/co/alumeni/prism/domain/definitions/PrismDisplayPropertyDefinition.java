@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -2009,6 +2008,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Your preferred mode of engagement (e.g. full-time, part-time, flexible)."),
     APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Start Date"),
     APPLICATION_PROGRAM_DETAIL_START_DATE_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "The date that you are available to start, if successful in your application."),
+    APPLICATION_PROGRAM_DETAIL_THEMES_HEADER(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Subject Preferences"),
+    APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Primary Subjects"),
+    APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify the primary subject(s)/theme(s) that you are interested on."),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Subjects"),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify the secondary subject(s)/theme(s) that you are interested on."),
+    APPLICATION_PROGRAM_DETAIL_LOCATIONS_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Locations"),
+    APPLICATION_PROGRAM_DETAIL_LOCATIONS_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Specify locations"),
 
     PROFILE_PERSONAL_DETAIL_HEADER(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "Personal Details"),
     PROFILE_PERSONAL_DETAIL_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_PERSONAL_DETAIL, "This section allows you to provide details about yourself."),

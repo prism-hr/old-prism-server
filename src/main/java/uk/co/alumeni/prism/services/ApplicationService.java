@@ -1,32 +1,11 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.lang3.text.WordUtils.capitalize;
-import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
-
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableRow;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,32 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.datatable.TableRow;
-
 import uk.co.alumeni.prism.dao.ApplicationDAO;
 import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationLocation;
-import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.application.ApplicationSection;
-import uk.co.alumeni.prism.domain.application.ApplicationTagSection;
-import uk.co.alumeni.prism.domain.application.ApplicationTheme;
+import uk.co.alumeni.prism.domain.application.*;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
-import uk.co.alumeni.prism.domain.definitions.PrismApplicationReportColumn;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
@@ -83,6 +44,29 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.validation.ProfileValidator;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import javax.inject.Inject;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+
+import static com.google.visualization.datasource.datatable.value.ValueType.TEXT;
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.text.WordUtils.capitalize;
+import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PrismActionEnhancementGroup.APPLICATION_EQUAL_OPPORTUNITIES_VIEWER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_UNSUBMITTED;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 
 @Service
 @Transactional
@@ -191,16 +175,16 @@ public class ApplicationService {
                 String value = null;
                 String getMethod = "get" + capitalize(column.getAccessor()) + "Display";
                 switch (column.getAccessorType()) {
-                case DATE:
-                    value = (String) invokeMethod(reportRow, getMethod, dateFormat);
-                    break;
-                case DISPLAY_PROPERTY:
-                    PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
-                    value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
-                    break;
-                case STRING:
-                    value = (String) invokeMethod(reportRow, getMethod);
-                    break;
+                    case DATE:
+                        value = (String) invokeMethod(reportRow, getMethod, dateFormat);
+                        break;
+                    case DISPLAY_PROPERTY:
+                        PrismLocalizableDefinition index = (PrismLocalizableDefinition) invokeMethod(reportRow, getMethod);
+                        value = index == null ? "" : loader.loadLazy(index.getDisplayProperty());
+                        break;
+                    case STRING:
+                        value = (String) invokeMethod(reportRow, getMethod);
+                        break;
                 }
                 row.addCell(value);
             }
@@ -308,13 +292,17 @@ public class ApplicationService {
         application.getLocations().clear();
         entityService.flush();
 
-        programDetailDTO.getThemes().forEach(themeDTO -> {
-            getOrCreateTheme(application, themeDTO);
-        });
+        if (programDetailDTO.getThemes() != null) {
+            for (ApplicationThemeDTO themeDTO : programDetailDTO.getThemes()) {
+                getOrCreateTheme(application, themeDTO);
+            }
+        }
 
-        programDetailDTO.getLocations().forEach(locationDTO -> {
-            getOrCreateLocation(application, locationDTO);
-        });
+        if (programDetailDTO.getLocations() != null) {
+            for (ApplicationLocationDTO locationDTO : programDetailDTO.getLocations()) {
+                getOrCreateLocation(application, locationDTO);
+            }
+        }
 
         programDetail.setLastUpdatedTimestamp(DateTime.now());
         application.setProgramDetail(programDetail);

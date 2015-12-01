@@ -1068,7 +1068,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_YES_NO_UNSURE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Screening Outcome Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_SCOPE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Scope Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_OPPORTUNITY_CATEGORY(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Opportunity Category Properties"),
-    SYSTEM_DISPLAY_CATEGORY_SYSTEM_OPPORTUNITY_TYPE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "0pportunity Type Properties"),
+    SYSTEM_DISPLAY_CATEGORY_SYSTEM_OPPORTUNITY_TYPE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Opportunity Type Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_STUDY_OPTION(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Engagement Option Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_AGE_RANGE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Age Range Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_GENDER(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Gender Properties"),

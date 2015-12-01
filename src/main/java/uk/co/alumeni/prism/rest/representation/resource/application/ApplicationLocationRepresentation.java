@@ -1,22 +1,23 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
-import com.google.common.base.Joiner;
-import jersey.repackaged.com.google.common.collect.Lists;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
-
 import java.util.List;
 
-public class ApplicationLocationRepresentation extends ApplicationSectionRepresentation {
+import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import com.google.common.base.Joiner;
+
+import jersey.repackaged.com.google.common.collect.Lists;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+
+public class ApplicationLocationRepresentation extends ApplicationTagSectionRepresentation {
 
     private ResourceRepresentationRelation resource;
 
     private String description;
 
     private LocalDate descriptionDate;
-
-    private Boolean preference;
 
     public ResourceRepresentationRelation getResource() {
         return resource;
@@ -42,14 +43,6 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
         this.descriptionDate = descriptionDate;
     }
 
-    public Boolean getPreference() {
-        return preference;
-    }
-
-    public void setPreference(Boolean preference) {
-        this.preference = preference;
-    }
-
     public ApplicationLocationRepresentation withResource(ResourceRepresentationRelation resource) {
         this.resource = resource;
         return this;
@@ -66,7 +59,7 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
     }
 
     public ApplicationLocationRepresentation withPreference(Boolean preference) {
-        this.preference = preference;
+        setPreference(preference);
         return this;
     }
 
@@ -75,7 +68,8 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
         return this;
     }
 
-    public String getDisplayName() {
+    @Override
+    public String toString() {
         String displayName = resource.getDisplayName();
         if (!(description == null || descriptionDate == null)) {
             List<String> suffixParts = Lists.newLinkedList();
@@ -87,7 +81,9 @@ public class ApplicationLocationRepresentation extends ApplicationSectionReprese
                 suffixParts.add("" + descriptionDate.getMonthOfYear() + '/' + descriptionDate.getYear());
             }
 
-            displayName = displayName + " - " + Joiner.on(" - ").join(suffixParts);
+            if (CollectionUtils.isNotEmpty(suffixParts)) {
+                displayName = displayName + " - " + Joiner.on(" - ").join(suffixParts);
+            }
         }
 
         return displayName;

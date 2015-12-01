@@ -64,8 +64,8 @@ public class ApplicationExecutor implements ActionExecutor {
                 throw new PrismValidationException("Application not completed", errors);
             }
 
-            application.setShared(commentDTO.getShared());
-            application.setOnCourse(commentDTO.getOnCourse());
+            application.setShared(BooleanUtils.isTrue(commentDTO.getShared()));
+            application.setOnCourse(BooleanUtils.isTrue(commentDTO.getOnCourse()));
         }
 
         Action action = actionService.getById(actionId);

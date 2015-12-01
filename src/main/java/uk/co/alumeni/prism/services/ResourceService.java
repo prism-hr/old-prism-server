@@ -1196,8 +1196,8 @@ public class ResourceService {
     }
 
     private <T extends Resource, U extends ResourceCreationDTO> void updateCustomAdvertTargets(T resource, U resourceDTO) {
-        if (ResourceParent.class.isAssignableFrom(resource.getClass()) && ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            advertService.updateCustomAdvertTargets(resource.getAdvert(), ((ResourceParentDTO) resourceDTO).getAdvert());
+        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass()) && ResourceOpportunityDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+            advertService.updateCustomAdvertTargets(resource.getAdvert(), ((ResourceOpportunityDTO) resourceDTO).getAdvert());
         }
     }
 

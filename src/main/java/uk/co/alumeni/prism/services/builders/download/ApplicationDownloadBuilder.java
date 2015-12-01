@@ -6,6 +6,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_HEADER;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_LOCATIONS_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROGRAM_DETAIL_THEMES_HEADER;
@@ -67,7 +68,6 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LAST_NAME;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PAGE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PREFERRED;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_SEE;
@@ -80,11 +80,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -94,9 +92,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -137,11 +133,9 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepr
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationLocationRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationOfferRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationProgramDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.DocumentService;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
@@ -231,7 +225,7 @@ public class ApplicationDownloadBuilder {
                     propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL, APPLICATION_CONFIRMED_START_DATE,
                             confirmedStartDate == null),
                     confirmedStartDate == null ? startDate.toString(dateFormat) : confirmedStartDate.toString(dateFormat), body);
-            
+
             addThemeSection(programDetail, body);
             addLocationSection(programDetail, body);
         }
@@ -240,51 +234,19 @@ public class ApplicationDownloadBuilder {
     }
 
     public void addThemeSection(ApplicationProgramDetailRepresentation programDetail, PdfPTable body) {
-        List<ApplicationThemeRepresentation> themes = programDetail.getThemes();
-        if (CollectionUtils.isNotEmpty(themes)) {
-            String preferredTheme = null;
-            Set<String> secondaryThemes = Sets.newTreeSet();
-            
-            for (ApplicationThemeRepresentation theme : themes) {
-                if (BooleanUtils.isTrue(theme.getPreference())) {
-                    preferredTheme = theme.getName();
-                } else {
-                    secondaryThemes.add(theme.getName());
-                }
-            }
-            
-            String themeContent = preferredTheme + " (" + propertyLoader.loadLazy(SYSTEM_PREFERRED) + ")";
-            if (CollectionUtils.isNotEmpty(secondaryThemes)) {
-                themeContent = themeContent + " " + Joiner.on(", ").join(secondaryThemes);
-            }
-            
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_THEMES_HEADER), themeContent, body);
+        String themes = programDetail.getThemesDisplay();
+        if (themes != null) {
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_THEMES_HEADER), themes, body);
         }
     }
 
     public void addLocationSection(ApplicationProgramDetailRepresentation programDetail, PdfPTable body) {
-        List<ApplicationLocationRepresentation> locations = programDetail.getLocations();
-        if (CollectionUtils.isNotEmpty(locations)) {
-            String preferredLocation = null;
-            Set<String> secondaryLocations = Sets.newTreeSet();
-            
-            for (ApplicationLocationRepresentation location : locations) {
-                if (BooleanUtils.isTrue(location.getPreference())) {
-                    preferredLocation = location.getDisplayName();
-                } else {
-                    secondaryLocations.add(location.getDisplayName());
-                }
-            }
-            
-            String locationContent = preferredLocation + " (" + propertyLoader.loadLazy(SYSTEM_PREFERRED) + ")";
-            if (CollectionUtils.isNotEmpty(secondaryLocations)) {
-                locationContent = locationContent + " " + Joiner.on(", ").join(secondaryLocations);
-            }
-            
-            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_THEMES_HEADER), locationContent, body);
+        String locations = programDetail.getLocationsDisplay();
+        if (locations != null) {
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(APPLICATION_PROGRAM_DETAIL_LOCATIONS_HEADER), locations, body);
         }
     }
-    
+
     private void addPersonalDetailSection(ApplicationRepresentationExtended application, Document pdfDocument)
             throws Exception {
         PdfPTable body = applicationDownloadBuilderHelper.startSection(pdfDocument, propertyLoader.loadLazy(PROFILE_PERSONAL_DETAIL_HEADER));

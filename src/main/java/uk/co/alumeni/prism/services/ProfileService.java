@@ -29,6 +29,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
@@ -550,7 +551,7 @@ public class ProfileService {
 
         personalDetail.setNationality(prismService.getDomicileById(personalDetailDTO.getNationality()));
         personalDetail.setDomicile(prismService.getDomicileById(personalDetailDTO.getDomicile()));
-        personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
+        personalDetail.setVisaRequired(BooleanUtils.isTrue(personalDetailDTO.getVisaRequired()));
 
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
@@ -795,7 +796,6 @@ public class ProfileService {
         }
 
         document.setPersonalSummary(documentDTO.getPersonalSummary());
-        document.setCv(documentService.getById(getDocumentId(documentDTO.getCv()), DOCUMENT));
         return document;
     }
 
@@ -867,10 +867,6 @@ public class ProfileService {
 
     private <T extends ProfileReferee<?>> T getProfileReferee(Class<T> refereeClass, Integer refereeId) {
         return entityService.getById(refereeClass, refereeId);
-    }
-
-    private Integer getDocumentId(DocumentDTO document) {
-        return document == null ? null : document.getId();
     }
 
     private List<CommentAssignedUser> getUserAssignmentsUpdate(Application application, User oldUser, User newUser, PrismRole prismRole) {

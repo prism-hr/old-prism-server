@@ -6,11 +6,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ResourceService;
 
+@Component
 public class ResourceByLocationSelector implements PrismResourceListFilterSelector<Integer> {
 
     @Inject

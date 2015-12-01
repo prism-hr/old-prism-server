@@ -1,12 +1,7 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisability;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
@@ -14,6 +9,10 @@ import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
 import uk.co.alumeni.prism.utils.validation.DatePast;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class ProfilePersonalDetailDTO {
 
@@ -32,7 +31,6 @@ public class ProfilePersonalDetailDTO {
     @NotNull
     private PrismDomicile nationality;
 
-    @NotNull
     private Boolean visaRequired;
 
     @NotEmpty
@@ -41,9 +39,9 @@ public class ProfilePersonalDetailDTO {
 
     @Size(min = 6, max = 32)
     private String skype;
-    
+
     private PrismEthnicity ethnicity;
-    
+
     private PrismDisability disability;
 
     public PrismGender getGender() {

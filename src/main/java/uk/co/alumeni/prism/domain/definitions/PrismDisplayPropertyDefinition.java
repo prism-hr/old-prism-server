@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
+import java.util.List;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import java.util.List;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -371,12 +372,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work Experience"),
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement"),
     SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering"),
-    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
+    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Scholarship"),
 
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Short term positions where the participant observes others."),
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Focused positions where the particpant performs concrete tasks."),
     SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Positions where the participant contributes towards a charitable cause."),
-    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Full or part-time jobs which the participant is paid to perform."),
+    SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Positions where the participant receives a scholarship to complete a research project."),
 
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "You may be required to pay the minimum wage."),
     SYSTEM_OPPORTUNITY_TYPE_MINIMUM_WAGE_WARNING_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Please check and confirm that your opportunity complies with your "),
@@ -1068,7 +1069,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_YES_NO_UNSURE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Screening Outcome Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_SCOPE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Scope Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_OPPORTUNITY_CATEGORY(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Opportunity Category Properties"),
-    SYSTEM_DISPLAY_CATEGORY_SYSTEM_OPPORTUNITY_TYPE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Opportunity Type Properties"),
+    SYSTEM_DISPLAY_CATEGORY_SYSTEM_OPPORTUNITY_TYPE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "0pportunity Type Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_STUDY_OPTION(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Engagement Option Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_AGE_RANGE(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Age Range Properties"),
     SYSTEM_DISPLAY_CATEGORY_SYSTEM_GENDER(PrismDisplayPropertyCategory.SYSTEM_DISPLAY_CATEGORY, "Gender Properties"),
@@ -1742,8 +1743,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your employment"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description of your employment."),
-    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Referee Employer"),
-    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your referee's employer"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Supervisor Instiution"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your referee's institution"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Position"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Enter the title of your referee's position"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. Business Unit Leader"),
@@ -2024,16 +2025,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PROGRAM_DETAIL_STUDY_OPTION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Your preferred mode of engagement (e.g. full-time, part-time, flexible)."),
     APPLICATION_PROGRAM_DETAIL_START_DATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Start Date"),
     APPLICATION_PROGRAM_DETAIL_START_DATE_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "The date that you are available to start, if successful in your application."),
-    APPLICATION_PROGRAM_DETAIL_THEMES_HEADER(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Themes"),
-    APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Preferred Theme"),
-    APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify your preferred theme"),
-    APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Themes"),
-    APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify any alternate themes that you wish to be considered for, should we not able to allocate you to your preferred theme"),
-    APPLICATION_PROGRAM_DETAIL_LOCATIONS_HEADER(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Locations"),
-    APPLICATION_PROGRAM_DETAIL_PRIMARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Preferred Location"),
-    APPLICATION_PROGRAM_DETAIL_PRIMARY_LOCATION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify your preferred primary location"),
-    APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Location"),
-    APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify any alternate locations that you wish to be considered for, should we not able to allocate you to your preferred location"),
+    APPLICATION_PROGRAM_DETAIL_THEMES_HEADER(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Subjects"),
+    APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Primary Subject"),
+    APPLICATION_PROGRAM_DETAIL_PRIMARY_THEME_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify your primary subject"),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Subject"),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_THEME_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify any secondary subjects that you feel your application may be applicable to"),
+    APPLICATION_PROGRAM_DETAIL_LOCATIONS_HEADER(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Study Details"),
+    APPLICATION_PROGRAM_DETAIL_PRIMARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Study Institution"),
+    APPLICATION_PROGRAM_DETAIL_PRIMARY_LOCATION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify your study location"),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Secondary Study Institutions"),
+    APPLICATION_PROGRAM_DETAIL_SECONDARY_LOCATION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please specify any secondary institutions that you feel your application may be applicable to"),
     APPLICATION_PROGRAM_DETAIL_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Study Application ID"),
     APPLICATION_PROGRAM_DETAIL_DESCRIPTION_HINT(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Please enter the ID of your study application"),
     APPLICATION_PROGRAM_DETAIL_DESCRIPTION_DATE_LABEL(PrismDisplayPropertyCategory.APPLICATION_PROGRAM_DETAIL, "Study Start Date"),
@@ -2125,22 +2126,22 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_EMPLOYMENT_POSITION_CURRENT_HINT(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "This tells us that the position is an ongoing one."),
     PROFILE_EMPLOYMENT_POSITION_PERIOD_LABEL(PrismDisplayPropertyCategory.PROFILE_EMPLOYMENT_POSITION, "Employment Period"),
 
-    PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referees"),
-    PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Specify your referee(s) here. Should you be considered for appointment, each referee will be asked to provide a statement in support of your application."),
+    PROFILE_REFEREE_HEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Supervisor"),
+    PROFILE_REFEREE_DESCRIPTION(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Specify your supervisor here. Should we progress your application for a scholarship, your supervisor will be contacted to provide a supporting statement."),
     PROFILE_REFEREE_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Referee"),
     PROFILE_REFEREE_POSITION_CONTACT_SUBHEADER(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Contact Details"),
     PROFILE_REFEREE_POSITION_EMPLOYER_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Employer & Position"),
     PROFILE_REFEREE_POSITION_EMPLOYER_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The position that your referee holds, and the organization that employs them."),
     PROFILE_REFEREE_PHONE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Telephone"),
-    PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The employer telephone number of the referee."),
+    PROFILE_REFEREE_PHONE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The work telephone number of the referee."),
     PROFILE_REFEREE_SKYPE_LABEL(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Skype user name"),
     PROFILE_REFEREE_SKYPE_HINT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "The Skype address of the referee."),
     PROFILE_REFEREE_REFERENCE_APPENDIX(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference"),
     PROFILE_REFEREE_REFERENCE_COMMENT(PrismDisplayPropertyCategory.PROFILE_REFEREE, "Reference Comment"),
 
     PROFILE_DOCUMENT_HEADER(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Supporting Information"),
-    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Personal Summary"),
-    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "A concise overview of your skills, personal characteristics and achievements. Take your time with this. Employers use it to differentiate between applicant. It is your chance to promote yourself."),
+    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Research Statement"),
+    APPLICATION_DOCUMENT_PERSONAL_SUMMARY_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Provide a brief description of your research interests and intended research focus, as instructed in the application guidelines."),
     PROFILE_DOCUMENT_CV_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "CV / Resume (PDF)"),
     PROFILE_DOCUMENT_CV_HINT(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Your CV/resume. This should summarise your ambitions, and academic and professionl achievements. Please provide no more than 2 pages of A4."),
     PROFILE_DOCUMENT_COVERING_LETTER_LABEL(PrismDisplayPropertyCategory.PROFILE_DOCUMENT, "Covering Letter (PDF)"),

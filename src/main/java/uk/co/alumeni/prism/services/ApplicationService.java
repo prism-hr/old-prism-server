@@ -381,12 +381,15 @@ public class ApplicationService {
         PrismScope organizationScope = null;
         ResourceRelationDTO resourceRelation = locationDTO.getResource();
         for (ResourceCreationDTO organization : resourceRelation.getOrganizations()) {
-            organizationId = organization.getId();
-            if (organizationId == null) {
+            Integer thisOrganizationId = organization.getId();
+            if (thisOrganizationId == null) {
                 break;
+            } else {
+               organizationId = thisOrganizationId;
             }
             organizationScope = organization.getScope();
         }
+        
         ResourceParent organization = (ResourceParent) resourceService.getById(organizationScope, organizationId);
         Advert locationAdvert = resourceService.createResourceRelation(resourceRelation, PrismScope.getResourceContexts(organization.getOpportunityCategories()).iterator().next(),
                 resourceRelation.getResource().getScope().getScopeCategory().equals(OPPORTUNITY) ? userService.getCurrentUser() : organization.getUser()).getAdvert();

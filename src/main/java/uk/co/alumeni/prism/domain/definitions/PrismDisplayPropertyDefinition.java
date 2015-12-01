@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -371,7 +370,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITY_TYPE_TRAINING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Vocational Training"),
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Work Experience"),
     SYSTEM_OPPORTUNITY_TYPE_PLACEMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Placement"),
-    SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Volunteering"),
+    SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Employment"),
     SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Scholarship"),
 
     SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE, "Short term positions where the participant observes others."),
@@ -1743,7 +1742,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your employment"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description"),
     SYSTEM_HTML_RESOURCE_FAMILY_EMPLOYMENT_POSITION_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Description of your employment."),
-    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Supervisor Instiution"),
+    SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Supervisor Institution"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_INSTITUTION_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select or enter the name of your referee's institution"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Position"),
     SYSTEM_HTML_RESOURCE_FAMILY_REFEREE_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Enter the title of your referee's position"),

@@ -494,7 +494,7 @@ public class UserService {
 
         return newLinkedList(profiles);
     }
-
+    
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
     }

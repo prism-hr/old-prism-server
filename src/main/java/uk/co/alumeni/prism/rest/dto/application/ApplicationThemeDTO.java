@@ -5,16 +5,16 @@ import javax.validation.constraints.NotNull;
 public class ApplicationThemeDTO {
 
     @NotNull
-    private Integer themeId;
+    private Integer id;
 
     private Boolean preference;
 
-    public Integer getThemeId() {
-        return themeId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setThemeId(Integer themeId) {
-        this.themeId = themeId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Boolean getPreference() {

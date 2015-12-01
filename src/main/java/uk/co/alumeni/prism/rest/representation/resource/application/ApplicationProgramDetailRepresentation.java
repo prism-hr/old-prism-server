@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
+import static uk.co.alumeni.prism.PrismConstants.COMMA;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+
 import java.util.List;
 import java.util.Set;
 
@@ -110,7 +113,8 @@ public class ApplicationProgramDetailRepresentation extends ApplicationSectionRe
 
             String tagContent = preferredTag + " (" + preferredFlag + ")";
             if (CollectionUtils.isNotEmpty(secondaryTags)) {
-                tagContent = tagContent + " " + Joiner.on(", ").join(secondaryTags);
+                String separator = COMMA + SPACE;
+                tagContent = tagContent + separator + Joiner.on(separator).join(secondaryTags);
             }
 
             return tagContent;

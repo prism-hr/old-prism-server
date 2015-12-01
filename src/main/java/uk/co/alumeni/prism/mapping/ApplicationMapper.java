@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PREFERRED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
@@ -25,6 +26,7 @@ import javax.transaction.Transactional;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Iterables;
@@ -69,7 +71,9 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.A
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 @Service
 @Transactional
@@ -77,6 +81,9 @@ public class ApplicationMapper {
 
     @Inject
     private ApplicationService applicationService;
+
+    @Inject
+    private AdvertMapper advertMapper;
 
     @Inject
     private CommentMapper commentMapper;
@@ -94,13 +101,16 @@ public class ApplicationMapper {
     private ResourceService resourceService;
 
     @Inject
-    private AdvertMapper advertMapper;
+    private SystemService systemService;
 
     @Inject
     private UserMapper userMapper;
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles) {
         ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, ApplicationRepresentationClient.class, overridingRoles);
@@ -212,9 +222,10 @@ public class ApplicationMapper {
     private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         if (applicationProgramDetail != null) {
-            return new ApplicationProgramDetailRepresentation().withStudyOption(applicationProgramDetail.getStudyOption()).withStartDate(applicationProgramDetail.getStartDate())
-                    .withThemes(getApplicationThemeRepresentations(application)).withLocations(getApplicationLocationRepresentations(application))
-                    .withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
+            String preferredFlag = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(SYSTEM_PREFERRED);
+            return new ApplicationProgramDetailRepresentation().withPreferredFlag(preferredFlag).withStudyOption(applicationProgramDetail.getStudyOption())
+                    .withStartDate(applicationProgramDetail.getStartDate()).withThemes(getApplicationThemeRepresentations(application))
+                    .withLocations(getApplicationLocationRepresentations(application)).withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
         }
         return null;
     }

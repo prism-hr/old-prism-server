@@ -563,7 +563,8 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN)
-                .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.themes", "advertTheme", JoinType.INNER_JOIN) //
+                .createAlias("advertTheme.theme", "theme", JoinType.INNER_JOIN) //
                 .add(Restrictions.like("theme.name", theme, MatchMode.ANYWHERE)) //
                 .list();
     }
@@ -572,7 +573,7 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("categories.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.locations", "location", JoinType.INNER_JOIN) //
                 .createAlias("location.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
                 .createAlias("locationAdvert.institution", "locationInstitution", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("locationAdvert.department", "locationDepartment", JoinType.LEFT_OUTER_JOIN) //

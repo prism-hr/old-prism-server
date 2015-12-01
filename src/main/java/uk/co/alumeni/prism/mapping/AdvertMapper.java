@@ -387,7 +387,7 @@ public class AdvertMapper {
             List<AdvertThemeRepresentation> themes = Lists.newLinkedList();
             categories.getThemes().forEach(advertTheme -> {
                 Theme theme = advertTheme.getTheme();
-                themes.add(new AdvertThemeRepresentation().withThemeId(theme.getId()).withName(theme.getName()));
+                themes.add(new AdvertThemeRepresentation().withId(theme.getId()).withName(theme.getName()));
             });
 
             List<ResourceRepresentationRelation> locations = categories.getLocations().stream()

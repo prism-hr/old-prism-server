@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -999,6 +998,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Validation Stage Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Review Stage Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Interview Stage Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Reference Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Availability Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Availability Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Notification"),

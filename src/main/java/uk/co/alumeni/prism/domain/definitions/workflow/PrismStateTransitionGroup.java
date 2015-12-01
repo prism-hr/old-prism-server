@@ -190,10 +190,6 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(PROJECT_APPROVED) //
                     .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) //
-                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_COMPLETED_OUTCOME),
-            new PrismStateTransition() //
-                    .withTransitionState(PROJECT_UNSUBMITTED) //
-                    .withTransitionAction(PrismAction.PROJECT_COMPLETE) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_COMPLETED_OUTCOME)), //
 
 
@@ -253,10 +249,6 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_APPROVED) //
                     .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT) //
-                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_COMPLETED_OUTCOME),
-            new PrismStateTransition() //
-                    .withTransitionState(PROGRAM_UNSUBMITTED) //
-                    .withTransitionAction(PrismAction.PROGRAM_COMPLETE) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_COMPLETED_OUTCOME)), //
 
     PROGRAM_APPROVE_TRANSITION( //
@@ -316,10 +308,6 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(DEPARTMENT_APPROVED) //
                     .withTransitionAction(PrismAction.DEPARTMENT_VIEW_EDIT) //
-                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.DEPARTMENT_COMPLETED_OUTCOME),
-            new PrismStateTransition() //
-                    .withTransitionState(DEPARTMENT_UNSUBMITTED) //
-                    .withTransitionAction(PrismAction.DEPARTMENT_COMPLETE) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.DEPARTMENT_COMPLETED_OUTCOME)), //
 
     DEPARTMENT_APPROVE_TRANSITION( //
@@ -366,10 +354,6 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_APPROVED) //
                     .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT) //
-                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_COMPLETED_OUTCOME),
-            new PrismStateTransition() //
-                    .withTransitionState(INSTITUTION_UNSUBMITTED) //
-                    .withTransitionAction(PrismAction.INSTITUTION_COMPLETE) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_COMPLETED_OUTCOME)), //
 
     INSTITUTION_APPROVE_TRANSITION( //

@@ -53,6 +53,7 @@ import uk.co.alumeni.prism.rest.dto.comment.CommentCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewAppointmentDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewInstructionDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
@@ -71,6 +72,12 @@ public class CommentService {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private ResourceService resourceService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private StateService stateService;
@@ -290,10 +297,19 @@ public class CommentService {
     }
 
     public void preprocessClaimComment(User user, CommentDTO commentDTO) {
-        PrismScope scope = commentDTO.getResource().getScope();
-        commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
-                .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
-                .withRole(PrismRole.valueOf(scope.name() + "_ADMINISTRATOR"))));
+        ResourceCreationDTO resourceDTO = commentDTO.getResource();
+
+        PrismScope resourceScope = resourceDTO.getScope();
+        String resourceScopeReference = resourceScope.name();
+        PrismRole administratorRole = PrismRole.valueOf(resourceScopeReference + "_ADMINISTRATOR");
+        if (roleService.hasUserRole(resourceService.getById(resourceScope, resourceDTO.getId()), user, administratorRole)) {
+            commentDTO.setTransitionState(PrismState.valueOf(resourceScopeReference + "_APPROVED"));
+        } else {
+            commentDTO.setTransitionState(PrismState.valueOf(resourceScopeReference + "_APPROVAL"));
+            commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
+                    .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
+                    .withRole(administratorRole)));
+        }
     }
 
     private void updateCommentStates(Comment comment) {

@@ -1,6 +1,9 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.project;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PARENT_APPROVAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVED;
 
 import javax.inject.Inject;
 
@@ -10,6 +13,7 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
 
@@ -20,14 +24,19 @@ public class ProjectCompletedResolver implements StateTransitionResolver<Project
     private ResourceService resourceService;
 
     @Inject
+    private RoleService roleService;
+
+    @Inject
     private StateService stateService;
 
     @Override
     public StateTransition resolve(Project resource, Comment comment) {
         if (resourceService.isUnderApproval(resource)) {
             return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
+        } else if (roleService.hasUserRole(resource, comment.getUser(), PROJECT_ADMINISTRATOR)) {
+            return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVED);
         }
-        return stateService.getPredefinedStateTransition(resource, comment);
+        return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL);
     }
 
 }

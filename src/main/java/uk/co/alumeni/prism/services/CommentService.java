@@ -37,7 +37,6 @@ import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -53,7 +52,6 @@ import uk.co.alumeni.prism.rest.dto.comment.CommentCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewAppointmentDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewInstructionDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
@@ -72,12 +70,6 @@ public class CommentService {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private ResourceService resourceService;
-
-    @Inject
-    private RoleService roleService;
 
     @Inject
     private StateService stateService;
@@ -297,19 +289,9 @@ public class CommentService {
     }
 
     public void preprocessClaimComment(User user, CommentDTO commentDTO) {
-        ResourceCreationDTO resourceDTO = commentDTO.getResource();
-
-        PrismScope resourceScope = resourceDTO.getScope();
-        String resourceScopeReference = resourceScope.name();
-        PrismRole administratorRole = PrismRole.valueOf(resourceScopeReference + "_ADMINISTRATOR");
-        if (roleService.hasUserRole(resourceService.getById(resourceScope, resourceDTO.getId()), user, administratorRole)) {
-            commentDTO.setTransitionState(PrismState.valueOf(resourceScopeReference + "_APPROVED"));
-        } else {
-            commentDTO.setTransitionState(PrismState.valueOf(resourceScopeReference + "_APPROVAL"));
-            commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
-                    .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
-                    .withRole(administratorRole)));
-        }
+        commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
+                .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
+                .withRole(PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ADMINISTRATOR"))));
     }
 
     private void updateCommentStates(Comment comment) {

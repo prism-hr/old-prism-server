@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Department;
+import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
@@ -31,12 +32,16 @@ public class DepartmentCompletedResolver implements StateTransitionResolver<Depa
 
     @Override
     public StateTransition resolve(Department resource, Comment comment) {
+        State transitionState = comment.getTransitionState();
         if (resourceService.isUnderApproval(resource.getInstitution())) {
             return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVAL_PARENT_APPROVAL);
-        } else if (roleService.hasUserRole(resource, comment.getUser(), DEPARTMENT_ADMINISTRATOR)) {
-            return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVED);
+        } else if (transitionState == null) {
+            if (roleService.hasUserRole(resource, comment.getUser(), DEPARTMENT_ADMINISTRATOR)) {
+                return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVED);
+            }
+            return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVAL);
         }
-        return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVAL);
+        return stateService.getPredefinedStateTransition(resource, comment);
     }
 
 }

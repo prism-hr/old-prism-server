@@ -180,6 +180,10 @@ public enum PrismStateTransitionGroup {
 
     PROJECT_COMPLETE_TRANSITION( //
             new PrismStateTransition() //
+                    .withTransitionState(PROJECT_UNSUBMITTED) //
+                    .withTransitionAction(PrismAction.PROJECT_COMPLETE) //
+                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_COMPLETED_OUTCOME),
+            new PrismStateTransition() //
                     .withTransitionState(PROJECT_APPROVAL_PARENT_APPROVAL) //
                     .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_COMPLETED_OUTCOME),
@@ -191,7 +195,6 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(PROJECT_APPROVED) //
                     .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_COMPLETED_OUTCOME)), //
-
 
     PROJECT_APPROVE_TRANSITION( //
             new PrismStateTransition() //
@@ -238,6 +241,10 @@ public enum PrismStateTransitionGroup {
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_CREATED_OUTCOME)), //
 
     PROGRAM_COMPLETE_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(PROGRAM_UNSUBMITTED) //
+                    .withTransitionAction(PrismAction.PROGRAM_COMPLETE) //
+                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_COMPLETED_OUTCOME), //
             new PrismStateTransition() //
                     .withTransitionState(PROGRAM_APPROVAL_PARENT_APPROVAL) //
                     .withTransitionAction(PrismAction.SYSTEM_VIEW_PROGRAM_LIST) //
@@ -298,6 +305,10 @@ public enum PrismStateTransitionGroup {
 
     DEPARTMENT_COMPLETE_TRANSITION( //
             new PrismStateTransition() //
+                    .withTransitionState(DEPARTMENT_UNSUBMITTED) //
+                    .withTransitionAction(PrismAction.DEPARTMENT_COMPLETE) //
+                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.DEPARTMENT_COMPLETED_OUTCOME),
+            new PrismStateTransition() //
                     .withTransitionState(DEPARTMENT_APPROVAL_PARENT_APPROVAL) //
                     .withTransitionAction(PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.DEPARTMENT_COMPLETED_OUTCOME), //
@@ -348,6 +359,10 @@ public enum PrismStateTransitionGroup {
 
     INSTITUTION_COMPLETE_TRANSITION( //
             new PrismStateTransition() //
+                    .withTransitionState(INSTITUTION_UNSUBMITTED) //
+                    .withTransitionAction(PrismAction.INSTITUTION_COMPLETE) //
+                    .withStateTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_COMPLETED_OUTCOME), //
+            new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_APPROVAL) //
                     .withTransitionAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_COMPLETED_OUTCOME), //
@@ -361,7 +376,8 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_APPROVED) //
                     .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT) //
                     .withStateTransitionEvaluation(PrismStateTransitionEvaluation.INSTITUTION_APPROVED_OUTCOME) //
-                    .withPropagatedActions(PrismAction.PROJECT_COMPLETE_PARENT_APPROVAL_STAGE, PrismAction.PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE, PrismAction.DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE),
+                    .withPropagatedActions(PrismAction.PROJECT_COMPLETE_PARENT_APPROVAL_STAGE, PrismAction.PROGRAM_COMPLETE_PARENT_APPROVAL_STAGE,
+                            PrismAction.DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE),
             new PrismStateTransition() //
                     .withTransitionState(INSTITUTION_REJECTED) //
                     .withTransitionAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST)

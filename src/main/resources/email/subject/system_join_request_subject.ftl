@@ -1,1 +1,1 @@
-Request to Join Organization in ${TEMPLATE_SYSTEM_NAME} Accepted
+Request to Join Organization in ${TEMPLATE_SYSTEM_NAME}

@@ -18,9 +18,9 @@ public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.e
     STUDY_POSTGRADUATE_TAUGHT(STUDY, false, null), //
     STUDY_POSTGRADUATE_RESEARCH(STUDY, false, null), //
     TRAINING(PERSONAL_DEVELOPMENT, false, null), //
-    WORK_EXPERIENCE(EXPERIENCE, true, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION), //
-    PLACEMENT(EXPERIENCE, true, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION), //
-    VOLUNTEERING(EXPERIENCE, true, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING_DESCRIPTION), //
+    WORK_EXPERIENCE(EXPERIENCE, false, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_WORK_EXPERIENCE_DESCRIPTION), //
+    PLACEMENT(EXPERIENCE, false, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_PLACEMENT_DESCRIPTION), //
+    VOLUNTEERING(EXPERIENCE, false, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_VOLUNTEERING_DESCRIPTION), //
     EMPLOYMENT(WORK, true, PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITY_TYPE_EMPLOYMENT_DESCRIPTION); //
 
     private PrismOpportunityCategory opportunityCategory;

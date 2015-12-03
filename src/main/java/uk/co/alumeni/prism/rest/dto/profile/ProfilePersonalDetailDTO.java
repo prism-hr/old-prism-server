@@ -32,7 +32,6 @@ public class ProfilePersonalDetailDTO {
     @NotNull
     private PrismDomicile nationality;
 
-    @NotNull
     private Boolean visaRequired;
 
     @NotEmpty
@@ -41,9 +40,9 @@ public class ProfilePersonalDetailDTO {
 
     @Size(min = 6, max = 32)
     private String skype;
-    
+
     private PrismEthnicity ethnicity;
-    
+
     private PrismDisability disability;
 
     public PrismGender getGender() {

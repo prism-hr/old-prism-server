@@ -12,7 +12,7 @@
 	To reset your password, go to your profile settings.
 </p>
 
-${ACTION_GLOBAL}
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

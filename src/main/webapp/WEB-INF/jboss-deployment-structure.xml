@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jboss-deployment-structure>
     <deployment>
-        <dependencies>
-            <!-- import jaxrs module so we can call new BasicAuthentication() -->
-            <module name="org.jboss.resteasy.resteasy-jaxrs" services="export" export="true"/>
-        </dependencies>
     </deployment>
 </jboss-deployment-structure>

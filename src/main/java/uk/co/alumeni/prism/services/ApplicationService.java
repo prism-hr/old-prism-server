@@ -7,7 +7,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
@@ -334,7 +333,7 @@ public class ApplicationService {
                 throw new WorkflowPermissionException(application, action);
             }
         } else {
-            resourceService.executeUpdate(application, currentUser, APPLICATION_COMMENT_UPDATED_PERSONAL_DETAIL, assignees);
+            resourceService.executeUpdate(application, currentUser, message, assignees);
         }
     }
 
@@ -401,11 +400,11 @@ public class ApplicationService {
             if (thisOrganizationId == null) {
                 break;
             } else {
-               organizationId = thisOrganizationId;
+                organizationId = thisOrganizationId;
             }
             organizationScope = organization.getScope();
         }
-        
+
         ResourceParent organization = (ResourceParent) resourceService.getById(organizationScope, organizationId);
         Advert locationAdvert = resourceService.createResourceRelation(resourceRelation, PrismScope.getResourceContexts(organization.getOpportunityCategories()).iterator().next(),
                 resourceRelation.getResource().getScope().getScopeCategory().equals(OPPORTUNITY) ? userService.getCurrentUser() : organization.getUser()).getAdvert();

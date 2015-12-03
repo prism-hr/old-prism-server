@@ -72,8 +72,9 @@ public class ApplicationExecutor implements ActionExecutor {
         User delegateUser = userService.getById(commentDTO.getDelegateUser());
         State transitionState = entityService.getById(State.class, commentDTO.getTransitionState());
 
-        Comment comment = new Comment().withUser(user).withResource(application).withContent(commentDTO.getContent()).withDelegateUser(delegateUser)
-                .withAction(action).withTransitionState(transitionState).withRating(commentDTO.getRating()).withCreatedTimestamp(new DateTime())
+        Comment comment = new Comment().withUser(user).withResource(application).withContent(commentDTO.getContent()).withDelegateUser(delegateUser).withAction(action)
+                .withTransitionState(transitionState).withApplicantKnown(commentDTO.getApplicantKnown()).withApplicantKnownDuration(commentDTO.getApplicantKnownDuration())
+                .withRating(commentDTO.getRating()).withApplicantKnownCapcity(commentDTO.getApplicantKnownCapacity()).withCreatedTimestamp(new DateTime())
                 .withDeclinedResponse(BooleanUtils.isTrue(commentDTO.getDeclinedResponse())).withEligible(commentDTO.getEligible()).withInterested(commentDTO.getInterested())
                 .withInterviewAvailable(commentDTO.getInterviewAvailable()).withRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment())
                 .withPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment()).withApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment())

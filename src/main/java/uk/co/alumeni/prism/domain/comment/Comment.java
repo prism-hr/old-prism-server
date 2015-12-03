@@ -124,12 +124,22 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @Column(name = "application_on_course")
     private Boolean onCourse;
 
-    @Column(name = "application_rating")
-    private BigDecimal rating;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "application_eligible")
     private PrismYesNoUnsureResponse eligible;
+
+    @Column(name = "application_applicant_known")
+    private Boolean applicantKnown;
+
+    @Column(name = "application_applicant_known_duration")
+    private Integer applicantKnownDuration;
+
+    @Lob
+    @Column(name = "application_applicant_known_capacity")
+    private String applicantKnownCapacity;
+
+    @Column(name = "application_rating")
+    private BigDecimal rating;
 
     @Column(name = "application_interested")
     private Boolean interested;
@@ -333,14 +343,6 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.transitionState = transitionState;
     }
 
-    public BigDecimal getRating() {
-        return rating;
-    }
-
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
-    }
-
     public Boolean getShared() {
         return shared;
     }
@@ -361,16 +363,48 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return eligible;
     }
 
+    public void setEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
+    }
+
+    public Boolean getApplicantKnown() {
+        return applicantKnown;
+    }
+
+    public void setApplicantKnown(Boolean applicantKnown) {
+        this.applicantKnown = applicantKnown;
+    }
+
+    public Integer getApplicantKnownDuration() {
+        return applicantKnownDuration;
+    }
+
+    public void setApplicantKnownDuration(Integer applicantKnownDuration) {
+        this.applicantKnownDuration = applicantKnownDuration;
+    }
+
+    public String getApplicantKnownCapacity() {
+        return applicantKnownCapacity;
+    }
+
+    public void setApplicantKnownCapacity(String applicantKnownCapacity) {
+        this.applicantKnownCapacity = applicantKnownCapacity;
+    }
+
+    public BigDecimal getRating() {
+        return rating;
+    }
+
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
+    }
+
     public Boolean getInterested() {
         return interested;
     }
 
     public void setInterested(Boolean interested) {
         this.interested = interested;
-    }
-
-    public void setEligible(PrismYesNoUnsureResponse eligible) {
-        this.eligible = eligible;
     }
 
     public CommentInterviewAppointment getInterviewAppointment() {
@@ -569,13 +603,28 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
-    public Comment withRating(BigDecimal rating) {
-        this.rating = rating;
+    public Comment withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
         return this;
     }
 
-    public Comment withCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
+    public Comment withApplicantKnown(Boolean applicantKnown) {
+        this.applicantKnown = applicantKnown;
+        return this;
+    }
+
+    public Comment withApplicantKnownDuration(Integer applicantKnownDuration) {
+        this.applicantKnownDuration = applicantKnownDuration;
+        return this;
+    }
+
+    public Comment withApplicantKnownCapcity(String applicantKnownCapacity) {
+        this.applicantKnownCapacity = applicantKnownCapacity;
+        return this;
+    }
+
+    public Comment withRating(BigDecimal rating) {
+        this.rating = rating;
         return this;
     }
 

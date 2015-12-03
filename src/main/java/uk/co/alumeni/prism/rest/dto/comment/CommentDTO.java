@@ -42,10 +42,16 @@ public class CommentDTO {
 
     private Boolean onCourse;
 
-    private BigDecimal rating;
-
     private PrismYesNoUnsureResponse eligible;
 
+    private Boolean applicantKnown;
+
+    private Integer applicantKnownDuration;
+
+    private String applicantKnownCapacity;
+    
+    private BigDecimal rating;
+    
     private Boolean interested;
 
     @Valid
@@ -174,13 +180,29 @@ public class CommentDTO {
     public void setEligible(PrismYesNoUnsureResponse eligible) {
         this.eligible = eligible;
     }
-
-    public Boolean getInterested() {
-        return interested;
+    
+    public Boolean getApplicantKnown() {
+        return applicantKnown;
     }
 
-    public void setInterested(Boolean interested) {
-        this.interested = interested;
+    public void setApplicantKnown(Boolean applicantKnown) {
+        this.applicantKnown = applicantKnown;
+    }
+
+    public Integer getApplicantKnownDuration() {
+        return applicantKnownDuration;
+    }
+
+    public void setApplicantKnownDuration(Integer applicantKnownDuration) {
+        this.applicantKnownDuration = applicantKnownDuration;
+    }
+
+    public String getApplicantKnownCapacity() {
+        return applicantKnownCapacity;
+    }
+
+    public void setApplicantKnownCapacity(String applicantKnownCapacity) {
+        this.applicantKnownCapacity = applicantKnownCapacity;
     }
 
     public BigDecimal getRating() {
@@ -189,6 +211,14 @@ public class CommentDTO {
 
     public void setRating(BigDecimal rating) {
         this.rating = rating;
+    }
+
+    public Boolean getInterested() {
+        return interested;
+    }
+
+    public void setInterested(Boolean interested) {
+        this.interested = interested;
     }
 
     public CommentInterviewAppointmentDTO getInterviewAppointment() {

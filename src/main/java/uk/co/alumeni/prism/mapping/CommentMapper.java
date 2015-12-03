@@ -211,7 +211,8 @@ public class CommentMapper {
 
     private CommentRepresentation getCommentRepresentationExtended(Comment comment) {
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
-                .withTransitionState(comment.getTransitionState().getId()).withRating(comment.getRating()).withEligible(comment.getEligible())
+                .withTransitionState(comment.getTransitionState().getId()).withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
+                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating())
                 .withInterested(comment.getInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))

@@ -35,9 +35,15 @@ public class CommentRepresentation {
 
     private Boolean onCourse;
 
-    private BigDecimal rating;
-
     private PrismYesNoUnsureResponse eligible;
+
+    private Boolean applicantKnown;
+
+    private Integer applicantKnownDuration;
+
+    private String applicantKnownCapacity;
+
+    private BigDecimal rating;
 
     private Boolean interested;
 
@@ -159,6 +165,38 @@ public class CommentRepresentation {
         this.eligible = eligible;
     }
 
+    public Boolean getApplicantKnown() {
+        return applicantKnown;
+    }
+
+    public void setApplicantKnown(Boolean applicantKnown) {
+        this.applicantKnown = applicantKnown;
+    }
+
+    public Integer getApplicantKnownDuration() {
+        return applicantKnownDuration;
+    }
+
+    public void setApplicantKnownDuration(Integer applicantKnownDuration) {
+        this.applicantKnownDuration = applicantKnownDuration;
+    }
+
+    public String getApplicantKnownCapacity() {
+        return applicantKnownCapacity;
+    }
+
+    public void setApplicantKnownCapacity(String applicantKnownCapacity) {
+        this.applicantKnownCapacity = applicantKnownCapacity;
+    }
+
+    public BigDecimal getRating() {
+        return rating;
+    }
+
+    public void setRating(BigDecimal rating) {
+        this.rating = rating;
+    }
+
     public Boolean getInterested() {
         return interested;
     }
@@ -237,14 +275,6 @@ public class CommentRepresentation {
 
     public void setRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-    public BigDecimal getRating() {
-        return rating;
-    }
-
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
     }
 
     public DateTime getCreatedTimestamp() {
@@ -345,13 +375,28 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withRating(BigDecimal rating) {
-        this.rating = rating;
+    public CommentRepresentation withEligible(PrismYesNoUnsureResponse eligible) {
+        this.eligible = eligible;
         return this;
     }
 
-    public CommentRepresentation withEligible(PrismYesNoUnsureResponse eligible) {
-        this.eligible = eligible;
+    public CommentRepresentation withApplicantKnown(Boolean applicantKnown) {
+        this.applicantKnown = applicantKnown;
+        return this;
+    }
+
+    public CommentRepresentation withApplicantKnownDuration(Integer applicantKnownDuration) {
+        this.applicantKnownDuration = applicantKnownDuration;
+        return this;
+    }
+
+    public CommentRepresentation withApplicantKnownCapacity(String applicantKnownCapacity) {
+        this.applicantKnownCapacity = applicantKnownCapacity;
+        return this;
+    }
+
+    public CommentRepresentation withRating(BigDecimal rating) {
+        this.rating = rating;
         return this;
     }
 

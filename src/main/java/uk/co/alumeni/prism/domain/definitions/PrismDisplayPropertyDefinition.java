@@ -1276,6 +1276,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_DURATION_CONTROL_HOURS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Hours"),
     SYSTEM_HTML_DURATION_CONTROL_MINUTES(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Minutes"),
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Completed"),
+    SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_UNCOMPLETED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Uncompleted"),
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "You cannot provide more than {{maxItems}} item(s)."),
     SYSTEM_HTML_FILE_UPLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload PDF"),
     SYSTEM_HTML_FILE_UPLOAD_IMAGE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload Logo"),

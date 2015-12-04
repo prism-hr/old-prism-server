@@ -1355,6 +1355,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_BUTTON_ACCEPTED(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Connected"),
     SYSTEM_OPPORTUNITIES_BUTTON_PENDING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Pending"),
     SYSTEM_OPPORTUNITIES_CONNECTED(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Connect"),
+    SYSTEM_OPPORTUNITIES_CONNECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Your connection has been requested"),
+    SYSTEM_OPPORTUNITIES_CONNECT_REQUEST_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "The organization you are connecting with will be notify about you interest of joining the network"),
     SYSTEM_OPPORTUNITIES_CREATE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create Employer"),
     SYSTEM_OPPORTUNITIES_INVITE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Invite Employer"),
     SYSTEM_OPPORTUNITIES_CREATE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create University"),

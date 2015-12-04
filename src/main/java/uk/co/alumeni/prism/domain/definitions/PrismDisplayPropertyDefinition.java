@@ -726,16 +726,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM DURATION *********************
      */
 
+    SYSTEM_DURATION_UNIT_HOUR(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Hour"),
     SYSTEM_DURATION_UNIT_DAY(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Day"),
     SYSTEM_DURATION_UNIT_WEEK(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Week"),
     SYSTEM_DURATION_UNIT_MONTH(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Month"),
     SYSTEM_DURATION_UNIT_YEAR(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Year"),
 
+    SYSTEM_DURATION_UNIT_HOURS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Hours"),
     SYSTEM_DURATION_UNIT_DAYS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Days"),
     SYSTEM_DURATION_UNIT_WEEKS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Weeks"),
     SYSTEM_DURATION_UNIT_MONTHS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Months"),
     SYSTEM_DURATION_UNIT_YEARS(PrismDisplayPropertyCategory.SYSTEM_DURATION, "Years"),
 
+    SYSTEM_DURATION_UNIT_PER_HOUR(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Hour"),
     SYSTEM_DURATION_UNIT_PER_DAY(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Day"),
     SYSTEM_DURATION_UNIT_PER_WEEK(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Week"),
     SYSTEM_DURATION_UNIT_PER_MONTH(PrismDisplayPropertyCategory.SYSTEM_DURATION, "per Month"),

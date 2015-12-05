@@ -8,6 +8,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 
@@ -31,7 +32,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.utils.PrismEnumUtils;
 
 @Component
 public class WorkflowDAO {
@@ -39,7 +39,9 @@ public class WorkflowDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public static PrismScope[] targetScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
+    public static PrismScope[] opportunityScopes = new PrismScope[] { PROJECT, PROGRAM };
+
+    public static PrismScope[] organizationScopes = new PrismScope[] { DEPARTMENT, INSTITUTION };
 
     public static PrismScope[] advertScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
@@ -153,8 +155,8 @@ public class WorkflowDAO {
     }
 
     public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
-        return Restrictions.not( //
-                Restrictions.in("state.id", PrismEnumUtils.values(PrismState.class, resourceScope, new String[]{"UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED"})));
+        return Restrictions
+                .not(Restrictions.in("state.id", values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
     }
 
     public static Junction getResourceParentManageableConstraint(PrismScope resourceScope, User user) {

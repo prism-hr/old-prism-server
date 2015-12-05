@@ -417,8 +417,8 @@ public class UserService {
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : WorkflowDAO.targetScopes) {
-                    for (PrismScope targetScope : WorkflowDAO.targetScopes) {
+                for (PrismScope targeterScope : WorkflowDAO.organizationScopes) {
+                    for (PrismScope targetScope : WorkflowDAO.organizationScopes) {
                         users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, targeterEntities, resource, actions));
                     }
                 }
@@ -486,7 +486,7 @@ public class UserService {
         User user = getCurrentUser();
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        Arrays.stream(WorkflowDAO.targetScopes).forEach(ts -> resources.putAll(ts,
+        Arrays.stream(WorkflowDAO.organizationScopes).forEach(ts -> resources.putAll(ts,
                 resourceService.getResources(user, ts, scopeService.getParentScopesDescending(ts, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
 
         Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();

@@ -1,14 +1,16 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateAbstract;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationUnsubmitted extends PrismWorkflowState {
@@ -16,22 +18,22 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.APPLICATION_COMPLETE) //
-                .withAssignments(PrismRole.APPLICATION_CREATOR, PrismActionEnhancement.APPLICATION_VIEW_EDIT_AS_CREATOR) //
-                .withNotifications(PrismRole.APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
-                .withStateTransitions(PrismStateTransitionGroup.APPLICATION_COMPLETE_TRANSITION));
+                .withAction(APPLICATION_COMPLETE) //
+                .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
+                .withNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
+                .withStateTransitions(APPLICATION_COMPLETE_TRANSITION));
 
-        stateActions.add(PrismApplicationWorkflow.applicationEscalate(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED));
+        stateActions.add(PrismApplicationWorkflow.applicationEscalate(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED));
 
-        stateActions.add(PrismApplicationWorkflow.applicationTerminateAbstract()
+        stateActions.add(applicationTerminateAbstract()
                 .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)));
+                        .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
+                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)));
 
         stateActions.add(PrismApplicationWorkflow.applicationWithdrawAbstract()
                 .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST)));
+                        .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
+                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST)));
     }
 
 }

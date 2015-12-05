@@ -5,7 +5,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
@@ -241,6 +241,14 @@ public class ActionService {
             actionDAO.setStateGroupTransitionActions(actions);
         }
     }
+    
+    public void setSequenceStartActions() {
+        
+    }
+    
+    public void setSequenceCloseActions() {
+        
+    }
 
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
         return actionDAO.getActionConditions(prismScope);
@@ -299,7 +307,7 @@ public class ActionService {
         }
         return actionEnhancements.toArray(new PrismActionEnhancement[actionEnhancements.size()]);
     }
-
+    
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();
 
@@ -360,7 +368,9 @@ public class ActionService {
                         .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
                         .add(Projections.max("primaryState").as("primaryState")) //
                         .add(Projections.min("stateActionAssignment.externalMode").as("onlyAsPartner")) //
-                        .add(Projections.property("action.declinableAction").as("declinable")),
+                        .add(Projections.property("action.declinableAction").as("declinable")) //
+                        .add(Projections.property("action.actionSequenceStart").as("actionSequenceStart")) //
+                        .add(Projections.property("action.actionSequenceClose").as("actionSequenceClose")),
                 ActionDTO.class).forEach(permittedAction -> {
                     permittedActions.put(permittedAction.getResourceId(), permittedAction);
                 });
@@ -395,8 +405,8 @@ public class ActionService {
             }
 
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    for (PrismScope targetScope : targetScopes) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
                         actionEntities.addAll(
                                 actionDAO.getActionEntities(user, scope, targeterScope, targetScope, targeterEntities, resources, actions, columns, restriction, responseClass));
                     }

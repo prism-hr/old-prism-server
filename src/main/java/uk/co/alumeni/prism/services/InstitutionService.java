@@ -4,11 +4,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.InstitutionDAO;
-import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
@@ -69,16 +69,15 @@ public class InstitutionService {
     public String getBusinessYear(Institution institution, Integer year, Integer month) {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
-        return month == 1 ? businessYear.toString()
-                : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
+        return month == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
-    private void changeInstitutionCurrency(Institution institution, String newCurrency) {
-        List<Advert> advertsWithFeesAndPays = advertService.getAdvertsWithFinancialDetails(institution);
-        for (Advert advertWithFeesAndPays : advertsWithFeesAndPays) {
-            advertService.updateFinancialDetails(advertWithFeesAndPays, newCurrency);
+    private void changeInstitutionCurrency(Institution institution, String currency) {
+        List<Integer> advertsWithoutPayConversions = advertService.getAdvertsWithoutPayConversions(institution);
+        if (CollectionUtils.isNotEmpty(advertsWithoutPayConversions)) {
+            advertService.updateAdvertPayCurrency(advertsWithoutPayConversions, currency);
         }
-        institution.setCurrency(newCurrency);
+        institution.setCurrency(currency);
     }
 
     private void changeInstitutionBusinessYear(Institution institution, Integer businessYearStartMonth) {

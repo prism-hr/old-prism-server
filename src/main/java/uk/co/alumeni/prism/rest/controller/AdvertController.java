@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertClosingDateDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDetailsDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
@@ -66,18 +64,6 @@ public class AdvertController {
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
             @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
         advertService.updateCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
-    }
-
-    @RequestMapping(value = "/closingDates", method = RequestMethod.POST)
-    public Integer addClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) {
-        AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getResourceScope(), resourceId, advertClosingDateDTO);
-        return closingDate.getId();
-    }
-
-    @RequestMapping(value = "/closingDates/{closingDateId}", method = RequestMethod.DELETE)
-    public void deleteClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId) {
-        advertService.deleteClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId);
     }
 
     @ModelAttribute

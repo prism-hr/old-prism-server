@@ -119,7 +119,7 @@ public class CommentDAO {
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("action.transitionAction"))
+                                .add(Restrictions.eq("action.transitionAction", true))
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
                                         .add(Restrictions.conjunction() //

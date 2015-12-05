@@ -360,7 +360,7 @@ public class AdvertDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
-                        Restrictions.eq("action.creationScope", APPLICATION)) //
+                        Restrictions.eq("action.creationScope.id", APPLICATION)) //
                 .add(Restrictions.neProperty("advert.pay.currency", "domicile.currency")) //
                 .add(Restrictions.lt("advert.pay.lastConversionDate", baseline)) //
                 .add(Restrictions.isNotNull("action.id")) //

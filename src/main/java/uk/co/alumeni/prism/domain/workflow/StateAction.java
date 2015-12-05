@@ -42,9 +42,6 @@ public class StateAction implements UniqueEntity {
     @Column(name = "replicable_sequence_start", nullable = false)
     private Boolean replicableSequenceStart;
 
-    @Column(name = "replicable_sequence_close", nullable = false)
-    private Boolean replicableSequenceClose;
-
     @Column(name = "action_condition")
     @Enumerated(EnumType.STRING)
     private PrismActionCondition actionCondition;
@@ -106,14 +103,6 @@ public class StateAction implements UniqueEntity {
         this.replicableSequenceStart = replicableSequenceStart;
     }
 
-    public Boolean getReplicableSequenceClose() {
-        return replicableSequenceClose;
-    }
-
-    public void setReplicableSequenceClose(Boolean replicableSequenceClose) {
-        this.replicableSequenceClose = replicableSequenceClose;
-    }
-
     public PrismActionCondition getActionCondition() {
         return actionCondition;
     }
@@ -170,11 +159,6 @@ public class StateAction implements UniqueEntity {
         return this;
     }
 
-    public StateAction withReplicableSequenceClose(Boolean replicableSequenceClose) {
-        this.replicableSequenceClose = replicableSequenceClose;
-        return this;
-    }
-    
     public StateAction withActionCondition(PrismActionCondition actionCondition) {
         this.actionCondition = actionCondition;
         return this;

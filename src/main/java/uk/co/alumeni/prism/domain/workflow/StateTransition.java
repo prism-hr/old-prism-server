@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.workflow;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -38,6 +39,9 @@ public class StateTransition implements UniqueEntity {
     @JoinColumn(name = "transition_action_id", nullable = false)
     private Action transitionAction;
 
+    @Column(name = "replicable_sequence_close", nullable = false)
+    private Boolean replicableSequenceClose;
+
     @ManyToOne
     @JoinColumn(name = "state_transition_evaluation_id")
     private StateTransitionEvaluation stateTransitionEvaluation;
@@ -46,7 +50,8 @@ public class StateTransition implements UniqueEntity {
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = { @JoinColumn(name = "propagated_action_id", nullable = false) })
+    @JoinTable(name = "state_transition_propagation", joinColumns = { @JoinColumn(name = "state_transition_id", nullable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "propagated_action_id", nullable = false) })
     private Set<Action> propagatedActions = Sets.newHashSet();
 
     @OneToMany(mappedBy = "stateTransition")
@@ -84,6 +89,14 @@ public class StateTransition implements UniqueEntity {
         this.transitionAction = transitionAction;
     }
 
+    public Boolean getReplicableSequenceClose() {
+        return replicableSequenceClose;
+    }
+
+    public void setReplicableSequenceClose(Boolean replicableSequenceClose) {
+        this.replicableSequenceClose = replicableSequenceClose;
+    }
+
     public final StateTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
@@ -116,6 +129,11 @@ public class StateTransition implements UniqueEntity {
 
     public StateTransition withTransitionAction(Action transitionAction) {
         this.transitionAction = transitionAction;
+        return this;
+    }
+
+    public StateTransition withReplicableSequenceClose(Boolean replicableSequenceClose) {
+        this.replicableSequenceClose = replicableSequenceClose;
         return this;
     }
 

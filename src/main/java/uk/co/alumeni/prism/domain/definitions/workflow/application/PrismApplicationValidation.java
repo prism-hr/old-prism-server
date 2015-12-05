@@ -4,6 +4,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreator;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
@@ -20,7 +21,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
     protected void setStateActions() {
         stateActions.add(PrismApplicationWorkflow.applicationComment());
 
-        stateActions.add(PrismApplicationWorkflow.applicationCompleteState(APPLICATION_COMPLETE_VALIDATION_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP)
+        stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_VALIDATION_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP)
                 .withRaisesUrgentFlag()
                 .withNotification(APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST));
 

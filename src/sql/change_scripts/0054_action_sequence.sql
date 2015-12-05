@@ -258,3 +258,12 @@ alter table advert
     add index (last_pay_conversion_date),
     drop column pay_converted
 ;
+
+alter table state_transition
+    add column replicable_sequence_close int(1) unsigned not null default 0 after transition_action_id,
+    add index (replicable_sequence_close)
+;
+
+alter table state_transition
+    modify column replicable_sequence_close int(1) unsigned not null
+;

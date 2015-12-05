@@ -6,17 +6,19 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.URL;
+import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
+import uk.co.alumeni.prism.utils.validation.DateNotPast;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class AdvertDTO {
 
     private List<PrismOpportunityType> targetOpportunityTypes;
 
-    @Size(max = 1000)
+    @Size(max = 340)
     private String summary;
 
     @URL
@@ -32,6 +34,9 @@ public class AdvertDTO {
 
     @Valid
     private AddressDTO address;
+
+    @DateNotPast
+    private LocalDate closingDate;
 
     @Valid
     private AdvertCategoriesDTO categories;
@@ -89,6 +94,14 @@ public class AdvertDTO {
 
     public void setAddress(AddressDTO address) {
         this.address = address;
+    }
+
+    public LocalDate getClosingDate() {
+        return closingDate;
+    }
+
+    public void setClosingDate(LocalDate closingDate) {
+        this.closingDate = closingDate;
     }
 
     public AdvertCategoriesDTO getCategories() {

@@ -3,18 +3,15 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationAssignedInterviewerResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationCompletedReferenceStateResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationCompletedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationCompletedStateResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedManagementResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferOutcome;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationIdentifiedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedPartnerApprovalResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedReferenceResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedReviewResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationPurgedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationUpdateInterviewAvailabilityResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.department.DepartmentApprovedResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.department.DepartmentCompletedResolver;
@@ -35,7 +32,6 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.project.ProjectUp
 
 public enum PrismStateTransitionEvaluation {
 
-    APPLICATION_COMPLETED_OUTCOME(false, PrismScope.APPLICATION, ApplicationCompletedResolver.class), //
     APPLICATION_CONFIRMED_OFFER_OUTCOME(false, PrismScope.APPLICATION, ApplicationConfirmedOfferOutcome.class), //
     APPLICATION_COMPLETED_STATE_OUTCOME(true, PrismScope.APPLICATION, ApplicationCompletedStateResolver.class), //
     APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME(false, PrismScope.APPLICATION, ApplicationConfirmedManagementResolver.class), //
@@ -48,8 +44,6 @@ public enum PrismStateTransitionEvaluation {
     APPLICATION_PROVIDED_REVIEW_OUTCOME(false, PrismScope.APPLICATION, ApplicationProvidedReviewResolver.class), //
     APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME(false, PrismScope.APPLICATION, ApplicationProvidedPartnerApprovalResolver.class), //
     APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME(false, PrismScope.APPLICATION, ApplicationUpdateInterviewAvailabilityResolver.class), //
-    APPLICATION_PURGED_OUTCOME(false, PrismScope.APPLICATION, ApplicationPurgedResolver.class), //
-    APPLICATION_IDENTIFIED_OUTCOME(false, PrismScope.APPLICATION, ApplicationIdentifiedResolver.class), //
 
     PROJECT_CREATED_OUTCOME(false, PrismScope.PROJECT, ProjectCreatedResolver.class), //
     PROJECT_COMPLETED_OUTCOME(false, PrismScope.PROJECT, ProjectCompletedResolver.class), //

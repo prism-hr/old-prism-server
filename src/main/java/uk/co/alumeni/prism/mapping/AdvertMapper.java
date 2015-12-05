@@ -59,7 +59,6 @@ import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
-import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
 import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
 import uk.co.alumeni.prism.domain.advert.AdvertFunction;
 import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
@@ -96,7 +95,6 @@ import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertClosingDateRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
@@ -260,7 +258,7 @@ public class AdvertMapper {
         representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
         representation.setApplicationRatingAverage(doubleToBigDecimal(advert.getApplicationRatingAverage(), RATING_PRECISION));
 
-        representation.setClosingDate(advert.getClosingDate() != null ? new AdvertClosingDateRepresentation().withClosingDate(advert.getClosingDate()) : null);
+        representation.setClosingDate(advert.getClosingDate());
         representation.setSequenceIdentifier(advert.getSequenceIdentifier());
         return representation;
     }
@@ -287,9 +285,7 @@ public class AdvertMapper {
         }
 
         representation.setFinancialDetails(getAdvertFinancialDetailRepresentation(advert));
-
-        representation.setClosingDate(getAdvertClosingDateRepresentation(advert));
-        representation.setClosingDates(getAdvertClosingDateRepresentations(advert));
+        representation.setClosingDate(advert.getClosingDate());
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
@@ -522,34 +518,12 @@ public class AdvertMapper {
     }
 
     private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(Advert advert) {
-        AdvertFinancialDetail financialDetail = advert.getPay();
-        if (financialDetail != null) {
-            PrismDurationUnit durationUnit = financialDetail.getInterval();
-            AdvertFinancialDetailRepresentation representation = new AdvertFinancialDetailRepresentation().withCurrency(financialDetail.getCurrencySpecified())
-                    .withInterval(financialDetail.getInterval());
-            if (durationUnit.equals(YEAR)) {
-                representation.setMinimum(financialDetail.getYearMinimumSpecified());
-                representation.setMaximum(financialDetail.getYearMaximumSpecified());
-            } else {
-                representation.setMinimum(financialDetail.getMonthMinimumSpecified());
-                representation.setMaximum(financialDetail.getMonthMaximumSpecified());
-            }
-            return representation;
+        AdvertFinancialDetail pay = advert.getPay();
+        if (pay != null) {
+            return new AdvertFinancialDetailRepresentation().withCurrency(pay.getCurrency()).withInterval(pay.getInterval()).withMinimum(pay.getMinimum())
+                    .withMaximum(pay.getMaximum());
         }
         return null;
-    }
-
-    private AdvertClosingDateRepresentation getAdvertClosingDateRepresentation(Advert advert) {
-        AdvertClosingDate closingDate = advert.getClosingDate();
-        return closingDate == null ? null : getAdvertClosingDateRepresentation(closingDate);
-    }
-
-    private AdvertClosingDateRepresentation getAdvertClosingDateRepresentation(AdvertClosingDate closingDate) {
-        return new AdvertClosingDateRepresentation().withId(closingDate.getId()).withClosingDate(closingDate.getClosingDate());
-    }
-
-    private List<AdvertClosingDateRepresentation> getAdvertClosingDateRepresentations(Advert advert) {
-        return advert.getClosingDates().stream().map(this::getAdvertClosingDateRepresentation).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")

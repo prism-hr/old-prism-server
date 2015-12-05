@@ -12,9 +12,9 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.MONTH;
-import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.YEAR;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.opportunityScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitInHours;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -30,22 +30,17 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,7 +75,6 @@ import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
-import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
 import uk.co.alumeni.prism.domain.advert.AdvertCompetence;
 import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
 import uk.co.alumeni.prism.domain.advert.AdvertFunction;
@@ -93,12 +87,10 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -111,7 +103,6 @@ import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
@@ -122,12 +113,10 @@ import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertClosingDateDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDetailsDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO.AdvertFinancialDetailPayDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
@@ -156,9 +145,6 @@ public class AdvertService {
 
     @Inject
     private AdvertDAO advertDAO;
-
-    @Inject
-    private ActionService actionService;
 
     @Inject
     private ActivityService activityService;
@@ -207,10 +193,6 @@ public class AdvertService {
 
     public Advert getById(Integer id) {
         return entityService.getById(Advert.class, id);
-    }
-
-    public AdvertClosingDate getClosingDateById(Integer id) {
-        return entityService.getById(AdvertClosingDate.class, id);
     }
 
     public AdvertTarget getAdvertTargetById(Integer id) {
@@ -308,6 +290,8 @@ public class AdvertService {
             }
         }
 
+        advert.setClosingDate(advertDTO.getClosingDate());
+
         AdvertCategoriesDTO categoriesDTO = advertDTO.getCategories();
         if (categoriesDTO != null) {
             updateCategories(advert, categoriesDTO);
@@ -322,6 +306,10 @@ public class AdvertService {
         }
     }
 
+    public void updateAdvertPayCurrency(List<Integer> adverts, String currency) {
+        advertDAO.updateAdvertPayCurrency(adverts, currency);
+    }
+
     public void updateDetail(PrismScope resourceScope, Integer resourceId, AdvertDetailsDTO advertDetailsDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
@@ -333,26 +321,13 @@ public class AdvertService {
 
     public void updateFinancialDetails(PrismScope resourceScope, Integer resourceId, AdvertFinancialDetailDTO financialDetailDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-
-        LocalDate baseline = new LocalDate();
-        String currencyAtLocale = getCurrencyAtLocale(advert);
-        updateFinancialDetail(baseline, advert, currencyAtLocale, financialDetailDTO);
-
-        advert.setLastCurrencyConversionDate(baseline);
+        updateFinancialDetail(resource.getAdvert(), financialDetailDTO);
         executeUpdate(resource, "COMMENT_UPDATED_FEE_AND_PAYMENT");
-    }
-
-    public void updateFinancialDetails(Advert advert, String newCurrency) {
-        Resource resource = advert.getResource();
-        AdvertFinancialDetailDTO financialDetailDTO = getFinancialDetailDTO(advert.getPay(), newCurrency);
-        updateFinancialDetails(resource.getResourceScope(), resource.getId(), financialDetailDTO);
     }
 
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-        updateCategories(advert, categoriesDTO);
+        updateCategories(resource.getAdvert(), categoriesDTO);
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
@@ -444,76 +419,24 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_COMPETENCE");
     }
 
-    public AdvertClosingDate createClosingDate(PrismScope resourceScope, Integer resourceId, AdvertClosingDateDTO advertClosingDateDTO) {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-
-        if (advert != null) {
-            AdvertClosingDate advertClosingDate = createAdvertClosingDate(advert, advertClosingDateDTO);
-            advertClosingDate = entityService.getOrCreate(advertClosingDate);
-            advert.setClosingDate(getNextAdvertClosingDate(advert));
-            executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
-            return advertClosingDate;
-        }
-
-        return null;
+    public void updateFinancialDetailNormalization(Integer advertId) {
+        updateFinancialDetailNormalization(getById(advertId));
     }
 
-    public void deleteClosingDate(PrismScope resourceScope, Integer resourceId, Integer closingDateId) {
-        ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        Advert advert = resource.getAdvert();
-
-        AdvertClosingDate advertClosingDate = getClosingDateById(closingDateId);
-        if (advert.getId().equals(advertClosingDate.getAdvert().getId())) {
-            AdvertClosingDate currentAdvertClosingDate = advert.getClosingDate();
-            if (currentAdvertClosingDate != null && advertClosingDate.getId().equals(currentAdvertClosingDate.getId())) {
-                advert.setClosingDate(null);
-            }
-            entityService.delete(advertClosingDate);
-            advert.setClosingDate(getNextAdvertClosingDate(advert));
-            executeUpdate(resource, "COMMENT_UPDATED_CLOSING_DATE");
-        }
+    public List<Integer> getAdvertsWithoutPayConversions(Institution institution) {
+        List<Integer> adverts = Lists.newArrayList();
+        Arrays.stream(opportunityScopes).forEach(scope -> adverts.addAll(advertDAO.getAdvertsWithoutPayConversions(institution, scope)));
+        return adverts;
     }
 
-    public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
-        return advertDAO.getAdvertsWithElapsedClosingDates(baseline);
-    }
-
-    public void refreshClosingDate(Integer advertId) {
-        Advert advert = getById(advertId);
-        advert.setClosingDate(getNextAdvertClosingDate(advert));
-
-        if (advert.getClosingDate() == null) {
-            Resource resource = advert.getResource();
-            PrismScope resourceScope = resource.getResourceScope();
-
-            Action action = actionService.getById(PrismAction.valueOf(resourceScope.name() + "_TERMINATE"));
-            actionService.executeAction(advert.getResource(), action,
-                    new Comment().withUser(systemService.getSystem().getUser()).withAction(action).withDeclinedResponse(false).withCreatedTimestamp(DateTime.now()));
-        }
-    }
-
-    public void updateCurrencyConversion(Integer advertId) {
-        Advert advert = getById(advertId);
-        LocalDate baseline = new LocalDate();
-
-        if (advert.hasConvertedPay()) {
-            updateConvertedMonetaryValues(advert.getPay(), baseline);
-        }
-
-        advert.setLastCurrencyConversionDate(baseline);
-    }
-
-    public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline) {
-        return advertDAO.getAdvertsWithElapsedCurrencyConversions(baseline, getAdvertScopes());
+    public List<Integer> getAdvertsWithElapsedPayConversions(LocalDate baseline) {
+        List<Integer> adverts = Lists.newArrayList();
+        Arrays.stream(opportunityScopes).forEach(scope -> adverts.addAll(advertDAO.getAdvertsWithElapsedPayConversions(scope, baseline)));
+        return adverts;
     }
 
     public void setSequenceIdentifier(Advert advert, String prefix) {
         advert.setSequenceIdentifier(prefix + String.format("%010d", advert.getId()));
-    }
-
-    public List<Advert> getAdvertsWithFinancialDetails(Institution institution) {
-        return advertDAO.getAdvertsWithFinancialDetails(institution);
     }
 
     public AdvertCategories getAdvertCategories(Advert advert) {
@@ -548,7 +471,7 @@ public class AdvertService {
         String[] opportunityCategoriesSplit = resource.getOpportunityCategories().split("\\|");
         List<PrismOpportunityCategory> opportunityCategories = asList(opportunityCategoriesSplit).stream().map(PrismOpportunityCategory::valueOf).collect(toList());
         if (containsAny(asList(EXPERIENCE, WORK), opportunityCategories)) {
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : organizationScopes) {
                 advertDAO.getAdvertTargets(targetScope, "target.advert", "target.targetAdvert", user, connectAdverts, manageAdverts).forEach(at -> {
                     advertTargets.put(at.getOtherAdvertId(), at);
                 });
@@ -556,7 +479,7 @@ public class AdvertService {
         }
 
         if (containsAny(asList(STUDY, PERSONAL_DEVELOPMENT), opportunityCategories)) {
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : organizationScopes) {
                 advertDAO.getAdvertTargets(targetScope, "target.targetAdvert", "target.advert", user, connectAdverts, manageAdverts).forEach(at -> {
                     advertTargets.put(at.getOtherAdvertId(), at);
                 });
@@ -596,7 +519,7 @@ public class AdvertService {
     public List<AdvertTargetDTO> getAdvertTargetsReceived(User user) {
         List<Integer> connectAdverts = getAdvertsForWhichUserCanManageConnections(user);
         List<AdvertTargetDTO> advertTargets = Lists.newArrayList();
-        for (PrismScope resourceScope : targetScopes) {
+        for (PrismScope resourceScope : organizationScopes) {
             for (String advertReference : new String[] { "advert", "targetAdvert" }) {
                 String targetAdvertReference = advertReference.equals("advert") ? "targetAdvert" : "advert";
                 advertTargets.addAll(advertDAO.getAdvertTargetsReceived(resourceScope, "target." + targetAdvertReference, "target." + advertReference, user, connectAdverts));
@@ -641,7 +564,7 @@ public class AdvertService {
                 states.putAll(advertScope, advertStates);
 
                 nodeAdverts.addAll(advertDAO.getAdvertsForEnclosingResource(resourceScope, resourceId, advertScope, advertStates));
-                stream(targetScopes).forEach(targeterScope -> {
+                stream(organizationScopes).forEach(targeterScope -> {
                     if (advertScope.ordinal() > targeterScope.ordinal()) {
                         nodeAdverts.addAll(advertDAO.getAdvertsForTargetResource(targeterScope, resourceScope, resourceId, advertScope, advertStates));
                     }
@@ -675,11 +598,11 @@ public class AdvertService {
             Set<Advert> targetAdverts = Sets.newHashSet();
             List<Integer> targeterEntities = getAdvertTargeterEntities(user, resourceScope);
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
+                for (PrismScope targeterScope : organizationScopes) {
                     if (targeterScope.ordinal() < resourceScope.ordinal()) {
                         ResourceParent targeterResource = (ResourceParent) getProperty(advert, targeterScope.getLowerCamelName());
                         if (targeterResource != null) {
-                            for (PrismScope targetScope : targetScopes) {
+                            for (PrismScope targetScope : organizationScopes) {
                                 targetAdverts.addAll(advertDAO.getAdvertsTargetsForWhichUserCanEndorse(targeterResource.getAdvert(), user, resourceScope, targeterScope,
                                         targetScope, targeterEntities));
                             }
@@ -751,7 +674,7 @@ public class AdvertService {
             targeterEntities.addAll(applicationCategory ? applicationService.getApplicationsForTargets() : advertDAO.getAdvertsForTargets());
         } else if (applicationCategory) {
             HashMultimap<PrismScope, Integer> students = HashMultimap.create();
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : organizationScopes) {
                 List<PrismRole> roles = values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR" });
                 List<Integer> resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
                 if (isNotEmpty(resources)) {
@@ -767,13 +690,13 @@ public class AdvertService {
                 }
             }
 
-            for (PrismScope targeterScope : targetScopes) {
-                for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targeterScope : organizationScopes) {
+                for (PrismScope targetScope : organizationScopes) {
                     targeterEntities.addAll(applicationService.getApplicationsForTargets(user, targeterScope, targetScope, students.get(targetScope)));
                 }
             }
         } else if (opportunityCategory) {
-            for (PrismScope targetScope : targetScopes) {
+            for (PrismScope targetScope : organizationScopes) {
                 targeterEntities.addAll(advertDAO.getAdvertsForTargets(user, targetScope));
             }
         }
@@ -796,7 +719,7 @@ public class AdvertService {
         });
 
         Set<Integer> memberAdverts = Sets.newHashSet();
-        stream(targetScopes).forEach(memberScope -> {
+        stream(organizationScopes).forEach(memberScope -> {
             Collection<PrismState> memberStates = states.get(memberScope);
             memberStates = isEmpty(memberStates) ? stateService.getActiveResourceStates(memberScope) : memberStates;
             memberAdverts.addAll(advertDAO.getUserAdverts(user, memberScope, memberStates));
@@ -804,7 +727,7 @@ public class AdvertService {
 
         if (isNotEmpty(memberAdverts)) {
             stream(displayScopes).forEach(displayScope -> {
-                stream(targetScopes).forEach(targetScope -> {
+                stream(organizationScopes).forEach(targetScope -> {
                     Collection<PrismState> advertStates = states.get(displayScope);
                     advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(displayScope) : advertStates;
                     userAdverts.addAll(advertDAO.getUserTargetAdverts(user, targetScope, displayScope, advertStates));
@@ -813,8 +736,8 @@ public class AdvertService {
 
             stream(displayScopes).forEach(displayScope -> {
                 if (displayScope.getScopeCategory().equals(OPPORTUNITY)) {
-                    stream(targetScopes).forEach(targeterScope -> {
-                        stream(targetScopes).forEach(targetScope -> {
+                    stream(organizationScopes).forEach(targeterScope -> {
+                        stream(organizationScopes).forEach(targetScope -> {
                             Collection<PrismState> advertStates = states.get(displayScope);
                             advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(displayScope) : advertStates;
                             userAdverts.addAll(advertDAO.getUserTargetAdverts(user, targeterScope, targetScope, displayScope, advertStates));
@@ -843,7 +766,7 @@ public class AdvertService {
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
-        return getAdvertsForWhichUserHasRoles(user, roleExtensions, targetScopes, null, true, AdvertCategoryDTO.class);
+        return getAdvertsForWhichUserHasRoles(user, roleExtensions, organizationScopes, null, true, AdvertCategoryDTO.class);
     }
 
     public List<Integer> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions, Collection<Integer> advertIds) {
@@ -861,13 +784,17 @@ public class AdvertService {
     public Map<Integer, AdvertUserDTO> getAdvertUsers(Collection<Integer> adverts) {
         Map<Integer, AdvertUserDTO> advertUsers = Maps.newHashMap();
         if (isNotEmpty(adverts)) {
-            for (PrismScope targetScope : targetScopes) {
-                for (AdvertUserDTO advertUserDTO : advertDAO.getAdvertUsers(targetScope, adverts)) {
+            for (PrismScope organizationScope : organizationScopes) {
+                for (AdvertUserDTO advertUserDTO : advertDAO.getAdvertUsers(organizationScope, adverts)) {
                     advertUsers.put(advertUserDTO.getAdvertId(), advertUserDTO);
                 }
             }
         }
         return advertUsers;
+    }
+
+    public void disableAdvert(Integer advert) {
+
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,
@@ -1109,200 +1036,79 @@ public class AdvertService {
         }
     }
 
-    private String getCurrencyAtLocale(Advert advert) {
-        Address addressAtLocale = advert.getAddress();
-        addressAtLocale = addressAtLocale == null ? advert.getResource().getInstitution().getAdvert().getAddress() : addressAtLocale;
-        return addressAtLocale.getDomicile().getCurrency();
-    }
-
-    private void setMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, String context) {
-        setProperty(financialDetails, intervalPrefixSpecified + "Minimum" + context, minimumSpecified);
-        setProperty(financialDetails, intervalPrefixSpecified + "Maximum" + context, maximumSpecified);
-        setProperty(financialDetails, intervalPrefixGenerated + "Minimum" + context, minimumGenerated);
-        setProperty(financialDetails, intervalPrefixGenerated + "Maximum" + context, maximumGenerated);
-    }
-
-    private void setConvertedMonetaryValues(AdvertFinancialDetail financialDetails, String intervalPrefixSpecified, BigDecimal minimumSpecified,
-            BigDecimal maximumSpecified, String intervalPrefixGenerated, BigDecimal minimumGenerated, BigDecimal maximumGenerated, BigDecimal rate)
-                    throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        if (rate.compareTo(new BigDecimal(0)) == 1) {
-            minimumSpecified = minimumSpecified.multiply(rate).setScale(2, HALF_UP);
-            maximumSpecified = maximumSpecified.multiply(rate).setScale(2, HALF_UP);
-            minimumGenerated = minimumGenerated.multiply(rate).setScale(2, HALF_UP);
-            maximumGenerated = maximumGenerated.multiply(rate).setScale(2, HALF_UP);
-            financialDetails.setConverted(true);
+    private void updateFinancialDetail(Advert advert, AdvertFinancialDetailDTO payDTO) {
+        if (payDTO == null) {
+            advert.setPay(null);
         } else {
-            financialDetails.setConverted(false);
-        }
-
-        setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                maximumGenerated, "AtLocale");
-    }
-
-    private void updateConvertedMonetaryValues(AdvertFinancialDetail financialDetails, LocalDate baseline) {
-        String currencySpecified = financialDetails.getCurrencySpecified();
-        String currencyAtLocale = financialDetails.getCurrencyAtLocale();
-
-        try {
-            BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-
-            BigDecimal minimumSpecified;
-            BigDecimal maximumSpecified;
-            BigDecimal minimumGenerated;
-            BigDecimal maximumGenerated;
-
-            PrismDurationUnit interval = financialDetails.getInterval();
-            String intervalPrefixGenerated;
-
-            if (interval == PrismDurationUnit.MONTH) {
-                minimumSpecified = financialDetails.getMonthMinimumSpecified();
-                maximumSpecified = financialDetails.getMonthMaximumSpecified();
-                minimumGenerated = financialDetails.getYearMinimumSpecified();
-                maximumGenerated = financialDetails.getYearMaximumSpecified();
-                intervalPrefixGenerated = PrismDurationUnit.YEAR.name().toLowerCase();
-            } else {
-                minimumSpecified = financialDetails.getYearMinimumSpecified();
-                maximumSpecified = financialDetails.getYearMaximumSpecified();
-                minimumGenerated = financialDetails.getMonthMinimumSpecified();
-                maximumGenerated = financialDetails.getMonthMaximumSpecified();
-                intervalPrefixGenerated = PrismDurationUnit.MONTH.name().toLowerCase();
+            AdvertFinancialDetail pay = advert.getPay();
+            if (pay == null) {
+                pay = new AdvertFinancialDetail();
+                advert.setPay(pay);
             }
 
-            setConvertedMonetaryValues(financialDetails, interval.name().toLowerCase(), minimumSpecified, maximumSpecified, intervalPrefixGenerated,
-                    minimumGenerated, maximumGenerated, rate);
-        } catch (Exception e) {
-            logger.error("Unable to perform currency conversion", e);
+            pay.setInterval(payDTO.getInterval());
+            pay.setCurrency(payDTO.getCurrency());
+            pay.setMinimum(payDTO.getMinimum());
+            pay.setMaximum(payDTO.getMaximum());
+
+            updateFinancialDetailNormalization(advert);
         }
     }
 
-    private BigDecimal getExchangeRate(String currencySpecified, String currencyConverted, LocalDate baseline) {
-        removeExpiredExchangeRates(baseline);
+    private void updateFinancialDetailNormalization(Advert advert) {
+        AdvertFinancialDetail pay = advert.getPay();
+        BigDecimal durationAsHours = new BigDecimal(getDurationUnitInHours(pay.getInterval()));
+        BigDecimal minimumNormalized = pay.getMinimum().divide(durationAsHours, 2, HALF_UP);
+        BigDecimal maximumNormalized = pay.getMaximum().divide(durationAsHours, 2, HALF_UP);
 
-        String pair = currencySpecified + currencyConverted;
+        String currency = pay.getCurrency();
+        String currencyNormalized = advert.getAddress().getDomicile().getCurrency();
+        if (!currency.equals(currencyNormalized)) {
+            try {
+                LocalDate baseline = LocalDate.now();
+                BigDecimal conversionRate = getExchangeRate(currency, currencyNormalized, baseline);
+                minimumNormalized = minimumNormalized.multiply(conversionRate).setScale(2, HALF_UP);
+                maximumNormalized = maximumNormalized.multiply(conversionRate).setScale(2, HALF_UP);
+                pay.setLastConversionDate(baseline);
+            } catch (Exception e) {
+                logger.error("Problem performing currency conversion", e);
+            }
+        }
+
+        pay.setMinimumNormalized(minimumNormalized);
+        pay.setMaximumNormalized(maximumNormalized);
+    }
+
+    private BigDecimal getExchangeRate(String currency, String currencyNormalized, LocalDate baseline) throws IOException {
+        exchangeRates.keySet().stream().filter(day -> day.isBefore(baseline)).forEach(exchangeRates::remove);
+
+        String pair = currency + currencyNormalized;
         Map<String, BigDecimal> todaysRates = exchangeRates.get(baseline);
 
+        BigDecimal todaysRate;
         if (todaysRates != null) {
-            BigDecimal todaysRate = todaysRates.get(pair);
+            todaysRate = todaysRates.get(pair);
             if (todaysRate != null) {
                 return todaysRate;
             }
         }
 
-        BigDecimal todaysRate;
-        try {
-            String query = URLEncoder.encode("select Rate from " + yahooExchangeRateApiTable + " where pair = \"" + pair + "\"", "UTF-8");
-            URI request = new DefaultResourceLoader().getResource(
-                    yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8") + "&format=json").getURI();
-            ExchangeRateLookupResponseDTO response = restTemplate.getForObject(request, ExchangeRateLookupResponseDTO.class);
+        String query = URLEncoder.encode("select Rate from " + yahooExchangeRateApiTable + " where pair = \"" + pair + "\"", "UTF-8");
+        URI request = new DefaultResourceLoader().getResource(
+                yahooExchangeRateApiUri + "?q=" + query + "&env=" + URLEncoder.encode(yahooExchangeRateApiSchema, "UTF-8") + "&format=json").getURI();
+        ExchangeRateLookupResponseDTO response = restTemplate.getForObject(request, ExchangeRateLookupResponseDTO.class);
 
-            todaysRate = response.getQuery().getResults().getRate().getRate();
+        todaysRate = response.getQuery().getResults().getRate().getRate();
 
-            if (todaysRates == null) {
-                todaysRates = new HashMap<>();
-                todaysRates.put(pair, todaysRate);
-                exchangeRates.put(baseline, todaysRates);
-            } else {
-                todaysRates.put(pair, todaysRate);
-            }
-        } catch (UnsupportedEncodingException e) {
-            throw new Error(e);
-        } catch (IOException e) {
-            throw new Error(e);
+        if (todaysRates == null) {
+            todaysRates = new HashMap<>();
+            todaysRates.put(pair, todaysRate);
+            exchangeRates.put(baseline, todaysRates);
+        } else {
+            todaysRates.put(pair, todaysRate);
         }
 
         return todaysRate;
-    }
-
-    private void removeExpiredExchangeRates(LocalDate baseline) {
-        exchangeRates.keySet().stream()
-                .filter(day -> day.isBefore(baseline))
-                .forEach(exchangeRates::remove);
-    }
-
-    private void updateFinancialDetail(LocalDate baseline, Advert advert, String currencyAtLocale, AdvertFinancialDetailDTO financialDetailDTO) {
-        if (financialDetailDTO == null) {
-            advert.setPay(null);
-            return;
-        }
-        if (advert.getPay() == null) {
-            advert.setPay(new AdvertFinancialDetail());
-        }
-        updateFinancialDetails(advert.getPay(), financialDetailDTO, currencyAtLocale, baseline);
-    }
-
-    private void updateFinancialDetails(AdvertFinancialDetail financialDetails, AdvertFinancialDetailDTO financialDetailsDTO, String currencyAtLocale,
-            LocalDate baseline) {
-        AdvertFinancialDetailPayDTO payDTO = financialDetailsDTO.getPay();
-        if (payDTO != null) {
-            PrismDurationUnit interval = payDTO.getInterval();
-            String currencySpecified = payDTO.getCurrency();
-
-            financialDetails.setInterval(interval);
-            financialDetails.setCurrencySpecified(currencySpecified);
-            financialDetails.setCurrencyAtLocale(currencyAtLocale);
-
-            String intervalPrefixSpecified = interval.name().toLowerCase();
-            BigDecimal minimumSpecified = payDTO.getMinimum();
-            BigDecimal maximumSpecified = payDTO.getMaximum();
-
-            String intervalPrefixGenerated;
-            BigDecimal minimumGenerated;
-            BigDecimal maximumGenerated;
-
-            if (interval == MONTH) {
-                intervalPrefixGenerated = YEAR.name().toLowerCase();
-                minimumGenerated = minimumSpecified.multiply(new BigDecimal(12));
-                maximumGenerated = maximumSpecified.multiply(new BigDecimal(12));
-            } else {
-                intervalPrefixGenerated = MONTH.name().toLowerCase();
-                minimumGenerated = minimumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
-                maximumGenerated = maximumSpecified.divide(new BigDecimal(12), 2, RoundingMode.HALF_UP);
-            }
-
-            setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                    maximumGenerated, "Specified");
-            if (currencySpecified.equals(currencyAtLocale)) {
-                setMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated, minimumGenerated,
-                        maximumGenerated, "AtLocale");
-            } else {
-                try {
-                    BigDecimal rate = getExchangeRate(currencySpecified, currencyAtLocale, baseline);
-                    setConvertedMonetaryValues(financialDetails, intervalPrefixSpecified, minimumSpecified, maximumSpecified, intervalPrefixGenerated,
-                            minimumGenerated, maximumGenerated, rate);
-                } catch (Exception e) {
-                    logger.error("Problem performing currency conversion", e);
-                }
-            }
-        }
-    }
-
-    private AdvertFinancialDetailDTO getFinancialDetailDTO(AdvertFinancialDetail detail, String newCurrency) {
-        if (detail != null) {
-            AdvertFinancialDetailPayDTO payDTO = new AdvertFinancialDetailPayDTO();
-            payDTO.setCurrency(newCurrency);
-
-            PrismDurationUnit interval = detail.getInterval();
-            String intervalPrefix = interval.name().toLowerCase();
-            payDTO.setInterval(interval);
-
-            String oldCurrency = detail.getCurrencySpecified();
-
-            BigDecimal exchangeRate = getExchangeRate(oldCurrency, newCurrency, new LocalDate());
-
-            BigDecimal minimumSpecified = (BigDecimal) getProperty(detail, intervalPrefix + "MinimumSpecified");
-            BigDecimal maximumSpecified = (BigDecimal) getProperty(detail, intervalPrefix + "MaximumSpecified");
-
-            setProperty(payDTO, "minimum", minimumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
-            setProperty(payDTO, "maximum", maximumSpecified.multiply(exchangeRate).setScale(2, RoundingMode.HALF_UP));
-
-            return new AdvertFinancialDetailDTO().withPay(payDTO);
-        }
-        return null;
-    }
-
-    private AdvertClosingDate getNextAdvertClosingDate(Advert advert) {
-        return advertDAO.getNextAdvertClosingDate(advert, new LocalDate());
     }
 
     private void executeUpdate(ResourceParent resource, String message) {
@@ -1337,21 +1143,6 @@ public class AdvertService {
         }
 
         return address;
-    }
-
-    private AdvertClosingDate createAdvertClosingDate(Advert advert, AdvertClosingDateDTO advertClosingDateDTO) {
-        AdvertClosingDate advertClosingDate = new AdvertClosingDate();
-        advertClosingDate.setAdvert(advert);
-        advertClosingDate.setClosingDate(advertClosingDateDTO.getClosingDate());
-        return advertClosingDate;
-    }
-
-    private HashMultimap<PrismScope, PrismState> getAdvertScopes() {
-        HashMultimap<PrismScope, PrismState> scopes = HashMultimap.create();
-        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
-            scopes.putAll(scope, stateService.getActiveResourceStates(scope));
-        }
-        return scopes;
     }
 
     private void setAdvertTargetPartnershipState(AdvertTarget advertTarget, PrismPartnershipState partnershipState, DateTime baseline, boolean activateResource) {

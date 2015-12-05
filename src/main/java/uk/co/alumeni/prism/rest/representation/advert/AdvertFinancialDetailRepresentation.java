@@ -56,4 +56,14 @@ public class AdvertFinancialDetailRepresentation {
         return this;
     }
 
+    public AdvertFinancialDetailRepresentation withMinimum(BigDecimal minimum) {
+        this.minimum = minimum;
+        return this;
+    }
+
+    public AdvertFinancialDetailRepresentation withMaximum(BigDecimal maximum) {
+        this.maximum = maximum;
+        return this;
+    }
+
 }

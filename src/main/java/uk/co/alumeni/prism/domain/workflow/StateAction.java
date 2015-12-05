@@ -39,6 +39,12 @@ public class StateAction implements UniqueEntity {
     @Column(name = "raises_urgent_flag", nullable = false)
     private Boolean raisesUrgentFlag;
 
+    @Column(name = "replicable_sequence_start", nullable = false)
+    private Boolean replicableSequenceStart;
+
+    @Column(name = "replicable_sequence_close", nullable = false)
+    private Boolean replicableSequenceClose;
+
     @Column(name = "action_condition")
     @Enumerated(EnumType.STRING)
     private PrismActionCondition actionCondition;
@@ -92,12 +98,28 @@ public class StateAction implements UniqueEntity {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public NotificationDefinition getNotificationDefinition() {
-        return notificationDefinition;
+    public Boolean getReplicableSequenceStart() {
+        return replicableSequenceStart;
     }
 
-    public void setNotificationDefinition(NotificationDefinition notificationTemplate) {
-        this.notificationDefinition = notificationTemplate;
+    public void setReplicableSequenceStart(Boolean replicableSequenceStart) {
+        this.replicableSequenceStart = replicableSequenceStart;
+    }
+
+    public Boolean getReplicableSequenceClose() {
+        return replicableSequenceClose;
+    }
+
+    public void setReplicableSequenceClose(Boolean replicableSequenceClose) {
+        this.replicableSequenceClose = replicableSequenceClose;
+    }
+
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
+    }
+
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -106,6 +128,14 @@ public class StateAction implements UniqueEntity {
 
     public void setActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
+    }
+
+    public NotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
+    }
+
+    public void setNotificationDefinition(NotificationDefinition notificationTemplate) {
+        this.notificationDefinition = notificationTemplate;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {
@@ -130,11 +160,21 @@ public class StateAction implements UniqueEntity {
         return this;
     }
 
-    public StateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
+    public StateAction withRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
         return this;
     }
 
+    public StateAction withReplicableSequenceStart(Boolean replicableSequenceStart) {
+        this.replicableSequenceStart = replicableSequenceStart;
+        return this;
+    }
+
+    public StateAction withReplicableSequenceClose(Boolean replicableSequenceClose) {
+        this.replicableSequenceClose = replicableSequenceClose;
+        return this;
+    }
+    
     public StateAction withActionCondition(PrismActionCondition actionCondition) {
         this.actionCondition = actionCondition;
         return this;

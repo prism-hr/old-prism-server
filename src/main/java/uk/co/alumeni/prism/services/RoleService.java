@@ -8,7 +8,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
@@ -242,8 +242,8 @@ public class RoleService {
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    for (PrismScope targetScope : targetScopes) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
                         roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, targeterScope, targetScope, targeterEntities, resourceIds));
                     }
                 }

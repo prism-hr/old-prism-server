@@ -12,7 +12,7 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
@@ -1038,8 +1038,8 @@ public class ResourceService {
             }
 
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    for (PrismScope targetScope : targetScopes) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
                         addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions, responseClass, baseline),
                                 resources, asPartner == null ? null : true);
                     }

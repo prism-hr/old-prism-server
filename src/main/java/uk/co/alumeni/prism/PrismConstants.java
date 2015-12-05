@@ -55,5 +55,13 @@ public class PrismConstants {
     public static final Integer REQUEST_BUFFER = 2;
 
     public static final Integer ACTIVITY_NOTIFICATION_INTERVAL = 3;
+    
+    public static final Integer WORK_MONTHS_IN_YEAR = 12;
+    
+    public static final Integer WORK_WEEKS_IN_MONTH = 4;
+    
+    public static final Integer WORK_DAYS_IN_WEEK = 5;
+    
+    public static final Integer WORK_HOURS_IN_DAY = 8;
 
 }

@@ -7,6 +7,9 @@ import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 
 @Embeddable
@@ -16,38 +19,24 @@ public class AdvertFinancialDetail {
     @Enumerated(EnumType.STRING)
     private PrismDurationUnit interval;
 
-    @Column(name = "pay_currency_specified")
-    private String currencySpecified;
+    @Column(name = "pay_currency")
+    private String currency;
 
-    @Column(name = "pay_currency_at_locale")
-    private String currencyAtLocale;
+    @Column(name = "pay_minimum")
+    private BigDecimal minimum;
 
-    @Column(name = "month_pay_minimum_specified")
-    private BigDecimal monthMinimumSpecified;
+    @Column(name = "pay_maximum")
+    private BigDecimal maximum;
 
-    @Column(name = "month_pay_maximum_specified")
-    private BigDecimal monthMaximumSpecified;
+    @Column(name = "pay_minimum_normalized")
+    private BigDecimal minimumNormalized;
 
-    @Column(name = "year_pay_minimum_specified")
-    private BigDecimal yearMinimumSpecified;
+    @Column(name = "pay_maximum_normalized")
+    private BigDecimal maximumNormalized;
 
-    @Column(name = "year_pay_maximum_specified")
-    private BigDecimal yearMaximumSpecified;
-
-    @Column(name = "month_pay_minimum_at_locale")
-    private BigDecimal monthMinimumAtLocale;
-
-    @Column(name = "month_pay_maximum_at_locale")
-    private BigDecimal monthMaximumAtLocale;
-
-    @Column(name = "year_pay_minimum_at_locale")
-    private BigDecimal yearMinimumAtLocale;
-
-    @Column(name = "year_pay_maximum_at_locale")
-    private BigDecimal yearMaximumAtLocale;
-
-    @Column(name = "pay_converted")
-    private Boolean converted;
+    @Column(name = "last_pay_conversion_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastConversionDate;
 
     public PrismDurationUnit getInterval() {
         return interval;
@@ -57,91 +46,52 @@ public class AdvertFinancialDetail {
         this.interval = interval;
     }
 
-    public final String getCurrencySpecified() {
-        return currencySpecified;
+    public String getCurrency() {
+        return currency;
     }
 
-    public final void setCurrencySpecified(String currencySpecified) {
-        this.currencySpecified = currencySpecified;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
-    public String getCurrencyAtLocale() {
-        return currencyAtLocale;
+    public BigDecimal getMinimum() {
+        return minimum;
     }
 
-    public void setCurrencyAtLocale(String currencyAtLocale) {
-        this.currencyAtLocale = currencyAtLocale;
+    public void setMinimum(BigDecimal minimum) {
+        this.minimum = minimum;
     }
 
-    public BigDecimal getMonthMinimumSpecified() {
-        return monthMinimumSpecified;
+    public BigDecimal getMaximum() {
+        return maximum;
     }
 
-    public void setMonthMinimumSpecified(BigDecimal monthMinimumSpecified) {
-        this.monthMinimumSpecified = monthMinimumSpecified;
+    public void setMaximum(BigDecimal maximum) {
+        this.maximum = maximum;
     }
 
-    public BigDecimal getMonthMaximumSpecified() {
-        return monthMaximumSpecified;
+    public BigDecimal getMinimumNormalized() {
+        return minimumNormalized;
     }
 
-    public void setMonthMaximumSpecified(BigDecimal monthMaximumSpecified) {
-        this.monthMaximumSpecified = monthMaximumSpecified;
+    public void setMinimumNormalized(BigDecimal minimumNormalized) {
+        this.minimumNormalized = minimumNormalized;
     }
 
-    public BigDecimal getYearMinimumSpecified() {
-        return yearMinimumSpecified;
+    public BigDecimal getMaximumNormalized() {
+        return maximumNormalized;
     }
 
-    public void setYearMinimumSpecified(BigDecimal yearMinimumSpecified) {
-        this.yearMinimumSpecified = yearMinimumSpecified;
+    public void setMaximumNormalized(BigDecimal maximumNormalized) {
+        this.maximumNormalized = maximumNormalized;
     }
 
-    public BigDecimal getYearMaximumSpecified() {
-        return yearMaximumSpecified;
+    public LocalDate getLastConversionDate() {
+        return lastConversionDate;
     }
 
-    public void setYearMaximumSpecified(BigDecimal yearMaximumSpecified) {
-        this.yearMaximumSpecified = yearMaximumSpecified;
+    public void setLastConversionDate(LocalDate lastConversionDate) {
+        this.lastConversionDate = lastConversionDate;
     }
 
-    public BigDecimal getMonthMinimumAtLocale() {
-        return monthMinimumAtLocale;
-    }
-
-    public void setMonthMinimumAtLocale(BigDecimal monthMinimumAtLocale) {
-        this.monthMinimumAtLocale = monthMinimumAtLocale;
-    }
-
-    public BigDecimal getMonthMaximumAtLocale() {
-        return monthMaximumAtLocale;
-    }
-
-    public void setMonthMaximumAtLocale(BigDecimal monthMaximumAtLocale) {
-        this.monthMaximumAtLocale = monthMaximumAtLocale;
-    }
-
-    public BigDecimal getYearMinimumAtLocale() {
-        return yearMinimumAtLocale;
-    }
-
-    public void setYearMinimumAtLocale(BigDecimal yearMinimumAtLocale) {
-        this.yearMinimumAtLocale = yearMinimumAtLocale;
-    }
-
-    public BigDecimal getYearMaximumAtLocale() {
-        return yearMaximumAtLocale;
-    }
-
-    public void setYearMaximumAtLocale(BigDecimal yearMaximumAtLocale) {
-        this.yearMaximumAtLocale = yearMaximumAtLocale;
-    }
-
-    public final Boolean getConverted() {
-        return converted;
-    }
-
-    public final void setConverted(Boolean converted) {
-        this.converted = converted;
-    }
 }

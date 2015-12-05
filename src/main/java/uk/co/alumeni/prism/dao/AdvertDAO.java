@@ -9,7 +9,8 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitInHours;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitAsHours;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
@@ -345,7 +346,6 @@ public class AdvertDAO {
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.institution", institution)) //
-                .add(Restrictions.isNotNull("advert.pay.currency")) //
                 .add(Restrictions.eqProperty("advert.pay.currency", "institution.currency")) //
                 .list();
     }
@@ -361,7 +361,6 @@ public class AdvertDAO {
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
                         Restrictions.eq("action.creationScope", APPLICATION)) //
-                .add(Restrictions.isNotNull("advert.pay.currency")) //
                 .add(Restrictions.neProperty("advert.pay.currency", "domicile.currency")) //
                 .add(Restrictions.lt("advert.pay.lastConversionDate", baseline)) //
                 .add(Restrictions.isNotNull("action.id")) //
@@ -858,10 +857,14 @@ public class AdvertDAO {
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismDurationUnit interval = queryDTO.getSalaryInterval();
         if (interval != null) {
-            BigDecimal durationAsHours = new BigDecimal(getDurationUnitInHours(interval));
-            BigDecimal minSalary = new BigDecimal(queryDTO.getMinSalary()).divide(durationAsHours, 2, HALF_UP);
-            BigDecimal maxSalary = new BigDecimal(queryDTO.getMaxSalary()).divide(durationAsHours, 2, HALF_UP);
-            appendRangeConstraint(criteria, "advert.pay.minimumNormalized", "advert.pay.maximumNormalized", minSalary, maxSalary);
+            BigDecimal durationAsHours = new BigDecimal(getDurationUnitAsHours(interval));
+            BigDecimal minSalary = queryDTO.getMinSalary().divide(durationAsHours, 2, HALF_UP);
+            BigDecimal maxSalary = queryDTO.getMaxSalary().divide(durationAsHours, 2, HALF_UP);
+            if (!interval.equals(HOUR)) {
+                appendRangeConstraint(criteria, "advert.pay.minimumNormalized", "advert.pay.maximumNormalized", minSalary, maxSalary);
+            } else {
+                appendRangeConstraint(criteria, "advert.pay.minimumNormalizedHour", "advert.pay.maximumNormalizedHour", minSalary, maxSalary);
+            }
         }
     }
 

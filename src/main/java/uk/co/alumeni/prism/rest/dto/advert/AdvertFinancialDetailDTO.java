@@ -2,6 +2,8 @@ package uk.co.alumeni.prism.rest.dto.advert;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -16,6 +18,14 @@ public class AdvertFinancialDetailDTO {
 
     @NotNull
     private PrismDurationUnit interval;
+
+    @Min(1)
+    @Max(48)
+    private Integer hoursWeekMinimum;
+
+    @Min(1)
+    @Max(48)
+    private Integer hoursWeekMaximum;
 
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     private BigDecimal minimum;
@@ -37,6 +47,22 @@ public class AdvertFinancialDetailDTO {
 
     public void setInterval(PrismDurationUnit interval) {
         this.interval = interval;
+    }
+
+    public Integer getHoursWeekMinimum() {
+        return hoursWeekMinimum;
+    }
+
+    public void setHoursWeekMinimum(Integer hoursWeekMinimum) {
+        this.hoursWeekMinimum = hoursWeekMinimum;
+    }
+
+    public Integer getHoursWeekMaximum() {
+        return hoursWeekMaximum;
+    }
+
+    public void setHoursWeekMaximum(Integer hoursWeekMaximum) {
+        this.hoursWeekMaximum = hoursWeekMaximum;
     }
 
     public BigDecimal getMinimum() {

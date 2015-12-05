@@ -277,3 +277,82 @@ alter table state_action
     drop column replicable_sequence_close
 ;
 
+alter table advert
+    add column pay_hours_week_minimum integer (2) unsigned after pay_interval,
+    add column pay_hours_week_maximum integer (2) unsigned after pay_hours_week_minimum
+;
+
+alter table advert
+    drop index month_pay_minimum_specified,
+    add index (pay_minimum, sequence_identifier),
+    drop index month_pay_maximum_specified,
+    add index (pay_maximum, sequence_identifier),
+    drop index year_pay_minimum_specified,
+    drop index year_pay_maximum_specified,
+    add index (pay_minimum_normalized),
+    add index (pay_maximum_normalized)
+;   
+
+alter table advert
+    change column pay_minimum_normalized pay_minimum_normalized_year decimal(10, 2) after pay_minimum,
+    add column pay_minimum_normalized_month decimal(10, 2) after pay_minimum_normalized_year,
+    add column pay_minimum_normalized_week decimal(10, 2) after pay_minimum_normalized_month,
+    add column pay_minimum_normalized_day decimal(10, 2) after pay_minimum_normalized_week,
+    add column pay_minimum_normalized_hour decimal(10, 2) after pay_minimum_normalized_day,
+    drop index pay_minimum_normalized,
+    add index (pay_minimum_normalized_year, sequence_identifier),
+    add index (pay_minimum_normalized_month, sequence_identifier),
+    add index (pay_minimum_normalized_week, sequence_identifier),
+    add index (pay_minimum_normalized_day, sequence_identifier),
+    add index (pay_minimum_normalized_hour, sequence_identifier),
+    change column pay_maximum_normalized pay_maximum_normalized_year decimal(10, 2) after pay_maximum,
+    add column pay_maximum_normalized_month decimal(10, 2) after pay_maximum_normalized_year,
+    add column pay_maximum_normalized_week decimal(10, 2) after pay_maximum_normalized_month,
+    add column pay_maximum_normalized_day decimal(10, 2) after pay_maximum_normalized_week,
+    add column pay_maximum_normalized_hour decimal(10, 2) after pay_maximum_normalized_day,
+    drop index pay_maximum_normalized,
+    add index (pay_maximum_normalized_year, sequence_identifier),
+    add index (pay_maximum_normalized_month, sequence_identifier),
+    add index (pay_maximum_normalized_week, sequence_identifier),
+    add index (pay_maximum_normalized_day, sequence_identifier),
+    add index (pay_maximum_normalized_hour, sequence_identifier)
+;
+
+alter table advert
+    change column pay_minimum_normalized_year pay_minimum_normalized decimal(10, 2),
+    drop column pay_minimum_normalized_month,
+    drop column pay_minimum_normalized_week,
+    drop column pay_minimum_normalized_day,
+    drop column pay_minimum_normalized_hour,
+    drop index pay_minimum_normalized_year,
+    add index (pay_minimum_normalized, sequence_identifier),
+    drop index pay_minimum_normalized_month,
+    drop index pay_minimum_normalized_week,
+    drop index pay_minimum_normalized_day,
+    drop index pay_minimum_normalized_hour,
+    change column pay_maximum_normalized_year pay_maximum_normalized decimal(10, 2),
+    drop column pay_maximum_normalized_month,
+    drop column pay_maximum_normalized_week,
+    drop column pay_maximum_normalized_day,
+    drop column pay_maximum_normalized_hour,
+    drop index pay_maximum_normalized_year,
+    add index (pay_maximum_normalized, sequence_identifier),
+    drop index pay_maximum_normalized_month,
+    drop index pay_maximum_normalized_week,
+    drop index pay_maximum_normalized_day,
+    drop index pay_maximum_normalized_hour
+;
+
+alter table advert
+    modify column pay_minimum_normalized decimal(10, 2) unsigned after pay_maximum,
+    modify column pay_maximum_normalized decimal(10, 2) unsigned
+;
+
+alter table advert
+    add column pay_minimum_normalized_hour decimal(10, 2) unsigned after pay_maximum_normalized,
+    add column pay_maximum_normalized_hour decimal(10, 2) unsigned after pay_minimum_normalized_hour,
+    add index (pay_minimum_normalized_hour, sequence_identifier),
+    add index (pay_maximum_normalized_hour, sequence_identifier)
+;
+
+

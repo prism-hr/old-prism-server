@@ -11,10 +11,13 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.PrismConstants.WORK_DAYS_IN_WEEK;
+import static uk.co.alumeni.prism.PrismConstants.WORK_HOURS_IN_DAY;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.opportunityScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitInHours;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitAsHours;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
@@ -1047,36 +1050,56 @@ public class AdvertService {
             }
 
             pay.setInterval(payDTO.getInterval());
+            pay.setHoursWeekMinimum(payDTO.getHoursWeekMinimum());
+            pay.setHoursWeekMaximum(payDTO.getHoursWeekMaximum());
             pay.setCurrency(payDTO.getCurrency());
             pay.setMinimum(payDTO.getMinimum());
             pay.setMaximum(payDTO.getMaximum());
-
             updateFinancialDetailNormalization(advert);
         }
     }
 
     private void updateFinancialDetailNormalization(Advert advert) {
         AdvertFinancialDetail pay = advert.getPay();
-        BigDecimal durationAsHours = new BigDecimal(getDurationUnitInHours(pay.getInterval()));
-        BigDecimal minimumNormalized = pay.getMinimum().divide(durationAsHours, 2, HALF_UP);
-        BigDecimal maximumNormalized = pay.getMaximum().divide(durationAsHours, 2, HALF_UP);
+        BigDecimal minimum = pay.getMinimum();
+        BigDecimal maximum = pay.getMaximum();
 
-        String currency = pay.getCurrency();
-        String currencyNormalized = advert.getAddress().getDomicile().getCurrency();
-        if (!currency.equals(currencyNormalized)) {
-            try {
-                LocalDate baseline = LocalDate.now();
-                BigDecimal conversionRate = getExchangeRate(currency, currencyNormalized, baseline);
-                minimumNormalized = minimumNormalized.multiply(conversionRate).setScale(2, HALF_UP);
-                maximumNormalized = maximumNormalized.multiply(conversionRate).setScale(2, HALF_UP);
-                pay.setLastConversionDate(baseline);
-            } catch (Exception e) {
-                logger.error("Problem performing currency conversion", e);
+        if (!(minimum == null || maximum == null)) {
+            BigDecimal durationAsHours = new BigDecimal(getDurationUnitAsHours(pay.getInterval()));
+            BigDecimal minimumNormalized = pay.getMinimum().divide(durationAsHours, 2, HALF_UP);
+            BigDecimal maximumNormalized = pay.getMaximum().divide(durationAsHours, 2, HALF_UP);
+
+            BigDecimal minimumNormalizedHour = minimumNormalized;
+            BigDecimal maximumNormalizedHour = maximumNormalized;
+            if (!pay.getInterval().equals(HOUR)) {
+                BigDecimal workHoursInWeek = new BigDecimal(WORK_DAYS_IN_WEEK * WORK_HOURS_IN_DAY);
+                BigDecimal workHoursInWeekAdjustment = workHoursInWeek.divide(new BigDecimal(pay.getHoursWeekMaximum()), 2, HALF_UP);
+
+                minimumNormalizedHour = minimumNormalizedHour.multiply(workHoursInWeekAdjustment).setScale(2, HALF_UP);
+                maximumNormalizedHour = maximumNormalizedHour.multiply(workHoursInWeekAdjustment).setScale(2, HALF_UP);
             }
-        }
 
-        pay.setMinimumNormalized(minimumNormalized);
-        pay.setMaximumNormalized(maximumNormalized);
+            String currency = pay.getCurrency();
+            String currencyNormalized = advert.getAddress().getDomicile().getCurrency();
+            if (!currency.equals(currencyNormalized)) {
+                try {
+                    LocalDate baseline = LocalDate.now();
+                    BigDecimal conversionRate = getExchangeRate(currency, currencyNormalized, baseline);
+                    minimumNormalized = minimumNormalized.multiply(conversionRate).setScale(2, HALF_UP);
+                    maximumNormalized = maximumNormalized.multiply(conversionRate).setScale(2, HALF_UP);
+                    minimumNormalizedHour = minimumNormalizedHour.multiply(conversionRate).setScale(2, HALF_UP);
+                    maximumNormalizedHour = maximumNormalizedHour.multiply(conversionRate).setScale(2, HALF_UP);
+                    pay.setLastConversionDate(baseline);
+                } catch (Exception e) {
+                    logger.error("Problem performing currency conversion", e);
+                }
+            }
+
+            pay.setMinimumNormalized(minimumNormalized);
+            pay.setMaximumNormalized(maximumNormalized);
+            pay.setMinimumNormalizedHour(minimumNormalizedHour);
+            pay.setMaximumNormalizedHour(maximumNormalizedHour);
+        }
     }
 
     private BigDecimal getExchangeRate(String currency, String currencyNormalized, LocalDate baseline) throws IOException {

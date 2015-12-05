@@ -13,7 +13,7 @@ public enum PrismDurationUnit {
     MONTH, //
     YEAR;
 
-    public static Integer getDurationUnitInHours(PrismDurationUnit interval) {
+    public static Integer getDurationUnitAsHours(PrismDurationUnit interval) {
         Integer value = 1;
 
         if (interval.equals(YEAR)) {

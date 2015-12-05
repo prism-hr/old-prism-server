@@ -45,9 +45,9 @@ public class OpportunitiesQueryDTO {
 
     private PrismDurationUnit salaryInterval;
 
-    private Integer minSalary;
+    private BigDecimal minSalary;
 
-    private Integer maxSalary;
+    private BigDecimal maxSalary;
 
     private Integer minDuration;
 
@@ -175,19 +175,19 @@ public class OpportunitiesQueryDTO {
         this.salaryInterval = salaryInterval;
     }
 
-    public Integer getMinSalary() {
+    public BigDecimal getMinSalary() {
         return minSalary;
     }
 
-    public void setMinSalary(Integer minSalary) {
+    public void setMinSalary(BigDecimal minSalary) {
         this.minSalary = minSalary;
     }
 
-    public Integer getMaxSalary() {
+    public BigDecimal getMaxSalary() {
         return maxSalary;
     }
 
-    public void setMaxSalary(Integer maxSalary) {
+    public void setMaxSalary(BigDecimal maxSalary) {
         this.maxSalary = maxSalary;
     }
 

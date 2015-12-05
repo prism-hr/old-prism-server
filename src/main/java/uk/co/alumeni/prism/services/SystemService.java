@@ -334,7 +334,7 @@ public class SystemService {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = scopeService.getById(prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
-                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
+                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction()).withTransitionAction(prismAction.isTransitionAction())
                     .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction()).withPartnershipState(prismAction.getPartnershipState())
                     .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
             Action action = entityService.createOrUpdate(transientAction);
@@ -484,7 +484,7 @@ public class SystemService {
         for (State state : stateService.getStates()) {
             for (PrismStateAction prismStateAction : PrismState.getStateActions(state.getId())) {
                 Action action = actionService.getById(prismStateAction.getAction());
-                initializeStateAction(state, action, prismStateAction, true);
+                initializeStateAction(state, action, prismStateAction);
             }
         }
 
@@ -504,13 +504,14 @@ public class SystemService {
         roleService.deleteObsoleteUserRoles();
     }
 
-    private void initializeStateAction(State state, Action action, PrismStateAction prismStateAction, boolean notify) {
-        StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.isRaisesUrgentFlag())
+    private void initializeStateAction(State state, Action action, PrismStateAction prismStateAction) {
+        StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.getRaisesUrgentFlag())
+                .withReplicableSequenceStart(prismStateAction.getReplicableSequenceStart()).withReplicableSequenceClose(prismStateAction.getReplicableSequenceClose())
                 .withActionCondition(prismStateAction.getActionCondition()).withActionEnhancement(prismStateAction.getActionEnhancement());
 
-        if (notify) {
-            NotificationDefinition notificationDefinition = notificationService.getById(prismStateAction.getNotification());
-            stateAction.setNotificationDefinition(notificationDefinition);
+        PrismNotificationDefinition prismNotificationDefiniton = prismStateAction.getNotification();
+        if (prismNotificationDefiniton != null) {
+            stateAction.setNotificationDefinition(notificationService.getById(prismNotificationDefiniton));
         }
 
         entityService.save(stateAction);

@@ -115,13 +115,9 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Embedded
     private AdvertFinancialDetail pay;
 
-    @OneToOne
-    @JoinColumn(name = "advert_closing_date_id", unique = true)
-    private AdvertClosingDate closingDate;
-
-    @Column(name = "last_currency_conversion_date")
+    @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastCurrencyConversionDate;
+    private LocalDate closingDate;
 
     @Column(name = "globally_visible", nullable = false)
     private Boolean globallyVisible;
@@ -139,10 +135,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertCompetence> competences = Sets.newHashSet();
-
-    @OrderBy(clause = "closing_date desc")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
     @OrderBy(clause = "sequence_identifier desc")
     @OneToMany(mappedBy = "advert")
@@ -300,19 +292,11 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.pay = pay;
     }
 
-    public LocalDate getLastCurrencyConversionDate() {
-        return lastCurrencyConversionDate;
-    }
-
-    public void setLastCurrencyConversionDate(LocalDate lastCurrencyConversionDate) {
-        this.lastCurrencyConversionDate = lastCurrencyConversionDate;
-    }
-
-    public AdvertClosingDate getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public void setClosingDate(AdvertClosingDate closingDate) {
+    public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
     }
 
@@ -348,10 +332,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         return competences;
     }
 
-    public Set<AdvertClosingDate> getClosingDates() {
-        return closingDates;
-    }
-
     public Set<Application> getApplications() {
         return applications;
     }
@@ -379,10 +359,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public boolean isAdvertOfScope(PrismScope scope) {
         return getResource().getResourceScope().equals(scope);
-    }
-
-    public boolean hasConvertedPay() {
-        return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
 
     public boolean sameAs(Object object) {

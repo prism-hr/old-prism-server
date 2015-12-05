@@ -409,7 +409,7 @@ public class ResourceDAO {
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(WorkflowDAO.getResourceParentConnectableConstraint(resourceScope, user)) //
+                .add(getResourceParentConnectableConstraint(resourceScope, user)) //
                 .uniqueResult();
     }
 

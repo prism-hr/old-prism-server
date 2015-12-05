@@ -1,13 +1,15 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import uk.co.alumeni.prism.workflow.resolvers.state.duration.ApplicationClosingDateResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.duration.ApplicationInterviewDateResolver;
+import uk.co.alumeni.prism.workflow.resolvers.state.duration.ProgramClosingDateResolver;
+import uk.co.alumeni.prism.workflow.resolvers.state.duration.ProjectClosingDateResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
 
 public enum PrismStateDurationEvaluation {
 
-    APPLICATION_CLOSING_DATE(ApplicationClosingDateResolver.class), //
-    APPLICATION_INTERVIEW_DATE(ApplicationInterviewDateResolver.class);
+    APPLICATION_INTERVIEW_DATE(ApplicationInterviewDateResolver.class), //
+    PROJECT_CLOSING_DATE(ProjectClosingDateResolver.class), //
+    PROGRAM_CLOSING_DATE(ProgramClosingDateResolver.class);
 
     private Class<? extends StateDurationResolver<?>> resolver;
 

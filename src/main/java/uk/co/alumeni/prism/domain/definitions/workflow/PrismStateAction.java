@@ -10,6 +10,10 @@ public class PrismStateAction {
     private PrismAction action;
 
     private Boolean raisesUrgentFlag = false;
+    
+    private Boolean replicableSequenceStart = false;
+    
+    private Boolean replicableSequenceClose = false;
 
     private PrismActionCondition actionCondition;
 
@@ -27,8 +31,16 @@ public class PrismStateAction {
         return action;
     }
 
-    public boolean isRaisesUrgentFlag() {
+    public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
+    }
+
+    public Boolean getReplicableSequenceStart() {
+        return replicableSequenceStart;
+    }
+
+    public Boolean getReplicableSequenceClose() {
+        return replicableSequenceClose;
     }
 
     public PrismActionCondition getActionCondition() {
@@ -62,6 +74,16 @@ public class PrismStateAction {
 
     public PrismStateAction withRaisesUrgentFlag() {
         this.raisesUrgentFlag = true;
+        return this;
+    }
+    
+    public PrismStateAction withReplicableSeqeunceStart() {
+        this.replicableSequenceStart = true;
+        return this;
+    }
+    
+    public PrismStateAction withReplicableSequenceClose() {
+        this.replicableSequenceClose = true;
         return this;
     }
 

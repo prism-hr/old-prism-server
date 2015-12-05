@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.services.AdvertService;
 
 @Component
-public class AdvertServiceHelperExchangeRate extends PrismServiceHelperAbstract {
+public class AdvertServiceHelperAdvertFinancialDetail extends PrismServiceHelperAbstract {
 
     @Inject
     private AdvertService advertService;
@@ -21,9 +21,9 @@ public class AdvertServiceHelperExchangeRate extends PrismServiceHelperAbstract 
     @Override
     public void execute() {
         LocalDate baseline = new LocalDate();
-        List<Integer> adverts = advertService.getAdvertsWithElapsedCurrencyConversions(baseline);
+        List<Integer> adverts = advertService.getAdvertsWithElapsedPayConversions(baseline);
         for (Integer advert : adverts) {
-            updateCurrencyConversion(advert);
+            updateFinancialDetailNormalization(advert);
         }
     }
 
@@ -32,9 +32,9 @@ public class AdvertServiceHelperExchangeRate extends PrismServiceHelperAbstract 
         return shuttingDown;
     }
 
-    private void updateCurrencyConversion(Integer advert) {
+    private void updateFinancialDetailNormalization(Integer advert) {
         if (!isShuttingDown()) {
-            advertService.updateCurrencyConversion(advert);
+            advertService.updateFinancialDetailNormalization(advert);
         }
     }
 

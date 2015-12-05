@@ -1,11 +1,18 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_MANAGER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_ENDORSE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproved;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProjectApproved extends PrismWorkflowState {
@@ -13,25 +20,26 @@ public class PrismProjectApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.PROJECT_CREATE_APPLICATION) //
-                .withActionCondition(PrismActionCondition.ACCEPT_APPLICATION) //
-                .withStateTransitions(PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION //
-                        .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP))); //
+                .withAction(PROJECT_CREATE_APPLICATION) //
+                .withActionCondition(ACCEPT_APPLICATION) //
+                .withStateTransitions(APPLICATION_CREATE_TRANSITION //
+                        .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
-        stateActions.add(PrismProjectWorkflow.projectEmailCreatorApproved()); //
+        stateActions.add(projectEmailCreatorApproved()); //
+        stateActions.add(projectEscalateApproved());
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.PROJECT_UNENDORSE) //
-                .withPartnerAssignments(PrismRoleGroup.PARTNERSHIP_MANAGER_GROUP) //
-                .withStateTransitions(PrismStateTransitionGroup.PROJECT_ENDORSE_TRANSITION));
+                .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
+                .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.PROJECT_REENDORSE) //
-                .withPartnerAssignments(PrismRoleGroup.PARTNERSHIP_MANAGER_GROUP) //
-                .withStateTransitions(PrismStateTransitionGroup.PROJECT_ENDORSE_TRANSITION));
+                .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
+                .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
-        stateActions.add(PrismProjectWorkflow.projectTerminateApproved()); //
-        stateActions.add(PrismProjectWorkflow.projectViewEditApproved()); //
+        stateActions.add(projectTerminateApproved()); //
+        stateActions.add(projectViewEditApproved()); //
     }
 
 }

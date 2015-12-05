@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
@@ -41,6 +42,8 @@ public class OpportunitiesQueryDTO {
     private List<PrismOpportunityType> targetOpportunityTypes;
 
     private List<PrismStudyOption> studyOptions;
+
+    private PrismDurationUnit salaryInterval;
 
     private Integer minSalary;
 
@@ -162,6 +165,14 @@ public class OpportunitiesQueryDTO {
 
     public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
+    }
+
+    public PrismDurationUnit getSalaryInterval() {
+        return salaryInterval;
+    }
+
+    public void setSalaryInterval(PrismDurationUnit salaryInterval) {
+        this.salaryInterval = salaryInterval;
     }
 
     public Integer getMinSalary() {

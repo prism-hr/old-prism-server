@@ -261,7 +261,7 @@ public class StateDAO {
                         .add(Projections.property("stateTransition.transitionState"), "transitionState")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("action.transitionAction")) //
+                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.isNotNull("stateTransition.transitionState")) //
                 .addOrder(Order.asc("state")) //
                 .addOrder(Order.asc("action")) //

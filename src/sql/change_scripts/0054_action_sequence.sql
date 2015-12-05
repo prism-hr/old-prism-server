@@ -267,3 +267,13 @@ alter table state_transition
 alter table state_transition
     modify column replicable_sequence_close int(1) unsigned not null
 ;
+
+update state
+set state_duration_evaluation = null
+;
+
+alter table state_action
+    drop index replicable_sequence_close,
+    drop column replicable_sequence_close
+;
+

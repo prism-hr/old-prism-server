@@ -57,6 +57,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
@@ -855,10 +856,13 @@ public class AdvertDAO {
     }
 
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        BigDecimal durationAsHours = new BigDecimal(getDurationUnitInHours(queryDTO.getSalaryInterval()));
-        BigDecimal minSalary = new BigDecimal(queryDTO.getMinSalary()).divide(durationAsHours, 2, HALF_UP);
-        BigDecimal maxSalary = new BigDecimal(queryDTO.getMaxSalary()).divide(durationAsHours, 2, HALF_UP);
-        appendRangeConstraint(criteria, "advert.pay.minimumNormalized", "advert.pay.maximumNormalized", minSalary, maxSalary);
+        PrismDurationUnit interval = queryDTO.getSalaryInterval();
+        if (interval != null) {
+            BigDecimal durationAsHours = new BigDecimal(getDurationUnitInHours(interval));
+            BigDecimal minSalary = new BigDecimal(queryDTO.getMinSalary()).divide(durationAsHours, 2, HALF_UP);
+            BigDecimal maxSalary = new BigDecimal(queryDTO.getMaxSalary()).divide(durationAsHours, 2, HALF_UP);
+            appendRangeConstraint(criteria, "advert.pay.minimumNormalized", "advert.pay.maximumNormalized", minSalary, maxSalary);
+        }
     }
 
     private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
@@ -873,7 +877,6 @@ public class AdvertDAO {
     }
 
     private Junction buildRangeConstraint(String loColumn, String hiColumn, Number loValue, Number hiValue) {
-
         if ((loValue == null || loValue.intValue() == 0) && (hiValue == null || hiValue.intValue() == 0)) {
             return null;
         }

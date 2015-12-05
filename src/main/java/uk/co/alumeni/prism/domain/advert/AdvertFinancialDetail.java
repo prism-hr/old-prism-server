@@ -19,6 +19,12 @@ public class AdvertFinancialDetail {
     @Enumerated(EnumType.STRING)
     private PrismDurationUnit interval;
 
+    @Column(name = "pay_hours_week_minimum")
+    private Integer hoursWeekMinimum;
+
+    @Column(name = "pay_hours_week_maximum")
+    private Integer hoursWeekMaximum;
+
     @Column(name = "pay_currency")
     private String currency;
 
@@ -34,6 +40,12 @@ public class AdvertFinancialDetail {
     @Column(name = "pay_maximum_normalized")
     private BigDecimal maximumNormalized;
 
+    @Column(name = "pay_minimum_normalized_hour")
+    private BigDecimal minimumNormalizedHour;
+
+    @Column(name = "pay_maximum_normalized_hour")
+    private BigDecimal maximumNormalizedHour;
+
     @Column(name = "last_pay_conversion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastConversionDate;
@@ -44,6 +56,22 @@ public class AdvertFinancialDetail {
 
     public void setInterval(PrismDurationUnit interval) {
         this.interval = interval;
+    }
+
+    public Integer getHoursWeekMinimum() {
+        return hoursWeekMinimum;
+    }
+
+    public void setHoursWeekMinimum(Integer hoursWeekMinimum) {
+        this.hoursWeekMinimum = hoursWeekMinimum;
+    }
+
+    public Integer getHoursWeekMaximum() {
+        return hoursWeekMaximum;
+    }
+
+    public void setHoursWeekMaximum(Integer hoursWeekMaximum) {
+        this.hoursWeekMaximum = hoursWeekMaximum;
     }
 
     public String getCurrency() {
@@ -84,6 +112,22 @@ public class AdvertFinancialDetail {
 
     public void setMaximumNormalized(BigDecimal maximumNormalized) {
         this.maximumNormalized = maximumNormalized;
+    }
+
+    public BigDecimal getMinimumNormalizedHour() {
+        return minimumNormalizedHour;
+    }
+
+    public void setMinimumNormalizedHour(BigDecimal minimumNormalizedHour) {
+        this.minimumNormalizedHour = minimumNormalizedHour;
+    }
+
+    public BigDecimal getMaximumNormalizedHour() {
+        return maximumNormalizedHour;
+    }
+
+    public void setMaximumNormalizedHour(BigDecimal maximumNormalizedHour) {
+        this.maximumNormalizedHour = maximumNormalizedHour;
     }
 
     public LocalDate getLastConversionDate() {

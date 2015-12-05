@@ -12,7 +12,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -70,8 +69,7 @@ public class ApplicationPreprocessor implements ResourceProcessor<Application> {
 
     private void setSubmissionData(Application application) {
         application.setSubmittedTimestamp(new DateTime());
-        AdvertClosingDate advertClosingDate = application.getAdvert().getClosingDate();
-        application.setClosingDate(advertClosingDate == null ? null : advertClosingDate.getClosingDate());
+        application.setClosingDate(application.getAdvert().getClosingDate());
     }
 
     private void appendInterviewScheduledConfirmedComments(Application application, Comment comment) {

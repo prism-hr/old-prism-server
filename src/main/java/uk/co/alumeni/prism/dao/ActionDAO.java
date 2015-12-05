@@ -81,7 +81,9 @@ public class ActionDAO {
                         .add(Projections.groupProperty("action.id"), "actionId") //
                         .add(Projections.max("stateAction.raisesUrgentFlag"), "raisesUrgentFlag") //
                         .add(Projections.max("primaryState"), "primaryState") //
-                        .add(Projections.property("action.declinableAction"), "declinable")) //
+                        .add(Projections.property("action.declinableAction"), "declinable") //
+                        .add(Projections.property("action.actionSequenceStart").as("actionSequenceStart")) //
+                        .add(Projections.property("action.actionSequenceClose").as("actionSequenceClose"))) //
                 .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //

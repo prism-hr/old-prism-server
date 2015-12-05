@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -8,6 +9,7 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitInHours;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
@@ -17,8 +19,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
@@ -47,12 +48,10 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
-import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -159,7 +158,7 @@ public class AdvertDAO {
                         .add(Projections.property("pay.monthMaximumAtLocale").as("payMonthMaximum")) //
                         .add(Projections.property("pay.yearMinimumAtLocale").as("payYearMinimum")) //
                         .add(Projections.property("pay.yearMaximumAtLocale").as("payYearMaximum")) //
-                        .add(Projections.property("closingDate.closingDate").as("closingDate")) //
+                        .add(Projections.property("closingDate").as("closingDate")) //
                         .add(Projections.countDistinct("application.id").as("applicationCount")) //
                         .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //
                         .add(Projections.avg("application.applicationRatingAverage").as("applicationRatingAverage")) //
@@ -174,7 +173,6 @@ public class AdvertDAO {
                         Restrictions.isNotNull("application.submittedTimestamp")) //
                 .createAlias("opportunityType", "opportunityType", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("address", "address", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("id", adverts));
 
         appendOpportunityTypeConstraint(criteria, query);
@@ -337,65 +335,35 @@ public class AdvertDAO {
                 .list();
     }
 
-    public AdvertClosingDate getNextAdvertClosingDate(Advert advert, LocalDate baseline) {
-        return (AdvertClosingDate) sessionFactory.getCurrentSession().createCriteria(AdvertClosingDate.class) //
-                .add(Restrictions.eq("advert", advert)) //
-                .add(Restrictions.ge("closingDate", baseline)) //
-                .addOrder(Order.asc("closingDate")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
-    public List<Integer> getAdvertsWithElapsedCurrencyConversions(LocalDate baseline, HashMultimap<PrismScope, PrismState> scopes) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("program", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.resourceStates", "programState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program.resourceConditions", "programCondition", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.resourceStates", "projectState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("project.resourceConditions", "projectCondition", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("program.id")) //
-                                .add(Restrictions.isNotNull("programCondition.id")) //
-                                .add(Restrictions.in("programState.state.id", scopes.get(PROGRAM)))) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("project.id")) //
-                                .add(Restrictions.isNotNull("projectCondition.id")) //
-                                .add(Restrictions.in("projectState.state.id", scopes.get(PROJECT))))) //
-                .add(Restrictions.lt("lastCurrencyConversionDate", baseline)) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.isNotNull("pay.currencySpecified")) //
-                        .add(Restrictions.isNotNull("pay.currencyAtLocale")) //
-                        .add(Restrictions.neProperty("pay.currencySpecified", "pay.currencyAtLocale")))
+    public List<Integer> getAdvertsWithoutPayConversions(Institution institution, PrismScope scope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.institution", institution)) //
+                .add(Restrictions.isNotNull("advert.pay.currency")) //
+                .add(Restrictions.eqProperty("advert.pay.currency", "institution.currency")) //
                 .list();
     }
 
-    public List<Integer> getAdvertsWithElapsedClosingDates(LocalDate baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.property("id")) //
-                .createAlias("closingDate", "closingDate", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("closingDates", "otherClosingDate", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.lt("closingDate.closingDate", baseline)) //
-                        .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNull("closingDate.id")) //
-                                .add(Restrictions.ge("otherClosingDate.closingDate", baseline)))) //
-                .list();
-    }
-
-    public List<Advert> getAdvertsWithFinancialDetails(Institution institution) {
-        String currency = institution.getCurrency();
-        return (List<Advert>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .createAlias("project", "program", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("program", "project", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("project.institution", institution)) //
-                        .add(Restrictions.eq("program.institution", institution)) //
-                        .add(Restrictions.eq("institution.id", institution.getId()))) //
-                .add(Restrictions.eq("pay.currencySpecified", currency)) //
+    public List<Integer> getAdvertsWithElapsedPayConversions(PrismScope scope, LocalDate baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.domicile", "domicile", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
+                        Restrictions.eq("action.creationScope", APPLICATION)) //
+                .add(Restrictions.isNotNull("advert.pay.currency")) //
+                .add(Restrictions.neProperty("advert.pay.currency", "domicile.currency")) //
+                .add(Restrictions.lt("advert.pay.lastConversionDate", baseline)) //
+                .add(Restrictions.isNotNull("action.id")) //
                 .list();
     }
 
@@ -765,6 +733,17 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
+    public void updateAdvertPayCurrency(List<Integer> adverts, String currency) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update Advert " //
+                        + "set pay.currency = :currency, " //
+                        + "pay.lastConversionDate = null " //
+                        + "where id in (:adverts)") //
+                .setParameter("currency", currency) //
+                .setParameterList("adverts", adverts) //
+                .executeUpdate();
+    }
+
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismResourceContext context = queryDTO.getContext();
         if (context != null) {
@@ -876,43 +855,36 @@ public class AdvertDAO {
     }
 
     private void appendPayConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        appendRangeConstraint(criteria, "advert.pay.monthMinimumAtLocale", "advert.pay.monthMaximumAtLocale", queryDTO.getMinSalary(), queryDTO.getMaxSalary(), true);
+        BigDecimal durationAsHours = new BigDecimal(getDurationUnitInHours(queryDTO.getSalaryInterval()));
+        BigDecimal minSalary = new BigDecimal(queryDTO.getMinSalary()).divide(durationAsHours, 2, HALF_UP);
+        BigDecimal maxSalary = new BigDecimal(queryDTO.getMaxSalary()).divide(durationAsHours, 2, HALF_UP);
+        appendRangeConstraint(criteria, "advert.pay.minimumNormalized", "advert.pay.maximumNormalized", minSalary, maxSalary);
     }
 
     private void appendDurationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
-        Junction disjunction = Restrictions.disjunction();
-        String lo = "resource.durationMinimum";
-        String hi = "resource.durationMaximum";
-        appendRangeConstraint(disjunction, lo, hi, queryDTO.getMinDuration(), queryDTO.getMaxDuration(), false);
-        criteria.add(disjunction);
+        appendRangeConstraint(criteria, "resource.durationMinimum", "resource.durationMaximum", queryDTO.getMinDuration(), queryDTO.getMaxDuration());
     }
 
-    private void appendRangeConstraint(Criteria criteria, String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {
-        Junction constraint = buildRangeConstraint(loColumn, hiColumn, loValue, hiValue, decimal);
+    private void appendRangeConstraint(Criteria criteria, String loColumn, String hiColumn, Number loValue, Number hiValue) {
+        Junction constraint = buildRangeConstraint(loColumn, hiColumn, loValue, hiValue);
         if (constraint != null) {
             criteria.add(constraint);
         }
     }
 
-    private void appendRangeConstraint(Junction junction, String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {
-        Junction constraint = buildRangeConstraint(loColumn, hiColumn, loValue, hiValue, decimal);
-        if (constraint != null) {
-            junction.add(constraint);
-        }
-    }
+    private Junction buildRangeConstraint(String loColumn, String hiColumn, Number loValue, Number hiValue) {
 
-    private Junction buildRangeConstraint(String loColumn, String hiColumn, Integer loValue, Integer hiValue, boolean decimal) {
-        if ((loValue == null || loValue == 0) && (hiValue == null || hiValue == 0)) {
+        if ((loValue == null || loValue.intValue() == 0) && (hiValue == null || hiValue.intValue() == 0)) {
             return null;
         }
 
         Junction conjunction = Restrictions.conjunction();
         if (loValue != null) {
-            conjunction.add(Restrictions.ge(loColumn, hiValue != null && hiValue < loValue ? hiValue : decimal ? new BigDecimal(loValue) : loValue));
+            conjunction.add(Restrictions.ge(loColumn, hiValue != null && hiValue.intValue() < loValue.intValue() ? hiValue : loValue));
         }
 
         if (hiValue != null) {
-            conjunction.add(Restrictions.le(hiColumn, loValue != null && loValue > hiValue ? loValue : decimal ? new BigDecimal(hiValue) : hiValue));
+            conjunction.add(Restrictions.le(hiColumn, loValue != null && loValue.intValue() > hiValue.intValue() ? loValue : hiValue));
         }
         return conjunction;
     }

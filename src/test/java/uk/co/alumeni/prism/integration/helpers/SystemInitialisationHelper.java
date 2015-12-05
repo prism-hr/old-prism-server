@@ -268,7 +268,7 @@ public class SystemInitialisationHelper {
         for (StateAction stateAction : stateActions) {
             PrismStateAction prismStateAction = PrismState.getStateAction(stateAction.getState().getId(), stateAction.getAction().getId());
             assertNotNull(prismStateAction);
-            assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.getRaisesUrgentFlag());
+            assertEquals(prismStateAction.getRaisesUrgentFlag(), stateAction.getRaisesUrgentFlag());
             assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
             NotificationDefinition template = stateAction.getNotificationDefinition();

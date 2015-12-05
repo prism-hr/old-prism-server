@@ -10,8 +10,8 @@ import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 
 public enum PrismAction implements PrismLocalizableDefinition {
 
-    APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_ASSIGN_HIRING_MANAGERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMMENT(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE(getDefaultViewEditApplicationActionDefinition()), //
@@ -24,9 +24,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_COMPLETE_REJECTED_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_CONFIRM_OFFER(getDefaultProcessApplicationActionDefinition()), //
+    APPLICATION_CONFIRM_OFFER(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE(getDefaultProcessApplicationActionDefinition()), //
-    APPLICATION_CONFIRM_REJECTION(getDefaultProcessApplicationActionDefinition()), //
+    APPLICATION_CONFIRM_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(PrismScope.APPLICATION)), //
     APPLICATION_ESCALATE(getDefaultEscalateResourceActionDefinition(PrismScope.APPLICATION)), //
     APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
@@ -131,6 +131,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return actionDefinition.isRatingAction();
     }
 
+    public boolean isTransitionAction() {
+        return actionDefinition.isTransitionAction();
+    }
+
     public boolean isDeclinableAction() {
         return actionDefinition.isDeclinableAction();
     }
@@ -163,6 +167,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         private boolean ratingAction = false;
 
+        private boolean transitionAction = false;
+
         private boolean declinableAction = false;
 
         private boolean visibleAction = false;
@@ -187,6 +193,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
             return ratingAction;
         }
 
+        public boolean isTransitionAction() {
+            return transitionAction;
+        }
+
         public boolean isDeclinableAction() {
             return declinableAction;
         }
@@ -194,7 +204,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
         public boolean isVisibleAction() {
             return visibleAction;
         }
-
+        
         public PrismPartnershipState getPartnershipState() {
             return partnershipState;
         }

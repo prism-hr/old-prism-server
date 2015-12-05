@@ -17,6 +17,10 @@ public class ActionDTO implements Comparable<ActionDTO> {
     private Boolean primaryState;
 
     private Boolean declinable;
+    
+    private Boolean actionSequenceStart;
+    
+    private Boolean actionSequenceClose;
 
     public Integer getResourceId() {
         return resourceId;
@@ -64,6 +68,22 @@ public class ActionDTO implements Comparable<ActionDTO> {
 
     public void setDeclinable(Boolean declinable) {
         this.declinable = declinable;
+    }
+
+    public Boolean getActionSequenceStart() {
+        return actionSequenceStart;
+    }
+
+    public void setActionSequenceStart(Boolean actionSequenceStart) {
+        this.actionSequenceStart = actionSequenceStart;
+    }
+
+    public Boolean getActionSequenceClose() {
+        return actionSequenceClose;
+    }
+
+    public void setActionSequenceClose(Boolean actionSequenceClose) {
+        this.actionSequenceClose = actionSequenceClose;
     }
 
     @Override

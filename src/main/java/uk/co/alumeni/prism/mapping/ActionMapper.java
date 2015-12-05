@@ -105,13 +105,9 @@ public class ActionMapper {
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
-        PrismAction prismAction = action.getActionId();
-        ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class);
-
-        representation.addNextStates(stateMapper.getStateRepresentations(resource, prismAction));
-        representation.addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
-
-        return representation;
+        return getActionRepresentationSimple(action, ActionRepresentationExtended.class).withActionSequenceStart(action.getActionSequenceStart())
+                .withActionSequenceClose(action.getActionSequenceClose()).addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId()))
+                .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
     }
 
     private <T extends ActionRepresentationSimple> T getActionRepresentationSimple(ActionDTO action, Class<T> returnType) {

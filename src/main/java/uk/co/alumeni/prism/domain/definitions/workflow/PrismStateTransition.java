@@ -12,6 +12,8 @@ public class PrismStateTransition {
 
     private PrismAction transitionAction;
 
+    private Boolean replicableSequenceClose = false;
+
     private PrismStateTransitionEvaluation transitionEvaluation;
 
     private List<PrismRoleTransition> roleTransitions = Lists.newLinkedList();
@@ -26,6 +28,10 @@ public class PrismStateTransition {
 
     public PrismAction getTransitionAction() {
         return transitionAction;
+    }
+
+    public Boolean getReplicableSequenceClose() {
+        return replicableSequenceClose;
     }
 
     public PrismStateTransitionEvaluation getTransitionEvaluation() {
@@ -51,6 +57,11 @@ public class PrismStateTransition {
 
     public PrismStateTransition withTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceClose() {
+        this.replicableSequenceClose = true;
         return this;
     }
 

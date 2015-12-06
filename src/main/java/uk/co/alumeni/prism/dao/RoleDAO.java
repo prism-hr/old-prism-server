@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -281,6 +282,18 @@ public class RoleDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.verified", false)) //
+                .list();
+    }
+
+    public List<PrismRole> getDefaultRoleCategories(User user) {
+        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.asc("scope.ordinal")) //
+                .addOrder(Order.desc("assignedTimestamp")) //
+                .addOrder(Order.desc("id")) //
                 .list();
     }
 

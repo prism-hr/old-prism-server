@@ -58,6 +58,8 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     private String advertIncompleteSection;
 
+    private Long stateActionPendingCount;
+
     private List<ActionDTO> actions;
 
     public Integer getSystemId() {
@@ -250,6 +252,14 @@ public class ResourceListRowDTO extends ResourceSimpleDTO implements ProfileEnti
 
     public void setAdvertIncompleteSection(String advertIncompleteSection) {
         this.advertIncompleteSection = advertIncompleteSection;
+    }
+
+    public Long getStateActionPendingCount() {
+        return stateActionPendingCount;
+    }
+
+    public void setStateActionPendingCount(Long stateActionPendingCount) {
+        this.stateActionPendingCount = stateActionPendingCount;
     }
 
     public List<ActionDTO> getActions() {

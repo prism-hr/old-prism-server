@@ -263,6 +263,8 @@ public class ResourceMapper {
                     representation.setSequenceIdentifier(row.getSequenceIdentifier());
 
                     representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
+                    representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
+
                     representation.setActions(actions);
                     representations.add(representation);
                 });
@@ -337,9 +339,8 @@ public class ResourceMapper {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
         V representation = getResourceRepresentationRelation(resource, returnType, actions, overridingRoles);
-
+        representation.setStateActionPendingCount(resource.getStateActionPendings().size());
         representation.setActions(actions);
-
         representation.setConditions(getResourceConditionRepresentations(resource));
         return representation;
     }

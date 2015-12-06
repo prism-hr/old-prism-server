@@ -10,7 +10,9 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED_PARTIAL;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING_PARTIAL;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.REJECTED;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.UNKNOWN;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.YEAR;
@@ -25,6 +27,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSame;
+import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSome;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
@@ -620,10 +623,14 @@ public class AdvertMapper {
             Set<Integer> acceptedFor = acceptedForIndex.get(advert);
 
             if (advertsAsStaffCount > 0) {
-                if (containsSame(acceptedFor, advertAsStaffIds)) {
-                    representations.get(advert).setConnectState(ACCEPTED);
-                } else if (containsSame(pendingFor, advertAsStaffIds)) {
+                if (containsSame(pendingFor, advertAsStaffIds)) {
                     representations.get(advert).setConnectState(PENDING);
+                } else if (containsSome(pendingFor, advertAsStaffIds)) {
+                    representations.get(advert).setConnectState(PENDING_PARTIAL);
+                } else if (containsSame(acceptedFor, advertAsStaffIds)) {
+                    representations.get(advert).setConnectState(ACCEPTED);
+                } else if (containsSome(acceptedFor, advertAsStaffIds)) {
+                    representations.get(advert).setConnectState(ACCEPTED_PARTIAL);
                 } else {
                     representations.get(advert).setConnectState(UNKNOWN);
                 }

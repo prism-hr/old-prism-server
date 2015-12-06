@@ -294,6 +294,10 @@ public class CommentService {
                 .withRole(PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ADMINISTRATOR"))));
     }
 
+    public List<Comment> getTransitionCommentHistory(Resource resource) {
+        return commentDAO.getTransitionCommentHistory(resource);
+    }
+
     private void updateCommentStates(Comment comment) {
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {
             if (isFalse(resourceState.getPrimaryState())) {

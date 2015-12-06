@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -28,11 +30,15 @@ import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentatio
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.services.ActionService;
 
 @Service
 @Transactional
 public class ActionMapper {
+
+    @Inject
+    private CommentMapper commentMapper;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -98,10 +104,19 @@ public class ActionMapper {
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
-        return new ActionOutcomeRepresentation()
-                .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
+        List<CommentRepresentation> replicableSequenceCommentRepresentations = null;
+        List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
+        if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
+            replicableSequenceCommentRepresentations = Lists.newLinkedList();
+            for (Comment replicableSequenceComment : replicableSequenceComments) {
+                replicableSequenceCommentRepresentations.add(commentMapper.getCommentRepresentationExtended(replicableSequenceComment));
+            }
+        }
+
+        return new ActionOutcomeRepresentation().withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
-                .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
+                .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId()).withReplicableSequenceComments(replicableSequenceCommentRepresentations)
+                .withReplicableSequenceResourceCount(actionOutcomeDTO.getReplicableSequenceResourceCount());
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {

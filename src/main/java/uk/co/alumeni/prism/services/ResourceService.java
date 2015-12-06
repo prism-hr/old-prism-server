@@ -671,7 +671,7 @@ public class ResourceService {
                     .filter(as -> as.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
-                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionId(PrismAction.valueOf(scopeReference + "_VIEW_EDIT")) //
+                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
                             .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("action.scope.id").as("scope")) //
@@ -921,6 +921,12 @@ public class ResourceService {
         return null;
     }
 
+    public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, ResourceListFilterDTO filter) {
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
+        return getResources(user, scope, parentScopes, targeterEntities, filter, null);
+    }
+    
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {
         return getResources(user, scope, parentScopes, emptyList(), new ResourceListFilterDTO(), null);
     }

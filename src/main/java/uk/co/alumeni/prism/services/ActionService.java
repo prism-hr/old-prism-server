@@ -17,9 +17,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -47,6 +50,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ActionCreationScopeDTO;
 import uk.co.alumeni.prism.dto.ActionDTO;
@@ -55,6 +59,7 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ActionRedactionDTO;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 
 @Service
@@ -66,6 +71,9 @@ public class ActionService {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private CommentService commentService;
 
     @Inject
     private EntityService entityService;
@@ -333,8 +341,26 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                .withTransitionAction(transitionAction);
+        List<Comment> replicableSequenceComments = null;
+        if (BooleanUtils.isTrue(stateTransition.getReplicableSequenceClose())) {
+            replicableSequenceComments = Lists.newLinkedList();
+            for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
+                replicableSequenceComments.add(transitionComment);
+                StateAction stateAction = stateService.getStateAction(comment.getState(), comment.getAction());
+                if (BooleanUtils.isTrue(stateAction.getReplicableSequenceStart())) {
+                    break;
+                }
+            }
+        }
+
+        Integer replicableSequenceResourceCount = null;
+        if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
+            replicableSequenceResourceCount = resourceService.getResources(user, transitionResource.getResourceScope(),
+                    new ResourceListFilterDTO().withActionIds(replicableSequenceComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList()))).size();
+        }
+
+        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource).withTransitionAction(transitionAction)
+                .withReplicableSequenceComments(replicableSequenceComments).withReplicableSequenceResourceCount(replicableSequenceResourceCount);
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

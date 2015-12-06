@@ -182,4 +182,12 @@ public class CommentDAO {
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN);
     }
 
+    public List<Comment> getTransitionCommentHistory(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.neProperty("state", "transitionState")) //
+                .addOrder(Order.desc("sequenceIdentifier")) //
+                .list();
+    }
+
 }

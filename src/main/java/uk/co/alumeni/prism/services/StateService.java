@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -121,6 +122,10 @@ public class StateService {
 
     public StateActionPending getStateActionPendingById(Integer id) {
         return entityService.getById(StateActionPending.class, id);
+    }
+
+    public StateAction getStateAction(State state, Action action) {
+        return entityService.getByProperties(StateAction.class, ImmutableMap.of("state", state, "action", action));
     }
 
     public List<State> getStates() {

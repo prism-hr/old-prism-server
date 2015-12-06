@@ -539,23 +539,17 @@ public class ResourceService {
         }
 
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-        if (comment.isStateTransitionComment()
-                || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
-            LocalDate baselineCustom = null;
-            LocalDate baseline = new LocalDate();
-
+        if (comment.isStateTransitionComment() || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
             PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
             if (stateDurationEvaluation != null) {
                 StateDurationResolver<T> resolver = (StateDurationResolver<T>) applicationContext.getBean(stateDurationEvaluation.getResolver());
-                baselineCustom = resolver.resolve(resource, comment);
+                resource.setDueDate(resolver.resolve(resource, comment));
+            } else if (stateDurationDefinition != null) {
+                StateDurationConfiguration stateDurationConfiguration = stateService.getStateDurationConfiguration(resource, stateDurationDefinition);
+                if (stateDurationConfiguration != null) {
+                    resource.setDueDate(LocalDate.now().plusDays(stateDurationConfiguration.getDuration()));
+                }
             }
-
-            baseline = baselineCustom == null || baselineCustom.isBefore(baseline) ? baseline : baselineCustom;
-
-            StateDurationConfiguration stateDurationConfiguration = stateDurationDefinition == null ? null //
-                    : stateService.getStateDurationConfiguration(resource, stateDurationDefinition);
-            resource.setDueDate(baseline
-                    .plusDays(stateDurationConfiguration == null ? 0 : stateDurationConfiguration.getDuration()));
         }
         entityService.flush();
     }

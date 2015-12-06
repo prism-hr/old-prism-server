@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
 import java.util.List;
@@ -227,20 +226,6 @@ public class RoleDAO {
                 .setProjection(Projections.groupProperty("role.id")) //
                 .add(Restrictions.isNotNull(prismScope.getLowerCamelName())) //
                 .add(Restrictions.eq("user", user)) //
-                .list();
-    }
-
-    public List<PrismRole> getRolesByVisibleScope(User user, PrismScope prismScope) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias(prismScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("resource.id")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("state.scope.id", SYSTEM)) //
-                        .add(Restrictions.isNull("state.hidden"))) //
                 .list();
     }
 

@@ -658,11 +658,11 @@ public class ResourceService {
     public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanAdminister(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
 
-        List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
-        for (PrismScope scope : visibleScopes) {
+        List<PrismScope> scopes = Arrays.asList(PrismScope.values());
+        for (PrismScope scope : scopes) {
             String scopeReference = scope.name();
 
-            getResources(user, scope, visibleScopes.stream()
+            getResources(user, scope, scopes.stream()
                     .filter(as -> as.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //

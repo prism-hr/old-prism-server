@@ -28,6 +28,8 @@ public class ResourceRepresentationStandard extends ResourceRepresentationRelati
 
     private List<PrismScopeSectionDefinition> advertIncompleteSections;
 
+    private Integer stateActionPendingCount;
+
     public boolean isRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
@@ -98,6 +100,14 @@ public class ResourceRepresentationStandard extends ResourceRepresentationRelati
 
     public void setAdvertIncompleteSections(List<PrismScopeSectionDefinition> advertIncompleteSections) {
         this.advertIncompleteSections = advertIncompleteSections;
+    }
+
+    public Integer getStateActionPendingCount() {
+        return stateActionPendingCount;
+    }
+
+    public void setStateActionPendingCount(Integer stateActionPendingCount) {
+        this.stateActionPendingCount = stateActionPendingCount;
     }
 
 }

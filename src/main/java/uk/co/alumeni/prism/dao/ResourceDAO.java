@@ -182,7 +182,8 @@ public class ResourceDAO {
                 projectionList.add(Projections.property("advertIncompleteSection"), "advertIncompleteSection");
             }
 
-            criteria.setProjection(projectionList);
+            criteria.setProjection(projectionList //
+                    .add(Projections.countDistinct("stateActionPending.id"), "stateActionPendingCount"));
             for (String parentScopeName : parentScopeNames) {
                 criteria.createAlias(parentScopeName, parentScopeName, JoinType.LEFT_OUTER_JOIN);
             }
@@ -190,7 +191,8 @@ public class ResourceDAO {
             criteria.setProjection(projectionList) //
                     .createAlias("user", "user", JoinType.INNER_JOIN) //
                     .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                    .createAlias("state", "state", JoinType.INNER_JOIN)
+                    .createAlias("state", "state", JoinType.INNER_JOIN) //
+                    .createAlias("stateActionPendings", "stateActionPending", JoinType.LEFT_OUTER_JOIN) //
                     .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
 
             criteria.add(Restrictions.in("id", resourceIds));

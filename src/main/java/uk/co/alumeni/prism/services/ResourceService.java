@@ -917,11 +917,11 @@ public class ResourceService {
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {
-        return getResources(user, scope, parentScopes, emptyList(), null, null);
+        return getResources(user, scope, parentScopes, emptyList(), new ResourceListFilterDTO(), null);
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities) {
-        return getResources(user, scope, parentScopes, targeterEntities, null, null);
+        return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), null);
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
@@ -929,7 +929,13 @@ public class ResourceService {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
-
+    
+    
+    public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ProjectionList columns,
+            Class<T> responseClass) {
+        return getResources(user, scope, parentScopes, targeterEntities, null, columns, responseClass);
+    }
+    
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns,
             Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);

@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -36,6 +37,9 @@ import uk.co.alumeni.prism.services.ActionService;
 @Service
 @Transactional
 public class ActionMapper {
+
+    @Inject
+    private AdvertMapper advertMapper;
 
     @Inject
     private CommentMapper commentMapper;
@@ -113,10 +117,19 @@ public class ActionMapper {
             }
         }
 
-        return new ActionOutcomeRepresentation().withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
+        ActionOutcomeRepresentation actionOutcomeRepresentation = new ActionOutcomeRepresentation()
+                .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId()).withReplicableSequenceComments(replicableSequenceCommentRepresentations)
                 .withReplicableSequenceResourceCount(actionOutcomeDTO.getReplicableSequenceResourceCount());
+
+        AdvertCategories transitionResourceAdvertCategories = actionOutcomeDTO.getTransitionResourceAdvertCategories();
+        if (transitionResourceAdvertCategories != null) {
+            actionOutcomeRepresentation.setReplicableSequenceFilterThemes(advertMapper.getAdvertThemeRepresentations(transitionResourceAdvertCategories));
+            actionOutcomeRepresentation.setReplicableSequenceFilterLocations(advertMapper.getAdvertLocationRepresentations(transitionResourceAdvertCategories));
+        }
+
+        return actionOutcomeRepresentation;
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {

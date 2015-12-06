@@ -360,7 +360,8 @@ public class ActionService {
         }
 
         return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource).withTransitionAction(transitionAction)
-                .withReplicableSequenceComments(replicableSequenceComments).withReplicableSequenceResourceCount(replicableSequenceResourceCount);
+                .withReplicableSequenceComments(replicableSequenceComments).withReplicableSequenceResourceCount(replicableSequenceResourceCount)
+                .withTransitionResourceAdvertCategories(advertService.getAdvertCategories(transitionResource.getAdvert()));
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

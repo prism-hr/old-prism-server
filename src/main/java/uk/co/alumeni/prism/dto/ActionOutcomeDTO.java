@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -24,6 +25,8 @@ public class ActionOutcomeDTO {
     private List<Comment> replicableSequenceComments;
 
     private Integer replicableSequenceResourceCount;
+
+    private AdvertCategories transitionResourceAdvertCategories;
 
     public User getUser() {
         return user;
@@ -47,6 +50,10 @@ public class ActionOutcomeDTO {
 
     public Integer getReplicableSequenceResourceCount() {
         return replicableSequenceResourceCount;
+    }
+
+    public AdvertCategories getTransitionResourceAdvertCategories() {
+        return transitionResourceAdvertCategories;
     }
 
     public ActionOutcomeDTO withUser(User user) {
@@ -76,6 +83,11 @@ public class ActionOutcomeDTO {
 
     public ActionOutcomeDTO withReplicableSequenceResourceCount(Integer replicableSequenceResourceCount) {
         this.replicableSequenceResourceCount = replicableSequenceResourceCount;
+        return this;
+    }
+
+    public ActionOutcomeDTO withTransitionResourceAdvertCategories(AdvertCategories transitionResourceAdvertCategories) {
+        this.transitionResourceAdvertCategories = transitionResourceAdvertCategories;
         return this;
     }
 

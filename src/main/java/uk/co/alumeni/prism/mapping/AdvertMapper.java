@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -65,7 +66,9 @@ import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
 import uk.co.alumeni.prism.domain.advert.AdvertFunction;
 import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
+import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
+import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
@@ -382,19 +385,36 @@ public class AdvertMapper {
         if (categories != null) {
             List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
-
-            List<AdvertThemeRepresentation> themes = Lists.newLinkedList();
-            categories.getThemes().forEach(advertTheme -> {
-                Theme theme = advertTheme.getTheme();
-                themes.add(new AdvertThemeRepresentation().withId(theme.getId()).withName(theme.getName()));
-            });
-
-            List<ResourceRepresentationRelation> locations = categories.getLocations().stream()
-                    .map(al -> resourceMapper.getResourceRepresentationRelation(al.getLocationAdvert().getResource())).collect(Collectors.toList());
-
+            List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
+            List<ResourceRepresentationRelation> locations = getAdvertLocationRepresentations(categories);
             return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
         }
         return null;
+    }
+
+    public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(AdvertCategories categories) {
+        Set<AdvertTheme> advertThemes = categories.getThemes();
+        List<AdvertThemeRepresentation> advertThemeRepresentations = null;
+        if (CollectionUtils.isNotEmpty(advertThemes)) {
+            advertThemeRepresentations = Lists.newLinkedList();
+            for (AdvertTheme advertTheme : advertThemes) {
+                Theme theme = advertTheme.getTheme();
+                advertThemeRepresentations.add(new AdvertThemeRepresentation().withId(theme.getId()).withName(theme.getName()));
+            }
+        }
+        return advertThemeRepresentations;
+    }
+
+    public List<ResourceRepresentationRelation> getAdvertLocationRepresentations(AdvertCategories categories) {
+        Set<AdvertLocation> advertLocations = categories.getLocations();
+        List<ResourceRepresentationRelation> advertLocationRepresentations = null;
+        if (CollectionUtils.isNotEmpty(advertLocations)) {
+            advertLocationRepresentations = Lists.newLinkedList();
+            for (AdvertLocation advertLocation : advertLocations) {
+                advertLocationRepresentations.add(resourceMapper.getResourceRepresentationRelation(advertLocation.getLocationAdvert().getResource()));
+            }
+        }
+        return advertLocationRepresentations;
     }
 
     public List<AdvertCompetenceRepresentation> getAdvertCompetenceRepresentations(Advert advert) {

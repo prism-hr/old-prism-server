@@ -5,7 +5,6 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang3.BooleanUtils.isNotTrue;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
@@ -44,7 +43,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Role;
@@ -125,19 +123,14 @@ public class RoleService {
     }
 
     public UserRole getOrCreateUserRole(UserRole transientUserRole) {
-        UserRole persistentUserRole = entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
-        if (persistentUserRole.getAcceptedTimestamp() == null) {
-            UserAccount userAccount = persistentUserRole.getUser().getUserAccount();
-            if (!(userAccount == null || isNotTrue(userAccount.getEnabled()))) {
-                acceptUserRole(persistentUserRole, now());
-            }
-        }
-        return persistentUserRole;
+        return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
     }
 
-    public void acceptUserRole(UserRole persistentUserRole, DateTime baseline) {
-        persistentUserRole.setAcceptedTimestamp(baseline);
-        activityService.setSequenceIdentifier(persistentUserRole, baseline);
+    public void acceptUnnacceptedUserRoles(User user, DateTime baseline) {
+        roleDAO.getUnnacceptedRolesForUser(user).forEach(userRole -> {
+            userRole.setAcceptedTimestamp(baseline);
+            activityService.setSequenceIdentifier(userRole, baseline);
+        });
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {
@@ -175,14 +168,10 @@ public class RoleService {
         boolean isVerify = isTrue(verify);
         for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
             if (isVerify) {
-                PrismRole role = PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", ""));
-                createUserRoles(invoker, resource, user, role);
+                createUserRoles(invoker, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
                 entityService.delete(userRole);
-                entityService.flush();
                 if (isTrue(userRole.getRequested())) {
                     notificationService.sendJoinNotification(invoker, user, resource);
-                    userRole = getUserRole(resource, user, getById(role));
-                    acceptUserRole(userRole, DateTime.now());
                 } else {
                     userRole.setInvitation(invitationService.createInvitation(user));
                 }

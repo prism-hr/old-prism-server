@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
@@ -215,7 +216,12 @@ public class ActionService {
     public void setCreationActions() {
         List<ActionCreationScopeDTO> actionCreationScopes = actionDAO.getCreationActions();
         for (ActionCreationScopeDTO actionCreationScope : actionCreationScopes) {
-            actionCreationScope.getAction().setCreationScope(actionCreationScope.getCreationScope());
+            Scope creationScope = actionCreationScope.getCreationScope();
+            PrismScope prismCreationScope = creationScope.getId();
+
+            Action action = actionCreationScope.getAction();
+            action.setActionCondition(prismCreationScope.ordinal() > INSTITUTION.ordinal() ? PrismActionCondition.valueOf("ACCEPT_" + prismCreationScope.name()) : null);
+            action.setCreationScope(creationScope);
         }
     }
 
@@ -241,13 +247,13 @@ public class ActionService {
             actionDAO.setStateGroupTransitionActions(actions);
         }
     }
-    
+
     public void setSequenceStartActions() {
-        
+
     }
-    
+
     public void setSequenceCloseActions() {
-        
+
     }
 
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
@@ -307,7 +313,7 @@ public class ActionService {
         }
         return actionEnhancements.toArray(new PrismActionEnhancement[actionEnhancements.size()]);
     }
-    
+
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();
 

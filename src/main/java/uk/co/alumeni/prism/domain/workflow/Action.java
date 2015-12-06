@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 
 @Entity
@@ -32,6 +33,10 @@ public class Action extends WorkflowDefinition {
     @Column(name = "action_category", nullable = false)
     @Enumerated(EnumType.STRING)
     private PrismActionCategory actionCategory;
+
+    @Column(name = "action_condition")
+    @Enumerated(EnumType.STRING)
+    private PrismActionCondition actionCondition;
 
     @Column(name = "rating_action", nullable = false)
     private Boolean ratingAction;
@@ -94,6 +99,14 @@ public class Action extends WorkflowDefinition {
 
     public void setActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
+    }
+
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
+    }
+
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
     }
 
     public Boolean getRatingAction() {
@@ -198,6 +211,11 @@ public class Action extends WorkflowDefinition {
 
     public Action withActionCategory(PrismActionCategory actionCategory) {
         this.actionCategory = actionCategory;
+        return this;
+    }
+
+    public Action withActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
         return this;
     }
 

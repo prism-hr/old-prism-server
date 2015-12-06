@@ -61,7 +61,8 @@ public class WorkflowDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .add(getResourceConditionConstraint());
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope parentScope, Projection projection) {
@@ -81,7 +82,8 @@ public class WorkflowDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .add(getResourceConditionConstraint());
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
@@ -109,7 +111,8 @@ public class WorkflowDAO {
                 .add(Restrictions.in(scope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities)) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .add(getResourceConditionConstraint());
     }
 
     public static Junction getTargetActionConstraint() {
@@ -186,7 +189,16 @@ public class WorkflowDAO {
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(projection) //
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN);
+    }
+
+    private Junction getResourceConditionConstraint() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("action.actionCondition")) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "action.actionCondition"))
+                        .add(Restrictions.eq("resourceCondition.internalMode", true)));
     }
 
 }

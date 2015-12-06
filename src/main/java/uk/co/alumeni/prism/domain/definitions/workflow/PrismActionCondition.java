@@ -1,14 +1,19 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+
 import java.util.Arrays;
 import java.util.List;
 
 public enum PrismActionCondition {
 
-    ACCEPT_APPLICATION(PrismScope.INSTITUTION, PrismScope.DEPARTMENT, PrismScope.PROGRAM, PrismScope.PROJECT),
-    ACCEPT_PROJECT(PrismScope.INSTITUTION, PrismScope.DEPARTMENT, PrismScope.PROGRAM),
-    ACCEPT_PROGRAM(PrismScope.INSTITUTION, PrismScope.DEPARTMENT),
-    ACCEPT_DEPARTMENT(PrismScope.INSTITUTION);
+    ACCEPT_APPLICATION(INSTITUTION, DEPARTMENT, PROGRAM, PROJECT), //
+    ACCEPT_PROJECT(INSTITUTION, DEPARTMENT, PROGRAM), //
+    ACCEPT_PROGRAM(INSTITUTION, DEPARTMENT), //
+    ACCEPT_DEPARTMENT(INSTITUTION);
 
     private List<PrismScope> validScopes;
 

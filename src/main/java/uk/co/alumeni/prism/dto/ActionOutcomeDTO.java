@@ -32,28 +32,56 @@ public class ActionOutcomeDTO {
         return user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Resource getResource() {
         return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     public Resource getTransitionResource() {
         return transitionResource;
     }
 
+    public void setTransitionResource(Resource transitionResource) {
+        this.transitionResource = transitionResource;
+    }
+
     public Action getTransitionAction() {
         return transitionAction;
+    }
+
+    public void setTransitionAction(Action transitionAction) {
+        this.transitionAction = transitionAction;
     }
 
     public List<Comment> getReplicableSequenceComments() {
         return replicableSequenceComments;
     }
 
+    public void setReplicableSequenceComments(List<Comment> replicableSequenceComments) {
+        this.replicableSequenceComments = replicableSequenceComments;
+    }
+
     public Integer getReplicableSequenceResourceCount() {
         return replicableSequenceResourceCount;
     }
 
+    public void setReplicableSequenceResourceCount(Integer replicableSequenceResourceCount) {
+        this.replicableSequenceResourceCount = replicableSequenceResourceCount;
+    }
+
     public AdvertCategories getTransitionResourceAdvertCategories() {
         return transitionResourceAdvertCategories;
+    }
+
+    public void setTransitionResourceAdvertCategories(AdvertCategories transitionResourceAdvertCategories) {
+        this.transitionResourceAdvertCategories = transitionResourceAdvertCategories;
     }
 
     public ActionOutcomeDTO withUser(User user) {
@@ -83,11 +111,6 @@ public class ActionOutcomeDTO {
 
     public ActionOutcomeDTO withReplicableSequenceResourceCount(Integer replicableSequenceResourceCount) {
         this.replicableSequenceResourceCount = replicableSequenceResourceCount;
-        return this;
-    }
-
-    public ActionOutcomeDTO withTransitionResourceAdvertCategories(AdvertCategories transitionResourceAdvertCategories) {
-        this.transitionResourceAdvertCategories = transitionResourceAdvertCategories;
         return this;
     }
 

@@ -37,6 +37,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
 import uk.co.alumeni.prism.dao.ActionDAO;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
@@ -356,9 +357,15 @@ public class ActionService {
             sequenceResourceCount = resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource.getResourceScope(), sequenceComments).size();
         }
 
-        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource).withTransitionAction(transitionAction)
-                .withReplicableSequenceComments(sequenceComments).withReplicableSequenceResourceCount(sequenceResourceCount)
-                .withTransitionResourceAdvertCategories(advertService.getAdvertCategories(transitionResource.getAdvert()));
+        ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
+                .withTransitionAction(transitionAction).withReplicableSequenceComments(sequenceComments).withReplicableSequenceResourceCount(sequenceResourceCount);
+
+        Advert transitionResourceAdvert = transitionResource.getAdvert();
+        if (transitionResourceAdvert != null) {
+            actionOutcome.setTransitionResourceAdvertCategories(advertService.getAdvertCategories(transitionResourceAdvert));
+        }
+
+        return actionOutcome;
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

@@ -133,8 +133,7 @@ public class ActionMapper {
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
-        return getActionRepresentationSimple(action, ActionRepresentationExtended.class).withActionSequenceStart(action.getActionSequenceStart())
-                .withActionSequenceClose(action.getActionSequenceClose()).addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId()))
+        return getActionRepresentationSimple(action, ActionRepresentationExtended.class).addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId()))
                 .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
     }
 

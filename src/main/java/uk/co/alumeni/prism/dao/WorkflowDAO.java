@@ -53,8 +53,7 @@ public class WorkflowDAO {
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -74,8 +73,7 @@ public class WorkflowDAO {
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", false)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -102,8 +100,7 @@ public class WorkflowDAO {
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN,
                         Restrictions.eq("stateActionAssignment.externalMode", true)) //
-                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateActionAssignment.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
@@ -197,7 +194,7 @@ public class WorkflowDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("action.actionCondition")) //
                 .add(Restrictions.conjunction() //
-                        .add(Restrictions.eqProperty("resourceCondition.actionCondition", "action.actionCondition"))
+                        .add(Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition"))
                         .add(Restrictions.eq("resourceCondition.internalMode", true)));
     }
 

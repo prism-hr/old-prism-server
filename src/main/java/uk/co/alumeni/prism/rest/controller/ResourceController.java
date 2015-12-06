@@ -43,6 +43,7 @@ import uk.co.alumeni.prism.mapping.RoleMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
+import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
@@ -287,6 +288,12 @@ public class ResourceController {
             @Valid @RequestBody CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), commentDTO);
         return actionOutcome == null ? null : actionMapper.getActionOutcomeRepresentation(actionOutcome);
+    }
+
+    @RequestMapping(value = "/comments/bulk", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void executeAction(@Valid @RequestBody ReplicableActionSequenceDTO replicableActionSequenceDTO) {
+        resourceService.executeAction(replicableActionSequenceDTO);
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)

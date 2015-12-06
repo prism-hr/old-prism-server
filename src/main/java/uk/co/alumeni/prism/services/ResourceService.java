@@ -116,6 +116,7 @@ import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
+import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
@@ -418,6 +419,10 @@ public class ResourceService {
             }
             inviteResourceRelation(resourceInviting, user, resourceInvitation);
         }
+    }
+
+    public void executeAction(ReplicableActionSequenceDTO sequenceDTO) {
+
     }
 
     @SuppressWarnings("unchecked")
@@ -926,7 +931,7 @@ public class ResourceService {
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
         return getResources(user, scope, parentScopes, targeterEntities, filter, null);
     }
-    
+
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes) {
         return getResources(user, scope, parentScopes, emptyList(), new ResourceListFilterDTO(), null);
     }
@@ -1030,6 +1035,10 @@ public class ResourceService {
         return resourceDAO.getResourcesByLocation(resourceScope, location);
     }
 
+    public List<Integer> getResourcesWithPendingAction(PrismScope scope, Action action) {
+        return resourceDAO.getResourcesWithPendingAction(scope, action);
+    }
+    
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //

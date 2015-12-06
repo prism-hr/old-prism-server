@@ -394,6 +394,15 @@ public class StateService {
         entityService.save(stateActionPending);
         return stateActionPending;
     }
+    
+    public StateActionPending createOrUpdateStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
+                .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))
+                .withAssignUserList(prismJsonMappingUtils.writeValue(stateActionPendingDTO.getAssignUserList()))
+                .withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
+        entityService.save(stateActionPending);
+        return stateActionPending;
+    }
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {
         Resource operativeResource = resourceService.getOperativeResource(resource, action);

@@ -91,11 +91,11 @@ public class NotificationDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
+                        Restrictions.isNull("action.actionCondition")) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
@@ -113,11 +113,11 @@ public class NotificationDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
+                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
+                        Restrictions.isNull("action.actionCondition")) //
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //

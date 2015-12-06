@@ -3,14 +3,11 @@ package uk.co.alumeni.prism.rest.representation.user;
 import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private Boolean sendApplicationRecommendationNotification;
-
-    private List<PrismScope> visibleScopes;
 
     private List<UserRolesRepresentation> userRoles;
 
@@ -30,14 +27,6 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
         this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
-    }
-
-    public List<PrismScope> getVisibleScopes() {
-        return visibleScopes;
-    }
-
-    public void setVisibleScopes(List<PrismScope> visibleScopes) {
-        this.visibleScopes = visibleScopes;
     }
 
     public List<UserRolesRepresentation> getUserRoles() {

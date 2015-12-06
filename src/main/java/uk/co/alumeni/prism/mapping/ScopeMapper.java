@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newLinkedList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.R
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
 
 @Service
 @Transactional
@@ -45,9 +45,6 @@ public class ScopeMapper {
 
     @Inject
     private ResourceService resourceService;
-
-    @Inject
-    private RoleService roleService;
 
     public List<ResourceRelationRepresentation> getResourceFamilyCreationRepresentations() {
         List<ResourceRelationRepresentation> representations = Lists.newLinkedList();
@@ -84,11 +81,10 @@ public class ScopeMapper {
     public List<ResourceActivityRepresentation> getResourceActivityRepresentation(User user) {
         DateTime baseline = new DateTime().minusDays(1);
 
+        List<PrismScope> scopes = Arrays.asList(PrismScope.values());
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
-        List<PrismScope> visibleScopes = roleService.getVisibleScopes(user);
-        for (PrismScope scope : visibleScopes) {
-
-            Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, visibleScopes.stream()
+        for (PrismScope scope : scopes) {
+            Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, scopes.stream()
                     .filter(as -> as.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //

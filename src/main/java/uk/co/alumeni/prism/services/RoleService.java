@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -283,14 +282,6 @@ public class RoleService {
             executeRoleTransitions(resource, comment, roleTransitions);
         }
         entityService.flush();
-    }
-
-    public List<PrismScope> getVisibleScopes(User user) {
-        Set<PrismScope> visibleScopes = Sets.newTreeSet();
-        for (PrismScope scope : PrismScope.values()) {
-            roleDAO.getRolesByVisibleScope(user, scope).forEach(role -> visibleScopes.addAll(role.getVisibleScopes()));
-        }
-        return newLinkedList(visibleScopes);
     }
 
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {

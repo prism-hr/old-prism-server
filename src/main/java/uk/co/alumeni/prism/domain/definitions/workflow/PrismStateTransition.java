@@ -65,6 +65,11 @@ public class PrismStateTransition {
         return this;
     }
 
+    public PrismStateTransition withReplicableSequenceClose(Boolean replicableSequenceClose) {
+        this.replicableSequenceClose = replicableSequenceClose;
+        return this;
+    }
+
     public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
         this.transitionEvaluation = transitionEvaluation;
         return this;

@@ -567,6 +567,7 @@ public enum PrismStateTransitionGroup {
                 stateTransitions.add(new PrismStateTransition() //
                         .withTransitionState(stateTransition.getTransitionState()) //
                         .withTransitionAction(stateTransition.getTransitionAction()) //
+                        .withReplicableSequenceClose(stateTransition.getReplicableSequenceClose()) //
                         .withStateTransitionEvaluation(stateTransition.getTransitionEvaluation()) //
                         .withRoleTransitions(definedRoleTransitions.toArray(new PrismRoleTransition[definedRoleTransitions.size()])) //
                         .withRoleTransitions(roleTransitions.toArray(new PrismRoleTransition[roleTransitions.size()])) //

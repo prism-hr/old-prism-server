@@ -4,7 +4,9 @@ public enum PrismConnectionState {
 
     UNKNOWN, //
     PENDING, //
+    PENDING_PARTIAL, //
     ACCEPTED, //
+    ACCEPTED_PARTIAL, //
     REJECTED;
 
 }

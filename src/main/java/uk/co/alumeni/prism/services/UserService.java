@@ -164,7 +164,9 @@ public class UserService {
             User user = (User) authentication.getDetails();
             user = getById(user.getId());
             if (user != null) {
-                user.setLastLoggedInTimestamp(now());
+                DateTime baseline = DateTime.now();
+                user.setLastLoggedInTimestamp(baseline);
+                roleService.acceptUnnacceptedUserRoles(user, baseline);
             }
             return user;
         }

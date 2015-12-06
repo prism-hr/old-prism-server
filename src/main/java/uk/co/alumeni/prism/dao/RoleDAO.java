@@ -297,6 +297,14 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<UserRole> getUnnacceptedRolesForUser(User user) {
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNull("acceptedTimestamp")) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .list();
+    }
+
     private static Junction getRolesOverridingRedactionsConstraint(User user, Collection<Integer> resourceIds) {
         return Restrictions.conjunction() //
                 .add(Restrictions.in("resource.id", resourceIds)) //

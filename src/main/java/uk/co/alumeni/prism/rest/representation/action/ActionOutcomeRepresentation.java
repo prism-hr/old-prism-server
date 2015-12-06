@@ -3,7 +3,9 @@ package uk.co.alumeni.prism.rest.representation.action;
 import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 
 public class ActionOutcomeRepresentation {
@@ -17,6 +19,10 @@ public class ActionOutcomeRepresentation {
     private List<CommentRepresentation> replicableSequenceComments;
 
     private Integer replicableSequenceResourceCount;
+
+    private List<AdvertThemeRepresentation> replicableSequenceFilterThemes;
+
+    private List<ResourceRepresentationRelation> replicableSequenceFilterLocations;
 
     public ResourceRepresentationSimple getResource() {
         return resource;
@@ -56,6 +62,22 @@ public class ActionOutcomeRepresentation {
 
     public void setReplicableSequenceResourceCount(Integer replicableSequenceResourceCount) {
         this.replicableSequenceResourceCount = replicableSequenceResourceCount;
+    }
+
+    public List<AdvertThemeRepresentation> getReplicableSequenceFilterThemes() {
+        return replicableSequenceFilterThemes;
+    }
+
+    public void setReplicableSequenceFilterThemes(List<AdvertThemeRepresentation> replicableSequenceFilterThemes) {
+        this.replicableSequenceFilterThemes = replicableSequenceFilterThemes;
+    }
+
+    public List<ResourceRepresentationRelation> getReplicableSequenceFilterLocations() {
+        return replicableSequenceFilterLocations;
+    }
+
+    public void setReplicableSequenceFilterLocations(List<ResourceRepresentationRelation> replicableSequenceFilterLocations) {
+        this.replicableSequenceFilterLocations = replicableSequenceFilterLocations;
     }
 
     public ActionOutcomeRepresentation withResource(ResourceRepresentationSimple resource) {

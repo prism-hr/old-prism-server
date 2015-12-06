@@ -64,9 +64,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
-import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
@@ -590,12 +588,11 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesWithPendingAction(PrismScope scope, Action action) {
-        String resourceReference = scope.getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(StateActionPending.class) //
-                .setProjection(Projections.property(resourceReference + ".id")) //
-                .add(Restrictions.isNotNull(resourceReference)) //
-                .add(Restrictions.eq("action", action)) //
+    public List<Integer> getResourcesWithStateActionsPending(PrismScope scope, List<PrismAction> actions) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("stateActionPendings", "stateActionPending", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("stateActionPending.action.id", actions)) //
                 .list();
     }
 

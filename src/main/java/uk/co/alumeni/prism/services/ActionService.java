@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -59,7 +58,6 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ActionRedactionDTO;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 
 @Service
@@ -341,11 +339,11 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        List<Comment> replicableSequenceComments = null;
+        List<Comment> sequenceComments = null;
         if (BooleanUtils.isTrue(stateTransition.getReplicableSequenceClose())) {
-            replicableSequenceComments = Lists.newLinkedList();
+            sequenceComments = Lists.newLinkedList();
             for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
-                replicableSequenceComments.add(transitionComment);
+                sequenceComments.add(transitionComment);
                 StateAction stateAction = stateService.getStateAction(comment.getState(), comment.getAction());
                 if (BooleanUtils.isTrue(stateAction.getReplicableSequenceStart())) {
                     break;
@@ -353,15 +351,13 @@ public class ActionService {
             }
         }
 
-        Integer replicableSequenceResourceCount = null;
-        List<Integer> resourcesWithStateAction
-        if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
-            replicableSequenceResourceCount = resourceService.getResources(user, transitionResource.getResourceScope(),
-                    new ResourceListFilterDTO().withActionIds(replicableSequenceComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList()))).size();
+        Integer sequenceResourceCount = null;
+        if (CollectionUtils.isNotEmpty(sequenceComments)) {
+            sequenceResourceCount = resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource.getResourceScope(), sequenceComments).size();
         }
 
         return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource).withTransitionAction(transitionAction)
-                .withReplicableSequenceComments(replicableSequenceComments).withReplicableSequenceResourceCount(replicableSequenceResourceCount)
+                .withReplicableSequenceComments(sequenceComments).withReplicableSequenceResourceCount(sequenceResourceCount)
                 .withTransitionResourceAdvertCategories(advertService.getAdvertCategories(transitionResource.getAdvert()));
     }
 

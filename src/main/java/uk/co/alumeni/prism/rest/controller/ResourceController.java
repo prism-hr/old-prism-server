@@ -292,8 +292,8 @@ public class ResourceController {
 
     @RequestMapping(value = "/comments/bulk", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void executeAction(@Valid @RequestBody ReplicableActionSequenceDTO replicableActionSequenceDTO) {
-        resourceService.executeAction(replicableActionSequenceDTO);
+    public void prepareActions(@Valid @RequestBody ReplicableActionSequenceDTO replicableActionSequenceDTO) {
+        resourceService.prepareActions(replicableActionSequenceDTO);
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)

@@ -62,6 +62,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 
+import jersey.repackaged.com.google.common.base.Objects;
 import jersey.repackaged.com.google.common.collect.Iterables;
 import jersey.repackaged.com.google.common.collect.Sets;
 import uk.co.alumeni.prism.dao.ResourceDAO;
@@ -103,8 +104,10 @@ import uk.co.alumeni.prism.domain.workflow.OpportunityType;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.domain.workflow.State;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
@@ -117,6 +120,7 @@ import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
+import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
@@ -421,8 +425,81 @@ public class ResourceService {
         }
     }
 
-    public void executeAction(ReplicableActionSequenceDTO sequenceDTO) {
+    public void prepareActions(ReplicableActionSequenceDTO sequenceDTO) {
+        List<Integer> resourceIds = sequenceDTO.getResources();
+        List<Integer> commentIds = sequenceDTO.getTemplateComments();
+        if (CollectionUtils.isNotEmpty(resourceIds) && CollectionUtils.isNotEmpty(commentIds)) {
+            List<Comment> comments = commentService.getComments(commentIds);
 
+            boolean validTransition = false;
+            boolean validStartTransition = false;
+            boolean validCloseTransition = false;
+
+            int commentsSize = comments.size();
+            for (int i = 0; i < commentsSize; i++) {
+                Comment comment = comments.get(i);
+                if (!Objects.equal(comment.getState(), comment.getTransitionState())) {
+                    validTransition = true;
+
+                    if (i == 0) {
+                        StateAction stateAction = stateService.getStateAction(comment.getState(), comment.getAction());
+                        validStartTransition = BooleanUtils.toBoolean(stateAction.getReplicableSequenceStart());
+                    } else if (i == (commentsSize - 1)) {
+                        StateTransition stateTransition = stateService.getStateTransition(comment.getState(), comment.getAction(), comment.getTransitionState());
+                        validCloseTransition = BooleanUtils.toBoolean(stateTransition.getReplicableSequenceClose());
+                    }
+                } else {
+                    validTransition = false;
+                }
+            }
+
+            if (validTransition && validStartTransition && validCloseTransition) {
+                List<PrismAction> actions = comments.stream().map(comment -> comment.getAction().getId()).collect(Collectors.toList());
+                resourceIds.removeAll(resourceDAO.getResourcesWithStateActionsPending(actions.get(0).getScope(), actions));
+
+                boolean authentic = true;
+                User user = userService.getCurrentUser();
+                for (Comment comment : comments) {
+                    if (!Objects.equal(user, comment.getUser())) {
+                        authentic = false;
+                    }
+                }
+
+                if (authentic) {
+                    resourceIds.stream().forEach(resourceId -> {
+                        comments.stream().forEach(comment -> {
+                            Action action = comment.getAction();
+                            Resource resource = getById(action.getScope().getId(), resourceId);
+                            StateActionPendingDTO stateActionPendingDTO = new StateActionPendingDTO();
+
+                            Set<CommentAssignedUser> commentAssignedUsers = comment.getAssignedUsers();
+                            if (CollectionUtils.isNotEmpty(commentAssignedUsers)) {
+                                PrismRole assignUserRole = null;
+                                List<UserDTO> assignUserList = Lists.newLinkedList();
+                                for (CommentAssignedUser commentAssignedUser : commentAssignedUsers) {
+                                    if (commentAssignedUser.getRoleTransitionType().equals(CREATE)) {
+                                        if (assignUserRole == null) {
+                                            assignUserRole = commentAssignedUser.getRole().getId();
+                                        }
+
+                                        User assignUser = commentAssignedUser.getUser();
+                                        assignUserList.add(new UserDTO().withId(assignUser.getId()).withFirstName(assignUser.getFirstName()).withLastName(assignUser.getLastName())
+                                                .withEmail(assignUser.getEmail()));
+                                    }
+                                }
+
+                                if (assignUserRole != null) {
+                                    stateActionPendingDTO.setAssignUserRole(assignUserRole);
+                                    stateActionPendingDTO.setAssignUserList(assignUserList);
+                                }
+                            }
+
+                            stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
+                        });
+                    });
+                }
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -1035,10 +1112,14 @@ public class ResourceService {
         return resourceDAO.getResourcesByLocation(resourceScope, location);
     }
 
-    public List<Integer> getResourcesWithPendingAction(PrismScope scope, Action action) {
-        return resourceDAO.getResourcesWithPendingAction(scope, action);
+    public List<Integer> getResourcesForStateActionPendingAssignment(User user, PrismScope resourceScope, List<Comment> replicableSequenceComments) {
+        List<PrismAction> actions = replicableSequenceComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList());
+        List<Integer> replicableSequenceResources = getResources(user, resourceScope, new ResourceListFilterDTO().withActionIds(actions)).stream()
+                .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
+        replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(resourceScope, actions));
+        return replicableSequenceResources;
     }
-    
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //

@@ -228,6 +228,10 @@ public class StateService {
         return stateDAO.getStateTransition(resource, action, prismTransitionState);
     }
 
+    public StateTransition getStateTransition(State state, Action action, State transitionState) {
+        return stateDAO.getStateTransition(state, action, transitionState);
+    }
+
     public StateTransition getPredefinedStateTransition(Resource resource, Comment comment) {
         State transitionState = comment.getTransitionState();
         if (transitionState != null) {
@@ -394,7 +398,7 @@ public class StateService {
         entityService.save(stateActionPending);
         return stateActionPending;
     }
-    
+
     public StateActionPending createOrUpdateStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
         StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
                 .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))

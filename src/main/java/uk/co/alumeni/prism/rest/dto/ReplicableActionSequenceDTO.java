@@ -2,19 +2,17 @@ package uk.co.alumeni.prism.rest.dto;
 
 import java.util.List;
 
-import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
-
 public class ReplicableActionSequenceDTO {
 
-    private List<ResourceDTO> resources;
+    private List<Integer> resources;
 
     private List<Integer> templateComments;
 
-    public List<ResourceDTO> getResources() {
+    public List<Integer> getResources() {
         return resources;
     }
 
-    public void setResources(List<ResourceDTO> resources) {
+    public void setResources(List<Integer> resources) {
         this.resources = resources;
     }
 

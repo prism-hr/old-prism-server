@@ -297,6 +297,10 @@ public class CommentService {
     public List<Comment> getTransitionCommentHistory(Resource resource) {
         return commentDAO.getTransitionCommentHistory(resource);
     }
+    
+    public List<Comment> getComments(List<Integer> commentIds) {
+        return commentDAO.getComments(commentIds);
+    }
 
     private void updateCommentStates(Comment comment) {
         for (ResourceState resourceState : comment.getResource().getResourceStates()) {

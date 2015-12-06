@@ -83,6 +83,8 @@ public class UserActivityRepresentation {
 
         private PrismScope scope;
 
+        private Integer count;
+
         private Integer updateCount;
 
         private List<ActionActivityRepresentation> actions;
@@ -93,6 +95,14 @@ public class UserActivityRepresentation {
 
         public void setScope(PrismScope scope) {
             this.scope = scope;
+        }
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
         }
 
         public Integer getUpdateCount() {
@@ -147,6 +157,11 @@ public class UserActivityRepresentation {
 
         public ResourceActivityRepresentation withScope(PrismScope scope) {
             this.scope = scope;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withCount(Integer count) {
+            this.count = count;
             return this;
         }
 

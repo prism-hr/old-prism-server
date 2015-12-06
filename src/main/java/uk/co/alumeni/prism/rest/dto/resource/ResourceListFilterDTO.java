@@ -15,7 +15,7 @@ public class ResourceListFilterDTO {
 
     private PrismRoleCategory roleCategory;
 
-    private PrismAction actionId;
+    private List<PrismAction> actionIds;
 
     private PrismActionEnhancement[] actionEnhancements;
 
@@ -43,19 +43,19 @@ public class ResourceListFilterDTO {
         this.roleCategory = roleCategory;
     }
 
-    public PrismAction getActionId() {
-        return actionId;
+    public List<PrismAction> getActionIds() {
+        return actionIds;
     }
 
-    public void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
+    public void setActionIds(List<PrismAction> actionIds) {
+        this.actionIds = actionIds;
     }
 
     public PrismActionEnhancement[] getActionEnhancements() {
         return actionEnhancements;
     }
 
-    public void setActionEnhancement(PrismActionEnhancement... actionEnhancements) {
+    public void setActionEnhancements(PrismActionEnhancement[] actionEnhancements) {
         this.actionEnhancements = actionEnhancements;
     }
 
@@ -133,8 +133,8 @@ public class ResourceListFilterDTO {
         return this;
     }
 
-    public ResourceListFilterDTO withActionId(PrismAction actionId) {
-        this.actionId = actionId;
+    public ResourceListFilterDTO withActionIds(List<PrismAction> actionIds) {
+        this.actionIds = actionIds;
         return this;
     }
 

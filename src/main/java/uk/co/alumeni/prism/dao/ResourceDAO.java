@@ -598,9 +598,9 @@ public class ResourceDAO {
             criteria.add(Restrictions.eq("role.roleCategory", roleCategory));
         }
 
-        PrismAction actionId = filter.getActionId();
-        if (actionId != null) {
-            criteria.add(Restrictions.eq("stateAction.action.id", actionId));
+        List<PrismAction> actionIds = filter.getActionIds();
+        if (isNotEmpty(actionIds)) {
+            criteria.add(Restrictions.in("stateAction.action.id", actionIds));
         }
 
         PrismActionEnhancement[] actionEnhancements = filter.getActionEnhancements();

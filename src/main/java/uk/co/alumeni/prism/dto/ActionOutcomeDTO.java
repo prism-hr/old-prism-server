@@ -1,11 +1,12 @@
 package uk.co.alumeni.prism.dto;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
@@ -20,7 +21,9 @@ public class ActionOutcomeDTO {
 
     private Action transitionAction;
 
-    private PrismConnectionState connectState;
+    private List<Comment> replicableSequenceComments;
+
+    private Integer replicableSequenceResourceCount;
 
     public User getUser() {
         return user;
@@ -38,8 +41,12 @@ public class ActionOutcomeDTO {
         return transitionAction;
     }
 
-    public PrismConnectionState getConnectState() {
-        return connectState;
+    public List<Comment> getReplicableSequenceComments() {
+        return replicableSequenceComments;
+    }
+
+    public Integer getReplicableSequenceResourceCount() {
+        return replicableSequenceResourceCount;
     }
 
     public ActionOutcomeDTO withUser(User user) {
@@ -62,8 +69,13 @@ public class ActionOutcomeDTO {
         return this;
     }
 
-    public ActionOutcomeDTO withConnectState(PrismConnectionState connectState) {
-        this.connectState = connectState;
+    public ActionOutcomeDTO withReplicableSequenceComments(List<Comment> replicableSequenceComments) {
+        this.replicableSequenceComments = replicableSequenceComments;
+        return this;
+    }
+
+    public ActionOutcomeDTO withReplicableSequenceResourceCount(Integer replicableSequenceResourceCount) {
+        this.replicableSequenceResourceCount = replicableSequenceResourceCount;
         return this;
     }
 

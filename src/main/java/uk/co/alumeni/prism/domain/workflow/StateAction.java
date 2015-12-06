@@ -17,7 +17,6 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
@@ -41,10 +40,6 @@ public class StateAction implements UniqueEntity {
 
     @Column(name = "replicable_sequence_start", nullable = false)
     private Boolean replicableSequenceStart;
-
-    @Column(name = "action_condition")
-    @Enumerated(EnumType.STRING)
-    private PrismActionCondition actionCondition;
 
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
@@ -103,14 +98,6 @@ public class StateAction implements UniqueEntity {
         this.replicableSequenceStart = replicableSequenceStart;
     }
 
-    public PrismActionCondition getActionCondition() {
-        return actionCondition;
-    }
-
-    public void setActionCondition(PrismActionCondition actionCondition) {
-        this.actionCondition = actionCondition;
-    }
-
     public PrismActionEnhancement getActionEnhancement() {
         return actionEnhancement;
     }
@@ -156,11 +143,6 @@ public class StateAction implements UniqueEntity {
 
     public StateAction withReplicableSequenceStart(Boolean replicableSequenceStart) {
         this.replicableSequenceStart = replicableSequenceStart;
-        return this;
-    }
-
-    public StateAction withActionCondition(PrismActionCondition actionCondition) {
-        this.actionCondition = actionCondition;
         return this;
     }
 

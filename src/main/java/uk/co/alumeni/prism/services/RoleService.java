@@ -13,8 +13,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.dao.RoleDAO;
@@ -172,11 +175,14 @@ public class RoleService {
         boolean isVerify = isTrue(verify);
         for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
             if (isVerify) {
-                Role role = userRole.getRole();
-                createUserRoles(invoker, resource, user, PrismRole.valueOf(role.getId().name().replace("_UNVERIFIED", "")));
+                PrismRole role = PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", ""));
+                createUserRoles(invoker, resource, user, role);
                 entityService.delete(userRole);
+                entityService.flush();
                 if (isTrue(userRole.getRequested())) {
                     notificationService.sendJoinNotification(invoker, user, resource);
+                    userRole = getUserRole(resource, user, getById(role));
+                    acceptUserRole(userRole, DateTime.now());
                 } else {
                     userRole.setInvitation(invitationService.createInvitation(user));
                 }
@@ -189,6 +195,22 @@ public class RoleService {
                 }
             }
         }
+    }
+
+    public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {
+        List<PrismScope> scopes = Arrays.asList(PrismScope.values());
+        Map<PrismScope, PrismRoleCategory> defaults = Maps.newTreeMap();
+        for (PrismRole role : roleDAO.getDefaultRoleCategories(user)) {
+            PrismScope scope = role.getScope();
+            if (!scopes.contains(scope)) {
+                defaults.put(scope, role.getRoleCategory());
+                scopes.remove(scope);
+                if (scopes.isEmpty()) {
+                    break;
+                }
+            }
+        }
+        return defaults;
     }
 
     public void setResourceOwner(Resource resource, User user) {

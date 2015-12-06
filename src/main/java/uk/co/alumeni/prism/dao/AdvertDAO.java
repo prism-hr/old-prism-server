@@ -284,9 +284,9 @@ public class AdvertDAO {
                 .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN)
                 .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition")) //
                 .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //

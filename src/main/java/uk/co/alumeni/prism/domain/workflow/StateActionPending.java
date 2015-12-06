@@ -229,7 +229,7 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("id", id);
+        return super.getEntitySignature().addProperty("action", action);
     }
 
 }

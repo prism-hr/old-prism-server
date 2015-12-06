@@ -64,7 +64,9 @@ import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
+import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.State;
+import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
@@ -364,8 +366,9 @@ public class ResourceDAO {
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
+                        Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition"))
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .uniqueResult();
     }
@@ -584,6 +587,15 @@ public class ResourceDAO {
                         .add(Restrictions.like("locationDepartment.name", location, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
+                .list();
+    }
+
+    public List<Integer> getResourcesWithPendingAction(PrismScope scope, Action action) {
+        String resourceReference = scope.getLowerCamelName();
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(StateActionPending.class) //
+                .setProjection(Projections.property(resourceReference + ".id")) //
+                .add(Restrictions.isNotNull(resourceReference)) //
+                .add(Restrictions.eq("action", action)) //
                 .list();
     }
 

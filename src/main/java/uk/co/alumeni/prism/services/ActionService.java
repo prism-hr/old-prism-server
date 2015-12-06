@@ -354,6 +354,7 @@ public class ActionService {
         }
 
         Integer replicableSequenceResourceCount = null;
+        List<Integer> resourcesWithStateAction
         if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
             replicableSequenceResourceCount = resourceService.getResources(user, transitionResource.getResourceScope(),
                     new ResourceListFilterDTO().withActionIds(replicableSequenceComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList()))).size();

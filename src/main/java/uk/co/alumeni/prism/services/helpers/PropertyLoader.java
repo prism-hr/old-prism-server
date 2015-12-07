@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.services.helpers;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.DISPLAY_PROPERTY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.DISPLAY_PROPERTY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.HashMap;

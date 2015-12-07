@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

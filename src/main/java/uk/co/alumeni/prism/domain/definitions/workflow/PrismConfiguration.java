@@ -1,4 +1,4 @@
-package uk.co.alumeni.prism.domain.definitions;
+package uk.co.alumeni.prism.domain.definitions.workflow;
 
 import java.util.Map;
 

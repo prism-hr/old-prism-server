@@ -17,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.INVITE;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -193,8 +194,8 @@ public class UserService {
     public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
-            stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
+            stateService.createStateActionPending(resource, user, action, INVITE, stateActionPendingDTO);
         }
     }
 
@@ -373,7 +374,7 @@ public class UserService {
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
@@ -383,7 +384,7 @@ public class UserService {
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             User bouncedOrUnverifiedUser = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
 
@@ -496,13 +497,17 @@ public class UserService {
 
         return newLinkedList(profiles);
     }
-    
+
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
     }
 
     public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
+    }
+
+    public UserDTO getUserDTO(User user) {
+        return new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
     @SuppressWarnings("unchecked")

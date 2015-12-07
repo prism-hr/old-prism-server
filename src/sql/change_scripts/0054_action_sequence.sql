@@ -354,5 +354,3 @@ alter table advert
     add index (pay_minimum_normalized_hour, sequence_identifier),
     add index (pay_maximum_normalized_hour, sequence_identifier)
 ;
-
-

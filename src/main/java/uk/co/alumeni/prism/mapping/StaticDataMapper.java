@@ -26,7 +26,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
@@ -36,6 +35,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;

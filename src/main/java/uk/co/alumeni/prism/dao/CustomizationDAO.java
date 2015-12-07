@@ -21,8 +21,8 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;

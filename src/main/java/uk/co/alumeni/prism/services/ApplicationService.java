@@ -329,7 +329,7 @@ public class ApplicationService {
         User currentUser = userService.getCurrentUser();
         if (application.getState().getStateGroup().getId().equals(APPLICATION_UNSUBMITTED)) {
             Action action = actionService.getById(APPLICATION_COMPLETE);
-            if (!actionService.checkActionExecutable(application, action, currentUser, false)) {
+            if (!actionService.checkActionExecutable(application, action, currentUser)) {
                 throw new WorkflowPermissionException(application, action);
             }
         } else {

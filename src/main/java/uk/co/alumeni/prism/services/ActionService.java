@@ -289,6 +289,10 @@ public class ActionService {
         return visible ? checkActionAvailable(resource, action, user, false) : false;
     }
 
+    public boolean checkActionExecutable(Resource resource, Action action, User user) {
+        return checkActionExecutable(resource, action, user, false);
+    }
+    
     public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {
         boolean executable = true;
         Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);
@@ -405,9 +409,7 @@ public class ActionService {
                         .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
                         .add(Projections.max("primaryState").as("primaryState")) //
                         .add(Projections.min("stateActionAssignment.externalMode").as("onlyAsPartner")) //
-                        .add(Projections.property("action.declinableAction").as("declinable")) //
-                        .add(Projections.property("action.actionSequenceStart").as("actionSequenceStart")) //
-                        .add(Projections.property("action.actionSequenceClose").as("actionSequenceClose")),
+                        .add(Projections.property("action.declinableAction").as("declinable")),
                 ActionDTO.class).forEach(permittedAction -> {
                     permittedActions.put(permittedAction.getResourceId(), permittedAction);
                 });

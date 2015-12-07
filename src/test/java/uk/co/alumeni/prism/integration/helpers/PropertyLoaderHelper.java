@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.rest.dto.DisplayPropertyConfigurationDTO;
 import uk.co.alumeni.prism.services.CustomizationService;

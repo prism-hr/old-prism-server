@@ -2,6 +2,8 @@ package uk.co.alumeni.prism.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,6 +14,7 @@ import javax.persistence.Table;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -62,9 +65,13 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @Lob
-    @Column(name = "content")
-    private String content;
+    @ManyToOne
+    @JoinColumn(name = "transition_state_id")
+    private State transitionState;
+
+    @Column(name = "state_action_pending_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PrismStateActionPendingType type;
 
     @ManyToOne
     @JoinColumn(name = "assign_user_role_id")
@@ -150,12 +157,20 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         this.action = action;
     }
 
-    public String getContent() {
-        return content;
+    public State getTransitionState() {
+        return transitionState;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTransitionState(State transitionState) {
+        this.transitionState = transitionState;
+    }
+
+    public PrismStateActionPendingType getType() {
+        return type;
+    }
+
+    public void setType(PrismStateActionPendingType type) {
+        this.type = type;
     }
 
     public Role getAssignUserRole() {
@@ -197,8 +212,13 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         return this;
     }
 
-    public StateActionPending withContent(String content) {
-        this.content = content;
+    public StateActionPending withTransitionState(State transitionState) {
+        this.transitionState = transitionState;
+        return this;
+    }
+
+    public StateActionPending withType(PrismStateActionPendingType type) {
+        this.type = type;
         return this;
     }
 
@@ -229,7 +249,7 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
 
     @Override
     public EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("action", action);
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

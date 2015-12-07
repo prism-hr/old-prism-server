@@ -28,6 +28,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITU
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
@@ -482,9 +483,7 @@ public class ResourceService {
                                             assignUserRole = commentAssignedUser.getRole().getId();
                                         }
 
-                                        User assignUser = commentAssignedUser.getUser();
-                                        assignUserList.add(new UserDTO().withId(assignUser.getId()).withFirstName(assignUser.getFirstName()).withLastName(assignUser.getLastName())
-                                                .withEmail(assignUser.getEmail()));
+                                        assignUserList.add(userService.getUserDTO(commentAssignedUser.getUser()));
                                     }
                                 }
 
@@ -494,7 +493,7 @@ public class ResourceService {
                                 }
                             }
 
-                            stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
+                            stateService.createStateActionPending(resource, user, action, comment.getTransitionState(), ACTION, stateActionPendingDTO);
                         });
                     });
                 }
@@ -1251,7 +1250,7 @@ public class ResourceService {
     private void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext, Boolean requested) {
         User currentUser = userService.getCurrentUser();
         Action viewEditAction = actionService.getViewEditAction(resource);
-        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser, false);
+        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser);
 
         Role role = null;
         String resourceName = resource.getResourceScope().name();

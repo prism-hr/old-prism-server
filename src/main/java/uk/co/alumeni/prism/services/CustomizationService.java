@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 
 import uk.co.alumeni.prism.dao.CustomizationDAO;
-import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.resource.Resource;

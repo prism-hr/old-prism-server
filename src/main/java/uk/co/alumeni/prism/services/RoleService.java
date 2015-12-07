@@ -165,23 +165,22 @@ public class RoleService {
     }
 
     public void verifyUserRoles(User invoker, ResourceParent resource, User user, Boolean verify) {
-        boolean isVerify = isTrue(verify);
-        for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
-            if (isVerify) {
-                createUserRoles(invoker, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
-                entityService.delete(userRole);
-                if (isTrue(userRole.getRequested())) {
-                    notificationService.sendJoinNotification(invoker, user, resource);
+        Action action = actionService.getViewEditAction(resource);
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker))) {
+            boolean isVerify = isTrue(verify);
+            for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
+                if (isVerify) {
+                    createUserRoles(invoker, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
+                    if (isTrue(userRole.getRequested())) {
+                        notificationService.sendJoinNotification(invoker, user, resource);
+                    } else {
+                        userRole.setInvitation(invitationService.createInvitation(user));
+                    }
                 } else {
-                    userRole.setInvitation(invitationService.createInvitation(user));
-                }
-            } else {
-                Action action = actionService.getViewEditAction(resource);
-                if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker, false))) {
                     getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
                             .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED")))).withAssignedTimestamp(now()));
-                    entityService.delete(userRole);
                 }
+                entityService.delete(userRole);
             }
         }
     }

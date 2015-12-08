@@ -854,6 +854,19 @@ public class ResourceService {
                 .addAll(studyOptions.stream().map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption)).collect(Collectors.toList()));
     }
 
+    public void updateResource(ResourceParent resource, ResourceParentDTO resourceDTO) {
+        resource.setImportedCode(resourceDTO.getImportedCode());
+        resource.setName(resourceDTO.getName());
+
+        Advert advert = resource.getAdvert();
+        advertService.updateAdvert(advert, resourceDTO);
+
+        updateCustomAdvertTargets(resource, resourceDTO);
+
+        List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
+        setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
+    }
+    
     public void updateOpportunity(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
         updateResource(resource, resourceDTO);
@@ -871,22 +884,8 @@ public class ResourceService {
         }
 
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
-
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
         setStudyOptions(resource, studyOptions == null ? newArrayList() : studyOptions);
-    }
-
-    public void updateResource(ResourceParent resource, ResourceParentDTO resourceDTO) {
-        resource.setImportedCode(resourceDTO.getImportedCode());
-        resource.setName(resourceDTO.getName());
-
-        Advert advert = resource.getAdvert();
-        advertService.updateAdvert(advert, resourceDTO);
-
-        updateCustomAdvertTargets(resource, resourceDTO);
-
-        List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
-        setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
     }
 
     public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {

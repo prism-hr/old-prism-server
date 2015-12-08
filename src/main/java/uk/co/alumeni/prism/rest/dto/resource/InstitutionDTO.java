@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
+import javax.validation.Valid;
+
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
-
-import javax.validation.Valid;
 
 public class InstitutionDTO extends ResourceParentDTO {
 

@@ -155,7 +155,7 @@ public class ResourceDAO {
             }
 
             boolean parentScope = !scope.equals(APPLICATION);
-            projectionList.add(Projections.property("id"), scopeName + "Id");
+            projectionList.add(Projections.groupProperty("id"), scopeName + "Id");
             if (parentScope) {
                 projectionList.add(Projections.property("name"), scopeName + "Name");
             }

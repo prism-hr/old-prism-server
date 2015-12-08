@@ -1,15 +1,17 @@
 package uk.co.alumeni.prism.services;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.dao.InstitutionDAO;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
-
-import javax.inject.Inject;
-import java.util.List;
 
 @Service
 @Transactional

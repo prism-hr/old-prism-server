@@ -1,6 +1,11 @@
 package uk.co.alumeni.prism.workflow.transition.creators;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -9,10 +14,6 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceOpportunityDTO;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
-
-import javax.inject.Inject;
-
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 
 @Component
 public class ProjectCreator implements ResourceCreator<ResourceOpportunityDTO> {

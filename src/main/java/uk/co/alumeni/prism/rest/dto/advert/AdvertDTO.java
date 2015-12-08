@@ -1,12 +1,13 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import org.hibernate.validator.constraints.URL;
-import org.joda.time.LocalDate;
-import uk.co.alumeni.prism.rest.dto.AddressDTO;
-import uk.co.alumeni.prism.utils.validation.DateNotPast;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.URL;
+import org.joda.time.LocalDate;
+
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
+import uk.co.alumeni.prism.utils.validation.DateNotPast;
 
 public class AdvertDTO {
 

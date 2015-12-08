@@ -11,6 +11,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.WORK_DAYS_IN_WEEK;
 import static uk.co.alumeni.prism.PrismConstants.WORK_HOURS_IN_DAY;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
@@ -54,6 +55,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -108,9 +110,9 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
@@ -214,8 +216,37 @@ public class AdvertService {
         return advertDAO.getAdvertApplicationSummary(advert);
     }
 
-    public List<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<Integer> advertIds) {
-        return advertIds.isEmpty() ? Lists.newArrayList() : advertDAO.getAdverts(query, advertIds);
+    public Collection<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<AdvertOpportunityFilterDTO> advertDTOs) {
+        String lastSequenceIdentifier = query.getLastSequenceIdentifier();
+
+        int returned = 0;
+        boolean returning = lastSequenceIdentifier == null;
+        Map<Integer, Boolean> advertIndex = Maps.newLinkedHashMap();
+        for (AdvertOpportunityFilterDTO advertDTO : advertDTOs) {
+            if (returning) {
+                advertIndex.put(advertDTO.getId(), advertDTO.getRecommended());
+                returned++;
+                if (returned == ADVERT_LIST_PAGE_ROW_COUNT) {
+                    break;
+                }
+            } else {
+                returning = lastSequenceIdentifier.compareTo(advertDTO.getSequenceIdentifier()) == 0;
+            }
+        }
+
+        Set<Integer> advertIds = advertIndex.keySet();
+        Map<String, uk.co.alumeni.prism.dto.AdvertDTO> adverts = Maps.newTreeMap();
+        if (!advertIds.isEmpty()) {
+            advertDAO.getAdverts(query, advertIndex.keySet()).forEach(advert -> {
+                Boolean recommended = BooleanUtils.toBoolean(advertIndex.get(advert.getAdvertId()));
+                String sequenceIdentifier = (recommended ? 1 : 0) + advert.getSequenceIdentifier();
+                advert.setSequenceIdentifier(sequenceIdentifier);
+                advert.setRecommended(recommended);
+                adverts.put(sequenceIdentifier, advert);
+            });
+        }
+
+        return adverts.values();
     }
 
     public LinkedHashMultimap<Integer, PrismActionCondition> getAdvertActionConditions(PrismScope resourceScope, Collection<Integer> resourceIds) {
@@ -551,7 +582,7 @@ public class AdvertService {
         return importances;
     }
 
-    public Set<EntityOpportunityFilterDTO> getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
+    public Set<AdvertOpportunityFilterDTO> getVisibleAdverts(User user, OpportunitiesQueryDTO query, PrismScope[] scopes) {
         PrismResourceContext context = query.getContext();
         PrismActionCondition actionCondition = context == APPLICANT ? ACCEPT_APPLICATION : ACCEPT_PROJECT;
 
@@ -577,13 +608,20 @@ public class AdvertService {
             nodeAdverts.add(advertId);
         }
 
-        Set<EntityOpportunityFilterDTO> adverts = Sets.newHashSet();
+        Set<AdvertOpportunityFilterDTO> adverts = Sets.newTreeSet();
         Set<Integer> userAdverts = getUserAdverts(user, scopes);
         if (!(resourceScope != null && isEmpty(nodeAdverts) || (isTrue(query.getRecommendation()) && isEmpty(userAdverts)))) {
             for (PrismScope scope : scopes) {
                 Collection<PrismState> advertStates = states.get(scope);
                 advertStates = isEmpty(advertStates) ? stateService.getActiveResourceStates(scope) : advertStates;
-                adverts.addAll(advertDAO.getVisibleAdverts(scope, advertStates, actionCondition, nodeAdverts, userAdverts, query));
+
+                advertDAO.getVisibleAdverts(scope, advertStates, actionCondition, nodeAdverts, userAdverts, query).forEach(advert -> {
+                    Integer visibleAdvertId = advert.getId();
+                    boolean recommended = userAdverts.contains(visibleAdvertId);
+                    advert.setSequenceIdentifier((recommended ? 1 : 0) + advert.getSequenceIdentifier());
+                    advert.setRecommended(recommended);
+                    adverts.add(advert);
+                });
             }
         }
 

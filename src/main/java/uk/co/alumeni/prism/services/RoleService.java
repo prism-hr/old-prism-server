@@ -12,7 +12,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -186,7 +185,7 @@ public class RoleService {
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {
-        List<PrismScope> scopes = Arrays.asList(PrismScope.values());
+        Set<PrismScope> scopes = Sets.newHashSet(PrismScope.values());
         Map<PrismScope, PrismRoleCategory> defaults = Maps.newTreeMap();
         for (PrismRole role : roleDAO.getDefaultRoleCategories(user)) {
             PrismScope scope = role.getScope();

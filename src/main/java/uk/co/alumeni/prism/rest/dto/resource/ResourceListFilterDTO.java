@@ -7,6 +7,7 @@ import org.apache.commons.lang.BooleanUtils;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
@@ -22,6 +23,8 @@ public class ResourceListFilterDTO {
     private List<Integer> resourceIds;
 
     private PrismOpportunityCategory opportunityCategory;
+
+    private List<PrismOpportunityType> opportunityTypes;
 
     private PrismFilterMatchMode matchMode;
 
@@ -73,6 +76,14 @@ public class ResourceListFilterDTO {
 
     public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
+    }
+
+    public List<PrismOpportunityType> getOpportunityTypes() {
+        return opportunityTypes;
+    }
+
+    public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
+        this.opportunityTypes = opportunityTypes;
     }
 
     public final PrismFilterMatchMode getMatchMode() {

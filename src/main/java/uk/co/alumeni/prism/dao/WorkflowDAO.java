@@ -26,7 +26,6 @@ import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -60,8 +59,7 @@ public class WorkflowDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(getResourceConditionConstraint());
+                .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope parentScope, Projection projection) {
@@ -80,8 +78,7 @@ public class WorkflowDAO {
                 .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(getResourceConditionConstraint());
+                .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
     public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
@@ -108,8 +105,7 @@ public class WorkflowDAO {
                 .add(Restrictions.in(scope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities)) //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
-                .add(getResourceConditionConstraint());
+                .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
     public static Junction getTargetActionConstraint() {
@@ -137,15 +133,6 @@ public class WorkflowDAO {
                 .add(Restrictions.like(alias + "lastName", searchTerm, MatchMode.START)) //
                 .add(Restrictions.like(alias + "fullName", searchTerm, MatchMode.START)) //
                 .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
-    }
-
-    public static Junction getOpportunityCategoryConstraint(PrismOpportunityCategory opportunityCategory) {
-        String opportunityCategoryName = opportunityCategory.name();
-        return Restrictions.disjunction() //
-                .add(Restrictions.eq("opportunityCategories", opportunityCategoryName))
-                .add(Restrictions.like("opportunityCategories", opportunityCategoryName + "|", MatchMode.START))
-                .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName + "|", MatchMode.ANYWHERE))
-                .add(Restrictions.like("opportunityCategories", "|" + opportunityCategoryName, MatchMode.END));
     }
 
     public static Junction getResourceParentManageableConstraint(PrismScope resourceScope) {
@@ -186,16 +173,7 @@ public class WorkflowDAO {
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(projection) //
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.LEFT_OUTER_JOIN);
-    }
-
-    private Junction getResourceConditionConstraint() {
-        return Restrictions.disjunction() //
-                .add(Restrictions.isNull("action.actionCondition")) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition"))
-                        .add(Restrictions.eq("resourceCondition.internalMode", true)));
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
     }
 
 }

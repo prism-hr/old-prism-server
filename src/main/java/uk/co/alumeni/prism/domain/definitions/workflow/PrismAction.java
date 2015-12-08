@@ -30,6 +30,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -184,6 +186,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     public List<PrismActionRedaction> getRedactions() {
         return actionDefinition.getRedactions();
+    }
+
+    public String getZeroPaddedOrdinal() {
+        return StringUtils.leftPad(String.valueOf(this.ordinal()), (String.valueOf(values().length).length() - 1), "0");
     }
 
     private static class PrismActionDefinition {

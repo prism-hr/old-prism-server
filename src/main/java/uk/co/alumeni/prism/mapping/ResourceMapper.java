@@ -14,6 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
+import static uk.co.alumeni.prism.utils.PrismListUtils.processRowSummaries;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
@@ -120,7 +121,6 @@ import uk.co.alumeni.prism.services.ScopeService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismListUtils;
 
 @Service
 @Transactional
@@ -186,21 +186,21 @@ public class ResourceMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceId) throws Exception {
+    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
         DateTime baseline = new DateTime();
-        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
 
         User user = userService.getCurrentUser();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-        Set<Integer> resourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
-        processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
+        processRowDescriptors(resources, onlyAsPartnerResourceIds, summaries);
 
-        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, filter, RESOURCE_LIST_PAGE_ROW_COUNT, sequenceId, resourceIds, onlyAsPartnerResourceIds, true)
+        List<ResourceListRowRepresentation> representations = Lists.newLinkedList();
+        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, resources, filter, lastSequenceIdentifier, RESOURCE_LIST_PAGE_ROW_COUNT,
+                onlyAsPartnerResourceIds, true)
                 .forEach(row -> {
                     ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
                     representation.setScope(scope);
@@ -270,8 +270,8 @@ public class ResourceMapper {
                 });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
-        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getRaisesUrgentFlag())).collect(Collectors.toSet());
-        PrismListUtils.processRowSummaries(urgentResources, urgentSummaries);
+        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getPrioritize())).collect(Collectors.toSet());
+        processRowSummaries(urgentResources, urgentSummaries);
 
         return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries))
                 .withUrgentSummaries(getSummaryRepresentations(urgentSummaries));

@@ -1,18 +1,17 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
+import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
 
-public class ResourceOpportunityDTO extends ResourceParentDTO implements ResourceOpportunityDefinition<AdvertDTO, PrismOpportunityType> {
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+public class ResourceOpportunityDTO extends ResourceParentDTO implements ResourceOpportunityDefinition<PrismOpportunityType> {
 
     @NotNull
     private PrismOpportunityType opportunityType;
@@ -26,6 +25,9 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
     private Integer durationMaximum;
 
     private List<PrismStudyOption> studyOptions;
+
+    @Valid
+    private AdvertFinancialDetailDTO financialDetail;
 
     @Override
     public PrismOpportunityType getOpportunityType() {
@@ -67,6 +69,14 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
 
     public void setStudyOptions(List<PrismStudyOption> studyOptions) {
         this.studyOptions = studyOptions;
+    }
+
+    public AdvertFinancialDetailDTO getFinancialDetail() {
+        return financialDetail;
+    }
+
+    public void setFinancialDetail(AdvertFinancialDetailDTO financialDetail) {
+        this.financialDetail = financialDetail;
     }
 
 }

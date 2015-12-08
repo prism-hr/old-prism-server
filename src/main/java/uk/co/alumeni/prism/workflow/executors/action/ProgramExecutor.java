@@ -49,7 +49,7 @@ public class ProgramExecutor implements ActionExecutor {
 
         ResourceOpportunityDTO programDTO = (ResourceOpportunityDTO) commentDTO.getResource();
         Comment comment = commentService.prepareProcessResourceComment(program, user, action, commentDTO);
-        resourceService.updateResource(PROGRAM, resourceId, programDTO);
+        resourceService.updateOpportunity(PROGRAM, resourceId, programDTO);
 
         return actionService.executeUserAction(program, action, comment);
     }

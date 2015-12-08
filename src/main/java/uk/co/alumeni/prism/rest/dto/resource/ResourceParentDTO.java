@@ -1,16 +1,16 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.hibernate.validator.constraints.NotEmpty;
-
+import org.hibernate.validator.constraints.URL;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
+import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
-public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition<AdvertDTO> {
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.List;
+
+public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition {
 
     @Valid
     private ResourceDTO parentResource;
@@ -18,14 +18,33 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     private String importedCode;
 
     @NotEmpty
+    @Size(max = 255)
     private String name;
 
-    @Valid
-    private AdvertDTO advert;
+    @Size(max = 330)
+    private String summary;
 
+    @Size(max = 20000)
+    private String description;
+
+    @PhoneNumber
+    private String telephone;
+
+    @URL
+    @Size(max = 2048)
+    private String homepage;
+
+    @Valid
     private List<ResourceConditionDTO> conditions;
 
     private List<PrismOpportunityCategory> opportunityCategories;
+
+    private Boolean globallyVisible;
+
+    @Valid
+    private ResourceRelationCreationDTO target;
+
+    private List<Integer> customTargets;
 
     @Override
     public ResourceDTO getParentResource() {
@@ -55,14 +74,36 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
         this.name = name;
     }
 
-    @Override
-    public AdvertDTO getAdvert() {
-        return advert;
+    public String getSummary() {
+        return summary;
     }
 
-    @Override
-    public void setAdvert(AdvertDTO advert) {
-        this.advert = advert;
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public String getHomepage() {
+        return homepage;
+    }
+
+    public void setHomepage(String homepage) {
+        this.homepage = homepage;
     }
 
     public List<ResourceConditionDTO> getConditions() {
@@ -79,5 +120,29 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
 
     public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public Boolean getGloballyVisible() {
+        return globallyVisible;
+    }
+
+    public void setGloballyVisible(Boolean globallyVisible) {
+        this.globallyVisible = globallyVisible;
+    }
+
+    public ResourceRelationCreationDTO getTarget() {
+        return target;
+    }
+
+    public void setTarget(ResourceRelationCreationDTO target) {
+        this.target = target;
+    }
+
+    public List<Integer> getCustomTargets() {
+        return customTargets;
+    }
+
+    public void setCustomTargets(List<Integer> customTargets) {
+        this.customTargets = customTargets;
     }
 }

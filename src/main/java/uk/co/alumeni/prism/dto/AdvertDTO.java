@@ -337,7 +337,7 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
     public BigDecimal getAddressCoordinateLongitude() {
         return addressCoordinateLongitude;
     }
-    
+
     public void setAddressCoordinateLongitude(BigDecimal addressCoordinateLongitude) {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
     }

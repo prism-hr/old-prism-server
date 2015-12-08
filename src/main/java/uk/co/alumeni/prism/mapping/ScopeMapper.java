@@ -35,7 +35,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCatego
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.ResourceActionDTO;
+import uk.co.alumeni.prism.dto.ResourceActionOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationRepresentation.ResourceRelationComponentRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation;
@@ -107,25 +107,25 @@ public class ScopeMapper {
         List<PrismScope> scopes = Arrays.asList(PrismScope.values());
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
         for (PrismScope scope : scopes) {
-            Set<ResourceActionDTO> resourceActionDTOs = resourceService.getResources(user, scope, scopes.stream()
+            Set<ResourceActionOpportunityCategoryDTO> resourceActionDTOs = resourceService.getResources(user, scope, scopes.stream()
                     .filter(as -> as.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
                     Projections.projectionList() //
-                            .add(Projections.groupProperty("resource.id").as("resourceId")) //
+                            .add(Projections.groupProperty("resource.id").as("id")) //
                             .add(Projections.groupProperty("stateAction.action.id").as("actionId")) //
-                            .add(Projections.property("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
+                            .add(Projections.property("stateAction.raisesUrgentFlag").as("prioritize")) //
                             .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")),
-                    ResourceActionDTO.class);
+                    ResourceActionOpportunityCategoryDTO.class);
 
             Set<Integer> resources = Sets.newHashSet();
             Set<Integer> updatedResources = Sets.newHashSet();
             Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();
-            for (ResourceActionDTO resourceActionDTO : resourceActionDTOs) {
-                Integer resourceId = resourceActionDTO.getResourceId();
+            for (ResourceActionOpportunityCategoryDTO resourceActionDTO : resourceActionDTOs) {
+                Integer resourceId = resourceActionDTO.getId();
                 resources.add(resourceId);
 
-                if (BooleanUtils.isTrue(resourceActionDTO.getRaisesUrgentFlag())) {
+                if (BooleanUtils.isTrue(resourceActionDTO.getPrioritize())) {
                     PrismAction actionId = resourceActionDTO.getActionId();
                     Integer existingCount = actionCounts.get(actionId);
                     actionCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);

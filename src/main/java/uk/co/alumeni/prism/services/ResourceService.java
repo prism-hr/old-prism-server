@@ -29,6 +29,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
+import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -111,10 +113,10 @@ import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
+import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
-import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
@@ -598,14 +600,18 @@ public class ResourceService {
         return resourceDAO.getResourcesToPropagate(propagatingScope, propagatingId, propagatedScope, actionId);
     }
 
-    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> targeterEntities, ResourceListFilterDTO filter,
-            Integer recordsToRetrieve, String sequenceId, Collection<Integer> resources, Collection<Integer> onlyAsPartnerResources, boolean extended) {
-        if (!resources.isEmpty()) {
+    public Collection<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> targeterEntities,
+            Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
+            Collection<Integer> onlyAsPartnerResources, boolean extended) {
+        if (!resourceDTOs.isEmpty()) {
             boolean hasRedactions = actionService.hasRedactions(user, scope);
-            List<ResourceListRowDTO> rows = resourceDAO.getResourceList(user, scope, parentScopes, resources, filter, sequenceId, recordsToRetrieve, hasRedactions);
+            Set<Integer> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(), lastSequenceIdentifier, maxRecords).keySet();
+            List<ResourceListRowDTO> rowDTOs = resourceDAO.getResourceList(user, scope, parentScopes, resources, filter, hasRedactions);
 
-            if (!rows.isEmpty()) {
-                Map<Integer, ResourceListRowDTO> rowIndex = rows.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
+            if (!rowDTOs.isEmpty()) {
+                TreeMap<String, ResourceListRowDTO> rows = Maps.newTreeMap();
+
+                Map<Integer, ResourceListRowDTO> rowIndex = rowDTOs.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
                 Set<Integer> filteredResources = rowIndex.keySet();
 
                 LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResources)
@@ -617,8 +623,8 @@ public class ResourceService {
                 TreeMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResources);
 
                 rowIndex.keySet().forEach(resourceId -> {
-                    ResourceListRowDTO row = rowIndex.get(resourceId);
-                    row.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
+                    ResourceListRowDTO rowDTO = rowIndex.get(resourceId);
+                    rowDTO.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
 
                     Set<ActionDTO> actions = Sets.newTreeSet(permittedActions.get(resourceId));
 
@@ -629,11 +635,18 @@ public class ResourceService {
                         }
                     });
 
-                    row.setActions(Lists.newLinkedList(actions));
+                    rowDTO.setActions(Lists.newLinkedList(actions));
+
+                    Boolean urgent = BooleanUtils.toBoolean(actions.stream().anyMatch(action -> BooleanUtils.toBoolean(action.getRaisesUrgentFlag())));
+                    String sequenceIdentifier = (urgent ? 1 : 0) + rowDTO.getSequenceIdentifier();
+                    rowDTO.setSequenceIdentifier(sequenceIdentifier);
+                    rows.put(sequenceIdentifier, rowDTO);
                 });
+
+                return rows.descendingMap().values();
             }
 
-            return rows;
+            return Lists.newArrayList();
         }
 
         return Lists.newArrayList();
@@ -696,14 +709,13 @@ public class ResourceService {
             if (!scope.equals(creationScope)) {
                 List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-                Set<Integer> resourceIds = Sets.newHashSet();
                 Map<String, Integer> summaries = Maps.newHashMap();
                 Set<Integer> onlyAsPartnerResources = Sets.newHashSet();
                 List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
                 Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
-                processRowDescriptors(scopedResources, resourceIds, onlyAsPartnerResources, summaries);
+                processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
 
-                for (ResourceListRowDTO row : getResourceList(user, scope, parentScopes, targeterEntities, filter, null, null, resourceIds, onlyAsPartnerResources, false)) {
+                for (ResourceListRowDTO row : getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null, onlyAsPartnerResources, false)) {
                     ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
                     resource.setScope(responseScope);
 
@@ -738,16 +750,15 @@ public class ResourceService {
             String scopeReference = scope.name();
 
             getResources(user, scope, scopes.stream()
-                    .filter(as -> as.ordinal() < scope.ordinal())
+                    .filter(parentScope -> parentScope.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
                     new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
                             .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
                     Projections.projectionList() //
-                            .add(Projections.groupProperty("action.scope.id").as("scope")) //
                             .add(Projections.groupProperty("resource.id").as("id")),
-                    ResourceIdentityDTO.class).forEach(resource -> {
-                        resources.put(resource.getScope(), resource.getId());
+                    ResourceOpportunityCategoryDTO.class).forEach(resource -> {
+                        resources.put(scope, resource.getId());
                     });
         }
 
@@ -1007,12 +1018,14 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
 
-    public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ProjectionList columns,
+    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
+            ProjectionList columns,
             Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
-    public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns,
+    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
+            ResourceListFilterDTO filter, ProjectionList columns,
             Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
@@ -1109,15 +1122,15 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //
                 Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id").as("id")) //
-                        .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
+                        .add(Projections.max("stateAction.raisesUrgentFlag").as("prioritize")) //
                         .add(Projections.property("resource.opportunityCategories").as("opportunityCategories")) //
                         .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")), //
                 conditions, ResourceOpportunityCategoryDTO.class);
     }
 
-    private <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ResourceListFilterDTO filter,
-            ProjectionList columns, Junction conditions, Class<T> responseClass) {
-        Set<T> resources = Sets.newHashSet();
+    private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
+            ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
+        Set<T> resources = Sets.newTreeSet();
         DateTime baseline = DateTime.now().minusDays(1);
 
         Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;

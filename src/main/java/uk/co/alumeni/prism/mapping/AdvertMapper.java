@@ -91,9 +91,9 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
-import uk.co.alumeni.prism.dto.AdvertOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
+import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
@@ -429,7 +429,7 @@ public class AdvertMapper {
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<AdvertOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
+        Set<EntityOpportunityCategoryDTO<?>> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
         processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
 
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };

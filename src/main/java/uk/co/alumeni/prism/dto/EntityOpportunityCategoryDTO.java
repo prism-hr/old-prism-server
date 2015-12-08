@@ -1,18 +1,21 @@
 package uk.co.alumeni.prism.dto;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Objects;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 
-public class EntityOpportunityFilterDTO implements Comparable<EntityOpportunityFilterDTO> {
+public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO<?>> implements Comparable<T> {
 
     private Integer id;
 
     private String opportunityCategories;
 
     private PrismOpportunityType opportunityType;
+
+    private Boolean prioritize;
 
     private String sequenceIdentifier;
 
@@ -40,6 +43,14 @@ public class EntityOpportunityFilterDTO implements Comparable<EntityOpportunityF
         this.opportunityType = opportunityType;
     }
 
+    public Boolean getPrioritize() {
+        return prioritize;
+    }
+
+    public void setPrioritize(Boolean prioritize) {
+        this.prioritize = prioritize;
+    }
+
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -54,6 +65,7 @@ public class EntityOpportunityFilterDTO implements Comparable<EntityOpportunityF
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object object) {
         if (object == null) {
             return false;
@@ -61,12 +73,17 @@ public class EntityOpportunityFilterDTO implements Comparable<EntityOpportunityF
         if (!getClass().equals(object.getClass())) {
             return false;
         }
-        EntityOpportunityFilterDTO other = (EntityOpportunityFilterDTO) object;
+        T other = (T) object;
         return id.equals(other.getId());
     }
 
     @Override
-    public int compareTo(EntityOpportunityFilterDTO other) {
+    public String toString() {
+        return (BooleanUtils.toBoolean(prioritize) ? 1 : 0) + sequenceIdentifier;
+    }
+
+    @Override
+    public int compareTo(T other) {
         return ObjectUtils.compare(other.getSequenceIdentifier(), sequenceIdentifier);
     }
 

@@ -29,12 +29,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!--<distributionManagement>-->
-        <!--<repository>-->
-            <!--<id>prism-dev.alumeni.co.uk</id>-->
-            <!--<url>scp://prism-dev.alumeni.co.uk/home/bitnami/pgadmissions-releases/</url>-->
-        <!--</repository>-->
-    <!--</distributionManagement>-->
+    <distributionManagement>
+        <repository>
+            <id>prism-dev.alumeni.co.uk</id>
+            <url>scp://prism-dev.alumeni.co.uk/home/bitnami/pgadmissions-releases/</url>
+        </repository>
+    </distributionManagement>
 
     <scm>
         <connection>scm:hg:http://mercurial.alumeni.co.uk/mercurial/pgadmissions/</connection>

@@ -222,7 +222,7 @@ public class AdvertService {
     public void updateAdvert(Advert advert, ResourceParentDTO resourceDTO) {
         advert.setName(resourceDTO.getName());
         advert.setSummary(resourceDTO.getSummary());
-        advert.setDescription(resourceDTO.getSummary());
+        advert.setDescription(resourceDTO.getDescription());
         advert.setTelephone(resourceDTO.getTelephone());
         advert.setHomepage(resourceDTO.getHomepage());
     }

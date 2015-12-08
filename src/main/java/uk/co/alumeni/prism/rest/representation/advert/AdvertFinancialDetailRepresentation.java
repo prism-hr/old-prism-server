@@ -1,12 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-
 import java.math.BigDecimal;
 
-public class AdvertFinancialDetailRepresentation {
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 
-    private String currency;
+public class AdvertFinancialDetailRepresentation {
 
     private PrismDurationUnit interval;
 
@@ -14,17 +12,11 @@ public class AdvertFinancialDetailRepresentation {
 
     private Integer hoursWeekMaximum;
 
+    private String currency;
+
     private BigDecimal minimum;
 
     private BigDecimal maximum;
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 
     public PrismDurationUnit getInterval() {
         return interval;
@@ -66,13 +58,21 @@ public class AdvertFinancialDetailRepresentation {
         this.maximum = maximum;
     }
 
-    public AdvertFinancialDetailRepresentation withCurrency(String currency) {
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
         this.currency = currency;
-        return this;
     }
 
     public AdvertFinancialDetailRepresentation withInterval(PrismDurationUnit interval) {
         this.interval = interval;
+        return this;
+    }
+
+    public AdvertFinancialDetailRepresentation withCurrency(String currency) {
+        this.currency = currency;
         return this;
     }
 

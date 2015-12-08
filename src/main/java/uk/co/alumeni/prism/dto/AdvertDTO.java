@@ -36,6 +36,10 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private String targetOpportunityTypes;
 
+    private String opportunityCategories;
+
+    private Boolean recommended;
+
     private String name;
 
     private String summary;
@@ -68,17 +72,17 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private BigDecimal addressCoordinateLongitude;
 
-    private String payCurrency;
-
     private PrismDurationUnit payInterval;
 
-    private BigDecimal payMonthMinimum;
+    private Integer payHoursWeekMinimum;
 
-    private BigDecimal payMonthMaximum;
+    private Integer payHoursWeekMaximum;
 
-    private BigDecimal payYearMinimum;
+    private String payCurrency;
 
-    private BigDecimal payYearMaximum;
+    private BigDecimal payMinimum;
+
+    private BigDecimal payMaximum;
 
     private LocalDate closingDate;
 
@@ -192,6 +196,22 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     public void setTargetOpportunityTypes(String targetOpportunityTypes) {
         this.targetOpportunityTypes = targetOpportunityTypes;
+    }
+
+    public String getOpportunityCategories() {
+        return opportunityCategories;
+    }
+
+    public void setOpportunityCategories(String opportunityCategories) {
+        this.opportunityCategories = opportunityCategories;
+    }
+
+    public Boolean getRecommended() {
+        return recommended;
+    }
+
+    public void setRecommended(Boolean recommended) {
+        this.recommended = recommended;
     }
 
     public String getName() {
@@ -317,17 +337,9 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
     public BigDecimal getAddressCoordinateLongitude() {
         return addressCoordinateLongitude;
     }
-
+    
     public void setAddressCoordinateLongitude(BigDecimal addressCoordinateLongitude) {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
-    }
-
-    public String getPayCurrency() {
-        return payCurrency;
-    }
-
-    public void setPayCurrency(String payCurrency) {
-        this.payCurrency = payCurrency;
     }
 
     public PrismDurationUnit getPayInterval() {
@@ -338,36 +350,44 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
         this.payInterval = payInterval;
     }
 
-    public BigDecimal getPayMonthMinimum() {
-        return payMonthMinimum;
+    public Integer getPayHoursWeekMinimum() {
+        return payHoursWeekMinimum;
     }
 
-    public void setPayMonthMinimum(BigDecimal payMonthMinimum) {
-        this.payMonthMinimum = payMonthMinimum;
+    public void setPayHoursWeekMinimum(Integer payHoursWeekMinimum) {
+        this.payHoursWeekMinimum = payHoursWeekMinimum;
     }
 
-    public BigDecimal getPayMonthMaximum() {
-        return payMonthMaximum;
+    public Integer getPayHoursWeekMaximum() {
+        return payHoursWeekMaximum;
     }
 
-    public void setPayMonthMaximum(BigDecimal payMonthMaximum) {
-        this.payMonthMaximum = payMonthMaximum;
+    public void setPayHoursWeekMaximum(Integer payHoursWeekMaximum) {
+        this.payHoursWeekMaximum = payHoursWeekMaximum;
     }
 
-    public BigDecimal getPayYearMinimum() {
-        return payYearMinimum;
+    public String getPayCurrency() {
+        return payCurrency;
     }
 
-    public void setPayYearMinimum(BigDecimal payYearMinimum) {
-        this.payYearMinimum = payYearMinimum;
+    public void setPayCurrency(String payCurrency) {
+        this.payCurrency = payCurrency;
     }
 
-    public BigDecimal getPayYearMaximum() {
-        return payYearMaximum;
+    public BigDecimal getPayMinimum() {
+        return payMinimum;
     }
 
-    public void setPayYearMaximum(BigDecimal payYearMaximum) {
-        this.payYearMaximum = payYearMaximum;
+    public void setPayMinimum(BigDecimal payMinimum) {
+        this.payMinimum = payMinimum;
+    }
+
+    public BigDecimal getPayMaximum() {
+        return payMaximum;
+    }
+
+    public void setPayMaximum(BigDecimal payMaximum) {
+        this.payMaximum = payMaximum;
     }
 
     public LocalDate getClosingDate() {

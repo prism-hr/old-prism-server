@@ -250,7 +250,7 @@ public class AdvertMapper {
 
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
-            representation.setFinancialDetails(new AdvertFinancialDetailRepresentation().withInterval(payInterval).withHoursWeekMinimum(advert.getPayHoursWeekMinimum())
+            representation.setFinancialDetail(new AdvertFinancialDetailRepresentation().withInterval(payInterval).withHoursWeekMinimum(advert.getPayHoursWeekMinimum())
                     .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withCurrency(advert.getPayCurrency()).withMinimum(advert.getPayMinimum())
                     .withMaximum(advert.getPayMaximum()));
         }
@@ -288,7 +288,7 @@ public class AdvertMapper {
             representation.setParentAddress(getAdvertAddressRepresentation(resource.getParentResource().getAdvert()));
         }
 
-        representation.setFinancialDetails(getAdvertFinancialDetailRepresentation(advert));
+        representation.setFinancialDetail(getAdvertFinancialDetailRepresentation(advert));
         representation.setClosingDate(advert.getClosingDate());
 
         representation.setCategories(getAdvertCategoriesRepresentation(advert));

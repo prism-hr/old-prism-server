@@ -1,11 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
+import java.util.List;
+
 import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
-
-import java.util.List;
 
 public class AdvertRepresentationSimple {
 

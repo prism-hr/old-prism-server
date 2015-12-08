@@ -1,16 +1,6 @@
 package uk.co.alumeni.prism.workflow.transition.creators;
 
-import static java.util.Arrays.asList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static uk.co.alumeni.prism.PrismConstants.SYSTEM_CURRENCY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
@@ -22,11 +12,15 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.DocumentService;
-import uk.co.alumeni.prism.services.PrismService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.SystemService;
+import uk.co.alumeni.prism.services.*;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static uk.co.alumeni.prism.PrismConstants.SYSTEM_CURRENCY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 
 @Component
 public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
@@ -52,7 +46,8 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
 
         AdvertDTO advertDTO = newResource.getAdvert();
         advertDTO.setGloballyVisible(INSTITUTION.isDefaultShared());
-        Advert advert = advertService.createAdvert(system, advertDTO, newResource.getName(), user);
+        Advert advert = advertService.createAdvert(newResource, newResource.getName(), user);
+        advertService.updateAddress(system, advert, advertDTO.getAddress());
 
         String currency = newResource.getCurrency();
         if (currency == null) {

@@ -1,15 +1,13 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import java.util.Set;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
 
-public abstract class ResourceOpportunity extends ResourceParent implements ResourceOpportunityDefinition<Advert, OpportunityType> {
+import java.util.Set;
+
+public abstract class ResourceOpportunity extends ResourceParent implements ResourceOpportunityDefinition<OpportunityType> {
 
     public abstract Department getDepartment();
 

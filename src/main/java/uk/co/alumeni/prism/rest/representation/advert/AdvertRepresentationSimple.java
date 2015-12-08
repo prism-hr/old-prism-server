@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import java.util.List;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+
+import java.util.List;
 
 public class AdvertRepresentationSimple {
 
@@ -30,7 +29,7 @@ public class AdvertRepresentationSimple {
 
     private AddressRepresentation parentAddress;
 
-    private AdvertFinancialDetailRepresentation financialDetails;
+    private AdvertFinancialDetailRepresentation financialDetail;
 
     private LocalDate closingDate;
 
@@ -122,12 +121,12 @@ public class AdvertRepresentationSimple {
         this.parentAddress = parentAddress;
     }
 
-    public AdvertFinancialDetailRepresentation getFinancialDetails() {
-        return financialDetails;
+    public AdvertFinancialDetailRepresentation getFinancialDetail() {
+        return financialDetail;
     }
 
-    public void setFinancialDetails(AdvertFinancialDetailRepresentation financialDetails) {
-        this.financialDetails = financialDetails;
+    public void setFinancialDetail(AdvertFinancialDetailRepresentation financialDetail) {
+        this.financialDetail = financialDetail;
     }
 
     public LocalDate getClosingDate() {

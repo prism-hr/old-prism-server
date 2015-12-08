@@ -15,7 +15,6 @@ import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDIN
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING_PARTIAL;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.REJECTED;
 import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.UNKNOWN;
-import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.YEAR;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
@@ -44,6 +43,7 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -91,9 +91,9 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
@@ -148,11 +148,11 @@ public class AdvertMapper {
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(OpportunitiesQueryDTO query) {
-        return getAdvertExtendedRepresentations(userService.getCurrentUser(), query);
+        return getAdvertListRepresentation(userService.getCurrentUser(), query);
     }
 
     public AdvertListRepresentation getAdvertExtendedRepresentations(Integer user) {
-        return getAdvertExtendedRepresentations(userService.getById(user), new OpportunitiesQueryDTO().withContext(APPLICANT).withRecommendation(true));
+        return getAdvertListRepresentation(userService.getById(user), new OpportunitiesQueryDTO().withContext(APPLICANT).withRecommendation(true));
     }
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
@@ -185,15 +185,14 @@ public class AdvertMapper {
 
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
-
-                String opportunityCategories = resource.getOpportunityCategories();
-                if (opportunityCategories != null) {
-                    representation.setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
-                }
-
                 setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
                 representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
             }
+
+            setOpportunityCategories(representation, resource.getOpportunityCategories());
+
+            Boolean recommended = userAdverts.contains(advert.getId());
+            representation.setRecommended(recommended);
 
             representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert)));
             representation.setName(advert.getName());
@@ -208,8 +207,9 @@ public class AdvertMapper {
 
             List<Integer> advertIds = newArrayList(advert.getId());
             Map<Integer, AdvertRepresentationExtended> representations = ImmutableMap.of(advert.getId(), representation);
-
             setAdvertCallToActionStates(user, advertIds, representations);
+
+            representation.setSequenceIdentifier((BooleanUtils.toBoolean(recommended) ? 1 : 0) + advert.getSequenceIdentifier());
             return representation;
         }
 
@@ -232,6 +232,8 @@ public class AdvertMapper {
 
         representation.setOpportunityType(advert.getOpportunityType());
         setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
+        setOpportunityCategories(representation, advert.getOpportunityCategories());
+        representation.setRecommended(advert.getRecommended());
 
         representation.setName(advert.getName());
         representation.setSummary(advert.getSummary());
@@ -246,15 +248,11 @@ public class AdvertMapper {
                 .withDomicile(advert.getAddressDomicileId()).withGoogleId(advert.getAddressGoogleId())
                 .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(advert.getAddressCoordinateLongitude())));
 
-        String payCurrency = advert.getPayCurrency();
-        if (payCurrency != null) {
-            PrismDurationUnit payInterval = advert.getPayInterval();
-            AdvertFinancialDetailRepresentation payRepresentation = new AdvertFinancialDetailRepresentation().withCurrency(payCurrency).withInterval(payInterval);
-
-            boolean byYear = payInterval.equals(YEAR);
-            payRepresentation.setMinimum(byYear ? advert.getPayYearMinimum() : advert.getPayMonthMinimum());
-            payRepresentation.setMaximum(byYear ? advert.getPayYearMaximum() : advert.getPayMonthMaximum());
-            representation.setFinancialDetails(payRepresentation);
+        PrismDurationUnit payInterval = advert.getPayInterval();
+        if (payInterval != null) {
+            representation.setFinancialDetails(new AdvertFinancialDetailRepresentation().withInterval(payInterval).withHoursWeekMinimum(advert.getPayHoursWeekMinimum())
+                    .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withCurrency(advert.getPayCurrency()).withMinimum(advert.getPayMinimum())
+                    .withMaximum(advert.getPayMaximum()));
         }
 
         Long applicationCount = advert.getApplicationCount();
@@ -297,7 +295,6 @@ public class AdvertMapper {
         representation.setCompetences(getAdvertCompetenceRepresentations(advert));
         representation.setExternalConditions(actionService.getExternalConditions(advert.getResource()));
 
-        representation.setSequenceIdentifier(advert.getSequenceIdentifier());
         return representation;
     }
 
@@ -426,20 +423,20 @@ public class AdvertMapper {
                 .collect(toList());
     }
 
-    private AdvertListRepresentation getAdvertExtendedRepresentations(User user, OpportunitiesQueryDTO query) {
+    private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
         PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
         Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
-        Set<EntityOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
+        Set<AdvertOpportunityFilterDTO> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
         processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
 
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
-        advertService.getAdvertList(query, advertIds).forEach(advert -> {
+        advertService.getAdvertList(query, adverts).forEach(advert -> {
             PrismScope scope = advert.getScope();
             for (PrismScope advertScope : parentScopes) {
                 if (advertScope.ordinal() <= scope.ordinal()) {
@@ -543,8 +540,8 @@ public class AdvertMapper {
     private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(Advert advert) {
         AdvertFinancialDetail pay = advert.getPay();
         if (pay != null) {
-            return new AdvertFinancialDetailRepresentation().withCurrency(pay.getCurrency()).withInterval(pay.getInterval()).withMinimum(pay.getMinimum())
-                    .withMaximum(pay.getMaximum());
+            return new AdvertFinancialDetailRepresentation().withInterval(pay.getInterval()).withHoursWeekMinimum(pay.getHoursWeekMinimum())
+                    .withHoursWeekMaximum(pay.getHoursWeekMaximum()).withCurrency(pay.getCurrency()).withMinimum(pay.getMinimum()).withMaximum(pay.getMaximum());
         }
         return null;
     }
@@ -574,6 +571,12 @@ public class AdvertMapper {
             return resourceRepresentation;
         }
         return null;
+    }
+
+    private void setOpportunityCategories(AdvertRepresentationExtended representation, String opportunityCategories) {
+        if (opportunityCategories != null) {
+            representation.setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
+        }
     }
 
     private void setTargetOpportunityTypes(AdvertRepresentationExtended representation, String targetOpportunityTypes) {
@@ -673,7 +676,7 @@ public class AdvertMapper {
         return (ownerContexts.contains(UNIVERSITY) && targetContexts.contains(EMPLOYER)) || (ownerContexts.contains(EMPLOYER) && targetContexts.contains(UNIVERSITY));
     }
 
-    public void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer ownerAdvert,
+    private void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer ownerAdvert,
             Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
             acceptedForIndex.put(targetAdvert, ownerAdvert);

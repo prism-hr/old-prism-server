@@ -1018,7 +1018,7 @@ public class ResourceService {
 
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ProjectionList columns,
             Class<T> responseClass) {
-        return getResources(user, scope, parentScopes, targeterEntities, null, columns, responseClass);
+        return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
     public <T> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns,
@@ -1119,7 +1119,8 @@ public class ResourceService {
                 Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id").as("id")) //
                         .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
-                        .add(Projections.property("resource.opportunityCategories").as("opportunityCategories")), //
+                        .add(Projections.property("resource.opportunityCategories").as("opportunityCategories")) //
+                        .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")), //
                 conditions, ResourceOpportunityCategoryDTO.class);
     }
 

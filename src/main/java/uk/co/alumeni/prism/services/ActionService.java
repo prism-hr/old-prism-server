@@ -1,5 +1,34 @@
 package uk.co.alumeni.prism.services;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.dao.ActionDAO;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
+import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
+
+import javax.inject.Inject;
+import java.util.*;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
@@ -11,55 +40,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategor
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Objects;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
-
-import uk.co.alumeni.prism.dao.ActionDAO;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.Scope;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ActionCreationScopeDTO;
-import uk.co.alumeni.prism.dto.ActionDTO;
-import uk.co.alumeni.prism.dto.ActionEnhancementDTO;
-import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
-import uk.co.alumeni.prism.dto.ActionRedactionDTO;
-import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
-import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 
 @Service
 @Transactional
@@ -388,19 +368,19 @@ public class ActionService {
     private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, Resource resource, Collection<PrismAction> actions, Collection<Integer> targeterEntities) {
         PrismScope scope = resource.getResourceScope();
         Set<ActionEnhancementDTO> enhancements = Sets.newHashSet();
-        for (String enhancementProperty : new String[] { "stateAction.actionEnhancement", "stateActionAssignment.actionEnhancement" }) {
+        for (String enhancementProperty : new String[]{"stateAction.actionEnhancement", "stateActionAssignment.actionEnhancement"}) {
             enhancements.addAll(getPermittedActionEnhancements(user, scope, targeterEntities, newArrayList(resource.getId()), actions, enhancementProperty));
         }
         return newArrayList(enhancements);
     }
 
     private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
-            PrismAction action) {
+                                                                 PrismAction action) {
         return getPermittedActions(user, scope, targeterEntities, resources, action == null ? null : newArrayList(action));
     }
 
     private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
-            Collection<PrismAction> actions) {
+                                                                 Collection<PrismAction> actions) {
         TreeMultimap<Integer, ActionDTO> permittedActions = TreeMultimap.create();
         getActionEntities(user, scope, targeterEntities, resources, actions,
                 Projections.projectionList() //
@@ -410,15 +390,14 @@ public class ActionService {
                         .add(Projections.max("primaryState").as("primaryState")) //
                         .add(Projections.min("stateActionAssignment.externalMode").as("onlyAsPartner")) //
                         .add(Projections.property("action.declinableAction").as("declinable")),
-                ActionDTO.class).forEach(permittedAction -> {
-                    permittedActions.put(permittedAction.getResourceId(), permittedAction);
-                });
+                ActionDTO.class).forEach(permittedAction -> permittedActions.put(permittedAction.getResourceId(), permittedAction)
+        );
 
         return permittedActions;
     }
 
     private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
-            Collection<PrismAction> actions, String column) {
+                                                                      Collection<PrismAction> actions, String column) {
         return newArrayList(getActionEntities(user, scope, targeterEntities, resources, actions,
                 Projections.projectionList() //
                         .add(Projections.groupProperty("action.id").as("action")) //
@@ -428,12 +407,12 @@ public class ActionService {
     }
 
     private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources, Collection<PrismAction> actions,
-            ProjectionList columns, Class<T> responseClass) {
+                                         ProjectionList columns, Class<T> responseClass) {
         return getActionEntities(user, scope, targeterEntities, resources, actions, columns, null, responseClass);
     }
 
     private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources, Collection<PrismAction> actions,
-            ProjectionList columns, Criterion restriction, Class<T> responseClass) {
+                                         ProjectionList columns, Criterion restriction, Class<T> responseClass) {
         Set<T> actionEntities = Sets.newHashSet();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
         actionEntities.addAll(actionDAO.getActionEntities(user, scope, resources, actions, columns, restriction, responseClass));

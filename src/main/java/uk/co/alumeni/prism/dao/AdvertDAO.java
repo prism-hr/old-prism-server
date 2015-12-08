@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
@@ -77,11 +76,11 @@ import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
+import uk.co.alumeni.prism.dto.AdvertOpportunityFilterDTO;
 import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
 import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityFilterDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 
 @Repository
@@ -138,6 +137,7 @@ public class AdvertDAO {
                         .add(Projections.property("project.durationMaximum").as("projectDurationMaximum")) //
                         .add(Projections.property("opportunityType.id").as("opportunityType")) //
                         .add(Projections.property("targetOpportunityTypes").as("targetOpportunityTypes")) //
+                        .add(Projections.property("opportunityCategories").as("opportunityCategories")) //
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.property("summary").as("summary")) //
                         .add(Projections.property("description").as("description")) //
@@ -154,12 +154,12 @@ public class AdvertDAO {
                         .add(Projections.property("address.googleId").as("addressGoogleId")) //
                         .add(Projections.property("address.addressCoordinates.latitude").as("addressCoordinateLatitude")) //
                         .add(Projections.property("address.addressCoordinates.longitude").as("addressCoordinateLongitude")) //
-                        .add(Projections.property("pay.currencyAtLocale").as("payCurrency")) //
                         .add(Projections.property("pay.interval").as("payInterval")) //
-                        .add(Projections.property("pay.monthMinimumAtLocale").as("payMonthMinimum")) //
-                        .add(Projections.property("pay.monthMaximumAtLocale").as("payMonthMaximum")) //
-                        .add(Projections.property("pay.yearMinimumAtLocale").as("payYearMinimum")) //
-                        .add(Projections.property("pay.yearMaximumAtLocale").as("payYearMaximum")) //
+                        .add(Projections.property("pay.hoursWeekMinimum").as("payHoursWeekMinimum")) //
+                        .add(Projections.property("pay.hoursWeekMaximum").as("payHoursWeekMaximum")) //
+                        .add(Projections.property("pay.currency").as("payCurrency")) //
+                        .add(Projections.property("pay.minimum").as("payMaximum")) //
+                        .add(Projections.property("pay.maximum").as("payMinimum")) //
                         .add(Projections.property("closingDate").as("closingDate")) //
                         .add(Projections.countDistinct("application.id").as("applicationCount")) //
                         .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //
@@ -179,14 +179,7 @@ public class AdvertDAO {
 
         appendOpportunityTypeConstraint(criteria, query);
 
-        String lastSequenceIdentifier = query.getLastSequenceIdentifier();
-        if (lastSequenceIdentifier != null) {
-            criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
-        }
-
-        return (List<AdvertDTO>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
-                .setMaxResults(ADVERT_LIST_PAGE_ROW_COUNT) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertDTO.class))
+        return (List<AdvertDTO>) criteria.setResultTransformer(Transformers.aliasToBean(AdvertDTO.class))
                 .list();
     }
 
@@ -208,7 +201,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<EntityOpportunityFilterDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> states, PrismActionCondition actionCondition,
+    public List<AdvertOpportunityFilterDTO> getVisibleAdverts(PrismScope scope, Collection<PrismState> states, PrismActionCondition actionCondition,
             Collection<Integer> nodeAdverts, Collection<Integer> userAdverts, OpportunitiesQueryDTO query) {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("advert.id").as("id")) //
@@ -219,7 +212,8 @@ public class AdvertDAO {
         }
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(projections) //
+                .setProjection(projections //
+                        .add(Projections.property("advert.sequenceIdentifier"))) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
@@ -271,7 +265,7 @@ public class AdvertDAO {
             appendDurationConstraint(criteria, query);
         }
 
-        return criteria.setResultTransformer(Transformers.aliasToBean(EntityOpportunityFilterDTO.class))
+        return criteria.setResultTransformer(Transformers.aliasToBean(AdvertOpportunityFilterDTO.class))
                 .list();
     }
 

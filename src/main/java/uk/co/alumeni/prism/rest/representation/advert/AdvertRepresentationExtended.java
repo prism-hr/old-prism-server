@@ -28,9 +28,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     private PrismOpportunityType opportunityType;
 
+    private List<PrismOpportunityType> targetOpportunityTypes;
+    
     private List<PrismOpportunityCategory> opportunityCategories;
 
-    private List<PrismOpportunityType> targetOpportunityTypes;
+    private Boolean recommended;
 
     private String name;
 
@@ -97,11 +99,7 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
     }
-
-    public List<PrismOpportunityCategory> getOpportunityCategories() {
-        return opportunityCategories;
-    }
-
+    
     public List<PrismOpportunityType> getTargetOpportunityTypes() {
         return targetOpportunityTypes;
     }
@@ -109,9 +107,21 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     public void setTargetOpportunityTypes(List<PrismOpportunityType> targetOpportunityTypes) {
         this.targetOpportunityTypes = targetOpportunityTypes;
     }
+    
+    public List<PrismOpportunityCategory> getOpportunityCategories() {
+        return opportunityCategories;
+    }
 
     public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public Boolean getRecommended() {
+        return recommended;
+    }
+
+    public void setRecommended(Boolean recommended) {
+        this.recommended = recommended;
     }
 
     public String getName() {

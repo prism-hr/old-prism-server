@@ -213,7 +213,7 @@ public class AdvertDAO {
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections //
-                        .add(Projections.property("advert.sequenceIdentifier"))) //
+                        .add(Projections.property("advert.sequenceIdentifier").as("sequenceIdentifier"))) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //

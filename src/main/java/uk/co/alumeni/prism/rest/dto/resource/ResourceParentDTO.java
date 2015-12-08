@@ -4,7 +4,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 import javax.validation.Valid;
@@ -36,12 +35,16 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     private String homepage;
 
     @Valid
-    private AdvertDTO advert;
-
-    @Valid
     private List<ResourceConditionDTO> conditions;
 
     private List<PrismOpportunityCategory> opportunityCategories;
+
+    private Boolean globallyVisible;
+
+    @Valid
+    private ResourceRelationCreationDTO target;
+
+    private List<Integer> customTargets;
 
     @Override
     public ResourceDTO getParentResource() {
@@ -69,14 +72,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    public AdvertDTO getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(AdvertDTO advert) {
-        this.advert = advert;
     }
 
     public String getSummary() {
@@ -125,5 +120,29 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
 
     public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public Boolean getGloballyVisible() {
+        return globallyVisible;
+    }
+
+    public void setGloballyVisible(Boolean globallyVisible) {
+        this.globallyVisible = globallyVisible;
+    }
+
+    public ResourceRelationCreationDTO getTarget() {
+        return target;
+    }
+
+    public void setTarget(ResourceRelationCreationDTO target) {
+        this.target = target;
+    }
+
+    public List<Integer> getCustomTargets() {
+        return customTargets;
+    }
+
+    public void setCustomTargets(List<Integer> customTargets) {
+        this.customTargets = customTargets;
     }
 }

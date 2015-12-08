@@ -10,7 +10,6 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
 import uk.co.alumeni.prism.services.*;
 
@@ -44,14 +43,13 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
     public Resource create(User user, InstitutionDTO newResource) {
         System system = systemService.getSystem();
 
-        AdvertDTO advertDTO = newResource.getAdvert();
-        advertDTO.setGloballyVisible(INSTITUTION.isDefaultShared());
-        Advert advert = advertService.createAdvert(newResource, newResource.getName(), user);
-        advertService.updateAddress(system, advert, advertDTO.getAddress());
+        newResource.setGloballyVisible(INSTITUTION.isDefaultShared());
+        Advert advert = advertService.createAdvert(newResource, user);
+        advertService.updateAddress(system, advert, newResource.getAddress());
 
         String currency = newResource.getCurrency();
         if (currency == null) {
-            Domicile domicile = prismService.getDomicileById(advertDTO.getAddress().getDomicile());
+            Domicile domicile = prismService.getDomicileById(newResource.getAddress().getDomicile());
             currency = domicile == null ? SYSTEM_CURRENCY : domicile.getCurrency();
         }
 

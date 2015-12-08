@@ -6,7 +6,6 @@ import uk.co.alumeni.prism.domain.resource.Program;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceOpportunityDTO;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
@@ -31,14 +30,10 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
     public Resource create(User user, ResourceOpportunityDTO newResource) {
         ResourceParent parentResource = resourceCreatorUtils.getParentResource(newResource);
 
-        if(newResource.getAdvert() == null){
-            newResource.setAdvert(new AdvertDTO());
+        if(newResource.getGloballyVisible() == null) {
+            newResource.setGloballyVisible(PROGRAM.isDefaultShared());
         }
-        AdvertDTO advertDTO = newResource.getAdvert();
-        if(advertDTO.getGloballyVisible() == null) {
-            advertDTO.setGloballyVisible(PROGRAM.isDefaultShared());
-        }
-        Advert advert = advertService.createAdvert(newResource, newResource.getName(), user);
+        Advert advert = advertService.createAdvert(newResource, user);
 
         Program program = new Program().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(parentResource).withAdvert(advert)
                 .withName(advert.getName()).withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum());

@@ -1,6 +1,9 @@
 package uk.co.alumeni.prism.workflow.executors.action;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.resource.Department;
@@ -9,9 +12,11 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
-import uk.co.alumeni.prism.services.*;
-
-import javax.inject.Inject;
+import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.CommentService;
+import uk.co.alumeni.prism.services.DepartmentService;
+import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.UserService;
 
 @Component
 public class DepartmentExecutor implements ActionExecutor {
@@ -41,7 +46,7 @@ public class DepartmentExecutor implements ActionExecutor {
 
         ResourceParentDTO resourceDTO = (ResourceParentDTO) commentDTO.getResource();
         Comment comment = commentService.prepareProcessResourceComment(department, user, action, commentDTO);
-//        resourceService.updateParentResource(department, resourceDTO);
+        resourceService.updateResource(department, resourceDTO);
 
         return actionService.executeUserAction(department, action, comment);
     }

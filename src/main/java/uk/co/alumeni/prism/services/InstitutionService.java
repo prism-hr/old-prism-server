@@ -32,6 +32,7 @@ public class InstitutionService {
     }
 
     public void update(Institution institution, InstitutionDTO institutionDTO) {
+        resourceService.updateResource(institution, institutionDTO);
         institution.setGoogleId(institution.getAdvert().getAddress().getGoogleId());
 
         String oldCurrency = institution.getCurrency();

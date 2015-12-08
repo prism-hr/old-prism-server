@@ -29,7 +29,7 @@ public class DepartmentExecutor implements ActionExecutor {
 
     @Inject
     private DepartmentService departmentService;
-
+    
     @Inject
     private ResourceService resourceService;
 
@@ -47,7 +47,7 @@ public class DepartmentExecutor implements ActionExecutor {
         ResourceParentDTO resourceDTO = (ResourceParentDTO) commentDTO.getResource();
         Comment comment = commentService.prepareProcessResourceComment(department, user, action, commentDTO);
         resourceService.updateResource(department, resourceDTO);
-
+        
         return actionService.executeUserAction(department, action, comment);
     }
 

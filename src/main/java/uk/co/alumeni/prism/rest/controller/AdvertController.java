@@ -36,8 +36,8 @@ public class AdvertController {
     private AdvertMapper advertMapper;
 
     @RequestMapping(value = "/targets", method = RequestMethod.GET)
-    public List<AdvertTargetConnectionRepresentation> getTargets(@PathVariable Integer resourceId,
-            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public List<AdvertTargetConnectionRepresentation> getTargets(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         List<AdvertTargetDTO> advertTargets = advertService.getAdvertTargets(advert);
         return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets);
@@ -45,7 +45,7 @@ public class AdvertController {
 
     @RequestMapping(value = "/details", method = RequestMethod.PUT)
     public void updateResourceDetails(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody ResourceParentDTO resourceDTO) {
-        advertService.updateDetails(resourceDescriptor.getResourceScope(), resourceId, resourceDTO);
+        advertService.updateResourceDetails(resourceDescriptor.getResourceScope(), resourceId, resourceDTO);
     }
 
     @RequestMapping(value = "/applicationOptions", method = RequestMethod.PUT)
@@ -66,7 +66,7 @@ public class AdvertController {
 
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
+                                  @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
         advertService.updateCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
     }
 

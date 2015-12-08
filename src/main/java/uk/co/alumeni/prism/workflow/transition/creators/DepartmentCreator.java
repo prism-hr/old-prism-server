@@ -7,7 +7,6 @@ import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
@@ -36,13 +35,8 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
     public Resource create(User user, ResourceParentDTO newResource) {
         Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
-        if (newResource.getAdvert() == null) {
-            newResource.setAdvert(new AdvertDTO());
-        }
-
-        AdvertDTO advertDTO = newResource.getAdvert();
-        advertDTO.setGloballyVisible(DEPARTMENT.isDefaultShared());
-        Advert advert = advertService.createAdvert(newResource, newResource.getName(), user);
+        newResource.setGloballyVisible(DEPARTMENT.isDefaultShared());
+        Advert advert = advertService.createAdvert(newResource, user);
 
         Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution).withAdvert(advert)
                 .withName(advert.getName());

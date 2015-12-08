@@ -78,4 +78,5 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
     public void setFinancialDetail(AdvertFinancialDetailDTO financialDetail) {
         this.financialDetail = financialDetail;
     }
+
 }

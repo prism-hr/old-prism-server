@@ -1,15 +1,14 @@
 package uk.co.alumeni.prism.domain.resource;
 
-import java.math.BigDecimal;
-import java.util.Set;
-
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 
-public abstract class ResourceParent extends Resource implements ResourceParentDefinition<Advert> {
+import java.math.BigDecimal;
+import java.util.Set;
+
+public abstract class ResourceParent extends Resource implements ResourceParentDefinition {
 
     public abstract String getImportedCode();
 

@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1553,6 +1553,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_SUMMARY_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Summary"),
     SYSTEM_RESOURCE_DETAILS_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Upload personalized images and content to increase the interest in your advert."),
     SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Programs"),
+    SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_ADVERT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Advert"),
     SYSTEM_RESOURCE_ADVERT_DETAILS_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Complete your advert, to help candidates understand whether they wish to apply."),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Themes and Locations"),
@@ -1632,20 +1633,24 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_RESOURCE_PARENT_FORM_BACKGROUND_UPLOAD_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Please Upload a background image to create your landing page"),
-    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Type"),
-    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The type of the opportunity"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_TITLE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Organization Name"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The Name or your Organization."),
-    SYSTEM_RESOURCE_PARENT_INSTITUTION_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Organization Type"),
-    SYSTEM_RESOURCE_PARENT_INSTITUTION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Is your organization an employer or a university."),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Department Name"),
     SYSTEM_RESOURCE_PARENT_DEPARTMENT_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The Name or your Department."),
-    SYSTEM_RESOURCE_PARENT_TITLE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Title"),
-    SYSTEM_RESOURCE_PARENT_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The title of your opportunity."),
-    SYSTEM_RESOURCE_PARENT_INSTITUTION_SUMMARY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Summary"),
+    SYSTEM_RESOURCE_PARENT_PROJECT_TITLE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Title"),
+    SYSTEM_RESOURCE_PARENT_PROJECT_TITLE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The Title of your Opportunity."),
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Type"),
+    SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The type of the opportunity"),
+    SYSTEM_RESOURCE_PARENT_INSTITUTION_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Organization Type"),
+    SYSTEM_RESOURCE_PARENT_INSTITUTION_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Is your organization an employer or a university."),
+    SYSTEM_RESOURCE_PARENT_INSTITUTION_SUMMARY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Headline"),
     SYSTEM_RESOURCE_PARENT_INSTITUTION_SUMMARY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "A brief description of your organization."),
-    SYSTEM_RESOURCE_PARENT_SUMMARY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Summary"),
-    SYSTEM_RESOURCE_PARENT_SUMMARY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "A brief description of your opportunity."),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_SUMMARY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Headline"),
+    SYSTEM_RESOURCE_PARENT_DEPARTMENT_SUMMARY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "A brief description of your division."),
+    SYSTEM_RESOURCE_PARENT_PROJECT_SUMMARY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Headline"),
+    SYSTEM_RESOURCE_PARENT_PROJECT_SUMMARY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "A brief description of your opportunity."),
+    SYSTEM_RESOURCE_PARENT_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Description"),
+    SYSTEM_RESOURCE_PARENT_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Detailed description of your advert."),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Visibility"),
     SYSTEM_RESOURCE_PARENT_VISIBILITY_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Set the visibility that you want for your opportunity."),
     SYSTEM_RESOURCE_PARENT_PRIMARY_CONTACT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Primary Contact"),
@@ -1678,8 +1683,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Permanent"),
     SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Fixed-Term/Contract"),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Minimum (Months)"),
-    SYSTEM_RESOURCE_PARENT_DURATION_RANGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Range (Months)"),
     SYSTEM_RESOURCE_PARENT_DURATION_MINIMUM_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The minimum anticipated duration of study for your opportunity."),
+    SYSTEM_RESOURCE_PARENT_DURATION_RANGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Range (Months)"),
     SYSTEM_RESOURCE_PARENT_DURATION_RANGE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The minimum and maximun anticipated duration of study for your opportunity."),
     SYSTEM_RESOURCE_PARENT_DURATION_MAXIMUM_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "Duration Maximum (Months)"),
     SYSTEM_RESOURCE_PARENT_DURATION_MAXIMUM_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_PARENT, "The maximum anticipated duration of study for your opportunity."),
@@ -1822,8 +1827,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM RESOURCE ADVERT *********************
      */
 
-    SYSTEM_ADVERT_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Description"),
-    SYSTEM_ADVERT_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Detailed description of your advert."),
     SYSTEM_ADVERT_HOMEPAGE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Homepage URL"),
     SYSTEM_ADVERT_HOMEPAGE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the web address at which further information about your opportunity can be found"),
     SYSTEM_ADVERT_USE_DIFFERENT_ADDRESS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Use different address"),
@@ -1973,7 +1976,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_RESTORED_DISPLAY_PROPERTY_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored Department default display property configuration"),
     PROGRAM_COMMENT_UPDATED_ADVERT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program advert"),
     PROGRAM_COMMENT_UPDATED_CATEGORY(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program categories"),
-    PROGRAM_COMMENT_UPDATED_FEE_AND_PAYMENT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program salary"),
     PROGRAM_COMMENT_UPDATED_CLOSING_DATE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program closing dates"),
     PROGRAM_COMMENT_UPDATED_TARGET(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program targets"),
     PROGRAM_COMMENT_UPDATED_COMPETENCE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program competences"),

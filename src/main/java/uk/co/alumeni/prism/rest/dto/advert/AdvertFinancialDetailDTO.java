@@ -1,22 +1,16 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import java.math.BigDecimal;
+import org.springframework.format.annotation.NumberFormat;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.format.annotation.NumberFormat;
-
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
 
 public class AdvertFinancialDetailDTO {
 
-    @NotEmpty
     private String currency;
 
-    @NotNull
     private PrismDurationUnit interval;
 
     @Min(1)

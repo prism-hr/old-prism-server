@@ -20,8 +20,6 @@ public class PrismConstants {
 
     public static final Integer PROFILE_LIST_PAGE_ROW_COUNT = 50;
 
-    public static final String SEQUENCE_IDENTIFIER = "sequenceIdentifier";
-
     public static final String NULL = "null";
 
     public static final Integer RATING_PRECISION = 2;
@@ -36,11 +34,7 @@ public class PrismConstants {
 
     public static final Integer START_DATE_LATEST_BUFFER = 1;
 
-    public static final Integer CONFIDENCE_LOW = 1;
-
     public static final Integer CONFIDENCE_MEDIUM = 2;
-
-    public static final Integer CONFIDENCE_HIGH = 3;
 
     public static final String SYSTEM_CURRENCY = "GBP";
 

@@ -1,19 +1,14 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
-import java.math.BigDecimal;
+import org.springframework.format.annotation.NumberFormat;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-
-import org.springframework.format.annotation.NumberFormat;
-
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
 
 public class AdvertFinancialDetailDTO {
-
-    private String currency;
-
-    private PrismDurationUnit interval;
 
     @Min(1)
     @Max(48)
@@ -23,27 +18,17 @@ public class AdvertFinancialDetailDTO {
     @Max(48)
     private Integer hoursWeekMaximum;
 
+    private PrismPaymentOption paymentOption;
+
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     private BigDecimal minimum;
 
     @NumberFormat(style = NumberFormat.Style.CURRENCY)
     private BigDecimal maximum;
 
-    public String getCurrency() {
-        return currency;
-    }
+    private String currency;
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public PrismDurationUnit getInterval() {
-        return interval;
-    }
-
-    public void setInterval(PrismDurationUnit interval) {
-        this.interval = interval;
-    }
+    private PrismDurationUnit interval;
 
     public Integer getHoursWeekMinimum() {
         return hoursWeekMinimum;
@@ -59,6 +44,14 @@ public class AdvertFinancialDetailDTO {
 
     public void setHoursWeekMaximum(Integer hoursWeekMaximum) {
         this.hoursWeekMaximum = hoursWeekMaximum;
+    }
+
+    public PrismPaymentOption getPaymentOption() {
+        return paymentOption;
+    }
+
+    public void setPaymentOption(PrismPaymentOption paymentOption) {
+        this.paymentOption = paymentOption;
     }
 
     public BigDecimal getMinimum() {
@@ -77,4 +70,19 @@ public class AdvertFinancialDetailDTO {
         this.maximum = maximum;
     }
 
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public PrismDurationUnit getInterval() {
+        return interval;
+    }
+
+    public void setInterval(PrismDurationUnit interval) {
+        this.interval = interval;
+    }
 }

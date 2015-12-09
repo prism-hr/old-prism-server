@@ -1,16 +1,15 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import java.math.BigDecimal;
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import java.math.BigDecimal;
 
 @Embeddable
 public class AdvertFinancialDetail {
@@ -24,6 +23,9 @@ public class AdvertFinancialDetail {
 
     @Column(name = "pay_hours_week_maximum")
     private Integer hoursWeekMaximum;
+
+    @Column(name = "payment_option")
+    private PrismPaymentOption paymentOption;
 
     @Column(name = "pay_currency")
     private String currency;
@@ -72,6 +74,14 @@ public class AdvertFinancialDetail {
 
     public void setHoursWeekMaximum(Integer hoursWeekMaximum) {
         this.hoursWeekMaximum = hoursWeekMaximum;
+    }
+
+    public PrismPaymentOption getPaymentOption() {
+        return paymentOption;
+    }
+
+    public void setPaymentOption(PrismPaymentOption paymentOption) {
+        this.paymentOption = paymentOption;
     }
 
     public String getCurrency() {

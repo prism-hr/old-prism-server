@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.URL;
 
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
 
-public class AdvertApplicationOptionsDTO {
+public class ResourceSettingsDTO {
 
     @URL
     @Size(max = 2048)

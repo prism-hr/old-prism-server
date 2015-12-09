@@ -1,5 +1,60 @@
 package uk.co.alumeni.prism.services;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.*;
+import jersey.repackaged.com.google.common.base.Objects;
+import jersey.repackaged.com.google.common.collect.Iterables;
+import jersey.repackaged.com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.dao.ResourceDAO;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertTarget;
+import uk.co.alumeni.prism.domain.comment.*;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelation;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.*;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserRole;
+import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
+import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
+import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
+import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
+import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.*;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+import uk.co.alumeni.prism.services.builders.PrismResourceListConstraintBuilder;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
+import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
+import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
+import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
+import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
+import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
+
+import javax.inject.Inject;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.asList;
@@ -17,136 +72,15 @@ import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.TreeMultimap;
-
-import jersey.repackaged.com.google.common.base.Objects;
-import jersey.repackaged.com.google.common.collect.Iterables;
-import jersey.repackaged.com.google.common.collect.Sets;
-import uk.co.alumeni.prism.dao.ResourceDAO;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertTarget;
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
-import uk.co.alumeni.prism.domain.comment.CommentState;
-import uk.co.alumeni.prism.domain.comment.CommentStateDefinition;
-import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelation;
-import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceCondition;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.resource.ResourcePreviousState;
-import uk.co.alumeni.prism.domain.resource.ResourceState;
-import uk.co.alumeni.prism.domain.resource.ResourceStateDefinition;
-import uk.co.alumeni.prism.domain.resource.ResourceStateTransitionSummary;
-import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserRole;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.OpportunityType;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.Scope;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ActionDTO;
-import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
-import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
-import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
-import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
-import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
-import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
-import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
-import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
-import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
-import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceOpportunityDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserDTO;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
-import uk.co.alumeni.prism.services.builders.PrismResourceListConstraintBuilder;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
-import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
-import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
-import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
-import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
-import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
 
 @Service
 @Transactional
@@ -399,11 +333,13 @@ public class ResourceService {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
+
+                // TODO remove it later (should be called from executor)
+//                if (commentDTO.isViewEditComment()) {
+//                    updateCustomAdvertTargets(actionOutcome.getResource(), commentDTO.getResource());
+//                }
             }
 
-            if (commentDTO.isViewEditComment()) {
-                updateCustomAdvertTargets(actionOutcome.getResource(), commentDTO.getResource());
-            }
         }
         return actionOutcome;
     }
@@ -866,7 +802,7 @@ public class ResourceService {
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
     }
-    
+
     public void updateOpportunity(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
         updateResource(resource, resourceDTO);
@@ -884,6 +820,7 @@ public class ResourceService {
         }
 
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
+        advertService.updateFinancialDetail(resource.getAdvert(), resourceDTO.getFinancialDetail());
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
         setStudyOptions(resource, studyOptions == null ? newArrayList() : studyOptions);
     }

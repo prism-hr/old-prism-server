@@ -1,16 +1,18 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertVisibilityDTO;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 public class ResourceOpportunityDTO extends ResourceParentDTO implements ResourceOpportunityDefinition<PrismOpportunityType> {
 

@@ -364,6 +364,10 @@ public class ApplicationService {
     public List<Integer> getApplicationsByLocation(String location) {
         return applicationDAO.getApplicationsByLocation(location);
     }
+    
+    public void updateApplicationOpportunityCategories(Advert advert) {
+        applicationDAO.updateApplicationOpportunityCategories(advert);
+    }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);

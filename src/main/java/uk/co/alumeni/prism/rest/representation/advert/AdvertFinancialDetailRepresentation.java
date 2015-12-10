@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
+import java.math.BigDecimal;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
-
-import java.math.BigDecimal;
 
 public class AdvertFinancialDetailRepresentation {
 

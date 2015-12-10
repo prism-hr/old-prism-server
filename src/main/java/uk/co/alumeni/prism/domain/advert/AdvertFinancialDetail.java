@@ -1,19 +1,25 @@
 package uk.co.alumeni.prism.domain.advert;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
+import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.math.BigDecimal;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
+
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
 
 @Embeddable
 public class AdvertFinancialDetail {
 
+    @Column(name = "pay_option")
+    @Enumerated(EnumType.STRING)
+    private PrismPaymentOption option;
+    
     @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private PrismDurationUnit interval;
@@ -23,9 +29,6 @@ public class AdvertFinancialDetail {
 
     @Column(name = "pay_hours_week_maximum")
     private Integer hoursWeekMaximum;
-
-    @Column(name = "payment_option")
-    private PrismPaymentOption paymentOption;
 
     @Column(name = "pay_currency")
     private String currency;
@@ -52,6 +55,14 @@ public class AdvertFinancialDetail {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastConversionDate;
 
+    public PrismPaymentOption getOption() {
+        return option;
+    }
+
+    public void setOption(PrismPaymentOption option) {
+        this.option = option;
+    }
+    
     public PrismDurationUnit getInterval() {
         return interval;
     }
@@ -74,14 +85,6 @@ public class AdvertFinancialDetail {
 
     public void setHoursWeekMaximum(Integer hoursWeekMaximum) {
         this.hoursWeekMaximum = hoursWeekMaximum;
-    }
-
-    public PrismPaymentOption getPaymentOption() {
-        return paymentOption;
-    }
-
-    public void setPaymentOption(PrismPaymentOption paymentOption) {
-        this.paymentOption = paymentOption;
     }
 
     public String getCurrency() {

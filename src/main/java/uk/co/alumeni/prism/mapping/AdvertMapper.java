@@ -427,15 +427,14 @@ public class AdvertMapper {
         PrismScope filterScope = query.getContextScope();
         PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
-        Set<Integer> advertIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<EntityOpportunityCategoryDTO<?>> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
-        processRowDescriptors(adverts, advertIds, summaries, query.getOpportunityTypes());
+        processRowDescriptors(adverts, summaries, query.getOpportunityTypes());
 
         PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        Map<Integer, AdvertRepresentationExtended> index = Maps.newLinkedHashMap();
+        Map<Integer, AdvertRepresentationExtended> advertIndex = Maps.newLinkedHashMap();
         advertService.getAdvertList(query, adverts).forEach(advert -> {
             PrismScope scope = advert.getScope();
             for (PrismScope advertScope : parentScopes) {
@@ -446,7 +445,7 @@ public class AdvertMapper {
                     }
                 }
             }
-            index.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
+            advertIndex.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
         });
 
         LinkedHashMultimap<Integer, PrismStudyOption> studyOptionIndex = LinkedHashMultimap.create();
@@ -490,8 +489,8 @@ public class AdvertMapper {
         }
 
         Map<Integer, AdvertRepresentationExtended> representations = Maps.newLinkedHashMap();
-        index.keySet().forEach(advert -> {
-            AdvertRepresentationExtended representation = index.get(advert);
+        advertIndex.keySet().forEach(advert -> {
+            AdvertRepresentationExtended representation = advertIndex.get(advert);
             representation.setExternalConditions(newLinkedList(actionConditionIndex.get(advert)));
             representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
 
@@ -504,7 +503,7 @@ public class AdvertMapper {
             representations.put(advert, representation);
         });
 
-        setAdvertCallToActionStates(user, advertIds, representations);
+        setAdvertCallToActionStates(user, advertIndex.keySet(), representations);
         return new AdvertListRepresentation().withRows(newLinkedList(representations.values())).withSummaries(getSummaryRepresentations(summaries));
     }
 

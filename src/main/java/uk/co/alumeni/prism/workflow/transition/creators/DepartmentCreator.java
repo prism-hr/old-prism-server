@@ -39,7 +39,7 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
 
         Advert advert = advertService.createAdvert(newResource, user);
         advert.setGloballyVisible(DEPARTMENT.isDefaultShared());
-        advertService.updateAddress(advert.getInstitution(), advert);
+        advertService.updateAddress(institution, advert);
 
         Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution).withAdvert(advert)
                 .withName(advert.getName());

@@ -334,6 +334,10 @@ public class AdvertService {
         }
     }
 
+    public void updateAddress(Resource parentResource, Advert advert) {
+        updateAddress(parentResource, advert, null);
+    }
+
     public void updateAddress(Resource parentResource, Advert advert, AddressDTO addressDTO) {
         Address address = advert.getAddress();
         if (addressDTO != null) {

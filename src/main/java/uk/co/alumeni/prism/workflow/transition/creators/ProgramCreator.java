@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.workflow.transition.creators;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -31,7 +30,6 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
         ResourceParent parentResource = resourceCreatorUtils.getParentResource(newResource);
 
         Advert advert = advertService.createAdvert(newResource, user);
-        Assert.notNull(advert.getGloballyVisible());
 
         Program program = new Program().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(parentResource).withAdvert(advert)
                 .withName(advert.getName()).withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum());

@@ -217,6 +217,9 @@ public class AdvertDAO {
                 .createAlias("advert.categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.categories.functions", "function", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert.categories.locations", "location", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("location.locationAdvert", "locationAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
@@ -768,8 +771,13 @@ public class AdvertDAO {
 
     private void appendLocationConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         if (queryDTO.getNeLat() != null) {
-            criteria.add(Restrictions.between("address.addressCoordinates.latitude", queryDTO.getSwLat(), queryDTO.getNeLat())) //
-                    .add(Restrictions.between("address.addressCoordinates.longitude", queryDTO.getSwLon(), queryDTO.getNeLon()));
+            criteria.add(Restrictions.disjunction() //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.between("address.addressCoordinates.latitude", queryDTO.getSwLat(), queryDTO.getNeLat()))
+                            .add(Restrictions.between("address.addressCoordinates.longitude", queryDTO.getSwLon(), queryDTO.getNeLon())))
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.between("locationAddress.addressCoordinates.latitude", queryDTO.getSwLat(), queryDTO.getNeLat()))
+                            .add(Restrictions.between("locationAddress.addressCoordinates.longitude", queryDTO.getSwLon(), queryDTO.getNeLon()))));
         }
     }
 

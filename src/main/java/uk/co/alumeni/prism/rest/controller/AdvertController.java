@@ -22,7 +22,7 @@ import uk.co.alumeni.prism.rest.ResourceDescriptor;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
-import uk.co.alumeni.prism.rest.dto.advert.ResourceSettingsDTO;
+import uk.co.alumeni.prism.rest.dto.advert.AdvertSettingsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
@@ -55,9 +55,9 @@ public class AdvertController {
         advertService.updateResourceDetails(resourceDescriptor.getResourceScope(), resourceId, resourceDTO);
     }
 
-    @RequestMapping(value = "/applicationOptions", method = RequestMethod.PUT)
-    public void updateApplicationOptions(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody ResourceSettingsDTO applicationOptionsDTO) {
-        advertService.updateApplicationOptions(resourceDescriptor.getResourceScope(), resourceId, applicationOptionsDTO);
+    @RequestMapping(value = "/settings", method = RequestMethod.PUT)
+    public void updateAdvertSettings(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertSettingsDTO advertSettingsDTO) {
+        advertService.updateAdvertSettings(resourceDescriptor.getResourceScope(), resourceId, advertSettingsDTO);
     }
 
     @RequestMapping(value = "/address", method = RequestMethod.PUT)

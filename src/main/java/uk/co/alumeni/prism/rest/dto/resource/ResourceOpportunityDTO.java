@@ -1,17 +1,16 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
+import uk.co.alumeni.prism.rest.dto.advert.AdvertVisibilityDTO;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class ResourceOpportunityDTO extends ResourceParentDTO implements ResourceOpportunityDefinition<PrismOpportunityType> {
 
@@ -30,6 +29,9 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
 
     @Valid
     private AdvertFinancialDetailDTO financialDetail;
+
+    @Valid
+    private AdvertVisibilityDTO advertVisibility;
 
     @Override
     public PrismOpportunityType getOpportunityType() {
@@ -81,4 +83,11 @@ public class ResourceOpportunityDTO extends ResourceParentDTO implements Resourc
         this.financialDetail = financialDetail;
     }
 
+    public AdvertVisibilityDTO getAdvertVisibility() {
+        return advertVisibility;
+    }
+
+    public void setAdvertVisibility(AdvertVisibilityDTO advertVisibility) {
+        this.advertVisibility = advertVisibility;
+    }
 }

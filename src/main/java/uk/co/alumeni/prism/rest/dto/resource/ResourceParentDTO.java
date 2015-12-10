@@ -1,16 +1,14 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.URL;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceParentDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.utils.validation.PhoneNumber;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition {
 
@@ -41,12 +39,8 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
 
     private List<PrismOpportunityCategory> opportunityCategories;
 
-    private Boolean globallyVisible;
-
     @Valid
     private ResourceRelationCreationDTO target;
-
-    private List<Integer> customTargets;
 
     @Override
     public ResourceDTO getParentResource() {
@@ -124,14 +118,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
         this.opportunityCategories = opportunityCategories;
     }
 
-    public Boolean getGloballyVisible() {
-        return globallyVisible;
-    }
-
-    public void setGloballyVisible(Boolean globallyVisible) {
-        this.globallyVisible = globallyVisible;
-    }
-
     public ResourceRelationCreationDTO getTarget() {
         return target;
     }
@@ -140,11 +126,4 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
         this.target = target;
     }
 
-    public List<Integer> getCustomTargets() {
-        return customTargets;
-    }
-
-    public void setCustomTargets(List<Integer> customTargets) {
-        this.customTargets = customTargets;
-    }
 }

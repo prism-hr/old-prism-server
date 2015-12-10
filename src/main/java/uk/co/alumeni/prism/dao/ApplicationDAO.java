@@ -36,6 +36,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
@@ -331,6 +332,16 @@ public class ApplicationDAO {
                         .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
                 .list();
+    }
+
+    public void updateApplicationOpportunityCategories(Advert advert) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update Application " //
+                        + "set opportunityCategories = :opportunityCategories " //
+                        + "where advert = :advert") //
+                .setParameter("opportunityCategories", advert.getOpportunityCategories()) //
+                .setParameter("advert", advert) //
+                .executeUpdate();
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {

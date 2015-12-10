@@ -1,12 +1,13 @@
 package uk.co.alumeni.prism.dto;
 
+import java.math.BigDecimal;
+
 import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
-
-import java.math.BigDecimal;
 
 public class AdvertDTO extends ResourceFlatToNestedDTO {
 
@@ -72,13 +73,13 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private BigDecimal addressCoordinateLongitude;
 
+    private PrismPaymentOption payOption;
+
     private PrismDurationUnit payInterval;
 
     private Integer payHoursWeekMinimum;
 
     private Integer payHoursWeekMaximum;
-
-    private PrismPaymentOption paymentOption;
 
     private String payCurrency;
 
@@ -182,14 +183,6 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     public void setProjectDurationMaximum(Integer projectDurationMaximum) {
         this.projectDurationMaximum = projectDurationMaximum;
-    }
-
-    public PrismPaymentOption getPaymentOption() {
-        return paymentOption;
-    }
-
-    public void setPaymentOption(PrismPaymentOption paymentOption) {
-        this.paymentOption = paymentOption;
     }
 
     public PrismOpportunityType getOpportunityType() {
@@ -350,6 +343,14 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     public void setAddressCoordinateLongitude(BigDecimal addressCoordinateLongitude) {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
+    }
+
+    public PrismPaymentOption getPayOption() {
+        return payOption;
+    }
+
+    public void setPayOption(PrismPaymentOption option) {
+        this.payOption = option;
     }
 
     public PrismDurationUnit getPayInterval() {

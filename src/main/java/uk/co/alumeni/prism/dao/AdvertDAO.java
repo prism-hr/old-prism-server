@@ -156,7 +156,7 @@ public class AdvertDAO {
                         .add(Projections.property("pay.interval").as("payInterval")) //
                         .add(Projections.property("pay.hoursWeekMinimum").as("payHoursWeekMinimum")) //
                         .add(Projections.property("pay.hoursWeekMaximum").as("payHoursWeekMaximum")) //
-                        .add(Projections.property("pay.paymentOption").as("paymentOption")) //
+                        .add(Projections.property("pay.option").as("payOption")) //
                         .add(Projections.property("pay.currency").as("payCurrency")) //
                         .add(Projections.property("pay.minimum").as("payMaximum")) //
                         .add(Projections.property("pay.maximum").as("payMinimum")) //

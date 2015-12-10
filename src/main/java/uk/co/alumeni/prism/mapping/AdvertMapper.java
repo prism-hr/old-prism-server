@@ -1,48 +1,5 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.*;
-import jersey.repackaged.com.google.common.base.Objects;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.domain.Domicile;
-import uk.co.alumeni.prism.domain.Theme;
-import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.address.AddressCoordinates;
-import uk.co.alumeni.prism.domain.advert.*;
-import uk.co.alumeni.prism.domain.definitions.*;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.*;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.*;
-import uk.co.alumeni.prism.rest.dto.AddressDTO;
-import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
-import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
-import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.*;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.UserService;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.asList;
@@ -52,11 +9,22 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
-import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.*;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.ACCEPTED_PARTIAL;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.PENDING_PARTIAL;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.PrismConnectionState.UNKNOWN;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.APPLICANT;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSame;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSome;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
@@ -64,6 +32,91 @@ import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
+
+import jersey.repackaged.com.google.common.base.Objects;
+import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.address.AddressCoordinates;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
+import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
+import uk.co.alumeni.prism.domain.advert.AdvertFunction;
+import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
+import uk.co.alumeni.prism.domain.advert.AdvertLocation;
+import uk.co.alumeni.prism.domain.advert.AdvertTarget;
+import uk.co.alumeni.prism.domain.advert.AdvertTheme;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
+import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.Department;
+import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.resource.Program;
+import uk.co.alumeni.prism.domain.resource.Project;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertDTO;
+import uk.co.alumeni.prism.dto.AdvertTargetDTO;
+import uk.co.alumeni.prism.dto.AdvertUserDTO;
+import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
+import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
+import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.UserService;
 
 @Service
 @Transactional
@@ -198,7 +251,7 @@ public class AdvertMapper {
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
             representation.setFinancialDetail(new AdvertFinancialDetailRepresentation().withInterval(payInterval).withHoursWeekMinimum(advert.getPayHoursWeekMinimum())
-                    .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withPaymentOption(advert.getPaymentOption())
+                    .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withPaymentOption(advert.getPayOption())
                     .withCurrency(advert.getPayCurrency()).withMinimum(advert.getPayMinimum()).withMaximum(advert.getPayMaximum()));
         }
 
@@ -487,7 +540,7 @@ public class AdvertMapper {
         AdvertFinancialDetail pay = advert.getPay();
         if (pay != null) {
             return new AdvertFinancialDetailRepresentation().withInterval(pay.getInterval()).withHoursWeekMinimum(pay.getHoursWeekMinimum())
-                    .withHoursWeekMaximum(pay.getHoursWeekMaximum()).withPaymentOption(pay.getPaymentOption())
+                    .withHoursWeekMaximum(pay.getHoursWeekMaximum()).withPaymentOption(pay.getOption())
                     .withCurrency(pay.getCurrency()).withMinimum(pay.getMinimum()).withMaximum(pay.getMaximum());
         }
         return null;

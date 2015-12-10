@@ -275,20 +275,20 @@ public class ResourceService {
             User student = null;
             User childOwner = null;
             switch (resourceRelationCreationDTO.getContext()) {
-            case QUALIFICATION:
-                viewer = userService.getOrCreateUser(resourceRelationCreationDTO.getUser());
-                student = userService.getCurrentUser();
-                childOwner = student;
-                break;
-            case EMPLOYMENT_POSITION:
-                childOwner = userService.getCurrentUser();
-                break;
-            case REFEREE:
-                viewer = userService.getOrCreateUser(resourceRelationCreationDTO.getUser());
-                childOwner = viewer;
-                break;
-            default:
-                throw new UnsupportedOperationException("Invalid resource relation creation attempt");
+                case QUALIFICATION:
+                    viewer = userService.getOrCreateUser(resourceRelationCreationDTO.getUser());
+                    student = userService.getCurrentUser();
+                    childOwner = student;
+                    break;
+                case EMPLOYMENT_POSITION:
+                    childOwner = userService.getCurrentUser();
+                    break;
+                case REFEREE:
+                    viewer = userService.getOrCreateUser(resourceRelationCreationDTO.getUser());
+                    childOwner = viewer;
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Invalid resource relation creation attempt");
             }
 
             ResourceParent resource = createResourceRelation(resourceRelationCreationDTO.getResource(), resourceRelationCreationDTO.getContext().getContext(), childOwner);
@@ -404,10 +404,9 @@ public class ResourceService {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
 
                 // TODO remove it later (should be called from executor)
-                // if (commentDTO.isViewEditComment()) {
-                // updateCustomAdvertTargets(actionOutcome.getResource(),
-                // commentDTO.getResource());
-                // }
+//                if (commentDTO.isViewEditComment()) {
+//                    updateAdvertVisibility(actionOutcome.getResource(), commentDTO.getResource());
+//                }
             }
 
         }
@@ -607,8 +606,8 @@ public class ResourceService {
     }
 
     public Collection<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> targeterEntities,
-            Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
-            Collection<Integer> onlyAsPartnerResources, boolean extended) {
+                                                          Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
+                                                          Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resourceDTOs.isEmpty()) {
             boolean hasRedactions = actionService.hasRedactions(user, scope);
             Set<Integer> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(), lastSequenceIdentifier, maxRecords).keySet();
@@ -693,7 +692,7 @@ public class ResourceService {
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, String searchTerm) {
         Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
-        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+        for (PrismScope resourceScope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
             resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> resources.add(resource));
         }
         return new ArrayList<>(resources);
@@ -704,7 +703,7 @@ public class ResourceService {
     }
 
     public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope, PrismScope creationScope,
-            String searchTerm) {
+                                                                                    String searchTerm) {
         User user = userService.getCurrentUser();
 
         String scopeReference = responseScope.getLowerCamelName();
@@ -756,16 +755,16 @@ public class ResourceService {
             String scopeReference = scope.name();
 
             getResources(user, scope, scopes.stream()
-                    .filter(parentScope -> parentScope.ordinal() < scope.ordinal())
-                    .collect(Collectors.toList()), //
+                            .filter(parentScope -> parentScope.ordinal() < scope.ordinal())
+                            .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
                     new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
                             .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("id")),
                     ResourceOpportunityCategoryDTO.class).forEach(resource -> {
-                        resources.put(scope, resource.getId());
-                    });
+                resources.put(scope, resource.getId());
+            });
         }
 
         return resources;
@@ -812,26 +811,26 @@ public class ResourceService {
         if (isEmpty(resourceConditions)) {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
-            case INSTITUTION:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                break;
-            case DEPARTMENT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                break;
-            case PROGRAM:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
-                break;
-            case PROJECT:
-                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
-                break;
-            default:
-                throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
+                case INSTITUTION:
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                    break;
+                case DEPARTMENT:
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                    break;
+                case PROGRAM:
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
+                    break;
+                case PROJECT:
+                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(true).withExternalMode(true));
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
             }
         }
 
@@ -867,7 +866,7 @@ public class ResourceService {
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(advert, resourceDTO);
 
-        updateCustomAdvertTargets(resource, resourceDTO);
+        advertService.updateAdvertVisibility(advert, resourceDTO);
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
@@ -928,7 +927,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
-            HashMultimap<PrismScope, PrismState> enclosedScopes) {
+                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
@@ -1019,20 +1018,20 @@ public class ResourceService {
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-            ResourceListFilterDTO filter) {
+                                                            ResourceListFilterDTO filter) {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-            ProjectionList columns,
-            Class<T> responseClass) {
+                                                                           ProjectionList columns,
+                                                                           Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-            ResourceListFilterDTO filter, ProjectionList columns,
-            Class<T> responseClass) {
+                                                                           ResourceListFilterDTO filter, ProjectionList columns,
+                                                                           Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
@@ -1124,7 +1123,7 @@ public class ResourceService {
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-            ResourceListFilterDTO filter, Junction conditions) {
+                                                             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //
                 Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id").as("id")) //
@@ -1135,7 +1134,7 @@ public class ResourceService {
     }
 
     private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-            ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
+                                                                            ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = Sets.newTreeSet();
         DateTime baseline = DateTime.now().minusDays(1);
 
@@ -1237,7 +1236,7 @@ public class ResourceService {
         String opportunityCategory = opportunityType.getOpportunityCategory().name();
         setResourceOpportunityCategories(resourceOpportunity, opportunityCategory);
 
-        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
+        for (PrismScope scope : new PrismScope[]{DEPARTMENT, INSTITUTION}) {
             ResourceParent enclosing = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
             if (enclosing != null) {
                 String opportunityCategories = enclosing.getOpportunityCategories();
@@ -1262,7 +1261,7 @@ public class ResourceService {
     private void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext, Boolean requested) {
         User currentUser = userService.getCurrentUser();
         Action viewEditAction = actionService.getViewEditAction(resource);
-        boolean canViewEdit = viewEditAction == null ? false : actionService.checkActionExecutable(resource, viewEditAction, currentUser);
+        boolean canViewEdit = viewEditAction != null && actionService.checkActionExecutable(resource, viewEditAction, currentUser);
 
         Role role = null;
         String resourceName = resource.getResourceScope().name();
@@ -1304,12 +1303,6 @@ public class ResourceService {
             }
         }
         return false;
-    }
-
-    private void updateCustomAdvertTargets(Resource resource, ResourceCreationDTO resourceDTO) {
-        if (ResourceOpportunity.class.isAssignableFrom(resource.getClass()) && ResourceOpportunityDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            advertService.updateCustomAdvertTargets(resource.getAdvert(), (ResourceOpportunityDTO) resourceDTO);
-        }
     }
 
 }

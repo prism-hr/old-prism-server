@@ -857,8 +857,11 @@ public class AdvertService {
         createAdvertLocation(advert, advertCategories.getLocations(), locationAdvert);
     }
     
-    public List<AdvertLocation> getPossibleAdvertLocations(Advert advert) {
-        return advertDAO.getPossibleAdvertLocations(advert);
+    public Set<Advert> getPossibleAdvertLocations(Advert advert) {
+        Set<Advert> locations = Sets.newTreeSet();
+        advert.getParentResources().stream().forEach(resource -> locations.add(resource.getAdvert()));
+        locations.addAll(advertDAO.getPossibleAdvertLocations(advert, locations));
+        return locations;
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,

@@ -739,15 +739,23 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<AdvertLocation> getPossibleAdvertLocations(Advert advert) {
-        return (List<AdvertLocation>) sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class) //
+    public List<Advert> getPossibleAdvertLocations(Advert advert, Collection<Advert> exclusions) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class) //
+                .setProjection(Projections.groupProperty("locationAdvert")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert", "locationAdvert", JoinType.INNER_JOIN)
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("advert.institution", advert.getInstitution())) //
                         .add(Restrictions.eq("advert.department", advert.getDepartment())) //
                         .add(Restrictions.eq("advert.program", advert.getProgram())) //
-                        .add(Restrictions.eq("advert.project", advert.getProject()))) //
-                .addOrder(Order.asc("locationAdvert.name")) //
+                        .add(Restrictions.eq("advert.project", advert.getProject())));
+
+        if (isNotEmpty(exclusions)) {
+            criteria.add(Restrictions.not( //
+                    Restrictions.in("locationAdvert", exclusions)));
+        }
+
+        return (List<Advert>) criteria.addOrder(Order.asc("locationAdvert.name")) //
                 .list(); //
     }
 

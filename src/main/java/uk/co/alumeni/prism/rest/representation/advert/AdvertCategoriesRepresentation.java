@@ -4,7 +4,7 @@ import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 
 public class AdvertCategoriesRepresentation {
 
@@ -14,9 +14,9 @@ public class AdvertCategoriesRepresentation {
 
     private List<AdvertThemeRepresentation> themes;
 
-    private List<ResourceRepresentationRelation> locations;
+    private List<ResourceLocationRepresentationRelation> locations;
 
-    private List<ResourceRepresentationRelation> possibleLocations;
+    private List<ResourceLocationRepresentationRelation> possibleLocations;
 
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
@@ -42,19 +42,19 @@ public class AdvertCategoriesRepresentation {
         this.themes = themes;
     }
 
-    public List<ResourceRepresentationRelation> getLocations() {
+    public List<ResourceLocationRepresentationRelation> getLocations() {
         return locations;
     }
 
-    public void setLocations(List<ResourceRepresentationRelation> locations) {
+    public void setLocations(List<ResourceLocationRepresentationRelation> locations) {
         this.locations = locations;
     }
 
-    public List<ResourceRepresentationRelation> getPossibleLocations() {
+    public List<ResourceLocationRepresentationRelation> getPossibleLocations() {
         return possibleLocations;
     }
 
-    public void setPossibleLocations(List<ResourceRepresentationRelation> possibleLocations) {
+    public void setPossibleLocations(List<ResourceLocationRepresentationRelation> possibleLocations) {
         this.possibleLocations = possibleLocations;
     }
 
@@ -73,12 +73,12 @@ public class AdvertCategoriesRepresentation {
         return this;
     }
 
-    public AdvertCategoriesRepresentation withLocations(List<ResourceRepresentationRelation> locations) {
+    public AdvertCategoriesRepresentation withLocations(List<ResourceLocationRepresentationRelation> locations) {
         this.locations = locations;
         return this;
     }
 
-    public AdvertCategoriesRepresentation withPossibleLocations(List<ResourceRepresentationRelation> possibleLocations) {
+    public AdvertCategoriesRepresentation withPossibleLocations(List<ResourceLocationRepresentationRelation> possibleLocations) {
         this.possibleLocations = possibleLocations;
         return this;
     }

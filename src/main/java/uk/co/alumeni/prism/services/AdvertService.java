@@ -856,6 +856,10 @@ public class AdvertService {
         }
         createAdvertLocation(advert, advertCategories.getLocations(), locationAdvert);
     }
+    
+    public List<AdvertLocation> getPossibleAdvertLocations(Advert advert) {
+        return advertDAO.getPossibleAdvertLocations(advert);
+    }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,
             Class<T> responseClass) {

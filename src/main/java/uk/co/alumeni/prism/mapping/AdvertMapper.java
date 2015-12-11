@@ -223,7 +223,7 @@ public class AdvertMapper {
         representation.setUser(new UserRepresentationSimple().withFirstName(advert.getUserFirstName()).withLastName(advert.getUserLastName())
                 .withAccountProfileUrl(advert.getUserAccountProfileUrl()).withAccountImageUrl(advert.getUserAccountImageUrl()));
 
-        for (PrismScope scope : new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION }) {
             ResourceRepresentationSimple resource = getAdvertResourceRepresentation(advert, scope);
             if (resource != null) {
                 setProperty(representation, scope.getLowerCamelName(), resource);
@@ -384,7 +384,9 @@ public class AdvertMapper {
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
             List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
             List<ResourceRepresentationRelation> locations = getAdvertLocationRepresentations(categories);
-            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
+            List<ResourceRepresentationRelation> possibleLocations = getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert));
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations)
+                    .withPossibleLocations(possibleLocations);
         }
         return null;
     }
@@ -406,10 +408,7 @@ public class AdvertMapper {
         Set<AdvertLocation> advertLocations = categories.getLocations();
         List<ResourceRepresentationRelation> advertLocationRepresentations = null;
         if (CollectionUtils.isNotEmpty(advertLocations)) {
-            advertLocationRepresentations = Lists.newLinkedList();
-            for (AdvertLocation advertLocation : advertLocations) {
-                advertLocationRepresentations.add(resourceMapper.getResourceRepresentationRelation(advertLocation.getLocationAdvert().getResource()));
-            }
+            advertLocationRepresentations = getAdvertLocationRepresentations(advertLocations);
         }
         return advertLocationRepresentations;
     }
@@ -425,13 +424,13 @@ public class AdvertMapper {
 
     private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunitiesQueryDTO query) {
         PrismScope filterScope = query.getContextScope();
-        PrismScope[] filterScopes = filterScope != null ? new PrismScope[]{filterScope} : query.getContext().getFilterScopes();
+        PrismScope[] filterScopes = filterScope != null ? new PrismScope[] { filterScope } : query.getContext().getFilterScopes();
 
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<EntityOpportunityCategoryDTO<?>> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
         processRowDescriptors(adverts, summaries, query.getOpportunityTypes());
 
-        PrismScope[] parentScopes = new PrismScope[]{PROJECT, PROGRAM, DEPARTMENT, INSTITUTION};
+        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> advertIndex = Maps.newLinkedHashMap();
@@ -593,10 +592,10 @@ public class AdvertMapper {
     }
 
     public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"ADMINISTRATOR", "APPROVER", "VIEWER"}, advertIds);
-        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"VIEWER_UNVERIFIED", "VIEWER_REJECTED"}, advertIds);
-        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"STUDENT"}, advertIds);
-        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"STUDENT_UNVERIFIED", "STUDENT_REJECTED"}, advertIds);
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" }, advertIds);
+        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" }, advertIds);
+        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
+        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" }, advertIds);
 
         representations.keySet().forEach(advert -> {
             representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
@@ -615,7 +614,7 @@ public class AdvertMapper {
 
     private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[]{"ADMINISTRATOR", "APPROVER", "VIEWER"});
+        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
 
         HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
         HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();
@@ -677,12 +676,20 @@ public class AdvertMapper {
     }
 
     private void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer ownerAdvert,
-                                       Integer targetAdvert) {
+            Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
             acceptedForIndex.put(targetAdvert, ownerAdvert);
         } else {
             pendingForIndex.put(targetAdvert, ownerAdvert);
         }
+    }
+
+    private List<ResourceRepresentationRelation> getAdvertLocationRepresentations(Collection<AdvertLocation> advertLocations) {
+        List<ResourceRepresentationRelation> advertLocationRepresentations = Lists.newLinkedList();
+        for (AdvertLocation advertLocation : advertLocations) {
+            advertLocationRepresentations.add(resourceMapper.getResourceRepresentationRelation(advertLocation.getLocationAdvert().getResource()));
+        }
+        return advertLocationRepresentations;
     }
 
 }

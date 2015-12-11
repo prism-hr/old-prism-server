@@ -52,6 +52,7 @@ import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
+import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -736,6 +737,18 @@ public class AdvertDAO {
                 .setParameter("currency", currency) //
                 .setParameterList("adverts", adverts) //
                 .executeUpdate();
+    }
+
+    public List<AdvertLocation> getPossibleAdvertLocations(Advert advert) {
+        return (List<AdvertLocation>) sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("advert.institution", advert.getInstitution())) //
+                        .add(Restrictions.eq("advert.department", advert.getDepartment())) //
+                        .add(Restrictions.eq("advert.program", advert.getProgram())) //
+                        .add(Restrictions.eq("advert.project", advert.getProject()))) //
+                .addOrder(Order.asc("locationAdvert.name")) //
+                .list(); //
     }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

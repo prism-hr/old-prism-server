@@ -363,6 +363,7 @@ public class AdvertService {
 
     public void updateAdvertVisibility(Advert advert, AdvertVisibilityDTO advertVisibilityDTO) {
         advert.setGloballyVisible(advertVisibilityDTO.getGloballyVisible());
+        advert.setClosingDate(advertVisibilityDTO.getClosingDate());
         advertDAO.deleteCustomAdvertTargets(advert);
         List<Integer> customTargetIds = advertVisibilityDTO.getCustomTargets();
         if (isNotEmpty(customTargetIds)) {

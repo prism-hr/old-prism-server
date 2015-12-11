@@ -245,7 +245,6 @@ public class ResourceService {
                 advertService.createAdvertTarget((ResourceParent) resource, target);
             }
             advertService.updateAdvertVisibility(resource.getAdvert(), resourceParentDTO);
-            Assert.notNull(resource.getAdvert().getGloballyVisible());
         }
 
 

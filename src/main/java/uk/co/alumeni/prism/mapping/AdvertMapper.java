@@ -109,9 +109,9 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
@@ -383,8 +383,8 @@ public class AdvertMapper {
             List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
             List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
-            List<ResourceRepresentationRelation> locations = getAdvertLocationRepresentations(categories);
-            List<ResourceRepresentationRelation> possibleLocations = getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert));
+            List<ResourceLocationRepresentationRelation> locations = getAdvertLocationRepresentations(categories);
+            List<ResourceLocationRepresentationRelation> possibleLocations = getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert));
             return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations)
                     .withPossibleLocations(possibleLocations);
         }
@@ -404,11 +404,12 @@ public class AdvertMapper {
         return advertThemeRepresentations;
     }
 
-    public List<ResourceRepresentationRelation> getAdvertLocationRepresentations(AdvertCategories categories) {
+    public List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(AdvertCategories categories) {
         Set<AdvertLocation> advertLocations = categories.getLocations();
-        List<ResourceRepresentationRelation> advertLocationRepresentations = null;
+        List<ResourceLocationRepresentationRelation> advertLocationRepresentations = null;
         if (CollectionUtils.isNotEmpty(advertLocations)) {
-            advertLocationRepresentations = getAdvertLocationRepresentations(advertLocations);
+            advertLocationRepresentations = getAdvertLocationRepresentations(
+                    advertLocations.stream().map(advertLocation -> advertLocation.getLocationAdvert()).collect(Collectors.toList()));
         }
         return advertLocationRepresentations;
     }
@@ -684,10 +685,10 @@ public class AdvertMapper {
         }
     }
 
-    private List<ResourceRepresentationRelation> getAdvertLocationRepresentations(Collection<AdvertLocation> advertLocations) {
-        List<ResourceRepresentationRelation> advertLocationRepresentations = Lists.newLinkedList();
-        for (AdvertLocation advertLocation : advertLocations) {
-            advertLocationRepresentations.add(resourceMapper.getResourceRepresentationRelation(advertLocation.getLocationAdvert().getResource()));
+    private List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(Collection<Advert> locations) {
+        List<ResourceLocationRepresentationRelation> advertLocationRepresentations = Lists.newLinkedList();
+        for (Advert location : locations) {
+            advertLocationRepresentations.add(resourceMapper.getResourceLocationRepresentationRelation(location.getResource()));
         }
         return advertLocationRepresentations;
     }

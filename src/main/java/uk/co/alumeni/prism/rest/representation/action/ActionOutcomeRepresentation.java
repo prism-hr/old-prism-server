@@ -5,7 +5,7 @@ import java.util.List;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 
 public class ActionOutcomeRepresentation {
@@ -22,7 +22,7 @@ public class ActionOutcomeRepresentation {
 
     private List<AdvertThemeRepresentation> replicableSequenceFilterThemes;
 
-    private List<ResourceRepresentationRelation> replicableSequenceFilterLocations;
+    private List<ResourceLocationRepresentationRelation> replicableSequenceFilterLocations;
 
     public ResourceRepresentationSimple getResource() {
         return resource;
@@ -72,11 +72,11 @@ public class ActionOutcomeRepresentation {
         this.replicableSequenceFilterThemes = replicableSequenceFilterThemes;
     }
 
-    public List<ResourceRepresentationRelation> getReplicableSequenceFilterLocations() {
+    public List<ResourceLocationRepresentationRelation> getReplicableSequenceFilterLocations() {
         return replicableSequenceFilterLocations;
     }
 
-    public void setReplicableSequenceFilterLocations(List<ResourceRepresentationRelation> replicableSequenceFilterLocations) {
+    public void setReplicableSequenceFilterLocations(List<ResourceLocationRepresentationRelation> replicableSequenceFilterLocations) {
         this.replicableSequenceFilterLocations = replicableSequenceFilterLocations;
     }
 

@@ -42,6 +42,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -87,6 +88,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepres
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRowRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
@@ -152,6 +154,9 @@ public class ResourceMapper {
 
     @Inject
     private AdvertMapper advertMapper;
+
+    @Inject
+    private AddressMapper addressMapper;
 
     @Inject
     private ApplicationMapper applicationMapper;
@@ -609,6 +614,10 @@ public class ResourceMapper {
         return getResourceRepresentationRelation(resource, ResourceRepresentationRelation.class);
     }
 
+    public <T extends Resource> ResourceLocationRepresentationRelation getResourceLocationRepresentationRelation(T resource) {
+        return getResourceRepresentationRelation(resource, ResourceLocationRepresentationRelation.class);
+    }
+
     public <T extends Resource> ResourceRepresentationRelation getResourceOpportunityRepresentationRelation(T resource) {
         return getResourceRepresentationRelation(resource, ResourceOpportunityRepresentationRelation.class);
     }
@@ -687,6 +696,13 @@ public class ResourceMapper {
                     parentRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(parentResource.getLogoImageId()));
                 }
                 representation.setParentResource(parentRepresentation);
+            }
+        }
+
+        if (returnType.equals(ResourceLocationRepresentationRelation.class)) {
+            Address address = resource.getAdvert().getAddress();
+            if (address != null) {
+                ((ResourceLocationRepresentationRelation) representation).setAddress(addressMapper.transform(address, AddressRepresentation.class));
             }
         }
 

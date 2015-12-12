@@ -30,3 +30,15 @@ alter table address_location_part
     drop index parent_id,
     add unique index (parent_id, address_location_part_type, name_index)
 ;
+
+alter table address_location_part
+    drop column address_location_part_type,
+    drop index parent_id,
+    drop index address_location_part_type,
+    add unique index (parent_id, name_index)
+;
+
+alter table address
+    modify column location_x decimal(24, 18),
+    modify column location_y decimal(24, 18)
+;

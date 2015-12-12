@@ -176,6 +176,8 @@ public class AddressService {
             address.setAddressCoordinates(addressCoordinates);
         }
 
+        // We may need to improve this later if google does not provide us with
+        // the address tokens in a predictable sequence across all addresses
         List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
         if (CollectionUtils.isNotEmpty(componentData)) {
             AddressLocationPart parent = null;

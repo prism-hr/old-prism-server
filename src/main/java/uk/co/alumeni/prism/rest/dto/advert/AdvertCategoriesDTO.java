@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
+import java.util.List;
+
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.rest.dto.TagDTO;
-
-import java.util.List;
 
 public class AdvertCategoriesDTO {
 

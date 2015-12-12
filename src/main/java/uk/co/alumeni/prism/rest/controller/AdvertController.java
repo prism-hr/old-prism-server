@@ -1,7 +1,18 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
@@ -18,10 +29,6 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions}/{resourceId}")

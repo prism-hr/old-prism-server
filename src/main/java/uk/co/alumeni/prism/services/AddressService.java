@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.services;
 
+import static org.apache.commons.lang.StringUtils.substring;
 import static uk.co.alumeni.prism.PrismConstants.MAX_INDEXABLE_COLUMN_LENGTH;
 import static uk.co.alumeni.prism.PrismConstants.OK;
-import static uk.co.alumeni.prism.domain.definitions.PrismAddressLocationPartType.getAddressLocationPartType;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -29,7 +29,6 @@ import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
-import uk.co.alumeni.prism.domain.definitions.PrismAddressLocationPartType;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.dto.json.EstablishmentSearchResponseDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO;
@@ -45,6 +44,10 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 public class AddressService {
 
     private static Logger logger = LoggerFactory.getLogger(AddressService.class);
+
+    private static final List<String> googleLocationTypes = Lists.newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
+            "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "political", "postal_town", "locality", "sublocality",
+            "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "premise", "subpremise", "airport");
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -179,11 +182,10 @@ public class AddressService {
             AddressLocationPart parent = null;
             Set<AddressLocationPart> parts = address.getAddressLocationParts();
             for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
-                PrismAddressLocationPartType partType = getAddressLocationPartType(componentItem.getTypes());
-                if (partType != null) {
+                if (CollectionUtils.containsAny(googleLocationTypes, componentItem.getTypes())) {
                     String name = componentItem.getName();
-                    AddressLocationPart part = entityService.getOrCreate(
-                            new AddressLocationPart().withParent(parent).withType(partType).withName(name).withNameIndex(name.substring(0, MAX_INDEXABLE_COLUMN_LENGTH)));
+                    AddressLocationPart part = entityService
+                            .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(substring(name, 0, MAX_INDEXABLE_COLUMN_LENGTH)));
                     parts.add(part);
                     parent = part;
                 }

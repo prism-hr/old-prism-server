@@ -13,10 +13,9 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.base.Objects;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismAddressLocationPartType;
 
 @Entity
-@Table(name = "address_location_part", uniqueConstraints = { @UniqueConstraint(columnNames = { "parent_id", "address_location_part_type", "name_index" }) })
+@Table(name = "address_location_part", uniqueConstraints = { @UniqueConstraint(columnNames = { "parent_id", "name_index" }) })
 public class AddressLocationPart implements UniqueEntity {
 
     @Id
@@ -26,9 +25,6 @@ public class AddressLocationPart implements UniqueEntity {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private AddressLocationPart parent;
-
-    @Column(name = "address_location_part_type", nullable = false)
-    private PrismAddressLocationPartType type;
 
     @Lob
     @Column(name = "name", nullable = false)
@@ -53,14 +49,6 @@ public class AddressLocationPart implements UniqueEntity {
         this.parent = parent;
     }
 
-    public PrismAddressLocationPartType getType() {
-        return type;
-    }
-
-    public void setType(PrismAddressLocationPartType type) {
-        this.type = type;
-    }
-
     public String getName() {
         return name;
     }
@@ -82,11 +70,6 @@ public class AddressLocationPart implements UniqueEntity {
         return this;
     }
 
-    public AddressLocationPart withType(PrismAddressLocationPartType type) {
-        this.type = type;
-        return this;
-    }
-
     public AddressLocationPart withName(String name) {
         this.name = name;
         return this;
@@ -99,7 +82,7 @@ public class AddressLocationPart implements UniqueEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(parent, type, nameIndex);
+        return Objects.hashCode(parent, nameIndex);
     }
 
     @Override
@@ -111,7 +94,7 @@ public class AddressLocationPart implements UniqueEntity {
             return false;
         }
         AddressLocationPart other = (AddressLocationPart) object;
-        if (Objects.equal(type, other.getType()) && Objects.equal(nameIndex, other.getNameIndex())) {
+        if (Objects.equal(nameIndex, other.getNameIndex())) {
             AddressLocationPart otherParent = other.getParent();
             if (parent == null && otherParent == null) {
                 return true;
@@ -124,7 +107,7 @@ public class AddressLocationPart implements UniqueEntity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("parent", parent).addProperty("type", type).addProperty("nameIndex", nameIndex);
+        return new EntitySignature().addProperty("parent", parent).addProperty("nameIndex", nameIndex);
     }
 
 }

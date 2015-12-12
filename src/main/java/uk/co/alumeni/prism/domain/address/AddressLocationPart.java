@@ -8,14 +8,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.google.common.base.Objects;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
 @Entity
-@Table(name = "address_location_part", uniqueConstraints = { @UniqueConstraint(columnNames = { "parent_id", "name_index" }) })
+@Table(name = "address_location_part")
 public class AddressLocationPart implements UniqueEntity {
 
     @Id
@@ -107,7 +106,7 @@ public class AddressLocationPart implements UniqueEntity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("parent", parent).addProperty("nameIndex", nameIndex);
+        return new EntitySignature().addProperty("nameIndex", nameIndex);
     }
 
 }

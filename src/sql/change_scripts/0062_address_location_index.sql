@@ -42,3 +42,10 @@ alter table address
     modify column location_x decimal(24, 18),
     modify column location_y decimal(24, 18)
 ;
+
+alter table address_location_part
+    drop index parent_id,
+    add index (parent_id),
+    drop index name_index,
+    modify column name_index text not null
+;

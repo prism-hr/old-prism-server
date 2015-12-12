@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.services;
 
-import static org.apache.commons.lang.StringUtils.substring;
-import static uk.co.alumeni.prism.PrismConstants.MAX_INDEXABLE_COLUMN_LENGTH;
+import static com.google.common.collect.Lists.newLinkedList;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
 import java.net.URI;
@@ -180,14 +179,18 @@ public class AddressService {
         List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
         if (CollectionUtils.isNotEmpty(componentData)) {
             AddressLocationPart parent = null;
+            List<String> partNames = newLinkedList();
             Set<AddressLocationPart> parts = address.getAddressLocationParts();
             for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
                 if (CollectionUtils.containsAny(googleLocationTypes, componentItem.getTypes())) {
                     String name = componentItem.getName();
-                    AddressLocationPart part = entityService
-                            .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(substring(name, 0, MAX_INDEXABLE_COLUMN_LENGTH)));
-                    parts.add(part);
-                    parent = part;
+                    if (!partNames.contains(name)) {
+                        partNames.add(name);
+                        AddressLocationPart part = entityService
+                                .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
+                        parts.add(part);
+                        parent = part;
+                    }
                 }
             }
         }

@@ -1,13 +1,17 @@
 package uk.co.alumeni.prism.services;
 
+import static uk.co.alumeni.prism.PrismConstants.MAX_INDEXABLE_COLUMN_LENGTH;
 import static uk.co.alumeni.prism.PrismConstants.OK;
+import static uk.co.alumeni.prism.domain.definitions.PrismAddressLocationPartType.getAddressLocationPartType;
 
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +28,12 @@ import com.google.common.collect.Lists;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
+import uk.co.alumeni.prism.domain.address.AddressLocationPart;
+import uk.co.alumeni.prism.domain.definitions.PrismAddressLocationPartType;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.dto.json.EstablishmentSearchResponseDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO;
+import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleAddressComponentDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleGeometryDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
 import uk.co.alumeni.prism.dto.json.LocationSearchResponseDTO;
@@ -50,6 +57,9 @@ public class AddressService {
 
     @Value("${integration.google.geocoding.api.request.delay.ms}")
     private Integer googleGeocodeRequestDelayMs;
+
+    @Inject
+    private EntityService entityService;
 
     @Inject
     private PrismService prismService;
@@ -81,7 +91,7 @@ public class AddressService {
         if (response.getStatus().equals(OK)) {
             GoogleResultDTO result = response.getResult();
             if (result != null) {
-                setLocation(address, result.getGeometry());
+                setLocation(address, result);
                 return true;
             }
         }
@@ -106,7 +116,7 @@ public class AddressService {
             if (response.getStatus().equals(OK)) {
                 List<GoogleResultDTO> results = response.getResults();
                 if (!results.isEmpty()) {
-                    setLocation(address, results.get(0).getGeometry());
+                    setLocation(address, results.get(0));
                     return;
                 }
             }
@@ -156,10 +166,29 @@ public class AddressService {
         return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
-    private void setLocation(Address address, GoogleGeometryDTO geometry) {
-        Location googleLocation = geometry.getLocation();
-        AddressCoordinates addressCoordinates = new AddressCoordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
-        address.setAddressCoordinates(addressCoordinates);
+    private void setLocation(Address address, GoogleResultDTO addressData) {
+        GoogleGeometryDTO geometryData = addressData.getGeometry();
+        if (geometryData != null) {
+            Location googleLocation = geometryData.getLocation();
+            AddressCoordinates addressCoordinates = new AddressCoordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
+            address.setAddressCoordinates(addressCoordinates);
+        }
+
+        List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
+        if (CollectionUtils.isNotEmpty(componentData)) {
+            AddressLocationPart parent = null;
+            Set<AddressLocationPart> parts = address.getAddressLocationParts();
+            for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
+                PrismAddressLocationPartType partType = getAddressLocationPartType(componentItem.getTypes());
+                if (partType != null) {
+                    String name = componentItem.getName();
+                    AddressLocationPart part = entityService.getOrCreate(
+                            new AddressLocationPart().withParent(parent).withType(partType).withName(name).withNameIndex(name.substring(0, MAX_INDEXABLE_COLUMN_LENGTH)));
+                    parts.add(part);
+                    parent = part;
+                }
+            }
+        }
     }
 
 }

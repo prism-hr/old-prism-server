@@ -50,4 +50,6 @@ public class PrismConstants {
 
     public static final Integer WORK_HOURS_IN_DAY = 8;
 
+    public static final Integer MAX_INDEXABLE_COLUMN_LENGTH = 255;
+
 }

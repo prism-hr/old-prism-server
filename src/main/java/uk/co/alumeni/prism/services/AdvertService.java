@@ -110,6 +110,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
@@ -856,12 +857,35 @@ public class AdvertService {
         }
         createAdvertLocation(advert, advertCategories.getLocations(), locationAdvert);
     }
-    
+
     public Set<Advert> getPossibleAdvertLocations(Advert advert) {
         Set<Advert> locations = Sets.newTreeSet();
         advert.getParentResources().stream().forEach(resource -> locations.add(resource.getAdvert()));
         locations.addAll(advertDAO.getPossibleAdvertLocations(advert, locations));
         return locations;
+    }
+
+    public Set<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(String searchTerm) {
+        Set<Integer> userAdverts = null;
+        User user = userService.getCurrentUser();
+        if (user != null) {
+            userAdverts = getUserAdverts(user, opportunityScopes);
+        }
+
+        Map<Integer, AdvertLocationAddressPartSummaryDTO> summaries = Maps.newHashMap();
+        for (PrismScope opportunityScope : opportunityScopes) {
+            advertDAO.getAdvertLocationSummaries(opportunityScope, userAdverts, searchTerm).forEach(summary -> {
+                Integer id = summary.getId();
+                AdvertLocationAddressPartSummaryDTO existingSummary = summaries.get(id);
+                if (existingSummary == null) {
+                    summaries.put(id, summary);
+                } else {
+                    existingSummary.setAdvertCount(existingSummary.getAdvertCount() + summary.getAdvertCount());
+                }
+            });
+        }
+
+        return Sets.newTreeSet(summaries.values());
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,

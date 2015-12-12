@@ -15,6 +15,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.ST
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
@@ -76,6 +77,7 @@ import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
 import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
@@ -757,6 +759,43 @@ public class AdvertDAO {
 
         return (List<Advert>) criteria.addOrder(Order.asc("locationAdvert.name")) //
                 .list(); //
+    }
+
+    public List<AdvertLocationAddressPartSummaryDTO> getAdvertLocationSummaries(PrismScope scope, Collection<Integer> userAdverts, String searchTerm) {
+        Criterion networkConstraint;
+        if (isNotEmpty(userAdverts)) {
+            networkConstraint = Restrictions.disjunction() //
+                    .add(Restrictions.eq("advert.globallyVisible", true)) //
+                    .add(Restrictions.in("advert.id", userAdverts));
+        } else {
+            networkConstraint = Restrictions.eq("advert.globallyVisible", true);
+        }
+
+        return (List<AdvertLocationAddressPartSummaryDTO>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("id"))
+                        .add(Projections.property("parent.id").as("parentId")) //
+                        .add(Projections.property("type").as("type")) //
+                        .add(Projections.property("name").as("name")) //
+                        .add(Projections.countDistinct("advert.id").as("advertCount"))) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN, //
+                        Restrictions.conjunction() //
+                                .add(Restrictions.eq("resourceCondition.externalMode", true)) //
+                                .add(Restrictions.eq("resourceCondition.actionCondition", ACCEPT_APPLICATION)))
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.locations", "advertLocation", JoinType.INNER_JOIN) //
+                .createAlias("advertLocation.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
+                .createAlias("locationAddress.addressLocationParts", "addressLocationPart", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .add(networkConstraint) //
+                .add(Restrictions.like("addressLocationPart.name", searchTerm)) //
+                .add(Restrictions.eq("stateAction.action.id", PrismAction.valueOf(scope.name() + "_CREATE_APPLICATION"))) //
+                .addOrder(Order.asc("addressLocationPart.nameIndex")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationAddressPartSummaryDTO.class)) //
+                .list();
     }
 
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {

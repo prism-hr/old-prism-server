@@ -91,6 +91,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
@@ -104,6 +105,7 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresenta
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertFinancialDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertLocationAddressPartRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
@@ -421,6 +423,54 @@ public class AdvertMapper {
                         .withDescription(Objects.firstNonNull(competence.getDescription(), competence.getCompetence().getDescription()))
                         .withImportance(competence.getImportance()))
                 .collect(toList());
+    }
+
+    public List<AdvertLocationAddressPartRepresentation> getAdvertLocationAddressPartRepresentations(String searchTerm) {
+        Set<AdvertLocationAddressPartSummaryDTO> summaryDTOs = advertService.getAdvertLocationSummaries(searchTerm);
+        if (CollectionUtils.isNotEmpty(summaryDTOs)) {
+            Set<AdvertLocationAddressPartRepresentation> representations = Sets.newTreeSet();
+            TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex = TreeMultimap.create();
+            summaryDTOs.forEach(summaryDTO -> {
+                Integer parentId = summaryDTO.getParentId();
+                AdvertLocationAddressPartRepresentation representation = new AdvertLocationAddressPartRepresentation().withId(summaryDTO.getId()).withName(summaryDTO.getName())
+                        .withAdvertCount(summaryDTO.getAdvertCount());
+                if (parentId == null) {
+                    representations.add(representation);
+                } else {
+                    representationIndex.put(parentId, representation);
+                }
+            });
+
+            Set<AdvertLocationAddressPartRepresentation> currentParents = Sets.newHashSet(representations);
+            mapAdvertLocationAddressPartRepresentations(currentParents, representationIndex);
+
+            return newLinkedList(representations);
+        }
+        return newArrayList();
+    }
+
+    private void mapAdvertLocationAddressPartRepresentations(Set<AdvertLocationAddressPartRepresentation> currentParents,
+            TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex) {
+        Set<AdvertLocationAddressPartRepresentation> newParents = Sets.newHashSet();
+        while (!(representationIndex == null || representationIndex.isEmpty())) {
+            currentParents.forEach(currentParent -> {
+                Integer currentParentId = currentParent.getId();
+                Set<AdvertLocationAddressPartRepresentation> subRepresentations = representationIndex.get(currentParentId);
+
+                List<AdvertLocationAddressPartRepresentation> subParts = newLinkedList();
+                subRepresentations.forEach(subRepresentation -> {
+                    subParts.add(subRepresentation);
+                    newParents.add(subRepresentation);
+                    representationIndex.remove(currentParentId, subRepresentation);
+                });
+
+                currentParent.setSubParts(subParts);
+            });
+
+            if (isNotEmpty(newParents)) {
+                mapAdvertLocationAddressPartRepresentations(newParents, representationIndex);
+            }
+        }
     }
 
     private AdvertListRepresentation getAdvertListRepresentation(User user, OpportunitiesQueryDTO query) {

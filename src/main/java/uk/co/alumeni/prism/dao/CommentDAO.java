@@ -193,7 +193,7 @@ public class CommentDAO {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.neProperty("state", "transitionState")) //
-                .addOrder(Order.desc("sequenceIdentifier")) //
+                .addOrder(Order.desc("id")) //
                 .list();
     }
 

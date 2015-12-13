@@ -775,7 +775,6 @@ public class AdvertDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("id"))
                         .add(Projections.property("parent.id").as("parentId")) //
-                        .add(Projections.property("type").as("type")) //
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.countDistinct("advert.id").as("advertCount"))) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //

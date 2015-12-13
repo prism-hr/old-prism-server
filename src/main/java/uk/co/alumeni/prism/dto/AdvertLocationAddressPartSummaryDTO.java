@@ -4,15 +4,11 @@ import org.apache.commons.lang3.ObjectUtils;
 
 import com.google.common.base.Objects;
 
-import uk.co.alumeni.prism.domain.definitions.PrismAddressLocationPartType;
-
 public class AdvertLocationAddressPartSummaryDTO implements Comparable<AdvertLocationAddressPartSummaryDTO> {
 
     private Integer id;
 
     private Integer parentId;
-
-    private PrismAddressLocationPartType type;
 
     private String name;
 
@@ -32,14 +28,6 @@ public class AdvertLocationAddressPartSummaryDTO implements Comparable<AdvertLoc
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
-    }
-
-    public PrismAddressLocationPartType getType() {
-        return type;
-    }
-
-    public void setType(PrismAddressLocationPartType type) {
-        this.type = type;
     }
 
     public String getName() {

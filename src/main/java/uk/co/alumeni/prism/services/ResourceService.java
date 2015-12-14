@@ -339,11 +339,6 @@ public class ResourceService {
             Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
-
-                // TODO remove it later (should be called from executor)
-//                if (commentDTO.isViewEditComment()) {
-//                    updateAdvertVisibility(actionOutcome.getResource(), commentDTO.getResource());
-//                }
             }
 
         }

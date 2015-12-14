@@ -349,7 +349,7 @@ public class ActionService {
             sequenceComments = Lists.newLinkedList();
             for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
                 sequenceComments.add(transitionComment);
-                StateAction stateAction = stateService.getStateAction(comment.getState(), comment.getAction());
+                StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
                 if (BooleanUtils.isTrue(stateAction.getReplicableSequenceStart())) {
                     break;
                 }

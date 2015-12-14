@@ -1,10 +1,23 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -15,19 +28,13 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.rest.representation.action.*;
+import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.services.ActionService;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Service
 @Transactional

@@ -1837,7 +1837,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERT_CATEGORIES_FUNCTIONS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the job functions that your advert is relevant to."),
     SYSTEM_ADVERT_CATEGORIES_THEMES_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Themes"),
     SYSTEM_ADVERT_CATEGORIES_THEMES_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the themes that you wish applicants to be able to select."),
-    SYSTEM_ADVERT_CATEGORIES_LOCATIONS_ADD_NEW_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the locations that you wish applicants to be able to select."),
+    SYSTEM_ADVERT_CATEGORIES_LOCATIONS_ADD_NEW_BUTTON(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Add new Location"),
+    SYSTEM_ADVERT_CATEGORIES_LOCATIONS_ADD_NEW_INFO(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Specify the locations that you wish applicants to be able to select."),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "Closing Date"),
     SYSTEM_ADVERT_CLOSING_DATES_CLOSING_DATE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_ADVERT, "The closing date for applications."),
 

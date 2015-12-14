@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.action;
 
+import java.util.List;
+
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
-
-import java.util.List;
 
 public class ActionOutcomeReplicableRepresentation {
 

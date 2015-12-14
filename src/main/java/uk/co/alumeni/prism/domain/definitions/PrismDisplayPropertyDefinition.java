@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1555,7 +1554,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_DEPARTMENT_PROGRAMS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Programs"),
     SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_MANAGEMENT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Resource Management"),
-    SYSTEM_RESOURCE_ADVERT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Advert"),
     SYSTEM_RESOURCE_ADVERT_DETAILS_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Complete your advert, to help candidates understand whether they wish to apply."),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Categories and Themes"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Provide some tags to help candidates discover your advert."),

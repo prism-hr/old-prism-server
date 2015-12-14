@@ -1154,7 +1154,7 @@ public class AdvertService {
             }
 
             String currency = pay.getCurrency();
-            String currencyNormalized = advert.getAddress().getDomicile().getCurrency();
+            String currencyNormalized = advert.getResourceParent().getAdvert().getAddress().getDomicile().getCurrency();
             if (!currency.equals(currencyNormalized)) {
                 try {
                     LocalDate baseline = LocalDate.now();

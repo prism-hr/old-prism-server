@@ -1,62 +1,22 @@
 package uk.co.alumeni.prism.dao;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Arrays.asList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceCondition;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.resource.ResourceState;
-import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
@@ -70,6 +30,20 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -387,8 +361,8 @@ public class ResourceDAO {
             criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
         });
 
-        return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId())) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceFlatToNestedDTO.class)) //
+        return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId()))
+                .setResultTransformer(Transformers.aliasToBean(ResourceFlatToNestedDTO.class))
                 .uniqueResult();
     }
 

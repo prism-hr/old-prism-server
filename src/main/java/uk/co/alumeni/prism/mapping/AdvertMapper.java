@@ -385,10 +385,16 @@ public class AdvertMapper {
             List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
             List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
-            List<ResourceLocationRepresentationRelation> locations = getAdvertLocationRepresentations(categories);
-            List<ResourceLocationRepresentationRelation> possibleLocations = getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert));
-            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations)
-                    .withPossibleLocations(possibleLocations);
+
+            List<ResourceLocationRepresentationRelation> selectedLocations = getAdvertLocationRepresentations(categories);
+            List<ResourceLocationRepresentationRelation> locations = getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert));
+            locations.stream().forEach(location -> {
+                if (selectedLocations.contains(location)) {
+                    location.setSelected(true);
+                }
+            });
+
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
         }
         return null;
     }

@@ -1,14 +1,18 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.util.List;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+
+import java.util.List;
+import java.util.Set;
 
 public class ResourceParentRepresentation extends ResourceRepresentationExtended {
 
     private String importedCode;
 
     private List<PrismOpportunityCategory> opportunityCategories;
+
+    private Set<PrismResourceContext> contexts;
 
     @Override
     public String getImportedCode() {
@@ -28,4 +32,11 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
         this.opportunityCategories = opportunityCategories;
     }
 
+    public Set<PrismResourceContext> getContexts() {
+        return contexts;
+    }
+
+    public void setContexts(Set<PrismResourceContext> contexts) {
+        this.contexts = contexts;
+    }
 }

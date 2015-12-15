@@ -1,47 +1,14 @@
 package uk.co.alumeni.prism.mapping;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
-import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
-import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
-import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
-import static uk.co.alumeni.prism.utils.PrismListUtils.processRowSummaries;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.collect.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -49,29 +16,12 @@ import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
-import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
-import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
-import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
-import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
-import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.ResourceLocationDTO;
-import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
-import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.*;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
@@ -80,49 +30,32 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple
 import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ProgramRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ProjectRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceConditionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceCountRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.*;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListRowRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationChildCreation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationClient;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobot;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationStandard;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.AdvertService;
-import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.EntityService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.ScopeService;
-import uk.co.alumeni.prism.services.StateService;
-import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.*;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
+import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.utils.PrismListUtils.*;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 @Service
 @Transactional
@@ -142,9 +75,6 @@ public class ResourceMapper {
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private EntityService entityService;
 
     @Inject
     private StateService stateService;
@@ -310,10 +240,6 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {
-        return getResourceRepresentationSimple(resourceScope, resourceDTO, ResourceRepresentationSimple.class);
-    }
-
     public <T extends Resource, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(T resource, Class<V> returnType) {
         V representation = getResourceRepresentation(resource, returnType);
         representation.setCode(resource.getCode());
@@ -322,19 +248,6 @@ public class ResourceMapper {
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
             ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
             representation.setImportedCode(resourceOpportunity.getImportedCode());
-        }
-
-        return representation;
-    }
-
-    public <T extends ResourceSimpleDTO, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO, Class<V> returnType) {
-        V representation = getResourceRepresentation(resourceScope, resourceDTO, returnType);
-        representation.setCode(resourceDTO.getCode());
-        representation.setImportedCode(resourceDTO.getImportedCode());
-
-        PrismState stateId = resourceDTO.getStateId();
-        if (stateId != null) {
-            representation.setState(stateMapper.getStateRepresentationSimple(stateId));
         }
 
         return representation;
@@ -387,18 +300,16 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
-        resourceService.setResourceAdvertIncompleteSection(resource);
-        entityService.flush();
-
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setOpportunityCategories(asList(resource.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
+        representation.setContexts(PrismScope.getResourceContexts(resource.getOpportunityCategories()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(
+            T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
 
         representation.setOpportunityType(resource.getOpportunityType().getId());
@@ -412,7 +323,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                                           List<PrismRole> overridingRoles) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
@@ -433,8 +344,7 @@ public class ResourceMapper {
                     : ProjectRepresentationClient.class;
             return getResourceOpportunityRepresentationClient((ResourceOpportunity) resource, representationType, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
-            ApplicationRepresentationClient representation = applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
-            return representation;
+            return applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
         }
 
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
@@ -498,9 +408,10 @@ public class ResourceMapper {
                 }
             });
 
-            constraintsToTransform.keySet().forEach(c -> {
-                transformedConstraints.putAll(c, applicationContext.getBean(c.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(c)));
-            });
+            for (PrismFilterEntity filterEntity : constraintsToTransform.keySet()) {
+                List<String> possibleConstraints = applicationContext.getBean(filterEntity.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(filterEntity));
+                transformedConstraints.putAll(filterEntity, possibleConstraints);
+            }
         }
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -640,22 +551,22 @@ public class ResourceMapper {
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName) {
+                                                                                String departmentName) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, Integer backgroundImageId) {
+                                                                                String departmentName, Integer backgroundImageId) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, backgroundImageId, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, String opportunityCategories) {
+                                                                                String departmentName, String opportunityCategories) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, opportunityCategories);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, Integer backgroundImageId, String opportunityCategories) {
+                                                                                String departmentName, Integer backgroundImageId, String opportunityCategories) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 
@@ -703,7 +614,9 @@ public class ResourceMapper {
         if (returnType.equals(ResourceLocationRepresentationRelation.class)) {
             Address address = resource.getAdvert().getAddress();
             if (address != null) {
-                ((ResourceLocationRepresentationRelation) representation).setAddress(addressMapper.transform(address, AddressRepresentation.class));
+                AddressRepresentation addressRepresentation = addressMapper.transform(address, AddressRepresentation.class);
+                addressRepresentation.setDomicile(address.getDomicile().getId());
+                ((ResourceLocationRepresentationRelation) representation).setAddress(addressRepresentation);
             }
         }
 

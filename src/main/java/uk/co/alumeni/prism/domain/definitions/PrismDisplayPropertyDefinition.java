@@ -1052,12 +1052,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),
     SYSTEM_NOTIFICATION_AVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are available to attend"),
     SYSTEM_NOTIFICATION_UNAVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are unavailable to attend"),
-    SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding tasks that require your attention"),
-    SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "updates to applications, opportunities and organizations that you are following"),
-    SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointments"),
-    SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to join organizations that you manage"),
-    SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "requests to connect from organizations in your network"),
-    SYSTEM_NOTIFICATION_BUFFERED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We have been sending you lots of these requests today! So that you do not feel spammed, we are going to stop sending new requests like this until tomorrow. In the meantime, you can always log in to see whether you have any new tasks."),
+    SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding task(s) that require your attention"),
+    SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "update(s) to applications, opportunities and organizations that you are following"),
+    SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointment(s)"),
+    SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "request(s) to join organizations that you manage"),
+    SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "request(s) to connect from organizations in your network"),
+    SYSTEM_NOTIFICATION_BUFFERED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We have been sending you lots of these requests today. So that you do not feel overwhelmed, we are going to stop sending new requests like this until tomorrow. In the meantime, you can always log in to see whether you have any new activity."),
 
     /*
      * *************** SYSTEM DISPLAY PROPERTY CATEGORY *********************
@@ -1537,7 +1537,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_LATEST_POSITION(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Latest Position:"),
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_NO_DOCUMENTS(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "No Documents provided"),
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_REFERENCES(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "References:"),
-
+    SYSTEM_RESOURCES_BULK_PROCESSING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Process in bulk"), 
+    SYSTEM_RESOURCES_BULK_PROCESSING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Click to apply the same sequence of actions to other items in the list."), 
+    SYSTEM_RESOURCES_BULK_PROCESSING_WARNING(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Select the items that you wish to apply the previous sequence of actions to. When you are ready click the commit button to queue the items for processing."), 
+    SYSTEM_RESOURCES_BULK_PROCESSING_BACK_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Go back to list"),
+    SYSTEM_RESOURCES_BULK_PROCESSING_AVAILABLE_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Available"),
+    SYSTEM_RESOURCES_BULK_PROCESSING_SELECTED_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Selected"),
+    SYSTEM_RESOURCES_BULK_PROCESSING_EXCLUDED_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Excluded"),
+    SYSTEM_RESOURCES_BULK_PROCESSING_COMMIT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Queue selection for processing"),
+    
     /*
      * *************** SYSTEM RESOURCE SECTION *********************
      */

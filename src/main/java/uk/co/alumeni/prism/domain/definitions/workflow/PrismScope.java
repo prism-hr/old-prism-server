@@ -214,7 +214,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     }
 
     public static Set<PrismResourceContext> getResourceContexts(String opportunityCategories) {
-        Set<PrismResourceContext> contexts = Sets.newHashSet();
+        Set<PrismResourceContext> contexts = Sets.newLinkedHashSet();
         if (isNotEmpty(opportunityCategories)) {
             for(String categoryString : opportunityCategories.split("\\|")) {
                 PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(categoryString);

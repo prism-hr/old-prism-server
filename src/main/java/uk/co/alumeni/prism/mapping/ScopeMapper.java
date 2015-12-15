@@ -108,14 +108,15 @@ public class ScopeMapper {
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
         for (PrismScope scope : scopes) {
             Set<ResourceActionOpportunityCategoryDTO> resourceActionDTOs = resourceService.getResources(user, scope, scopes.stream()
-                    .filter(as -> as.ordinal() < scope.ordinal())
+                    .filter(filterScope -> filterScope.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("id")) //
                             .add(Projections.groupProperty("stateAction.action.id").as("actionId")) //
                             .add(Projections.property("stateAction.raisesUrgentFlag").as("prioritize")) //
-                            .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")),
+                            .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")) //
+                            .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")),
                     ResourceActionOpportunityCategoryDTO.class);
 
             Set<Integer> resources = Sets.newHashSet();

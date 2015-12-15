@@ -185,16 +185,11 @@ public class RoleService {
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {
-        Set<PrismScope> scopes = Sets.newHashSet(PrismScope.values());
         Map<PrismScope, PrismRoleCategory> defaults = Maps.newTreeMap();
-        for (PrismRole role : roleDAO.getDefaultRoleCategories(user)) {
-            PrismScope scope = role.getScope();
-            if (scopes.contains(scope)) {
-                defaults.put(scope, role.getRoleCategory());
-                scopes.remove(scope);
-                if (scopes.isEmpty()) {
-                    break;
-                }
+        for (PrismScope scope : PrismScope.values()) {
+            PrismRole defaultRole = roleDAO.getDefaultRoleCategories(scope, user);
+            if (defaultRole != null) {
+                defaults.put(scope, defaultRole.getRoleCategory());
             }
         }
         return defaults;

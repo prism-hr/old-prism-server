@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
+import static org.apache.commons.lang.ArrayUtils.contains;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
@@ -21,6 +23,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
@@ -285,16 +288,23 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getDefaultRoleCategories(User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+    public PrismRole getDefaultRoleCategories(PrismScope scope, User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("user", user)) //
-                .addOrder(Order.asc("scope.ordinal")) //
-                .addOrder(Order.desc("assignedTimestamp")) //
+                .add(Restrictions.eq("user", user));
+
+        if (contains(advertScopes, scope)) {
+            criteria.add(Restrictions.ne("resourceState.state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
+        }
+
+        return (PrismRole) criteria.addOrder(Order.desc("assignedTimestamp")) //
                 .addOrder(Order.desc("id")) //
-                .list();
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
     public List<UserRole> getUnnacceptedRolesForUser(User user) {

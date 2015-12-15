@@ -22,6 +22,8 @@ public class ResourceListFilterDTO {
 
     private List<Integer> resourceIds;
 
+    private ResourceDTO parentResource;
+
     private PrismOpportunityCategory opportunityCategory;
 
     private List<PrismOpportunityType> opportunityTypes;
@@ -68,6 +70,14 @@ public class ResourceListFilterDTO {
 
     public void setResourceIds(List<Integer> resourceIds) {
         this.resourceIds = resourceIds;
+    }
+
+    public ResourceDTO getParentResource() {
+        return parentResource;
+    }
+
+    public void setParentResource(ResourceDTO parentResource) {
+        this.parentResource = parentResource;
     }
 
     public PrismOpportunityCategory getOpportunityCategory() {
@@ -136,6 +146,11 @@ public class ResourceListFilterDTO {
 
     public ResourceListFilterDTO withResourceIds(List<Integer> resourceIds) {
         this.resourceIds = resourceIds;
+        return this;
+    }
+
+    public ResourceListFilterDTO withParentResource(ResourceDTO parentResource) {
+        this.parentResource = parentResource;
         return this;
     }
 

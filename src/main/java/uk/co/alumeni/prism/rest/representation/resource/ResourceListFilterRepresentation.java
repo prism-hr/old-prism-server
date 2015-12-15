@@ -9,65 +9,72 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public class ResourceListFilterRepresentation {
 
-	private PrismResourceListConstraint propertyName;
+    private PrismResourceListConstraint propertyName;
 
-	private List<FilterExpressionRepresentation> permittedExpressions;
+    private List<FilterExpressionRepresentation> permittedExpressions;
 
-	private PrismResourceListFilterPropertyType valueType;
+    private PrismResourceListFilterPropertyType valueType;
 
-	private List<PrismScope> permittedScopes;
+    private List<PrismScope> permittedScopes;
 
-	public ResourceListFilterRepresentation(PrismResourceListConstraint propertyName, List<FilterExpressionRepresentation> permittedExpressions,
-	        PrismResourceListFilterPropertyType valueType, List<PrismScope> permittedScopes) {
-		this.propertyName = propertyName;
-		this.permittedExpressions = permittedExpressions;
-		this.valueType = valueType;
-		this.permittedScopes = permittedScopes;
-	}
+    private boolean permittedInBulkMode;
 
-	public PrismResourceListConstraint getPropertyName() {
-		return propertyName;
-	}
+    public ResourceListFilterRepresentation(PrismResourceListConstraint propertyName, List<FilterExpressionRepresentation> permittedExpressions,
+            PrismResourceListFilterPropertyType valueType, List<PrismScope> permittedScopes, boolean permittedInBulkMode) {
+        this.propertyName = propertyName;
+        this.permittedExpressions = permittedExpressions;
+        this.valueType = valueType;
+        this.permittedScopes = permittedScopes;
+        this.permittedInBulkMode = permittedInBulkMode;
+    }
 
-	public List<FilterExpressionRepresentation> getPermittedExpressions() {
-		return permittedExpressions;
-	}
+    public PrismResourceListConstraint getPropertyName() {
+        return propertyName;
+    }
 
-	public PrismResourceListFilterPropertyType getValueType() {
-		return valueType;
-	}
+    public List<FilterExpressionRepresentation> getPermittedExpressions() {
+        return permittedExpressions;
+    }
 
-	public List<PrismScope> getPermittedScopes() {
-		return permittedScopes;
-	}
+    public PrismResourceListFilterPropertyType getValueType() {
+        return valueType;
+    }
 
-	public static class FilterExpressionRepresentation {
+    public List<PrismScope> getPermittedScopes() {
+        return permittedScopes;
+    }
 
-		private PrismResourceListFilterExpression expressionName;
+    public boolean isPermittedInBulkMode() {
+        return permittedInBulkMode;
+    }
 
-		private boolean negatable;
+    public static class FilterExpressionRepresentation {
 
-		public FilterExpressionRepresentation(PrismResourceListFilterExpression expressionName, boolean negatable) {
-	        this.expressionName = expressionName;
-	        this.negatable = negatable;
+        private PrismResourceListFilterExpression expressionName;
+
+        private boolean negatable;
+
+        public FilterExpressionRepresentation(PrismResourceListFilterExpression expressionName, boolean negatable) {
+            this.expressionName = expressionName;
+            this.negatable = negatable;
         }
 
-		public PrismResourceListFilterExpression getExpressionName() {
-			return expressionName;
-		}
+        public PrismResourceListFilterExpression getExpressionName() {
+            return expressionName;
+        }
 
-		public void setExpressionName(PrismResourceListFilterExpression expressionName) {
-			this.expressionName = expressionName;
-		}
+        public void setExpressionName(PrismResourceListFilterExpression expressionName) {
+            this.expressionName = expressionName;
+        }
 
-		public boolean isNegatable() {
-			return negatable;
-		}
+        public boolean isNegatable() {
+            return negatable;
+        }
 
-		public void setNegatable(boolean negatable) {
-			this.negatable = negatable;
-		}
+        public void setNegatable(boolean negatable) {
+            this.negatable = negatable;
+        }
 
-	}
+    }
 
 }

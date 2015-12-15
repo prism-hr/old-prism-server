@@ -266,7 +266,7 @@ public class StateService {
 
             Set<User> assignUsers = Sets.newHashSet();
             if (!Strings.isNullOrEmpty(assignUserList)) {
-                Set<UserDTO> assignUserDTOs = prismJsonMappingUtils.readCollection(stateActionPending.getAssignUserList(), Set.class, UserDTO.class);
+                Set<UserDTO> assignUserDTOs = prismJsonMappingUtils.readCollection(assignUserList, Set.class, UserDTO.class);
                 assignUsers = assignUserDTOs.stream().map(userService::getOrCreateUser).collect(Collectors.toSet());
             }
 

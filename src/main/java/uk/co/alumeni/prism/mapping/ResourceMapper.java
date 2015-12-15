@@ -628,7 +628,8 @@ public class ResourceMapper {
             List<FilterExpressionRepresentation> filterExpressions = property.getPermittedExpressions().stream()
                     .map(filterExpression -> new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()))
                     .collect(Collectors.toList());
-            filters.add(new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes()));
+            filters.add(
+                    new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes(), property.isPermittedInBulkMode()));
         }
         return filters;
     }

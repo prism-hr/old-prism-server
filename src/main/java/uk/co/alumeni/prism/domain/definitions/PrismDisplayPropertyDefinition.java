@@ -805,6 +805,16 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ENTITY_EMPLOYER_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ENTITY, "Organization"),
     SYSTEM_ENTITY_EMPLOYER_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_ENTITY, "Division"),
 
+    /*
+     * *************** SYSTEM ADVERT BENEFIT *********************
+     */
+    
+    SYSTEM_ADVERT_BENEFIT_BONUS(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Annual Bonus"),
+    SYSTEM_ADVERT_BENEFIT_ON_TARGET_EARNING(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "On Target Earning"),
+    SYSTEM_ADVERT_BENEFIT_SHARE_OPTION(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Share Options"),
+    SYSTEM_ADVERT_BENEFIT_HEALTH_INSURANCE(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Private Health Insurance"),
+    SYSTEM_ADVERT_BENEFIT_PENSION(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Pension Scheme / Contribution"),
+    SYSTEM_ADVERT_BENEFIT_OTHER(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Other"),
 
     /*
      * *************** SYSTEM ADVERT INDUSTRY *********************

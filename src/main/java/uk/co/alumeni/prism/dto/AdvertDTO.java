@@ -87,6 +87,10 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private BigDecimal payMaximum;
 
+    private String payBenefit;
+
+    private String payBenefitDescription;
+
     private LocalDate closingDate;
 
     private Long applicationCount;
@@ -399,6 +403,22 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     public void setPayMaximum(BigDecimal payMaximum) {
         this.payMaximum = payMaximum;
+    }
+
+    public String getPayBenefit() {
+        return payBenefit;
+    }
+
+    public void setPayBenefit(String payBenefit) {
+        this.payBenefit = payBenefit;
+    }
+
+    public String getPayBenefitDescription() {
+        return payBenefitDescription;
+    }
+
+    public void setPayBenefitDescription(String payBenefitDescription) {
+        this.payBenefitDescription = payBenefitDescription;
     }
 
     public LocalDate getClosingDate() {

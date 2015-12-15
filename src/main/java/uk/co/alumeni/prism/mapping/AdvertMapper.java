@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -69,6 +70,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertIndustry;
 import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
@@ -252,9 +254,17 @@ public class AdvertMapper {
 
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
-            representation.setFinancialDetail(new AdvertFinancialDetailRepresentation().withInterval(payInterval).withHoursWeekMinimum(advert.getPayHoursWeekMinimum())
-                    .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withPaymentOption(advert.getPayOption())
-                    .withCurrency(advert.getPayCurrency()).withMinimum(advert.getPayMinimum()).withMaximum(advert.getPayMaximum()));
+            AdvertFinancialDetailRepresentation financialDetailRepresentation = new AdvertFinancialDetailRepresentation().withInterval(payInterval)
+                    .withHoursWeekMinimum(advert.getPayHoursWeekMinimum())
+                    .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withPaymentOption(advert.getPayOption()).withCurrency(advert.getPayCurrency())
+                    .withMinimum(advert.getPayMinimum()).withMaximum(advert.getPayMaximum());
+
+            String benefit = advert.getPayBenefit();
+            if (benefit != null) {
+                setAdvertFinancialDetailBenefitsRepresentation(benefit, advert.getPayBenefitDescription(), financialDetailRepresentation);
+            }
+
+            representation.setFinancialDetail(financialDetailRepresentation);
         }
 
         Long applicationCount = advert.getApplicationCount();
@@ -388,11 +398,14 @@ public class AdvertMapper {
 
             List<ResourceLocationRepresentationRelation> selectedLocations = getAdvertLocationRepresentations(categories);
             List<ResourceLocationRepresentationRelation> locations = getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert));
-            locations.stream().forEach(location -> {
-                if (selectedLocations.contains(location)) {
-                    location.setSelected(true);
-                }
-            });
+
+            if (isNotEmpty(selectedLocations)) {
+                locations.stream().forEach(location -> {
+                    if (selectedLocations.contains(location)) {
+                        location.setSelected(true);
+                    }
+                });
+            }
 
             return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
         }
@@ -415,7 +428,7 @@ public class AdvertMapper {
     public List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(AdvertCategories categories) {
         Set<AdvertLocation> advertLocations = categories.getLocations();
         List<ResourceLocationRepresentationRelation> advertLocationRepresentations = null;
-        if (CollectionUtils.isNotEmpty(advertLocations)) {
+        if (isNotEmpty(advertLocations)) {
             advertLocationRepresentations = getAdvertLocationRepresentations(
                     advertLocations.stream().map(advertLocation -> advertLocation.getLocationAdvert()).collect(Collectors.toList()));
         }
@@ -595,11 +608,24 @@ public class AdvertMapper {
     private AdvertFinancialDetailRepresentation getAdvertFinancialDetailRepresentation(Advert advert) {
         AdvertFinancialDetail pay = advert.getPay();
         if (pay != null) {
-            return new AdvertFinancialDetailRepresentation().withInterval(pay.getInterval()).withHoursWeekMinimum(pay.getHoursWeekMinimum())
-                    .withHoursWeekMaximum(pay.getHoursWeekMaximum()).withPaymentOption(pay.getOption())
+            AdvertFinancialDetailRepresentation representation = new AdvertFinancialDetailRepresentation().withInterval(pay.getInterval())
+                    .withHoursWeekMinimum(pay.getHoursWeekMinimum()).withHoursWeekMaximum(pay.getHoursWeekMaximum()).withPaymentOption(pay.getOption())
                     .withCurrency(pay.getCurrency()).withMinimum(pay.getMinimum()).withMaximum(pay.getMaximum());
+
+            String benefit = pay.getBenefit();
+            if (benefit != null) {
+                setAdvertFinancialDetailBenefitsRepresentation(benefit, pay.getBenefitDescription(), representation);
+            }
+
+            return representation;
         }
+
         return null;
+    }
+
+    private void setAdvertFinancialDetailBenefitsRepresentation(String benefit, String benefitDescription, AdvertFinancialDetailRepresentation financialDetailRepresentation) {
+        financialDetailRepresentation.setBenefits(stream(benefit.split("\\|")).map(PrismAdvertBenefit::valueOf).collect(toList()));
+        financialDetailRepresentation.setBenefitsDescription(benefitDescription);
     }
 
     @SuppressWarnings("unchecked")

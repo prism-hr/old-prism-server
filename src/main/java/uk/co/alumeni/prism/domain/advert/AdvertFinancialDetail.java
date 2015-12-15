@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -50,8 +51,16 @@ public class AdvertFinancialDetail {
 
     @Column(name = "pay_maximum_normalized_hour")
     private BigDecimal maximumNormalizedHour;
+    
+    @Lob
+    @Column(name = "pay_benefit")
+    private String benefit;
 
-    @Column(name = "last_pay_conversion_date")
+    @Lob
+    @Column(name = "pay_benefit_description")
+    private String benefitDescription;
+    
+    @Column(name = "pay_last_conversion_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate lastConversionDate;
 
@@ -141,6 +150,22 @@ public class AdvertFinancialDetail {
 
     public void setMaximumNormalizedHour(BigDecimal maximumNormalizedHour) {
         this.maximumNormalizedHour = maximumNormalizedHour;
+    }
+    
+    public String getBenefit() {
+        return benefit;
+    }
+
+    public void setBenefit(String benefit) {
+        this.benefit = benefit;
+    }
+
+    public String getBenefitDescription() {
+        return benefitDescription;
+    }
+
+    public void setBenefitDescription(String benefitDescription) {
+        this.benefitDescription = benefitDescription;
     }
 
     public LocalDate getLastConversionDate() {

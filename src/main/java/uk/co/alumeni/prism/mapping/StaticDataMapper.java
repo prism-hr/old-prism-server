@@ -26,6 +26,7 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
@@ -167,7 +168,7 @@ public class StaticDataMapper {
 
         for (Class<?> enumClass : new Class[]{PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
-                PrismGender.class}) {
+                PrismGender.class, PrismAdvertBenefit.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());

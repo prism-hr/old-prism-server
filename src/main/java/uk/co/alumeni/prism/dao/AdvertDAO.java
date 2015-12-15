@@ -163,6 +163,8 @@ public class AdvertDAO {
                         .add(Projections.property("pay.currency").as("payCurrency")) //
                         .add(Projections.property("pay.minimum").as("payMaximum")) //
                         .add(Projections.property("pay.maximum").as("payMinimum")) //
+                        .add(Projections.property("pay.benefit").as("payBenefit")) //
+                        .add(Projections.property("pay.benefitDescription").as("payBenefitDescription")) //
                         .add(Projections.property("closingDate").as("closingDate")) //
                         .add(Projections.countDistinct("application.id").as("applicationCount")) //
                         .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //

@@ -1,12 +1,14 @@
 package uk.co.alumeni.prism.rest.dto.advert;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.springframework.format.annotation.NumberFormat;
 
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
 
@@ -31,6 +33,10 @@ public class AdvertFinancialDetailDTO {
     private String currency;
 
     private PrismDurationUnit interval;
+
+    private List<PrismAdvertBenefit> benefits;
+
+    private String benefitsDescription;
 
     public Integer getHoursWeekMinimum() {
         return hoursWeekMinimum;
@@ -87,4 +93,21 @@ public class AdvertFinancialDetailDTO {
     public void setInterval(PrismDurationUnit interval) {
         this.interval = interval;
     }
+
+    public List<PrismAdvertBenefit> getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(List<PrismAdvertBenefit> benefits) {
+        this.benefits = benefits;
+    }
+
+    public String getBenefitsDescription() {
+        return benefitsDescription;
+    }
+
+    public void setBenefitsDescription(String benefitsDescription) {
+        this.benefitsDescription = benefitsDescription;
+    }
+
 }

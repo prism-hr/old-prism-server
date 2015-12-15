@@ -1,7 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
 
@@ -20,6 +22,10 @@ public class AdvertFinancialDetailRepresentation {
     private BigDecimal minimum;
 
     private BigDecimal maximum;
+
+    private List<PrismAdvertBenefit> benefits;
+
+    private String benefitsDescription;
 
     public PrismDurationUnit getInterval() {
         return interval;
@@ -75,6 +81,22 @@ public class AdvertFinancialDetailRepresentation {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public List<PrismAdvertBenefit> getBenefits() {
+        return benefits;
+    }
+
+    public void setBenefits(List<PrismAdvertBenefit> benefits) {
+        this.benefits = benefits;
+    }
+
+    public String getBenefitsDescription() {
+        return benefitsDescription;
+    }
+
+    public void setBenefitsDescription(String benefitsDescription) {
+        this.benefitsDescription = benefitsDescription;
     }
 
     public AdvertFinancialDetailRepresentation withInterval(PrismDurationUnit interval) {

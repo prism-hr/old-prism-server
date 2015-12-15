@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -90,6 +91,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -321,6 +323,17 @@ public class AdvertService {
             pay.setMinimum(payDTO.getMinimum());
             pay.setMaximum(payDTO.getMaximum());
             updateFinancialDetailNormalization(advert);
+
+            String benefitString = null;
+            String benefitDescription = null;
+            List<PrismAdvertBenefit> benefitList = payDTO.getBenefits();
+            if (isNotEmpty(benefitList)) {
+                benefitString = benefitList.stream().map(benefit -> benefit.name()).collect(Collectors.joining("|"));
+                benefitDescription = payDTO.getBenefitsDescription();
+            }
+
+            pay.setBenefit(benefitString);
+            pay.setBenefitDescription(benefitDescription);
         }
     }
 

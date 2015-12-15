@@ -1,9 +1,29 @@
 package uk.co.alumeni.prism.services;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
+import static java.util.Arrays.asList;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.DISPLAY_PROPERTY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -12,13 +32,38 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
+
 import uk.co.alumeni.prism.dao.SystemDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.*;
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.definitions.PrismAgeRange;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedaction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionAssignment;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionNotification;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -26,7 +71,22 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.ActionRedaction;
+import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
+import uk.co.alumeni.prism.domain.workflow.OpportunityType;
+import uk.co.alumeni.prism.domain.workflow.Role;
+import uk.co.alumeni.prism.domain.workflow.RoleTransition;
+import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.State;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
+import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
+import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
+import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
+import uk.co.alumeni.prism.domain.workflow.StateGroup;
+import uk.co.alumeni.prism.domain.workflow.StateTermination;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
+import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
@@ -39,23 +99,6 @@ import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismFileUtils;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
-import static java.util.Arrays.asList;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 @Service
 public class SystemService {

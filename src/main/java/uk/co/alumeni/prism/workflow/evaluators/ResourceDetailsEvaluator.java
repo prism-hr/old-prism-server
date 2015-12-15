@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.workflow.evaluators;
 
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;

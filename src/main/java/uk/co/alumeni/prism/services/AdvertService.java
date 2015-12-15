@@ -1029,29 +1029,35 @@ public class AdvertService {
         }
 
         Set<AdvertIndustry> advertIndustries = categories.getIndustries();
-        categoriesDTO.getIndustries().stream().forEach(industryDTO -> {
-            AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(industryDTO);
-            entityService.save(advertIndustry);
-            advertIndustries.add(advertIndustry);
-        });
+        if (isNotEmpty(advertIndustries)) {
+            categoriesDTO.getIndustries().stream().forEach(industryDTO -> {
+                AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(industryDTO);
+                entityService.save(advertIndustry);
+                advertIndustries.add(advertIndustry);
+            });
+        }
 
         Set<AdvertFunction> advertFunctions = categories.getFunctions();
-        categoriesDTO.getFunctions().stream().forEach(functionDTO -> {
-            AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(functionDTO);
-            entityService.save(advertFunction);
-            advertFunctions.add(advertFunction);
-        });
-
+        if (isNotEmpty(advertFunctions)) {
+            categoriesDTO.getFunctions().stream().forEach(functionDTO -> {
+                AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(functionDTO);
+                entityService.save(advertFunction);
+                advertFunctions.add(advertFunction);
+            });
+   
+        }
+        
         Set<AdvertTheme> advertThemes = categories.getThemes();
-        categoriesDTO.getThemes().stream().forEach(themeDTO -> {
-            Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
-            AdvertTheme advertTheme = new AdvertTheme();
-            advertTheme.setAdvert(advert);
-            advertTheme.setTheme(theme);
-            entityService.save(advertTheme);
-            advertThemes.add(advertTheme);
-        });
-
+        if (isNotEmpty(advertThemes)) {
+            categoriesDTO.getThemes().stream().forEach(themeDTO -> {
+                Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
+                AdvertTheme advertTheme = new AdvertTheme();
+                advertTheme.setAdvert(advert);
+                advertTheme.setTheme(theme);
+                entityService.save(advertTheme);
+                advertThemes.add(advertTheme);
+            });    
+        }
     }
 
     private boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {

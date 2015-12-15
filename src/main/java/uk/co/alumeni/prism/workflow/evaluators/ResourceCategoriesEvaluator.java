@@ -8,7 +8,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 
 @Component
-public class ResourceAdvertCategoriesEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {
+public class ResourceCategoriesEvaluator implements ResourceCompletenessEvaluator<ResourceParent> {
 
     @Override
     public boolean evaluate(ResourceParent resource) {

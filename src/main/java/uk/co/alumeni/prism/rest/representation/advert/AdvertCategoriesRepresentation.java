@@ -16,8 +16,6 @@ public class AdvertCategoriesRepresentation {
 
     private List<ResourceLocationRepresentationRelation> locations;
 
-    private List<ResourceLocationRepresentationRelation> possibleLocations;
-
     public List<PrismAdvertIndustry> getIndustries() {
         return industries;
     }
@@ -50,14 +48,6 @@ public class AdvertCategoriesRepresentation {
         this.locations = locations;
     }
 
-    public List<ResourceLocationRepresentationRelation> getPossibleLocations() {
-        return possibleLocations;
-    }
-
-    public void setPossibleLocations(List<ResourceLocationRepresentationRelation> possibleLocations) {
-        this.possibleLocations = possibleLocations;
-    }
-
     public AdvertCategoriesRepresentation withIndustries(List<PrismAdvertIndustry> industries) {
         this.industries = industries;
         return this;
@@ -75,11 +65,6 @@ public class AdvertCategoriesRepresentation {
 
     public AdvertCategoriesRepresentation withLocations(List<ResourceLocationRepresentationRelation> locations) {
         this.locations = locations;
-        return this;
-    }
-
-    public AdvertCategoriesRepresentation withPossibleLocations(List<ResourceLocationRepresentationRelation> possibleLocations) {
-        this.possibleLocations = possibleLocations;
         return this;
     }
 

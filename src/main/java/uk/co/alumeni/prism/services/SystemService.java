@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static java.util.Arrays.asList;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
@@ -9,15 +10,11 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -265,8 +262,8 @@ public class SystemService {
 
     @Transactional(timeout = 600)
     public void initializeSectionCompleteness() throws Exception {
-        logger.info("Initializing resource completeness");
-        for (PrismScope scope : Arrays.asList(INSTITUTION, DEPARTMENT, PROGRAM, PROJECT)) {
+        logger.info("Initializing advert section completeness");
+        for (PrismScope scope : advertScopes) {
             for (Resource resource : entityService.getAll(scope.getResourceClass())) {
                 resourceService.setResourceAdvertIncompleteSection((ResourceParent) resource);
             }
@@ -625,7 +622,7 @@ public class SystemService {
     }
 
     private void persistConfigurations(PrismConfiguration configurationType, System system, PrismScope prismScope,
-                                       List<? extends WorkflowConfigurationDTO> configurationDTO) {
+            List<? extends WorkflowConfigurationDTO> configurationDTO) {
         if (configurationDTO.size() > 0) {
             customizationService.createConfigurationGroup(configurationType, system, prismScope,
                     prismScope.ordinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null, configurationDTO);

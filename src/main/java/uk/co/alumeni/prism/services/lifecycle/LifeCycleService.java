@@ -83,14 +83,14 @@ public class LifeCycleService {
             systemService.initializeDisplayProperties();
         }
 
-        if(BooleanUtils.isTrue(initializeSectionCompleteness)) {
-            systemService.initializeSectionCompleteness();
-        }
-
         if (doInitializeWorkflow) {
             systemService.initializeSystemUser();
         }
 
+        if(BooleanUtils.isTrue(initializeSectionCompleteness)) {
+            systemService.initializeSectionCompleteness();
+        }
+        
         if (!environment.equals("test")) {
             staticDataMapper.getData();
         }

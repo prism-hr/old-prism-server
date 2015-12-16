@@ -90,7 +90,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("commentState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("comment.action", "stateAction.action")) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
@@ -107,7 +107,7 @@ public class NotificationDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("commentState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("comment.action", "stateAction.action")) //
                 .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
@@ -209,7 +209,6 @@ public class NotificationDAO {
 
     private static Criteria getIndividualUpdateDefinitionCriteria(Criteria criteria, Comment comment, Collection<User> exclusions) {
         criteria.createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("comment.action", "stateAction.action")) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("comment.id", comment.getId())); //
 
@@ -225,8 +224,7 @@ public class NotificationDAO {
         return sessionFactory.getCurrentSession().createCriteria(CommentState.class) //
                 .setProjection(getIndividualUpdateDefinitionsProjection()) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("comment." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("comment.commentStates", "commentState", JoinType.INNER_JOIN);
+                .createAlias("comment." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN); //
     }
 
 }

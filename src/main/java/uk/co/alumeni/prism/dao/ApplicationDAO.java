@@ -312,16 +312,17 @@ public class ApplicationDAO {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByTheme(String theme) {
+    public List<Integer> getApplicationsByTheme(String theme, Boolean preference) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationTheme.class) //
                 .setProjection(Projections.groupProperty("association.id")) //
                 .createAlias("tag", "theme") //
                 .add(Restrictions.like("theme.name", theme, MatchMode.ANYWHERE)) //
+                .add(Restrictions.eq("preference", preference)) //
                 .list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Integer> getApplicationsByLocation(String location) {
+    public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationLocation.class) //
                 .setProjection(Projections.groupProperty("association.id")) //
                 .createAlias("tag", "locationAdvert", JoinType.INNER_JOIN) //
@@ -334,6 +335,7 @@ public class ApplicationDAO {
                         .add(Restrictions.like("locationDepartment.name", location, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
                         .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
+                .add(Restrictions.eq("preference", preference)) //
                 .list();
     }
 

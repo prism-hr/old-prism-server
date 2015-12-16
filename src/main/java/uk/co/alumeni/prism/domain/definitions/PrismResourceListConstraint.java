@@ -7,6 +7,10 @@ import java.util.Set;
 import com.google.common.collect.LinkedHashMultimap;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryLocationSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryThemeSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationBySecondaryLocationSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationBySecondaryThemeSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.PrismResourceListFilterSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByLocationSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByParentResourceSelector;
@@ -14,7 +18,7 @@ import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByThemeSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByUserAndRoleSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.StateByStateGroupSelector;
 
-public enum PrismResourceListConstraint {
+public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
 
     USER("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
             Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION), true), //
@@ -55,9 +59,17 @@ public enum PrismResourceListConstraint {
     INSTITUTION_USER("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByUserAndRoleSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
             Arrays.asList(PrismScope.INSTITUTION), true), //
     THEME("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByThemeSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
-            Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION), true), //
+            Arrays.asList(PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION), true), //
+    PRIMARY_THEME("resource.id", PrismResourceListFilterPropertyType.STRING, ApplicationByPrimaryThemeSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
+            Arrays.asList(PrismScope.APPLICATION), true), //
+    SECONDARY_THEME("resource.id", PrismResourceListFilterPropertyType.STRING, ApplicationBySecondaryThemeSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
+            Arrays.asList(PrismScope.APPLICATION), true), //
     LOCATION("resource.id", PrismResourceListFilterPropertyType.STRING, ResourceByLocationSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
-            Arrays.asList(PrismScope.APPLICATION, PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION), true);
+            Arrays.asList(PrismScope.PROJECT, PrismScope.PROGRAM, PrismScope.DEPARTMENT, PrismScope.INSTITUTION), true),
+    PRIMARY_LOCATION("resource.id", PrismResourceListFilterPropertyType.STRING, ApplicationByPrimaryLocationSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
+            Arrays.asList(PrismScope.APPLICATION), true),
+    SECONDARY_LOCATION("resource.id", PrismResourceListFilterPropertyType.STRING, ApplicationBySecondaryLocationSelector.class, Arrays.asList(PrismResourceListFilterExpression.CONTAIN), //
+            Arrays.asList(PrismScope.APPLICATION), true);
 
     private String propertyName;
 
@@ -134,6 +146,11 @@ public enum PrismResourceListConstraint {
 
     public boolean isPermittedInBulkMode() {
         return permittedInBulkMode;
+    }
+    
+    @Override
+    public PrismDisplayPropertyDefinition getDisplayProperty() {
+        return PrismDisplayPropertyDefinition.valueOf("SYSTEM_FILTER_PROPERTY_" + name());
     }
 
 }

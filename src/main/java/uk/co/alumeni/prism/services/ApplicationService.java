@@ -357,12 +357,12 @@ public class ApplicationService {
         return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
     }
 
-    public List<Integer> getApplicationsByTheme(String theme) {
-        return applicationDAO.getApplicationsByTheme(theme);
+    public List<Integer> getApplicationsByTheme(String theme, Boolean preference) {
+        return applicationDAO.getApplicationsByTheme(theme, preference);
     }
 
-    public List<Integer> getApplicationsByLocation(String location) {
-        return applicationDAO.getApplicationsByLocation(location);
+    public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
+        return applicationDAO.getApplicationsByLocation(location, preference);
     }
     
     public void updateApplicationOpportunityCategories(Advert advert) {

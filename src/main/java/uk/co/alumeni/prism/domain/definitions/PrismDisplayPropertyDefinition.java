@@ -122,6 +122,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_RESTORED_DISPLAY_PROPERTY_GLOBAL(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "Restored system global display property configuration"),
     SYSTEM_COMMENT_INITIALIZED_SYSTEM(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "System initialised and ready to use"),
     SYSTEM_COMMENT_CONTENT_NOT_PROVIDED(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "No comment provided"),
+    SYSTEM_COMMENT_CONTENT_BULK_PROCESSED(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "Bulk processing outcome"),
 
     /*
      * *************** SYSTEM STATE GROUP *********************

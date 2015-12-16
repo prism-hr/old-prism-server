@@ -19,7 +19,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.INVITE;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -197,7 +196,7 @@ public class UserService {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
         if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
-            stateService.createStateActionPending(resource, user, action, INVITE, stateActionPendingDTO);
+            stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
         }
     }
 

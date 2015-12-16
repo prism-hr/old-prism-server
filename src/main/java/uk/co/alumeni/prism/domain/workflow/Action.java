@@ -50,6 +50,9 @@ public class Action extends WorkflowDefinition {
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
 
+    @Column(name = "replicable_user_assignment_action", nullable = false)
+    private Boolean replicableUserAssignmentAction;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "partnership_state")
     private PrismPartnershipState partnershipState;
@@ -139,6 +142,14 @@ public class Action extends WorkflowDefinition {
 
     public void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+    }
+
+    public Boolean getReplicableUserAssignmentAction() {
+        return replicableUserAssignmentAction;
+    }
+
+    public void setReplicableUserAssignmentAction(Boolean replicableUserAssignmentAction) {
+        this.replicableUserAssignmentAction = replicableUserAssignmentAction;
     }
 
     public PrismPartnershipState getPartnershipState() {
@@ -236,6 +247,11 @@ public class Action extends WorkflowDefinition {
 
     public Action withVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+        return this;
+    }
+
+    public Action withReplicableUserAssignmentAction(Boolean replicableUserAssignmentAction) {
+        this.replicableUserAssignmentAction = replicableUserAssignmentAction;
         return this;
     }
 

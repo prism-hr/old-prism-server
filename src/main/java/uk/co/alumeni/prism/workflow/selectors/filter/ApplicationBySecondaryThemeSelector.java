@@ -8,17 +8,17 @@ import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
-import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.ApplicationService;
 
 @Component
-public class ResourceByThemeSelector implements PrismResourceListFilterSelector<Integer> {
+public class ApplicationBySecondaryThemeSelector implements PrismResourceListFilterSelector<Integer> {
 
     @Inject
-    private ResourceService resourceService;
+    private ApplicationService applicationService;
 
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-        return resourceService.getResourcesByTheme(scope, constraint.getValueString());
+        return applicationService.getApplicationsByTheme(constraint.getValueString(), false);
     }
 
 }

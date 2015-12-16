@@ -228,13 +228,16 @@ public class AdvertService {
             Map<Integer, Boolean> advertIndex = getRowsToReturn(advertDTOs, query.getOpportunityCategory(), query.getOpportunityTypes(), query.getLastSequenceIdentifier(),
                     ADVERT_LIST_PAGE_ROW_COUNT);
 
-            advertDAO.getAdverts(query, advertIndex.keySet()).forEach(advert -> {
-                Boolean recommended = BooleanUtils.toBoolean(advertIndex.get(advert.getAdvertId()));
-                String sequenceIdentifier = (recommended ? 1 : 0) + advert.getSequenceIdentifier();
-                advert.setSequenceIdentifier(sequenceIdentifier);
-                advert.setRecommended(recommended);
-                adverts.put(sequenceIdentifier, advert);
-            });
+            Set<Integer> advertIds = advertIndex.keySet();
+            if (CollectionUtils.isNotEmpty(advertIds)) {
+                advertDAO.getAdverts(query, advertIndex.keySet()).forEach(advert -> {
+                    Boolean recommended = BooleanUtils.toBoolean(advertIndex.get(advert.getAdvertId()));
+                    String sequenceIdentifier = (recommended ? 1 : 0) + advert.getSequenceIdentifier();
+                    advert.setSequenceIdentifier(sequenceIdentifier);
+                    advert.setRecommended(recommended);
+                    adverts.put(sequenceIdentifier, advert);
+                });
+            }
         }
 
         return adverts.descendingMap().values();

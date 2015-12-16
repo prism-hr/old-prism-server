@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -17,6 +18,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.INVITE;
 
 import java.lang.reflect.Field;
@@ -481,8 +483,13 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public List<Integer> getUsersForActivityRepresentation() {
-        return userDAO.getUsersForActivityNotification(now().minusDays(ACTIVITY_NOTIFICATION_INTERVAL));
+    public Set<Integer> getUsersForActivityRepresentation() {
+        Set<Integer> users = Sets.newHashSet();
+        DateTime baseline = now().minusDays(ACTIVITY_NOTIFICATION_INTERVAL);
+        stream(values()).forEach(scope -> {
+            users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
+        });
+        return users;
     }
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {

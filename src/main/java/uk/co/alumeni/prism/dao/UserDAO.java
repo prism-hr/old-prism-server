@@ -2,8 +2,10 @@ package uk.co.alumeni.prism.dao;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.ArrayUtils.contains;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
@@ -41,6 +43,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
@@ -521,10 +524,12 @@ public class UserDAO {
                 .list();
     }
 
-    public List<Integer> getUsersForActivityNotification(DateTime baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+    public List<Integer> getUsersForActivityNotification(PrismScope scope, DateTime baseline) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
                         Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
@@ -539,8 +544,13 @@ public class UserDAO {
                                 .add(Restrictions.lt("userRole.assignedTimestamp", baseline)))
                         .add(Restrictions.lt("lastLoggedInTimestamp", baseline)))
                 .add(Restrictions.eq("userAccount.enabled", true)) //
-                .add(Restrictions.eq("userAccount.sendActivityNotification", true)) //
-                .list();
+                .add(Restrictions.eq("userAccount.sendActivityNotification", true));
+
+        if (contains(advertScopes, scope)) {
+            criteria.add(Restrictions.ne("resourceState.state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
+        }
+
+        return (List<Integer>) criteria.list();
     }
 
     public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> void deleteUserProfileSection(

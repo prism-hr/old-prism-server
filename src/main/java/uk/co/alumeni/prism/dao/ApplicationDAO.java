@@ -90,9 +90,12 @@ public class ApplicationDAO {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
                         + "from Application as application " + "join application.user as user " //
-                        + "left join application.personalDetail as personalDetail " //
-                        + "join application.institution as institution " //
-                        + "join application.program as program " //
+                        + "left join user.userAccount as userAccount " //
+                        + "left join userAccount.personalDetail as userPersonalDetail " //
+                        + "left join application.personalDetail as applicationPersonalDetail " //
+                        + "left join application.institution as institution " //
+                        + "left join application.department as department " //
+                        + "left join application.program as program " //
                         + "left join program.department as department " //
                         + "left join application.project as project " //
                         + "join application.state as state " //

@@ -606,46 +606,50 @@ public class ResourceService {
             Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
             Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resourceDTOs.isEmpty()) {
-            boolean hasRedactions = actionService.hasRedactions(user, scope);
-            Set<Integer> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(), lastSequenceIdentifier, maxRecords).keySet();
-            List<ResourceListRowDTO> rowDTOs = resourceDAO.getResourceList(user, scope, parentScopes, resources, filter, hasRedactions);
+            Map<Integer, Boolean> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(), lastSequenceIdentifier, maxRecords);
 
-            if (!rowDTOs.isEmpty()) {
-                TreeMap<String, ResourceListRowDTO> rows = Maps.newTreeMap();
+            Set<Integer> resourceIds = resources.keySet();
+            if (isNotEmpty(resourceIds)) {
+                boolean hasRedactions = actionService.hasRedactions(user, scope);
+                List<ResourceListRowDTO> rowDTOs = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, hasRedactions);
 
-                Map<Integer, ResourceListRowDTO> rowIndex = rowDTOs.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
-                Set<Integer> filteredResources = rowIndex.keySet();
+                if (!rowDTOs.isEmpty()) {
+                    TreeMap<String, ResourceListRowDTO> rows = Maps.newTreeMap();
 
-                LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResources)
-                        : LinkedHashMultimap.create();
+                    Map<Integer, ResourceListRowDTO> rowIndex = rowDTOs.stream().collect(Collectors.toMap(row -> (row.getResourceId()), row -> (row)));
+                    Set<Integer> filteredResources = rowIndex.keySet();
 
-                TreeMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(user, scope, targeterEntities, filteredResources)
-                        : TreeMultimap.create();
+                    LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResources)
+                            : LinkedHashMultimap.create();
 
-                TreeMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResources);
+                    TreeMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(user, scope, targeterEntities, filteredResources)
+                            : TreeMultimap.create();
 
-                rowIndex.keySet().forEach(resourceId -> {
-                    ResourceListRowDTO rowDTO = rowIndex.get(resourceId);
-                    rowDTO.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
+                    TreeMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResources);
 
-                    Set<ActionDTO> actions = Sets.newTreeSet(permittedActions.get(resourceId));
+                    rowIndex.keySet().forEach(resourceId -> {
+                        ResourceListRowDTO rowDTO = rowIndex.get(resourceId);
+                        rowDTO.setSecondaryStateIds(Lists.newLinkedList(secondaryStates.get(resourceId)));
 
-                    boolean onlyAsPartner = onlyAsPartnerResources.contains(resourceId);
-                    creationActions.get(resourceId).forEach(creationAction -> {
-                        if (!onlyAsPartner || creationAction.getActionId().name().endsWith("_CREATE_APPLICATION")) {
-                            actions.add(creationAction);
-                        }
+                        Set<ActionDTO> actions = Sets.newTreeSet(permittedActions.get(resourceId));
+
+                        boolean onlyAsPartner = onlyAsPartnerResources.contains(resourceId);
+                        creationActions.get(resourceId).forEach(creationAction -> {
+                            if (!onlyAsPartner || creationAction.getActionId().name().endsWith("_CREATE_APPLICATION")) {
+                                actions.add(creationAction);
+                            }
+                        });
+
+                        rowDTO.setActions(Lists.newLinkedList(actions));
+
+                        Boolean urgent = BooleanUtils.toBoolean(actions.stream().anyMatch(action -> BooleanUtils.toBoolean(action.getRaisesUrgentFlag())));
+                        String sequenceIdentifier = (urgent ? 1 : 0) + rowDTO.getSequenceIdentifier();
+                        rowDTO.setSequenceIdentifier(sequenceIdentifier);
+                        rows.put(sequenceIdentifier, rowDTO);
                     });
 
-                    rowDTO.setActions(Lists.newLinkedList(actions));
-
-                    Boolean urgent = BooleanUtils.toBoolean(actions.stream().anyMatch(action -> BooleanUtils.toBoolean(action.getRaisesUrgentFlag())));
-                    String sequenceIdentifier = (urgent ? 1 : 0) + rowDTO.getSequenceIdentifier();
-                    rowDTO.setSequenceIdentifier(sequenceIdentifier);
-                    rows.put(sequenceIdentifier, rowDTO);
-                });
-
-                return rows.descendingMap().values();
+                    return rows.descendingMap().values();
+                }
             }
 
             return Lists.newArrayList();
@@ -1135,7 +1139,7 @@ public class ResourceService {
             ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = Sets.newTreeSet();
         DateTime baseline = DateTime.now().minusDays(1);
-        
+
         Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
         addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
 

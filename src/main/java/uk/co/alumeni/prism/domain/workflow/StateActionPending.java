@@ -81,7 +81,7 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
 
     @ManyToOne
     @JoinColumn(name = "template_comment_id")
-    private Comment comment;
+    private Comment templateComment;
 
     public Integer getId() {
         return id;
@@ -187,12 +187,12 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         this.assignUserMessage = assignUserMessage;
     }
 
-    public Comment getComment() {
-        return comment;
+    public Comment getTemplateComment() {
+        return templateComment;
     }
 
-    public void setComment(Comment comment) {
-        this.comment = comment;
+    public void setTemplateComment(Comment templateComment) {
+        this.templateComment = templateComment;
     }
 
     public StateActionPending withResource(Resource resource) {
@@ -230,8 +230,8 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         return this;
     }
 
-    public StateActionPending withTemplateComment(Comment comment) {
-        this.comment = comment;
+    public StateActionPending withTemplateComment(Comment templateComment) {
+        this.templateComment = templateComment;
         return this;
     }
 

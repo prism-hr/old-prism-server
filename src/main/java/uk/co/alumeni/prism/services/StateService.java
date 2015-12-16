@@ -267,7 +267,7 @@ public class StateService {
                 assignUsers = assignUserDTOs.stream().map(userService::getOrCreateUser).collect(Collectors.toSet());
             }
 
-            Comment templateComment = stateActionPending.getComment();
+            Comment templateComment = stateActionPending.getTemplateComment();
             if (templateComment == null) {
                 roleService.createUserRoles(user, resource, assignUsers, stateActionPending.getAssignUserMessage(), assignUserRole.getId());
             } else {

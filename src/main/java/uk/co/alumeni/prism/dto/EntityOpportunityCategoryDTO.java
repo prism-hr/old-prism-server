@@ -84,7 +84,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
 
     @Override
     public int compareTo(T other) {
-        return ObjectUtils.compare(other.getSequenceIdentifier(), sequenceIdentifier);
+        return ObjectUtils.compare(other.toString(), toString());
     }
 
 }

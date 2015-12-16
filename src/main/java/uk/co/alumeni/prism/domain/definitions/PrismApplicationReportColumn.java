@@ -14,10 +14,10 @@ public enum PrismApplicationReportColumn {
     ID(PrismDisplayPropertyDefinition.SYSTEM_ID, "application.id", null, false, "id", STRING), //
     USER_NAME(PrismDisplayPropertyDefinition.SYSTEM_NAME, "user.fullName", null, false, "name", STRING), //
     USER_EMAIL(PrismDisplayPropertyDefinition.SYSTEM_EMAIL, "user.email", null, false, "email", STRING), //
-    USER_DATE_OF_BIRTH(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "personalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
-    USER_GENDER(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_GENDER_LABEL, "personalDetail.gender.id", null, false, "gender", DISPLAY_PROPERTY), //
-    USER_NATIONALITY(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL, "personalDetail.nationality.id", null, false, "nationality", DISPLAY_PROPERTY), //
-    USER_DOMICILE(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL, "personalDetail.domicile.id", null, false, "countryOfBirth", DISPLAY_PROPERTY), //
+    USER_DATE_OF_BIRTH(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "userPersonalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
+    USER_GENDER(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_GENDER_LABEL, "applicationPersonalDetail.gender", null, false, "gender", DISPLAY_PROPERTY), //
+    USER_NATIONALITY(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL, "applicationPersonalDetail.nationality.id", null, false, "nationality", DISPLAY_PROPERTY), //
+    USER_DOMICILE(PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL, "applicationPersonalDetail.domicile.id", null, false, "domicile", DISPLAY_PROPERTY), //
     INSTITUTION_NAME(PrismDisplayPropertyDefinition.SYSTEM_INSTITUTION, "institution.name", null, false, "institution", STRING), //
     DEPARTMENT_NAME(PrismDisplayPropertyDefinition.SYSTEM_DEPARTMENT, "department.name", null, false, "department", STRING), //
     PROGRAM_NAME(PrismDisplayPropertyDefinition.SYSTEM_PROGRAM, "program.name", null, false, "program", STRING), //

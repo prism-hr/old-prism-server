@@ -303,7 +303,7 @@ public class NotificationService {
                         .withComment(comment).withTransitionAction(request.getActionId());
 
                 recipient = sendIndividualRequestNotification(resource, recipient, definition, definitionDTO, recentRequestCount);
-                if (recentRequestCount != null) {
+                if (recipient != null) {
                     recipients.add(recipient);
                 }
             }

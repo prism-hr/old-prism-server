@@ -70,6 +70,11 @@ public class CommentTransitionState extends CommentStateDefinition {
         this.primaryState = primaryState;
     }
 
+    public CommentTransitionState withComment(Comment comment) {
+        this.comment = comment;
+        return this;
+    }
+    
     public CommentTransitionState withState(State state) {
         this.state = state;
         return this;

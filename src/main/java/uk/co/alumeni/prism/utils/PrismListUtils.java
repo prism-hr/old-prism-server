@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -56,9 +54,7 @@ public class PrismListUtils {
                 for (String opportunityCategory : entity.getOpportunityCategories().split("\\|")) {
                     Integer summary = summaries.get(opportunityCategory);
                     PrismOpportunityType opportunityType = entity.getOpportunityType();
-                    if (!filterByOpportunityType || !opportunityCategory.equals(opportunityType.getOpportunityCategory().name())) {
-                        summaries.put(opportunityCategory, summary == null ? 1 : summary + 1);
-                    } else if (filterByOpportunityType && (opportunityType != null && opportunityTypes.contains(opportunityType))) {
+                    if (filterByOpportunityType && (opportunityType != null && opportunityTypes.contains(opportunityType))) {
                         summaries.put(opportunityCategory, summary == null ? 1 : summary + 1);
                     }
                 }
@@ -82,7 +78,7 @@ public class PrismListUtils {
         boolean returning = lastSequenceIdentifier == null;
 
         boolean filteringOpportunityCategory = filterOpportunityCategory != null;
-        boolean filteringOpportunityType = CollectionUtils.isNotEmpty(filterOpportunityTypes);
+        boolean filteringOpportunityType = isNotEmpty(filterOpportunityTypes);
         String filterOpportunityCategoryName = filteringOpportunityCategory ? filterOpportunityCategory.name() : null;
 
         Map<Integer, Boolean> entityIndex = Maps.newLinkedHashMap();

@@ -28,7 +28,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITU
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
@@ -123,7 +122,6 @@ import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
-import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
@@ -144,7 +142,6 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
 import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
 import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
-import uk.co.alumeni.prism.workflow.selectors.user.PrismReplicableActionUserAssignmentSelector;
 import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
 import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
@@ -471,14 +468,7 @@ public class ResourceService {
                         comments.stream().forEach(comment -> {
                             Action action = comment.getAction();
                             Resource resource = getById(action.getScope().getId(), resourceId);
-                            StateActionPendingDTO stateActionPendingDTO = new StateActionPendingDTO();
-
-                            Class<? extends PrismReplicableActionUserAssignmentSelector> userAssignmentSelector = action.getId().getReplicableActionUserAssignmentSelector();
-                            if (userAssignmentSelector != null) {
-                                applicationContext.getBean(userAssignmentSelector).setUserAssignments(comment, stateActionPendingDTO);
-                            }
-
-                            stateService.createStateActionPending(resource, user, action, comment.getTransitionState(), ACTION, stateActionPendingDTO);
+                            stateService.createStateActionPending(resource, comment);
                         });
                     });
                 }

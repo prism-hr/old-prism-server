@@ -36,14 +36,12 @@ import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
-import uk.co.alumeni.prism.workflow.selectors.user.ApplicationRecuiterSelector;
-import uk.co.alumeni.prism.workflow.selectors.user.PrismReplicableActionUserAssignmentSelector;
 
 public enum PrismAction implements PrismLocalizableDefinition {
 
-    APPLICATION_ASSIGN_HIRING_MANAGERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndUserAssignmentSelector()), //
-    APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndUserAssignmentSelector()), //
-    APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndUserAssignmentSelector()), //
+    APPLICATION_ASSIGN_HIRING_MANAGERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments()), //
+    APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments()), //
+    APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments()), //
     APPLICATION_COMMENT(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_COMPLETE(getDefaultViewEditApplicationActionDefinition()), //
     APPLICATION_COMPLETE_VALIDATION_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
@@ -174,6 +172,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return actionDefinition.isVisibleAction();
     }
 
+    public boolean isReplicableUserAssignmentAction() {
+        return actionDefinition.isReplicableUserAssignmentAction();
+    }
+
     public PrismPartnershipState getPartnershipState() {
         return actionDefinition.getPartnershipState();
     }
@@ -188,10 +190,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     public List<PrismActionRedaction> getRedactions() {
         return actionDefinition.getRedactions();
-    }
-
-    public Class<? extends PrismReplicableActionUserAssignmentSelector> getReplicableActionUserAssignmentSelector() {
-        return actionDefinition.getReplicableActionUserAssignmentSelector();
     }
 
     public String getZeroPaddedOrdinal() {
@@ -212,6 +210,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         private boolean visibleAction = false;
 
+        private boolean replicableUserAssignmentAction = false;
+
         private PrismPartnershipState partnershipState;
 
         private PrismPartnershipState partnershipTransitionState;
@@ -219,8 +219,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
         private PrismScope scope;
 
         private List<PrismActionRedaction> redactions = Lists.newArrayList();
-
-        private Class<? extends PrismReplicableActionUserAssignmentSelector> replicableActionUserAssignmentSelector;
 
         public boolean isSystemInvocationOnly() {
             return systemInvocationOnly;
@@ -246,6 +244,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
             return visibleAction;
         }
 
+        public boolean isReplicableUserAssignmentAction() {
+            return replicableUserAssignmentAction;
+        }
+
         public PrismPartnershipState getPartnershipState() {
             return partnershipState;
         }
@@ -260,10 +262,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public List<PrismActionRedaction> getRedactions() {
             return redactions;
-        }
-
-        public Class<? extends PrismReplicableActionUserAssignmentSelector> getReplicableActionUserAssignmentSelector() {
-            return replicableActionUserAssignmentSelector;
         }
 
         public PrismActionDefinition withSystemInvocationOnly() {
@@ -291,6 +289,11 @@ public enum PrismAction implements PrismLocalizableDefinition {
             return this;
         }
 
+        public PrismActionDefinition withReplicableUserAssignmentAction() {
+            this.replicableUserAssignmentAction = true;
+            return this;
+        }
+
         public PrismActionDefinition withPartnershipState(PrismPartnershipState partnershipState) {
             this.partnershipState = partnershipState;
             return this;
@@ -308,12 +311,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public PrismActionDefinition withRedactions(List<PrismActionRedaction> redactions) {
             this.redactions = redactions;
-            return this;
-        }
-
-        public PrismActionDefinition withReplicableActionUserAssignmentSelector(
-                Class<? extends PrismReplicableActionUserAssignmentSelector> replicableActionUserAssignmentSelector) {
-            this.replicableActionUserAssignmentSelector = replicableActionUserAssignmentSelector;
             return this;
         }
 
@@ -367,13 +364,12 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return getDefaultApplicationActionDefinition(PROCESS_RESOURCE);
     }
 
-    private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactionsAndUserAssignmentSelector() {
+    private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments() {
         return getDefaultProcessApplicationActionDefinition() //
                 .withRedactions(getDefaultApplicationActionRedactions()) //
-                .withReplicableActionUserAssignmentSelector(ApplicationRecuiterSelector.class);
+                .withReplicableUserAssignmentAction();
     }
 
-    
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactions() {
         return getDefaultProcessApplicationActionDefinition() //
                 .withRedactions(getDefaultApplicationActionRedactions());

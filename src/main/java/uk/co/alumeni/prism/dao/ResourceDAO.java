@@ -14,7 +14,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -189,7 +188,7 @@ public class ResourceDAO {
                     .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                     .createAlias("state", "state", JoinType.INNER_JOIN) //
                     .createAlias("stateActionPendings", "stateActionPending", JoinType.LEFT_OUTER_JOIN,
-                            Restrictions.eq("stateActionPending.type", ACTION)) //
+                            Restrictions.isNotNull("stateActionPending.templateComment")) //
                     .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.in("id", resourceIds)) //
                     .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
@@ -583,7 +582,7 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("stateActionPendings", "stateActionPending", JoinType.INNER_JOIN,
-                        Restrictions.eq("stateActionPending.type", ACTION)) //
+                        Restrictions.isNotNull("stateActionPending.templateComment")) //
                 .add(Restrictions.in("stateActionPending.action.id", actions)) //
                 .list();
     }

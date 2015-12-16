@@ -2,8 +2,6 @@ package uk.co.alumeni.prism.domain.workflow;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,7 +12,7 @@ import javax.persistence.Table;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -69,10 +67,6 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
     @JoinColumn(name = "transition_state_id")
     private State transitionState;
 
-    @Column(name = "state_action_pending_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PrismStateActionPendingType type;
-
     @ManyToOne
     @JoinColumn(name = "assign_user_role_id")
     private Role assignUserRole;
@@ -84,6 +78,10 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
     @Lob
     @Column(name = "assign_user_message")
     private String assignUserMessage;
+
+    @ManyToOne
+    @JoinColumn(name = "template_comment_id")
+    private Comment comment;
 
     public Integer getId() {
         return id;
@@ -165,14 +163,6 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         this.transitionState = transitionState;
     }
 
-    public PrismStateActionPendingType getType() {
-        return type;
-    }
-
-    public void setType(PrismStateActionPendingType type) {
-        this.type = type;
-    }
-
     public Role getAssignUserRole() {
         return assignUserRole;
     }
@@ -197,6 +187,14 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         this.assignUserMessage = assignUserMessage;
     }
 
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
     public StateActionPending withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -217,11 +215,6 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         return this;
     }
 
-    public StateActionPending withType(PrismStateActionPendingType type) {
-        this.type = type;
-        return this;
-    }
-
     public StateActionPending withAssignUserRole(Role assignUserRole) {
         this.assignUserRole = assignUserRole;
         return this;
@@ -234,6 +227,11 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
 
     public StateActionPending withAssignUserMessage(String assignUserMessage) {
         this.assignUserMessage = assignUserMessage;
+        return this;
+    }
+
+    public StateActionPending withTemplateComment(Comment comment) {
+        this.comment = comment;
         return this;
     }
 

@@ -583,13 +583,13 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
-    public Comment withDeclinedResponse(Boolean declinedResponse) {
-        this.declinedResponse = declinedResponse;
+    public Comment withContent(String content) {
+        this.content = content;
         return this;
     }
 
-    public Comment withContent(String content) {
-        this.content = content;
+    public Comment withDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
         return this;
     }
 
@@ -603,13 +603,18 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
-    public Comment withCreatedTimestamp(DateTime createdTimestamp) {
-        this.createdTimestamp = createdTimestamp;
+    public Comment withApplicantKnown(Boolean applicantKnown) {
+        this.applicantKnown = applicantKnown;
         return this;
     }
 
-    public Comment withApplicantKnown(Boolean applicantKnown) {
-        this.applicantKnown = applicantKnown;
+    public Comment withShared(Boolean shared) {
+        this.shared = shared;
+        return this;
+    }
+
+    public Comment withOnCourse(Boolean onCourse) {
+        this.onCourse = onCourse;
         return this;
     }
 
@@ -670,6 +675,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public Comment withRejectionReason(PrismRejectionReason rejectionReason) {
         this.rejectionReason = rejectionReason;
+        return this;
+    }
+
+    public Comment withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
         return this;
     }
 

@@ -4,8 +4,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType.ACTION;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +30,6 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionPendingType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationEvaluation;
@@ -270,17 +267,11 @@ public class StateService {
                 assignUsers = assignUserDTOs.stream().map(userService::getOrCreateUser).collect(Collectors.toSet());
             }
 
-            if (stateActionPending.getType().equals(ACTION)) {
-                Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
-                        .withTransitionState(stateActionPending.getTransitionState()).withCreatedTimestamp(DateTime.now());
-
-                for (User assignUser : assignUsers) {
-                    comment.addAssignedUser(assignUser, assignUserRole, CREATE);
-                }
-
-                actionService.executeUserAction(resource, action, comment);
-            } else {
+            Comment templateComment = stateActionPending.getComment();
+            if (templateComment == null) {
                 roleService.createUserRoles(user, resource, assignUsers, stateActionPending.getAssignUserMessage(), assignUserRole.getId());
+            } else {
+                actionService.executeUserAction(resource, action, commentService.replicateComment(resource, templateComment));
             }
         }
 
@@ -415,15 +406,16 @@ public class StateService {
         return stateDAO.getPreviousPrimaryState(resource, currentState);
     }
 
-    public StateActionPending createStateActionPending(Resource resource, User user, Action action, PrismStateActionPendingType stateActionPendingType,
-            StateActionPendingDTO stateActionPendingDTO) {
-        return createStateActionPending(resource, user, action, null, stateActionPendingType, stateActionPendingDTO);
+    public StateActionPending createStateActionPending(Resource resource, Comment templateComment) {
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(templateComment.getUser()).withAction(templateComment.getAction())
+                .withTemplateComment(templateComment);
+        entityService.save(stateActionPending);
+        return stateActionPending;
     }
 
-    public StateActionPending createStateActionPending(Resource resource, User user, Action action, State transitionState, PrismStateActionPendingType stateActionPendingType,
-            StateActionPendingDTO stateActionPendingDTO) {
-        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action).withTransitionState(transitionState)
-                .withType(stateActionPendingType).withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))
+    public StateActionPending createStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(user).withAction(action)
+                .withAssignUserRole(roleService.getById(stateActionPendingDTO.getAssignUserRole()))
                 .withAssignUserList(prismJsonMappingUtils.writeValue(stateActionPendingDTO.getAssignUserList()))
                 .withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
         entityService.save(stateActionPending);

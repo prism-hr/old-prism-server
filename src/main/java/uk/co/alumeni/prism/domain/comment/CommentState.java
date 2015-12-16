@@ -70,11 +70,6 @@ public class CommentState extends CommentStateDefinition {
         this.primaryState = primaryState;
     }
 
-    public CommentState withComment(Comment comment) {
-        this.comment = comment;
-        return this;
-    }
-
     public CommentState withState(State state) {
         this.state = state;
         return this;

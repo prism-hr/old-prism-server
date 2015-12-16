@@ -679,12 +679,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public Comment addCommentState(State state, Boolean primaryState) {
-        commentStates.add(new CommentState().withComment(this).withState(state).withPrimaryState(primaryState));
+        commentStates.add(new CommentState().withState(state).withPrimaryState(primaryState));
         return this;
     }
 
     public Comment addCommentTransitionState(State transitionState, Boolean primaryState) {
-        commentTransitionStates.add(new CommentTransitionState().withComment(this).withState(transitionState).withPrimaryState(primaryState));
+        commentTransitionStates.add(new CommentTransitionState().withState(transitionState).withPrimaryState(primaryState));
         return this;
     }
 

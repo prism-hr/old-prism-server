@@ -144,6 +144,7 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
 import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
 import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
+import uk.co.alumeni.prism.workflow.selectors.user.PrismReplicableActionUserAssignmentSelector;
 import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
 import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
@@ -472,24 +473,9 @@ public class ResourceService {
                             Resource resource = getById(action.getScope().getId(), resourceId);
                             StateActionPendingDTO stateActionPendingDTO = new StateActionPendingDTO();
 
-                            Set<CommentAssignedUser> commentAssignedUsers = comment.getAssignedUsers();
-                            if (isNotEmpty(commentAssignedUsers)) {
-                                PrismRole assignUserRole = null;
-                                List<UserDTO> assignUserList = Lists.newLinkedList();
-                                for (CommentAssignedUser commentAssignedUser : commentAssignedUsers) {
-                                    if (commentAssignedUser.getRoleTransitionType().equals(CREATE)) {
-                                        if (assignUserRole == null) {
-                                            assignUserRole = commentAssignedUser.getRole().getId();
-                                        }
-
-                                        assignUserList.add(userService.getUserDTO(commentAssignedUser.getUser()));
-                                    }
-                                }
-
-                                if (assignUserRole != null) {
-                                    stateActionPendingDTO.setAssignUserRole(assignUserRole);
-                                    stateActionPendingDTO.setAssignUserList(assignUserList);
-                                }
+                            Class<? extends PrismReplicableActionUserAssignmentSelector> userAssignmentSelector = action.getId().getReplicableActionUserAssignmentSelector();
+                            if (userAssignmentSelector != null) {
+                                applicationContext.getBean(userAssignmentSelector).setUserAssignments(comment, stateActionPendingDTO);
                             }
 
                             stateService.createStateActionPending(resource, user, action, comment.getTransitionState(), ACTION, stateActionPendingDTO);

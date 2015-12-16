@@ -16,7 +16,7 @@ public class PrismConstants {
 
     public static final Integer ADVERT_LIST_PAGE_ROW_COUNT = 25;
 
-    public static final Integer RESOURCE_LIST_PAGE_ROW_COUNT = 50;
+    public static final Integer RESOURCE_LIST_PAGE_ROW_COUNT = 1;
 
     public static final Integer PROFILE_LIST_PAGE_ROW_COUNT = 50;
 

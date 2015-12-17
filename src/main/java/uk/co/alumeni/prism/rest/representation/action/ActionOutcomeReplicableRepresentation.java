@@ -2,21 +2,21 @@ package uk.co.alumeni.prism.rest.representation.action;
 
 import java.util.List;
 
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 
 public class ActionOutcomeReplicableRepresentation {
 
-    private ResourceRepresentationSimple parentResource;
+    private ResourceListFilterDTO filter;
 
     private List<CommentRepresentation> sequenceComments;
-
-    public ResourceRepresentationSimple getParentResource() {
-        return parentResource;
+    
+    public ResourceListFilterDTO getFilter() {
+        return filter;
     }
 
-    public void setParentResource(ResourceRepresentationSimple parentResource) {
-        this.parentResource = parentResource;
+    public void setFilter(ResourceListFilterDTO filter) {
+        this.filter = filter;
     }
 
     public List<CommentRepresentation> getSequenceComments() {
@@ -27,8 +27,8 @@ public class ActionOutcomeReplicableRepresentation {
         this.sequenceComments = sequenceComments;
     }
 
-    public ActionOutcomeReplicableRepresentation withParentResource(ResourceRepresentationSimple parentResource) {
-        this.parentResource = parentResource;
+    public ActionOutcomeReplicableRepresentation withFilter(ResourceListFilterDTO filter) {
+        this.filter = filter;
         return this;
     }
 

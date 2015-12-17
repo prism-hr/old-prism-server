@@ -60,10 +60,10 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
@@ -585,14 +585,32 @@ public class ResourceDAO {
                 .add(Restrictions.in("stateActionPending.action.id", actions)) //
                 .list();
     }
+    
+    public List<Integer> getResourcesByAdvertTheme(PrismScope scope, List<Integer> advertThemes) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.themes", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("theme.id", advertThemes)) //
+                .list();
+    }
 
+    public List<Integer> getResourcesByAdvertLocation(PrismScope scope, List<Integer> advertLocations) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.locations", "location", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("location.id", advertLocations)) //
+                .list();
+    }
+    
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));
         }
 
-        ResourceDTO parentResource = filter.getParentResource();
+        ResourceIdentityDTO parentResource = filter.getParentResource();
         if (parentResource != null) {
             criteria.add(Restrictions.eq("resource." + parentResource.getScope().getLowerCamelName() + ".id", parentResource.getId()));
         }

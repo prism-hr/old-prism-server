@@ -364,9 +364,17 @@ public class ApplicationService {
     public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
         return applicationDAO.getApplicationsByLocation(location, preference);
     }
-    
+
     public void updateApplicationOpportunityCategories(Advert advert) {
         applicationDAO.updateApplicationOpportunityCategories(advert);
+    }
+
+    public List<Integer> getApplicationsByApplicationTheme(List<Integer> applicationThemes, boolean preference) {
+        return applicationDAO.getApplicationsByApplicationTheme(applicationThemes, preference);
+    }
+
+    public List<Integer> getApplicationsByApplicationLocation(List<Integer> applicationLocations, boolean preference) {
+        return applicationDAO.getApplicationsByApplicationLocation(applicationLocations, preference);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

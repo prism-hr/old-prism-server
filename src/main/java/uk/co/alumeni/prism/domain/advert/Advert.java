@@ -1,5 +1,9 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
+import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
@@ -409,13 +413,19 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     @Override
-    public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program).addProperty("project", project);
+    public int compareTo(Advert other) {
+        return ObjectUtils.compare(name, other.getName());
     }
 
     @Override
-    public int compareTo(Advert other) {
-        return ObjectUtils.compare(name, other.getName());
+    public String toString() {
+        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null).map(resource -> resource.getAdvert().getName())
+                .collect(joining(SPACE + HYPHEN + SPACE));
+    }
+
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program).addProperty("project", project);
     }
 
 }

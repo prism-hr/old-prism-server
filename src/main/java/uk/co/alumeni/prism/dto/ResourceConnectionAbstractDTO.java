@@ -14,9 +14,9 @@ public abstract class ResourceConnectionAbstractDTO implements Comparable<Resour
 
     public abstract void setInstitutionName(String institutionName);
 
-    public abstract Integer getInstitutionLogoImageId();
+    public abstract Integer getLogoImageId();
 
-    public abstract void setInstitutionLogoImageId(Integer institutionLogoImageId);
+    public abstract void setLogoImageId(Integer logoImageId);
 
     public abstract Integer getDepartmentId();
 

@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.mapping;
 
 import com.google.common.collect.*;
 import jersey.repackaged.com.google.common.base.Objects;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.LocalDate;
@@ -203,12 +204,8 @@ public class AdvertMapper {
                     .withHoursWeekMaximum(advert.getPayHoursWeekMaximum()).withPaymentOption(advert.getPayOption()).withCurrency(advert.getPayCurrency())
                     .withMinimum(advert.getPayMinimum()).withMaximum(advert.getPayMaximum());
 
-            String benefit = advert.getPayBenefit();
-            if (benefit != null) {
-                setAdvertFinancialDetailBenefitsRepresentation(benefit, advert.getPayBenefitDescription(), financialDetailRepresentation);
-            }
-
             representation.setFinancialDetail(financialDetailRepresentation);
+            setAdvertFinancialDetailBenefitsRepresentation(advert.getPayBenefit(), advert.getPayBenefitDescription(), financialDetailRepresentation);
         }
 
         Long applicationCount = advert.getApplicationCount();
@@ -292,7 +289,7 @@ public class AdvertMapper {
 
         for (AdvertTargetDTO advertTarget : advertTargets) {
             ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
-                    advertTarget.getThisInstitutionName(), advertTarget.getThisInstitutionLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
+                    advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
 
             AdvertTargetRepresentation representation = representationIndex.get(thisResourceRepresentation);
             if (representation == null) {
@@ -351,6 +348,25 @@ public class AdvertMapper {
                 });
             }
 
+            Resource resource = advert.getResource();
+            List<String> displayThemes = newLinkedList();
+            List<String> displayLocations = newLinkedList();
+            if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
+                Integer advertId = advert.getId();
+                PrismScope resourceScope = resource.getResourceScope();
+                List<Integer> resourceIds = newArrayList(resource.getId());
+
+                Set<String> advertDisplayThemes = advertService.getAdvertThemes(resourceScope, resourceIds).get(advertId);
+                if (isNotEmpty(advertDisplayThemes)) {
+                    displayThemes.addAll(advertDisplayThemes);
+                }
+
+                Set<String> advertDisplayLocations = advertService.getAdvertLocations(resourceScope, resourceIds).get(advertId);
+                if (isNotEmpty(advertDisplayLocations)) {
+                    displayLocations.addAll(advertDisplayLocations);
+                }
+            }
+
             return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
         }
         return null;
@@ -359,7 +375,7 @@ public class AdvertMapper {
     public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(AdvertCategories categories) {
         Set<AdvertTheme> advertThemes = categories.getThemes();
         List<AdvertThemeRepresentation> advertThemeRepresentations = null;
-        if (CollectionUtils.isNotEmpty(advertThemes)) {
+        if (isNotEmpty(advertThemes)) {
             advertThemeRepresentations = Lists.newLinkedList();
             for (AdvertTheme advertTheme : advertThemes) {
                 Theme theme = advertTheme.getTheme();
@@ -444,13 +460,11 @@ public class AdvertMapper {
         Set<EntityOpportunityCategoryDTO<?>> adverts = advertService.getVisibleAdverts(user, query, filterScopes);
         processRowDescriptors(adverts, summaries, query.getOpportunityTypes());
 
-        PrismScope[] parentScopes = new PrismScope[] { PROJECT, PROGRAM, DEPARTMENT, INSTITUTION };
-
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         Map<Integer, AdvertRepresentationExtended> advertIndex = Maps.newLinkedHashMap();
         advertService.getAdvertList(query, adverts).forEach(advert -> {
             PrismScope scope = advert.getScope();
-            for (PrismScope advertScope : parentScopes) {
+            for (PrismScope advertScope : advertScopes) {
                     if (advertScope.ordinal() <= scope.ordinal()) {
                     ResourceFlatToNestedDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
                     if (enclosingResourceDTO != null) {
@@ -461,36 +475,52 @@ public class AdvertMapper {
             advertIndex.put(advert.getAdvertId(), getAdvertRepresentationExtended(advert));
         });
 
-        LinkedHashMultimap<Integer, PrismStudyOption> studyOptionIndex = LinkedHashMultimap.create();
         LinkedHashMultimap<Integer, PrismActionCondition> actionConditionIndex = LinkedHashMultimap.create();
         LinkedHashMultimap<Integer, PrismAdvertIndustry> industryIndex = LinkedHashMultimap.create();
         LinkedHashMultimap<Integer, PrismAdvertFunction> functionIndex = LinkedHashMultimap.create();
-        for (PrismScope parentScope : parentScopes) {
-            Set<Integer> scopedResources = resources.get(parentScope);
+        LinkedHashMultimap<Integer, String> themeIndex = LinkedHashMultimap.create();
+        LinkedHashMultimap<Integer, String> locationIndex = LinkedHashMultimap.create();
+        LinkedHashMultimap<Integer, PrismStudyOption> studyOptionIndex = LinkedHashMultimap.create();
+        for (PrismScope advertScope : advertScopes) {
+            Set<Integer> scopedResources = resources.get(advertScope);
             if (isNotEmpty(scopedResources)) {
-                LinkedHashMultimap<Integer, PrismActionCondition> actionConditions = advertService.getAdvertActionConditions(parentScope, scopedResources);
+                LinkedHashMultimap<Integer, PrismActionCondition> actionConditions = advertService.getAdvertActionConditions(advertScope, scopedResources);
                 actionConditions.keySet().forEach(advert -> {
                     Set<PrismActionCondition> advertPartnerActions = actionConditions.get(advert);
                     if (!(isEmpty(advertPartnerActions) || actionConditionIndex.containsKey(advert))) {
                         actionConditionIndex.putAll(advert, advertPartnerActions);
                     }
                 });
-                LinkedHashMultimap<Integer, PrismAdvertIndustry> industries = advertService.getAdvertIndustries(parentScope, scopedResources);
+                LinkedHashMultimap<Integer, PrismAdvertIndustry> industries = advertService.getAdvertIndustries(advertScope, scopedResources);
                 industries.keySet().forEach(advert -> {
                     Set<PrismAdvertIndustry> advertIndustries = industries.get(advert);
                     if (!(isEmpty(advertIndustries) || industryIndex.containsKey(advert))) {
                         industryIndex.putAll(advert, advertIndustries);
                     }
                 });
-                LinkedHashMultimap<Integer, PrismAdvertFunction> functions = advertService.getAdvertFunctions(parentScope, scopedResources);
+                LinkedHashMultimap<Integer, PrismAdvertFunction> functions = advertService.getAdvertFunctions(advertScope, scopedResources);
                 functions.keySet().forEach(advert -> {
                     Set<PrismAdvertFunction> advertFunctions = functions.get(advert);
                     if (!(isEmpty(advertFunctions) || functionIndex.containsKey(advert))) {
                         functionIndex.putAll(advert, advertFunctions);
                     }
                 });
-                if (asList(PROJECT, PROGRAM).contains(parentScope)) {
-                    LinkedHashMultimap<Integer, PrismStudyOption> studyOptions = advertService.getAdvertStudyOptions(parentScope, scopedResources);
+                if (asList(PROJECT, PROGRAM).contains(advertScope)) {
+                    LinkedHashMultimap<Integer, String> themes = advertService.getAdvertThemes(advertScope, scopedResources);
+                    themes.keySet().forEach(advert -> {
+                        Set<String> advertThemes = themes.get(advert);
+                        if (!(isEmpty(advertThemes) || themeIndex.containsKey(advert))) {
+                            themeIndex.putAll(advert, advertThemes);
+                        }
+                    });
+                    LinkedHashMultimap<Integer, String> locations = advertService.getAdvertLocations(advertScope, scopedResources);
+                    locations.keySet().forEach(advert -> {
+                        Set<String> advertLocations = locations.get(advert);
+                        if (!(isEmpty(advertLocations) || locationIndex.containsKey(advert))) {
+                            locationIndex.putAll(advert, advertLocations);
+                        }
+                    });
+                    LinkedHashMultimap<Integer, PrismStudyOption> studyOptions = advertService.getAdvertStudyOptions(advertScope, scopedResources);
                     studyOptions.keySet().forEach(advert -> {
                         Set<PrismStudyOption> advertStudyOptions = studyOptions.get(advert);
                         if (!(isEmpty(advertStudyOptions) || studyOptionIndex.containsKey(advert))) {
@@ -505,14 +535,18 @@ public class AdvertMapper {
         advertIndex.keySet().forEach(advert -> {
             AdvertRepresentationExtended representation = advertIndex.get(advert);
             representation.setExternalConditions(newLinkedList(actionConditionIndex.get(advert)));
-            representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
 
             Set<PrismAdvertIndustry> industries = industryIndex.get(advert);
             Set<PrismAdvertFunction> functions = functionIndex.get(advert);
-            if (isNotEmpty(industries) || isNotEmpty(functions)) {
-                representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries)).withFunctions(newLinkedList(functions)));
+            Set<String> themes = themeIndex.get(advert);
+            Set<String> locations = locationIndex.get(advert);
+
+            if (isNotEmpty(industries) || isNotEmpty(functions) || isNotEmpty(themes) || isNotEmpty(locations)) {
+                representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries)).withFunctions(newLinkedList(functions))
+                        .withThemesDisplay(newLinkedList(themes)).withLocationsDisplay(newLinkedList(locations)));
             }
 
+            representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
             representations.put(advert, representation);
         });
 
@@ -525,7 +559,7 @@ public class AdvertMapper {
         boolean severed = isTrue(advertTarget.getThisAdvertSevered()) || isTrue(advertTarget.getOtherAdvertSevered());
         AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
                 .withResource(resourceMapper.getResourceRepresentationConnection(advertTarget.getOtherInstitutionId(), advertTarget.getOtherInstitutionName(),
-                        advertTarget.getOtherInstitutionLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
+                        advertTarget.getOtherLogoImageId(), advertTarget.getOtherDepartmentId(), advertTarget.getOtherDepartmentName(),
                         advertTarget.getOtherBackgroundId()))
                 .withCanManage(canManage).withSevered(severed).withSelected(isTrue(advertTarget.getSelected()));
 
@@ -556,11 +590,7 @@ public class AdvertMapper {
                     .withHoursWeekMinimum(pay.getHoursWeekMinimum()).withHoursWeekMaximum(pay.getHoursWeekMaximum()).withPaymentOption(pay.getOption())
                     .withCurrency(pay.getCurrency()).withMinimum(pay.getMinimum()).withMaximum(pay.getMaximum());
 
-            String benefit = pay.getBenefit();
-            if (benefit != null) {
-                setAdvertFinancialDetailBenefitsRepresentation(benefit, pay.getBenefitDescription(), representation);
-            }
-
+            setAdvertFinancialDetailBenefitsRepresentation(pay.getBenefit(), pay.getBenefitDescription(), representation);
             return representation;
         }
 
@@ -568,8 +598,10 @@ public class AdvertMapper {
     }
 
     private void setAdvertFinancialDetailBenefitsRepresentation(String benefit, String benefitDescription, AdvertFinancialDetailRepresentation financialDetailRepresentation) {
-        financialDetailRepresentation.setBenefits(stream(benefit.split("\\|")).map(PrismAdvertBenefit::valueOf).collect(toList()));
-        financialDetailRepresentation.setBenefitsDescription(benefitDescription);
+        if (benefit != null) {
+            financialDetailRepresentation.setBenefits(stream(benefit.split("\\|")).map(PrismAdvertBenefit::valueOf).collect(toList()));
+            financialDetailRepresentation.setBenefitsDescription(benefitDescription);
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -282,7 +282,7 @@ public class AdvertService {
         LinkedHashMultimap<Integer, String> themes = LinkedHashMultimap.create();
         if (isNotEmpty(resourceIds)) {
             advertDAO.getAdvertThemes(resourceScope, resourceIds).forEach(theme -> {
-                themes.put(theme.getAdvertId(), theme.getValue());
+                themes.put(theme.getAdvertId(), theme.getTheme());
             });
         }
         return themes;
@@ -291,8 +291,8 @@ public class AdvertService {
     public LinkedHashMultimap<Integer, String> getAdvertLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
         LinkedHashMultimap<Integer, String> locations = LinkedHashMultimap.create();
         if (isNotEmpty(resourceIds)) {
-            advertDAO.getAdvertLocations(resourceScope, resourceIds).forEach(theme -> {
-                String[] partsArray = theme.getValue().split("\\|");
+            advertDAO.getAdvertLocations(resourceScope, resourceIds).forEach(location -> {
+                String[] partsArray = location.getLocation().split("\\|");
 
                 int counter = 0;
                 int element = partsArray.length;
@@ -304,7 +304,7 @@ public class AdvertService {
                 }
 
                 ArrayUtils.reverse(partsArray);
-                locations.put(theme.getAdvertId(), Joiner.on(COMMA + SPACE).join(partsList));
+                locations.put(location.getAdvertId(), Joiner.on(COMMA + SPACE).join(partsList));
             });
         }
         return locations;

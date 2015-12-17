@@ -385,14 +385,17 @@ public class SystemService {
         int ordinal = 0;
         StateGroup lastStateGroup = null;
         for (PrismState prismState : PrismState.values()) {
-            StateDurationDefinition stateDurationDefinition = stateService.getStateDurationDefinitionById(prismState.getDefaultDuration());
-            Scope scope = entityService.getByProperty(Scope.class, "id", prismState.getStateGroup().getScope());
-            StateGroup stateGroup = entityService.getByProperty(StateGroup.class, "id", prismState.getStateGroup());
+            PrismStateGroup prismStateGroup = prismState.getStateGroup();
+            Scope scope = scopeService.getById(prismStateGroup.getScope());
+            
+            StateGroup stateGroup = stateService.getStateGroupById(prismStateGroup);
             if (!Objects.equal(stateGroup, lastStateGroup)) {
                 ordinal = 0;
                 lastStateGroup = stateGroup;
             }
-            State transientState = new State().withId(prismState).withOrdinal(ordinal).withStateGroup(stateGroup).withStateDurationDefinition(stateDurationDefinition)
+            
+            State transientState = new State().withId(prismState).withOrdinal(ordinal).withStateGroup(stateGroup)
+                    .withStateDurationDefinition(stateService.getStateDurationDefinitionById(prismState.getDefaultDuration()))
                     .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withScope(scope);
             entityService.createOrUpdate(transientState);
             ordinal++;

@@ -161,7 +161,7 @@ public class ResourceFlatToNestedDTO implements Comparable<Object> {
         return null;
     }
 
-    public Integer getLogoImage() {
+    public Integer getInstitutionLogoImage() {
         return getScope().equals(INSTITUTION) ? logoImageId : null;
     }
 

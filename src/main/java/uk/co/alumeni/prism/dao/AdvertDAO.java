@@ -80,6 +80,7 @@ import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
 import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
+import uk.co.alumeni.prism.dto.AdvertTagDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
@@ -296,20 +297,6 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id").as("advertId")) //
-                        .add(Projections.groupProperty("resourceStudyOption.studyOption").as("studyOption"))) //
-                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceStudyOptions", "resourceStudyOption", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("resource.id", resourceIds)) //
-                .addOrder(Order.asc("id")) //
-                .addOrder(Order.asc("resourceStudyOption.studyOption"))
-                .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
-                .list();
-    }
-
     public List<AdvertIndustryDTO> getAdvertIndustries(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return (List<AdvertIndustryDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
@@ -333,6 +320,49 @@ public class AdvertDAO {
                 .addOrder(Order.asc("id")) //
                 .addOrder(Order.asc("function.function"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertFunctionDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertTagDTO> getAdvertThemes(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertTagDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("theme.theme").as("value"))) //
+                .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("theme.theme"))
+                .setResultTransformer(Transformers.aliasToBean(AdvertTagDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertTagDTO> getAdvertLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertTagDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("locationAddressLocationPart.nameIndex").as("value"))) //
+                .createAlias("categories.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
+                .createAlias("locationAddress.addressLocationParts", "locationAddressLocationPart", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.desc("locationAddressLocationPart.nameIndex"))
+                .setResultTransformer(Transformers.aliasToBean(AdvertTagDTO.class)) //
+                .list();
+    }
+
+    public List<AdvertStudyOptionDTO> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertStudyOptionDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("advertId")) //
+                        .add(Projections.groupProperty("resourceStudyOption.studyOption").as("studyOption"))) //
+                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStudyOptions", "resourceStudyOption", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("resource.id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("resourceStudyOption.studyOption"))
+                .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
                 .list();
     }
 
@@ -945,14 +975,14 @@ public class AdvertDAO {
                 .add(Projections.property(thisAdvertReference + "Severed").as("thisAdvertSevered")) //
                 .add(Projections.groupProperty("thisInstitution.id").as("thisInstitutionId")) //
                 .add(Projections.property("thisInstitution.name").as("thisInstitutionName")) //
-                .add(Projections.property("thisInstitution.logoImage.id").as("thisInstitutionLogoImageId")) //
+                .add(Projections.property("thisInstitution.logoImage.id").as("thisLogoImageId")) //
                 .add(Projections.groupProperty("thisDepartment.id").as("thisDepartmentId")) //
                 .add(Projections.property("thisDepartment.name").as("thisDepartmentName")) //
                 .add(Projections.groupProperty("otherAdvert.id").as("otherAdvertId")) //
                 .add(Projections.property(otherAdvertReference + "Severed").as("otherAdvertSevered")) //
                 .add(Projections.groupProperty("otherInstitution.id").as("otherInstitutionId")) //
                 .add(Projections.property("otherInstitution.name").as("otherInstitutionName")) //
-                .add(Projections.property("otherInstitution.logoImage.id").as("otherInstitutionLogoImageId")) //
+                .add(Projections.property("otherInstitution.logoImage.id").as("otherLogoImageId")) //
                 .add(Projections.property("otherInstitutionAdvert.backgroundImage.id").as("otherInstitutionBackgroundImageId")) //
                 .add(Projections.groupProperty("otherDepartment.id").as("otherDepartmentId")) //
                 .add(Projections.property("otherDepartment.name").as("otherDepartmentName"))

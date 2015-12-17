@@ -373,15 +373,15 @@ public class ApplicationDAO {
                 .list();
     }
 
-    private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaries, List<Integer> secondaries) {
+    private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaryIds, List<Integer> secondaryIds) {
         Junction constraint = Restrictions.conjunction() //
-                .add(Restrictions.in(tagAlias + ".id", primaries)) //
+                .add(Restrictions.in(tagAlias + ".id", primaryIds)) //
                 .add(Restrictions.eq(tagAlias + ".preference", true));
-        if (isNotEmpty(secondaries)) {
+        if (isNotEmpty(secondaryIds)) {
             constraint = Restrictions.disjunction() //
                     .add(constraint) //
                     .add(Restrictions.conjunction() //
-                            .add(Restrictions.in(tagAlias + ".id", secondaries)) //
+                            .add(Restrictions.in(tagAlias + ".id", secondaryIds)) //
                             .add(Restrictions.ne(tagAlias + ".preference", true)));
         }
         return constraint;

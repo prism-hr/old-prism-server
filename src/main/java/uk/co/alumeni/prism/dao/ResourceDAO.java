@@ -22,7 +22,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -126,7 +125,7 @@ public class ResourceDAO {
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds, ResourceListFilterDTO filter,
             boolean hasRedactions) {
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
+        if (isNotEmpty(resourceIds)) {
             String scopeName = scope.getLowerCamelName();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass(), scopeName);
 
@@ -408,7 +407,7 @@ public class ResourceDAO {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
-                .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId"));
+                .add(Projections.property("institution.logoImage.id").as("logoImageId"));
 
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {

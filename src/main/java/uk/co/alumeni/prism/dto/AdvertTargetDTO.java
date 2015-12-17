@@ -16,7 +16,7 @@ public class AdvertTargetDTO {
 
     private String thisInstitutionName;
 
-    private Integer thisInstitutionLogoImageId;
+    private Integer thisLogoImageId;
 
     private Integer thisDepartmentId;
 
@@ -30,7 +30,7 @@ public class AdvertTargetDTO {
 
     private String otherInstitutionName;
 
-    private Integer otherInstitutionLogoImageId;
+    private Integer otherLogoImageId;
 
     private Integer otherInstitutionBackgroundImageId;
 
@@ -100,12 +100,12 @@ public class AdvertTargetDTO {
         this.thisInstitutionName = thisInstitutionName;
     }
 
-    public Integer getThisInstitutionLogoImageId() {
-        return thisInstitutionLogoImageId;
+    public Integer getThisLogoImageId() {
+        return thisLogoImageId;
     }
 
-    public void setThisInstitutionLogoImageId(Integer thisInstitutionLogoImageId) {
-        this.thisInstitutionLogoImageId = thisInstitutionLogoImageId;
+    public void setThisLogoImageId(Integer thisLogoImageId) {
+        this.thisLogoImageId = thisLogoImageId;
     }
 
     public Integer getThisDepartmentId() {
@@ -156,12 +156,12 @@ public class AdvertTargetDTO {
         this.otherInstitutionName = otherInstitutionName;
     }
 
-    public Integer getOtherInstitutionLogoImageId() {
-        return otherInstitutionLogoImageId;
+    public Integer getOtherLogoImageId() {
+        return otherLogoImageId;
     }
 
-    public void setOtherInstitutionLogoImageId(Integer otherInstitutionLogoImageId) {
-        this.otherInstitutionLogoImageId = otherInstitutionLogoImageId;
+    public void setOtherLogoImageId(Integer otherLogoImageId) {
+        this.otherLogoImageId = otherLogoImageId;
     }
 
     public Integer getOtherInstitutionBackgroundImageId() {

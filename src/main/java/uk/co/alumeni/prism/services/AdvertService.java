@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -12,6 +13,8 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
+import static uk.co.alumeni.prism.PrismConstants.COMMA;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.PrismConstants.WORK_DAYS_IN_WEEK;
 import static uk.co.alumeni.prism.PrismConstants.WORK_HOURS_IN_DAY;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
@@ -58,6 +61,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -69,6 +73,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
@@ -253,19 +258,9 @@ public class AdvertService {
         return actions;
     }
 
-    public LinkedHashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        LinkedHashMultimap<Integer, PrismStudyOption> options = LinkedHashMultimap.create();
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
-            advertDAO.getAdvertStudyOptions(resourceScope, resourceIds).forEach(option -> {
-                options.put(option.getAdvertId(), option.getStudyOption());
-            });
-        }
-        return options;
-    }
-
     public LinkedHashMultimap<Integer, PrismAdvertIndustry> getAdvertIndustries(PrismScope resourceScope, Collection<Integer> resourceIds) {
         LinkedHashMultimap<Integer, PrismAdvertIndustry> industries = LinkedHashMultimap.create();
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
+        if (isNotEmpty(resourceIds)) {
             advertDAO.getAdvertIndustries(resourceScope, resourceIds).forEach(industry -> {
                 industries.put(industry.getAdvertId(), industry.getIndustry());
             });
@@ -275,12 +270,54 @@ public class AdvertService {
 
     public LinkedHashMultimap<Integer, PrismAdvertFunction> getAdvertFunctions(PrismScope resourceScope, Collection<Integer> resourceIds) {
         LinkedHashMultimap<Integer, PrismAdvertFunction> functions = LinkedHashMultimap.create();
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
+        if (isNotEmpty(resourceIds)) {
             advertDAO.getAdvertFunctions(resourceScope, resourceIds).forEach(function -> {
                 functions.put(function.getAdvertId(), function.getFunction());
             });
         }
         return functions;
+    }
+
+    public LinkedHashMultimap<Integer, String> getAdvertThemes(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, String> themes = LinkedHashMultimap.create();
+        if (isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertThemes(resourceScope, resourceIds).forEach(theme -> {
+                themes.put(theme.getAdvertId(), theme.getValue());
+            });
+        }
+        return themes;
+    }
+
+    public LinkedHashMultimap<Integer, String> getAdvertLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, String> locations = LinkedHashMultimap.create();
+        if (isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertLocations(resourceScope, resourceIds).forEach(theme -> {
+                String[] partsArray = theme.getValue().split("\\|");
+
+                int counter = 0;
+                int element = partsArray.length;
+                List<String> partsList = newLinkedList();
+                while (counter < 2 && element > 0) {
+                    partsList.add(partsArray[(element - 1)]);
+                    counter++;
+                    element--;
+                }
+
+                ArrayUtils.reverse(partsArray);
+                locations.put(theme.getAdvertId(), Joiner.on(COMMA + SPACE).join(partsList));
+            });
+        }
+        return locations;
+    }
+
+    public LinkedHashMultimap<Integer, PrismStudyOption> getAdvertStudyOptions(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        LinkedHashMultimap<Integer, PrismStudyOption> studyOptions = LinkedHashMultimap.create();
+        if (isNotEmpty(resourceIds)) {
+            advertDAO.getAdvertStudyOptions(resourceScope, resourceIds).forEach(studyOption -> {
+                studyOptions.put(studyOption.getAdvertId(), studyOption.getStudyOption());
+            });
+        }
+        return studyOptions;
     }
 
     public Advert createAdvert(ResourceParentDTO resourceDTO, User user) {
@@ -1047,9 +1084,9 @@ public class AdvertService {
                 entityService.save(advertFunction);
                 advertFunctions.add(advertFunction);
             });
-   
+
         }
-        
+
         Set<AdvertTheme> advertThemes = categories.getThemes();
         if (isNotEmpty(advertThemes)) {
             categoriesDTO.getThemes().stream().forEach(themeDTO -> {
@@ -1059,7 +1096,7 @@ public class AdvertService {
                 advertTheme.setTheme(theme);
                 entityService.save(advertTheme);
                 advertThemes.add(advertTheme);
-            });    
+            });
         }
     }
 

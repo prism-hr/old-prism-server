@@ -813,7 +813,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     /*
      * *************** SYSTEM ADVERT BENEFIT *********************
      */
-    
+
     SYSTEM_ADVERT_BENEFIT_BONUS(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Annual Bonus"),
     SYSTEM_ADVERT_BENEFIT_ON_TARGET_EARNING(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "On Target Earning"),
     SYSTEM_ADVERT_BENEFIT_SHARE_OPTION(PrismDisplayPropertyCategory.SYSTEM_ADVERT_BENEFIT, "Share Options"),
@@ -1552,15 +1552,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_LATEST_POSITION(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Latest Position:"),
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_NO_DOCUMENTS(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "No Documents provided"),
     SYSTEM_RESOURCES_SUMMARY_APPLICATION_REFERENCES(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "References:"),
-    SYSTEM_RESOURCES_BULK_PROCESSING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Process in bulk"), 
-    SYSTEM_RESOURCES_BULK_PROCESSING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Click to apply the same sequence of actions to other items in the list."), 
-    SYSTEM_RESOURCES_BULK_PROCESSING_WARNING(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Select the items that you wish to apply the previous sequence of actions to. When you are ready click the commit button to queue the items for processing."), 
+    SYSTEM_RESOURCES_BULK_PROCESSING_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Process in bulk"),
+    SYSTEM_RESOURCES_BULK_PROCESSING_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Click to apply the same sequence of actions to other items in the list."),
+    SYSTEM_RESOURCES_BULK_PROCESSING_WARNING(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Select the items that you wish to apply the previous sequence of actions to. When you are ready click the commit button to queue the items for processing."),
     SYSTEM_RESOURCES_BULK_PROCESSING_BACK_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Go back to list"),
     SYSTEM_RESOURCES_BULK_PROCESSING_AVAILABLE_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Available"),
     SYSTEM_RESOURCES_BULK_PROCESSING_SELECTED_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Selected"),
     SYSTEM_RESOURCES_BULK_PROCESSING_EXCLUDED_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Excluded"),
     SYSTEM_RESOURCES_BULK_PROCESSING_COMMIT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Queue selection for processing"),
-    
+
     /*
      * *************** SYSTEM RESOURCE SECTION *********************
      */
@@ -1750,6 +1750,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PROJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow users to create new positions"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PARTNER_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow partnerships"),
     SYSTEM_RESOURCE_OPPORTUNITY_ACCEPT_PARTNER_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Allow third party organizations to offer positions"),
+    SYSTEM_RESOURCE_OPPORTUNITY_BENEFITS_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Benefits"),
+    SYSTEM_RESOURCE_OPPORTUNITY_BENEFITS_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Please specify any benefits you are offering"),
+    SYSTEM_RESOURCE_OPPORTUNITY_BENEFITS_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Benefits Description"),
+    SYSTEM_RESOURCE_OPPORTUNITY_BENEFITS_DESCRIPTION_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE_OPPORTUNITY, "Describe in greater detail any additional benefits that you are offering"),
 
     /*
      * *************** SYSTEM RESOURCE FAMILY CREATION *********************

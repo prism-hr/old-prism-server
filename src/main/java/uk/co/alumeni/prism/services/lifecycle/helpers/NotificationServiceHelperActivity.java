@@ -1,17 +1,15 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class NotificationServiceHelperActivity extends PrismServiceHelperAbstract {
@@ -32,9 +30,7 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersForActivityRepresentation().forEach(user -> {
-            sendUserActivityNotification(user);
-        });
+        userService.getUsersForActivityRepresentation().forEach(this::sendUserActivityNotification);
     }
 
     @Override

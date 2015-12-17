@@ -1,46 +1,15 @@
 package uk.co.alumeni.prism.mapping;
 
-import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.utils.PrismWordUtils.pluralize;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.*;
 import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismGender;
-import uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator;
-import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint;
+import uk.co.alumeni.prism.domain.definitions.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.WorkflowDefinition;
@@ -54,6 +23,17 @@ import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.utils.TimeZoneUtils;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
+import static uk.co.alumeni.prism.utils.PrismWordUtils.pluralize;
 
 @Service
 @Transactional
@@ -113,6 +93,7 @@ public class StaticDataMapper {
         staticData.putAll(getDisabilities());
         staticData.putAll(getAdvertFunctions());
         staticData.putAll(getAdvertIndustries());
+        staticData.putAll(getAdvertBenefits());
         staticData.putAll(getAgeRanges());
         return staticData;
     }
@@ -168,7 +149,7 @@ public class StaticDataMapper {
 
         for (Class<?> enumClass : new Class[]{PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
-                PrismGender.class, PrismAdvertBenefit.class}) {
+                PrismGender.class}) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
             simpleName = WordUtils.uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
@@ -272,6 +253,10 @@ public class StaticDataMapper {
 
     private Map<String, Object> getAdvertIndustries() {
         return singletonMap("advertIndustries", prismMapper.getAdvertIndustryRepresentations());
+    }
+
+    private Map<String, Object> getAdvertBenefits() {
+        return singletonMap("advertBenefits", prismMapper.getAdvertBenefitRepresentations());
     }
 
 }

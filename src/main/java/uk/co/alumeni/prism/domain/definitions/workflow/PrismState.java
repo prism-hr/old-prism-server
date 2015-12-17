@@ -80,6 +80,8 @@ import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWithd
 import uk.co.alumeni.prism.domain.definitions.workflow.system.PrismSystemRunning;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.ApplicationReferenceSelectionResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
+import uk.co.alumeni.prism.workflow.selectors.action.ApplicationByReferencesProvidedSelector;
+import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
 
 public enum PrismState {
 
@@ -112,7 +114,7 @@ public enum PrismState {
     APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApprovalPendingCompletion.class), 
     APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null,
-            PrismApplicationReference.class, ApplicationReferenceSelectionResolver.class), 
+            PrismApplicationReference.class, ApplicationReferenceSelectionResolver.class, ApplicationByReferencesProvidedSelector.class), 
     APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationReferencePendingCompletion.class), 
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
@@ -195,8 +197,10 @@ public enum PrismState {
     private Class<? extends PrismWorkflowState> workflowStateClass;
 
     private Class<? extends StateTransitionSelectionResolver> stateTransitionSelectionResolver;
+    
+    private Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector;
 
-    PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
+    private PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
             Class<? extends PrismWorkflowState> workflowStateClass) {
         this.stateGroup = stateGroup;
         this.defaultDuration = defaultDuration;
@@ -208,6 +212,13 @@ public enum PrismState {
             Class<? extends PrismWorkflowState> workflowStateClass, Class<? extends StateTransitionSelectionResolver> stateTransitionSelectionResolver) {
         this(stateGroup, defaultDuration, stateDurationEvaluation, workflowStateClass);
         this.stateTransitionSelectionResolver = stateTransitionSelectionResolver;
+    }
+    
+    private PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
+            Class<? extends PrismWorkflowState> workflowStateClass, Class<? extends StateTransitionSelectionResolver> stateTransitionSelectionResolver,
+            Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector) {
+        this(stateGroup, defaultDuration, stateDurationEvaluation, workflowStateClass, stateTransitionSelectionResolver);
+        this.replicableActionExclusionSelector = replicableActionExclusionSelector;
     }
 
     public static List<PrismStateAction> getStateActions(PrismState state) {
@@ -236,6 +247,10 @@ public enum PrismState {
 
     public Class<? extends StateTransitionSelectionResolver> getStateTransitionSelectionResolver() {
         return stateTransitionSelectionResolver;
+    }
+
+    public Class<? extends PrismResourceByParentResourceSelector> getReplicableActionExclusionSelector() {
+        return replicableActionExclusionSelector;
     }
 
 }

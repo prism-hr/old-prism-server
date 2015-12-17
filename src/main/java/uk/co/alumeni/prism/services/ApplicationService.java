@@ -65,6 +65,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
@@ -375,6 +376,14 @@ public class ApplicationService {
 
     public List<Integer> getApplicationsByApplicationLocation(List<Integer> applicationLocations, boolean preference) {
         return applicationDAO.getApplicationsByApplicationLocation(applicationLocations, preference);
+    }
+
+    public List<Integer> getApplicationsWithReferencesPending(Resource parentResource) {
+        return applicationDAO.getApplicationsWithReferencesPending(parentResource);
+    }
+
+    public List<Integer> getApplicationsWithReferencesProvided(Resource parentResource) {
+        return applicationDAO.getApplicationsWithReferencesProvided(parentResource);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

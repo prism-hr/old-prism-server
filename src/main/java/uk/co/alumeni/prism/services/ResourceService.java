@@ -145,6 +145,7 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
 import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
 import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
+import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
 import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
 import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
@@ -1095,6 +1096,16 @@ public class ResourceService {
         List<Integer> replicableSequenceResources = getResources(user, templateScope, resourceListFilterService.getReplicableActionFilter(templateResource, actions)).stream()
                 .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
         replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(templateScope, actions));
+
+        templateComments.stream().forEach(templateComment -> {
+            templateComment.getCommentTransitionStates().forEach(transition -> {
+                Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId().getReplicableActionExclusionSelector();
+                if (replicableActionExclusionSelector != null) {
+                    replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(templateResource.getParentResource()));
+                }
+            });
+        });
+
         return replicableSequenceResources;
     }
 

@@ -342,15 +342,13 @@ public class AdvertDAO {
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
                         .add(Projections.groupProperty("locationAdvert.id").as("locationAdvertId")) //
-                        .add(Projections.property("locationAddressLocationPart.nameIndex").as("location"))) //
+                        .add(Projections.max("locationAddressLocationPart.nameIndex").as("location"))) //
                 .createAlias("categories.locations", "location", JoinType.INNER_JOIN) //
                 .createAlias("location.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
                 .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
                 .createAlias("locationAddress.addressLocationParts", "locationAddressLocationPart", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
                 .addOrder(Order.asc("id")) //
-                .addOrder(Order.asc("locationAdvertId")) //
-                .addOrder(Order.desc("locationAddressLocationPart.nameIndex"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertLocationDTO.class)) //
                 .list();
     }

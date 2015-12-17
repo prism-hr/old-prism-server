@@ -10,23 +10,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.apache.commons.collections.CollectionUtils;
+
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
-
-import java.util.*;
-import java.util.Map.Entry;
-
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 public class PrismListUtils {
 

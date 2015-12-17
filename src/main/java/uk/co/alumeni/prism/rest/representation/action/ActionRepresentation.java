@@ -1,0 +1,67 @@
+package uk.co.alumeni.prism.rest.representation.action;
+
+import com.google.common.base.Objects;
+
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
+
+public class ActionRepresentation {
+
+    private PrismAction id;
+
+    private PrismActionCategory category;
+
+    private String redirectLink;
+
+    private Boolean declinable;
+
+    public PrismAction getId() {
+        return id;
+    }
+
+    public void setId(PrismAction id) {
+        this.id = id;
+    }
+
+    public PrismActionCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(PrismActionCategory category) {
+        this.category = category;
+    }
+
+    public String getRedirectLink() {
+        return redirectLink;
+    }
+
+    public void setRedirectLink(String redirectLink) {
+        this.redirectLink = redirectLink;
+    }
+
+    public Boolean getDeclinable() {
+        return declinable;
+    }
+
+    public void setDeclinable(Boolean declinable) {
+        this.declinable = declinable;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ActionRepresentation other = (ActionRepresentation) object;
+        return Objects.equal(getId(), other.getId());
+    }
+
+}

@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-public class AdvertTagDTO {
+public class AdvertThemeDTO {
 
     private Integer advertId;
 
-    private String value;
+    private String theme;
 
     public Integer getAdvertId() {
         return advertId;
@@ -14,12 +14,12 @@ public class AdvertTagDTO {
         this.advertId = advertId;
     }
 
-    public String getValue() {
-        return value;
+    public String getTheme() {
+        return theme;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
 }

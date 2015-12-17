@@ -78,10 +78,11 @@ import uk.co.alumeni.prism.dto.AdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
 import uk.co.alumeni.prism.dto.AdvertLocationAddressPartSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertLocationDTO;
 import uk.co.alumeni.prism.dto.AdvertPartnerActionDTO;
 import uk.co.alumeni.prism.dto.AdvertStudyOptionDTO;
-import uk.co.alumeni.prism.dto.AdvertTagDTO;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
+import uk.co.alumeni.prism.dto.AdvertThemeDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
@@ -323,32 +324,34 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<AdvertTagDTO> getAdvertThemes(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return (List<AdvertTagDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+    public List<AdvertThemeDTO> getAdvertThemes(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertThemeDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
-                        .add(Projections.groupProperty("theme.theme").as("value"))) //
+                        .add(Projections.groupProperty("theme.theme").as("theme"))) //
                 .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
                 .addOrder(Order.asc("id")) //
                 .addOrder(Order.asc("theme.theme"))
-                .setResultTransformer(Transformers.aliasToBean(AdvertTagDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertThemeDTO.class)) //
                 .list();
     }
 
-    public List<AdvertTagDTO> getAdvertLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return (List<AdvertTagDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+    public List<AdvertLocationDTO> getAdvertLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<AdvertLocationDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
-                        .add(Projections.groupProperty("locationAddressLocationPart.nameIndex").as("value"))) //
+                        .add(Projections.groupProperty("locationAdvert.id").as("locationAdvertId")) //
+                        .add(Projections.property("locationAddressLocationPart.nameIndex").as("location"))) //
                 .createAlias("categories.locations", "location", JoinType.INNER_JOIN) //
                 .createAlias("location.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
                 .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
                 .createAlias("locationAddress.addressLocationParts", "locationAddressLocationPart", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
                 .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("locationAdvertId")) //
                 .addOrder(Order.desc("locationAddressLocationPart.nameIndex"))
-                .setResultTransformer(Transformers.aliasToBean(AdvertTagDTO.class)) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertLocationDTO.class)) //
                 .list();
     }
 

@@ -51,6 +51,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
@@ -351,6 +352,24 @@ public class ApplicationDAO {
                 .createAlias("locations", "location", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("location.id", applicationLocations)) //
                 .add(Restrictions.eq("location.preference", preference)) //
+                .list();
+    }
+
+    public List<Integer> getApplicationsWithReferencesPending(Resource parentResource) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNull("comment")) //
+                .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
+                .list();
+    }
+
+    public List<Integer> getApplicationsWithReferencesProvided(Resource parentResource) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
+                .setProjection(Projections.groupProperty("application.id")) //
+                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNotNull("comment")) //
+                .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .list();
     }
 

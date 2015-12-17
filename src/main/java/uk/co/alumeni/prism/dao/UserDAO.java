@@ -341,7 +341,7 @@ public class UserDAO {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
-                .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId"));
+                .add(Projections.property("institution.logoImage.id").as("logoImageId"));
 
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {

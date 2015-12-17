@@ -282,7 +282,7 @@ public class UserMapper {
                 userRepresentations = newLinkedList();
                 representation = new ResourceUnverifiedUserRepresentation()
                         .withResource(resourceMapper.getResourceRepresentationConnection(institutionId, unverifiedUser.getInstitutionName(),
-                                unverifiedUser.getInstitutionLogoImageId(), departmentId, unverifiedUser.getDepartmentName()))
+                                unverifiedUser.getLogoImageId(), departmentId, unverifiedUser.getDepartmentName()))
                         .withUsers(userRepresentations);
                 representations.put(resourceKey, representation);
             } else {

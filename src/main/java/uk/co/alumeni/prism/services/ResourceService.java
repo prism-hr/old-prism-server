@@ -1103,7 +1103,7 @@ public class ResourceService {
                 replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(templateResource.getParentResource()));
             }
         });
-        
+
         return replicableSequenceResources;
     }
 
@@ -1154,19 +1154,11 @@ public class ResourceService {
         Set<Integer> resourceIds = Sets.newHashSet();
         if (scope.equals(APPLICATION)) {
             if (isNotEmpty(filterThemes)) {
-                resourceIds.addAll(applicationService.getApplicationsByApplicationTheme(filterThemes, true));
-            }
-
-            if (isNotEmpty(secondaryFilterThemes)) {
-                resourceIds.addAll(applicationService.getApplicationsByApplicationTheme(secondaryFilterThemes, false));
+                resourceIds.addAll(applicationService.getApplicationsByApplicationTheme(filterThemes, secondaryFilterThemes));
             }
 
             if (isNotEmpty(filterLocations)) {
-                resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(filterLocations, true));
-            }
-
-            if (isNotEmpty(secondaryFilterLocations)) {
-                resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(secondaryFilterLocations, false));
+                resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(filterLocations, secondaryFilterLocations));
             }
         } else if (ArrayUtils.contains(advertScopes, scope)) {
             if (isNotEmpty(filterThemes)) {

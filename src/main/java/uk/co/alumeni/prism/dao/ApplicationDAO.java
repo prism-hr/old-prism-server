@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.dao;
 import static com.amazonaws.util.StringUtils.isNullOrEmpty;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
@@ -18,6 +19,7 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -337,21 +339,19 @@ public class ApplicationDAO {
                 .executeUpdate();
     }
 
-    public List<Integer> getApplicationsByApplicationTheme(List<Integer> applicationThemes, boolean preference) {
+    public List<Integer> getApplicationsByApplicationTheme(List<Integer> themes, List<Integer> secondaryThemes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("themes", "theme", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("theme.id", applicationThemes)) //
-                .add(Restrictions.eq("theme.preference", preference)) //
+                .add(getApplicationTagCriterion("theme", themes, secondaryThemes)) //
                 .list();
     }
 
-    public List<Integer> getApplicationsByApplicationLocation(List<Integer> applicationLocations, boolean preference) {
+    public List<Integer> getApplicationsByApplicationLocation(List<Integer> locations, List<Integer> secondaryLocations) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("locations", "location", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("location.id", applicationLocations)) //
-                .add(Restrictions.eq("location.preference", preference)) //
+                .add(getApplicationTagCriterion("location", locations, secondaryLocations)) //
                 .list();
     }
 
@@ -371,6 +371,20 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("comment")) //
                 .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .list();
+    }
+
+    private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaries, List<Integer> secondaries) {
+        Junction constraint = Restrictions.conjunction() //
+                .add(Restrictions.in(tagAlias + ".id", primaries)) //
+                .add(Restrictions.eq(tagAlias + ".preference", true));
+        if (isNotEmpty(secondaries)) {
+            constraint = Restrictions.disjunction() //
+                    .add(constraint) //
+                    .add(Restrictions.conjunction() //
+                            .add(Restrictions.in(tagAlias + ".id", secondaries)) //
+                            .add(Restrictions.ne(tagAlias + ".preference", true)));
+        }
+        return constraint;
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {

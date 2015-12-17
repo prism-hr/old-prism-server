@@ -370,12 +370,12 @@ public class ApplicationService {
         applicationDAO.updateApplicationOpportunityCategories(advert);
     }
 
-    public List<Integer> getApplicationsByApplicationTheme(List<Integer> applicationThemes, boolean preference) {
-        return applicationDAO.getApplicationsByApplicationTheme(applicationThemes, preference);
+    public List<Integer> getApplicationsByApplicationTheme(List<Integer> themes, List<Integer> secondaryThemes) {
+        return applicationDAO.getApplicationsByApplicationTheme(themes, secondaryThemes);
     }
 
-    public List<Integer> getApplicationsByApplicationLocation(List<Integer> applicationLocations, boolean preference) {
-        return applicationDAO.getApplicationsByApplicationLocation(applicationLocations, preference);
+    public List<Integer> getApplicationsByApplicationLocation(List<Integer> locations, List<Integer> secondaryLocations) {
+        return applicationDAO.getApplicationsByApplicationLocation(locations, secondaryLocations);
     }
 
     public List<Integer> getApplicationsWithReferencesPending(Resource parentResource) {

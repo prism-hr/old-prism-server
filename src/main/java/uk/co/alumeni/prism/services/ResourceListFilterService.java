@@ -1,8 +1,13 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.ArrayUtils.contains;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.DESCENDING;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.getPermittedFilters;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,16 +21,25 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
+import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilterConstraint;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterTagDTO;
 
 @Service
 @Transactional
@@ -98,6 +112,68 @@ public class ResourceListFilterService {
 
         return new ResourceListFilterDTO().withUrgentOnly(false).withSortOrder(DESCENDING)
                 .withConstraints(Collections.emptyList());
+    }
+
+    public ResourceListFilterDTO getReplicableActionFilter(Resource resource, List<PrismAction> actions) {
+        return getReplicableActionFilter(resource, actions, false);
+    }
+
+    public ResourceListFilterDTO getReplicableActionFilter(Resource resource, List<PrismAction> actions, boolean includeTags) {
+        List<ResourceListFilterTagDTO> themeDTOs = newArrayList();
+        List<ResourceListFilterTagDTO> secondaryThemeDTOs = newArrayList();
+        List<ResourceListFilterTagDTO> locationDTOs = newArrayList();
+        List<ResourceListFilterTagDTO> secondaryLocationDTOs = newArrayList();
+
+        if (includeTags) {
+            PrismScope resourceScope = resource.getResourceScope();
+            if (resourceScope.equals(APPLICATION)) {
+                Application application = (Application) resource;
+                application.getThemes().forEach(applicationTheme -> {
+                    ResourceListFilterTagDTO themeDTO = new ResourceListFilterTagDTO(applicationTheme.getId(), applicationTheme.getTag().getName());
+                    if (isTrue(applicationTheme.getPreference())) {
+                        themeDTOs.add(themeDTO);
+                    } else {
+                        secondaryThemeDTOs.add(themeDTO);
+                    }
+                });
+
+                application.getLocations().forEach(applicationLocation -> {
+                    ResourceListFilterTagDTO locationDTO = new ResourceListFilterTagDTO(applicationLocation.getId(), applicationLocation.getTag().toString());
+                    if (isTrue(applicationLocation.getPreference())) {
+                        locationDTOs.add(locationDTO);
+                    } else {
+                        secondaryLocationDTOs.add(locationDTO);
+                    }
+                });
+            } else if (contains(advertScopes, resourceScope)) {
+                AdvertCategories categories = resource.getAdvert().getCategories();
+                if (categories != null) {
+                    categories.getThemes().forEach(advertTheme -> {
+                        themeDTOs.add(new ResourceListFilterTagDTO(advertTheme.getId(), advertTheme.getTheme().getName()));
+                    });
+
+                    categories.getLocations().forEach(advertLocation -> {
+                        locationDTOs.add(new ResourceListFilterTagDTO(advertLocation.getId(), advertLocation.getLocationAdvert().toString()));
+                    });
+                }
+            }
+        }
+
+        Resource parentResource = resource.getParentResource();
+        Class<? extends Resource> parentResourceClass = parentResource.getClass();
+        ResourceIdentityDTO parentResourceDTO = new ResourceIdentityDTO().withId(parentResource.getId()).withScope(parentResource.getResourceScope());
+        if (ResourceParent.class.isAssignableFrom(parentResourceClass)) {
+            parentResourceDTO.setName(((ResourceParent) parentResource).getAdvert().getName());
+            if (parentResourceClass.equals(Institution.class)) {
+                Document logoImage = ((Institution) parentResource).getLogoImage();
+                if (logoImage != null) {
+                    parentResourceDTO.setLogoImageId(logoImage.getId());
+                }
+            }
+        }
+
+        return new ResourceListFilterDTO().withParentResource(parentResourceDTO).withActionIds(actions).withThemes(themeDTOs).withSecondaryThemes(secondaryThemeDTOs)
+                .withLocations(locationDTOs).withSecondaryLocations(secondaryLocationDTOs);
     }
 
     public ResourceListFilterDTO saveOrGetByUserAndScope(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO) throws DeduplicationException {

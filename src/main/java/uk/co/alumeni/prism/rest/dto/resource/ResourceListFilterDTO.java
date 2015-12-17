@@ -11,6 +11,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 
 public class ResourceListFilterDTO {
 
@@ -22,11 +23,19 @@ public class ResourceListFilterDTO {
 
     private List<Integer> resourceIds;
 
-    private ResourceDTO parentResource;
+    private ResourceIdentityDTO parentResource;
 
     private PrismOpportunityCategory opportunityCategory;
 
     private List<PrismOpportunityType> opportunityTypes;
+
+    private List<ResourceListFilterTagDTO> themes;
+
+    private List<ResourceListFilterTagDTO> secondaryThemes;
+
+    private List<ResourceListFilterTagDTO> locations;
+
+    private List<ResourceListFilterTagDTO> secondaryLocations;
 
     private PrismFilterMatchMode matchMode;
 
@@ -72,11 +81,11 @@ public class ResourceListFilterDTO {
         this.resourceIds = resourceIds;
     }
 
-    public ResourceDTO getParentResource() {
+    public ResourceIdentityDTO getParentResource() {
         return parentResource;
     }
 
-    public void setParentResource(ResourceDTO parentResource) {
+    public void setParentResource(ResourceIdentityDTO parentResource) {
         this.parentResource = parentResource;
     }
 
@@ -94,6 +103,38 @@ public class ResourceListFilterDTO {
 
     public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
         this.opportunityTypes = opportunityTypes;
+    }
+
+    public List<ResourceListFilterTagDTO> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<ResourceListFilterTagDTO> themes) {
+        this.themes = themes;
+    }
+
+    public List<ResourceListFilterTagDTO> getSecondaryThemes() {
+        return secondaryThemes;
+    }
+
+    public void setSecondaryThemes(List<ResourceListFilterTagDTO> secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
+    }
+
+    public List<ResourceListFilterTagDTO> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<ResourceListFilterTagDTO> locations) {
+        this.locations = locations;
+    }
+
+    public List<ResourceListFilterTagDTO> getSecondaryLocations() {
+        return secondaryLocations;
+    }
+
+    public void setSecondaryLocations(List<ResourceListFilterTagDTO> secondaryLocations) {
+        this.secondaryLocations = secondaryLocations;
     }
 
     public final PrismFilterMatchMode getMatchMode() {
@@ -149,7 +190,7 @@ public class ResourceListFilterDTO {
         return this;
     }
 
-    public ResourceListFilterDTO withParentResource(ResourceDTO parentResource) {
+    public ResourceListFilterDTO withParentResource(ResourceIdentityDTO parentResource) {
         this.parentResource = parentResource;
         return this;
     }
@@ -171,6 +212,26 @@ public class ResourceListFilterDTO {
 
     public ResourceListFilterDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
+        return this;
+    }
+
+    public ResourceListFilterDTO withThemes(List<ResourceListFilterTagDTO> themes) {
+        this.themes = themes;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryThemes(List<ResourceListFilterTagDTO> secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
+        return this;
+    }
+
+    public ResourceListFilterDTO withLocations(List<ResourceListFilterTagDTO> locations) {
+        this.locations = locations;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryLocations(List<ResourceListFilterTagDTO> secondaryLocations) {
+        this.secondaryLocations = secondaryLocations;
         return this;
     }
 

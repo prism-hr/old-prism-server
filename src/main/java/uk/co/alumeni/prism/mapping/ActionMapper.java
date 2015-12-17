@@ -33,6 +33,7 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.ResourceListFilterService;
 
 @Service
 @Transactional
@@ -49,6 +50,9 @@ public class ActionMapper {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private ResourceListFilterService resourceListFilterService;
 
     public ActionRepresentation getActionRepresentation(PrismAction action) {
         return getActionRepresentation(action, ActionRepresentation.class);
@@ -112,7 +116,8 @@ public class ActionMapper {
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
             representation.setReplicable(new ActionOutcomeReplicableRepresentation()
-                    .withParentResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource().getParentResource()))
+                    .withFilter(resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
+                            replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
                     .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(Collectors.toList())));
         }
 

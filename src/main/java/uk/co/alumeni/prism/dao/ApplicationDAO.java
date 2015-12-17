@@ -61,6 +61,7 @@ import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class ApplicationDAO {
 
     @Inject
@@ -76,7 +77,6 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<User> getApplicationRefereesNotResponded(Application application) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.property("user")) //
@@ -85,7 +85,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationReportListRowDTO> getApplicationReport(Collection<Integer> applicationIds, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
@@ -115,7 +114,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_year.ftl")
@@ -123,7 +121,6 @@ public class ApplicationDAO {
                         .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_month.ftl")
@@ -132,7 +129,6 @@ public class ApplicationDAO {
                         .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_week.ftl")
@@ -177,7 +173,6 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByRejectionReason(ResourceParent parent, Collection<String> rejectionReasons) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -187,7 +182,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByQualifyingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<String> resources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationQualification.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -198,7 +192,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByEmployingResourceScope(ResourceParent parent, PrismScope resourceScope, Collection<String> resources) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationEmploymentPosition.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -209,7 +202,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getUserWithAppointmentsForApplications() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
@@ -229,7 +221,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ApplicationAppointmentDTO> getApplicationAppointments(User user) {
         return (List<ApplicationAppointmentDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
@@ -265,7 +256,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsForTargets() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -274,7 +264,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
@@ -311,7 +300,6 @@ public class ApplicationDAO {
                 .executeUpdate();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByTheme(String theme, Boolean preference) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationTheme.class) //
                 .setProjection(Projections.groupProperty("association.id")) //
@@ -321,7 +309,6 @@ public class ApplicationDAO {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationLocation.class) //
                 .setProjection(Projections.groupProperty("association.id")) //
@@ -347,6 +334,24 @@ public class ApplicationDAO {
                 .setParameter("opportunityCategories", advert.getOpportunityCategories()) //
                 .setParameter("advert", advert) //
                 .executeUpdate();
+    }
+
+    public List<Integer> getApplicationsByApplicationTheme(List<Integer> applicationThemes, boolean preference) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("themes", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("theme.id", applicationThemes)) //
+                .add(Restrictions.eq("theme.preference", preference)) //
+                .list();
+    }
+
+    public List<Integer> getApplicationsByApplicationLocation(List<Integer> applicationLocations, boolean preference) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("locations", "location", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("location.id", applicationLocations)) //
+                .add(Restrictions.eq("location.preference", preference)) //
+                .list();
     }
 
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {

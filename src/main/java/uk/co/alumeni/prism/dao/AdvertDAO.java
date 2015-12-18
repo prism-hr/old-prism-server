@@ -328,11 +328,12 @@ public class AdvertDAO {
         return (List<AdvertThemeDTO>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("advertId")) //
-                        .add(Projections.groupProperty("theme.theme").as("theme"))) //
-                .createAlias("categories.themes", "theme", JoinType.INNER_JOIN) //
+                        .add(Projections.groupProperty("theme.name").as("theme"))) //
+                .createAlias("categories.themes", "advertTheme", JoinType.INNER_JOIN) //
+                .createAlias("advertTheme.theme", "theme", JoinType.INNER_JOIN)
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
                 .addOrder(Order.asc("id")) //
-                .addOrder(Order.asc("theme.theme"))
+                .addOrder(Order.asc("theme.name"))
                 .setResultTransformer(Transformers.aliasToBean(AdvertThemeDTO.class)) //
                 .list();
     }

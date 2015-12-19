@@ -6,6 +6,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDuration
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_ESCALATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
@@ -117,6 +119,8 @@ public enum PrismState {
             PrismApplicationReference.class, ApplicationReferenceSelectionResolver.class, ApplicationByReferencesProvidedSelector.class), 
     APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationReferencePendingCompletion.class), 
+    APPLICATION_RESERVED(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_DURATION, null, null),
+    APPLICATION_RESERVED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_ESCALATE_DURATION, null, null),
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationApproved.class), 
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,

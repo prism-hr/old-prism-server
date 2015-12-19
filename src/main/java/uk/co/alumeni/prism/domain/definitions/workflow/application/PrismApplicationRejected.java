@@ -10,7 +10,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APP
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_EXHUME_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CONFIRM_REJECTION_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
@@ -46,10 +45,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditWithViewerRecruiter(state));
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
-    }
-
-    public static PrismStateAction applicationEscalateRejected() {
-        return applicationEscalate(APPLICATION_REJECTED_COMPLETED);
     }
 
     public static PrismStateAction applicationReverseRejection() {

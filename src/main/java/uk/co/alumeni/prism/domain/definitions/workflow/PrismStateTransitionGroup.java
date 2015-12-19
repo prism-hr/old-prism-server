@@ -61,6 +61,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_RESERVED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REVIEW;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_COMPLETION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK;
@@ -151,6 +152,11 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVAL) //
                     .withTransitionAction(APPLICATION_ASSIGN_HIRING_MANAGERS) //
+                    .withStateTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
+            new PrismStateTransition() //
+                    .withTransitionState(APPLICATION_RESERVED) //
+                    .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
+                    .withReplicableSequenceClose() //
                     .withStateTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED) //

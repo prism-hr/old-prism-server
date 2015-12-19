@@ -20,7 +20,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
@@ -46,7 +45,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
     }
 
     public static PrismStateAction applicationCompleteReview(PrismState state) {
-        return applicationCompleteState(PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_RETIRE_REVIEWER_GROUP);
+        return applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_RETIRE_REVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationProvideReview() {

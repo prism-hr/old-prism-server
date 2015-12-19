@@ -116,7 +116,7 @@ public class ActionMapper {
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
             representation.setReplicable(new ActionOutcomeReplicableRepresentation()
-                    .withFilter(resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
+                    .withFilter(resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(), actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
                     .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(Collectors.toList())));
         }

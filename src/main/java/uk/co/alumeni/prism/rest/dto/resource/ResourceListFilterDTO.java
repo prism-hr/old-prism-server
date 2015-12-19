@@ -31,11 +31,19 @@ public class ResourceListFilterDTO {
 
     private List<ResourceListFilterTagDTO> themes;
 
+    private Boolean themesApplied;
+
     private List<ResourceListFilterTagDTO> secondaryThemes;
+
+    private Boolean secondaryThemesApplied;
 
     private List<ResourceListFilterTagDTO> locations;
 
+    private Boolean locationsApplied;
+
     private List<ResourceListFilterTagDTO> secondaryLocations;
+
+    private Boolean secondaryLocationsApplied;
 
     private PrismFilterMatchMode matchMode;
 
@@ -113,12 +121,28 @@ public class ResourceListFilterDTO {
         this.themes = themes;
     }
 
+    public Boolean getThemesApplied() {
+        return themesApplied;
+    }
+
+    public void setThemesApplied(Boolean themesApplied) {
+        this.themesApplied = themesApplied;
+    }
+
     public List<ResourceListFilterTagDTO> getSecondaryThemes() {
         return secondaryThemes;
     }
 
     public void setSecondaryThemes(List<ResourceListFilterTagDTO> secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
+    }
+
+    public Boolean getSecondaryThemesApplied() {
+        return secondaryThemesApplied;
+    }
+
+    public void setSecondaryThemesApplied(Boolean secondaryThemesApplied) {
+        this.secondaryThemesApplied = secondaryThemesApplied;
     }
 
     public List<ResourceListFilterTagDTO> getLocations() {
@@ -129,12 +153,28 @@ public class ResourceListFilterDTO {
         this.locations = locations;
     }
 
+    public Boolean getLocationsApplied() {
+        return locationsApplied;
+    }
+
+    public void setLocationsApplied(Boolean locationsApplied) {
+        this.locationsApplied = locationsApplied;
+    }
+
     public List<ResourceListFilterTagDTO> getSecondaryLocations() {
         return secondaryLocations;
     }
 
     public void setSecondaryLocations(List<ResourceListFilterTagDTO> secondaryLocations) {
         this.secondaryLocations = secondaryLocations;
+    }
+
+    public Boolean getSecondaryLocationsApplied() {
+        return secondaryLocationsApplied;
+    }
+
+    public void setSecondaryLocationsApplied(Boolean secondaryLocationsApplied) {
+        this.secondaryLocationsApplied = secondaryLocationsApplied;
     }
 
     public final PrismFilterMatchMode getMatchMode() {
@@ -220,8 +260,18 @@ public class ResourceListFilterDTO {
         return this;
     }
 
+    public ResourceListFilterDTO withThemesApplied(Boolean themesApplied) {
+        this.themesApplied = themesApplied;
+        return this;
+    }
+
     public ResourceListFilterDTO withSecondaryThemes(List<ResourceListFilterTagDTO> secondaryThemes) {
         this.secondaryThemes = secondaryThemes;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryThemesApplied(Boolean secondaryThemesApplied) {
+        this.secondaryThemesApplied = secondaryThemesApplied;
         return this;
     }
 
@@ -230,8 +280,18 @@ public class ResourceListFilterDTO {
         return this;
     }
 
+    public ResourceListFilterDTO withLocationsApplied(Boolean locationsApplied) {
+        this.locationsApplied = locationsApplied;
+        return this;
+    }
+
     public ResourceListFilterDTO withSecondaryLocations(List<ResourceListFilterTagDTO> secondaryLocations) {
         this.secondaryLocations = secondaryLocations;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryLocationsApplied(Boolean secondaryLocationsApplied) {
+        this.secondaryLocationsApplied = secondaryLocationsApplied;
         return this;
     }
 

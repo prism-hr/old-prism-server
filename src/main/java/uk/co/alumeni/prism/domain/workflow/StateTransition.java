@@ -42,6 +42,18 @@ public class StateTransition implements UniqueEntity {
     @Column(name = "replicable_sequence_close", nullable = false)
     private Boolean replicableSequenceClose;
 
+    @Column(name = "replicable_sequence_filter_theme", nullable = false)
+    private Boolean replicableSequenceFilterTheme;
+
+    @Column(name = "replicable_sequence_filter_secondary_theme", nullable = false)
+    private Boolean replicableSequenceFilterSecondaryTheme;
+
+    @Column(name = "replicable_sequence_filter_location", nullable = false)
+    private Boolean replicableSequenceFilterLocation;
+
+    @Column(name = "replicable_sequence_filter_secondary_location", nullable = false)
+    private Boolean replicableSequenceFilterSecondaryLocation;
+
     @ManyToOne
     @JoinColumn(name = "state_transition_evaluation_id")
     private StateTransitionEvaluation stateTransitionEvaluation;
@@ -97,6 +109,38 @@ public class StateTransition implements UniqueEntity {
         this.replicableSequenceClose = replicableSequenceClose;
     }
 
+    public Boolean getReplicableSequenceFilterTheme() {
+        return replicableSequenceFilterTheme;
+    }
+
+    public void setReplicableSequenceFilterTheme(Boolean replicableSequenceFilterTheme) {
+        this.replicableSequenceFilterTheme = replicableSequenceFilterTheme;
+    }
+
+    public Boolean getReplicableSequenceFilterSecondaryTheme() {
+        return replicableSequenceFilterSecondaryTheme;
+    }
+
+    public void setReplicableSequenceFilterSecondaryTheme(Boolean replicableSequenceFilterSecondaryTheme) {
+        this.replicableSequenceFilterSecondaryTheme = replicableSequenceFilterSecondaryTheme;
+    }
+
+    public Boolean getReplicableSequenceFilterLocation() {
+        return replicableSequenceFilterLocation;
+    }
+
+    public void setReplicableSequenceFilterLocation(Boolean replicableSequenceFilterLocation) {
+        this.replicableSequenceFilterLocation = replicableSequenceFilterLocation;
+    }
+
+    public Boolean getReplicableSequenceFilterSecondaryLocation() {
+        return replicableSequenceFilterSecondaryLocation;
+    }
+
+    public void setReplicableSequenceFilterSecondaryLocation(Boolean replicableSequenceFilterSecondaryLocation) {
+        this.replicableSequenceFilterSecondaryLocation = replicableSequenceFilterSecondaryLocation;
+    }
+
     public final StateTransitionEvaluation getStateTransitionEvaluation() {
         return stateTransitionEvaluation;
     }
@@ -134,6 +178,26 @@ public class StateTransition implements UniqueEntity {
 
     public StateTransition withReplicableSequenceClose(Boolean replicableSequenceClose) {
         this.replicableSequenceClose = replicableSequenceClose;
+        return this;
+    }
+
+    public StateTransition withReplicableSequenceFilterTheme(Boolean replicableSequenceFilterTheme) {
+        this.replicableSequenceFilterTheme = replicableSequenceFilterTheme;
+        return this;
+    }
+
+    public StateTransition withReplicableSequenceFilterSecondaryTheme(Boolean replicableSequenceFilterSecondaryTheme) {
+        this.replicableSequenceFilterSecondaryTheme = replicableSequenceFilterSecondaryTheme;
+        return this;
+    }
+
+    public StateTransition withReplicableSequenceFilterLocation(Boolean replicableSequenceFilterLocation) {
+        this.replicableSequenceFilterLocation = replicableSequenceFilterLocation;
+        return this;
+    }
+
+    public StateTransition withReplicableSequenceFilterSecondaryLocation(Boolean replicableSequenceFilterSecondaryLocation) {
+        this.replicableSequenceFilterSecondaryLocation = replicableSequenceFilterSecondaryLocation;
         return this;
     }
 

@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ArrayUtils.contains;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.DESCENDING;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.getPermittedFilters;
@@ -35,6 +35,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceListFilterConstraint;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
@@ -114,11 +115,11 @@ public class ResourceListFilterService {
                 .withConstraints(Collections.emptyList());
     }
 
-    public ResourceListFilterDTO getReplicableActionFilter(Resource resource, List<PrismAction> actions) {
-        return getReplicableActionFilter(resource, actions, false);
+    public ResourceListFilterDTO getReplicableActionFilter(Resource resource, StateTransition stateTransition, List<PrismAction> actions) {
+        return getReplicableActionFilter(resource, stateTransition, actions, false);
     }
 
-    public ResourceListFilterDTO getReplicableActionFilter(Resource resource, List<PrismAction> actions, boolean includeTags) {
+    public ResourceListFilterDTO getReplicableActionFilter(Resource resource, StateTransition stateTransition, List<PrismAction> actions, boolean includeTags) {
         List<ResourceListFilterTagDTO> themeDTOs = newArrayList();
         List<ResourceListFilterTagDTO> secondaryThemeDTOs = newArrayList();
         List<ResourceListFilterTagDTO> locationDTOs = newArrayList();
@@ -172,8 +173,11 @@ public class ResourceListFilterService {
             }
         }
 
-        return new ResourceListFilterDTO().withParentResource(parentResourceDTO).withActionIds(actions).withThemes(themeDTOs).withSecondaryThemes(secondaryThemeDTOs)
-                .withLocations(locationDTOs).withSecondaryLocations(secondaryLocationDTOs);
+        return new ResourceListFilterDTO().withParentResource(parentResourceDTO).withActionIds(actions).withThemes(themeDTOs)
+                .withThemesApplied(stateTransition.getReplicableSequenceFilterTheme()).withSecondaryThemes(secondaryThemeDTOs)
+                .withSecondaryThemesApplied(stateTransition.getReplicableSequenceFilterSecondaryTheme())
+                .withLocations(locationDTOs).withLocationsApplied(stateTransition.getReplicableSequenceFilterLocation()).withSecondaryLocations(secondaryLocationDTOs)
+                .withSecondaryLocationsApplied(stateTransition.getReplicableSequenceFilterSecondaryLocation());
     }
 
     public ResourceListFilterDTO saveOrGetByUserAndScope(User user, PrismScope scopeId, ResourceListFilterDTO filterDTO) throws DeduplicationException {

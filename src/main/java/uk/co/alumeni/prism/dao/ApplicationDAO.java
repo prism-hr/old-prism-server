@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.amazonaws.util.StringUtils.isNullOrEmpty;
+import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -35,7 +36,6 @@ import org.springframework.stereotype.Repository;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -390,7 +390,7 @@ public class ApplicationDAO {
     private SQLQuery getApplicationProcessingSummaryQuery(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints, String templateLocation) {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
-        List<String> filterConstraintExpressions = Lists.newLinkedList();
+        List<String> filterConstraintExpressions = newLinkedList();
         constraints.keySet().forEach(fe -> {
             Set<String> constraintValues = constraints.get(fe);
             if (CollectionUtils.isNotEmpty(constraintValues)) {

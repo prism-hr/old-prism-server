@@ -1090,11 +1090,12 @@ public class ResourceService {
         return resourceDAO.getResourcesByLocation(resourceScope, location);
     }
 
-    public List<Integer> getResourcesForStateActionPendingAssignment(User user, Resource templateResource, List<Comment> templateComments) {
+    public List<Integer> getResourcesForStateActionPendingAssignment(User user, Resource templateResource, StateTransition stateTransition, List<Comment> templateComments) {
         PrismScope templateScope = templateResource.getResourceScope();
         List<PrismAction> actions = templateComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList());
-        List<Integer> replicableSequenceResources = getResources(user, templateScope, resourceListFilterService.getReplicableActionFilter(templateResource, actions)).stream()
-                .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
+        List<Integer> replicableSequenceResources = getResources(user, templateScope,
+                resourceListFilterService.getReplicableActionFilter(templateResource, stateTransition, actions)).stream()
+                        .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
         replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(templateScope, actions));
 
         templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> {
@@ -1147,25 +1148,31 @@ public class ResourceService {
 
     private void appendReplicableActionFilter(PrismScope scope, ResourceListFilterDTO filter) {
         List<Integer> filterThemes = getReplicableActionFilterCollection(filter.getThemes());
-        List<Integer> secondaryFilterThemes = getReplicableActionFilterCollection(filter.getSecondaryThemes());
         List<Integer> filterLocations = getReplicableActionFilterCollection(filter.getLocations());
-        List<Integer> secondaryFilterLocations = getReplicableActionFilterCollection(filter.getSecondaryLocations());
 
         Set<Integer> resourceIds = Sets.newHashSet();
         if (scope.equals(APPLICATION)) {
-            if (isNotEmpty(filterThemes)) {
+            if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
+                List<Integer> secondaryFilterThemes = null;
+                if (isTrue(filter.getSecondaryThemesApplied())) {
+                    secondaryFilterThemes = getReplicableActionFilterCollection(filter.getSecondaryThemes());
+                }
                 resourceIds.addAll(applicationService.getApplicationsByApplicationTheme(filterThemes, secondaryFilterThemes));
             }
 
-            if (isNotEmpty(filterLocations)) {
+            if (isNotEmpty(filterLocations) && isTrue(filter.getSecondaryThemesApplied())) {
+                List<Integer> secondaryFilterLocations = null;
+                if (isNotEmpty(secondaryFilterLocations)) {
+                    secondaryFilterLocations = getReplicableActionFilterCollection(filter.getSecondaryLocations());
+                }
                 resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(filterLocations, secondaryFilterLocations));
             }
         } else if (ArrayUtils.contains(advertScopes, scope)) {
-            if (isNotEmpty(filterThemes)) {
+            if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
                 resourceIds.addAll(resourceDAO.getResourcesByAdvertTheme(scope, filterThemes));
             }
 
-            if (isNotEmpty(filterLocations)) {
+            if (isNotEmpty(filterLocations) && isTrue(filter.getLocationsApplied())) {
                 resourceIds.addAll(resourceDAO.getResourcesByAdvertLocation(scope, filterLocations));
             }
         }

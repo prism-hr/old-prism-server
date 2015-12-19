@@ -193,6 +193,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(APPLICATION_REVIEW_PENDING_FEEDBACK) //
                     .withTransitionAction(APPLICATION_PROVIDE_REVIEW) //
                     .withReplicableSequenceClose() //
+                    .withReplicableSequenceFilterTheme() //
                     .withRoleTransitions(APPLICATION_CREATE_REVIEWER_GROUP)),
 
     APPLICATION_CONFIRM_OFFER_TRANSITION( //
@@ -568,6 +569,10 @@ public enum PrismStateTransitionGroup {
                         .withTransitionState(stateTransition.getTransitionState()) //
                         .withTransitionAction(stateTransition.getTransitionAction()) //
                         .withReplicableSequenceClose(stateTransition.getReplicableSequenceClose()) //
+                        .withReplicableSequenceFilterTheme(stateTransition.getReplicableSequenceFilterTheme()) //
+                        .withReplicableSequenceFilterSecondaryTheme(stateTransition.getReplicableSequenceFilterSecondaryTheme()) //
+                        .withReplicableSequenceFilterLocation(stateTransition.getReplicableSequenceFilterLocation()) //
+                        .withReplicableSequenceFilterSecondaryLocation(stateTransition.getReplicableSequenceFilterSecondaryLocation()) //
                         .withStateTransitionEvaluation(stateTransition.getTransitionEvaluation()) //
                         .withRoleTransitions(definedRoleTransitions.toArray(new PrismRoleTransition[definedRoleTransitions.size()])) //
                         .withRoleTransitions(roleTransitions.toArray(new PrismRoleTransition[roleTransitions.size()])) //

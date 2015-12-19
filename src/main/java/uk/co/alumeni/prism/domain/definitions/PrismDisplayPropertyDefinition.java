@@ -1559,7 +1559,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_BULK_PROCESSING_AVAILABLE_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Available"),
     SYSTEM_RESOURCES_BULK_PROCESSING_SELECTED_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Selected"),
     SYSTEM_RESOURCES_BULK_PROCESSING_EXCLUDED_TAB(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Excluded"),
-    SYSTEM_RESOURCES_BULK_PROCESSING_COMMIT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Queue selection for processing"),
+    SYSTEM_RESOURCES_BULK_PROCESSING_COMMIT_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Commit Selection"),
 
     /*
      * *************** SYSTEM RESOURCE SECTION *********************

@@ -6,6 +6,7 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
 
 public class ActionOutcomeDTO {
 
@@ -16,6 +17,8 @@ public class ActionOutcomeDTO {
     private Resource transitionResource;
 
     private Action transitionAction;
+
+    private StateTransition stateTransition;
 
     private List<Comment> replicableSequenceComments;
 
@@ -51,6 +54,14 @@ public class ActionOutcomeDTO {
         this.transitionAction = transitionAction;
     }
 
+    public StateTransition getStateTransition() {
+        return stateTransition;
+    }
+
+    public void setStateTransition(StateTransition stateTransition) {
+        this.stateTransition = stateTransition;
+    }
+
     public List<Comment> getReplicableSequenceComments() {
         return replicableSequenceComments;
     }
@@ -76,6 +87,11 @@ public class ActionOutcomeDTO {
 
     public ActionOutcomeDTO withTransitionAction(Action transitionAction) {
         this.transitionAction = transitionAction;
+        return this;
+    }
+
+    public ActionOutcomeDTO withStateTransition(StateTransition stateTransition) {
+        this.stateTransition = stateTransition;
         return this;
     }
 

@@ -359,7 +359,7 @@ public class ActionService {
         }
 
         if (isNotEmpty(replicableSequenceComments)) {
-            if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, replicableSequenceComments))) {
+            if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition, replicableSequenceComments))) {
                 actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
             }
         }

@@ -387,13 +387,13 @@ public class SystemService {
         for (PrismState prismState : PrismState.values()) {
             PrismStateGroup prismStateGroup = prismState.getStateGroup();
             Scope scope = scopeService.getById(prismStateGroup.getScope());
-            
+
             StateGroup stateGroup = stateService.getStateGroupById(prismStateGroup);
             if (!Objects.equal(stateGroup, lastStateGroup)) {
                 ordinal = 0;
                 lastStateGroup = stateGroup;
             }
-            
+
             State transientState = new State().withId(prismState).withOrdinal(ordinal).withStateGroup(stateGroup)
                     .withStateDurationDefinition(stateService.getStateDurationDefinitionById(prismState.getDefaultDuration()))
                     .withStateDurationEvaluation(prismState.getStateDurationEvaluation()).withScope(scope);
@@ -584,7 +584,12 @@ public class SystemService {
             }
 
             StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState).withTransitionAction(transitionAction)
-                    .withReplicableSequenceClose(prismStateTransition.getReplicableSequenceClose()).withStateTransitionEvaluation(stateTransitionEvaluation);
+                    .withReplicableSequenceClose(prismStateTransition.getReplicableSequenceClose())
+                    .withReplicableSequenceFilterTheme(prismStateTransition.getReplicableSequenceFilterTheme())
+                    .withReplicableSequenceFilterSecondaryTheme(prismStateTransition.getReplicableSequenceFilterSecondaryTheme())
+                    .withReplicableSequenceFilterLocation(prismStateTransition.getReplicableSequenceFilterLocation())
+                    .withReplicableSequenceFilterSecondaryLocation(prismStateTransition.getReplicableSequenceFilterSecondaryLocation())
+                    .withStateTransitionEvaluation(stateTransitionEvaluation);
             entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
 

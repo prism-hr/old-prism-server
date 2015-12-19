@@ -1,9 +1,20 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CONFIRM_APPOINTMENT_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationCompleteApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationProvideHiringManagerApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationTerminateApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationViewEditApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
@@ -11,27 +22,27 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
 
     @Override
     protected void setStateActions() {
-        stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentWithViewerRecruiter()); //
 
-        stateActions.add(PrismApplicationApproval.applicationCompleteApproval(state) //
+        stateActions.add(applicationCompleteApproval(state) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST)); //
 
-        stateActions.add(PrismApplicationApproval.applicationProvideHiringManagerApproval() //
+        stateActions.add(applicationProvideHiringManagerApproval() //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
-                        .withTransitionAction(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE) //
-                        .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_CONFIRM_APPOINTMENT_GROUP))); //
+                        .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
+                        .withRoleTransitions(APPLICATION_CONFIRM_APPOINTMENT_GROUP))); //
 
-        stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
 
-        stateActions.add(PrismApplicationWorkflow.applicationEscalate(PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP, //
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP));
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
+                APPLICATION_RETIRE_HIRING_MANAGER_GROUP));
 
-        stateActions.add(PrismApplicationApproval.applicationTerminateApproval());
-        stateActions.add(PrismApplicationWorkflow.applicationUploadReference(state));
-        stateActions.add(PrismApplicationApproval.applicationViewEditApproval(state)); //
-        stateActions.add(PrismApplicationApproval.applicationWithdrawApproval());
+        stateActions.add(applicationTerminateApproval());
+        stateActions.add(applicationUploadReference(state));
+        stateActions.add(applicationViewEditApproval(state)); //
+        stateActions.add(applicationWithdrawApproval());
     }
 
 }

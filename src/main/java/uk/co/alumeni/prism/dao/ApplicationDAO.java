@@ -358,7 +358,7 @@ public class ApplicationDAO {
     public List<Integer> getApplicationsWithReferencesPending(Resource parentResource) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("association", "application", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNull("comment")) //
                 .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .list();
@@ -367,7 +367,7 @@ public class ApplicationDAO {
     public List<Integer> getApplicationsWithReferencesProvided(Resource parentResource) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationReferee.class) //
                 .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("application", "application", JoinType.INNER_JOIN) //
+                .createAlias("association", "application", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull("comment")) //
                 .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .list();

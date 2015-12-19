@@ -41,6 +41,8 @@ import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicat
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReferencePendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejected;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejectedCompleted;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReserved;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReservedPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReviewPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReviewPendingFeedback;
@@ -119,8 +121,9 @@ public enum PrismState {
             PrismApplicationReference.class, ApplicationReferenceSelectionResolver.class, ApplicationByReferencesProvidedSelector.class), 
     APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationReferencePendingCompletion.class), 
-    APPLICATION_RESERVED(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_DURATION, null, null),
-    APPLICATION_RESERVED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_ESCALATE_DURATION, null, null),
+    APPLICATION_RESERVED(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_DURATION, null, PrismApplicationReserved.class),
+    APPLICATION_RESERVED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_ESCALATE_DURATION, null, 
+            PrismApplicationReservedPendingCompletion.class),
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationApproved.class), 
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,

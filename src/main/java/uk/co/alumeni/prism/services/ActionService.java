@@ -344,7 +344,7 @@ public class ActionService {
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
         ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                .withTransitionAction(transitionAction);
+                .withTransitionAction(transitionAction).withStateTransition(stateTransition);
 
         LinkedList<Comment> replicableSequenceComments = null;
         if (stateTransition != null && BooleanUtils.isTrue(stateTransition.getReplicableSequenceClose())) {

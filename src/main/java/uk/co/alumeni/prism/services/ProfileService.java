@@ -366,8 +366,7 @@ public class ProfileService {
     public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationDocument applicationDocument = updateDocument(application, ApplicationDocument.class, documentDTO);
-        Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(), DOCUMENT) : null;
-        applicationDocument.setCoveringLetter(coveringLetter);
+        applicationDocument.setCoveringLetter(getDocument(documentDTO.getCoveringLetter()));
 
         documentDTO.setCv(cloneDocument(documentDTO.getCv()));
         documentDTO.setCoveringLetter(cloneDocument(documentDTO.getCoveringLetter()));
@@ -519,7 +518,9 @@ public class ProfileService {
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
             applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            applicationDocument.setLastUpdatedTimestamp(new DateTime());
+            if (applicationDocument.getCv() != null) {
+                applicationDocument.setLastUpdatedTimestamp(new DateTime());
+            }
         }
     }
 
@@ -619,8 +620,7 @@ public class ProfileService {
 
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setCompleted(isTrue(qualificationDTO.getCompleted()));
-        Document document = qualificationDTO.getDocument() != null ? documentService.getById(qualificationDTO.getDocument().getId(), DOCUMENT) : null;
-        qualification.setDocument(document);
+        qualification.setDocument(getDocument(qualificationDTO.getDocument()));
 
         if (qualification.getClass().equals(ApplicationQualification.class)) {
             ((ApplicationQualification) qualification).setLastUpdatedTimestamp(DateTime.now());
@@ -793,12 +793,8 @@ public class ProfileService {
         }
 
         document.setPersonalSummary(documentDTO.getPersonalSummary());
-        
-        Integer cvId = getDocumentId(documentDTO.getCv());
-        if (cvId != null) {
-            document.setCv(documentService.getById(cvId, DOCUMENT));
-        }
-        
+        document.setCv(getDocument(documentDTO.getCv()));
+
         return document;
     }
 
@@ -871,8 +867,12 @@ public class ProfileService {
         return entityService.getById(refereeClass, refereeId);
     }
 
-    private Integer getDocumentId(DocumentDTO document) {
-        return document == null ? null : document.getId();
+    private Document getDocument(DocumentDTO documentDTO) {
+        Integer documentId = documentDTO == null ? null : documentDTO.getId();
+        if (documentId != null) {
+            return documentService.getById(documentId, DOCUMENT);
+        }
+        return null;
     }
 
     private List<CommentAssignedUser> getUserAssignmentsUpdate(Application application, User oldUser, User newUser, PrismRole prismRole) {

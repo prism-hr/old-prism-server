@@ -2,12 +2,12 @@ package uk.co.alumeni.prism.services;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_ACTIVITY_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_CONNECTION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_JOIN_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
@@ -280,8 +280,8 @@ public class NotificationService {
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(resource.getResourceScope());
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    for (PrismScope targetScope : targetScopes) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
                         requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, targeterScope, targetScope, targeterEntities, resource));
                     }
                 }
@@ -303,7 +303,7 @@ public class NotificationService {
                         .withComment(comment).withTransitionAction(request.getActionId());
 
                 recipient = sendIndividualRequestNotification(resource, recipient, definition, definitionDTO, recentRequestCount);
-                if (recentRequestCount != null) {
+                if (recipient != null) {
                     recipients.add(recipient);
                 }
             }

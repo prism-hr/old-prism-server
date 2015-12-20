@@ -11,6 +11,8 @@ public class ActionOutcomeRepresentation {
 
     private PrismAction transitionAction;
 
+    private ActionOutcomeReplicableRepresentation replicable;
+
     public ResourceRepresentationSimple getResource() {
         return resource;
     }
@@ -35,7 +37,15 @@ public class ActionOutcomeRepresentation {
         this.transitionAction = transitionAction;
     }
 
-    public ActionOutcomeRepresentation withResource(final ResourceRepresentationSimple resource) {
+    public ActionOutcomeReplicableRepresentation getReplicable() {
+        return replicable;
+    }
+
+    public void setReplicable(ActionOutcomeReplicableRepresentation replicable) {
+        this.replicable = replicable;
+    }
+
+    public ActionOutcomeRepresentation withResource(ResourceRepresentationSimple resource) {
         this.resource = resource;
         return this;
     }
@@ -47,6 +57,11 @@ public class ActionOutcomeRepresentation {
 
     public ActionOutcomeRepresentation withTransitionAction(PrismAction transitionAction) {
         this.transitionAction = transitionAction;
+        return this;
+    }
+
+    public ActionOutcomeRepresentation withReplicable(final ActionOutcomeReplicableRepresentation replicable) {
+        this.replicable = replicable;
         return this;
     }
 

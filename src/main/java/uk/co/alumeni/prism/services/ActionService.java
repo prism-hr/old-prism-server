@@ -5,20 +5,23 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.targetScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -46,6 +49,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ActionCreationScopeDTO;
 import uk.co.alumeni.prism.dto.ActionDTO;
@@ -65,6 +69,9 @@ public class ActionService {
 
     @Inject
     private AdvertService advertService;
+
+    @Inject
+    private CommentService commentService;
 
     @Inject
     private EntityService entityService;
@@ -215,7 +222,12 @@ public class ActionService {
     public void setCreationActions() {
         List<ActionCreationScopeDTO> actionCreationScopes = actionDAO.getCreationActions();
         for (ActionCreationScopeDTO actionCreationScope : actionCreationScopes) {
-            actionCreationScope.getAction().setCreationScope(actionCreationScope.getCreationScope());
+            Scope creationScope = actionCreationScope.getCreationScope();
+            PrismScope prismCreationScope = creationScope.getId();
+
+            Action action = actionCreationScope.getAction();
+            action.setActionCondition(prismCreationScope.ordinal() > INSTITUTION.ordinal() ? PrismActionCondition.valueOf("ACCEPT_" + prismCreationScope.name()) : null);
+            action.setCreationScope(creationScope);
         }
     }
 
@@ -242,6 +254,14 @@ public class ActionService {
         }
     }
 
+    public void setSequenceStartActions() {
+
+    }
+
+    public void setSequenceCloseActions() {
+
+    }
+
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
         return actionDAO.getActionConditions(prismScope);
     }
@@ -266,6 +286,10 @@ public class ActionService {
             visible = getPermittedActionEnhancements(user, resource, action.getId()).stream().anyMatch(ae -> ae.name().contains("_VIEW"));
         }
         return visible ? checkActionAvailable(resource, action, user, false) : false;
+    }
+
+    public boolean checkActionExecutable(Resource resource, Action action, User user) {
+        return checkActionExecutable(resource, action, user, false);
     }
 
     public boolean checkActionExecutable(Resource resource, Action action, User user, boolean declinedResponse) {
@@ -319,8 +343,28 @@ public class ActionService {
         Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
         Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                .withTransitionAction(transitionAction);
+        ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
+                .withTransitionAction(transitionAction).withStateTransition(stateTransition);
+
+        LinkedList<Comment> replicableSequenceComments = null;
+        if (stateTransition != null && BooleanUtils.isTrue(stateTransition.getReplicableSequenceClose())) {
+            replicableSequenceComments = Lists.newLinkedList();
+            for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
+                replicableSequenceComments.push(transitionComment);
+                StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
+                if (BooleanUtils.isTrue(stateAction.getReplicableSequenceStart())) {
+                    break;
+                }
+            }
+        }
+
+        if (isNotEmpty(replicableSequenceComments)) {
+            if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition, replicableSequenceComments))) {
+                actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
+            }
+        }
+
+        return actionOutcome;
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {
@@ -361,9 +405,7 @@ public class ActionService {
                         .add(Projections.max("primaryState").as("primaryState")) //
                         .add(Projections.min("stateActionAssignment.externalMode").as("onlyAsPartner")) //
                         .add(Projections.property("action.declinableAction").as("declinable")),
-                ActionDTO.class).forEach(permittedAction -> {
-                    permittedActions.put(permittedAction.getResourceId(), permittedAction);
-                });
+                ActionDTO.class).forEach(permittedAction -> permittedActions.put(permittedAction.getResourceId(), permittedAction));
 
         return permittedActions;
     }
@@ -395,8 +437,8 @@ public class ActionService {
             }
 
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : targetScopes) {
-                    for (PrismScope targetScope : targetScopes) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
                         actionEntities.addAll(
                                 actionDAO.getActionEntities(user, scope, targeterScope, targetScope, targeterEntities, resources, actions, columns, restriction, responseClass));
                     }

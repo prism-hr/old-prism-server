@@ -1,5 +1,21 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_RESERVE_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.APPLICATION_INTERVIEW_DATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_CLOSING_DATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROJECT_CLOSING_DATE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +41,13 @@ import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicat
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReferencePendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejected;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejectedCompleted;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReserved;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReservedPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReviewPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReviewPendingFeedback;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationUnsubmitted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationValidation;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationValidationPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWithdrawnCompleted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWithdrawnCompletedUnsubmitted;
 import uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentApproval;
@@ -67,84 +84,87 @@ import uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWithd
 import uk.co.alumeni.prism.domain.definitions.workflow.system.PrismSystemRunning;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.ApplicationReferenceSelectionResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
+import uk.co.alumeni.prism.workflow.selectors.action.ApplicationByReferencesProvidedSelector;
+import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
 
 public enum PrismState {
 
-    APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationUnsubmitted.class), 
-    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, null, PrismStateDurationEvaluation.APPLICATION_CLOSING_DATE,
+    APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
+            PrismApplicationUnsubmitted.class),
+    APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationValidation.class), 
-    APPLICATION_VALIDATION_PENDING_COMPLETION(PrismStateGroup.APPLICATION_VALIDATION, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationValidationPendingCompletion.class), 
-    APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationReview.class), 
-    APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, PrismStateDurationDefinition.APPLICATION_PROVIDE_REVIEW_DURATION, null, 
+    APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null, 
             PrismApplicationReviewPendingFeedback.class), 
-    APPLICATION_REVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REVIEW, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_REVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationReviewPendingCompletion.class), 
-    APPLICATION_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationInterview.class), 
     APPLICATION_INTERVIEW_PENDING_AVAILABILITY(PrismStateGroup.APPLICATION_INTERVIEW, 
-            PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION, null, PrismApplicationInterviewPendingAvailability.class), 
-    APPLICATION_INTERVIEW_PENDING_SCHEDULING(PrismStateGroup.APPLICATION_INTERVIEW, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+            APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION, null, PrismApplicationInterviewPendingAvailability.class), 
+    APPLICATION_INTERVIEW_PENDING_SCHEDULING(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationInterviewPendingScheduling.class), 
-    APPLICATION_INTERVIEW_PENDING_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, null, PrismStateDurationEvaluation.APPLICATION_INTERVIEW_DATE,
+    APPLICATION_INTERVIEW_PENDING_INTERVIEW(PrismStateGroup.APPLICATION_INTERVIEW, null, APPLICATION_INTERVIEW_DATE,
             PrismApplicationInterviewPendingInterview.class), 
     APPLICATION_INTERVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_INTERVIEW, 
-            PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION, null, PrismApplicationInterviewPendingFeedback.class), 
-    APPLICATION_INTERVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_INTERVIEW, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+            APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION, null, PrismApplicationInterviewPendingFeedback.class), 
+    APPLICATION_INTERVIEW_PENDING_COMPLETION(PrismStateGroup.APPLICATION_INTERVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationInterviewPendingCompletion.class), 
-    APPLICATION_APPROVAL(PrismStateGroup.APPLICATION_APPROVAL, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_APPROVAL(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApproval.class), 
-    APPLICATION_APPROVAL_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_APPROVAL, 
-            PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION, null, PrismApplicationApprovalPendingFeedback.class), 
-    APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_APPROVAL_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_CONFIRM_APPOINTMENT_DURATION, 
+            null, PrismApplicationApprovalPendingFeedback.class), 
+    APPLICATION_APPROVAL_PENDING_COMPLETION(PrismStateGroup.APPLICATION_APPROVAL, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApprovalPendingCompletion.class), 
-    APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION, null,
-            PrismApplicationReference.class, ApplicationReferenceSelectionResolver.class), 
-    APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_REFERENCE(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_PROVIDE_REFERENCE_DURATION, null,
+            PrismApplicationReference.class, ApplicationReferenceSelectionResolver.class, ApplicationByReferencesProvidedSelector.class), 
+    APPLICATION_REFERENCE_PENDING_COMPLETION(PrismStateGroup.APPLICATION_REFERENCE, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationReferencePendingCompletion.class), 
-    APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_RESERVED(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_DURATION, null, PrismApplicationReserved.class),
+    APPLICATION_RESERVED_PENDING_COMPLETION(PrismStateGroup.APPLICATION_RESERVED, APPLICATION_RESERVE_ESCALATE_DURATION, null, 
+            PrismApplicationReservedPendingCompletion.class),
+    APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationApproved.class), 
-    APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null,
+    APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
            PrismApplicationApprovedPendingPartnerAcceptance.class), 
     APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferAcceptance.class), 
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedCompleted.class), 
-    APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION, null, 
+    APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null, 
             PrismApplicationRejected.class), 
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompleted.class), 
     APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedUnsubmitted.class), 
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompleted.class),
 
     PROJECT_UNSUBMITTED(PrismStateGroup.PROJECT_UNSUBMITTED, null, null, PrismProjectUnsubmitted.class), 
-    PROJECT_APPROVAL_PARENT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION, null, 
+    PROJECT_APPROVAL_PARENT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, 
             PrismProjectParentApproval.class), 
-    PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION, null, PrismProjectApproval.class), 
-    PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PrismStateDurationDefinition.PROJECT_ESCALATE_DURATION, null,
+    PROJECT_APPROVAL(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null, PrismProjectApproval.class), 
+    PROJECT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROJECT_APPROVAL, PROJECT_ESCALATE_DURATION, null,
             PrismProjectApprovalPendingCorrection.class), 
-    PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, null, null, PrismProjectApproved.class), 
+    PROJECT_APPROVED(PrismStateGroup.PROJECT_APPROVED, null, PROJECT_CLOSING_DATE, PrismProjectApproved.class), 
     PROJECT_DISABLED_COMPLETED(PrismStateGroup.PROJECT_DISABLED, null, null, PrismProjectDisabledCompleted.class), 
     PROJECT_REJECTED(PrismStateGroup.PROJECT_REJECTED, null, null, PrismProjectRejected.class), 
     PROJECT_WITHDRAWN(PrismStateGroup.PROJECT_WITHDRAWN, null, null, PrismProjectWithdrawn.class),
 
     PROGRAM_UNSUBMITTED(PrismStateGroup.PROGRAM_UNSUBMITTED, null, null, PrismProgramUnsubmitted.class), 
-    PROGRAM_APPROVAL_PARENT_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION, null, 
+    PROGRAM_APPROVAL_PARENT_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null, 
             PrismProgramParentApproval.class), 
-    PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION, null,
+    PROGRAM_APPROVAL(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApproval.class), 
-    PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PrismStateDurationDefinition.PROGRAM_ESCALATE_DURATION, null,
+    PROGRAM_APPROVAL_PENDING_CORRECTION(PrismStateGroup.PROGRAM_APPROVAL, PROGRAM_ESCALATE_DURATION, null,
             PrismProgramApprovalPendingCorrection.class), 
-    PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, null, null, PrismProgramApproved.class), 
+    PROGRAM_APPROVED(PrismStateGroup.PROGRAM_APPROVED, null, PROGRAM_CLOSING_DATE, PrismProgramApproved.class), 
     PROGRAM_DISABLED_COMPLETED(PrismStateGroup.PROGRAM_DISABLED, null, null, PrismProgramDisabledCompleted.class), 
     PROGRAM_REJECTED(PrismStateGroup.PROGRAM_REJECTED, null, null, PrismProgramRejected.class), 
     PROGRAM_WITHDRAWN(PrismStateGroup.PROGRAM_WITHDRAWN, null, null, PrismProgramWithdrawn.class),
 
     DEPARTMENT_UNSUBMITTED(PrismStateGroup.DEPARTMENT_UNSUBMITTED, null, null, PrismDepartmentUnsubmitted.class), 
-    DEPARTMENT_APPROVAL_PARENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION, null, 
+    DEPARTMENT_APPROVAL_PARENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null, 
             PrismDepartmentParentApproval.class), 
-    DEPARTMENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION, null, 
+    DEPARTMENT_APPROVAL(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null, 
             PrismDepartmentApproval.class), 
-    DEPARTMENT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.DEPARTMENT_APPROVAL, PrismStateDurationDefinition.DEPARTMENT_ESCALATE_DURATION, null,
+    DEPARTMENT_APPROVAL_PENDING_CORRECTION(PrismStateGroup.DEPARTMENT_APPROVAL, DEPARTMENT_ESCALATE_DURATION, null,
             PrismDepartmentApprovalPendingCorrection.class), 
     DEPARTMENT_APPROVED(PrismStateGroup.DEPARTMENT_APPROVED, null, null, PrismDepartmentApproved.class), 
     DEPARTMENT_DISABLED_COMPLETED(PrismStateGroup.DEPARTMENT_DISABLED, null, null, PrismDepartmentDisabledCompleted.class), 
@@ -152,9 +172,9 @@ public enum PrismState {
     DEPARTMENT_WITHDRAWN(PrismStateGroup.DEPARTMENT_WITHDRAWN, null, null, PrismDepartmentWithdrawn.class),
 
     INSTITUTION_UNSUBMITTED(PrismStateGroup.INSTITUTION_UNSUBMITTED, null, null, PrismInstitutionUnsubmitted.class), 
-    INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION, null, 
+    INSTITUTION_APPROVAL(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null, 
             PrismInstitutionApproval.class), 
-    INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, PrismStateDurationDefinition.INSTITUTION_ESCALATE_DURATION, null,
+    INSTITUTION_APPROVAL_PENDING_CORRECTION(PrismStateGroup.INSTITUTION_APPROVAL, INSTITUTION_ESCALATE_DURATION, null,
             PrismInstitutionApprovalPendingCorrection.class), 
     INSTITUTION_APPROVED(PrismStateGroup.INSTITUTION_APPROVED, null, null, PrismInstitutionApproved.class), 
     INSTITUTION_DISABLED_COMPLETED(PrismStateGroup.INSTITUTION_DISABLED, null, null, PrismInstitutionDisabledCompleted.class), 
@@ -184,8 +204,10 @@ public enum PrismState {
     private Class<? extends PrismWorkflowState> workflowStateClass;
 
     private Class<? extends StateTransitionSelectionResolver> stateTransitionSelectionResolver;
+    
+    private Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector;
 
-    PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
+    private PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
             Class<? extends PrismWorkflowState> workflowStateClass) {
         this.stateGroup = stateGroup;
         this.defaultDuration = defaultDuration;
@@ -197,6 +219,13 @@ public enum PrismState {
             Class<? extends PrismWorkflowState> workflowStateClass, Class<? extends StateTransitionSelectionResolver> stateTransitionSelectionResolver) {
         this(stateGroup, defaultDuration, stateDurationEvaluation, workflowStateClass);
         this.stateTransitionSelectionResolver = stateTransitionSelectionResolver;
+    }
+    
+    private PrismState(PrismStateGroup stateGroup, PrismStateDurationDefinition defaultDuration, PrismStateDurationEvaluation stateDurationEvaluation,
+            Class<? extends PrismWorkflowState> workflowStateClass, Class<? extends StateTransitionSelectionResolver> stateTransitionSelectionResolver,
+            Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector) {
+        this(stateGroup, defaultDuration, stateDurationEvaluation, workflowStateClass, stateTransitionSelectionResolver);
+        this.replicableActionExclusionSelector = replicableActionExclusionSelector;
     }
 
     public static List<PrismStateAction> getStateActions(PrismState state) {
@@ -225,6 +254,10 @@ public enum PrismState {
 
     public Class<? extends StateTransitionSelectionResolver> getStateTransitionSelectionResolver() {
         return stateTransitionSelectionResolver;
+    }
+
+    public Class<? extends PrismResourceByParentResourceSelector> getReplicableActionExclusionSelector() {
+        return replicableActionExclusionSelector;
     }
 
 }

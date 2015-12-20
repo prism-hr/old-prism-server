@@ -1,19 +1,27 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REVIEW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_REVIEW_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REVIEWER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REVIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ASSIGN_REVIEWERS_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismApplicationReview extends PrismWorkflowState {
@@ -21,64 +29,45 @@ public class PrismApplicationReview extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.APPLICATION_ASSIGN_REVIEWERS) //
+                .withAction(APPLICATION_ASSIGN_REVIEWERS) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(PrismState.APPLICATION_REVIEW_PENDING_FEEDBACK) //
-                        .withTransitionAction(PrismAction.APPLICATION_PROVIDE_REVIEW) //
-                        .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_CREATE_REVIEWER_GROUP)));
+                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateTransitions(APPLICATION_ASSIGN_REVIEWERS_TRANSITION));
 
-        stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter());
-
-        stateActions.add(applicationCompleteState(PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE, state, //
-                PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP));
-
-        stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter());
-
-        stateActions.add(PrismApplicationWorkflow.applicationEscalate(PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP));
-
-        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP));
-
-        stateActions.add(PrismApplicationWorkflow.applicationUploadReference(state));
-        stateActions.add(PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter(state)); //
-
-        stateActions.add(applicationWithdrawSubmitted(PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP));
+        stateActions.add(applicationCommentWithViewerRecruiter());
+        stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP));
+        stateActions.add(applicationEmailCreatorWithViewerRecruiter());
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
+        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
+        stateActions.add(applicationUploadReference(state));
+        stateActions.add(applicationViewEditWithViewerRecruiter(state));
+        stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
     }
 
     public static PrismStateAction applicationCompleteReview(PrismState state) {
-        return PrismApplicationWorkflow.applicationCompleteState(PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE, state, //
-                PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REVIEWER_GROUP);
+        return applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_RETIRE_REVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationProvideReview() {
         return new PrismStateAction() //
-                .withAction(PrismAction.APPLICATION_PROVIDE_REVIEW) //
+                .withAction(APPLICATION_PROVIDE_REVIEW) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_PROVIDE_REVIEW_REQUEST)
-                .withAssignments(PrismRole.APPLICATION_REVIEWER);
+                .withAssignments(APPLICATION_REVIEWER);
     }
 
     public static PrismStateAction applicationTerminateReview() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP,
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP,
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REVIEWER_GROUP);
+        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP, APPLICATION_RETIRE_REVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationViewEditReview(PrismState state) {
         return PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(PrismRole.APPLICATION_REVIEWER, PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER);
+                .withAssignments(APPLICATION_REVIEWER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationWithdrawReview() {
-        return applicationWithdrawSubmitted(PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP, //
-                APPLICATION_TERMINATE_REFERENCE_GROUP,
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP,
-                PrismRoleTransitionGroup.APPLICATION_RETIRE_REVIEWER_GROUP);
+        return applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP,
+                APPLICATION_RETIRE_REVIEWER_GROUP);
     }
 
 }

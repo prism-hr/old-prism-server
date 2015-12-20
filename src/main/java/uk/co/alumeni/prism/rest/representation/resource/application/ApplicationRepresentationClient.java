@@ -5,7 +5,7 @@ import java.util.List;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCompetenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class ApplicationRepresentationClient extends ApplicationRepresentationExtended {
@@ -14,7 +14,7 @@ public class ApplicationRepresentationClient extends ApplicationRepresentationEx
 
     private List<AdvertThemeRepresentation> possibleThemes;
 
-    private List<ResourceRepresentationRelation> possibleLocations;
+    private List<ResourceLocationRepresentationRelation> possibleLocations;
 
     private List<UserRepresentationSimple> usersInterestedInApplication;
 
@@ -40,11 +40,11 @@ public class ApplicationRepresentationClient extends ApplicationRepresentationEx
         this.possibleThemes = possibleThemes;
     }
 
-    public List<ResourceRepresentationRelation> getPossibleLocations() {
+    public List<ResourceLocationRepresentationRelation> getPossibleLocations() {
         return possibleLocations;
     }
 
-    public void setPossibleLocations(List<ResourceRepresentationRelation> possibleLocations) {
+    public void setPossibleLocations(List<ResourceLocationRepresentationRelation> possibleLocations) {
         this.possibleLocations = possibleLocations;
     }
 

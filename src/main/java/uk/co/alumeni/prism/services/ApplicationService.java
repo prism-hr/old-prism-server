@@ -65,6 +65,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
@@ -329,7 +330,7 @@ public class ApplicationService {
         User currentUser = userService.getCurrentUser();
         if (application.getState().getStateGroup().getId().equals(APPLICATION_UNSUBMITTED)) {
             Action action = actionService.getById(APPLICATION_COMPLETE);
-            if (!actionService.checkActionExecutable(application, action, currentUser, false)) {
+            if (!actionService.checkActionExecutable(application, action, currentUser)) {
                 throw new WorkflowPermissionException(application, action);
             }
         } else {
@@ -357,12 +358,32 @@ public class ApplicationService {
         return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
     }
 
-    public List<Integer> getApplicationsByTheme(String theme) {
-        return applicationDAO.getApplicationsByTheme(theme);
+    public List<Integer> getApplicationsByTheme(String theme, Boolean preference) {
+        return applicationDAO.getApplicationsByTheme(theme, preference);
     }
 
-    public List<Integer> getApplicationsByLocation(String location) {
-        return applicationDAO.getApplicationsByLocation(location);
+    public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
+        return applicationDAO.getApplicationsByLocation(location, preference);
+    }
+
+    public void updateApplicationOpportunityCategories(Advert advert) {
+        applicationDAO.updateApplicationOpportunityCategories(advert);
+    }
+
+    public List<Integer> getApplicationsByApplicationTheme(List<Integer> themes, List<Integer> secondaryThemes) {
+        return applicationDAO.getApplicationsByApplicationTheme(themes, secondaryThemes);
+    }
+
+    public List<Integer> getApplicationsByApplicationLocation(List<Integer> locations, List<Integer> secondaryLocations) {
+        return applicationDAO.getApplicationsByApplicationLocation(locations, secondaryLocations);
+    }
+
+    public List<Integer> getApplicationsWithReferencesPending(Resource parentResource) {
+        return applicationDAO.getApplicationsWithReferencesPending(parentResource);
+    }
+
+    public List<Integer> getApplicationsWithReferencesProvided(Resource parentResource) {
+        return applicationDAO.getApplicationsWithReferencesProvided(parentResource);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

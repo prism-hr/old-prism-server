@@ -17,7 +17,6 @@ import javax.persistence.UniqueConstraint;
 import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 
 @Entity
@@ -39,9 +38,8 @@ public class StateAction implements UniqueEntity {
     @Column(name = "raises_urgent_flag", nullable = false)
     private Boolean raisesUrgentFlag;
 
-    @Column(name = "action_condition")
-    @Enumerated(EnumType.STRING)
-    private PrismActionCondition actionCondition;
+    @Column(name = "replicable_sequence_start", nullable = false)
+    private Boolean replicableSequenceStart;
 
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
@@ -92,12 +90,12 @@ public class StateAction implements UniqueEntity {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public NotificationDefinition getNotificationDefinition() {
-        return notificationDefinition;
+    public Boolean getReplicableSequenceStart() {
+        return replicableSequenceStart;
     }
 
-    public void setNotificationDefinition(NotificationDefinition notificationTemplate) {
-        this.notificationDefinition = notificationTemplate;
+    public void setReplicableSequenceStart(Boolean replicableSequenceStart) {
+        this.replicableSequenceStart = replicableSequenceStart;
     }
 
     public PrismActionEnhancement getActionEnhancement() {
@@ -106,6 +104,14 @@ public class StateAction implements UniqueEntity {
 
     public void setActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
+    }
+
+    public NotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
+    }
+
+    public void setNotificationDefinition(NotificationDefinition notificationTemplate) {
+        this.notificationDefinition = notificationTemplate;
     }
 
     public Set<StateActionAssignment> getStateActionAssignments() {
@@ -130,13 +136,13 @@ public class StateAction implements UniqueEntity {
         return this;
     }
 
-    public StateAction withRaisesUrgentFlag(boolean raisesUrgentFlag) {
+    public StateAction withRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
         return this;
     }
 
-    public StateAction withActionCondition(PrismActionCondition actionCondition) {
-        this.actionCondition = actionCondition;
+    public StateAction withReplicableSequenceStart(Boolean replicableSequenceStart) {
+        this.replicableSequenceStart = replicableSequenceStart;
         return this;
     }
 

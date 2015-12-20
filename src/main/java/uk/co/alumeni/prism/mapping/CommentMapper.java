@@ -176,6 +176,20 @@ public class CommentMapper {
         return getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, redactions);
     }
 
+    public CommentRepresentation getCommentRepresentationExtended(Comment comment) {
+        return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
+                .withTransitionState(comment.getTransitionState().getId()).withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
+                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating())
+                .withInterested(comment.getInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+                .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
+                .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
+                .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())
+                .withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment()).withRejectionReason(comment.getRejectionReason())
+                .withCompetenceGroups(getCommentCompetenceRepresentations(comment.getCompetences()))
+                .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
+                .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
+    }
+    
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles, List<PrismActionEnhancement> actionEnhancements,
             List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
@@ -207,20 +221,6 @@ public class CommentMapper {
         }
 
         return representation;
-    }
-
-    private CommentRepresentation getCommentRepresentationExtended(Comment comment) {
-        return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
-                .withTransitionState(comment.getTransitionState().getId()).withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
-                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating())
-                .withInterested(comment.getInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
-                .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
-                .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
-                .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())
-                .withApplicantAcceptAppointment(comment.getApplicantAcceptAppointment()).withRejectionReason(comment.getRejectionReason())
-                .withCompetenceGroups(getCommentCompetenceRepresentations(comment.getCompetences()))
-                .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
-                .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }
 
     private CommentAssignedUserRepresentation getCommentAssignedUserRepresentation(CommentAssignedUser commentAssignedUser) {

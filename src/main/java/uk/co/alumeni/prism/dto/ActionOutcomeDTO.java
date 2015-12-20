@@ -1,14 +1,12 @@
 package uk.co.alumeni.prism.dto;
 
-import java.util.Map;
+import java.util.List;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
-
-import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
 
 public class ActionOutcomeDTO {
 
@@ -20,26 +18,56 @@ public class ActionOutcomeDTO {
 
     private Action transitionAction;
 
-    private PrismConnectionState connectState;
+    private StateTransition stateTransition;
+
+    private List<Comment> replicableSequenceComments;
 
     public User getUser() {
         return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Resource getResource() {
         return resource;
     }
 
+    public void setResource(Resource resource) {
+        this.resource = resource;
+    }
+
     public Resource getTransitionResource() {
         return transitionResource;
+    }
+
+    public void setTransitionResource(Resource transitionResource) {
+        this.transitionResource = transitionResource;
     }
 
     public Action getTransitionAction() {
         return transitionAction;
     }
 
-    public PrismConnectionState getConnectState() {
-        return connectState;
+    public void setTransitionAction(Action transitionAction) {
+        this.transitionAction = transitionAction;
+    }
+
+    public StateTransition getStateTransition() {
+        return stateTransition;
+    }
+
+    public void setStateTransition(StateTransition stateTransition) {
+        this.stateTransition = stateTransition;
+    }
+
+    public List<Comment> getReplicableSequenceComments() {
+        return replicableSequenceComments;
+    }
+
+    public void setReplicableSequenceComments(List<Comment> replicableSequenceComments) {
+        this.replicableSequenceComments = replicableSequenceComments;
     }
 
     public ActionOutcomeDTO withUser(User user) {
@@ -62,16 +90,9 @@ public class ActionOutcomeDTO {
         return this;
     }
 
-    public ActionOutcomeDTO withConnectState(PrismConnectionState connectState) {
-        this.connectState = connectState;
+    public ActionOutcomeDTO withStateTransition(StateTransition stateTransition) {
+        this.stateTransition = stateTransition;
         return this;
-    }
-
-    public String createRedirectionUrl() {
-        Map<String, String> params = Maps.newLinkedHashMap();
-        params.put("resource", transitionResource.getId().toString());
-        params.put("action", transitionAction.getId().toString());
-        return "redirect:/execute?" + Joiner.on("&").withKeyValueSeparator("=").join(params);
     }
 
 }

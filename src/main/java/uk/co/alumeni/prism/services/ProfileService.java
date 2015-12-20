@@ -24,7 +24,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -80,7 +79,6 @@ import uk.co.alumeni.prism.domain.user.UserReferee;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDTO;
 import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
@@ -91,7 +89,7 @@ import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileQualificationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileRefereeDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceOpportunityDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
@@ -369,8 +367,7 @@ public class ProfileService {
     public void updateDocumentApplication(Integer applicationId, ProfileDocumentDTO documentDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationDocument applicationDocument = updateDocument(application, ApplicationDocument.class, documentDTO);
-        Document coveringLetter = documentDTO.getCoveringLetter() != null ? documentService.getById(documentDTO.getCoveringLetter().getId(), DOCUMENT) : null;
-        applicationDocument.setCoveringLetter(coveringLetter);
+        applicationDocument.setCoveringLetter(getDocument(documentDTO.getCoveringLetter()));
 
         documentDTO.setCv(cloneDocument(documentDTO.getCv()));
         documentDTO.setCoveringLetter(cloneDocument(documentDTO.getCoveringLetter()));
@@ -522,7 +519,9 @@ public class ProfileService {
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
             applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            applicationDocument.setLastUpdatedTimestamp(new DateTime());
+            if (applicationDocument.getCv() != null) {
+                applicationDocument.setLastUpdatedTimestamp(new DateTime());
+            }
         }
     }
 
@@ -609,7 +608,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(
             T profile, U qualification, ProfileQualificationDTO qualificationDTO) {
-        createAdvertRelation(profile.getUser(), qualification, qualificationDTO);
+        createAdvertRelation(qualification, qualificationDTO);
 
         qualification.setStartYear(qualificationDTO.getStartDate().getYear());
         qualification.setStartMonth(qualificationDTO.getStartDate().getMonthOfYear());
@@ -622,8 +621,7 @@ public class ProfileService {
 
         qualification.setGrade(qualificationDTO.getGrade());
         qualification.setCompleted(isTrue(qualificationDTO.getCompleted()));
-        Document document = qualificationDTO.getDocument() != null ? documentService.getById(qualificationDTO.getDocument().getId(), DOCUMENT) : null;
-        qualification.setDocument(document);
+        qualification.setDocument(getDocument(qualificationDTO.getDocument()));
 
         if (qualification.getClass().equals(ApplicationQualification.class)) {
             ((ApplicationQualification) qualification).setLastUpdatedTimestamp(DateTime.now());
@@ -712,7 +710,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(
             T profile, U employmentPosition, ProfileEmploymentPositionDTO employmentPositionDTO) {
-        createAdvertRelation(profile.getUser(), employmentPosition, employmentPositionDTO);
+        createAdvertRelation(employmentPosition, employmentPositionDTO);
 
         employmentPosition.setStartYear(employmentPositionDTO.getStartDate().getYear());
         employmentPosition.setStartMonth(employmentPositionDTO.getStartDate().getMonthOfYear());
@@ -765,7 +763,7 @@ public class ProfileService {
     private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(
             T profile, U referee, ProfileRefereeDTO refereeDTO) {
         List<CommentAssignedUser> refereeAssignments = assignReferee(profile, referee, refereeDTO);
-        createAdvertRelation(profile.getUser(), referee, refereeDTO);
+        createAdvertRelation(referee, refereeDTO);
 
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
@@ -796,6 +794,8 @@ public class ProfileService {
         }
 
         document.setPersonalSummary(documentDTO.getPersonalSummary());
+        document.setCv(getDocument(documentDTO.getCv()));
+
         return document;
     }
 
@@ -834,7 +834,7 @@ public class ProfileService {
         return emptyList();
     }
 
-    private void createAdvertRelation(User user, ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
+    private void createAdvertRelation(ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
         ResourceRelationCreationDTO resourceRelationDTO = advertRelationDTO.getResource();
         ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
 
@@ -845,9 +845,8 @@ public class ProfileService {
 
         Advert advert = resource.getAdvert();
         ResourceCreationDTO resourceDTO = advertRelationDTO.getResource().getResource().getResource();
-        if (ResourceOpportunityDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            AdvertDTO advertDTO = ((ResourceOpportunityDTO) resourceDTO).getAdvert();
-            advert.setSummary(Optional.ofNullable(advertDTO).map(a -> a.getSummary()).orElse(null));
+        if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+            advert.setSummary(((ResourceParentDTO) resourceDTO).getSummary());
         }
 
         advertRelation.setAdvert(advert);
@@ -867,6 +866,14 @@ public class ProfileService {
 
     private <T extends ProfileReferee<?>> T getProfileReferee(Class<T> refereeClass, Integer refereeId) {
         return entityService.getById(refereeClass, refereeId);
+    }
+
+    private Document getDocument(DocumentDTO documentDTO) {
+        Integer documentId = documentDTO == null ? null : documentDTO.getId();
+        if (documentId != null) {
+            return documentService.getById(documentId, DOCUMENT);
+        }
+        return null;
     }
 
     private List<CommentAssignedUser> getUserAssignmentsUpdate(Application application, User oldUser, User newUser, PrismRole prismRole) {

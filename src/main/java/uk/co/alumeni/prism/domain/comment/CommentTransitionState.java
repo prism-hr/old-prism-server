@@ -69,7 +69,7 @@ public class CommentTransitionState extends CommentStateDefinition {
     public final void setPrimaryState(Boolean primaryState) {
         this.primaryState = primaryState;
     }
-
+    
     public CommentTransitionState withState(State state) {
         this.state = state;
         return this;

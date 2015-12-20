@@ -6,10 +6,9 @@ import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
 
-public abstract class ResourceOpportunity extends ResourceParent implements ResourceOpportunityDefinition<Advert, OpportunityType> {
+public abstract class ResourceOpportunity extends ResourceParent implements ResourceOpportunityDefinition<OpportunityType> {
 
     public abstract Department getDepartment();
 

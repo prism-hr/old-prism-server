@@ -212,7 +212,7 @@ public class ActionDAO {
     }
 
     public List<PrismActionCondition> getActionConditions(PrismScope prismScope) {
-        return (List<PrismActionCondition>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+        return (List<PrismActionCondition>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.groupProperty("actionCondition")) //
                 .createAlias("action", "action") //
                 .add(Restrictions.eq("action.scope.id", prismScope)) //
@@ -226,9 +226,9 @@ public class ActionDAO {
                 .createAlias(resource.getResourceScope().getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("stateAction.actionCondition", "resourceCondition.actionCondition")) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition")) //
                 .createAlias("action.creationScope", "creationScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.eq("resourceCondition.externalMode", true)) //
@@ -279,7 +279,7 @@ public class ActionDAO {
 
     private static Junction getUnsecuredActionVisibilityConstraint(boolean userLoggedIn) {
         Junction conditionConstraint = Restrictions.conjunction() //
-                .add(Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition"));
+                .add(Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition"));
         if (userLoggedIn) {
             conditionConstraint.add(Restrictions.disjunction() //
                     .add(Restrictions.eq("resourceCondition.internalMode", true)) //
@@ -291,7 +291,7 @@ public class ActionDAO {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("action.creationScope")) //
                 .add(Restrictions.isNull("resourceCondition.id")) //
-                .add(Restrictions.isNull("stateAction.actionCondition")) //
+                .add(Restrictions.isNull("action.actionCondition")) //
                 .add(conditionConstraint);
     }
 

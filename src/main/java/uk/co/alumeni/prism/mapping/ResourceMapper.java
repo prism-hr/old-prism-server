@@ -14,6 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
+import static uk.co.alumeni.prism.utils.PrismListUtils.processRowSummaries;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
@@ -41,6 +42,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -51,7 +53,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
@@ -86,6 +87,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepres
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRowRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
@@ -108,19 +110,16 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataR
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ApplicationService;
-import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.ScopeService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismListUtils;
 
 @Service
 @Transactional
@@ -142,9 +141,6 @@ public class ResourceMapper {
     private ApplicationService applicationService;
 
     @Inject
-    private EntityService entityService;
-
-    @Inject
     private StateService stateService;
 
     @Inject
@@ -152,6 +148,9 @@ public class ResourceMapper {
 
     @Inject
     private AdvertMapper advertMapper;
+
+    @Inject
+    private AddressMapper addressMapper;
 
     @Inject
     private ApplicationMapper applicationMapper;
@@ -186,21 +185,21 @@ public class ResourceMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String sequenceId) throws Exception {
+    public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String lastSequenceIdentifier) throws Exception {
         DateTime baseline = new DateTime();
-        List<ResourceListRowRepresentation> representations = Lists.newArrayList();
 
         User user = userService.getCurrentUser();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-        Set<Integer> resourceIds = Sets.newHashSet();
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
-        processRowDescriptors(resources, resourceIds, onlyAsPartnerResourceIds, summaries);
+        processRowDescriptors(resources, onlyAsPartnerResourceIds, summaries);
 
-        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, filter, RESOURCE_LIST_PAGE_ROW_COUNT, sequenceId, resourceIds, onlyAsPartnerResourceIds, true)
+        List<ResourceListRowRepresentation> representations = Lists.newLinkedList();
+        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, resources, filter, lastSequenceIdentifier, RESOURCE_LIST_PAGE_ROW_COUNT,
+                onlyAsPartnerResourceIds, true)
                 .forEach(row -> {
                     ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
                     representation.setScope(scope);
@@ -263,13 +262,15 @@ public class ResourceMapper {
                     representation.setSequenceIdentifier(row.getSequenceIdentifier());
 
                     representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
+                    representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
+
                     representation.setActions(actions);
                     representations.add(representation);
                 });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
-        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getRaisesUrgentFlag())).collect(Collectors.toSet());
-        PrismListUtils.processRowSummaries(urgentResources, urgentSummaries);
+        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getPrioritize())).collect(Collectors.toSet());
+        processRowSummaries(urgentResources, urgentSummaries);
 
         return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries))
                 .withUrgentSummaries(getSummaryRepresentations(urgentSummaries));
@@ -303,10 +304,6 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceSimpleDTO> ResourceRepresentationSimple getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO) {
-        return getResourceRepresentationSimple(resourceScope, resourceDTO, ResourceRepresentationSimple.class);
-    }
-
     public <T extends Resource, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(T resource, Class<V> returnType) {
         V representation = getResourceRepresentation(resource, returnType);
         representation.setCode(resource.getCode());
@@ -320,26 +317,12 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceSimpleDTO, V extends ResourceRepresentationSimple> V getResourceRepresentationSimple(PrismScope resourceScope, T resourceDTO, Class<V> returnType) {
-        V representation = getResourceRepresentation(resourceScope, resourceDTO, returnType);
-        representation.setCode(resourceDTO.getCode());
-        representation.setImportedCode(resourceDTO.getImportedCode());
-
-        PrismState stateId = resourceDTO.getStateId();
-        if (stateId != null) {
-            representation.setState(stateMapper.getStateRepresentationSimple(stateId));
-        }
-
-        return representation;
-    }
-
     public <T extends Resource, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         User currentUser = userService.getCurrentUser();
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
         V representation = getResourceRepresentationRelation(resource, returnType, actions, overridingRoles);
-
+        representation.setStateActionPendingCount(resource.getStateActionPendings().size());
         representation.setActions(actions);
-
         representation.setConditions(getResourceConditionRepresentations(resource));
         return representation;
     }
@@ -381,18 +364,16 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceParent, V extends ResourceParentRepresentation> V getResourceParentRepresentation(T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
-        resourceService.setResourceAdvertIncompleteSection(resource);
-        entityService.flush();
-
         V representation = getResourceRepresentationExtended(resource, returnType, overridingRoles);
         representation.setAdvert(advertMapper.getAdvertRepresentationSimple(resource.getAdvert()));
         representation.setOpportunityCategories(asList(resource.getOpportunityCategories().split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
+        representation.setContexts(PrismScope.getResourceContexts(resource.getOpportunityCategories()));
         representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(resource.getAdvertIncompleteSection()));
         return representation;
     }
 
-    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+    public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentation> V getResourceOpportunityRepresentation(
+            T resource, Class<V> returnType, List<PrismRole> overridingRoles) {
         V representation = getResourceParentRepresentation(resource, returnType, overridingRoles);
 
         representation.setOpportunityType(resource.getOpportunityType().getId());
@@ -406,7 +387,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
-            List<PrismRole> overridingRoles) {
+                                                                                                                                           List<PrismRole> overridingRoles) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
@@ -427,8 +408,7 @@ public class ResourceMapper {
                     : ProjectRepresentationClient.class;
             return getResourceOpportunityRepresentationClient((ResourceOpportunity) resource, representationType, overridingRoles);
         } else if (Application.class.isAssignableFrom(resourceClass)) {
-            ApplicationRepresentationClient representation = applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
-            return representation;
+            return applicationMapper.getApplicationRepresentationClient((Application) resource, overridingRoles);
         }
 
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles);
@@ -492,9 +472,10 @@ public class ResourceMapper {
                 }
             });
 
-            constraintsToTransform.keySet().forEach(c -> {
-                transformedConstraints.putAll(c, applicationContext.getBean(c.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(c)));
-            });
+            for (PrismFilterEntity filterEntity : constraintsToTransform.keySet()) {
+                List<String> possibleConstraints = applicationContext.getBean(filterEntity.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(filterEntity));
+                transformedConstraints.putAll(filterEntity, possibleConstraints);
+            }
         }
 
         List<ApplicationProcessingSummaryRepresentationYear> yearRepresentations = Lists.newLinkedList();
@@ -608,6 +589,10 @@ public class ResourceMapper {
         return getResourceRepresentationRelation(resource, ResourceRepresentationRelation.class);
     }
 
+    public <T extends Resource> ResourceLocationRepresentationRelation getResourceLocationRepresentationRelation(T resource) {
+        return getResourceRepresentationRelation(resource, ResourceLocationRepresentationRelation.class);
+    }
+
     public <T extends Resource> ResourceRepresentationRelation getResourceOpportunityRepresentationRelation(T resource) {
         return getResourceRepresentationRelation(resource, ResourceOpportunityRepresentationRelation.class);
     }
@@ -618,33 +603,34 @@ public class ResourceMapper {
             List<FilterExpressionRepresentation> filterExpressions = property.getPermittedExpressions().stream()
                     .map(filterExpression -> new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()))
                     .collect(Collectors.toList());
-            filters.add(new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes()));
+            filters.add(
+                    new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes(), property.isPermittedInBulkMode()));
         }
         return filters;
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(ResourceConnectionDTO resource) {
-        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getInstitutionLogoImageId(), resource.getDepartmentId(),
+        return getResourceRepresentationConnection(resource.getInstitutionId(), resource.getInstitutionName(), resource.getLogoImageId(), resource.getDepartmentId(),
                 resource.getDepartmentName(), resource.getOpportunityCategories());
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName) {
+                                                                                String departmentName) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, Integer backgroundImageId) {
+                                                                                String departmentName, Integer backgroundImageId) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, backgroundImageId, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, String opportunityCategories) {
+                                                                                String departmentName, String opportunityCategories) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, opportunityCategories);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-            String departmentName, Integer backgroundImageId, String opportunityCategories) {
+                                                                                String departmentName, Integer backgroundImageId, String opportunityCategories) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 
@@ -686,6 +672,15 @@ public class ResourceMapper {
                     parentRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(parentResource.getLogoImageId()));
                 }
                 representation.setParentResource(parentRepresentation);
+            }
+        }
+
+        if (returnType.equals(ResourceLocationRepresentationRelation.class)) {
+            Address address = resource.getAdvert().getAddress();
+            if (address != null) {
+                AddressRepresentation addressRepresentation = addressMapper.transform(address, AddressRepresentation.class);
+                addressRepresentation.setDomicile(address.getDomicile().getId());
+                ((ResourceLocationRepresentationRelation) representation).setAddress(addressRepresentation);
             }
         }
 

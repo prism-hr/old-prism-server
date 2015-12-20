@@ -28,12 +28,15 @@ public class PrismJsonMappingUtils {
     }
 
     public String writeValue(Object value) {
-        try {
-            return objectMapper.writeValueAsString(value);
-        } catch (Exception e) {
-            logger.error("Unable to write json", e);
-            return null;
+        if (value != null) {
+            try {
+                return objectMapper.writeValueAsString(value);
+            } catch (Exception e) {
+                logger.error("Unable to write json", e);
+                return null;
+            }
         }
+        return null;
     }
 
 }

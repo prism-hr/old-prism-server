@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -62,9 +63,9 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @Lob
-    @Column(name = "content")
-    private String content;
+    @ManyToOne
+    @JoinColumn(name = "transition_state_id")
+    private State transitionState;
 
     @ManyToOne
     @JoinColumn(name = "assign_user_role_id")
@@ -77,6 +78,10 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
     @Lob
     @Column(name = "assign_user_message")
     private String assignUserMessage;
+
+    @ManyToOne
+    @JoinColumn(name = "template_comment_id")
+    private Comment templateComment;
 
     public Integer getId() {
         return id;
@@ -150,12 +155,12 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         this.action = action;
     }
 
-    public String getContent() {
-        return content;
+    public State getTransitionState() {
+        return transitionState;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTransitionState(State transitionState) {
+        this.transitionState = transitionState;
     }
 
     public Role getAssignUserRole() {
@@ -182,6 +187,14 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         this.assignUserMessage = assignUserMessage;
     }
 
+    public Comment getTemplateComment() {
+        return templateComment;
+    }
+
+    public void setTemplateComment(Comment templateComment) {
+        this.templateComment = templateComment;
+    }
+
     public StateActionPending withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -197,8 +210,8 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
         return this;
     }
 
-    public StateActionPending withContent(String content) {
-        this.content = content;
+    public StateActionPending withTransitionState(State transitionState) {
+        this.transitionState = transitionState;
         return this;
     }
 
@@ -214,6 +227,11 @@ public class StateActionPending extends WorkflowResourceExecution implements Use
 
     public StateActionPending withAssignUserMessage(String assignUserMessage) {
         this.assignUserMessage = assignUserMessage;
+        return this;
+    }
+
+    public StateActionPending withTemplateComment(Comment templateComment) {
+        this.templateComment = templateComment;
         return this;
     }
 

@@ -7,21 +7,43 @@ import org.apache.commons.lang.BooleanUtils;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 
 public class ResourceListFilterDTO {
 
     private PrismRoleCategory roleCategory;
 
-    private PrismAction actionId;
+    private List<PrismAction> actionIds;
 
     private PrismActionEnhancement[] actionEnhancements;
 
     private List<Integer> resourceIds;
 
+    private ResourceIdentityDTO parentResource;
+
     private PrismOpportunityCategory opportunityCategory;
+
+    private List<PrismOpportunityType> opportunityTypes;
+
+    private List<ResourceListFilterTagDTO> themes;
+
+    private Boolean themesApplied;
+
+    private List<ResourceListFilterTagDTO> secondaryThemes;
+
+    private Boolean secondaryThemesApplied;
+
+    private List<ResourceListFilterTagDTO> locations;
+
+    private Boolean locationsApplied;
+
+    private List<ResourceListFilterTagDTO> secondaryLocations;
+
+    private Boolean secondaryLocationsApplied;
 
     private PrismFilterMatchMode matchMode;
 
@@ -43,19 +65,19 @@ public class ResourceListFilterDTO {
         this.roleCategory = roleCategory;
     }
 
-    public PrismAction getActionId() {
-        return actionId;
+    public List<PrismAction> getActionIds() {
+        return actionIds;
     }
 
-    public void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
+    public void setActionIds(List<PrismAction> actionIds) {
+        this.actionIds = actionIds;
     }
 
     public PrismActionEnhancement[] getActionEnhancements() {
         return actionEnhancements;
     }
 
-    public void setActionEnhancement(PrismActionEnhancement... actionEnhancements) {
+    public void setActionEnhancements(PrismActionEnhancement[] actionEnhancements) {
         this.actionEnhancements = actionEnhancements;
     }
 
@@ -67,12 +89,92 @@ public class ResourceListFilterDTO {
         this.resourceIds = resourceIds;
     }
 
+    public ResourceIdentityDTO getParentResource() {
+        return parentResource;
+    }
+
+    public void setParentResource(ResourceIdentityDTO parentResource) {
+        this.parentResource = parentResource;
+    }
+
     public PrismOpportunityCategory getOpportunityCategory() {
         return opportunityCategory;
     }
 
     public void setOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
+    }
+
+    public List<PrismOpportunityType> getOpportunityTypes() {
+        return opportunityTypes;
+    }
+
+    public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
+        this.opportunityTypes = opportunityTypes;
+    }
+
+    public List<ResourceListFilterTagDTO> getThemes() {
+        return themes;
+    }
+
+    public void setThemes(List<ResourceListFilterTagDTO> themes) {
+        this.themes = themes;
+    }
+
+    public Boolean getThemesApplied() {
+        return themesApplied;
+    }
+
+    public void setThemesApplied(Boolean themesApplied) {
+        this.themesApplied = themesApplied;
+    }
+
+    public List<ResourceListFilterTagDTO> getSecondaryThemes() {
+        return secondaryThemes;
+    }
+
+    public void setSecondaryThemes(List<ResourceListFilterTagDTO> secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
+    }
+
+    public Boolean getSecondaryThemesApplied() {
+        return secondaryThemesApplied;
+    }
+
+    public void setSecondaryThemesApplied(Boolean secondaryThemesApplied) {
+        this.secondaryThemesApplied = secondaryThemesApplied;
+    }
+
+    public List<ResourceListFilterTagDTO> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<ResourceListFilterTagDTO> locations) {
+        this.locations = locations;
+    }
+
+    public Boolean getLocationsApplied() {
+        return locationsApplied;
+    }
+
+    public void setLocationsApplied(Boolean locationsApplied) {
+        this.locationsApplied = locationsApplied;
+    }
+
+    public List<ResourceListFilterTagDTO> getSecondaryLocations() {
+        return secondaryLocations;
+    }
+
+    public void setSecondaryLocations(List<ResourceListFilterTagDTO> secondaryLocations) {
+        this.secondaryLocations = secondaryLocations;
+    }
+
+    public Boolean getSecondaryLocationsApplied() {
+        return secondaryLocationsApplied;
+    }
+
+    public void setSecondaryLocationsApplied(Boolean secondaryLocationsApplied) {
+        this.secondaryLocationsApplied = secondaryLocationsApplied;
     }
 
     public final PrismFilterMatchMode getMatchMode() {
@@ -128,13 +230,18 @@ public class ResourceListFilterDTO {
         return this;
     }
 
+    public ResourceListFilterDTO withParentResource(ResourceIdentityDTO parentResource) {
+        this.parentResource = parentResource;
+        return this;
+    }
+
     public ResourceListFilterDTO withRoleCategory(PrismRoleCategory roleCategory) {
         this.roleCategory = roleCategory;
         return this;
     }
 
-    public ResourceListFilterDTO withActionId(PrismAction actionId) {
-        this.actionId = actionId;
+    public ResourceListFilterDTO withActionIds(List<PrismAction> actionIds) {
+        this.actionIds = actionIds;
         return this;
     }
 
@@ -145,6 +252,46 @@ public class ResourceListFilterDTO {
 
     public ResourceListFilterDTO withOpportunityCategory(PrismOpportunityCategory opportunityCategory) {
         this.opportunityCategory = opportunityCategory;
+        return this;
+    }
+
+    public ResourceListFilterDTO withThemes(List<ResourceListFilterTagDTO> themes) {
+        this.themes = themes;
+        return this;
+    }
+
+    public ResourceListFilterDTO withThemesApplied(Boolean themesApplied) {
+        this.themesApplied = themesApplied;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryThemes(List<ResourceListFilterTagDTO> secondaryThemes) {
+        this.secondaryThemes = secondaryThemes;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryThemesApplied(Boolean secondaryThemesApplied) {
+        this.secondaryThemesApplied = secondaryThemesApplied;
+        return this;
+    }
+
+    public ResourceListFilterDTO withLocations(List<ResourceListFilterTagDTO> locations) {
+        this.locations = locations;
+        return this;
+    }
+
+    public ResourceListFilterDTO withLocationsApplied(Boolean locationsApplied) {
+        this.locationsApplied = locationsApplied;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryLocations(List<ResourceListFilterTagDTO> secondaryLocations) {
+        this.secondaryLocations = secondaryLocations;
+        return this;
+    }
+
+    public ResourceListFilterDTO withSecondaryLocationsApplied(Boolean secondaryLocationsApplied) {
+        this.secondaryLocationsApplied = secondaryLocationsApplied;
         return this;
     }
 

@@ -25,12 +25,12 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 
 @Entity
-@Table(name = "resource_list_filter", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_account_id", "scope_id" }) })
+@Table(name = "resource_list_filter", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "scope_id"})})
 public class ResourceListFilter implements UniqueEntity {
 
     @Id
     @GeneratedValue
-    Integer Id;
+    private Integer Id;
 
     @ManyToOne
     @JoinColumn(name = "user_account_id", nullable = false)
@@ -59,63 +59,63 @@ public class ResourceListFilter implements UniqueEntity {
     @OrderBy("displayPosition")
     private Set<ResourceListFilterConstraint> constraints = Sets.newHashSet();
 
-    public final Integer getId() {
+    public Integer getId() {
         return Id;
     }
 
-    public final void setId(Integer id) {
+    public void setId(Integer id) {
         Id = id;
     }
 
-    public final UserAccount getUserAccount() {
+    public UserAccount getUserAccount() {
         return userAccount;
     }
 
-    public final void setUserAccount(UserAccount userAccount) {
+    public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
 
-    public final Scope getScope() {
+    public Scope getScope() {
         return scope;
     }
 
-    public final void setScope(Scope scope) {
+    public void setScope(Scope scope) {
         this.scope = scope;
     }
 
-    public final Boolean isUrgentOnly() {
+    public Boolean isUrgentOnly() {
         return urgentOnly;
     }
 
-    public final void setUrgentOnly(Boolean urgentOnly) {
+    public void setUrgentOnly(Boolean urgentOnly) {
         this.urgentOnly = urgentOnly;
     }
 
-    public final PrismFilterMatchMode getMatchMode() {
+    public PrismFilterMatchMode getMatchMode() {
         return matchMode;
     }
 
-    public final void setMatchMode(PrismFilterMatchMode matchMode) {
+    public void setMatchMode(PrismFilterMatchMode matchMode) {
         this.matchMode = matchMode;
     }
 
-    public final PrismFilterSortOrder getSortOrder() {
+    public PrismFilterSortOrder getSortOrder() {
         return sortOrder;
     }
 
-    public final void setSortOrder(PrismFilterSortOrder sortOrder) {
+    public void setSortOrder(PrismFilterSortOrder sortOrder) {
         this.sortOrder = sortOrder;
     }
 
-    public final String getValueString() {
+    public String getValueString() {
         return valueString;
     }
 
-    public final void setValueString(String valueString) {
+    public void setValueString(String valueString) {
         this.valueString = valueString;
     }
 
-    public final Set<ResourceListFilterConstraint> getConstraints() {
+    public Set<ResourceListFilterConstraint> getConstraints() {
         return constraints;
     }
 

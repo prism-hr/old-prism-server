@@ -3,7 +3,7 @@ package uk.co.alumeni.prism.services;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Objects;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -36,6 +37,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvalu
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
@@ -121,6 +123,10 @@ public class StateService {
 
     public StateActionPending getStateActionPendingById(Integer id) {
         return entityService.getById(StateActionPending.class, id);
+    }
+
+    public StateAction getStateAction(State state, Action action) {
+        return entityService.getByProperties(StateAction.class, ImmutableMap.of("state", state, "action", action));
     }
 
     public List<State> getStates() {
@@ -223,6 +229,10 @@ public class StateService {
         return stateDAO.getStateTransition(resource, action, prismTransitionState);
     }
 
+    public StateTransition getStateTransition(State state, Action action, State transitionState) {
+        return stateDAO.getStateTransition(state, action, transitionState);
+    }
+
     public StateTransition getPredefinedStateTransition(Resource resource, Comment comment) {
         State transitionState = comment.getTransitionState();
         if (transitionState != null) {
@@ -243,13 +253,28 @@ public class StateService {
     @SuppressWarnings("unchecked")
     public void executeStateActionPending(Integer stateActionPendingId) {
         StateActionPending stateActionPending = getStateActionPendingById(stateActionPendingId);
-        Set<UserDTO> userDTOs = prismJsonMappingUtils.readCollection(stateActionPending.getAssignUserList(), Set.class, UserDTO.class);
 
-        Set<User> users = Sets.newHashSet();
-        userDTOs.forEach(userDTO -> users.add(userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail())));
+        User user = stateActionPending.getUser();
+        Action action = stateActionPending.getAction();
+        Resource resource = stateActionPending.getResource();
+        if (actionService.checkActionExecutable(resource, action, user)) {
+            Role assignUserRole = stateActionPending.getAssignUserRole();
+            String assignUserList = stateActionPending.getAssignUserList();
 
-        roleService.createUserRoles(stateActionPending.getUser(), stateActionPending.getResource(), users, stateActionPending.getAssignUserMessage(),
-                stateActionPending.getAssignUserRole().getId());
+            Set<User> assignUsers = Sets.newHashSet();
+            if (!Strings.isNullOrEmpty(assignUserList)) {
+                Set<UserDTO> assignUserDTOs = prismJsonMappingUtils.readCollection(assignUserList, Set.class, UserDTO.class);
+                assignUsers = assignUserDTOs.stream().map(userService::getOrCreateUser).collect(Collectors.toSet());
+            }
+
+            Comment templateComment = stateActionPending.getTemplateComment();
+            if (templateComment == null) {
+                roleService.createUserRoles(user, resource, assignUsers, stateActionPending.getAssignUserMessage(), assignUserRole.getId());
+            } else {
+                actionService.executeUserAction(resource, action, commentService.replicateComment(resource, templateComment));
+            }
+        }
+
         entityService.delete(stateActionPending);
     }
 
@@ -379,6 +404,13 @@ public class StateService {
 
     public PrismState getPreviousPrimaryState(Resource resource, PrismState currentState) {
         return stateDAO.getPreviousPrimaryState(resource, currentState);
+    }
+
+    public StateActionPending createStateActionPending(Resource resource, Comment templateComment) {
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(templateComment.getUser()).withAction(templateComment.getAction())
+                .withTemplateComment(templateComment);
+        entityService.save(stateActionPending);
+        return stateActionPending;
     }
 
     public StateActionPending createStateActionPending(Resource resource, User user, Action action, StateActionPendingDTO stateActionPendingDTO) {

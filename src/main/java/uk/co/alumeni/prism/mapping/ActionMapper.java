@@ -6,10 +6,12 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -24,15 +27,20 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
+import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.ResourceListFilterService;
 
 @Service
 @Transactional
 public class ActionMapper {
+
+    @Inject
+    private CommentMapper commentMapper;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -42,6 +50,9 @@ public class ActionMapper {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private ResourceListFilterService resourceListFilterService;
 
     public ActionRepresentation getActionRepresentation(PrismAction action) {
         return getActionRepresentation(action, ActionRepresentation.class);
@@ -98,20 +109,24 @@ public class ActionMapper {
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
-        return new ActionOutcomeRepresentation()
-                .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
+        ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation().withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
+
+        List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
+        if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
+            representation.setReplicable(new ActionOutcomeReplicableRepresentation()
+                    .withFilter(resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(), actionOutcomeDTO.getStateTransition(),
+                            replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
+                    .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(Collectors.toList())));
+        }
+
+        return representation;
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
-        PrismAction prismAction = action.getActionId();
-        ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class);
-
-        representation.addNextStates(stateMapper.getStateRepresentations(resource, prismAction));
-        representation.addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
-
-        return representation;
+        return getActionRepresentationSimple(action, ActionRepresentationExtended.class).addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId()))
+                .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
     }
 
     private <T extends ActionRepresentationSimple> T getActionRepresentationSimple(ActionDTO action, Class<T> returnType) {

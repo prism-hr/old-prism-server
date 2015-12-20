@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -268,7 +268,7 @@ public class SystemInitialisationHelper {
         for (StateAction stateAction : stateActions) {
             PrismStateAction prismStateAction = PrismState.getStateAction(stateAction.getState().getId(), stateAction.getAction().getId());
             assertNotNull(prismStateAction);
-            assertEquals(prismStateAction.isRaisesUrgentFlag(), stateAction.getRaisesUrgentFlag());
+            assertEquals(prismStateAction.getRaisesUrgentFlag(), stateAction.getRaisesUrgentFlag());
             assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
             NotificationDefinition template = stateAction.getNotificationDefinition();

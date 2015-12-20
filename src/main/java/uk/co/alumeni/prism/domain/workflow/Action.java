@@ -16,6 +16,7 @@ import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 
 @Entity
@@ -33,6 +34,10 @@ public class Action extends WorkflowDefinition {
     @Enumerated(EnumType.STRING)
     private PrismActionCategory actionCategory;
 
+    @Column(name = "action_condition")
+    @Enumerated(EnumType.STRING)
+    private PrismActionCondition actionCondition;
+
     @Column(name = "rating_action", nullable = false)
     private Boolean ratingAction;
 
@@ -44,6 +49,9 @@ public class Action extends WorkflowDefinition {
 
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
+
+    @Column(name = "replicable_user_assignment_action", nullable = false)
+    private Boolean replicableUserAssignmentAction;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "partnership_state")
@@ -96,6 +104,14 @@ public class Action extends WorkflowDefinition {
         this.actionCategory = actionCategory;
     }
 
+    public PrismActionCondition getActionCondition() {
+        return actionCondition;
+    }
+
+    public void setActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
+    }
+
     public Boolean getRatingAction() {
         return ratingAction;
     }
@@ -126,6 +142,14 @@ public class Action extends WorkflowDefinition {
 
     public void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+    }
+
+    public Boolean getReplicableUserAssignmentAction() {
+        return replicableUserAssignmentAction;
+    }
+
+    public void setReplicableUserAssignmentAction(Boolean replicableUserAssignmentAction) {
+        this.replicableUserAssignmentAction = replicableUserAssignmentAction;
     }
 
     public PrismPartnershipState getPartnershipState() {
@@ -201,6 +225,11 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
+    public Action withActionCondition(PrismActionCondition actionCondition) {
+        this.actionCondition = actionCondition;
+        return this;
+    }
+
     public Action withRatingAction(Boolean ratingAction) {
         this.ratingAction = ratingAction;
         return this;
@@ -218,6 +247,11 @@ public class Action extends WorkflowDefinition {
 
     public Action withVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+        return this;
+    }
+
+    public Action withReplicableUserAssignmentAction(Boolean replicableUserAssignmentAction) {
+        this.replicableUserAssignmentAction = replicableUserAssignmentAction;
         return this;
     }
 

@@ -32,6 +32,8 @@ import com.google.gson.JsonPrimitive;
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -132,7 +134,6 @@ public class UserMapper {
     public UserRepresentationExtended getUserRepresentationExtended(User user) {
         UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendActivityNotification());
-        representation.setVisibleScopes(roleService.getVisibleScopes(user));
         representation.setUserRoles(getUserRoleRepresentations(user));
 
         representation.setParentUser(user.getEmail());
@@ -218,7 +219,9 @@ public class UserMapper {
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(User user) {
-        return new UserActivityRepresentation().withResourceActivities(scopeMapper.getResourceActivityRepresentation(user))
+        Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
+        return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
+                .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withUnverifiedUserActivities(getUnverifiedUserRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user)));
     }
@@ -279,7 +282,7 @@ public class UserMapper {
                 userRepresentations = newLinkedList();
                 representation = new ResourceUnverifiedUserRepresentation()
                         .withResource(resourceMapper.getResourceRepresentationConnection(institutionId, unverifiedUser.getInstitutionName(),
-                                unverifiedUser.getInstitutionLogoImageId(), departmentId, unverifiedUser.getDepartmentName()))
+                                unverifiedUser.getLogoImageId(), departmentId, unverifiedUser.getDepartmentName()))
                         .withUsers(userRepresentations);
                 representations.put(resourceKey, representation);
             } else {

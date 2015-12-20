@@ -12,6 +12,7 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.InstitutionService;
@@ -34,15 +35,18 @@ public class InstitutionExecutor implements ActionExecutor {
 
     @Override
     public ActionOutcomeDTO execute(CommentDTO commentDTO) {
+        PrismAction actionId = commentDTO.getAction();
         User user = userService.getById(commentDTO.getUser());
         Institution institution = institutionService.getById(commentDTO.getResource().getId());
 
-        PrismAction actionId = commentDTO.getAction();
-        Action action = actionService.getById(actionId);
+        ResourceCreationDTO institutionDTO = commentDTO.getResource();
 
-        InstitutionDTO institutionDTO = (InstitutionDTO) commentDTO.getResource();
+        if (institutionDTO.getClass().equals(InstitutionDTO.class)) {
+            institutionService.update(institution, (InstitutionDTO) institutionDTO);
+        }
+
+        Action action = actionService.getById(actionId);
         Comment comment = commentService.prepareProcessResourceComment(institution, user, action, commentDTO);
-        institutionService.update(institution, institutionDTO);
 
         return actionService.executeUserAction(institution, action, comment);
     }

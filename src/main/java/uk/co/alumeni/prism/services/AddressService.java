@@ -1,13 +1,16 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +27,11 @@ import com.google.common.collect.Lists;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
+import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.dto.json.EstablishmentSearchResponseDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO;
+import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleAddressComponentDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleGeometryDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
 import uk.co.alumeni.prism.dto.json.LocationSearchResponseDTO;
@@ -39,6 +44,10 @@ public class AddressService {
 
     private static Logger logger = LoggerFactory.getLogger(AddressService.class);
 
+    private static final List<String> googleLocationTypes = Lists.newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
+            "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "political", "postal_town", "locality", "sublocality",
+            "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "premise", "subpremise", "airport");
+
     @Value("${integration.google.api.key}")
     private String googleApiKey;
 
@@ -50,6 +59,9 @@ public class AddressService {
 
     @Value("${integration.google.geocoding.api.request.delay.ms}")
     private Integer googleGeocodeRequestDelayMs;
+
+    @Inject
+    private EntityService entityService;
 
     @Inject
     private PrismService prismService;
@@ -81,7 +93,7 @@ public class AddressService {
         if (response.getStatus().equals(OK)) {
             GoogleResultDTO result = response.getResult();
             if (result != null) {
-                setLocation(address, result.getGeometry());
+                setLocation(address, result);
                 return true;
             }
         }
@@ -106,7 +118,7 @@ public class AddressService {
             if (response.getStatus().equals(OK)) {
                 List<GoogleResultDTO> results = response.getResults();
                 if (!results.isEmpty()) {
-                    setLocation(address, results.get(0).getGeometry());
+                    setLocation(address, results.get(0));
                     return;
                 }
             }
@@ -156,10 +168,34 @@ public class AddressService {
         return restTemplate.getForObject(request, LocationSearchResponseDTO.class);
     }
 
-    private void setLocation(Address address, GoogleGeometryDTO geometry) {
-        Location googleLocation = geometry.getLocation();
-        AddressCoordinates addressCoordinates = new AddressCoordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
-        address.setAddressCoordinates(addressCoordinates);
+    private void setLocation(Address address, GoogleResultDTO addressData) {
+        GoogleGeometryDTO geometryData = addressData.getGeometry();
+        if (geometryData != null) {
+            Location googleLocation = geometryData.getLocation();
+            AddressCoordinates addressCoordinates = new AddressCoordinates().withLatitude(googleLocation.getLat()).withLongitude(googleLocation.getLng());
+            address.setAddressCoordinates(addressCoordinates);
+        }
+
+        // We may need to improve this later if google does not provide us with
+        // the address tokens in a predictable sequence across all addresses
+        List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
+        if (CollectionUtils.isNotEmpty(componentData)) {
+            AddressLocationPart parent = null;
+            List<String> partNames = newLinkedList();
+            Set<AddressLocationPart> parts = address.getAddressLocationParts();
+            for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
+                if (CollectionUtils.containsAny(googleLocationTypes, componentItem.getTypes())) {
+                    String name = componentItem.getName();
+                    if (!partNames.contains(name)) {
+                        partNames.add(name);
+                        AddressLocationPart part = entityService
+                                .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
+                        parts.add(part);
+                        parent = part;
+                    }
+                }
+            }
+        }
     }
 
 }

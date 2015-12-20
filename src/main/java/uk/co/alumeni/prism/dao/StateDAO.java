@@ -105,6 +105,15 @@ public class StateDAO {
                 .uniqueResult();
     }
 
+    public StateTransition getStateTransition(State state, Action action, State transitionState) {
+        return (StateTransition) sessionFactory.getCurrentSession().createCriteria(StateTransition.class) //
+                .createAlias("stateAction", "stateAction") //
+                .add(Restrictions.eq("stateAction.state", state)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("transitionState", transitionState)) //
+                .uniqueResult();
+    }
+
     public List<StateTransitionPendingDTO> getStateTransitionsPending(PrismScope scopeId) {
         String scopeReference = scopeId.getLowerCamelName();
         return (List<StateTransitionPendingDTO>) sessionFactory.getCurrentSession().createCriteria(StateTransitionPending.class) //
@@ -261,7 +270,7 @@ public class StateDAO {
                         .add(Projections.property("stateTransition.transitionState"), "transitionState")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .createAlias("stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("action.transitionAction")) //
+                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.isNotNull("stateTransition.transitionState")) //
                 .addOrder(Order.asc("state")) //
                 .addOrder(Order.asc("action")) //

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
@@ -14,6 +15,8 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRe
 
 public class UserActivityRepresentation {
 
+    private PrismRoleCategory defaultRoleCategory;
+
     private List<ResourceActivityRepresentation> resourceActivities;
 
     private List<AppointmentActivityRepresentation> appointmentActivities;
@@ -21,6 +24,14 @@ public class UserActivityRepresentation {
     private List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities;
 
     private List<AdvertTargetRepresentation> advertTargetActivities;
+
+    public PrismRoleCategory getDefaultRoleCategory() {
+        return defaultRoleCategory;
+    }
+
+    public void setDefaultRoleCategory(PrismRoleCategory defaultRoleCategory) {
+        this.defaultRoleCategory = defaultRoleCategory;
+    }
 
     public List<ResourceActivityRepresentation> getResourceActivities() {
         return resourceActivities;
@@ -54,6 +65,11 @@ public class UserActivityRepresentation {
         this.advertTargetActivities = advertTargetActivities;
     }
 
+    public UserActivityRepresentation withDefaultRoleCategory(PrismRoleCategory defaultRoleCategory) {
+        this.defaultRoleCategory = defaultRoleCategory;
+        return this;
+    }
+
     public UserActivityRepresentation withResourceActivities(List<ResourceActivityRepresentation> resourceActivities) {
         this.resourceActivities = resourceActivities;
         return this;
@@ -83,6 +99,12 @@ public class UserActivityRepresentation {
 
         private PrismScope scope;
 
+        private PrismRoleCategory defaultRoleCategory;
+
+        private Boolean resourceCreator;
+
+        private Integer count;
+
         private Integer updateCount;
 
         private List<ActionActivityRepresentation> actions;
@@ -93,6 +115,30 @@ public class UserActivityRepresentation {
 
         public void setScope(PrismScope scope) {
             this.scope = scope;
+        }
+
+        public PrismRoleCategory getDefaultRoleCategory() {
+            return defaultRoleCategory;
+        }
+
+        public void setDefaultRoleCategory(PrismRoleCategory defaultRoleCategory) {
+            this.defaultRoleCategory = defaultRoleCategory;
+        }
+
+        public Boolean getResourceCreator() {
+            return resourceCreator;
+        }
+
+        public void setResourceCreator(Boolean resourceCreator) {
+            this.resourceCreator = resourceCreator;
+        }
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
         }
 
         public Integer getUpdateCount() {
@@ -109,6 +155,36 @@ public class UserActivityRepresentation {
 
         public void setActions(List<ActionActivityRepresentation> actions) {
             this.actions = actions;
+        }
+
+        public ResourceActivityRepresentation withScope(PrismScope scope) {
+            this.scope = scope;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withDefaultRoleCategory(PrismRoleCategory defaultRoleCategory) {
+            this.defaultRoleCategory = defaultRoleCategory;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withResourceCreator(Boolean resourceCreator) {
+            this.resourceCreator = resourceCreator;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withCount(Integer count) {
+            this.count = count;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withActions(List<ActionActivityRepresentation> actions) {
+            this.actions = actions;
+            return this;
         }
 
         public static class ActionActivityRepresentation {
@@ -143,21 +219,6 @@ public class UserActivityRepresentation {
                 return this;
             }
 
-        }
-
-        public ResourceActivityRepresentation withScope(PrismScope scope) {
-            this.scope = scope;
-            return this;
-        }
-
-        public ResourceActivityRepresentation withUpdateCount(Integer updateCount) {
-            this.updateCount = updateCount;
-            return this;
-        }
-
-        public ResourceActivityRepresentation withActions(List<ActionActivityRepresentation> actions) {
-            this.actions = actions;
-            return this;
         }
 
     }

@@ -1,14 +1,21 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
+import javax.validation.Valid;
+
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 
 public class InstitutionDTO extends ResourceParentDTO {
 
+    @Valid
     private DocumentDTO logoImage;
 
     private String currency;
 
     private Integer businessYearStartMonth;
+
+    @Valid
+    private AddressDTO address;
 
     public DocumentDTO getLogoImage() {
         return logoImage;
@@ -34,4 +41,11 @@ public class InstitutionDTO extends ResourceParentDTO {
         this.businessYearStartMonth = businessYearStartMonth;
     }
 
+    public AddressDTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDTO address) {
+        this.address = address;
+    }
 }

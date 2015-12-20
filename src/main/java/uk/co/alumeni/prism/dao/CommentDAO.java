@@ -119,7 +119,7 @@ public class CommentDAO {
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
-                                .add(Restrictions.isNotNull("action.transitionAction"))
+                                .add(Restrictions.eq("action.transitionAction", true))
                                 .add(Restrictions.disjunction() //
                                         .add(Restrictions.neProperty("stateGroup.id", "transitionStateGroup.id")) //
                                         .add(Restrictions.conjunction() //
@@ -180,6 +180,21 @@ public class CommentDAO {
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN);
+    }
+
+    public List<Comment> getComments(List<Integer> commentIds) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.in("id", commentIds)) //
+                .addOrder(Order.asc("sequenceIdentifier")) //
+                .list();
+    }
+
+    public List<Comment> getTransitionCommentHistory(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.neProperty("state", "transitionState")) //
+                    .addOrder(Order.desc("id")) //
+                .list();
     }
 
 }

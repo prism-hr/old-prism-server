@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableMap;
 
+import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismDisability;
@@ -91,6 +92,13 @@ public class PrismMapper {
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
         return Stream.of(PrismAdvertIndustry.values())
                 .map(industry -> ImmutableMap.of("id", industry, "name", propertyLoader.loadEager(PrismDisplayPropertyDefinition.valueOf("SYSTEM_ADVERT_INDUSTRY_" + industry))))
+                .collect(toList());
+    }
+
+    public List<ImmutableMap<String, ? extends Object>> getAdvertBenefitRepresentations() {
+        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
+        return Stream.of(PrismAdvertBenefit.values())
+                .map(benefit -> ImmutableMap.of("id", benefit, "name", propertyLoader.loadEager(benefit.getDisplayProperty())))
                 .collect(toList());
     }
 

@@ -3,14 +3,10 @@ package uk.co.alumeni.prism.dao;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.PrismConstants.SEQUENCE_IDENTIFIER;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getOpportunityCategoryConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
-import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.getOrderExpression;
-import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.getPagingRestriction;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -26,7 +22,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -46,8 +41,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
@@ -67,6 +60,7 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
@@ -130,8 +124,8 @@ public class ResourceDAO {
     }
 
     public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds, ResourceListFilterDTO filter,
-            String lastSequenceIdentifier, Integer maxRecords, boolean hasRedactions) {
-        if (CollectionUtils.isNotEmpty(resourceIds)) {
+            boolean hasRedactions) {
+        if (isNotEmpty(resourceIds)) {
             String scopeName = scope.getLowerCamelName();
             Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass(), scopeName);
 
@@ -154,7 +148,7 @@ public class ResourceDAO {
             }
 
             boolean parentScope = !scope.equals(APPLICATION);
-            projectionList.add(Projections.property("id"), scopeName + "Id");
+            projectionList.add(Projections.groupProperty("id"), scopeName + "Id");
             if (parentScope) {
                 projectionList.add(Projections.property("name"), scopeName + "Name");
             }
@@ -182,25 +176,20 @@ public class ResourceDAO {
                 projectionList.add(Projections.property("advertIncompleteSection"), "advertIncompleteSection");
             }
 
-            criteria.setProjection(projectionList);
+            criteria.setProjection(projectionList //
+                    .add(Projections.countDistinct("stateActionPending.id"), "stateActionPendingCount"));
             for (String parentScopeName : parentScopeNames) {
                 criteria.createAlias(parentScopeName, parentScopeName, JoinType.LEFT_OUTER_JOIN);
             }
 
-            criteria.setProjection(projectionList) //
+            return (List<ResourceListRowDTO>) criteria.setProjection(projectionList) //
                     .createAlias("user", "user", JoinType.INNER_JOIN) //
                     .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                    .createAlias("state", "state", JoinType.INNER_JOIN)
-                    .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
-
-            criteria.add(Restrictions.in("id", resourceIds));
-
-            PrismOpportunityCategory opportunityCategory = filter.getOpportunityCategory();
-            if (opportunityCategory != null) {
-                criteria.add(getOpportunityCategoryConstraint(opportunityCategory));
-            }
-
-            return appendResourceListLimitCriteria(criteria, filter, lastSequenceIdentifier, maxRecords)
+                    .createAlias("state", "state", JoinType.INNER_JOIN) //
+                    .createAlias("stateActionPendings", "stateActionPending", JoinType.LEFT_OUTER_JOIN,
+                            Restrictions.isNotNull("stateActionPending.templateComment")) //
+                    .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
+                    .add(Restrictions.in("id", resourceIds)) //
                     .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
                     .list();
         }
@@ -364,8 +353,9 @@ public class ResourceDAO {
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("resourceCondition.actionCondition", "stateAction.actionCondition")) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
+                        Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition"))
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .uniqueResult();
     }
@@ -395,8 +385,8 @@ public class ResourceDAO {
             criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
         });
 
-        return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId())) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceFlatToNestedDTO.class)) //
+        return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId()))
+                .setResultTransformer(Transformers.aliasToBean(ResourceFlatToNestedDTO.class))
                 .uniqueResult();
     }
 
@@ -409,7 +399,7 @@ public class ResourceDAO {
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
-                .add(WorkflowDAO.getResourceParentConnectableConstraint(resourceScope, user)) //
+                .add(getResourceParentConnectableConstraint(resourceScope, user)) //
                 .uniqueResult();
     }
 
@@ -417,7 +407,7 @@ public class ResourceDAO {
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("institution.id").as("institutionId")) //
                 .add(Projections.property("institution.name").as("institutionName")) //
-                .add(Projections.property("institution.logoImage.id").as("institutionLogoImageId"));
+                .add(Projections.property("institution.logoImage.id").as("logoImageId"));
 
         boolean isDepartment = resourceScope.equals(DEPARTMENT);
         if (isDepartment) {
@@ -587,10 +577,42 @@ public class ResourceDAO {
                 .list();
     }
 
+    public List<Integer> getResourcesWithStateActionsPending(PrismScope scope, List<PrismAction> actions) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("stateActionPendings", "stateActionPending", JoinType.INNER_JOIN,
+                        Restrictions.isNotNull("stateActionPending.templateComment")) //
+                .add(Restrictions.in("stateActionPending.action.id", actions)) //
+                .list();
+    }
+    
+    public List<Integer> getResourcesByAdvertTheme(PrismScope scope, List<Integer> advertThemes) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.themes", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("theme.theme.id", advertThemes)) //
+                .list();
+    }
+
+    public List<Integer> getResourcesByAdvertLocation(PrismScope scope, List<Integer> advertLocations) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.categories.locations", "location", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("location.locationAdvert.id", advertLocations)) //
+                .list();
+    }
+    
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));
+        }
+
+        ResourceIdentityDTO parentResource = filter.getParentResource();
+        if (parentResource != null) {
+            criteria.add(Restrictions.eq("resource." + parentResource.getScope().getLowerCamelName() + ".id", parentResource.getId()));
         }
 
         PrismRoleCategory roleCategory = filter.getRoleCategory();
@@ -598,9 +620,9 @@ public class ResourceDAO {
             criteria.add(Restrictions.eq("role.roleCategory", roleCategory));
         }
 
-        PrismAction actionId = filter.getActionId();
-        if (actionId != null) {
-            criteria.add(Restrictions.eq("stateAction.action.id", actionId));
+        List<PrismAction> actionIds = filter.getActionIds();
+        if (isNotEmpty(actionIds)) {
+            criteria.add(Restrictions.in("stateAction.action.id", actionIds));
         }
 
         PrismActionEnhancement[] actionEnhancements = filter.getActionEnhancements();
@@ -626,22 +648,6 @@ public class ResourceDAO {
         if (constraints != null) {
             criteria.add(constraints);
         }
-    }
-
-    private static Criteria appendResourceListLimitCriteria(Criteria criteria, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer recordsToRetrieve) {
-        PrismFilterSortOrder sortOrder = filter.getSortOrder();
-
-        if (lastSequenceIdentifier != null) {
-            criteria.add(getPagingRestriction(SEQUENCE_IDENTIFIER, sortOrder, lastSequenceIdentifier));
-        }
-
-        criteria.addOrder(getOrderExpression(SEQUENCE_IDENTIFIER, sortOrder));
-
-        if (recordsToRetrieve != null) {
-            criteria.setMaxResults(recordsToRetrieve);
-        }
-
-        return criteria;
     }
 
     private static Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates, Junction enclosedScopeExclusion) {

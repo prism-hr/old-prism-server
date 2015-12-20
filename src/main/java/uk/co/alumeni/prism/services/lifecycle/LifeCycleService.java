@@ -49,6 +49,9 @@ public class LifeCycleService {
     @Value("${startup.display.initialize}")
     private Boolean initializeDisplayProperties;
 
+    @Value("${startup.section.completeness.initialize}")
+    private Boolean initializeSectionCompleteness;
+
     @Value("${maintenance.run}")
     private Boolean maintain;
 
@@ -84,6 +87,10 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
+        if(BooleanUtils.isTrue(initializeSectionCompleteness)) {
+            systemService.initializeSectionCompleteness();
+        }
+        
         if (!environment.equals("test")) {
             staticDataMapper.getData();
         }

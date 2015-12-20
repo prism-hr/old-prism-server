@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
+import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
@@ -42,9 +43,11 @@ public class OpportunitiesQueryDTO {
 
     private List<PrismStudyOption> studyOptions;
 
-    private Integer minSalary;
+    private PrismDurationUnit salaryInterval;
 
-    private Integer maxSalary;
+    private BigDecimal minSalary;
+
+    private BigDecimal maxSalary;
 
     private Integer minDuration;
 
@@ -164,19 +167,27 @@ public class OpportunitiesQueryDTO {
         this.studyOptions = studyOptions;
     }
 
-    public Integer getMinSalary() {
+    public PrismDurationUnit getSalaryInterval() {
+        return salaryInterval;
+    }
+
+    public void setSalaryInterval(PrismDurationUnit salaryInterval) {
+        this.salaryInterval = salaryInterval;
+    }
+
+    public BigDecimal getMinSalary() {
         return minSalary;
     }
 
-    public void setMinSalary(Integer minSalary) {
+    public void setMinSalary(BigDecimal minSalary) {
         this.minSalary = minSalary;
     }
 
-    public Integer getMaxSalary() {
+    public BigDecimal getMaxSalary() {
         return maxSalary;
     }
 
-    public void setMaxSalary(Integer maxSalary) {
+    public void setMaxSalary(BigDecimal maxSalary) {
         this.maxSalary = maxSalary;
     }
 

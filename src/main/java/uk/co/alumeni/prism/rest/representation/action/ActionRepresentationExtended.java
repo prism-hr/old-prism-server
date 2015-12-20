@@ -21,6 +21,14 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return actionEnhancements;
     }
 
+    public Set<StateRepresentationExtended> getNextStates() {
+        return nextStates;
+    }
+
+    public Set<StateRepresentationSimple> getRecommendedNextStates() {
+        return recommendedNextStates;
+    }
+
     public ActionRepresentationExtended addActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancements.add(actionEnhancement);
         return this;
@@ -31,17 +39,9 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return this;
     }
 
-    public Set<StateRepresentationExtended> getNextStates() {
-        return nextStates;
-    }
-
     public ActionRepresentationExtended addNextStates(Collection<StateRepresentationExtended> nextStates) {
         this.nextStates.addAll(nextStates);
         return this;
-    }
-
-    public Set<StateRepresentationSimple> getRecommendedNextStates() {
-        return recommendedNextStates;
     }
 
     public ActionRepresentationExtended addRecommendedNextStates(Collection<StateRepresentationSimple> recommendedNextStates) {

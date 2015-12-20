@@ -2,6 +2,9 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_BULK_PROCESSED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -33,6 +36,8 @@ import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.comment.CommentCompetence;
 import uk.co.alumeni.prism.domain.comment.CommentInterviewAppointment;
 import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
+import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
+import uk.co.alumeni.prism.domain.comment.CommentPositionDetail;
 import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -138,6 +143,64 @@ public class CommentService {
         entityService.flush();
     }
 
+    public Comment replicateComment(Resource resource, Comment templateComment) {
+        String content = templateComment.getContent();
+        if (content != null) {
+            content = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource.getSystem()).loadLazy(SYSTEM_COMMENT_CONTENT_BULK_PROCESSED);
+        }
+
+        Action action = templateComment.getAction();
+        Comment replicateComment = new Comment().withResource(resource).withUser(templateComment.getUser()).withDelegateUser(templateComment.getDelegateUser())
+                .withAction(action).withContent(content).withDeclinedResponse(false).withState(templateComment.getState()).withTransitionState(templateComment.getTransitionState())
+                .withRejectionReason(templateComment.getRejectionReason()).withCreatedTimestamp(now());
+
+        CommentInterviewAppointment templateInterviewAppointment = templateComment.getInterviewAppointment();
+        if (templateInterviewAppointment != null) {
+            replicateComment.setInterviewAppointment(new CommentInterviewAppointment().withInterviewDateTime(templateInterviewAppointment.getInterviewDateTime())
+                    .withInterviewTimezone(templateInterviewAppointment.getInterviewTimeZone()).withInterviewDuration(templateInterviewAppointment.getInterviewDuration()));
+        }
+
+        CommentInterviewInstruction templateInterviewInstruction = templateComment.getInterviewInstruction();
+        if (templateInterviewInstruction != null) {
+            replicateComment.setInterviewInstruction(new CommentInterviewInstruction().withIntervieweeInstructions(templateInterviewInstruction.getIntervieweeInstructions())
+                    .withInterviewerInstructions(templateInterviewInstruction.getInterviewerInstructions())
+                    .withInterviewLocation(templateInterviewInstruction.getInterviewLocation()));
+        }
+
+        CommentPositionDetail templatePositionDetail = templateComment.getPositionDetail();
+        if (templatePositionDetail != null) {
+            replicateComment.setPositionDetail(new CommentPositionDetail().withPositionName(templatePositionDetail.getPositionName())
+                    .withPositionDescription(templatePositionDetail.getPositionDescription()));
+        }
+
+        CommentOfferDetail templateOfferDetail = templateComment.getOfferDetail();
+        if (templateOfferDetail != null) {
+            replicateComment.setOfferDetail(new CommentOfferDetail().withPositionProvisionStartDate(templateOfferDetail.getPositionProvisionalStartDate())
+                    .withAppointmentConditions(templateOfferDetail.getAppointmentConditions()));
+        }
+
+        if (isTrue(action.getReplicableUserAssignmentAction())) {
+            templateComment.getAssignedUsers().forEach(assignedUser -> {
+                if (assignedUser.getRoleTransitionType().equals(CREATE)) {
+                    replicateComment.addAssignedUser(assignedUser.getUser(), assignedUser.getRole(), CREATE);
+                }
+            });
+        }
+        
+        Set<CommentAppointmentTimeslot> replicateAppointmentTimelots = replicateComment.getAppointmentTimeslots();
+        templateComment.getAppointmentTimeslots().stream().forEach(appointmentTimeslot -> {
+            replicateAppointmentTimelots.add(new CommentAppointmentTimeslot().withDateTime(appointmentTimeslot.getDateTime()));
+        });
+
+        templateComment.getCommentTransitionStates().stream().forEach(commentTransitionState -> {
+            if (isFalse(commentTransitionState.getPrimaryState())) {
+                replicateComment.addSecondaryTransitionState(commentTransitionState.getState());
+            }
+        });
+
+        return replicateComment;
+    }
+
     public void recordStateTransition(Comment comment, State state, State transitionState, Set<State> stateTerminations) {
         comment.setState(state);
         comment.setTransitionState(transitionState);
@@ -178,16 +241,18 @@ public class CommentService {
     }
 
     public void appendAppointmentTimeslots(Comment comment, CommentDTO commentDTO) {
+        Set<CommentAppointmentTimeslot> appointmentTimeslots = comment.getAppointmentTimeslots();
         for (LocalDateTime dateTime : commentDTO.getAppointmentTimeslots()) {
             CommentAppointmentTimeslot timeslot = new CommentAppointmentTimeslot().withDateTime(dateTime);
-            comment.getAppointmentTimeslots().add(timeslot);
+            appointmentTimeslots.add(timeslot);
         }
     }
 
     public void appendAppointmentPreferences(Comment comment, CommentDTO commentDTO) {
+        Set<CommentAppointmentPreference> appointmentPreferences = comment.getAppointmentPreferences();
         for (Integer timeslotId : commentDTO.getAppointmentPreferences()) {
             CommentAppointmentTimeslot timeslot = entityService.getById(CommentAppointmentTimeslot.class, timeslotId);
-            comment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
+            appointmentPreferences.add(new CommentAppointmentPreference().withDateTime(timeslot.getDateTime()));
         }
     }
 
@@ -292,6 +357,14 @@ public class CommentService {
         commentDTO.setAssignedUsers(newArrayList(new CommentAssignedUserDTO()
                 .withUser(new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail()))
                 .withRole(PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ADMINISTRATOR"))));
+    }
+
+    public List<Comment> getTransitionCommentHistory(Resource resource) {
+        return commentDAO.getTransitionCommentHistory(resource);
+    }
+
+    public List<Comment> getComments(List<Integer> commentIds) {
+        return commentDAO.getComments(commentIds);
     }
 
     private void updateCommentStates(Comment comment) {

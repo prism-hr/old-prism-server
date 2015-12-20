@@ -1,18 +1,8 @@
 package uk.co.alumeni.prism.dto;
 
-public class ResourceOpportunityCategoryDTO extends EntityOpportunityFilterDTO {
-
-    private Boolean raisesUrgentFlag;
+public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO<ResourceOpportunityCategoryDTO> {
 
     private Boolean onlyAsPartner;
-
-    public Boolean getRaisesUrgentFlag() {
-        return raisesUrgentFlag;
-    }
-
-    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
-        this.raisesUrgentFlag = raisesUrgentFlag;
-    }
 
     public Boolean getOnlyAsPartner() {
         return onlyAsPartner;

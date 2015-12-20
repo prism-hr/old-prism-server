@@ -1,12 +1,12 @@
 package uk.co.alumeni.prism.mapping;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;

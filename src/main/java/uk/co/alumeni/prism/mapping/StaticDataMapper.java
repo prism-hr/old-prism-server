@@ -26,7 +26,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import uk.co.alumeni.prism.domain.definitions.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
@@ -36,6 +35,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
@@ -112,6 +112,7 @@ public class StaticDataMapper {
         staticData.putAll(getDisabilities());
         staticData.putAll(getAdvertFunctions());
         staticData.putAll(getAdvertIndustries());
+        staticData.putAll(getAdvertBenefits());
         staticData.putAll(getAgeRanges());
         return staticData;
     }
@@ -227,7 +228,11 @@ public class StaticDataMapper {
     private Map<String, Object> getRequiredSections() {
         List<Object> sectionDefinitions = Lists.newLinkedList();
         for (PrismScopeSectionDefinition section : PrismScopeSectionDefinition.values()) {
-            sectionDefinitions.add(ImmutableMap.of("id", section, "explanationDisplayProperty", section.getIncompleteExplanation()));
+            sectionDefinitions.add(ImmutableMap.of(
+                    "id", section,
+                    "name", section.getName(),
+                    "explanation", section.getIncompleteExplanation(),
+                    "scopes", PrismScopeSectionDefinition.getScopes(section)));
         }
         return singletonMap("requiredSections", sectionDefinitions);
     }
@@ -267,6 +272,10 @@ public class StaticDataMapper {
 
     private Map<String, Object> getAdvertIndustries() {
         return singletonMap("advertIndustries", prismMapper.getAdvertIndustryRepresentations());
+    }
+
+    private Map<String, Object> getAdvertBenefits() {
+        return singletonMap("advertBenefits", prismMapper.getAdvertBenefitRepresentations());
     }
 
 }

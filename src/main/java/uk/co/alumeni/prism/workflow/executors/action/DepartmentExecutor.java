@@ -11,6 +11,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
@@ -44,10 +45,12 @@ public class DepartmentExecutor implements ActionExecutor {
         PrismAction actionId = commentDTO.getAction();
         Action action = actionService.getById(actionId);
 
-        ResourceParentDTO resourceDTO = (ResourceParentDTO) commentDTO.getResource();
-        Comment comment = commentService.prepareProcessResourceComment(department, user, action, commentDTO);
-        resourceService.updateResource(department, resourceDTO);
+        ResourceCreationDTO departmentDTO = commentDTO.getResource();
+        if (departmentDTO.getClass().equals(ResourceParentDTO.class)) {
+            resourceService.updateResource(department, (ResourceParentDTO) departmentDTO);
+        }
 
+        Comment comment = commentService.prepareProcessResourceComment(department, user, action, commentDTO);
         return actionService.executeUserAction(department, action, comment);
     }
 

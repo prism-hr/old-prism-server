@@ -2,6 +2,8 @@ package uk.co.alumeni.prism.rest.representation.advert;
 
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
@@ -28,14 +30,12 @@ public class AdvertRepresentationSimple {
 
     private AddressRepresentation parentAddress;
 
-    private AdvertFinancialDetailRepresentation financialDetails;
+    private AdvertFinancialDetailRepresentation financialDetail;
 
-    private AdvertClosingDateRepresentation closingDate;
-
-    private List<AdvertClosingDateRepresentation> closingDates;
+    private LocalDate closingDate;
 
     private AdvertCategoriesRepresentation categories;
-
+    
     private List<AdvertCompetenceRepresentation> competences;
 
     private List<PrismActionCondition> externalConditions;
@@ -122,28 +122,20 @@ public class AdvertRepresentationSimple {
         this.parentAddress = parentAddress;
     }
 
-    public AdvertFinancialDetailRepresentation getFinancialDetails() {
-        return financialDetails;
+    public AdvertFinancialDetailRepresentation getFinancialDetail() {
+        return financialDetail;
     }
 
-    public void setFinancialDetails(AdvertFinancialDetailRepresentation financialDetails) {
-        this.financialDetails = financialDetails;
+    public void setFinancialDetail(AdvertFinancialDetailRepresentation financialDetail) {
+        this.financialDetail = financialDetail;
     }
 
-    public AdvertClosingDateRepresentation getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public void setClosingDate(AdvertClosingDateRepresentation closingDate) {
+    public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
-    }
-
-    public List<AdvertClosingDateRepresentation> getClosingDates() {
-        return closingDates;
-    }
-
-    public void setClosingDates(List<AdvertClosingDateRepresentation> closingDates) {
-        this.closingDates = closingDates;
     }
 
     public AdvertCategoriesRepresentation getCategories() {

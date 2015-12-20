@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import java.util.Arrays;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
+
 import java.util.List;
 
 import com.google.common.base.Objects;
@@ -11,6 +13,16 @@ public class PrismStateTransition {
     private PrismState transitionState;
 
     private PrismAction transitionAction;
+
+    private Boolean replicableSequenceClose = false;
+
+    private Boolean replicableSequenceFilterTheme = false;
+
+    private Boolean replicableSequenceFilterSecondaryTheme = false;
+
+    private Boolean replicableSequenceFilterLocation = false;
+
+    private Boolean replicableSequenceFilterSecondaryLocation = false;
 
     private PrismStateTransitionEvaluation transitionEvaluation;
 
@@ -26,6 +38,26 @@ public class PrismStateTransition {
 
     public PrismAction getTransitionAction() {
         return transitionAction;
+    }
+
+    public Boolean getReplicableSequenceClose() {
+        return replicableSequenceClose;
+    }
+
+    public Boolean getReplicableSequenceFilterTheme() {
+        return replicableSequenceFilterTheme;
+    }
+
+    public Boolean getReplicableSequenceFilterSecondaryTheme() {
+        return replicableSequenceFilterSecondaryTheme;
+    }
+
+    public Boolean getReplicableSequenceFilterLocation() {
+        return replicableSequenceFilterLocation;
+    }
+
+    public Boolean getReplicableSequenceFilterSecondaryLocation() {
+        return replicableSequenceFilterSecondaryLocation;
     }
 
     public PrismStateTransitionEvaluation getTransitionEvaluation() {
@@ -54,30 +86,80 @@ public class PrismStateTransition {
         return this;
     }
 
+    public PrismStateTransition withReplicableSequenceClose() {
+        this.replicableSequenceClose = true;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceClose(Boolean replicableSequenceClose) {
+        this.replicableSequenceClose = replicableSequenceClose;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterTheme() {
+        this.replicableSequenceFilterTheme = true;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterTheme(Boolean replicableSequenceFilterTheme) {
+        this.replicableSequenceFilterTheme = replicableSequenceFilterTheme;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterSecondaryTheme() {
+        this.replicableSequenceFilterSecondaryTheme = true;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterSecondaryTheme(Boolean replicableSequenceFilterSecondaryTheme) {
+        this.replicableSequenceFilterSecondaryTheme = replicableSequenceFilterSecondaryTheme;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterLocation() {
+        this.replicableSequenceFilterLocation = true;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterLocation(Boolean replicableSequenceFilterLocation) {
+        this.replicableSequenceFilterLocation = replicableSequenceFilterLocation;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterSecondaryLocation() {
+        this.replicableSequenceFilterSecondaryLocation = true;
+        return this;
+    }
+
+    public PrismStateTransition withReplicableSequenceFilterSecondaryLocation(Boolean replicableSequenceFilterSecondaryLocation) {
+        this.replicableSequenceFilterSecondaryLocation = replicableSequenceFilterSecondaryLocation;
+        return this;
+    }
+
     public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
         this.transitionEvaluation = transitionEvaluation;
         return this;
     }
 
     public PrismStateTransition withRoleTransitions(PrismRoleTransition... roleTransitions) {
-        this.roleTransitions.addAll(Arrays.asList(roleTransitions));
+        this.roleTransitions.addAll(asList(roleTransitions));
         return this;
     }
 
     public PrismStateTransition withRoleTransitions(PrismRoleTransitionGroup... roleTransitionGroups) {
         for (PrismRoleTransitionGroup roleTransitionGroup : roleTransitionGroups) {
-            this.roleTransitions.addAll(Lists.newArrayList(roleTransitionGroup.getRoleTransitions()));
+            this.roleTransitions.addAll(newArrayList(roleTransitionGroup.getRoleTransitions()));
         }
         return this;
     }
 
     public PrismStateTransition withPropagatedActions(PrismAction... propagatedActions) {
-        this.propagatedActions.addAll(Arrays.asList(propagatedActions));
+        this.propagatedActions.addAll(asList(propagatedActions));
         return this;
     }
 
     public PrismStateTransition withStateTerminations(PrismStateTermination... stateTerminations) {
-        this.stateTerminations.addAll(Arrays.asList(stateTerminations));
+        this.stateTerminations.addAll(asList(stateTerminations));
         return this;
     }
 

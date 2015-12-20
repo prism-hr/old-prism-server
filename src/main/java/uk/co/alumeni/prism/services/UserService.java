@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -17,6 +18,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -164,7 +166,9 @@ public class UserService {
             User user = (User) authentication.getDetails();
             user = getById(user.getId());
             if (user != null) {
-                user.setLastLoggedInTimestamp(now());
+                DateTime baseline = DateTime.now();
+                user.setLastLoggedInTimestamp(baseline);
+                roleService.acceptUnnacceptedUserRoles(user, baseline);
             }
             return user;
         }
@@ -191,7 +195,7 @@ public class UserService {
     public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             stateService.createStateActionPending(resource, user, action, stateActionPendingDTO);
         }
     }
@@ -371,7 +375,7 @@ public class UserService {
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
@@ -381,7 +385,7 @@ public class UserService {
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, user, false))) {
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             User bouncedOrUnverifiedUser = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
 
@@ -417,8 +421,8 @@ public class UserService {
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
             if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : WorkflowDAO.targetScopes) {
-                    for (PrismScope targetScope : WorkflowDAO.targetScopes) {
+                for (PrismScope targeterScope : WorkflowDAO.organizationScopes) {
+                    for (PrismScope targetScope : WorkflowDAO.organizationScopes) {
                         users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, targeterEntities, resource, actions));
                     }
                 }
@@ -478,15 +482,20 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public List<Integer> getUsersForActivityRepresentation() {
-        return userDAO.getUsersForActivityNotification(now().minusDays(ACTIVITY_NOTIFICATION_INTERVAL));
+    public Set<Integer> getUsersForActivityRepresentation() {
+        Set<Integer> users = Sets.newHashSet();
+        DateTime baseline = now().minusDays(ACTIVITY_NOTIFICATION_INTERVAL);
+        stream(values()).forEach(scope -> {
+            users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
+        });
+        return users;
     }
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
 
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        Arrays.stream(WorkflowDAO.targetScopes).forEach(ts -> resources.putAll(ts,
+        Arrays.stream(WorkflowDAO.organizationScopes).forEach(ts -> resources.putAll(ts,
                 resourceService.getResources(user, ts, scopeService.getParentScopesDescending(ts, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
 
         Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
@@ -494,13 +503,17 @@ public class UserService {
 
         return newLinkedList(profiles);
     }
-    
+
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
     }
 
     public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
+    }
+
+    public UserDTO getUserDTO(User user) {
+        return new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
     @SuppressWarnings("unchecked")

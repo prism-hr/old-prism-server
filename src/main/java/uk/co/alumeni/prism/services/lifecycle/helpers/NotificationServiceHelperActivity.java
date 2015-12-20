@@ -32,9 +32,7 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersForActivityRepresentation().forEach(user -> {
-            sendUserActivityNotification(user);
-        });
+        userService.getUsersForActivityRepresentation().forEach(this::sendUserActivityNotification);
     }
 
     @Override

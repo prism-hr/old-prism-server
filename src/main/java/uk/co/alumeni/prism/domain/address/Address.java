@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.address;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -8,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -15,6 +18,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.Domicile;
 
@@ -52,6 +56,11 @@ public class Address extends AddressDefinition<Domicile> {
 
     @Embedded
     private AddressCoordinates addressCoordinates;
+
+    @ManyToMany
+    @JoinTable(name = "address_location", joinColumns = { @JoinColumn(name = "address_id", nullable = false, updatable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "address_location_part_id", nullable = false, updatable = false) })
+    private Set<AddressLocationPart> addressLocationParts = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -123,6 +132,14 @@ public class Address extends AddressDefinition<Domicile> {
 
     public void setAddressCoordinates(AddressCoordinates addressCoordinates) {
         this.addressCoordinates = addressCoordinates;
+    }
+
+    public Set<AddressLocationPart> getAddressLocationParts() {
+        return addressLocationParts;
+    }
+
+    public void addAddressLocationPart(AddressLocationPart addressLocationPart) {
+        addressLocationParts.add(addressLocationPart);
     }
 
     public String getLocationString() {

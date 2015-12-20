@@ -1,7 +1,8 @@
 package uk.co.alumeni.prism.dao;
 
+import static org.apache.commons.lang.ArrayUtils.contains;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.inject.Inject;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -21,6 +23,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
@@ -230,20 +233,6 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getRolesByVisibleScope(User user, PrismScope prismScope) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("role.id")) //
-                .createAlias(prismScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull("resource.id")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("state.scope.id", SYSTEM)) //
-                        .add(Restrictions.isNull("state.hidden"))) //
-                .list();
-    }
-
     public List<Role> getCreatorRoles() {
         return (List<Role>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("roleTransition.transitionRole")) //
@@ -296,6 +285,33 @@ public class RoleDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.verified", false)) //
+                .list();
+    }
+
+    public PrismRole getDefaultRoleCategories(PrismScope scope, User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("role.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("user", user));
+
+        if (contains(advertScopes, scope)) {
+            criteria.add(Restrictions.ne("resourceState.state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
+        }
+
+        return (PrismRole) criteria.addOrder(Order.desc("assignedTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<UserRole> getUnnacceptedRolesForUser(User user) {
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNull("acceptedTimestamp")) //
+                .add(Restrictions.eq("role.verified", true)) //
                 .list();
     }
 

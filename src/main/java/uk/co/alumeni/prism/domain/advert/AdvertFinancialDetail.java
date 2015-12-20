@@ -6,49 +6,72 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
+
+import org.hibernate.annotations.Type;
+import org.joda.time.LocalDate;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
+import uk.co.alumeni.prism.domain.definitions.PrismPaymentOption;
 
 @Embeddable
 public class AdvertFinancialDetail {
 
+    @Column(name = "pay_option")
+    @Enumerated(EnumType.STRING)
+    private PrismPaymentOption option;
+    
     @Column(name = "pay_interval")
     @Enumerated(EnumType.STRING)
     private PrismDurationUnit interval;
 
-    @Column(name = "pay_currency_specified")
-    private String currencySpecified;
+    @Column(name = "pay_hours_week_minimum")
+    private Integer hoursWeekMinimum;
 
-    @Column(name = "pay_currency_at_locale")
-    private String currencyAtLocale;
+    @Column(name = "pay_hours_week_maximum")
+    private Integer hoursWeekMaximum;
 
-    @Column(name = "month_pay_minimum_specified")
-    private BigDecimal monthMinimumSpecified;
+    @Column(name = "pay_currency")
+    private String currency;
 
-    @Column(name = "month_pay_maximum_specified")
-    private BigDecimal monthMaximumSpecified;
+    @Column(name = "pay_minimum")
+    private BigDecimal minimum;
 
-    @Column(name = "year_pay_minimum_specified")
-    private BigDecimal yearMinimumSpecified;
+    @Column(name = "pay_maximum")
+    private BigDecimal maximum;
 
-    @Column(name = "year_pay_maximum_specified")
-    private BigDecimal yearMaximumSpecified;
+    @Column(name = "pay_minimum_normalized")
+    private BigDecimal minimumNormalized;
 
-    @Column(name = "month_pay_minimum_at_locale")
-    private BigDecimal monthMinimumAtLocale;
+    @Column(name = "pay_maximum_normalized")
+    private BigDecimal maximumNormalized;
 
-    @Column(name = "month_pay_maximum_at_locale")
-    private BigDecimal monthMaximumAtLocale;
+    @Column(name = "pay_minimum_normalized_hour")
+    private BigDecimal minimumNormalizedHour;
 
-    @Column(name = "year_pay_minimum_at_locale")
-    private BigDecimal yearMinimumAtLocale;
+    @Column(name = "pay_maximum_normalized_hour")
+    private BigDecimal maximumNormalizedHour;
+    
+    @Lob
+    @Column(name = "pay_benefit")
+    private String benefit;
 
-    @Column(name = "year_pay_maximum_at_locale")
-    private BigDecimal yearMaximumAtLocale;
+    @Lob
+    @Column(name = "pay_benefit_description")
+    private String benefitDescription;
+    
+    @Column(name = "pay_last_conversion_date")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
+    private LocalDate lastConversionDate;
 
-    @Column(name = "pay_converted")
-    private Boolean converted;
+    public PrismPaymentOption getOption() {
+        return option;
+    }
 
+    public void setOption(PrismPaymentOption option) {
+        this.option = option;
+    }
+    
     public PrismDurationUnit getInterval() {
         return interval;
     }
@@ -57,91 +80,100 @@ public class AdvertFinancialDetail {
         this.interval = interval;
     }
 
-    public final String getCurrencySpecified() {
-        return currencySpecified;
+    public Integer getHoursWeekMinimum() {
+        return hoursWeekMinimum;
     }
 
-    public final void setCurrencySpecified(String currencySpecified) {
-        this.currencySpecified = currencySpecified;
+    public void setHoursWeekMinimum(Integer hoursWeekMinimum) {
+        this.hoursWeekMinimum = hoursWeekMinimum;
     }
 
-    public String getCurrencyAtLocale() {
-        return currencyAtLocale;
+    public Integer getHoursWeekMaximum() {
+        return hoursWeekMaximum;
     }
 
-    public void setCurrencyAtLocale(String currencyAtLocale) {
-        this.currencyAtLocale = currencyAtLocale;
+    public void setHoursWeekMaximum(Integer hoursWeekMaximum) {
+        this.hoursWeekMaximum = hoursWeekMaximum;
     }
 
-    public BigDecimal getMonthMinimumSpecified() {
-        return monthMinimumSpecified;
+    public String getCurrency() {
+        return currency;
     }
 
-    public void setMonthMinimumSpecified(BigDecimal monthMinimumSpecified) {
-        this.monthMinimumSpecified = monthMinimumSpecified;
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
-    public BigDecimal getMonthMaximumSpecified() {
-        return monthMaximumSpecified;
+    public BigDecimal getMinimum() {
+        return minimum;
     }
 
-    public void setMonthMaximumSpecified(BigDecimal monthMaximumSpecified) {
-        this.monthMaximumSpecified = monthMaximumSpecified;
+    public void setMinimum(BigDecimal minimum) {
+        this.minimum = minimum;
     }
 
-    public BigDecimal getYearMinimumSpecified() {
-        return yearMinimumSpecified;
+    public BigDecimal getMaximum() {
+        return maximum;
     }
 
-    public void setYearMinimumSpecified(BigDecimal yearMinimumSpecified) {
-        this.yearMinimumSpecified = yearMinimumSpecified;
+    public void setMaximum(BigDecimal maximum) {
+        this.maximum = maximum;
     }
 
-    public BigDecimal getYearMaximumSpecified() {
-        return yearMaximumSpecified;
+    public BigDecimal getMinimumNormalized() {
+        return minimumNormalized;
     }
 
-    public void setYearMaximumSpecified(BigDecimal yearMaximumSpecified) {
-        this.yearMaximumSpecified = yearMaximumSpecified;
+    public void setMinimumNormalized(BigDecimal minimumNormalized) {
+        this.minimumNormalized = minimumNormalized;
     }
 
-    public BigDecimal getMonthMinimumAtLocale() {
-        return monthMinimumAtLocale;
+    public BigDecimal getMaximumNormalized() {
+        return maximumNormalized;
     }
 
-    public void setMonthMinimumAtLocale(BigDecimal monthMinimumAtLocale) {
-        this.monthMinimumAtLocale = monthMinimumAtLocale;
+    public void setMaximumNormalized(BigDecimal maximumNormalized) {
+        this.maximumNormalized = maximumNormalized;
     }
 
-    public BigDecimal getMonthMaximumAtLocale() {
-        return monthMaximumAtLocale;
+    public BigDecimal getMinimumNormalizedHour() {
+        return minimumNormalizedHour;
     }
 
-    public void setMonthMaximumAtLocale(BigDecimal monthMaximumAtLocale) {
-        this.monthMaximumAtLocale = monthMaximumAtLocale;
+    public void setMinimumNormalizedHour(BigDecimal minimumNormalizedHour) {
+        this.minimumNormalizedHour = minimumNormalizedHour;
     }
 
-    public BigDecimal getYearMinimumAtLocale() {
-        return yearMinimumAtLocale;
+    public BigDecimal getMaximumNormalizedHour() {
+        return maximumNormalizedHour;
     }
 
-    public void setYearMinimumAtLocale(BigDecimal yearMinimumAtLocale) {
-        this.yearMinimumAtLocale = yearMinimumAtLocale;
+    public void setMaximumNormalizedHour(BigDecimal maximumNormalizedHour) {
+        this.maximumNormalizedHour = maximumNormalizedHour;
+    }
+    
+    public String getBenefit() {
+        return benefit;
     }
 
-    public BigDecimal getYearMaximumAtLocale() {
-        return yearMaximumAtLocale;
+    public void setBenefit(String benefit) {
+        this.benefit = benefit;
     }
 
-    public void setYearMaximumAtLocale(BigDecimal yearMaximumAtLocale) {
-        this.yearMaximumAtLocale = yearMaximumAtLocale;
+    public String getBenefitDescription() {
+        return benefitDescription;
     }
 
-    public final Boolean getConverted() {
-        return converted;
+    public void setBenefitDescription(String benefitDescription) {
+        this.benefitDescription = benefitDescription;
     }
 
-    public final void setConverted(Boolean converted) {
-        this.converted = converted;
+    public LocalDate getLastConversionDate() {
+        return lastConversionDate;
     }
+
+    public void setLastConversionDate(LocalDate lastConversionDate) {
+        this.lastConversionDate = lastConversionDate;
+    }
+
 }

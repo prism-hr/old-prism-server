@@ -7,6 +7,12 @@ import static java.time.Month.APRIL;
 import static java.time.Month.OCTOBER;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.PERSONAL_DEVELOPMENT;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.STUDY;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WORK;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.EMPLOYER;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVERSITY;
 
 import java.time.Month;
 import java.util.AbstractMap.SimpleEntry;
@@ -38,8 +44,7 @@ import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
 import uk.co.alumeni.prism.workflow.executors.action.ApplicationExecutor;
 import uk.co.alumeni.prism.workflow.executors.action.DepartmentExecutor;
 import uk.co.alumeni.prism.workflow.executors.action.InstitutionExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.ProgramExecutor;
-import uk.co.alumeni.prism.workflow.executors.action.ProjectExecutor;
+import uk.co.alumeni.prism.workflow.executors.action.ResourceOpportunityExecutor;
 import uk.co.alumeni.prism.workflow.executors.action.SystemExecutor;
 import uk.co.alumeni.prism.workflow.transition.creators.ApplicationCreator;
 import uk.co.alumeni.prism.workflow.transition.creators.DepartmentCreator;
@@ -82,14 +87,14 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             new PrismScopeDefinition() //
                     .withResourceClass(Program.class) //
                     .withResourceDTOClass(ResourceOpportunityDTO.class) //
-                    .withActionExecutor(ProgramExecutor.class) //
+                    .withActionExecutor(ResourceOpportunityExecutor.class) //
                     .withResourceCreator(ProgramCreator.class) //
                     .withResourcePostprocessor(ProgramPostprocessor.class)), //
     PROJECT(PrismScopeCategory.OPPORTUNITY, "PT", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Project.class) //
                     .withResourceDTOClass(ResourceOpportunityDTO.class) //
-                    .withActionExecutor(ProjectExecutor.class) //
+                    .withActionExecutor(ResourceOpportunityExecutor.class) //
                     .withResourceCreator(ProjectCreator.class) //
                     .withResourcePostprocessor(ProjectPostprocessor.class)), //
     APPLICATION(PrismScopeCategory.APPLICATION, "AN", false, //
@@ -126,10 +131,10 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             parentScope = scope;
         }
 
-        defaults.put(new SimpleEntry<>(INSTITUTION, PrismResourceContext.UNIVERSITY), new PrismScopeCreationDefault(OCTOBER, PrismOpportunityCategory.STUDY, PrismOpportunityCategory.PERSONAL_DEVELOPMENT));
-        defaults.put(new SimpleEntry<>(INSTITUTION, PrismResourceContext.EMPLOYER), new PrismScopeCreationDefault(APRIL, PrismOpportunityCategory.WORK, PrismOpportunityCategory.EXPERIENCE));
-        defaults.put(new SimpleEntry<>(DEPARTMENT, PrismResourceContext.UNIVERSITY), new PrismScopeCreationDefault(PrismOpportunityCategory.STUDY, PrismOpportunityCategory.PERSONAL_DEVELOPMENT));
-        defaults.put(new SimpleEntry<>(DEPARTMENT, PrismResourceContext.EMPLOYER), new PrismScopeCreationDefault(PrismOpportunityCategory.WORK, PrismOpportunityCategory.EXPERIENCE));
+        defaults.put(new SimpleEntry<>(INSTITUTION, UNIVERSITY), new PrismScopeCreationDefault(OCTOBER, STUDY, PERSONAL_DEVELOPMENT));
+        defaults.put(new SimpleEntry<>(INSTITUTION, EMPLOYER), new PrismScopeCreationDefault(APRIL, WORK, EXPERIENCE));
+        defaults.put(new SimpleEntry<>(DEPARTMENT, UNIVERSITY), new PrismScopeCreationDefault(STUDY, PERSONAL_DEVELOPMENT));
+        defaults.put(new SimpleEntry<>(DEPARTMENT, EMPLOYER), new PrismScopeCreationDefault(WORK, EXPERIENCE));
     }
 
     private PrismScope(PrismScopeCategory scopeCategory, String shortCode, boolean defaultShared, PrismScopeDefinition definition) {
@@ -209,9 +214,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     }
 
     public static Set<PrismResourceContext> getResourceContexts(String opportunityCategories) {
-        Set<PrismResourceContext> contexts = Sets.newHashSet();
+        Set<PrismResourceContext> contexts = Sets.newLinkedHashSet();
         if (isNotEmpty(opportunityCategories)) {
-            for(String categoryString : opportunityCategories.split("\\|")){
+            for(String categoryString : opportunityCategories.split("\\|")) {
                 PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(categoryString);
                 defaults.keySet().forEach(key -> {
                     if (contains(defaults.get(key).getDefaultOpportunityCategories(), opportunityCategory)) {

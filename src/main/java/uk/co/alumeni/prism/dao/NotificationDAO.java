@@ -88,18 +88,13 @@ public class NotificationDAO {
         Criteria criteria = getWorkflowCriteriaListComment(scope) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("comment.action", "stateAction.action")) //
+                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("userRole.role", "stateActionNotification.role"));
 
         return getIndividualUpdateDefinitionCriteria(criteria, comment, exclusions)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
@@ -110,18 +105,13 @@ public class NotificationDAO {
                 .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
                 .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("role.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN) //
-                .createAlias("stateActionNotification.stateAction", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.isNull("stateAction.actionCondition")) //
-                .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("state", "stateAction.state")) //
-                .add(Restrictions.isNull("state.hidden")) //
-                .add(Restrictions.eq("action.systemInvocationOnly", false));
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("comment.action", "stateAction.action")) //
+                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("userRole.role", "stateActionNotification.role"));
 
         return getIndividualUpdateDefinitionCriteria(criteria, comment, exclusions)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
@@ -219,7 +209,6 @@ public class NotificationDAO {
 
     private static Criteria getIndividualUpdateDefinitionCriteria(Criteria criteria, Comment comment, Collection<User> exclusions) {
         criteria.createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
-                .add(Restrictions.eqProperty("comment.action", "stateAction.action")) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("comment.id", comment.getId())); //
 
@@ -235,7 +224,7 @@ public class NotificationDAO {
         return sessionFactory.getCurrentSession().createCriteria(CommentState.class) //
                 .setProjection(getIndividualUpdateDefinitionsProjection()) //
                 .createAlias("comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("comment." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
+                .createAlias("comment." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN); //
     }
 
 }

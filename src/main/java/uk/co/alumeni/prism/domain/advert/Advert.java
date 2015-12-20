@@ -1,5 +1,13 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
+import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -22,6 +30,7 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
@@ -44,7 +53,7 @@ import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
-public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentProcessor> {
+public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentProcessor>, Comparable<Advert> {
 
     @Id
     @GeneratedValue
@@ -81,6 +90,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Column(name = "opportunity_category")
     private String opportunityCategories;
 
+    @Lob
     @Column(name = "target_opportunity_type")
     private String targetOpportunityTypes;
 
@@ -115,15 +125,11 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Embedded
     private AdvertFinancialDetail pay;
 
-    @OneToOne
-    @JoinColumn(name = "advert_closing_date_id", unique = true)
-    private AdvertClosingDate closingDate;
-
-    @Column(name = "last_currency_conversion_date")
+    @Column(name = "closing_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate lastCurrencyConversionDate;
+    private LocalDate closingDate;
 
-    @Column(name = "globally_visible", nullable = false)
+    @Column(name = "globally_visible")
     private Boolean globallyVisible;
 
     @Column(name = "sequence_identifier", unique = true)
@@ -139,10 +145,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
     private Set<AdvertCompetence> competences = Sets.newHashSet();
-
-    @OrderBy(clause = "closing_date desc")
-    @OneToMany(mappedBy = "advert")
-    private Set<AdvertClosingDate> closingDates = Sets.newHashSet();
 
     @OrderBy(clause = "sequence_identifier desc")
     @OneToMany(mappedBy = "advert")
@@ -300,19 +302,11 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.pay = pay;
     }
 
-    public LocalDate getLastCurrencyConversionDate() {
-        return lastCurrencyConversionDate;
-    }
-
-    public void setLastCurrencyConversionDate(LocalDate lastCurrencyConversionDate) {
-        this.lastCurrencyConversionDate = lastCurrencyConversionDate;
-    }
-
-    public AdvertClosingDate getClosingDate() {
+    public LocalDate getClosingDate() {
         return closingDate;
     }
 
-    public void setClosingDate(AdvertClosingDate closingDate) {
+    public void setClosingDate(LocalDate closingDate) {
         this.closingDate = closingDate;
     }
 
@@ -348,10 +342,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         return competences;
     }
 
-    public Set<AdvertClosingDate> getClosingDates() {
-        return closingDates;
-    }
-
     public Set<Application> getApplications() {
         return applications;
     }
@@ -362,7 +352,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     }
 
     public ResourceParent getResource() {
-        return ObjectUtils.firstNonNull(getResourceOpportunity(), department, institution);
+        return ObjectUtils.firstNonNull(getResourceOpportunity(), getResourceParent());
     }
 
     public void setResource(Resource resource) {
@@ -373,16 +363,30 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.project = resource.getProject();
     }
 
+    public ResourceParent getResourceParent() {
+        return ObjectUtils.firstNonNull(department, institution);
+    }
+
     public ResourceOpportunity getResourceOpportunity() {
-        return (ResourceOpportunity) ObjectUtils.firstNonNull(project, program);
+        return ObjectUtils.firstNonNull(project, program);
+    }
+
+    public List<ResourceParent> getParentResources() {
+        PrismScope scope = getResource().getResourceScope();
+        List<ResourceParent> parentResources = Lists.newArrayList();
+        for (PrismScope advertScope : advertScopes) {
+            if (advertScope.ordinal() < scope.ordinal()) {
+                ResourceParent parentResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
+                if (parentResource != null) {
+                    parentResources.add(parentResource);
+                }
+            }
+        }
+        return parentResources;
     }
 
     public boolean isAdvertOfScope(PrismScope scope) {
         return getResource().getResourceScope().equals(scope);
-    }
-
-    public boolean hasConvertedPay() {
-        return pay != null && !pay.getCurrencySpecified().equals(pay.getCurrencyAtLocale());
     }
 
     public boolean sameAs(Object object) {
@@ -406,6 +410,17 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Override
     public boolean isResourceUserAssignmentProperty() {
         return true;
+    }
+
+    @Override
+    public int compareTo(Advert other) {
+        return ObjectUtils.compare(name, other.getName());
+    }
+
+    @Override
+    public String toString() {
+        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null).map(resource -> resource.getAdvert().getName())
+                .collect(joining(SPACE + HYPHEN + SPACE));
     }
 
     @Override

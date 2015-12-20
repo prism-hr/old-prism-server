@@ -14,18 +14,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertClosingDate;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertClosingDateDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertDetailsDTO;
-import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
+import uk.co.alumeni.prism.rest.dto.advert.AdvertSettingsDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
 import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.ResourceService;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions}/{resourceId}")
@@ -36,25 +39,39 @@ public class AdvertController {
     private AdvertService advertService;
 
     @Inject
+    private ResourceService resourceService;
+
+    @Inject
     private AdvertMapper advertMapper;
 
     @RequestMapping(value = "/targets", method = RequestMethod.GET)
-    public List<AdvertTargetConnectionRepresentation> getTargets(@PathVariable Integer resourceId,
-            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public List<AdvertTargetConnectionRepresentation> getTargets(
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         List<AdvertTargetDTO> advertTargets = advertService.getAdvertTargets(advert);
         return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets);
     }
 
-    @RequestMapping(value = "/advertDetails", method = RequestMethod.PUT)
-    public void updateAdvert(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertDetailsDTO advertDetailsDTO) {
-        advertService.updateDetail(resourceDescriptor.getResourceScope(), resourceId, advertDetailsDTO);
+    @RequestMapping(value = "/details", method = RequestMethod.PUT)
+    public void updateResourceDetails(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody ResourceParentDTO resourceDTO) {
+        advertService.updateResourceDetails(resourceDescriptor.getResourceScope(), resourceId, resourceDTO);
     }
 
-    @RequestMapping(value = "/financialDetails", method = RequestMethod.PUT)
-    public void updateFeesAndPayments(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertFinancialDetailDTO financialDetailDTO) {
-        advertService.updateFinancialDetails(resourceDescriptor.getResourceScope(), resourceId, financialDetailDTO);
+    @RequestMapping(value = "/settings", method = RequestMethod.PUT)
+    public void updateAdvertSettings(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertSettingsDTO advertSettingsDTO) {
+        advertService.updateAdvertSettings(resourceDescriptor.getResourceScope(), resourceId, advertSettingsDTO);
+    }
+
+    @RequestMapping(value = "/address", method = RequestMethod.PUT)
+    public void updateAddress(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AddressDTO addressDTO) {
+        Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
+        advertService.updateAddress(resource.getParentResource(), resource.getAdvert(), addressDTO);
+    }
+
+    @RequestMapping(value = "/locations", method = RequestMethod.PUT)
+    public void updateLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody List<ResourceRelationDTO> locations) {
+        ResourceOpportunity resource = (ResourceOpportunity) resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
+        advertService.updateLocations(resource, locations);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
@@ -64,20 +81,8 @@ public class AdvertController {
 
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
+                                  @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
         advertService.updateCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
-    }
-
-    @RequestMapping(value = "/closingDates", method = RequestMethod.POST)
-    public Integer addClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-            @Valid @RequestBody AdvertClosingDateDTO advertClosingDateDTO) {
-        AdvertClosingDate closingDate = advertService.createClosingDate(resourceDescriptor.getResourceScope(), resourceId, advertClosingDateDTO);
-        return closingDate.getId();
-    }
-
-    @RequestMapping(value = "/closingDates/{closingDateId}", method = RequestMethod.DELETE)
-    public void deleteClosingDate(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @PathVariable Integer closingDateId) {
-        advertService.deleteClosingDate(resourceDescriptor.getResourceScope(), resourceId, closingDateId);
     }
 
     @ModelAttribute

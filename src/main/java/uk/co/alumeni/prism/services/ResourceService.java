@@ -1122,22 +1122,22 @@ public class ResourceService {
     private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = Sets.newTreeSet();
-        DateTime baseline = DateTime.now().minusDays(1);
+        if (!(applyReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
+            DateTime baseline = DateTime.now().minusDays(1);
+            Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
+            addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
 
-        appendReplicableActionFilter(scope, filter);
-        Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
-        addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
+            if (!scope.equals(SYSTEM)) {
+                for (PrismScope parentScope : parentScopes) {
+                    addResources(resourceDAO.getResources(user, scope, parentScope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
+                }
 
-        if (!scope.equals(SYSTEM)) {
-            for (PrismScope parentScope : parentScopes) {
-                addResources(resourceDAO.getResources(user, scope, parentScope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
-            }
-
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : organizationScopes) {
-                    for (PrismScope targetScope : organizationScopes) {
-                        addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions, responseClass, baseline),
-                                resources, asPartner == null ? null : true);
+                if (isNotEmpty(targeterEntities)) {
+                    for (PrismScope targeterScope : organizationScopes) {
+                        for (PrismScope targetScope : organizationScopes) {
+                            addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions, responseClass, baseline),
+                                    resources, asPartner == null ? null : true);
+                        }
                     }
                 }
             }
@@ -1146,10 +1146,11 @@ public class ResourceService {
         return resources;
     }
 
-    private void appendReplicableActionFilter(PrismScope scope, ResourceListFilterDTO filter) {
+    private boolean applyReplicableActionFilter(PrismScope scope, ResourceListFilterDTO filter) {
         List<Integer> filterThemes = getReplicableActionFilterCollection(filter.getThemes());
         List<Integer> filterLocations = getReplicableActionFilterCollection(filter.getLocations());
 
+        boolean filterApplied = false;
         Set<Integer> resourceIds = Sets.newHashSet();
         if (scope.equals(APPLICATION)) {
             if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
@@ -1158,6 +1159,7 @@ public class ResourceService {
                     secondaryFilterThemes = getReplicableActionFilterCollection(filter.getSecondaryThemes());
                 }
                 resourceIds.addAll(applicationService.getApplicationsByApplicationTheme(filterThemes, secondaryFilterThemes));
+                filterApplied = true;
             }
 
             if (isNotEmpty(filterLocations) && isTrue(filter.getLocationsApplied())) {
@@ -1166,18 +1168,22 @@ public class ResourceService {
                     secondaryFilterLocations = getReplicableActionFilterCollection(filter.getSecondaryLocations());
                 }
                 resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(filterLocations, secondaryFilterLocations));
+                filterApplied = true;
             }
         } else if (ArrayUtils.contains(advertScopes, scope)) {
             if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
                 resourceIds.addAll(resourceDAO.getResourcesByAdvertTheme(scope, filterThemes));
+                filterApplied = true;
             }
 
             if (isNotEmpty(filterLocations) && isTrue(filter.getLocationsApplied())) {
                 resourceIds.addAll(resourceDAO.getResourcesByAdvertLocation(scope, filterLocations));
+                filterApplied = true;
             }
         }
 
         filter.setResourceIds(newArrayList(resourceIds));
+        return filterApplied;
     }
 
     private List<Integer> getReplicableActionFilterCollection(List<ResourceListFilterTagDTO> tagDTOs) {

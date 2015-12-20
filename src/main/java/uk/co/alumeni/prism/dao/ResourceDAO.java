@@ -591,7 +591,7 @@ public class ResourceDAO {
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.categories.themes", "theme", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("theme.id", advertThemes)) //
+                .add(Restrictions.in("theme.theme.id", advertThemes)) //
                 .list();
     }
 
@@ -600,7 +600,7 @@ public class ResourceDAO {
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.categories.locations", "location", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("location.id", advertLocations)) //
+                .add(Restrictions.in("location.locationAdvert.id", advertLocations)) //
                 .list();
     }
     

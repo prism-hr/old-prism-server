@@ -11,6 +11,9 @@ public class ResourceListFilterTagDTO {
         this.value = value;
     }
 
+    public ResourceListFilterTagDTO() {
+    }
+
     public Integer getId() {
         return id;
     }

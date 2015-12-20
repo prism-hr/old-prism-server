@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
@@ -130,7 +132,8 @@ public class ResourceListFilterService {
             if (resourceScope.equals(APPLICATION)) {
                 Application application = (Application) resource;
                 application.getThemes().forEach(applicationTheme -> {
-                    ResourceListFilterTagDTO themeDTO = new ResourceListFilterTagDTO(applicationTheme.getId(), applicationTheme.getTag().getName());
+                    Theme tag = applicationTheme.getTag();
+                    ResourceListFilterTagDTO themeDTO = new ResourceListFilterTagDTO(tag.getId(), tag.getName());
                     if (isTrue(applicationTheme.getPreference())) {
                         themeDTOs.add(themeDTO);
                     } else {
@@ -139,7 +142,8 @@ public class ResourceListFilterService {
                 });
 
                 application.getLocations().forEach(applicationLocation -> {
-                    ResourceListFilterTagDTO locationDTO = new ResourceListFilterTagDTO(applicationLocation.getId(), applicationLocation.getTag().toString());
+                    Advert tag = applicationLocation.getTag();
+                    ResourceListFilterTagDTO locationDTO = new ResourceListFilterTagDTO(tag.getId(), tag.toString());
                     if (isTrue(applicationLocation.getPreference())) {
                         locationDTOs.add(locationDTO);
                     } else {
@@ -150,11 +154,13 @@ public class ResourceListFilterService {
                 AdvertCategories categories = resource.getAdvert().getCategories();
                 if (categories != null) {
                     categories.getThemes().forEach(advertTheme -> {
-                        themeDTOs.add(new ResourceListFilterTagDTO(advertTheme.getId(), advertTheme.getTheme().getName()));
+                        Theme tag = advertTheme.getTheme();
+                        themeDTOs.add(new ResourceListFilterTagDTO(tag.getId(), tag.getName()));
                     });
 
                     categories.getLocations().forEach(advertLocation -> {
-                        locationDTOs.add(new ResourceListFilterTagDTO(advertLocation.getId(), advertLocation.getLocationAdvert().toString()));
+                        Advert tag = advertLocation.getLocationAdvert();
+                        locationDTOs.add(new ResourceListFilterTagDTO(tag.getId(), tag.toString()));
                     });
                 }
             }

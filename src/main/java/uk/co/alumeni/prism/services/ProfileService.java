@@ -793,7 +793,12 @@ public class ProfileService {
         }
 
         document.setPersonalSummary(documentDTO.getPersonalSummary());
-        document.setCv(documentService.getById(getDocumentId(documentDTO.getCv()), DOCUMENT));
+        
+        Integer cvId = getDocumentId(documentDTO.getCv());
+        if (cvId != null) {
+            document.setCv(documentService.getById(cvId, DOCUMENT));
+        }
+        
         return document;
     }
 

@@ -375,13 +375,13 @@ public class ApplicationDAO {
 
     private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaryIds, List<Integer> secondaryIds) {
         Junction constraint = Restrictions.conjunction() //
-                .add(Restrictions.in(tagAlias + ".id", primaryIds)) //
+                .add(Restrictions.in(tagAlias + ".tag.id", primaryIds)) //
                 .add(Restrictions.eq(tagAlias + ".preference", true));
         if (isNotEmpty(secondaryIds)) {
             constraint = Restrictions.disjunction() //
                     .add(constraint) //
                     .add(Restrictions.conjunction() //
-                            .add(Restrictions.in(tagAlias + ".id", secondaryIds)) //
+                            .add(Restrictions.in(tagAlias + ".tag.id", secondaryIds)) //
                             .add(Restrictions.ne(tagAlias + ".preference", true)));
         }
         return constraint;

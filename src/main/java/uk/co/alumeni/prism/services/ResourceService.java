@@ -1160,7 +1160,7 @@ public class ResourceService {
                 resourceIds.addAll(applicationService.getApplicationsByApplicationTheme(filterThemes, secondaryFilterThemes));
             }
 
-            if (isNotEmpty(filterLocations) && isTrue(filter.getSecondaryThemesApplied())) {
+            if (isNotEmpty(filterLocations) && isTrue(filter.getLocationsApplied())) {
                 List<Integer> secondaryFilterLocations = null;
                 if (isNotEmpty(secondaryFilterLocations)) {
                     secondaryFilterLocations = getReplicableActionFilterCollection(filter.getSecondaryLocations());

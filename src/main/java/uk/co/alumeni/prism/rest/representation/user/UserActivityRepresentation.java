@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
-import java.util.List;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -12,6 +12,7 @@ import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointme
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
 
 public class UserActivityRepresentation {
 
@@ -90,9 +91,28 @@ public class UserActivityRepresentation {
         return this;
     }
 
-    public boolean isNotEmpty() {
-        return CollectionUtils.isNotEmpty(resourceActivities) || CollectionUtils.isNotEmpty(appointmentActivities) || CollectionUtils.isNotEmpty(unverifiedUserActivities)
-                || CollectionUtils.isNotEmpty(advertTargetActivities);
+    public boolean hasNotifiableUpdates() {
+        boolean hasResourceActivity = false;
+        if (isNotEmpty(resourceActivities)) {
+            for (ResourceActivityRepresentation resourceActivity : resourceActivities) {
+                if (resourceActivity.getUpdateCount() > 0) {
+                    hasResourceActivity = true;
+                    break;
+                } else {
+                    List<ActionActivityRepresentation> actionActivities = resourceActivity.getActions();
+                    if (isNotEmpty(actionActivities)) {
+                        for (ActionActivityRepresentation actionActivity : actionActivities) {
+                            if (actionActivity.getUrgentCount() > 0) {
+                                hasResourceActivity = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return hasResourceActivity || isNotEmpty(appointmentActivities) || isNotEmpty(unverifiedUserActivities) || isNotEmpty(advertTargetActivities);
     }
 
     public static class ResourceActivityRepresentation {

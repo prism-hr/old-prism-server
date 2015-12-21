@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.advert;
 
-import java.util.List;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.util.List;
 
 import uk.co.alumeni.prism.rest.representation.ListRepresentation;
 import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
@@ -29,8 +29,8 @@ public class AdvertListRepresentation extends ListRepresentation<AdvertRepresent
         return this;
     }
 
-    public boolean isNotEmpty() {
-        return CollectionUtils.isNotEmpty(rows);
+    public boolean hasNotifiableUpdates() {
+        return isNotEmpty(rows);
     }
 
 }

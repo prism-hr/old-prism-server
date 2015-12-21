@@ -1,1 +1,1 @@
-Daily summary of activity in ${TEMPLATE_SYSTEM_NAME}
+Summary of activity in ${TEMPLATE_SYSTEM_NAME}

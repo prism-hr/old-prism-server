@@ -578,11 +578,11 @@
         <profile>
             <id>prod</id>
             <properties>
-                <sql.host>prism-prod.cd4p8rv23vn5.eu-west-1.rds.amazonaws.com</sql.host>
+                <sql.host>prism-lahp.cd4p8rv23vn5.eu-west-1.rds.amazonaws.com</sql.host>
                 <sql.db>prism</sql.db>
                 <sql.userid>prism</sql.userid>
                 <sql.password>pgadmissions</sql.password>
-                <wildfly.management.port>9992</wildfly.management.port>
+                <wildfly.management.port>9993</wildfly.management.port>
             </properties>
             <build>
                 <plugins>

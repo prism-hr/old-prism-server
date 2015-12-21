@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static jersey.repackaged.com.google.common.base.Objects.equal;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
@@ -427,7 +428,7 @@ public class ResourceService {
     public void executeBulkAction(ReplicableActionSequenceDTO sequenceDTO) {
         List<Integer> resourceIds = sequenceDTO.getResources();
         List<Integer> commentIds = sequenceDTO.getTemplateComments();
-        if (CollectionUtils.isNotEmpty(resourceIds) && CollectionUtils.isNotEmpty(commentIds)) {
+        if (isNotEmpty(resourceIds) && isNotEmpty(commentIds)) {
             List<Comment> comments = commentService.getComments(commentIds);
 
             boolean validTransition = false;
@@ -437,15 +438,17 @@ public class ResourceService {
             int commentsSize = comments.size();
             for (int i = 0; i < commentsSize; i++) {
                 Comment comment = comments.get(i);
-                if (!Objects.equal(comment.getState(), comment.getTransitionState())) {
+                if (!equal(comment.getState(), comment.getTransitionState())) {
                     validTransition = true;
 
                     if (i == 0) {
                         StateAction stateAction = stateService.getStateAction(comment.getState(), comment.getAction());
-                        validStartTransition = BooleanUtils.toBoolean(stateAction.getReplicableSequenceStart());
-                    } else if (i == (commentsSize - 1)) {
+                        validStartTransition = toBoolean(stateAction.getReplicableSequenceStart());
+                    }
+
+                    if (i == (commentsSize - 1)) {
                         StateTransition stateTransition = stateService.getStateTransition(comment.getState(), comment.getAction(), comment.getTransitionState());
-                        validCloseTransition = BooleanUtils.toBoolean(stateTransition.getReplicableSequenceClose());
+                        validCloseTransition = toBoolean(stateTransition.getReplicableSequenceClose());
                     }
                 } else {
                     validTransition = false;

@@ -133,7 +133,7 @@ public class NotificationService {
     }
 
     public void sendUserActivityNotification(Integer user, UserActivityRepresentation userActivityRepresentation, AdvertListRepresentation advertListRepresentation) {
-        if (userActivityRepresentation.isNotEmpty() || advertListRepresentation.isNotEmpty()) {
+        if (userActivityRepresentation.hasNotifiableUpdates() || advertListRepresentation.hasNotifiableUpdates()) {
             User recipient = userService.getById(user);
             System resource = systemService.getSystem();
             NotificationDefinition definition = getById(SYSTEM_ACTIVITY_NOTIFICATION);

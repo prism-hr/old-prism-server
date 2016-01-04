@@ -228,7 +228,7 @@ public class RoleService {
     public List<PrismRole> getRolesOverridingRedactions(Resource resource) {
         User user = userService.getCurrentUser();
         PrismScope resourceScope = resource.getResourceScope();
-        List<Integer> resourceIds = Lists.newArrayList(resource.getId());
+        List<Integer> resourceIds = newArrayList(resource.getId());
         return getRolesOverridingRedactions(user, resourceScope, resourceIds);
     }
 

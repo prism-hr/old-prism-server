@@ -590,7 +590,7 @@ public class ResourceService {
 
             Set<Integer> resourceIds = resources.keySet();
             if (isNotEmpty(resourceIds)) {
-                boolean hasRedactions = actionService.hasRedactions(user, scope);
+                boolean hasRedactions = actionService.hasRedactions(user, scope, resourceIds);
                 List<ResourceListRowDTO> rowDTOs = resourceDAO.getResourceList(user, scope, parentScopes, resourceIds, filter, hasRedactions);
 
                 if (!rowDTOs.isEmpty()) {

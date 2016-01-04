@@ -1,8 +1,9 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.Range;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class CommentCompetenceDTO {
 
@@ -16,6 +17,7 @@ public class CommentCompetenceDTO {
     @NotNull
     private Integer rating;
 
+    @Size(max = 255)
     private String remark;
 
     public Integer getCompetenceId() {

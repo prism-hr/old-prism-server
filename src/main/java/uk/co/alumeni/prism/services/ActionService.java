@@ -200,12 +200,17 @@ public class ActionService {
         return actionRedactions;
     }
 
-    public boolean hasRedactions(User user, PrismScope resourceScope) {
+    public boolean hasRedactions(User user, PrismScope resourceScope, Collection<Integer> resources) {
         List<PrismRole> userRoles = roleService.getRolesByScope(user, resourceScope);
         if (userRoles.isEmpty()) {
             return false;
         }
 
+        List<PrismRole> rolesOverridingRedations = roleService.getRolesOverridingRedactions(user, resourceScope, resources);
+        if (!rolesOverridingRedations.isEmpty()) {
+            return false;
+        }
+        
         List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
         userRoles.removeAll(rolesWithRedactions);
         return userRoles.isEmpty();

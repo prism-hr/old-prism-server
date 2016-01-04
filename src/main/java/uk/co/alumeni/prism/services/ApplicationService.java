@@ -161,12 +161,13 @@ public class ApplicationService {
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(APPLICATION, SYSTEM);
 
         User user = userService.getCurrentUser();
-        boolean hasRedactions = actionService.hasRedactions(user, scope);
 
         resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
-        List<Integer> assignedApplications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId()).collect(toList());
+        List<Integer> applications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId()).collect(toList());
 
+        boolean hasRedactions = actionService.hasRedactions(user, scope, applications);
+        
         DataTable dataTable = new DataTable();
 
         List<ColumnDescription> headers = Lists.newLinkedList();
@@ -184,7 +185,7 @@ public class ApplicationService {
         dataTable.addColumns(headers);
 
         String dateFormat = loader.loadLazy(SYSTEM_DATE_FORMAT);
-        List<ApplicationReportListRowDTO> reportRows = applicationDAO.getApplicationReport(assignedApplications, Joiner.on(", ").join(columnAccessors));
+        List<ApplicationReportListRowDTO> reportRows = applicationDAO.getApplicationReport(applications, Joiner.on(", ").join(columnAccessors));
 
         for (ApplicationReportListRowDTO reportRow : reportRows) {
             TableRow row = new TableRow();

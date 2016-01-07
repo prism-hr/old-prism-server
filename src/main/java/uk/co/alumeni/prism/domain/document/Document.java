@@ -27,6 +27,7 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.workflow.user.DocumentReassignmentProcessor;
 
 @Entity
@@ -93,6 +94,9 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     @OneToOne(mappedBy = "backgroundImage")
     private Advert backgroundImage;
+
+    @OneToOne(mappedBy = "document")
+    private NotificationConfigurationDocument notificationConfigurationDocument;
 
     public void setId(Integer id) {
         this.id = id;
@@ -190,8 +194,16 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
         return logoImage;
     }
 
+    public Institution getLogoImageEmail() {
+        return logoImageEmail;
+    }
+
     public Advert getBackgroundImage() {
         return backgroundImage;
+    }
+
+    public NotificationConfigurationDocument getNotificationConfigurationDocument() {
+        return notificationConfigurationDocument;
     }
 
     public Document withId(Integer id) {

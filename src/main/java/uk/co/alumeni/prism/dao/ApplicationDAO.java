@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
@@ -50,7 +51,6 @@ import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -98,21 +98,28 @@ public class ApplicationDAO {
                         + "left join application.institution as institution " //
                         + "left join application.department as department " //
                         + "left join application.program as program " //
-                        + "left join program.department as department " //
                         + "left join application.project as project " //
-                        + "join application.state as state " //
+                        + "left join application.themes as primaryTheme " //
+                            + "with primaryTheme.preference is true " //
+                        + "left join primaryTheme.tag as primaryThemeTag "
+                        + "left join application.locations as primaryLocation " //
+                            + "with primaryLocation.preference is true " //
+                        + "left join primaryLocation.tag as primaryLocationTag " //
+                        + "left join primaryLocationTag.institution as primaryLocationInstitution " //
+                        + "left join primaryLocationTag.department as primaryLocationDepartment " //
+                        + "left join application.state as state " //
                         + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //
-                        + "with provideReferenceComment.action.id = :provideReferenceAction " //
-                        + "and provideReferenceComment.declinedResponse is false " //
+                            + "with provideReferenceComment.action.id = :provideReferenceAction " //
+                            + "and provideReferenceComment.declinedResponse is false " //
                         + "left join application.comments as declineReferenceComment " //
-                        + "with declineReferenceComment.action.id = :provideReferenceAction " //
-                        + "and declineReferenceComment.declinedResponse is true " //
+                            + "with declineReferenceComment.action.id = :provideReferenceAction " //
+                            + "and declineReferenceComment.declinedResponse is true " //
                         + "where application.id in :assignedApplications " //
                         + "group by application.id " //
                         + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", applicationIds) //
-                .setParameter("provideReferenceAction", PrismAction.APPLICATION_PROVIDE_REFERENCE) //
+                .setParameter("provideReferenceAction", APPLICATION_PROVIDE_REFERENCE) //
                 .setResultTransformer(Transformers.aliasToBean(ApplicationReportListRowDTO.class)) //
                 .list();
     }

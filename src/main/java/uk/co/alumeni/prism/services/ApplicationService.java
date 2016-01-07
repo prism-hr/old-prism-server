@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.trim;
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
@@ -166,7 +167,7 @@ public class ApplicationService {
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
         List<Integer> applications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId()).collect(toList());
 
-        boolean hasRedactions = actionService.hasRedactions(user, scope, applications);       
+        boolean hasRedactions = actionService.hasRedactions(user, scope, applications);
         DataTable dataTable = new DataTable();
 
         List<ColumnDescription> headers = Lists.newLinkedList();
@@ -203,7 +204,7 @@ public class ApplicationService {
                     value = (String) invokeMethod(reportRow, getMethod);
                     break;
                 }
-                row.addCell(value);
+                row.addCell(trim(value));
             }
             row.addCell(applicationUrl + "/" + ANGULAR_HASH + "/application/" + reportRow.getIdDisplay() + "/view");
             dataTable.addRow(row);

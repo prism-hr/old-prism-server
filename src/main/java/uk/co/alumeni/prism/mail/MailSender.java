@@ -1,14 +1,24 @@
 package uk.co.alumeni.prism.mail;
 
+import static com.amazonaws.regions.Regions.EU_WEST_1;
+import static javax.mail.Session.getInstance;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
+import static uk.co.alumeni.prism.utils.PrismConversionUtils.htmlToPlainText;
+import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessageData;
+import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMimeBodyPart;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.inject.Inject;
+import javax.mail.Message;
+import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -21,13 +31,9 @@ import org.springframework.stereotype.Component;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
-import com.amazonaws.services.simpleemail.model.Body;
-import com.amazonaws.services.simpleemail.model.Content;
-import com.amazonaws.services.simpleemail.model.Destination;
-import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+import com.amazonaws.services.simpleemail.model.RawMessage;
+import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 import com.google.common.collect.Maps;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
@@ -37,13 +43,14 @@ import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
+import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
+import uk.co.alumeni.prism.services.DocumentService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismConversionUtils;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 @Component
@@ -70,45 +77,60 @@ public class MailSender {
     private String emailStrategy;
 
     @Inject
+    private DocumentService documentService;
+
+    @Inject
+    private SystemService systemService;
+
+    @Inject
     private PrismTemplateUtils prismTemplateUtils;
 
     @Inject
     private ApplicationContext applicationContext;
 
-    @Inject
-    private SystemService systemService;
-
     public void sendEmail(final MailMessageDTO messageDTO) {
         NotificationDefinitionDTO notificationDefinitionDTO = messageDTO.getNotificationDefinitionDTO();
-        final NotificationConfiguration configuration = messageDTO.getNotificationConfiguration();
+        NotificationConfiguration notificationConfiguration = messageDTO.getNotificationConfiguration();
         try {
             Map<String, Object> model = createNotificationModel(messageDTO.getNotificationConfiguration().getDefinition(), notificationDefinitionDTO);
-            String definitionReference = configuration.getDefinition().getId().name();
-            String subject = prismTemplateUtils.getContent(definitionReference + "_subject", configuration.getSubject(), model);
-            String content = prismTemplateUtils.getContent(definitionReference + "_content", configuration.getContent(), model);
+            String definitionReference = notificationConfiguration.getDefinition().getId().name();
+            String subject = prismTemplateUtils.getContent(definitionReference + "_subject", notificationConfiguration.getSubject(), model);
+            String content = prismTemplateUtils.getContent(definitionReference + "_content", notificationConfiguration.getContent(), model);
 
-            String html = getMessage(messageDTO.getNotificationDefinitionDTO().getResource(), subject, content, model);
-            String plainText = PrismConversionUtils.htmlToPlainText(html) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
+            String htmlContent = getMessage(messageDTO.getNotificationDefinitionDTO().getResource(), subject, content, model);
+            String plainTextContent = htmlToPlainText(htmlContent) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + messageDTO.toString());
 
-                Destination destination = new Destination().withToAddresses(new String[] { convertToInternetAddresses(notificationDefinitionDTO.getRecipient()).toString() });
-                Content subjectContent = new Content().withData(subject);
-                Content plainTextContent = new Content().withData(plainText);
-                Content htmlContent = new Content().withData(html);
-                Body body = new Body().withText(plainTextContent).withHtml(htmlContent);
-                Message message = new Message().withSubject(subjectContent).withBody(body);
-                SendEmailRequest request = new SendEmailRequest().withSource(emailSource).withDestination(destination)
-                        .withMessage(message);
-
                 AWSCredentials credentials = systemService.getAmazonCredentials();
-                AmazonSimpleEmailServiceClient client = new AmazonSimpleEmailServiceClient(credentials);
-                Region REGION = Region.getRegion(Regions.EU_WEST_1);
-                client.setRegion(REGION);
-                client.sendEmail(request);
+                AmazonSimpleEmailServiceClient amazonClient = new AmazonSimpleEmailServiceClient(credentials);
+                amazonClient.setRegion(Region.getRegion(EU_WEST_1));
+
+                Properties mailSessionProperties = new Properties();
+                mailSessionProperties.setProperty("mail.transport.protocol", "aws");
+                mailSessionProperties.setProperty("mail.aws.user", credentials.getAWSAccessKeyId());
+                mailSessionProperties.setProperty("mail.aws.password", credentials.getAWSSecretKey());
+                Session mailSession = getInstance(mailSessionProperties);
+
+                MimeMessage message = new MimeMessage(mailSession);
+                message.setFrom(new InternetAddress(emailSource));
+                message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(notificationDefinitionDTO.getRecipient()));
+                message.setSubject(subject);
+
+                MimeMultipart messageParts = new MimeMultipart();
+                messageParts.addBodyPart(getMimeBodyPart(htmlContent, "text/html"));
+                messageParts.addBodyPart(getMimeBodyPart(plainTextContent, "text/plain"));
+
+                for (NotificationConfigurationDocument notificationConfigurationDocument : notificationConfiguration.getDocuments()) {
+                    Document document = notificationConfigurationDocument.getDocument();
+                    messageParts.addBodyPart(getMimeBodyPart(documentService.getDocumentContent(document), document.getContentType(), document.getFileName()));
+                }
+
+                message.setContent(messageParts);
+                amazonClient.sendRawEmail(new SendRawEmailRequest(new RawMessage(getMessageData(message))));
             } else if (emailStrategy.equals("log")) {
-                logger.info("Sending Development Email: " + messageDTO.toString() + "\n" + subject + "\nContent:\n" + html);
+                logger.info("Sending Development Email: " + messageDTO.toString() + "\n" + subject + "\nContent:\n" + htmlContent);
             } else {
                 logger.info("Sending Development Email: " + messageDTO.toString());
             }

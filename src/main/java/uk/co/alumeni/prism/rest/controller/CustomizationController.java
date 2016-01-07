@@ -39,6 +39,7 @@ import uk.co.alumeni.prism.rest.representation.configuration.NotificationConfigu
 import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import uk.co.alumeni.prism.services.CustomizationService;
 import uk.co.alumeni.prism.services.EntityService;
+import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.utils.PrismWordUtils;
 
 @RestController
@@ -50,6 +51,9 @@ public class CustomizationController {
 
     @Inject
     private CustomizationService customizationService;
+
+    @Inject
+    private NotificationService notificationService;
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{configurationType:notifications}/{id}", method = RequestMethod.GET)
@@ -124,7 +128,7 @@ public class CustomizationController {
             @PathVariable Integer resourceId, @RequestParam(required = false) PrismOpportunityType opportunityType, @PathVariable PrismNotificationDefinition id,
             @Valid @RequestBody NotificationConfigurationDTO notificationConfigurationDTO) {
         Resource resource = entityService.getById(resourceDescriptor.getType(), resourceId);
-        customizationService.createOrUpdateConfigurationUser(configurationType, resource, opportunityType, notificationConfigurationDTO);
+        notificationService.createOrUpdateNotificationConfiguration(configurationType, resource, opportunityType, notificationConfigurationDTO);
     }
 
     @PreAuthorize("isAuthenticated()")

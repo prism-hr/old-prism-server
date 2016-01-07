@@ -1,12 +1,17 @@
 package uk.co.alumeni.prism.rest.representation.configuration;
 
+import java.util.List;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 
 public class NotificationConfigurationRepresentation extends WorkflowConfigurationRepresentation {
 
     private String subject;
 
     private String content;
+
+    private List<DocumentRepresentation> documents;
 
     public String getSubject() {
         return subject;
@@ -22,6 +27,14 @@ public class NotificationConfigurationRepresentation extends WorkflowConfigurati
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public List<DocumentRepresentation> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentRepresentation> documents) {
+        this.documents = documents;
     }
 
     public NotificationConfigurationRepresentation withProperty(PrismNotificationDefinition property) {

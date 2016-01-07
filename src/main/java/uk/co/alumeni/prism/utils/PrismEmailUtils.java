@@ -22,7 +22,7 @@ public class PrismEmailUtils {
         }
     }
 
-    public static MimeBodyPart getMimeBodyPart(String content, String contentType) {
+    public static MimeBodyPart getMessagePart(String content, String contentType) {
         try {
             MimeBodyPart part = new MimeBodyPart();
             part.setContent(content, contentType);
@@ -32,7 +32,7 @@ public class PrismEmailUtils {
         }
     }
 
-    public static MimeBodyPart getMimeBodyPart(byte[] content, String contentType, String fileName) {
+    public static MimeBodyPart getMessagePart(byte[] content, String contentType, String fileName) {
         try {
             MimeBodyPart part = new MimeBodyPart();
             part.setDataHandler(new DataHandler(new ByteArrayDataSource(content, contentType)));

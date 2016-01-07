@@ -6,7 +6,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.htmlToPlainText;
 import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessageData;
-import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMimeBodyPart;
+import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessagePart;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
@@ -98,7 +99,7 @@ public class MailSender {
             String content = prismTemplateUtils.getContent(definitionReference + "_content", notificationConfiguration.getContent(), model);
 
             String htmlContent = getMessage(messageDTO.getNotificationDefinitionDTO().getResource(), subject, content, model);
-            String plainTextContent = htmlToPlainText(htmlContent) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
+            String plainContent = htmlToPlainText(htmlContent) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (emailStrategy.equals("send")) {
                 logger.info("Sending Production Email: " + messageDTO.toString());
@@ -118,13 +119,18 @@ public class MailSender {
                 message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(notificationDefinitionDTO.getRecipient()));
                 message.setSubject(subject);
 
-                MimeMultipart messageParts = new MimeMultipart();
-                messageParts.addBodyPart(getMimeBodyPart(htmlContent, "text/html"));
-                messageParts.addBodyPart(getMimeBodyPart(plainTextContent, "text/plain"));
+                MimeBodyPart messageBodyPart = new MimeBodyPart();
+                MimeMultipart messageBodyParts = new MimeMultipart("alternative");
+                messageBodyParts.addBodyPart(getMessagePart(htmlContent, "text/html"));
+                messageBodyParts.addBodyPart(getMessagePart(plainContent, "text/plain"));
+                messageBodyPart.setContent(messageBodyParts);
+
+                MimeMultipart messageParts = new MimeMultipart("related");
+                messageParts.addBodyPart(messageBodyPart);
 
                 for (NotificationConfigurationDocument notificationConfigurationDocument : notificationConfiguration.getDocuments()) {
                     Document document = notificationConfigurationDocument.getDocument();
-                    messageParts.addBodyPart(getMimeBodyPart(documentService.getDocumentContent(document), document.getContentType(), document.getFileName()));
+                    messageParts.addBodyPart(getMessagePart(documentService.getDocumentContent(document), document.getContentType(), document.getFileName()));
                 }
 
                 message.setContent(messageParts);

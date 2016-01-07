@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.dto;
 
+import static org.jboss.util.Strings.EMPTY;
+
 import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
@@ -32,6 +34,10 @@ public class ApplicationReportListRowDTO {
     private String program;
 
     private String project;
+
+    private String primaryTheme;
+
+    private String primaryLocation;
 
     private String applicationYear;
 
@@ -145,6 +151,22 @@ public class ApplicationReportListRowDTO {
         this.project = project;
     }
 
+    public String getPrimaryTheme() {
+        return primaryTheme;
+    }
+
+    public void setPrimaryTheme(String primaryTheme) {
+        this.primaryTheme = primaryTheme;
+    }
+
+    public String getPrimaryLocation() {
+        return primaryLocation;
+    }
+
+    public void setPrimaryLocation(String primaryLocation) {
+        this.primaryLocation = primaryLocation;
+    }
+
     public String getApplicationYear() {
         return applicationYear;
     }
@@ -242,15 +264,15 @@ public class ApplicationReportListRowDTO {
     }
 
     public String getIdDisplay() {
-        return id == null ? "" : id.toString();
+        return id == null ? EMPTY : id.toString();
     }
 
     public String getNameDisplay() {
-        return name == null ? "" : name;
+        return name == null ? EMPTY : name;
     }
 
     public String getEmailDisplay() {
-        return email == null ? "" : email;
+        return email == null ? EMPTY : email;
     }
 
     public PrismGender getGenderDisplay() {
@@ -258,7 +280,7 @@ public class ApplicationReportListRowDTO {
     }
 
     public String getDateOfBirthDisplay(String dateFormat) {
-        return dateOfBirth == null ? "" : dateOfBirth.toString(dateFormat);
+        return dateOfBirth == null ? EMPTY : dateOfBirth.toString(dateFormat);
     }
 
     public PrismDomicile getNationalityDisplay() {
@@ -270,68 +292,76 @@ public class ApplicationReportListRowDTO {
     }
 
     public String getInstitutionDisplay() {
-        return institution == null ? "" : institution;
+        return institution == null ? EMPTY : institution;
     }
 
     public String getDepartmentDisplay() {
-        return department == null ? "" : department;
+        return department == null ? EMPTY : department;
     }
 
     public String getProgramDisplay() {
-        return program == null ? "" : program;
+        return program == null ? EMPTY : program;
     }
 
     public String getProjectDisplay() {
-        return project == null ? "" : project;
+        return project == null ? EMPTY : project;
+    }
+    
+    public String getPrimaryThemeDisplay() {
+        return primaryTheme == null ? EMPTY : primaryTheme;
+    }
+    
+    public String getPrimaryLocationDisplay() {
+        return primaryLocation == null ? EMPTY : primaryLocation;
     }
 
     public String getApplicationYearDisplay() {
-        return applicationYear == null ? "" : applicationYear;
+        return applicationYear == null ? EMPTY : applicationYear;
     }
 
     public String getCreatedDateDisplay(String dateFormat) {
-        return createdDate == null ? "" : createdDate.toString(dateFormat);
+        return createdDate == null ? EMPTY : createdDate.toString(dateFormat);
     }
 
     public String getClosingDateDisplay(String dateFormat) {
-        return closingDate == null ? "" : closingDate.toString(dateFormat);
+        return closingDate == null ? EMPTY : closingDate.toString(dateFormat);
     }
 
     public String getSubmittedDateDisplay(String dateFormat) {
-        return submittedDate == null ? "" : submittedDate.toString(dateFormat);
+        return submittedDate == null ? EMPTY : submittedDate.toString(dateFormat);
     }
 
     public String getUpdatedDateDisplay(String dateFormat) {
-        return updatedDate == null ? "" : updatedDate.toString(dateFormat);
+        return updatedDate == null ? EMPTY : updatedDate.toString(dateFormat);
     }
 
     public String getAcademicYearDisplay() {
         DateTime baseline = submittedDate == null ? createdDate : submittedDate;
         if (baseline == null) {
-            return "";
+            return EMPTY;
         }
         Integer baselineMonth = baseline.getMonthOfYear();
         return baselineMonth < 10 ? Integer.toString(baseline.getYear()) : Integer.toString(baseline.plusYears(1).getYear());
     }
 
     public String getRatingCountDisplay() {
-        return ratingCount == null ? "" : ratingCount.toString();
+        return ratingCount == null ? EMPTY : ratingCount.toString();
     }
 
     public String getRatingAverageDisplay() {
-        return ratingAverage == null ? "" : ratingAverage.toPlainString();
+        return ratingAverage == null ? EMPTY : ratingAverage.toPlainString();
     }
 
     public String getProvidedReferencesDisplay() {
-        return providedReferences == null ? "" : providedReferences.toString();
+        return providedReferences == null ? EMPTY : providedReferences.toString();
     }
 
     public String getDeclinedReferencesDisplay() {
-        return declinedReferences == null ? "" : declinedReferences.toString();
+        return declinedReferences == null ? EMPTY : declinedReferences.toString();
     }
 
     public String getConfirmedStartDateDisplay(String dateFormat) {
-        return confirmedStartDate == null ? "" : confirmedStartDate.toString(dateFormat);
+        return confirmedStartDate == null ? EMPTY : confirmedStartDate.toString(dateFormat);
     }
 
     public PrismStateGroup getStateDisplay() {
@@ -339,7 +369,7 @@ public class ApplicationReportListRowDTO {
     }
 
     public String getRefereesDisplay() {
-        return referees == null ? "" : referees.toString();
+        return referees == null ? EMPTY : referees.toString();
     }
 
 }

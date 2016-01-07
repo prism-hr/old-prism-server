@@ -2057,6 +2057,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_PROVIDED_REFERENCES(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Provided References"),
     APPLICATION_DECLINED_REFERENCES(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Declined References"),
     APPLICATION_SUBMISSION_DATE(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Submission Date"),
+    APPLICATION_PRIMARY_THEME(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Primary Theme"),
+    APPLICATION_PRIMARY_LOCATION(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Primary Location"),
     APPLICATION_CODE(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Application Code"),
     APPLICATION_LAST_EDITED(PrismDisplayPropertyCategory.APPLICATION_GLOBAL, "Last Edited"),
 

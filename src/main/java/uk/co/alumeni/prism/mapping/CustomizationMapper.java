@@ -2,10 +2,14 @@ package uk.co.alumeni.prism.mapping;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 
+import java.util.List;
+
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import jersey.repackaged.com.google.common.collect.Lists;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
@@ -20,6 +24,7 @@ import uk.co.alumeni.prism.rest.dto.DisplayPropertyConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.DisplayPropertyConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.NotificationConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.StateDurationConfigurationRepresentation;
@@ -31,6 +36,9 @@ import uk.co.alumeni.prism.rest.representation.workflow.WorkflowDefinitionRepres
 @Service
 @Transactional
 public class CustomizationMapper {
+
+    @Inject
+    private DocumentMapper documentMapper;
 
     @SuppressWarnings("unchecked")
     public <T extends WorkflowDefinition, U extends WorkflowDefinitionRepresentation> U getWorkflowDefinitionRepresentation(T definition) {
@@ -110,8 +118,14 @@ public class CustomizationMapper {
     }
 
     public NotificationConfigurationRepresentation getNotificationConfigurationRepresentation(NotificationConfiguration configuration) {
-        return new NotificationConfigurationRepresentation().withProperty(configuration.getDefinition().getId()).withSubject(configuration.getSubject())
-                .withContent(configuration.getContent());
+        NotificationConfigurationRepresentation representation = new NotificationConfigurationRepresentation().withProperty(configuration.getDefinition().getId())
+                .withSubject(configuration.getSubject()).withContent(configuration.getContent());
+
+        List<DocumentRepresentation> documentRepresentations = Lists.newArrayList();
+        configuration.getDocuments().stream().forEach(document -> documentRepresentations.add(documentMapper.getDocumentRepresentation(document.getDocument())));
+        representation.setDocuments(documentRepresentations);
+
+        return representation;
     }
 
     public StateDurationConfigurationRepresentation getStateDurationConfigurationRepresentation(StateDurationConfiguration configuration) {

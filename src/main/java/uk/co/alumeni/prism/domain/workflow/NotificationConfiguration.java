@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.workflow;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,8 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import com.google.common.collect.Sets;
 
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
@@ -67,6 +72,9 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
 
     @Column(name = "system_default", nullable = false)
     private Boolean systemDefault;
+
+    @OneToMany(mappedBy = "notificationConfiguration")
+    private Set<NotificationConfigurationDocument> documents = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -172,6 +180,10 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
         this.systemDefault = systemDefault;
     }
 
+    public Set<NotificationConfigurationDocument> getDocuments() {
+        return documents;
+    }
+
     public NotificationConfiguration withResource(Resource resource) {
         setResource(resource);
         return this;
@@ -199,6 +211,11 @@ public class NotificationConfiguration extends WorkflowConfiguration<Notificatio
 
     public NotificationConfiguration withSystemDefault(Boolean systemDefault) {
         this.systemDefault = systemDefault;
+        return this;
+    }
+
+    public NotificationConfiguration addDocument(NotificationConfigurationDocument document) {
+        documents.add(document);
         return this;
     }
 

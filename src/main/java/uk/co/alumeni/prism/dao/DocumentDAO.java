@@ -33,7 +33,9 @@ public class DocumentDAO {
                         .add(Restrictions.isNotNull("userCv.id")) //
                         .add(Restrictions.isNotNull("portraitImage.id")) //
                         .add(Restrictions.isNotNull("logoImage.id")) //
-                        .add(Restrictions.isNotNull("backgroundImage.id"))) //
+                        .add(Restrictions.isNotNull("logoImageEmail.id")) //
+                        .add(Restrictions.isNotNull("backgroundImage.id")) //
+                        .add(Restrictions.isNotNull("notificationConfigurationDocument.id"))) //
                 .list();
     }
 
@@ -49,6 +51,7 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("logoImage.id")) //
                 .add(Restrictions.isNull("logoImageEmail.id")) //
                 .add(Restrictions.isNull("backgroundImage.id")) //
+                .add(Restrictions.isNull("notificationConfigurationDocument.id")) //
                 .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
                 .list();
     }
@@ -84,7 +87,8 @@ public class DocumentDAO {
                 .createAlias("portraitImage", "portraitImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("logoImageEmail", "logoImageEmail", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("backgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN);
+                .createAlias("backgroundImage", "backgroundImage", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("notificationConfigurationDocument", "notificationConfigurationDocument", JoinType.LEFT_OUTER_JOIN);
     }
 
 }

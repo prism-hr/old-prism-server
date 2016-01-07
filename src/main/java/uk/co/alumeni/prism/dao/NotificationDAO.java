@@ -26,6 +26,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserNotification;
+import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
@@ -182,6 +183,14 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationPurpose", PrismNotificationPurpose.REQUEST)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDTO.class)) //
                 .list();
+    }
+
+    public void deleteNotificationConfigurationDocuments(NotificationConfiguration notificationConfiguration) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete NotificationConfigurationDocument " //
+                        + "where notificationConfiguration = :notificationConfiguration") //
+                .setParameter("notificationConfiguration", notificationConfiguration) //
+                .executeUpdate();
     }
 
     private static ProjectionList getInvidualRequestDefinitionsProjection() {

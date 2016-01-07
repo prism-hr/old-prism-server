@@ -42,10 +42,14 @@ import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.System;
@@ -54,8 +58,10 @@ import uk.co.alumeni.prism.domain.user.UserNotification;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
+import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.Role;
+import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
@@ -64,6 +70,7 @@ import uk.co.alumeni.prism.dto.UserNotificationDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
 import uk.co.alumeni.prism.mail.MailSender;
+import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
@@ -83,22 +90,28 @@ public class NotificationService {
     private AdvertService advertService;
 
     @Inject
-    private UserService userService;
+    private CustomizationService customizationService;
 
     @Inject
-    private SystemService systemService;
+    private DocumentService documentService;
 
     @Inject
     private EntityService entityService;
 
     @Inject
-    private CustomizationService customizationService;
+    private ResourceService resourceService;
 
     @Inject
     private RoleService roleService;
 
     @Inject
     private ScopeService scopeService;
+
+    @Inject
+    private SystemService systemService;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -310,6 +323,29 @@ public class NotificationService {
         }
 
         return recipients;
+    }
+
+    public NotificationConfiguration createOrUpdateNotificationConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
+            NotificationConfigurationDTO notificationConfigurationDTO) {
+        WorkflowConfiguration<?> configuration = customizationService.createConfiguration(configurationType, resource, opportunityType, notificationConfigurationDTO);
+        resourceService.executeUpdate(resource, userService.getCurrentUser(),
+                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
+        configuration = entityService.createOrUpdate(configuration);
+
+        List<Integer> documentIds = notificationConfigurationDTO.getDocuments();
+        NotificationConfiguration notificationConfiguration = (NotificationConfiguration) configuration;
+        notificationDAO.deleteNotificationConfigurationDocuments(notificationConfiguration);
+        if (isNotEmpty(documentIds)) {
+            documentIds.stream().forEach(documentId -> {
+                Document document = documentService.getById(documentId);
+                if (document != null) {
+                    notificationConfiguration.addDocument(
+                            entityService.getOrCreate(new NotificationConfigurationDocument().withNotificationConfiguration(notificationConfiguration).withDocument(document)));
+                }
+            });
+        }
+
+        return notificationConfiguration;
     }
 
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<User> exclusions) {

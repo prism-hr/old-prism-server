@@ -224,13 +224,17 @@ public class CustomizationService {
         WorkflowConfiguration<?> configuration = createConfiguration(configurationType, resource, opportunityType, workflowConfigurationDTO);
         entityService.createOrUpdate(configuration);
     }
-
-    public WorkflowConfiguration<?> createOrUpdateConfigurationUser(
-            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowConfigurationDTO workflowConfigurationDTO) {
-        WorkflowConfiguration<?> configuration = createConfiguration(configurationType, resource, opportunityType, workflowConfigurationDTO);
-        resourceService.executeUpdate(resource, userService.getCurrentUser(),
-                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
-        return entityService.createOrUpdate(configuration);
+    
+    @SuppressWarnings("unchecked")
+    public <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType prismOpportunityType,
+            WorkflowConfigurationDTO workflowConfigurationDTO) {
+        T definition = (T) entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
+        WorkflowConfiguration<T> configuration = customizationMapper.getWorkflowConfiguration(workflowConfigurationDTO);
+        configuration.setResource(resource);
+        configuration.setOpportunityType(prismService.getOpportunityTypeById(prismOpportunityType));
+        configuration.setDefinition(definition);
+        configuration.setSystemDefault(isSystemDefault((WorkflowDefinition) definition, prismOpportunityType));
+        return configuration;
     }
 
     private List<WorkflowConfigurationRepresentation> getConfigurationRepresentations(PrismConfiguration configurationType, Resource resource, PrismScope scope,
@@ -243,18 +247,6 @@ public class CustomizationService {
             return parseRepresentations(configurationType, configurations);
         }
         return getConfigurationRepresentations(configurationType, configuredResource, scope, configuredOpportunityType);
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> WorkflowConfiguration<T> createConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType prismOpportunityType,
-            WorkflowConfigurationDTO workflowConfigurationDTO) {
-        T definition = (T) entityService.getById(configurationType.getDefinitionClass(), workflowConfigurationDTO.getDefinitionId());
-        WorkflowConfiguration<T> configuration = customizationMapper.getWorkflowConfiguration(workflowConfigurationDTO);
-        configuration.setResource(resource);
-        configuration.setOpportunityType(prismService.getOpportunityTypeById(prismOpportunityType));
-        configuration.setDefinition(definition);
-        configuration.setSystemDefault(isSystemDefault((WorkflowDefinition) definition, prismOpportunityType));
-        return configuration;
     }
 
     private Resource getConfiguredResource(Resource resource) {

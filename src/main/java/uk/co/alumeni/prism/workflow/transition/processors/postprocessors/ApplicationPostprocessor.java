@@ -124,12 +124,12 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             Map<Integer, Integer> importances = advertService.getCompetenceImportances(comment.getResource().getAdvert());
 
             List<Integer> scores = Lists.newArrayList();
-            BigDecimal sumImportance = new BigDecimal(0).setScale(0);
+            BigDecimal sumImportance = new BigDecimal(0).setScale(RATING_PRECISION);
             for (CommentCompetence competence : competences) {
                 Integer importance = importances.get(competence.getId());
                 importance = importance == null ? CONFIDENCE_MEDIUM : importance;
                 scores.add(importance * competence.getRating());
-                sumImportance = sumImportance.add(new BigDecimal(importance).setScale(0));
+                sumImportance = sumImportance.add(new BigDecimal(importance).setScale(RATING_PRECISION));
             }
 
             BigDecimal rating = new BigDecimal(0).setScale(RATING_PRECISION, HALF_UP);

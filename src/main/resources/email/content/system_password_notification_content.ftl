@@ -16,5 +16,5 @@ ${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,
-    <br/> ${TEMPLATE_INITIATOR_FULL_NAME}
+    <br/> ${TEMPLATE_SIGNATORY_FULL_NAME}
 </p>

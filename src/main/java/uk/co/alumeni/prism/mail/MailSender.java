@@ -121,8 +121,8 @@ public class MailSender {
 
                 MimeBodyPart messageBodyPart = new MimeBodyPart();
                 MimeMultipart messageBodyParts = new MimeMultipart("alternative");
-                messageBodyParts.addBodyPart(getMessagePart(htmlContent, "text/html"));
                 messageBodyParts.addBodyPart(getMessagePart(plainContent, "text/plain"));
+                messageBodyParts.addBodyPart(getMessagePart(htmlContent, "text/html"));
                 messageBodyPart.setContent(messageBodyParts);
 
                 MimeMultipart messageParts = new MimeMultipart("related");

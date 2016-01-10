@@ -15,7 +15,7 @@ public class AuthenticationTokenHelper {
 
     public static final long MINUTE = 1000L * 60;
 
-    public static final long EXPIRY_PERIOD = 1000L * 20;
+    public static final long EXPIRY_PERIOD = MINUTE * 60 * 2;
 
     public static final long RENEW_PERIOD = MINUTE * 5;
 

@@ -168,6 +168,7 @@ public class ApplicationService {
         List<Integer> applications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId()).collect(toList());
 
         boolean hasRedactions = actionService.hasRedactions(user, scope, applications);
+        
         DataTable dataTable = new DataTable();
 
         List<ColumnDescription> headers = Lists.newLinkedList();

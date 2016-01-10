@@ -1,22 +1,21 @@
 package uk.co.alumeni.prism.security;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.SystemService;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 @Service
 public class AuthenticationTokenHelper {
 
     public static final long MINUTE = 1000L * 60;
 
-    public static final long EXPIRY_PERIOD = MINUTE * 60 * 2;
+    public static final long EXPIRY_PERIOD = 1000L * 20;
 
     public static final long RENEW_PERIOD = MINUTE * 5;
 

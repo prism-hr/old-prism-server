@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotEmpty;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
 
@@ -19,7 +18,8 @@ public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
     @NotEmpty
     private String content;
 
-    private List<Integer> documents;
+    @Valid
+    private List<DocumentDTO> documents;
 
     @Override
     public PrismNotificationDefinition getDefinitionId() {
@@ -46,11 +46,11 @@ public class NotificationConfigurationDTO extends WorkflowConfigurationDTO {
         this.content = content;
     }
 
-    public List<Integer> getDocuments() {
+    public List<DocumentDTO> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<Integer> documents) {
+    public void setDocuments(List<DocumentDTO> documents) {
         this.documents = documents;
     }
 

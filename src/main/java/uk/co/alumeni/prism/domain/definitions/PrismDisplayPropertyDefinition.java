@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1066,6 +1065,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_CONFIGURATION_SUBJECT_HINT(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Edit to amend the email subject"),
     SYSTEM_NOTIFICATION_CONFIGURATION_CONTENT_LABEL(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Content"),
     SYSTEM_NOTIFICATION_CONFIGURATION_CONTENT_HINT(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Edit to amend the email content"),
+    SYSTEM_NOTIFICATION_CONFIGURATION_ATTACHMENTS_LABEL(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Attachments"),
+    SYSTEM_NOTIFICATION_CONFIGURATION_ATTACHMENTS_HINT(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Upload files that will be attached to the email"),
     SYSTEM_NOTIFICATION_NO_RECOMMENDATIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that due to an unexpected glitch in our system we have no current recommendations for you"),
     SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are pleased to inform you that the applicant accepted your offer"),
     SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),

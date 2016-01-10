@@ -1,42 +1,12 @@
 package uk.co.alumeni.prism.services;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_ACTIVITY_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_CONNECTION_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_JOIN_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import jersey.repackaged.com.google.common.collect.Maps;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.dao.NotificationDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
@@ -44,11 +14,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -56,24 +22,29 @@ import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserNotification;
 import uk.co.alumeni.prism.domain.user.UserRole;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
-import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
-import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
-import uk.co.alumeni.prism.dto.MailMessageDTO;
-import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
-import uk.co.alumeni.prism.dto.UserConnectionDTO;
-import uk.co.alumeni.prism.dto.UserNotificationDTO;
-import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
-import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
+import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.dto.*;
 import uk.co.alumeni.prism.mail.MailSender;
+import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional
@@ -325,24 +296,22 @@ public class NotificationService {
         return recipients;
     }
 
-    public NotificationConfiguration createOrUpdateNotificationConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-            NotificationConfigurationDTO notificationConfigurationDTO) {
+    public NotificationConfiguration createOrUpdateNotificationConfiguration(
+            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, NotificationConfigurationDTO notificationConfigurationDTO) {
         WorkflowConfiguration<?> configuration = customizationService.createConfiguration(configurationType, resource, opportunityType, notificationConfigurationDTO);
         resourceService.executeUpdate(resource, userService.getCurrentUser(),
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + configurationType.getUpdateCommentProperty()));
         configuration = entityService.createOrUpdate(configuration);
 
-        List<Integer> documentIds = notificationConfigurationDTO.getDocuments();
+        List<DocumentDTO> documents = notificationConfigurationDTO.getDocuments();
         NotificationConfiguration notificationConfiguration = (NotificationConfiguration) configuration;
         notificationDAO.deleteNotificationConfigurationDocuments(notificationConfiguration);
-        if (isNotEmpty(documentIds)) {
-            documentIds.stream().forEach(documentId -> {
-                Document document = documentService.getById(documentId);
-                if (document != null) {
-                    notificationConfiguration.addDocument(
-                            entityService.getOrCreate(new NotificationConfigurationDocument().withNotificationConfiguration(notificationConfiguration).withDocument(document)));
-                }
-            });
+        if (documents != null) {
+            for (DocumentDTO documentDTO : documents) {
+                Document document = documentService.getById(documentDTO.getId());
+                NotificationConfigurationDocument notificationConfigurationDocument = entityService.getOrCreate(new NotificationConfigurationDocument().withNotificationConfiguration(notificationConfiguration).withDocument(document));
+                notificationConfiguration.addDocument(notificationConfigurationDocument);
+            }
         }
 
         return notificationConfiguration;
@@ -409,7 +378,7 @@ public class NotificationService {
     }
 
     private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition, NotificationDefinitionDTO definitionDTO,
-            Long recentRequestCount) {
+                                                   Long recentRequestCount) {
         recentRequestCount = recentRequestCount == null ? 0 : recentRequestCount;
         if (recentRequestCount < REQUEST_BUFFER) {
             sendNotification(definition, definitionDTO.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));

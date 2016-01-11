@@ -7,7 +7,9 @@ import java.math.BigDecimal;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.domain.definitions.PrismAgeRange;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.domain.definitions.PrismEthnicity;
 import uk.co.alumeni.prism.domain.definitions.PrismGender;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 
@@ -20,6 +22,10 @@ public class ApplicationReportListRowDTO {
     private String email;
 
     private PrismGender gender;
+
+    private PrismAgeRange ageRange;
+
+    private PrismEthnicity ethnicity;
 
     private LocalDate dateOfBirth;
 
@@ -37,7 +43,15 @@ public class ApplicationReportListRowDTO {
 
     private String primaryTheme;
 
+    private String secondaryTheme;
+
     private String primaryLocation;
+    
+    private String primaryLocationDescription;
+
+    private String secondaryLocation;
+    
+    private String secondaryLocationDescription;
 
     private String applicationYear;
 
@@ -93,6 +107,22 @@ public class ApplicationReportListRowDTO {
 
     public void setGender(PrismGender gender) {
         this.gender = gender;
+    }
+
+    public PrismAgeRange getAgeRange() {
+        return ageRange;
+    }
+
+    public void setAgeRange(PrismAgeRange ageRange) {
+        this.ageRange = ageRange;
+    }
+
+    public PrismEthnicity getEthnicity() {
+        return ethnicity;
+    }
+
+    public void setEthnicity(PrismEthnicity ethnicity) {
+        this.ethnicity = ethnicity;
     }
 
     public LocalDate getDateOfBirth() {
@@ -159,12 +189,44 @@ public class ApplicationReportListRowDTO {
         this.primaryTheme = primaryTheme;
     }
 
+    public String getSecondaryTheme() {
+        return secondaryTheme;
+    }
+
+    public void setSecondaryTheme(String secondaryTheme) {
+        this.secondaryTheme = secondaryTheme;
+    }
+
     public String getPrimaryLocation() {
         return primaryLocation;
     }
 
     public void setPrimaryLocation(String primaryLocation) {
         this.primaryLocation = primaryLocation;
+    }
+
+    public String getPrimaryLocationDescription() {
+        return primaryLocationDescription;
+    }
+
+    public void setPrimaryLocationDescription(String primaryLocationDescription) {
+        this.primaryLocationDescription = primaryLocationDescription;
+    }
+
+    public String getSecondaryLocation() {
+        return secondaryLocation;
+    }
+
+    public void setSecondaryLocation(String secondaryLocation) {
+        this.secondaryLocation = secondaryLocation;
+    }
+
+    public String getSecondaryLocationDescription() {
+        return secondaryLocationDescription;
+    }
+
+    public void setSecondaryLocationDescription(String secondaryLocationDescription) {
+        this.secondaryLocationDescription = secondaryLocationDescription;
     }
 
     public String getApplicationYear() {
@@ -279,6 +341,14 @@ public class ApplicationReportListRowDTO {
         return gender;
     }
 
+    public PrismAgeRange getAgeRangeDisplay() {
+        return ageRange;
+    }
+
+    public PrismEthnicity getEthnicityDisplay() {
+        return ethnicity;
+    }
+
     public String getDateOfBirthDisplay(String dateFormat) {
         return dateOfBirth == null ? EMPTY : dateOfBirth.toString(dateFormat);
     }
@@ -306,13 +376,29 @@ public class ApplicationReportListRowDTO {
     public String getProjectDisplay() {
         return project == null ? EMPTY : project;
     }
-    
+
     public String getPrimaryThemeDisplay() {
         return primaryTheme == null ? EMPTY : primaryTheme;
+    }
+
+    public String getSecondaryThemeDisplay() {
+        return secondaryTheme == null ? EMPTY : secondaryTheme;
     }
     
     public String getPrimaryLocationDisplay() {
         return primaryLocation == null ? EMPTY : primaryLocation;
+    }
+    
+    public String getPrimaryLocationDescriptionDisplay() {
+        return primaryLocationDescription == null ? EMPTY : primaryLocationDescription;
+    }
+    
+    public String getSecondaryLocationDisplay() {
+        return secondaryLocation == null ? EMPTY : secondaryLocation;
+    }
+    
+    public String getSecondaryLocationDescriptionDisplay() {
+        return secondaryLocationDescription == null ? EMPTY : secondaryLocationDescription;
     }
 
     public String getApplicationYearDisplay() {

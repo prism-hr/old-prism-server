@@ -1,4 +1,3 @@
-UPDATE resource_state_transition_summary
-SET transition_state_selection = replace(transition_state_selection, "APPLICATION_VALIDATION_PENDING_COMPLETION",
-                                         "APPLICATION_VALIDATION")
+delete from resource_state_transition_summary
+where transition_state_selection like "%APPLICATION_VALIDATION_PENDING_COMPLETION%"
 ;

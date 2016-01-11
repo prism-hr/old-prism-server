@@ -47,7 +47,7 @@ public enum PrismApplicationReportColumn {
     USER_EMAIL(SYSTEM_EMAIL, "user.email", null, false, "email", STRING), //
     USER_DATE_OF_BIRTH(PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "userPersonalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
     USER_GENDER(PROFILE_PERSONAL_DETAIL_GENDER_LABEL, "applicationPersonalDetail.gender", null, false, "gender", DISPLAY_PROPERTY), //
-    USER_AGE_RANGE(APPLICATION_AGE_RANGE, "applicationPersonalDetail.ageRange", null, false, "ageRange", DISPLAY_PROPERTY), //
+    USER_AGE_RANGE(APPLICATION_AGE_RANGE, "applicationPersonalDetail.ageRange.id", null, false, "ageRange", DISPLAY_PROPERTY), //
     USER_ETHNICITY(PROFILE_PERSONAL_DETAIL_ETHNICITY_HINT, "applicationPersonalDetail.ethnicity", null, false, "ethnicity", DISPLAY_PROPERTY), //
     USER_NATIONALITY(PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL, "applicationPersonalDetail.nationality.id", null, false, "nationality", DISPLAY_PROPERTY), //
     USER_DOMICILE(PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL, "applicationPersonalDetail.domicile.id", null, false, "domicile", DISPLAY_PROPERTY), //

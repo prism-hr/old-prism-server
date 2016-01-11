@@ -124,6 +124,7 @@ public class ApplicationDAO {
                             + "with declineReferenceComment.action.id = :provideReferenceAction " //
                             + "and declineReferenceComment.declinedResponse is true " //
                         + "where application.id in :assignedApplications " //
+                        + "group by application.id, secondaryTheme.id, secondaryLocation.id " //
                         + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", applicationIds) //
                 .setParameter("provideReferenceAction", APPLICATION_PROVIDE_REFERENCE) //

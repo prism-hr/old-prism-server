@@ -1,9 +1,16 @@
 package uk.co.alumeni.prism.domain.workflow;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.document.Document;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "notification_configuration_document", uniqueConstraints = { @UniqueConstraint(columnNames = { "notification_configuration_id", "document_id" }) })

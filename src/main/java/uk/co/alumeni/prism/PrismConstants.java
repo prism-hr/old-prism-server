@@ -11,6 +11,8 @@ public class PrismConstants {
     public static final String HYPHEN = "-";
     
     public static final String PIPE = "|";
+    
+    public static final String SEMI_COLON = ";";
 
     public static final String ANGULAR_HASH = "#!";
 

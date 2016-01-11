@@ -8,7 +8,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.trim;
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
-import static uk.co.alumeni.prism.PrismConstants.COMMA;
+import static uk.co.alumeni.prism.PrismConstants.SEMI_COLON;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
@@ -192,7 +192,7 @@ public class ApplicationService {
         String dateFormat = loader.loadLazy(SYSTEM_DATE_FORMAT);
         List<ApplicationReportListRowDTO> reportRows = applicationDAO.getApplicationReport(applications, Joiner.on(", ").join(columnAccessors));
 
-        String groupConcatSeparator = COMMA + SPACE;
+        String groupConcatSeparator = SEMI_COLON + SPACE;
         Map<Integer, TableRow> reportRowIndex = Maps.newLinkedHashMap();
         HashMultimap<String, String> reportValueIndex = HashMultimap.create();
         for (ApplicationReportListRowDTO reportRow : reportRows) {

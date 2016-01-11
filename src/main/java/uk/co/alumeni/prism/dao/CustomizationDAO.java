@@ -253,13 +253,10 @@ public class CustomizationDAO {
         Criterion opportunityTypeCriterion = getOpportunityTypeCriterionSelect(scope, opportunityType);
         return Restrictions.disjunction() //
                 .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("system", resource.getSystem())) //
-                        .add(opportunityTypeCriterion)) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(opportunityTypeCriterion)) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("department", resource.getDepartment())) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.eq("system", resource.getSystem())) //
+                                .add(Restrictions.eq("institution", resource.getInstitution())) //
+                                .add(Restrictions.eq("department", resource.getDepartment())))
                         .add(opportunityTypeCriterion)) //
                 .add(Restrictions.eq("program", resource.getProgram()))
                 .add(Restrictions.eq("project", resource.getProject()));

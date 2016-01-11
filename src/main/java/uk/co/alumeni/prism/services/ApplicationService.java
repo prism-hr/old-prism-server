@@ -8,6 +8,8 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.trim;
 import static org.apache.commons.lang3.text.WordUtils.capitalize;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
+import static uk.co.alumeni.prism.PrismConstants.COMMA;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_PROGRAM_DETAIL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_LINK;
@@ -24,6 +26,7 @@ import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -41,8 +44,10 @@ import org.springframework.validation.ValidationUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.visualization.datasource.datatable.ColumnDescription;
 import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableCell;
 import com.google.visualization.datasource.datatable.TableRow;
 
 import uk.co.alumeni.prism.dao.ApplicationDAO;
@@ -187,8 +192,21 @@ public class ApplicationService {
         String dateFormat = loader.loadLazy(SYSTEM_DATE_FORMAT);
         List<ApplicationReportListRowDTO> reportRows = applicationDAO.getApplicationReport(applications, Joiner.on(", ").join(columnAccessors));
 
+        String groupConcatSeparator = COMMA + SPACE;
+        Map<Integer, TableRow> reportRowIndex = Maps.newLinkedHashMap();
+        HashMultimap<String, String> reportValueIndex = HashMultimap.create();
         for (ApplicationReportListRowDTO reportRow : reportRows) {
-            TableRow row = new TableRow();
+            boolean grouping = false;
+            Integer id = reportRow.getId();
+
+            TableRow row = reportRowIndex.get(id);
+            if (row == null) {
+                row = new TableRow();
+            } else {
+                grouping = true;
+            }
+
+            int columnIndex = 0;
             for (PrismApplicationReportColumn column : columns) {
                 String value = null;
                 String getMethod = "get" + capitalize(column.getAccessor()) + "Display";
@@ -204,7 +222,20 @@ public class ApplicationService {
                     value = (String) invokeMethod(reportRow, getMethod);
                     break;
                 }
-                row.addCell(trim(value));
+
+                value = trim(value);
+                String valueKey = id + "|" + columnIndex;
+                if (grouping) {
+                    if (!reportValueIndex.containsEntry(valueKey, value)) {
+                        TableCell cell = row.getCell(columnIndex);
+                        cell = new TableCell(cell.getValue() + groupConcatSeparator + value);
+                    }
+                } else {
+                    row.addCell(value);
+                    reportValueIndex.put(valueKey, value);
+                }
+
+                columnIndex++;
             }
             row.addCell(applicationUrl + "/" + ANGULAR_HASH + "/application/" + reportRow.getIdDisplay() + "/view");
             dataTable.addRow(row);

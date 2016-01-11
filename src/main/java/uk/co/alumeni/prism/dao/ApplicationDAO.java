@@ -102,11 +102,19 @@ public class ApplicationDAO {
                         + "left join application.themes as primaryTheme " //
                             + "with primaryTheme.preference is true " //
                         + "left join primaryTheme.tag as primaryThemeTag "
+                        + "left join application.themes as secondaryTheme " //
+                            + "with secondaryTheme.preference is false " //
+                        + "left join secondaryTheme.tag as secondaryThemeTag "
                         + "left join application.locations as primaryLocation " //
                             + "with primaryLocation.preference is true " //
                         + "left join primaryLocation.tag as primaryLocationTag " //
                         + "left join primaryLocationTag.institution as primaryLocationInstitution " //
                         + "left join primaryLocationTag.department as primaryLocationDepartment " //
+                        + "left join application.locations as secondaryLocation " //
+                            + "with secondaryLocation.preference is false " //
+                        + "left join secondaryLocation.tag as secondaryLocationTag " //
+                        + "left join secondaryLocationTag.institution as secondaryLocationInstitution " //
+                        + "left join secondaryLocationTag.department as secondaryLocationDepartment " //
                         + "left join application.state as state " //
                         + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //
@@ -116,7 +124,7 @@ public class ApplicationDAO {
                             + "with declineReferenceComment.action.id = :provideReferenceAction " //
                             + "and declineReferenceComment.declinedResponse is true " //
                         + "where application.id in :assignedApplications " //
-                        + "group by application.id " //
+                        + "group by application.id, secondaryTheme.id, secondaryLocation.id " //
                         + "order by application.sequenceIdentifier desc") //
                 .setParameterList("assignedApplications", applicationIds) //
                 .setParameter("provideReferenceAction", APPLICATION_PROVIDE_REFERENCE) //

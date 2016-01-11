@@ -1,11 +1,24 @@
 package uk.co.alumeni.prism.mapping;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
+
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
-import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
+import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
+import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
+import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
+import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
+import uk.co.alumeni.prism.domain.workflow.WorkflowDefinition;
 import uk.co.alumeni.prism.rest.dto.DisplayPropertyConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
@@ -17,12 +30,6 @@ import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurati
 import uk.co.alumeni.prism.rest.representation.workflow.NotificationDefinitionRepresentation;
 import uk.co.alumeni.prism.rest.representation.workflow.StateDurationDefinitionRepresentation;
 import uk.co.alumeni.prism.rest.representation.workflow.WorkflowDefinitionRepresentation;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.stream.Collectors;
-
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 
 @Service
 @Transactional

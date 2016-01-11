@@ -1,14 +1,15 @@
 package uk.co.alumeni.prism.security;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.SystemService;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 @Service
 public class AuthenticationTokenHelper {

@@ -3,15 +3,21 @@ package uk.co.alumeni.prism.domain.definitions;
 import static uk.co.alumeni.prism.domain.definitions.PrismApplicationReportColumnAccessorType.DATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismApplicationReportColumnAccessorType.DISPLAY_PROPERTY;
 import static uk.co.alumeni.prism.domain.definitions.PrismApplicationReportColumnAccessorType.STRING;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_AGE_RANGE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_START_DATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DECLINED_REFERENCES;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIMARY_LOCATION;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIMARY_LOCATION_DESCRIPTION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PRIMARY_THEME;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_PROVIDED_REFERENCES;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_REFEREES;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SECONDARY_LOCATION;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SECONDARY_LOCATION_DESCRIPTION;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SECONDARY_THEME;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_SUBMISSION_DATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_ETHNICITY_HINT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_GENDER_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_ACADEMIC_YEAR;
@@ -41,6 +47,8 @@ public enum PrismApplicationReportColumn {
     USER_EMAIL(SYSTEM_EMAIL, "user.email", null, false, "email", STRING), //
     USER_DATE_OF_BIRTH(PROFILE_PERSONAL_DETAIL_DATE_OF_BIRTH_LABEL, "userPersonalDetail.dateOfBirth", null, false, "dateOfBirth", DATE), //
     USER_GENDER(PROFILE_PERSONAL_DETAIL_GENDER_LABEL, "applicationPersonalDetail.gender", null, false, "gender", DISPLAY_PROPERTY), //
+    USER_AGE_RANGE(APPLICATION_AGE_RANGE, "applicationPersonalDetail.ageRange", null, false, "ageRange", DISPLAY_PROPERTY), //
+    USER_ETHNICITY(PROFILE_PERSONAL_DETAIL_ETHNICITY_HINT, "applicationPersonalDetail.ethnicity", null, false, "ethnicity", DISPLAY_PROPERTY), //
     USER_NATIONALITY(PROFILE_PERSONAL_DETAIL_NATIONALITY_LABEL, "applicationPersonalDetail.nationality.id", null, false, "nationality", DISPLAY_PROPERTY), //
     USER_DOMICILE(PROFILE_PERSONAL_DETAIL_DOMICILE_LABEL, "applicationPersonalDetail.domicile.id", null, false, "domicile", DISPLAY_PROPERTY), //
     INSTITUTION_NAME(SYSTEM_INSTITUTION, "institution.name", null, false, "institution", STRING), //
@@ -48,7 +56,11 @@ public enum PrismApplicationReportColumn {
     PROGRAM_NAME(SYSTEM_PROGRAM, "program.name", null, false, "program", STRING), //
     PROJECT_NAME(SYSTEM_PROJECT, "project.name", null, false, "project", STRING), //
     PRIMARY_THEME(APPLICATION_PRIMARY_THEME, "primaryThemeTag.name", null, false, "primaryTheme", STRING), //
+    SECONDARY_THEME(APPLICATION_SECONDARY_THEME, "secondaryThemeTag.name", null, false, "secondaryTheme", STRING), //
     PRIMARY_LOCATION(APPLICATION_PRIMARY_LOCATION, "concat(primaryLocationInstitution.name, ' ', primaryLocationDepartment.name)", null, false, "primaryLocation", STRING), //
+    PRIMARY_LOCATION_DESCRIPTION(APPLICATION_PRIMARY_LOCATION_DESCRIPTION, "primaryLocation.description", null, false, "primaryLocationDescription", STRING), //
+    SECONDARY_LOCATION(APPLICATION_SECONDARY_LOCATION, "concat(secondaryLocationInstitution.name, ' ', secondaryLocationDepartment.name)", null, false, "secondaryLocation", STRING), //
+    SECONDARY_LOCATION_DESCRIPTION(APPLICATION_SECONDARY_LOCATION_DESCRIPTION, "secondaryLocation.description", null, false, "secondaryLocationDescription", STRING), //
     APPLICATION_YEAR(SYSTEM_ACADEMIC_YEAR, "application.applicationYear", null, false, "applicationYear", STRING), //
     CREATED_DATE(SYSTEM_CREATED_DATE, "application.createdTimestamp", null, false, "createdDate", DATE), //
     CLOSING_DATE(SYSTEM_CLOSING_DATE, "application.closingDate", null, false, "closingDate", DATE), //

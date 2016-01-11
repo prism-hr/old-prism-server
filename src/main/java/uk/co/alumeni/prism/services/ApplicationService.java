@@ -225,8 +225,10 @@ public class ApplicationService {
 
                 value = trim(value);
                 String valueKey = id + "|" + columnIndex;
-                if (grouping && !reportValueIndex.containsEntry(valueKey, value)) {
-                    values.set(columnIndex, values.get(columnIndex) + groupConcatSeparator + value);
+                if (grouping) {
+                    if (!reportValueIndex.containsEntry(valueKey, value)) {
+                        values.set(columnIndex, values.get(columnIndex) + groupConcatSeparator + value);
+                    }
                 } else {
                     values.add(value);
                     reportValueIndex.put(valueKey, value);

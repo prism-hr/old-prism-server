@@ -1,73 +1,42 @@
 package uk.co.alumeni.prism.dao;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Arrays.asList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceCondition;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.resource.ResourceState;
-import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
-import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
-import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
-import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
-import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.*;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -312,7 +281,7 @@ public class ResourceDAO {
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass())
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getResourceScope().getResourceClass())
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id"), "id")
                         .add(Projections.property("advert.name"), "name")
@@ -372,7 +341,7 @@ public class ResourceDAO {
     public ResourceFlatToNestedDTO getResourceWithParentResources(Resource resource, List<PrismScope> parentScopes) {
         PrismScope resourceScope = resource.getResourceScope();
         ProjectionList projections = Projections.projectionList();
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(projections);
 
         appendResourceProjections(resourceScope, projections, true);
@@ -485,7 +454,7 @@ public class ResourceDAO {
 
     public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent resource, ResourceParent parent) {
         String parentReference = parent.getResourceScope().getLowerCamelName();
-        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(resource.getClass()) //
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(resource.getResourceScope().getResourceClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(parentReference), "resource") //
                         .add(Projections.sum("opportunityRatingCount"), "ratingCount") //
@@ -585,7 +554,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("stateActionPending.action.id", actions)) //
                 .list();
     }
-    
+
     public List<Integer> getResourcesByAdvertTheme(PrismScope scope, List<Integer> advertThemes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -603,7 +572,7 @@ public class ResourceDAO {
                 .add(Restrictions.in("location.locationAdvert.id", advertLocations)) //
                 .list();
     }
-    
+
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {

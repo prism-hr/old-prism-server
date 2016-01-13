@@ -921,6 +921,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_SELECTION(SYSTEM_VALIDATION_ERROR, "You have to make a selection."),
     SYSTEM_VALIDATION_MIN_ASSIGNED_USERS(SYSTEM_VALIDATION_ERROR, "You have to assign more users."),
     SYSTEM_VALIDATION_MAX_ASSIGNED_USERS(SYSTEM_VALIDATION_ERROR, "Too many users selected."),
+    SYSTEM_VALIDATION_ATAS_CHARACTERS(SYSTEM_VALIDATION_ERROR, "Your statement contains a character that is not within the Extended-ASCII set. In order to solve this problem, edit the statement in a simple text editor such as Notepad, taking care to remove any non-standard characters or punctuation marks (e.g. bullets, characters with accents, extended hyphens etc.)."),
+    SYSTEM_VALIDATION_ATAS_WORDS(SYSTEM_VALIDATION_ERROR, "This statement cannot have more than 200 words."),
 
     SYSTEM_VALIDATION_BAD_CREDENTIALS(SYSTEM_VALIDATION_ERROR, "Invalid Username or Password."),
     SYSTEM_VALIDATION_INVALID_PASSWORD(SYSTEM_VALIDATION_ERROR, "Invalid Password."),

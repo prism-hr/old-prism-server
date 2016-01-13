@@ -31,7 +31,7 @@ public enum PrismDurationUnit {
         }
 
         if (intervalOrdinal > HOUR.ordinal()) {
-            value = value + WORK_HOURS_IN_DAY;
+            value = value * WORK_HOURS_IN_DAY;
         }
 
         return value;

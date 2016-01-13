@@ -345,7 +345,7 @@ public class AdvertService {
         advert.setHomepage(resourceDTO.getHomepage());
     }
 
-    public void updateFinancialDetail(Advert advert, AdvertFinancialDetailDTO payDTO) {
+    public void updateFinancialDetail(Advert advert, AdvertFinancialDetailDTO payDTO, Institution institution) {
         if (payDTO == null) {
             advert.setPay(null);
         } else {
@@ -362,7 +362,7 @@ public class AdvertService {
             pay.setCurrency(payDTO.getCurrency());
             pay.setMinimum(payDTO.getMinimum());
             pay.setMaximum(payDTO.getMaximum());
-            updateFinancialDetailNormalization(advert);
+            updateFinancialDetailNormalization(advert, institution);
 
             String benefitString = null;
             String benefitDescription = null;
@@ -540,7 +540,8 @@ public class AdvertService {
     }
 
     public void updateFinancialDetailNormalization(Integer advertId) {
-        updateFinancialDetailNormalization(getById(advertId));
+        Advert advert = getById(advertId);
+        updateFinancialDetailNormalization(advert, advert.getInstitution());
     }
 
     public List<Integer> getAdvertsWithoutPayConversions(Institution institution) {
@@ -1192,7 +1193,7 @@ public class AdvertService {
         }
     }
 
-    private void updateFinancialDetailNormalization(Advert advert) {
+    private void updateFinancialDetailNormalization(Advert advert, Institution institution) {
         AdvertFinancialDetail pay = advert.getPay();
         BigDecimal minimum = pay.getMinimum();
         BigDecimal maximum = pay.getMaximum();
@@ -1213,7 +1214,7 @@ public class AdvertService {
             }
 
             String currency = pay.getCurrency();
-            String currencyNormalized = advert.getResourceParent().getAdvert().getAddress().getDomicile().getCurrency();
+            String currencyNormalized = institution.getAdvert().getAddress().getDomicile().getCurrency();
             if (!currency.equals(currencyNormalized)) {
                 try {
                     LocalDate baseline = LocalDate.now();

@@ -35,7 +35,7 @@ public class ProgramCreator implements ResourceCreator<ResourceOpportunityDTO> {
         Program program = new Program().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(parentResource).withAdvert(advert)
                 .withName(advert.getName()).withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum());
 
-        advertService.updateFinancialDetail(advert, newResource.getFinancialDetail());
+        advertService.updateFinancialDetail(advert, newResource.getFinancialDetail(), parentResource.getInstitution());
         resourceService.setResourceAttributes(program, newResource);
         return program;
     }

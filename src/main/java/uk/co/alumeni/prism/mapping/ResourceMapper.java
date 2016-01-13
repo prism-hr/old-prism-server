@@ -387,7 +387,7 @@ public class ResourceMapper {
     }
 
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource, Class<V> returnType,
-                                                                                                                                           List<PrismRole> overridingRoles) {
+            List<PrismRole> overridingRoles) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles);
         appendResourceSummaryRepresentation(resource, representation);
         return representation;
@@ -473,7 +473,8 @@ public class ResourceMapper {
             });
 
             for (PrismFilterEntity filterEntity : constraintsToTransform.keySet()) {
-                List<String> possibleConstraints = applicationContext.getBean(filterEntity.getFilterSelector()).getPossible(resource, APPLICATION, constraintsToTransform.get(filterEntity));
+                List<String> possibleConstraints = applicationContext.getBean(filterEntity.getFilterSelector()).getPossible(resource, APPLICATION,
+                        constraintsToTransform.get(filterEntity));
                 transformedConstraints.putAll(filterEntity, possibleConstraints);
             }
         }
@@ -615,22 +616,22 @@ public class ResourceMapper {
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-                                                                                String departmentName) {
+            String departmentName) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-                                                                                String departmentName, Integer backgroundImageId) {
+            String departmentName, Integer backgroundImageId) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, backgroundImageId, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-                                                                                String departmentName, String opportunityCategories) {
+            String departmentName, String opportunityCategories) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, opportunityCategories);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId, Integer departmentId,
-                                                                                String departmentName, Integer backgroundImageId, String opportunityCategories) {
+            String departmentName, Integer backgroundImageId, String opportunityCategories) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
 

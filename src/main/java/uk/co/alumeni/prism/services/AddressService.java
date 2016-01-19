@@ -75,6 +75,10 @@ public class AddressService {
     @Inject
     private ApplicationContext applicationContext;
 
+    public void deleteAddress(Address address) {
+        entityService.delete(address);
+    }
+
     public void geocodeAddress(Address address, String establishment) {
         try {
             if (!geocodeAddressAsEstablishment(address)) {

@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.address;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -57,7 +58,7 @@ public class Address extends AddressDefinition<Domicile> {
     @Embedded
     private AddressCoordinates addressCoordinates;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "address_location", joinColumns = { @JoinColumn(name = "address_id", nullable = false, updatable = false) }, inverseJoinColumns = {
             @JoinColumn(name = "address_location_part_id", nullable = false, updatable = false) })
     private Set<AddressLocationPart> addressLocationParts = Sets.newHashSet();

@@ -119,7 +119,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @OneToOne
     @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "advert_address_id")
+    @JoinColumn(name = "address_id")
     private Address address;
 
     @Embedded

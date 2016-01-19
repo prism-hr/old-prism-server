@@ -1290,7 +1290,6 @@ public class AdvertService {
         if (address == null) {
             address = new Address();
             addressService.copyAddress(address, addressDTO, advert.getName());
-            entityService.save(address);
             advert.setAddress(address);
         } else {
             addressService.copyAddress(address, addressDTO, advert.getName());

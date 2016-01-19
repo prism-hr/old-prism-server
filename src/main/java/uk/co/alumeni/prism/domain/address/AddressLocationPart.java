@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.address;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,10 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.google.common.base.Objects;
 
+import jersey.repackaged.com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
 @Entity
@@ -31,6 +35,9 @@ public class AddressLocationPart implements UniqueEntity {
 
     @Column(name = "name_index", nullable = false)
     private String nameIndex;
+
+    @OneToMany(mappedBy = "locationPart")
+    private Set<AddressLocation> locations = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -62,6 +69,10 @@ public class AddressLocationPart implements UniqueEntity {
 
     public void setNameIndex(String nameIndex) {
         this.nameIndex = nameIndex;
+    }
+
+    public Set<AddressLocation> getLocations() {
+        return locations;
     }
 
     public AddressLocationPart withParent(AddressLocationPart parent) {

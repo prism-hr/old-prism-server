@@ -11,7 +11,7 @@
 
 <p>In order to reset your password, go to the profile section:
 	<br/>
-	${SYSTEM_USER_ACCOUNT_MANAGEMENT}
+	${SYSTEM_USER_ACCOUNT_ACTIVATION}
 </p>
 
 <p>

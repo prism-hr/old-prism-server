@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -956,7 +957,19 @@ public class AdvertService {
             });
         }
 
-        return Sets.newTreeSet(summaries.values());
+        return newTreeSet(summaries.values());
+    }
+
+    public void deleteDuplicateAdvert(Advert advert) {
+        advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
+
+        Address address = advert.getAddress();
+        if (address != null) {
+            advert.setAddress(null);
+            addressService.deleteAddress(address);
+        }
+
+        entityService.delete(advert);
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,

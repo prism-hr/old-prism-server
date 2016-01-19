@@ -15,8 +15,11 @@ import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.ACTIVITY_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
 
@@ -63,7 +66,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -327,16 +329,13 @@ public class UserService {
     }
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {
+        ResourceParent parent = application.getResourceParent();
+
+        List<Integer> programs = resourceService.getResourceIds(parent, PROGRAM);
+        List<Integer> projects = resourceService.getResourceIds(parent, PROJECT);
+        List<Integer> applications = resourceService.getResourceIds(parent, APPLICATION);
+
         List<UserSelectionDTO> usersToInclude = Lists.newLinkedList();
-
-        Department department = application.getDepartment();
-        Institution institution = application.getInstitution();
-        ResourceParent parent = department == null ? institution : department;
-
-        List<Integer> programs = parent.getPrograms().stream().map(p -> p.getId()).collect(toList());
-        List<Integer> projects = parent.getProjects().stream().map(p -> p.getId()).collect(toList());
-        List<Integer> applications = parent.getApplications().stream().map(a -> a.getId()).collect(toList());
-
         List<UserSelectionDTO> users = userDAO.getUsersPotentiallyInterestedInApplication(programs, projects, applications);
         for (UserSelectionDTO userPotentiallyInterested : users) {
             if (!usersToExclude.contains(userPotentiallyInterested)) {

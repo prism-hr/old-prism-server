@@ -347,7 +347,8 @@ public class AdvertDAO {
                 .createAlias("categories.locations", "location", JoinType.INNER_JOIN) //
                 .createAlias("location.locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
                 .createAlias("locationAdvert.address", "locationAddress", JoinType.INNER_JOIN) //
-                .createAlias("locationAddress.addressLocationParts", "locationAddressLocationPart", JoinType.INNER_JOIN) //
+                .createAlias("locationAddress.locations", "locationAddressLocation", JoinType.INNER_JOIN) //
+                .createAlias("locationAddressLocation.locationPart", "locationAddressLocationPart", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceScope.getLowerCamelName() + ".id", resourceIds)) //
                 .addOrder(Order.asc("id")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertLocationDTO.class)) //

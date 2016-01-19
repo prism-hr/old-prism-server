@@ -24,9 +24,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import uk.co.alumeni.prism.dao.AddressDAO;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
+import uk.co.alumeni.prism.domain.address.AddressLocation;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.dto.json.EstablishmentSearchResponseDTO;
@@ -61,6 +63,9 @@ public class AddressService {
     private Integer googleGeocodeRequestDelayMs;
 
     @Inject
+    private AddressDAO addressDAO;
+
+    @Inject
     private EntityService entityService;
 
     @Inject
@@ -76,7 +81,13 @@ public class AddressService {
     private ApplicationContext applicationContext;
 
     public void deleteAddress(Address address) {
+        deleteAddressLocations(address);
         entityService.delete(address);
+    }
+
+    public void deleteAddressLocations(Address address) {
+        addressDAO.deleteAddressLocations(address);
+        addressDAO.getOrphanAddressLocationParts().stream().forEach(lp -> entityService.delete(lp));
     }
 
     public void geocodeAddress(Address address, String establishment) {
@@ -162,6 +173,11 @@ public class AddressService {
         address.setAddressCode(Strings.emptyToNull(addressData.getAddressCode()));
         address.setDomicile(prismService.getDomicileById(addressData.getDomicile()));
         address.setGoogleId(addressData.getGoogleId());
+
+        if (address.getId() == null) {
+            entityService.save(address);
+        }
+
         geocodeAddress(address, establishment);
     }
 
@@ -180,13 +196,12 @@ public class AddressService {
             address.setAddressCoordinates(addressCoordinates);
         }
 
-        // We may need to improve this later if google does not provide us with
-        // the address tokens in a predictable sequence across all addresses
+        deleteAddressLocations(address);
         List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
         if (CollectionUtils.isNotEmpty(componentData)) {
             AddressLocationPart parent = null;
             List<String> partNames = newLinkedList();
-            Set<AddressLocationPart> parts = address.getAddressLocationParts();
+            Set<AddressLocation> locations = address.getAddressLocations();
             for (GoogleAddressComponentDTO componentItem : Lists.reverse(componentData)) {
                 if (CollectionUtils.containsAny(googleLocationTypes, componentItem.getTypes())) {
                     String name = componentItem.getName();
@@ -194,7 +209,7 @@ public class AddressService {
                         partNames.add(name);
                         AddressLocationPart part = entityService
                                 .getOrCreate(new AddressLocationPart().withParent(parent).withName(name).withNameIndex(Joiner.on("|").join(partNames)));
-                        parts.add(part);
+                        locations.add(entityService.getOrCreate(new AddressLocation().withAddress(address).withLocationPart(part)));
                         parent = part;
                     }
                 }

@@ -667,6 +667,10 @@ public class ResourceService {
         return resourceDAO.getResourceForWhichUserHasRoles(user, roles.toArray(new PrismRole[roles.size()]));
     }
 
+    public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope) {
+        return resourceDAO.getResourceIds(enclosingResource, resourceScope);
+    }
+
     public Integer getResourceForWhichUserCanConnect(User user, ResourceParent resource) {
         return resourceDAO.getResourceForWhichUserCanConnect(user, resource);
     }

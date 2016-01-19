@@ -78,7 +78,7 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 @Service
 @Transactional
 public class ApplicationMapper {
-
+    
     @Inject
     private ApplicationService applicationService;
 
@@ -114,7 +114,7 @@ public class ApplicationMapper {
 
     public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles) {
         ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, ApplicationRepresentationClient.class, overridingRoles);
-
+        
         List<PrismStudyOption> studyOptions;
         Resource parent = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
@@ -133,13 +133,16 @@ public class ApplicationMapper {
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
+        
         representation.setUsersPotentiallyInterestedInApplication(
                 userMapper.getUserRepresentations(userService.getUsersPotentiallyInterestedInApplication(application, usersInterested)));
 
         representation.setInterview(getApplicationInterviewRepresentation(application));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
+        
         representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(advert));
+        
         return representation;
     }
 

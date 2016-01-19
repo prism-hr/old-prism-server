@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
@@ -29,7 +30,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -210,7 +210,7 @@ public class ActionService {
         if (!rolesOverridingRedations.isEmpty()) {
             return false;
         }
-        
+
         List<PrismRole> rolesWithRedactions = roleService.getRolesWithRedactions(resourceScope);
         userRoles.removeAll(rolesWithRedactions);
         return userRoles.isEmpty();
@@ -337,8 +337,9 @@ public class ActionService {
 
             if (duplicate != null) {
                 if (action.getActionCategory() == CREATE_RESOURCE) {
+                    advertService.deleteDuplicateAdvert(resource.getAdvert());
                     return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(getViewEditAction(duplicate));
-                } else if (!Objects.equal(resource.getId(), duplicate.getId())) {
+                } else if (!equal(resource.getId(), duplicate.getId())) {
                     throw new WorkflowPermissionException(resource, action);
                 }
             }

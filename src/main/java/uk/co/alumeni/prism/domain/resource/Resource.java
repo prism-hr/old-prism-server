@@ -154,6 +154,10 @@ public abstract class Resource implements Activity, UniqueEntity {
         }
     }
 
+    public ResourceParent getResourceParent() {
+        return ObjectUtils.firstNonNull(getDepartment(), getInstitution());
+    }
+
     public PrismScope getResourceScope() {
         return PrismScope.valueOf(getClass().getSimpleName().toUpperCase());
     }

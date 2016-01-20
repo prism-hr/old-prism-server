@@ -80,66 +80,6 @@ public class AddressService {
     @Inject
     private ApplicationContext applicationContext;
 
-    public void deleteAddress(Address address) {
-        deleteAddressLocations(address);
-        entityService.delete(address);
-    }
-
-    public void deleteAddressLocations(Address address) {
-        addressDAO.deleteAddressLocations(address);
-        addressDAO.getOrphanAddressLocationParts().stream().forEach(lp -> entityService.delete(lp));
-    }
-
-    public void geocodeAddress(Address address, String establishment) {
-        try {
-            if (!geocodeAddressAsEstablishment(address)) {
-                geocodeAddressAsLocation(address, establishment);
-            }
-        } catch (Exception e) {
-            logger.error("Problem obtaining location for " + address.getLocationString(), e);
-        }
-    }
-
-    public synchronized boolean geocodeAddressAsEstablishment(Address address) throws Exception {
-        wait(googleGeocodeRequestDelayMs);
-        URI request = new DefaultResourceLoader().getResource(googlePlacesApiUri + "json?placeid=" + address.getGoogleId() + "&key=" + googleApiKey).getURI();
-        EstablishmentSearchResponseDTO response = restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
-
-        if (response.getStatus().equals(OK)) {
-            GoogleResultDTO result = response.getResult();
-            if (result != null) {
-                setLocation(address, result);
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void geocodeAddressAsLocation(Address address, String establishment) throws Exception {
-        List<String> addressTokens = Lists.reverse(address.getLocationTokens());
-        addressTokens.add(establishment);
-
-        Domicile domicile = address.getDomicile();
-        PrismDomicile prismDomicile = domicile == null ? null : domicile.getId();
-        String domicileName = prismDomicile == null ? null
-                : applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(prismDomicile.getDisplayProperty());
-
-        for (int i = addressTokens.size(); i >= 0; i--) {
-            List<String> requestTokens = addressTokens.subList(0, i);
-            requestTokens.add(domicileName);
-
-            LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").skipNulls().join(Lists.reverse(requestTokens)));
-            if (response.getStatus().equals(OK)) {
-                List<GoogleResultDTO> results = response.getResults();
-                if (!results.isEmpty()) {
-                    setLocation(address, results.get(0));
-                    return;
-                }
-            }
-        }
-    }
-
     public Address cloneAddress(Address oldAddress) {
         if (oldAddress != null) {
             Address newAddress = new Address();
@@ -161,24 +101,87 @@ public class AddressService {
         return null;
     }
 
-    public void copyAddress(Address address, AddressDTO addressData) {
-        copyAddress(address, addressData, null);
+    public void updateAndGeocodeAddress(Address address, AddressDTO addressDTO) {
+        updateAndGeocodeAddress(address, addressDTO, null);
     }
 
-    public void copyAddress(Address address, AddressDTO addressData, String establishment) {
-        address.setAddressLine1(addressData.getAddressLine1());
-        address.setAddressLine2(Strings.emptyToNull(addressData.getAddressLine2()));
-        address.setAddressTown(addressData.getAddressTown());
-        address.setAddressRegion(Strings.emptyToNull(addressData.getAddressRegion()));
-        address.setAddressCode(Strings.emptyToNull(addressData.getAddressCode()));
-        address.setDomicile(prismService.getDomicileById(addressData.getDomicile()));
-        address.setGoogleId(addressData.getGoogleId());
+    public void updateAndGeocodeAddress(Address address, AddressDTO addressDTO, String establishmentName) {
+        updateAddress(address, addressDTO);
+        geocodeAddress(address, establishmentName);
+    }
 
-        if (address.getId() == null) {
-            entityService.save(address);
+    public void updateGeocodeAndPersistAddress(Address address, AddressDTO addressDTO) {
+        updateGeocodeAndPersistAddress(address, addressDTO, null);
+    }
+
+    public void updateGeocodeAndPersistAddress(Address address, AddressDTO addressDTO, String establishmentName) {
+        updateAddress(address, addressDTO);
+        persistAndGeocodeAddress(address, establishmentName);
+    }
+
+    public void persistAndGeocodeAddress(Address address, String establishmentName) {
+        entityService.save(address);
+        geocodeAddress(address, establishmentName);
+    }
+
+    public void updateAddress(Address address, AddressDTO addressDTO) {
+        address.setAddressLine1(addressDTO.getAddressLine1());
+        address.setAddressLine2(Strings.emptyToNull(addressDTO.getAddressLine2()));
+        address.setAddressTown(addressDTO.getAddressTown());
+        address.setAddressRegion(Strings.emptyToNull(addressDTO.getAddressRegion()));
+        address.setAddressCode(Strings.emptyToNull(addressDTO.getAddressCode()));
+        address.setDomicile(prismService.getDomicileById(addressDTO.getDomicile()));
+        address.setGoogleId(addressDTO.getGoogleId());
+    }
+
+    private void geocodeAddress(Address address, String establishmentName) {
+        try {
+            if (!geocodeAddressAsEstablishment(address)) {
+                geocodeAddressAsLocation(address, establishmentName);
+            }
+        } catch (Exception e) {
+            logger.error("Problem obtaining location for " + address.getLocationString(), e);
+        }
+    }
+
+    private synchronized boolean geocodeAddressAsEstablishment(Address address) throws Exception {
+        wait(googleGeocodeRequestDelayMs);
+        URI request = new DefaultResourceLoader().getResource(googlePlacesApiUri + "json?placeid=" + address.getGoogleId() + "&key=" + googleApiKey).getURI();
+        EstablishmentSearchResponseDTO response = restTemplate.getForObject(request, EstablishmentSearchResponseDTO.class);
+
+        if (response.getStatus().equals(OK)) {
+            GoogleResultDTO result = response.getResult();
+            if (result != null) {
+                setLocation(address, result);
+                return true;
+            }
         }
 
-        geocodeAddress(address, establishment);
+        return false;
+    }
+
+    private void geocodeAddressAsLocation(Address address, String establishmentName) throws Exception {
+        List<String> addressTokens = Lists.reverse(address.getLocationTokens());
+        addressTokens.add(establishmentName);
+
+        Domicile domicile = address.getDomicile();
+        PrismDomicile prismDomicile = domicile == null ? null : domicile.getId();
+        String domicileName = prismDomicile == null ? null
+                : applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(prismDomicile.getDisplayProperty());
+
+        for (int i = addressTokens.size(); i >= 0; i--) {
+            List<String> requestTokens = addressTokens.subList(0, i);
+            requestTokens.add(domicileName);
+
+            LocationSearchResponseDTO response = getGeocodeLocation(Joiner.on(", ").skipNulls().join(Lists.reverse(requestTokens)));
+            if (response.getStatus().equals(OK)) {
+                List<GoogleResultDTO> results = response.getResults();
+                if (!results.isEmpty()) {
+                    setLocation(address, results.get(0));
+                    return;
+                }
+            }
+        }
     }
 
     private synchronized LocationSearchResponseDTO getGeocodeLocation(String address) throws Exception {
@@ -196,7 +199,9 @@ public class AddressService {
             address.setAddressCoordinates(addressCoordinates);
         }
 
-        deleteAddressLocations(address);
+        addressDAO.deleteAddressLocations(address);
+        addressDAO.getOrphanAddressLocationParts().stream().forEach(lp -> entityService.delete(lp));
+
         List<GoogleAddressComponentDTO> componentData = addressData.getComponents();
         if (CollectionUtils.isNotEmpty(componentData)) {
             AddressLocationPart parent = null;

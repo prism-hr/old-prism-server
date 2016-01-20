@@ -95,7 +95,7 @@
         <dependency>
             <groupId>org.springframework.social</groupId>
             <artifactId>spring-social-facebook</artifactId>
-            <version>2.0.1.RELEASE</version>
+            <version>2.0.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.social</groupId>
@@ -369,7 +369,7 @@
         </extensions>
 
         <finalName>prism</finalName>
-        
+
         <plugins>
 
             <plugin>

@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.workflow.executors.action;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
@@ -43,9 +45,9 @@ public class ResourceOpportunityExecutor implements ActionExecutor {
         User user = userService.getById(commentDTO.getUser());
         ResourceOpportunity opportunity = (ResourceOpportunity) resourceService.getById(resourceScope, resourceId);
 
-        ResourceCreationDTO projectDTO = commentDTO.getResource();
-        if (projectDTO.getClass().equals(ResourceOpportunityDTO.class)) {
-            resourceService.updateOpportunity(resourceScope, resourceId, (ResourceOpportunityDTO) projectDTO);
+        ResourceCreationDTO opportunityDTO = commentDTO.getResource();
+        if (opportunityDTO.getScope().getScopeCategory().equals(OPPORTUNITY)) {
+            resourceService.updateOpportunity(resourceScope, resourceId, (ResourceOpportunityDTO) opportunityDTO);
         }
 
         Action action = actionService.getById(actionId);

@@ -365,8 +365,9 @@ public class ResourceService {
             resource.setUpdatedTimestamp(baseline);
 
             if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-                resource.getAdvert().setResource(resource);
-                ((ResourceParent) (resource)).setUpdatedTimestampSitemap(baseline);
+                ResourceParent resourceParent = (ResourceParent) resource;
+                advertService.persistResourceAdvert(resourceParent);
+                resourceParent.setUpdatedTimestampSitemap(baseline);
             }
 
             entityService.save(resource);

@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
@@ -22,7 +23,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -332,12 +332,12 @@ public class ActionService {
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();
 
-        if (action.getActionCategory() == CREATE_RESOURCE || action.getActionCategory() == VIEW_EDIT_RESOURCE) {
+        boolean createAction = action.getActionCategory().equals(CREATE_RESOURCE); 
+        if (createAction || action.getActionCategory().equals(VIEW_EDIT_RESOURCE)) {
             Resource duplicate = entityService.getDuplicateEntity(resource);
 
             if (duplicate != null) {
-                if (action.getActionCategory() == CREATE_RESOURCE) {
-                    advertService.deleteDuplicateAdvert(resource.getAdvert());
+                if (createAction) {
                     return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate).withTransitionAction(getViewEditAction(duplicate));
                 } else if (!equal(resource.getId(), duplicate.getId())) {
                     throw new WorkflowPermissionException(resource, action);
@@ -353,12 +353,12 @@ public class ActionService {
                 .withTransitionAction(transitionAction).withStateTransition(stateTransition);
 
         LinkedList<Comment> replicableSequenceComments = null;
-        if (stateTransition != null && BooleanUtils.isTrue(stateTransition.getReplicableSequenceClose())) {
+        if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
             replicableSequenceComments = Lists.newLinkedList();
             for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
                 replicableSequenceComments.push(transitionComment);
                 StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
-                if (BooleanUtils.isTrue(stateAction.getReplicableSequenceStart())) {
+                if (isTrue(stateAction.getReplicableSequenceStart())) {
                     break;
                 }
             }

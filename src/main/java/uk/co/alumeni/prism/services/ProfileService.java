@@ -22,6 +22,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICAT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.List;
 import java.util.Set;
@@ -567,29 +569,27 @@ public class ProfileService {
 
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileAddress<T>> U updateAddress(
-            T profile, Class<U> addressClass, ProfileAddressDTO addressDTO) {
-        U address = (U) profile.getAddress();
+            T profile, Class<U> addressClass, ProfileAddressDTO addressSectionDTO) {
+        U addressSection = (U) profile.getAddress();
+        if (addressSection == null) {
+            addressSection = instantiate(addressClass);
+        }
+
+        updateAddressComponent(addressSectionDTO, addressSection, "currentAddress");
+        updateAddressComponent(addressSectionDTO, addressSection, "contactAddress");
+        return addressSection;
+    }
+
+    private void updateAddressComponent(ProfileAddressDTO addressSectionDTO, ProfileAddress<?> addressSection, String componentName) {
+        Address address = (Address) getProperty(addressSection, componentName);
+        AddressDTO addressDTO = (AddressDTO) getProperty(addressSectionDTO, componentName);
         if (address == null) {
-            address = instantiate(addressClass);
+            address = new Address();
+            setProperty(addressSection, componentName, address);
+            addressService.updateGeocodeAndPersistAddress(address, addressDTO);
+        } else {
+            addressService.updateAndGeocodeAddress(address, addressDTO);
         }
-
-        AddressDTO currentAddressDTO = addressDTO.getCurrentAddress();
-        Address currentAddress = address.getCurrentAddress();
-        if (currentAddress == null) {
-            currentAddress = new Address();
-            address.setCurrentAddress(currentAddress);
-        }
-        addressService.copyAddress(currentAddress, currentAddressDTO);
-
-        AddressDTO contactAddressDTO = addressDTO.getContactAddress();
-        Address contactAddress = address.getContactAddress();
-        if (contactAddress == null) {
-            contactAddress = new Address();
-            address.setContactAddress(contactAddress);
-        }
-        addressService.copyAddress(contactAddress, contactAddressDTO);
-
-        return address;
     }
 
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> U updateQualification(

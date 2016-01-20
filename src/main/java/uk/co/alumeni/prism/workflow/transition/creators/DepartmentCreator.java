@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.workflow.transition.creators;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 
 import java.util.List;
 
@@ -37,10 +36,7 @@ public class DepartmentCreator implements ResourceCreator<ResourceParentDTO> {
     public Resource create(User user, ResourceParentDTO newResource) {
         Institution institution = resourceCreatorUtils.getParentResource(newResource);
 
-        Advert advert = advertService.createAdvert(newResource, user);
-        advert.setGloballyVisible(DEPARTMENT.isDefaultShared());
-        advertService.updateAddress(institution, advert);
-
+        Advert advert = advertService.createResourceAdvert(newResource, institution, user);
         Department department = new Department().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(institution).withAdvert(advert)
                 .withName(advert.getName());
 

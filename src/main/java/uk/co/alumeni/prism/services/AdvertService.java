@@ -132,6 +132,7 @@ import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertSettingsDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertVisibilityDTO;
+import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceConnectionInvitationsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
@@ -321,13 +322,44 @@ public class AdvertService {
         return studyOptions;
     }
 
-    public Advert createAdvert(ResourceParentDTO resourceDTO, User user) {
+    public Advert createResourceAdvert(ResourceParentDTO resourceDTO, Resource parentResource, User user) {
         Advert advert = new Advert();
         advert.setUser(user);
-
         updateAdvert(advert, resourceDTO);
-        entityService.save(advert);
+
+        PrismScope resourceScope = resourceDTO.getScope();
+        if (resourceScope.getScopeCategory().equals(OPPORTUNITY)) {
+            AdvertCategories advertCategories = advert.getCategories();
+            if (advertCategories == null) {
+                advertCategories = new AdvertCategories();
+                advert.setCategories(advertCategories);
+            }
+
+            advertCategories.getLocations().add(new AdvertLocation().withAdvert(advert).withLocationAdvert(parentResource.getAdvert()));
+            updateFinancialDetail(advert, ((ResourceOpportunityDTO) resourceDTO).getFinancialDetail(), parentResource.getInstitution());
+        } else {
+            advert.setGloballyVisible(resourceScope.isDefaultShared());
+            if (resourceScope.equals(DEPARTMENT)) {
+                updateAddress(parentResource, advert);
+            } else {
+                updateAddress(parentResource, advert, ((InstitutionDTO) resourceDTO).getAddress());
+            }
+        }
+
         return advert;
+    }
+
+    public void persistResourceAdvert(ResourceParent resource) {
+        Advert advert = resource.getAdvert();
+        advert.setResource(resource);
+        entityService.save(advert);
+
+        AdvertCategories categories = advert.getCategories();
+        if (categories != null) {
+            categories.getLocations().stream().forEach(location -> entityService.getOrCreate(location));
+        }
+
+        addressService.persistAndGeocodeAddress(advert.getAddress(), advert.getName());
     }
 
     public void updateResourceDetails(PrismScope resourceScope, Integer resourceId, ResourceParentDTO resourceDTO) {
@@ -418,7 +450,7 @@ public class AdvertService {
             User user = resource.getUser();
             for (ResourceRelationDTO locationDTO : locations) {
                 ResourceParent locationResource = resourceService.createResourceRelation(locationDTO, context, user);
-                createAdvertLocation(advert, advertLocations, locationResource.getAdvert());
+                persistAdvertLocation(advert, advertLocations, locationResource.getAdvert());
             }
         }
     }
@@ -921,15 +953,6 @@ public class AdvertService {
         return advertUsers;
     }
 
-    public void createAdvertLocation(Advert advert, Advert locationAdvert) {
-        AdvertCategories advertCategories = advert.getCategories();
-        if (advertCategories == null) {
-            advertCategories = new AdvertCategories();
-            advert.setCategories(advertCategories);
-        }
-        createAdvertLocation(advert, advertCategories.getLocations(), locationAdvert);
-    }
-
     public Set<Advert> getPossibleAdvertLocations(Advert advert) {
         Set<Advert> locations = Sets.newTreeSet();
         advert.getParentResources().stream().forEach(resource -> locations.add(resource.getAdvert()));
@@ -958,18 +981,6 @@ public class AdvertService {
         }
 
         return newTreeSet(summaries.values());
-    }
-
-    public void deleteDuplicateAdvert(Advert advert) {
-        advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
-
-        Address address = advert.getAddress();
-        if (address != null) {
-            advert.setAddress(null);
-            addressService.deleteAddress(address);
-        }
-
-        entityService.delete(advert);
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds, boolean strict,
@@ -1289,10 +1300,10 @@ public class AdvertService {
         Address address = advert.getAddress();
         if (address == null) {
             address = new Address();
-            addressService.copyAddress(address, addressDTO, advert.getName());
             advert.setAddress(address);
+            addressService.updateAddress(address, addressDTO);
         } else {
-            addressService.copyAddress(address, addressDTO, advert.getName());
+            addressService.updateAndGeocodeAddress(address, addressDTO, advert.getName());
         }
     }
 
@@ -1341,7 +1352,7 @@ public class AdvertService {
         }
     }
 
-    private boolean createAdvertLocation(Advert advert, Set<AdvertLocation> advertLocations, Advert locationAdvert) {
+    private boolean persistAdvertLocation(Advert advert, Set<AdvertLocation> advertLocations, Advert locationAdvert) {
         return advertLocations.add(entityService.getOrCreate(new AdvertLocation().withAdvert(advert).withLocationAdvert(locationAdvert)));
     }
 

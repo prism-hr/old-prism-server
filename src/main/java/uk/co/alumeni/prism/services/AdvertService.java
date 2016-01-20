@@ -349,9 +349,11 @@ public class AdvertService {
         return advert;
     }
 
-    public void persistResourceAdvert(ResourceParent resource) {
-        Advert advert = resource.getAdvert();
+    public void persistResourceAdvert(ResourceParent resource, Advert advert) {
         advert.setResource(resource);
+
+        Address address = advert.getAddress();
+        advert.setAddress(null);
         entityService.save(advert);
 
         AdvertCategories categories = advert.getCategories();
@@ -359,7 +361,12 @@ public class AdvertService {
             categories.getLocations().stream().forEach(location -> entityService.getOrCreate(location));
         }
 
-        addressService.persistAndGeocodeAddress(advert.getAddress(), advert.getName());
+        if (address != null) {
+            addressService.persistAndGeocodeAddress(address, advert.getName());
+            advert.setAddress(address);
+        }
+
+        entityService.flush();
     }
 
     public void updateResourceDetails(PrismScope resourceScope, Integer resourceId, ResourceParentDTO resourceDTO) {

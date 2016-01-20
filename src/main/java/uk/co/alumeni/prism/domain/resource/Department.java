@@ -63,7 +63,7 @@ public class Department extends ResourceParent {
 
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false, unique = true)
+    @JoinColumn(name = "advert_id", unique = true)
     private Advert advert;
 
     @Column(name = "opportunity_category", nullable = false)

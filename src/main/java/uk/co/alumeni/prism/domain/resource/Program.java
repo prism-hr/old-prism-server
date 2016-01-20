@@ -72,7 +72,7 @@ public class Program extends ResourceOpportunity {
 
     @OneToOne
     @Fetch(FetchMode.SELECT)
-    @JoinColumn(name = "advert_id", nullable = false, unique = true)
+    @JoinColumn(name = "advert_id", unique = true)
     private Advert advert;
 
     @Lob

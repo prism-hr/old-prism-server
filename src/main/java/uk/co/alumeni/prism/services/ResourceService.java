@@ -30,6 +30,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
@@ -361,17 +363,25 @@ public class ResourceService {
     public <T extends Resource> void persistResource(T resource, Comment comment) {
         DateTime baseline = new DateTime();
         if (comment.isCreateComment()) {
+            Advert advert = resource.getAdvert();
+            resource.setAdvert(null);
+
             resource.setCreatedTimestamp(baseline);
             resource.setUpdatedTimestamp(baseline);
 
-            if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-                ResourceParent resourceParent = (ResourceParent) resource;
-                advertService.persistResourceAdvert(resourceParent);
-                resourceParent.setUpdatedTimestampSitemap(baseline);
+            boolean resourceParent = asList(OPPORTUNITY, ORGANIZATION).contains(resource.getResourceScope().getScopeCategory());
+            if (resourceParent) {
+                ((ResourceParent) resource).setUpdatedTimestampSitemap(baseline);
             }
 
             entityService.save(resource);
             entityService.flush();
+
+            if (resourceParent) {
+                advertService.persistResourceAdvert((ResourceParent) resource, advert);
+            }
+
+            resource.setAdvert(advert);
 
             activityService.setSequenceIdentifier(resource, baseline);
             Class<? extends ResourcePopulator<T>> populator = (Class<? extends ResourcePopulator<T>>) resource.getResourceScope().getResourcePopulator();

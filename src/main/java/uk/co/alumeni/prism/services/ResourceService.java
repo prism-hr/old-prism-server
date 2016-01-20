@@ -880,7 +880,11 @@ public class ResourceService {
         }
 
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
-        advertService.updateFinancialDetail(resource.getAdvert(), resourceDTO.getFinancialDetail(), resource.getInstitution());
+
+        Advert advert = resource.getAdvert();
+        advertService.updateFinancialDetail(advert, resourceDTO.getFinancialDetail(), resource.getInstitution());
+        applicationService.updateApplicationOpportunityCategories(advert);
+
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
         setStudyOptions(resource, studyOptions == null ? newArrayList() : studyOptions);
     }
@@ -1302,7 +1306,6 @@ public class ResourceService {
         resource.setOpportunityCategories(opportunityCategories);
         Advert advert = resource.getAdvert();
         advert.setOpportunityCategories(opportunityCategories);
-        applicationService.updateApplicationOpportunityCategories(advert);
     }
 
     private void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext, Boolean requested) {

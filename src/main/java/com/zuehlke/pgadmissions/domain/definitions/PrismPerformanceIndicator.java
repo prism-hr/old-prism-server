@@ -1,8 +1,8 @@
 package com.zuehlke.pgadmissions.domain.definitions;
 
-import com.google.common.collect.Lists;
-
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 public enum PrismPerformanceIndicator {
 

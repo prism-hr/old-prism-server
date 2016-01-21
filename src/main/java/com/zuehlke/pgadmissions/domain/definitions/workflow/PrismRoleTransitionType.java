@@ -1,6 +1,13 @@
 package com.zuehlke.pgadmissions.domain.definitions.workflow;
 
-import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.*;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.BranchResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.CreateResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.DeleteResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.ExhumeResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.RetireResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.ReviveResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.RoleTransitionResolver;
+import com.zuehlke.pgadmissions.workflow.resolvers.role.transition.UpdateResolver;
 
 public enum PrismRoleTransitionType {
 

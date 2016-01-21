@@ -17,9 +17,6 @@ import com.zuehlke.pgadmissions.domain.workflow.Scope;
 public class ScopeDAO {
 
 	@Autowired
-	private EntityDAO entityDAO;
-
-	@Autowired
 	private SessionFactory sessionFactory;
 
 	public List<PrismScope> getScopesDescending() {

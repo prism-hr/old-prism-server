@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationOpport
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationParentResourceCodeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationParentResourceTitleBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationRejectionReasonBuilder;
+import com.zuehlke.pgadmissions.workflow.notification.property.ApplicationRejectionRecommendBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentContentBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentDateTimeBuilder;
 import com.zuehlke.pgadmissions.workflow.notification.property.CommentSponsorshipBuilder;
@@ -119,6 +120,7 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_CONFIRMED_SECONDARY_SUPERVISOR(APPLICATION_APPROVED, true, ApplicationConfirmedSecondarySupervisorBuilder.class), //
     APPLICATION_CONFIRMED_OFFER_CONDITION(APPLICATION_APPROVED, true, ApplicationConfirmedOfferConditionBuilder.class), //
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //
+    APPLICATION_REJECTION_RECOMMEND(APPLICATION_REJECTED, false, ApplicationRejectionRecommendBuilder.class), //
     PROJECT_TITLE(PROJECT_GLOBAL, true, ProjectTitleBuilder.class), //
     PROJECT_CODE(PROJECT_GLOBAL, true, ProjectCodeBuilder.class), //
     PROJECT_USER_CONTACT(PROJECT_GLOBAL, true, ProjectUserContactBuilder.class), //

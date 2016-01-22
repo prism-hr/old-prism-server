@@ -15,20 +15,23 @@ import com.zuehlke.pgadmissions.utils.PrismConstants;
 @RequestMapping("api/mail")
 public class MailUrlController {
 
-    @Value("${application.url}")
-    private String applicationUrl;
+	@Value("${application.url}")
+	private String applicationUrl;
 
-    @RequestMapping(method = RequestMethod.GET, value = "{redirectPath:.+}")
-    public void redirect(HttpServletRequest request, HttpServletResponse response, @PathVariable String redirectPath) {
-        String redirect = applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/";
-        if(redirectPath != null){
-            redirect += redirectPath;
-            if(request.getQueryString() != null){
-                redirect += "?" + request.getQueryString();
-            }
-        }
-        response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-        response.setHeader("Location", redirect);
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "{redirectPath:.+}")
+	public void redirect(HttpServletRequest request, HttpServletResponse response, @PathVariable String redirectPath) {
+		String redirect = applicationUrl + "/" + PrismConstants.ANGULAR_HASH + "/";
+		if (redirectPath != null) {
+			if (redirectPath.equals("activate")) {
+				redirect += redirectPath;
+			}
+			
+			if (request.getQueryString() != null) {
+				redirect += "?" + request.getQueryString();
+			}
+		}
+		response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+		response.setHeader("Location", redirect);
+	}
 
 }

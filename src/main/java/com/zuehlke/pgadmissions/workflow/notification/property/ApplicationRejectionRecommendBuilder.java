@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.department.Department;
 import com.zuehlke.pgadmissions.domain.institution.Institution;
 import com.zuehlke.pgadmissions.domain.program.Program;
 import com.zuehlke.pgadmissions.domain.resource.Resource;
-import com.zuehlke.pgadmissions.domain.user.User;
 import com.zuehlke.pgadmissions.dto.NotificationDefinitionModelDTO;
 import com.zuehlke.pgadmissions.services.helpers.NotificationPropertyLoader;
 import com.zuehlke.pgadmissions.services.helpers.PropertyLoader;
@@ -30,28 +29,28 @@ public class ApplicationRejectionRecommendBuilder implements NotificationPropert
 
 		String field = "";
 		if (BooleanUtils.isTrue(modelDTO.getComment().getRejectionRecommend())) {
-			User user = modelDTO.getUser();
 			Resource resource = modelDTO.getResource();
+			Integer userId = modelDTO.getUser().getId();
 
 			Program program = resource.getProgram();
 			Department department = program == null ? null : program.getDepartment();
 
 			field = field + loader.load(SYSTEM_NOTIFICATION_TEMPLATE_CONSIDER) + " ";
 			if (department != null) {
-				field = field + getRedirectLink(user, "department", department.getId(), department.getTitle()) + " "
+				field = field + getRedirectLink(userId, "department", department.getId(), department.getTitle()) + " "
 						+ loader.load(SYSTEM_OR) + " ";
 			}
 
 			Institution institution = resource.getInstitution();
-			field = field + getRedirectLink(user, "institution", institution.getId(), institution.getTitle()) + ". ";
+			field = field + getRedirectLink(userId, "institution", institution.getId(), institution.getTitle()) + ". ";
 		}
 		return field + loader.load(PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_WISH_SUCCESS) + ".";
 	}
 
-	private String getRedirectLink(User user, String nodeType, Integer nodeId, String nodeTitle) {
-		String url = applicationApiUrl + "/mail/activate";
-		return "<a href='" + url + "?rejectedApplicant=" + user.getId() + "&" + nodeType + "s=" + nodeId
-				+ "&activationCode=" + user.getActivationCode() + "'>" + nodeTitle + "</a>";
+	private String getRedirectLink(Integer userId, String nodeType, Integer nodeId, String nodeTitle) {
+		String url = applicationApiUrl + "/mail/public";
+		return "<a href='" + url + "?rejectedApplicant=" + userId + "&" + nodeType + "=" + nodeId + "'>" + nodeTitle
+				+ "</a>";
 	}
 
 }

@@ -53,7 +53,7 @@ public class ApplicationRejectionRecommendBuilder implements NotificationPropert
 	private String getRedirectLink(Integer userId, Integer applicationId, String nodeType, Integer nodeId,
 			String nodeTitle) {
 		String url = applicationApiUrl + "/mail/public";
-		return "<a href='" + url + "?rejectedApplicant=" + userId + "?rejectedApplication=" + applicationId + "&"
+		return "<a href='" + url + "?rejectedApplicant=" + userId + "&rejectedApplication=" + applicationId + "&"
 				+ nodeType + "=" + nodeId + "'>" + nodeTitle + "</a>";
 	}
 

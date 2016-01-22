@@ -10,7 +10,9 @@
     The following explanation was given by our assessors: ${APPLICATION_REJECTION_REASON}
 </p>
 
-${TEMPLATE_SYSTEM_HOMEPAGE}
+<#if APPLICATION_REJECTION_RECOMMEND?has_content>
+	<p>${APPLICATION_REJECTION_RECOMMEND}</p>
+</#if>
 
 <p>
     We wish you success in your search for postgraduate research study.

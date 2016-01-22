@@ -36,6 +36,8 @@ public class OpportunitiesQueryDTO {
 
     private Integer maxDuration;
 
+    private Integer rejectedApplicant;
+    
     private Integer[] institutions;
 
     private Integer[] departments;
@@ -146,7 +148,15 @@ public class OpportunitiesQueryDTO {
         this.maxDuration = maxDuration;
     }
 
-    public final Integer[] getInstitutions() {
+    public Integer getRejectedApplicant() {
+		return rejectedApplicant;
+	}
+
+	public void setRejectedApplicant(Integer rejectedApplicant) {
+		this.rejectedApplicant = rejectedApplicant;
+	}
+
+	public final Integer[] getInstitutions() {
         return institutions;
     }
 

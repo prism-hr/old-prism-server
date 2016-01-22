@@ -183,6 +183,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "application_rejection_reason_id")
     private RejectionReason rejectionReason;
+    
+    @Transient
+    private Boolean rejectionRecommend;
 
     @Column(name = "application_rejection_reason_system")
     private String rejectionReasonSystem;
@@ -444,7 +447,15 @@ public class Comment {
         this.rejectionReason = rejectionReason;
     }
 
-    public String getRejectionReasonSystem() {
+    public Boolean getRejectionRecommend() {
+		return rejectionRecommend;
+	}
+
+	public void setRejectionRecommend(Boolean rejectionRecommend) {
+		this.rejectionRecommend = rejectionRecommend;
+	}
+
+	public String getRejectionReasonSystem() {
         return rejectionReasonSystem;
     }
 

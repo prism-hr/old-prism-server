@@ -57,7 +57,6 @@ import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCa
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_IMPORTED_ENTITY;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_INTEGRATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_MONTH;
-import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION_TEMPLATE;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES_SECTION;
 import static com.zuehlke.pgadmissions.domain.definitions.PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITY_TYPE;
@@ -164,6 +163,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DESCRIPTION(SYSTEM_GLOBAL, "The Opportunity Portal"),
     SYSTEM_LINK(SYSTEM_GLOBAL, "Link"),
     SYSTEM_NOW(SYSTEM_GLOBAL, "Now"),
+    SYSTEM_OR(SYSTEM_GLOBAL, "or"),
     SYSTEM_NA(SYSTEM_GLOBAL, "N/A"),
 
     /*
@@ -829,14 +829,14 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_OFFER_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE,
             "Confirm Offer Recommendation Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Confirm Rejection Notification"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST(SYSTEM_NOTIFICATION, "Application Correct Request"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION, "Application Correct Request Reminder"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Application Correct Request"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_CORRECT_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Application Correct Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Interview Availability Request Reminder"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_REFERENCE_REQUEST(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Reference Request"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_PROVIDE_REFERENCE_REQUEST_REMINDER(SYSTEM_NOTIFICATION_TEMPLATE, "Provide Reference Request Reminder"),
-    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_RESERVE_NOTIFICATION(SYSTEM_NOTIFICATION, "Application Reserve Notification"),
+    SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_RESERVE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Application Reserve Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_REVERSE_REJECTION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Rejection Reversed Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_TERMINATE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Terminate Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Update Interview Availability Notification"),
@@ -875,6 +875,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_PROJECT_UPDATE_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Project Update Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Recommendation Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS(SYSTEM_NOTIFICATION_TEMPLATE, "We are sorry to inform that we have no current recommendations"),
+    SYSTEM_NOTIFICATION_TEMPLATE_CONSIDER(SYSTEM_NOTIFICATION_TEMPLATE, "You may wish to consider other opportunities in "),
 
     /*
      * *************** SYSTEM REFEREE TYPE *********************
@@ -2206,6 +2207,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "If you wish to recommend any specific conditions to the study offer you may do so here."),
     APPLICATION_ACTION_REJECTION_REASON_LABEL(APPLICATION_ACTION, "Reasons for Rejection"),
     APPLICATION_ACTION_REJECTION_REASON_HINT(APPLICATION_ACTION, "Specify the pertinent reason for rejection."),
+    APPLICATION_ACTION_REJECTION_RECOMMEND_LABEL(APPLICATION_ACTION, "Recommend other programs"),
+    APPLICATION_ACTION_REJECTION_RECOMMEND_HINT(APPLICATION_ACTION, "Recommend other programs in your department to the applicant."),
     APPLICATION_ACTION_RESERVE_STATUS_LABEL(APPLICATION_ACTION, "Priority status"),
     APPLICATION_ACTION_RESERVE_STATUS_HINT(APPLICATION_ACTION,
             "Indicate whether you wish you wish to assign the applicant to the first, second or third reserve group"),

@@ -156,7 +156,7 @@ public class AdvertService {
 			Institution institution = null;
 			Integer[] departmentIds = queryDTO.getDepartments();
 			if (!ArrayUtils.isEmpty(departmentIds)) {
-				institution = departmentService.getById(departmentIds[1]).getInstitution();
+				institution = departmentService.getById(departmentIds[0]).getInstitution();
 			} else {
 				institution = institutionService.getById(queryDTO.getInstitutions()[0]);
 			}

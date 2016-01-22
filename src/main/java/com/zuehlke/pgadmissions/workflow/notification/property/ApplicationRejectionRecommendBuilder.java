@@ -31,26 +31,30 @@ public class ApplicationRejectionRecommendBuilder implements NotificationPropert
 		if (BooleanUtils.isTrue(modelDTO.getComment().getRejectionRecommend())) {
 			Resource resource = modelDTO.getResource();
 			Integer userId = modelDTO.getUser().getId();
+			Integer applicationId = resource.getId();
 
 			Program program = resource.getProgram();
 			Department department = program == null ? null : program.getDepartment();
 
 			field = field + loader.load(SYSTEM_NOTIFICATION_TEMPLATE_CONSIDER) + " ";
 			if (department != null) {
-				field = field + getRedirectLink(userId, "department", department.getId(), department.getTitle()) + " "
-						+ loader.load(SYSTEM_OR) + " ";
+				field = field + getRedirectLink(userId, applicationId, "department", department.getId(),
+						department.getTitle()) + " " + loader.load(SYSTEM_OR) + " ";
 			}
 
 			Institution institution = resource.getInstitution();
-			field = field + getRedirectLink(userId, "institution", institution.getId(), institution.getTitle()) + ". ";
+			field = field
+					+ getRedirectLink(userId, applicationId, "institution", institution.getId(), institution.getTitle())
+					+ ". ";
 		}
 		return field + loader.load(PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_TEMPLATE_WISH_SUCCESS) + ".";
 	}
 
-	private String getRedirectLink(Integer userId, String nodeType, Integer nodeId, String nodeTitle) {
+	private String getRedirectLink(Integer userId, Integer applicationId, String nodeType, Integer nodeId,
+			String nodeTitle) {
 		String url = applicationApiUrl + "/mail/public";
-		return "<a href='" + url + "?rejectedApplicant=" + userId + "&" + nodeType + "=" + nodeId + "'>" + nodeTitle
-				+ "</a>";
+		return "<a href='" + url + "?rejectedApplicant=" + userId + "?rejectedApplication=" + applicationId + "&"
+				+ nodeType + "=" + nodeId + "'>" + nodeTitle + "</a>";
 	}
 
 }

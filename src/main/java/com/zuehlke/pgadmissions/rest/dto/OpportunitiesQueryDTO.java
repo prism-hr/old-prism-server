@@ -13,142 +13,154 @@ import com.zuehlke.pgadmissions.domain.definitions.workflow.PrismActionCondition
 
 public class OpportunitiesQueryDTO {
 
-    @NotNull
-    private List<PrismOpportunityCategory> programCategories;
+	private List<Integer> exclusions;
 
-    private String keyword;
+	@NotNull
+	private List<PrismOpportunityCategory> programCategories;
 
-    private List<PrismOpportunityType> opportunityTypes;
+	private String keyword;
 
-    private List<PrismStudyOption> studyOptions;
-    
-    private List<PrismActionCondition> actionConditions;
+	private List<PrismOpportunityType> opportunityTypes;
 
-    private Integer minFee;
+	private List<PrismStudyOption> studyOptions;
 
-    private Integer maxFee;
+	private List<PrismActionCondition> actionConditions;
 
-    private Integer minSalary;
+	private Integer minFee;
 
-    private Integer maxSalary;
+	private Integer maxFee;
 
-    private Integer minDuration;
+	private Integer minSalary;
 
-    private Integer maxDuration;
+	private Integer maxSalary;
 
-    private Integer rejectedApplicant;
-    
-    private Integer[] institutions;
+	private Integer minDuration;
 
-    private Integer[] departments;
+	private Integer maxDuration;
 
-    private Integer[] programs;
+	private Integer rejectedApplicant;
 
-    private Integer[] projects;
+	private Integer rejectedApplication;
 
-    private BigDecimal neLat;
+	private Integer[] institutions;
 
-    private BigDecimal neLon;
+	private Integer[] departments;
 
-    private BigDecimal swLat;
+	private Integer[] programs;
 
-    private BigDecimal swLon;
+	private Integer[] projects;
 
-    private String lastSequenceIdentifier;
+	private BigDecimal neLat;
 
-    private Integer resourceId;
+	private BigDecimal neLon;
 
-    private PrismAction actionId;
+	private BigDecimal swLat;
 
-    public List<PrismOpportunityCategory> getProgramCategories() {
-        return programCategories;
-    }
+	private BigDecimal swLon;
 
-    public void setProgramCategories(List<PrismOpportunityCategory> programCategories) {
-        this.programCategories = programCategories;
-    }
+	private String lastSequenceIdentifier;
 
-    public String getKeyword() {
-        return keyword;
-    }
+	private Integer resourceId;
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
+	private PrismAction actionId;
 
-    public List<PrismOpportunityType> getOpportunityTypes() {
-        return opportunityTypes;
-    }
+	public List<Integer> getExclusions() {
+		return exclusions;
+	}
 
-    public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
-        this.opportunityTypes = opportunityTypes;
-    }
+	public void setExclusions(List<Integer> exclusions) {
+		this.exclusions = exclusions;
+	}
 
-    public List<PrismStudyOption> getStudyOptions() {
-        return studyOptions;
-    }
+	public List<PrismOpportunityCategory> getProgramCategories() {
+		return programCategories;
+	}
 
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
-        this.studyOptions = studyOptions;
-    }
+	public void setProgramCategories(List<PrismOpportunityCategory> programCategories) {
+		this.programCategories = programCategories;
+	}
 
-    public List<PrismActionCondition> getActionConditions() {
-        return actionConditions;
-    }
+	public String getKeyword() {
+		return keyword;
+	}
 
-    public void setActionConditions(List<PrismActionCondition> actionConditions) {
-        this.actionConditions = actionConditions;
-    }
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
 
-    public final Integer getMinFee() {
-        return minFee;
-    }
+	public List<PrismOpportunityType> getOpportunityTypes() {
+		return opportunityTypes;
+	}
 
-    public final void setMinFee(Integer minFee) {
-        this.minFee = minFee;
-    }
+	public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
+		this.opportunityTypes = opportunityTypes;
+	}
 
-    public final Integer getMaxFee() {
-        return maxFee;
-    }
+	public List<PrismStudyOption> getStudyOptions() {
+		return studyOptions;
+	}
 
-    public final void setMaxFee(Integer maxFee) {
-        this.maxFee = maxFee;
-    }
+	public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+		this.studyOptions = studyOptions;
+	}
 
-    public final Integer getMinSalary() {
-        return minSalary;
-    }
+	public List<PrismActionCondition> getActionConditions() {
+		return actionConditions;
+	}
 
-    public final void setMinSalary(Integer minSalary) {
-        this.minSalary = minSalary;
-    }
+	public void setActionConditions(List<PrismActionCondition> actionConditions) {
+		this.actionConditions = actionConditions;
+	}
 
-    public final Integer getMaxSalary() {
-        return maxSalary;
-    }
+	public final Integer getMinFee() {
+		return minFee;
+	}
 
-    public final void setMaxSalary(Integer maxSalary) {
-        this.maxSalary = maxSalary;
-    }
+	public final void setMinFee(Integer minFee) {
+		this.minFee = minFee;
+	}
 
-    public final Integer getMinDuration() {
-        return minDuration;
-    }
+	public final Integer getMaxFee() {
+		return maxFee;
+	}
 
-    public final void setMinDuration(Integer minDuration) {
-        this.minDuration = minDuration;
-    }
+	public final void setMaxFee(Integer maxFee) {
+		this.maxFee = maxFee;
+	}
 
-    public final Integer getMaxDuration() {
-        return maxDuration;
-    }
+	public final Integer getMinSalary() {
+		return minSalary;
+	}
 
-    public final void setMaxDuration(Integer maxDuration) {
-        this.maxDuration = maxDuration;
-    }
+	public final void setMinSalary(Integer minSalary) {
+		this.minSalary = minSalary;
+	}
 
-    public Integer getRejectedApplicant() {
+	public final Integer getMaxSalary() {
+		return maxSalary;
+	}
+
+	public final void setMaxSalary(Integer maxSalary) {
+		this.maxSalary = maxSalary;
+	}
+
+	public final Integer getMinDuration() {
+		return minDuration;
+	}
+
+	public final void setMinDuration(Integer minDuration) {
+		this.minDuration = minDuration;
+	}
+
+	public final Integer getMaxDuration() {
+		return maxDuration;
+	}
+
+	public final void setMaxDuration(Integer maxDuration) {
+		this.maxDuration = maxDuration;
+	}
+
+	public Integer getRejectedApplicant() {
 		return rejectedApplicant;
 	}
 
@@ -156,96 +168,104 @@ public class OpportunitiesQueryDTO {
 		this.rejectedApplicant = rejectedApplicant;
 	}
 
+	public Integer getRejectedApplication() {
+		return rejectedApplication;
+	}
+
+	public void setRejectedApplication(Integer rejectedApplication) {
+		this.rejectedApplication = rejectedApplication;
+	}
+
 	public final Integer[] getInstitutions() {
-        return institutions;
-    }
+		return institutions;
+	}
 
-    public final void setInstitutions(Integer[] institutions) {
-        this.institutions = institutions;
-    }
+	public final void setInstitutions(Integer[] institutions) {
+		this.institutions = institutions;
+	}
 
-    public final Integer[] getDepartments() {
-        return departments;
-    }
+	public final Integer[] getDepartments() {
+		return departments;
+	}
 
-    public final void setDepartments(Integer[] departments) {
-        this.departments = departments;
-    }
+	public final void setDepartments(Integer[] departments) {
+		this.departments = departments;
+	}
 
-    public final Integer[] getPrograms() {
-        return programs;
-    }
+	public final Integer[] getPrograms() {
+		return programs;
+	}
 
-    public final void setPrograms(Integer[] programs) {
-        this.programs = programs;
-    }
+	public final void setPrograms(Integer[] programs) {
+		this.programs = programs;
+	}
 
-    public final Integer[] getProjects() {
-        return projects;
-    }
+	public final Integer[] getProjects() {
+		return projects;
+	}
 
-    public final void setProjects(Integer[] projects) {
-        this.projects = projects;
-    }
+	public final void setProjects(Integer[] projects) {
+		this.projects = projects;
+	}
 
-    public BigDecimal getNeLat() {
-        return neLat;
-    }
+	public BigDecimal getNeLat() {
+		return neLat;
+	}
 
-    public void setNeLat(BigDecimal neLat) {
-        this.neLat = neLat;
-    }
+	public void setNeLat(BigDecimal neLat) {
+		this.neLat = neLat;
+	}
 
-    public BigDecimal getNeLon() {
-        return neLon;
-    }
+	public BigDecimal getNeLon() {
+		return neLon;
+	}
 
-    public void setNeLon(BigDecimal neLon) {
-        this.neLon = neLon;
-    }
+	public void setNeLon(BigDecimal neLon) {
+		this.neLon = neLon;
+	}
 
-    public BigDecimal getSwLat() {
-        return swLat;
-    }
+	public BigDecimal getSwLat() {
+		return swLat;
+	}
 
-    public void setSwLat(BigDecimal swLat) {
-        this.swLat = swLat;
-    }
+	public void setSwLat(BigDecimal swLat) {
+		this.swLat = swLat;
+	}
 
-    public BigDecimal getSwLon() {
-        return swLon;
-    }
+	public BigDecimal getSwLon() {
+		return swLon;
+	}
 
-    public void setSwLon(BigDecimal swLon) {
-        this.swLon = swLon;
-    }
+	public void setSwLon(BigDecimal swLon) {
+		this.swLon = swLon;
+	}
 
-    public final String getLastSequenceIdentifier() {
-        return lastSequenceIdentifier;
-    }
+	public final String getLastSequenceIdentifier() {
+		return lastSequenceIdentifier;
+	}
 
-    public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
-        this.lastSequenceIdentifier = lastSequenceIdentifier;
-    }
+	public final void setLastSequenceIdentifier(String lastSequenceIdentifier) {
+		this.lastSequenceIdentifier = lastSequenceIdentifier;
+	}
 
-    public final Integer getResourceId() {
-        return resourceId;
-    }
+	public final Integer getResourceId() {
+		return resourceId;
+	}
 
-    public final void setResourceId(Integer resourceId) {
-        this.resourceId = resourceId;
-    }
+	public final void setResourceId(Integer resourceId) {
+		this.resourceId = resourceId;
+	}
 
-    public final PrismAction getActionId() {
-        return actionId;
-    }
+	public final PrismAction getActionId() {
+		return actionId;
+	}
 
-    public final void setActionId(PrismAction actionId) {
-        this.actionId = actionId;
-    }
+	public final void setActionId(PrismAction actionId) {
+		this.actionId = actionId;
+	}
 
-    public boolean isResourceAction() {
-        return !(resourceId == null || actionId == null);
-    }
+	public boolean isResourceAction() {
+		return !(resourceId == null || actionId == null);
+	}
 
 }

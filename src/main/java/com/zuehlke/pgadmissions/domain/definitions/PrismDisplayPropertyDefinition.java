@@ -876,6 +876,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_TEMPLATE_SYSTEM_RECOMMENDATION_NOTIFICATION(SYSTEM_NOTIFICATION_TEMPLATE, "Recommendation Notification"),
     SYSTEM_NOTIFICATION_TEMPLATE_NO_RECOMMENDATIONS(SYSTEM_NOTIFICATION_TEMPLATE, "We are sorry to inform that we have no current recommendations"),
     SYSTEM_NOTIFICATION_TEMPLATE_CONSIDER(SYSTEM_NOTIFICATION_TEMPLATE, "You may wish to consider other opportunities in "),
+    SYSTEM_NOTIFICATION_TEMPLATE_WISH_SUCCESS(SYSTEM_NOTIFICATION_TEMPLATE, "We wish you success in your search for postgraduate research study"), 
 
     /*
      * *************** SYSTEM REFEREE TYPE *********************

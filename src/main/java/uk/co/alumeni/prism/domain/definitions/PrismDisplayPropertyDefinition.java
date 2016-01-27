@@ -659,7 +659,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_DOMICILE_SH(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Saint Helena, Ascension and Tristan da Cunha"),
     SYSTEM_DOMICILE_SI(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Slovenia"),
     SYSTEM_DOMICILE_SJ(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Svalbard and Jan Mayen"),
-    SYSTEM_DOMICILE_SK(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Sikkim"),
+    SYSTEM_DOMICILE_SK(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Slovakia"),
     SYSTEM_DOMICILE_SL(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Sierra Leone"),
     SYSTEM_DOMICILE_SM(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "San Marino"),
     SYSTEM_DOMICILE_SN(PrismDisplayPropertyCategory.SYSTEM_DOMICILE, "Senegal"),

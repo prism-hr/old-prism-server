@@ -11,10 +11,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
-
-import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 
 public class ApplicationProgramDetailRepresentation extends ApplicationSectionRepresentation {
 

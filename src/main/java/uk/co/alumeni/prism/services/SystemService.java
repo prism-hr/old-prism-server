@@ -30,11 +30,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.dao.SystemDAO;
 import uk.co.alumeni.prism.domain.AgeRange;
 import uk.co.alumeni.prism.domain.Domicile;
@@ -96,6 +91,11 @@ import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismFileUtils;
+
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 @Service
 public class SystemService {

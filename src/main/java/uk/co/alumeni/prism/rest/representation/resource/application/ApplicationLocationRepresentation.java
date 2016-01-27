@@ -2,14 +2,15 @@ package uk.co.alumeni.prism.rest.representation.resource.application;
 
 import java.util.List;
 
+import jersey.repackaged.com.google.common.collect.Lists;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Joiner;
-
-import jersey.repackaged.com.google.common.collect.Lists;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+
+import com.google.common.base.Joiner;
 
 public class ApplicationLocationRepresentation extends ApplicationTagSectionRepresentation {
 

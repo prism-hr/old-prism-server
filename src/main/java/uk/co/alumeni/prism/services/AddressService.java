@@ -20,10 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.dao.AddressDAO;
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
@@ -39,6 +35,10 @@ import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleGeometryDTO.Location;
 import uk.co.alumeni.prism.dto.json.LocationSearchResponseDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional

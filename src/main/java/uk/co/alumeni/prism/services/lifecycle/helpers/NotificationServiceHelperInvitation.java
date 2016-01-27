@@ -7,14 +7,14 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.UserConnectionDTO;
 import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
 import uk.co.alumeni.prism.services.InvitationService;
 import uk.co.alumeni.prism.services.NotificationService;
+
+import com.google.common.collect.Sets;
 
 @Component
 public class NotificationServiceHelperInvitation extends PrismServiceHelperAbstract {

@@ -20,8 +20,6 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Preconditions;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
@@ -37,6 +35,8 @@ import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
+
+import com.google.common.base.Preconditions;
 
 @Service
 @Transactional

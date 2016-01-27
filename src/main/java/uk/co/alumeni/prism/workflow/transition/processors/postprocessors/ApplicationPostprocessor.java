@@ -21,8 +21,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -43,6 +41,8 @@ import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.ScopeService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
+
+import com.google.common.collect.Lists;
 
 @Component
 public class ApplicationPostprocessor implements ResourceProcessor<Application> {

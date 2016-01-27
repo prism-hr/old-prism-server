@@ -9,16 +9,17 @@ import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jersey.repackaged.com.google.common.collect.Sets;
+
 import org.apache.commons.lang3.ObjectUtils;
+
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-
-import jersey.repackaged.com.google.common.collect.Sets;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class ResourceRepresentationRelation extends ResourceRepresentationSimple {
 

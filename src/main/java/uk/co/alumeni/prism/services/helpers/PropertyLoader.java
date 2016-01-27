@@ -12,8 +12,6 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -24,6 +22,8 @@ import uk.co.alumeni.prism.rest.representation.configuration.DisplayPropertyConf
 import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurationRepresentation;
 import uk.co.alumeni.prism.services.CustomizationService;
 import uk.co.alumeni.prism.services.SystemService;
+
+import com.google.common.collect.Maps;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)

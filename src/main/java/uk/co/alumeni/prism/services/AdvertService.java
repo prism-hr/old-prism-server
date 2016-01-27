@@ -74,13 +74,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.dao.AdvertDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.Invitation;
@@ -143,6 +136,13 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

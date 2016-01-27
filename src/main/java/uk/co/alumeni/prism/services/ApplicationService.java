@@ -31,6 +31,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import jersey.repackaged.com.google.common.collect.Maps;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -42,14 +44,6 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.ValidationUtils;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.visualization.datasource.datatable.ColumnDescription;
-import com.google.visualization.datasource.datatable.DataTable;
-import com.google.visualization.datasource.datatable.TableRow;
-
-import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.dao.ApplicationDAO;
 import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.UniqueEntity;
@@ -90,6 +84,13 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.validation.ProfileValidator;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.visualization.datasource.datatable.ColumnDescription;
+import com.google.visualization.datasource.datatable.DataTable;
+import com.google.visualization.datasource.datatable.TableRow;
 
 @Service
 @Transactional

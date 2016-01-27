@@ -343,7 +343,7 @@ public class ApplicationDownloadBuilder {
 
                 if (resource.getScope().equals(PROJECT)) {
                     applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_LABEL),
-                            resource.getAdvert().getDescription(), subBody);
+                            resource.getAdvert().getSummary(), subBody);
                 }
 
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_QUALIFICATION_START_DATE_LABEL),
@@ -405,7 +405,7 @@ public class ApplicationDownloadBuilder {
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_EMPLOYMENT_POSITION_EMPLOYER_LABEL),
                         resource.getDisplayName(), subBody);
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_HTML_RESOURCE_FAMILY_QUALIFICATION_DESCRIPTION_LABEL),
-                        resource.getAdvert().getDescription(), subBody);
+                        resource.getAdvert().getSummary(), subBody);
 
                 applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_EMPLOYMENT_POSITION_START_DATE_LABEL),
                         position.getStartDateDisplay(), subBody);

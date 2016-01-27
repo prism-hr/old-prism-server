@@ -4,12 +4,12 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
+
+import com.google.common.base.Objects;
 
 @Component
 public class ApplicationInterviewerInstructionsBuilder implements NotificationPropertyBuilder {

@@ -19,9 +19,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.GenericFilterBean;
 
-import com.google.common.base.Charsets;
-
 import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.base.Charsets;
 
 public class AuthenticationTokenProcessingFilter extends GenericFilterBean {
 

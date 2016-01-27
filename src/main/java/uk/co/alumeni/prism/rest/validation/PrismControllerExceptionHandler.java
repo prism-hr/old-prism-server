@@ -27,10 +27,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
@@ -40,6 +36,10 @@ import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismDiagnosticUtils;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @ControllerAdvice
 public class PrismControllerExceptionHandler extends ResponseEntityExceptionHandler {

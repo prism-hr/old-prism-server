@@ -3,11 +3,11 @@ package uk.co.alumeni.prism.rest.representation.action;
 import java.util.Collection;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
+
+import com.google.common.collect.Sets;
 
 public class ActionRepresentationExtended extends ActionRepresentationSimple {
 

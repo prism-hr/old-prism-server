@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.address;
 
-import com.google.common.base.Joiner;
-
 import uk.co.alumeni.prism.domain.address.AddressDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+
+import com.google.common.base.Joiner;
 
 public class AddressRepresentation extends AddressDefinition<PrismDomicile> {
 

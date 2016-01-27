@@ -11,9 +11,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang.BooleanUtils;
 
-import com.google.common.base.Joiner;
-
 import uk.co.alumeni.prism.PrismConstants;
+
+import com.google.common.base.Joiner;
 
 public class PrismQueryUtils {
 

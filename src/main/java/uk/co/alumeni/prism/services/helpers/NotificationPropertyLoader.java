@@ -14,11 +14,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -31,6 +26,11 @@ import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

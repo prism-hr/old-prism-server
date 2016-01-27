@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.exceptions.IntegrationException;
+
 import com.amazonaws.services.simpleemail.model.NotificationType;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.DeleteMessageBatchRequest;
@@ -23,9 +26,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.exceptions.IntegrationException;
 
 @Service
 @Transactional

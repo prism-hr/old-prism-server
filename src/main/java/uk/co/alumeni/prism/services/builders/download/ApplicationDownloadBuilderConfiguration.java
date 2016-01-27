@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.services.builders.download;
 
+import uk.co.alumeni.prism.utils.PrismReflectionUtils;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
-
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 
 public class ApplicationDownloadBuilderConfiguration {
 

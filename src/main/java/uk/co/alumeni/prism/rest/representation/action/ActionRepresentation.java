@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.rest.representation.action;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
+
+import com.google.common.base.Objects;
 
 public class ActionRepresentation {
 

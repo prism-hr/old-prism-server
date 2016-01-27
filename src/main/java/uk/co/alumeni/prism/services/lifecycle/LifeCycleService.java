@@ -19,11 +19,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.definitions.PrismMaintenanceTask;
 import uk.co.alumeni.prism.mapping.StaticDataMapper;
 import uk.co.alumeni.prism.services.SystemService;
+
+import com.google.common.collect.Sets;
 
 @Service
 public class LifeCycleService {

@@ -14,8 +14,6 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.dao.CustomizationDAO;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -31,6 +29,8 @@ import uk.co.alumeni.prism.domain.workflow.WorkflowDefinition;
 import uk.co.alumeni.prism.mapping.CustomizationMapper;
 import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
 import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurationRepresentation;
+
+import com.google.common.base.Objects;
 
 @Service
 @Transactional

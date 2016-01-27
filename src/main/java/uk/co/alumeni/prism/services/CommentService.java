@@ -23,9 +23,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.dao.CommentDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -59,6 +56,9 @@ import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewAppointmentDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewInstructionDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

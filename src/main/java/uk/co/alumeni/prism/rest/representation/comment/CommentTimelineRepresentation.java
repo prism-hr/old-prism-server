@@ -2,9 +2,9 @@ package uk.co.alumeni.prism.rest.representation.comment;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+
+import com.google.common.collect.Lists;
 
 public class CommentTimelineRepresentation {
 

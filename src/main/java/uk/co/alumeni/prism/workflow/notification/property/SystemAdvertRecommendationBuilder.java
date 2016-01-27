@@ -10,9 +10,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
@@ -20,6 +17,9 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 @Component
 public class SystemAdvertRecommendationBuilder implements NotificationPropertyBuilder {

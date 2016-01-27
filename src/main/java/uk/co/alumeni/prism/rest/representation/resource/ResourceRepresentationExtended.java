@@ -2,12 +2,12 @@ package uk.co.alumeni.prism.rest.representation.resource;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentationClient;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "scope")
 @JsonSubTypes({

@@ -17,13 +17,13 @@ import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.workflow.selectors.filter.PrismResourceListFilterSelector;
+
+import com.google.common.collect.Lists;
 
 @Component
 public class PrismResourceListConstraintBuilder {

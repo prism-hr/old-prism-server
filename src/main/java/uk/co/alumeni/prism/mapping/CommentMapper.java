@@ -17,9 +17,6 @@ import javax.transaction.Transactional;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;
@@ -55,6 +52,9 @@ import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional

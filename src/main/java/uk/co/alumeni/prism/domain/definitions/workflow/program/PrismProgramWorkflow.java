@@ -25,7 +25,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROGRAM_WITHDRAWN;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_VIEW_EDIT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;

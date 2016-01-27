@@ -5,6 +5,8 @@ import java.util.List;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
+import com.google.common.base.Objects;
+
 public class ResourceUserRolesRepresentation {
 
     private UserRepresentationSimple user;
@@ -67,5 +69,21 @@ public class ResourceUserRolesRepresentation {
         return this;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(user);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        ResourceUserRolesRepresentation other = (ResourceUserRolesRepresentation) object;
+        return Objects.equal(user, other.getUser());
+    }
 
 }

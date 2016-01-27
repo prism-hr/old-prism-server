@@ -14,8 +14,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
-
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertBenefit;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
@@ -32,6 +30,8 @@ import uk.co.alumeni.prism.rest.representation.OpportunityCategoryRepresentation
 import uk.co.alumeni.prism.services.PrismService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.collect.ImmutableMap;
 
 @Service
 @Transactional

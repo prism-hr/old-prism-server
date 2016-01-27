@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_CORRECT_REQUEST;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;

@@ -18,14 +18,14 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user_account")

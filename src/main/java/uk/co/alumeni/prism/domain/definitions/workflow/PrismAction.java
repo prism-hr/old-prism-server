@@ -32,10 +32,10 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+
+import com.google.common.collect.Lists;
 
 public enum PrismAction implements PrismLocalizableDefinition {
 

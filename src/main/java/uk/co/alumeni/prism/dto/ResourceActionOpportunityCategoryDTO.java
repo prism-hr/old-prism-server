@@ -3,9 +3,9 @@ package uk.co.alumeni.prism.dto;
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+
+import com.google.common.base.Objects;
 
 public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCategoryDTO<ResourceActionOpportunityCategoryDTO> {
 

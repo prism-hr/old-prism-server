@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+
+import com.google.common.base.Objects;
 
 public abstract class Definition<T extends PrismLocalizableDefinition> implements UniqueEntity {
 

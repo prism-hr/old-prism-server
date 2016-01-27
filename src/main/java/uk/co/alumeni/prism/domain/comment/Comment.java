@@ -29,9 +29,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -58,6 +55,9 @@ import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 import uk.co.alumeni.prism.workflow.user.CommentReassignmentProcessor;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "comment")

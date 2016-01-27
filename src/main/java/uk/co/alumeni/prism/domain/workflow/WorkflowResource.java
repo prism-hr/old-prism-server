@@ -2,7 +2,6 @@ package uk.co.alumeni.prism.domain.workflow;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;

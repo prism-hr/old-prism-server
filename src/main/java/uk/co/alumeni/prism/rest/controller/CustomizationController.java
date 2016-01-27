@@ -17,10 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
@@ -41,6 +37,10 @@ import uk.co.alumeni.prism.services.CustomizationService;
 import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.utils.PrismWordUtils;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions|systems}/{resourceId}/configuration")

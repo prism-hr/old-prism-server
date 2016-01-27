@@ -48,9 +48,6 @@ import org.hibernate.transform.Transformers;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
 import uk.co.alumeni.prism.domain.advert.AdvertLocation;
@@ -86,6 +83,9 @@ import uk.co.alumeni.prism.dto.AdvertThemeDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 
 @Repository
 @SuppressWarnings("unchecked")

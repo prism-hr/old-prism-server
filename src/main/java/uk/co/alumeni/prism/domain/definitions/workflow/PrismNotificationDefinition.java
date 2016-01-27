@@ -29,10 +29,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+
+import com.google.common.collect.Lists;
 
 public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
 

@@ -14,11 +14,11 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 

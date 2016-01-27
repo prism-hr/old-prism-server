@@ -19,13 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
@@ -53,6 +46,13 @@ import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.utils.TimeZoneUtils;
+
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 @Transactional

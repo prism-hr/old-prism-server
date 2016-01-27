@@ -21,14 +21,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.TreeMultimap;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -64,6 +56,14 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserFeedbackService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.TreeMultimap;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 @Service
 @Transactional

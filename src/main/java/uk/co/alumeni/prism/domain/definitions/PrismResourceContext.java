@@ -4,7 +4,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public enum PrismResourceContext {

@@ -8,9 +8,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "address_location", uniqueConstraints = { @UniqueConstraint(columnNames = { "address_id", "address_location_part_id" }) })

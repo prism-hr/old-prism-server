@@ -17,13 +17,13 @@ import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
+
+import com.google.common.collect.Maps;
 
 @Repository
 public class InstitutionDAO {

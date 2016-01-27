@@ -20,9 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
@@ -31,6 +28,9 @@ import uk.co.alumeni.prism.mapping.SystemMapper;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
+
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 
 @Controller
 @RequestMapping("api/robots")

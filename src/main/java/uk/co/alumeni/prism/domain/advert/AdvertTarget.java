@@ -11,10 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import jersey.repackaged.com.google.common.base.Objects;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import jersey.repackaged.com.google.common.base.Objects;
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;

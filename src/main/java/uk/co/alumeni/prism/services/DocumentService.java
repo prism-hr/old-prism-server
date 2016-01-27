@@ -20,6 +20,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.dao.DocumentDAO;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.document.PrismFileCategory;
+import uk.co.alumeni.prism.domain.document.PrismFileCategory.PrismImageCategory;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.System;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.exceptions.IntegrationException;
+import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
+import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
@@ -35,18 +47,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.itextpdf.text.pdf.PdfReader;
-
-import uk.co.alumeni.prism.dao.DocumentDAO;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.document.PrismFileCategory;
-import uk.co.alumeni.prism.domain.document.PrismFileCategory.PrismImageCategory;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.exceptions.IntegrationException;
-import uk.co.alumeni.prism.exceptions.PrismBadRequestException;
-import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 
 @Service
 @Transactional

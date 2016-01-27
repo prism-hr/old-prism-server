@@ -50,12 +50,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.dao.UserDAO;
 import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
@@ -91,6 +85,12 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

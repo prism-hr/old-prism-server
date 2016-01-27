@@ -28,11 +28,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.PrismConstants;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+
+import com.google.common.collect.Maps;
 
 @Service
 @Transactional

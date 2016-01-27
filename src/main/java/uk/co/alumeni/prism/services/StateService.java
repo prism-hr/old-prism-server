@@ -17,14 +17,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.dao.StateDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -61,6 +53,14 @@ import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 import uk.co.alumeni.prism.workflow.resolvers.state.termination.StateTerminationResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

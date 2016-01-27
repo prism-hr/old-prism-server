@@ -30,12 +30,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
-
 import uk.co.alumeni.prism.dao.ActionDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -59,6 +53,12 @@ import uk.co.alumeni.prism.dto.ActionRedactionDTO;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional

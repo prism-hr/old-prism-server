@@ -28,15 +28,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import jersey.repackaged.com.google.common.collect.Maps;
+
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.dao.NotificationDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
@@ -75,6 +73,9 @@ import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

@@ -36,10 +36,6 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.dao.ProfileDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
@@ -94,6 +90,10 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional

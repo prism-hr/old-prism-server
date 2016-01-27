@@ -10,12 +10,12 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 
 public class ResourceRepresentationConnection implements Comparable<ResourceRepresentationConnection> {
 

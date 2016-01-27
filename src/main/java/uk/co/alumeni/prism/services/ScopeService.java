@@ -7,12 +7,12 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.HashMultimap;
-
 import uk.co.alumeni.prism.dao.ScopeDAO;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+
+import com.google.common.collect.HashMultimap;
 
 @Service
 @Transactional

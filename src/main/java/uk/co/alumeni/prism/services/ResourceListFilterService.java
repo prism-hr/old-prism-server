@@ -18,9 +18,6 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
@@ -43,6 +40,9 @@ import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterTagDTO;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional

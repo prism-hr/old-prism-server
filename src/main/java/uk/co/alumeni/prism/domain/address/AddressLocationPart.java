@@ -12,10 +12,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.google.common.base.Objects;
-
 import jersey.repackaged.com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.UniqueEntity;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "address_location_part")

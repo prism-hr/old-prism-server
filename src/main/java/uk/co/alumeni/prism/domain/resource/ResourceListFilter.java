@@ -16,13 +16,13 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.workflow.Scope;
+
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "resource_list_filter", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_account_id", "scope_id"})})

@@ -2,8 +2,6 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
@@ -16,6 +14,8 @@ import uk.co.alumeni.prism.rest.representation.configuration.DisplayPropertyConf
 import uk.co.alumeni.prism.rest.representation.configuration.NotificationConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.StateDurationConfigurationRepresentation;
 import uk.co.alumeni.prism.rest.representation.configuration.WorkflowConfigurationRepresentation;
+
+import com.google.common.collect.Maps;
 
 public enum PrismConfiguration {
 

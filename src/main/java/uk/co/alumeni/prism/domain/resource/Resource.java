@@ -10,8 +10,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import com.google.common.base.Joiner;
-
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -23,6 +21,8 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import uk.co.alumeni.prism.utils.PrismReflectionUtils;
+
+import com.google.common.base.Joiner;
 
 public abstract class Resource implements Activity, UniqueEntity {
 

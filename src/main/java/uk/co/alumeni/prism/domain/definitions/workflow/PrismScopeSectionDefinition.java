@@ -15,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.SetMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceCategoriesEvaluator;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceCompetencesEvaluator;
@@ -26,6 +22,10 @@ import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceDetailsEvaluator;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceImagesEvaluator;
 import uk.co.alumeni.prism.workflow.evaluators.ResourceTargetsEvaluator;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.SetMultimap;
 
 public enum PrismScopeSectionDefinition {
 

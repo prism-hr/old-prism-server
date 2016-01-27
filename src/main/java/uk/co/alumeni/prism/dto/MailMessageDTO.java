@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.dto;
 
-import com.google.common.base.MoreObjects;
-
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
+
+import com.google.common.base.MoreObjects;
 
 public final class MailMessageDTO {
 

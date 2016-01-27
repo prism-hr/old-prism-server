@@ -3,9 +3,9 @@ package uk.co.alumeni.prism.dto;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+
+import com.google.common.base.Objects;
 
 public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO<?>> implements Comparable<T> {
 

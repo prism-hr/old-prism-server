@@ -14,11 +14,11 @@ import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.user.UserRole;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "role")

@@ -15,9 +15,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -34,6 +31,9 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtend
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 @Transactional

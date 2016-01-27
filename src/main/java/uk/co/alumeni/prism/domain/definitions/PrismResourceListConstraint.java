@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.LinkedHashMultimap;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryLocationSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryThemeSelector;
@@ -17,6 +15,8 @@ import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByParentResourceSel
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByThemeSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByUserAndRoleSelector;
 import uk.co.alumeni.prism.workflow.selectors.filter.StateByStateGroupSelector;
+
+import com.google.common.collect.LinkedHashMultimap;
 
 public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
 

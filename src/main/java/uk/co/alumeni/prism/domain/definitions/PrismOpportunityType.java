@@ -7,9 +7,9 @@ import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.WO
 
 import java.util.List;
 
-import com.google.common.collect.LinkedListMultimap;
-
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
+
+import com.google.common.collect.LinkedListMultimap;
 
 public enum PrismOpportunityType implements EnumDefinition<uk.co.alumeni.prism.enums.PrismOpportunityType>,
     PrismLocalizableDefinition {

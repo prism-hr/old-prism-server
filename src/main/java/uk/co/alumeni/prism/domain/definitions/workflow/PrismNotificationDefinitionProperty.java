@@ -24,9 +24,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 
 import java.util.List;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-
 import uk.co.alumeni.prism.workflow.notification.property.ActionCompleteBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ActionViewEditBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationCodeBuilder;
@@ -91,6 +88,9 @@ import uk.co.alumeni.prism.workflow.notification.property.TemplateSignatoryFullN
 import uk.co.alumeni.prism.workflow.notification.property.TemplateSystemHelpdeskBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TemplateSystemHomepageBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TemplateSystemNameBuilder;
+
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
 
 public enum PrismNotificationDefinitionProperty {
 

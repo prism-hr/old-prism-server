@@ -37,9 +37,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -68,6 +65,9 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 
 @Repository
 @SuppressWarnings("unchecked")

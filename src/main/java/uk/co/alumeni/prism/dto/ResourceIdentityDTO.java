@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.dto;
 
 import static org.apache.commons.lang3.ObjectUtils.compare;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 import com.google.common.base.Objects;
-
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
 public class ResourceIdentityDTO implements Comparable<ResourceIdentityDTO> {
 

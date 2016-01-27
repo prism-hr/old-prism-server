@@ -14,10 +14,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
+
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "state_action", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_id", "action_id" }) })

@@ -43,8 +43,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
@@ -55,6 +53,8 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+
+import com.google.common.collect.Lists;
 
 public class PrismApplicationWorkflow {
 

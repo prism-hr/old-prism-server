@@ -34,10 +34,6 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMap;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
@@ -62,6 +58,10 @@ import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
 import uk.co.alumeni.prism.dto.ApplicationReportListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 
 @Repository
 @SuppressWarnings("unchecked")

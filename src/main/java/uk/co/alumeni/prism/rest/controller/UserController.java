@@ -24,9 +24,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
@@ -69,6 +66,9 @@ import uk.co.alumeni.prism.services.ProfileService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.UserAccountService;
 import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 @RestController
 @RequestMapping("/api/user")

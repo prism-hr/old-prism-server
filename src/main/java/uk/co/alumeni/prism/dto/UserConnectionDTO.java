@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.dto;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.user.User;
+
+import com.google.common.base.Objects;
 
 public class UserConnectionDTO {
 

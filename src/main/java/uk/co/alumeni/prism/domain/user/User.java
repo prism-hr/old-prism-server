@@ -22,9 +22,6 @@ import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -44,6 +41,9 @@ import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import uk.co.alumeni.prism.workflow.user.UserReassignmentProcessor;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user")

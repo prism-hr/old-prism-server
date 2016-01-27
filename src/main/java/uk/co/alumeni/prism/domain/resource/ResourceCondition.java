@@ -12,11 +12,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "resource_condition", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "action_condition" }),

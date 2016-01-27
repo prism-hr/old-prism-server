@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.ImmutableMap;
-
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationAward;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
@@ -39,6 +37,8 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentat
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ProfileService;
+
+import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping(value = { "api/applications" })

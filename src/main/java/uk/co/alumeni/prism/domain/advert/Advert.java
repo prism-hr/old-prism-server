@@ -30,9 +30,6 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -50,6 +47,9 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
 import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })

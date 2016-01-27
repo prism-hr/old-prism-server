@@ -32,8 +32,6 @@ import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.HashMultimap;
-
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationAdvertRelationSection;
@@ -59,6 +57,8 @@ import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import com.google.common.collect.HashMultimap;
 
 @Repository
 @SuppressWarnings("unchecked")

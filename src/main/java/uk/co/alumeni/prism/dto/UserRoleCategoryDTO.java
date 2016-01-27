@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+
+import com.google.common.base.Objects;
 
 public class UserRoleCategoryDTO {
 

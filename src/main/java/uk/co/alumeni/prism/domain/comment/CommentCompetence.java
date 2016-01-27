@@ -9,9 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.Competence;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "comment_competence", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "competence_id" }) })

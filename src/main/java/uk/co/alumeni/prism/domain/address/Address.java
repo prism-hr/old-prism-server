@@ -15,11 +15,11 @@ import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import uk.co.alumeni.prism.domain.Domicile;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
-import uk.co.alumeni.prism.domain.Domicile;
 
 @Entity
 @Table(name = "address")

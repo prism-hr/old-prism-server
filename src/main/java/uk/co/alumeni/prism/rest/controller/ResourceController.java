@@ -22,11 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.visualization.datasource.DataSourceHelper;
-import com.google.visualization.datasource.DataSourceRequest;
-import com.google.visualization.datasource.datatable.DataTable;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -67,6 +62,11 @@ import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.visualization.datasource.DataSourceHelper;
+import com.google.visualization.datasource.DataSourceRequest;
+import com.google.visualization.datasource.datatable.DataTable;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")

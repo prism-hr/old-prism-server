@@ -13,14 +13,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.google.common.collect.Sets;
-
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
 import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.System;
+
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "notification_configuration", uniqueConstraints = {

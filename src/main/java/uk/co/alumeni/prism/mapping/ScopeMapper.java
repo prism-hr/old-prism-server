@@ -17,6 +17,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import jersey.repackaged.com.google.common.collect.Lists;
+import jersey.repackaged.com.google.common.collect.Maps;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Projections;
@@ -24,10 +27,6 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Sets;
-
-import jersey.repackaged.com.google.common.collect.Lists;
-import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelationGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -43,6 +42,8 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.R
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
+
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional

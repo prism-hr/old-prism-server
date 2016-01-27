@@ -2,9 +2,9 @@ package uk.co.alumeni.prism.rest.dto.resource;
 
 import javax.validation.constraints.NotNull;
 
-import com.google.common.base.Objects;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+
+import com.google.common.base.Objects;
 
 public class ResourceDTO {
 

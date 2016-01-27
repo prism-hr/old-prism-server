@@ -1,16 +1,17 @@
 package uk.co.alumeni.prism.mapping;
 
-import java.util.Collections;
-import java.util.HashSet;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.Collections.singletonList;
+
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceUserRolesRepresentation;
@@ -19,6 +20,8 @@ import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
+
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -42,27 +45,24 @@ public class RoleMapper {
     public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource) {
         resourceService.validateViewResource(resource);
 
-        HashSet<String> emailSet = new HashSet<>();
-        List<User> users = userService.getResourceUsers(resource);
+        Set<ResourceUserRolesRepresentation> representations = Sets.newLinkedHashSet();
+        userService.getResourceUsers(resource).forEach(user -> representations.add(getResourceUserRolesRepresentation(resource, user)));
 
-        Stream<ResourceUserRolesRepresentation> activeUserRepresentations = users.stream()
-                .filter(user -> emailSet.add(user.getEmail()))
-                .map(user -> getResourceUserRolesRepresentation(resource, user));
-
-        Stream<ResourceUserRolesRepresentation> pendingUserRepresentations = resource.getStateActionPendings().stream()
-                .flatMap(sa -> {
+        resource.getStateActionPendings().stream().forEach(stateActionPending -> { //
+                    PrismRole assignRole = stateActionPending.getAssignUserRole().getId();
                     @SuppressWarnings("unchecked")
-                    List<UserRepresentationSimple> userRepresentations = prismJsonMappingUtils.readCollection(sa.getAssignUserList(), List.class, UserRepresentationSimple.class);
-                    return userRepresentations.stream()
-                            .map(userRepresentation -> new ResourceUserRolesRepresentation()
-                                    .withUser(userRepresentation)
-                                    .withRoles(Collections.singletonList(sa.getAssignUserRole().getId()))
-                                    .withMessage(sa.getAssignUserMessage())
-                                    .withPending(true));
-                })
-                .filter(user -> emailSet.add(user.getUser().getEmail()));
+                    List<UserRepresentationSimple> userRepresentations = prismJsonMappingUtils.readCollection(stateActionPending.getAssignUserList(),
+                            List.class, UserRepresentationSimple.class);
+                    userRepresentations.stream().forEach(userRepresentation -> {
+                        representations.add(new ResourceUserRolesRepresentation()
+                                .withUser(userRepresentation)
+                                .withRoles(singletonList(assignRole))
+                                .withMessage(stateActionPending.getAssignUserMessage())
+                                .withPending(true));
+                    });
+                });
 
-        return Stream.concat(activeUserRepresentations, pendingUserRepresentations).collect(Collectors.toList());
+        return newLinkedList(representations);
     }
 
     private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user) {

@@ -22,8 +22,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import com.google.common.collect.Maps;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
@@ -86,6 +84,8 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.Applica
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
 import uk.co.alumeni.prism.workflow.selectors.action.ApplicationByReferencesProvidedSelector;
 import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
+
+import com.google.common.collect.Maps;
 
 public enum PrismState {
 

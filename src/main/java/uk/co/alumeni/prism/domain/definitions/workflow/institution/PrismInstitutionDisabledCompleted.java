@@ -2,7 +2,6 @@ package uk.co.alumeni.prism.domain.definitions.workflow.institution;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditAbstract;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;

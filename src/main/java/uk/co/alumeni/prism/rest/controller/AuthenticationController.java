@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.common.collect.ImmutableMap;
-
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.auth.OauthLoginDTO;
 import uk.co.alumeni.prism.rest.dto.auth.OauthUserDefinition;
@@ -33,6 +31,8 @@ import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
 import uk.co.alumeni.prism.security.AuthenticationTokenHelper;
 import uk.co.alumeni.prism.services.UserAccountService;
+
+import com.google.common.collect.ImmutableMap;
 
 @RestController
 @RequestMapping("/api/auth")

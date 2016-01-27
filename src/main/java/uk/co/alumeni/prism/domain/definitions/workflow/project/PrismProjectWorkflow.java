@@ -22,7 +22,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_WITHDRAWN;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_VIEW_EDIT_TRANSITION;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;

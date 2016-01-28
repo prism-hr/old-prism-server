@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.math.RoundingMode.HALF_UP;
@@ -8,6 +9,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
@@ -182,7 +184,8 @@ public class UserService {
     }
 
     public User getOrCreateUser(String firstName, String lastName, String email) {
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email);
+        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
+                .withCreatorUser(getCurrentUser());
         User duplicateUser = entityService.getDuplicateEntity(transientUser);
         if (duplicateUser == null) {
             transientUser.setActivationCode(PrismEncryptionUtils.getUUID());
@@ -513,6 +516,11 @@ public class UserService {
 
     public UserDTO getUserDTO(User user) {
         return new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail());
+    }
+
+    public boolean checkUserEditable(User user) {
+        UserAccount userAccount = user.getUserAccount();
+        return userAccount == null || isFalse(userAccount.getEnabled()) && equal(user.getCreatorUser(), getCurrentUser());
     }
 
     @SuppressWarnings("unchecked")

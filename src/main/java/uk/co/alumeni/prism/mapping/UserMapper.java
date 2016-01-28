@@ -46,6 +46,7 @@ import uk.co.alumeni.prism.rest.representation.user.UserInstitutionIdentityRepre
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationProfile;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationUnverified;
 import uk.co.alumeni.prism.rest.representation.user.UserRolesRepresentation;
@@ -111,24 +112,31 @@ public class UserMapper {
     public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
         DateTime updatedBaseline = DateTime.now().minusDays(1);
         List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
-        userService.getUserProfiles(filter).forEach(u -> {
-            representations.add(new ProfileListRowRepresentation()
-                    .withRaisesUpdateFlag(u.getUpdatedTimestamp().isAfter(updatedBaseline))
-                    .withUser(getUserRepresentationSimple(u))
-                    .withPersonalSummary(u.getPersonalSummary())
-                    .withCv(u.getCvId() == null ? null : documentMapper.getDocumentRepresentation(u.getCvId()))
-                    .withLinkedInProfileUrl(u.getLinkedInProfileUrl())
-                    .withApplicationCount(u.getApplicationCount() == null ? null : u.getApplicationCount().intValue())
-                    .withApplicationRatingCount(u.getApplicationRatingCount() == null ? null : u.getApplicationRatingCount().intValue())
-                    .withApplicationRatingAverage(u.getApplicationRatingAverage() == null ? null : u.getApplicationRatingAverage().setScale(RATING_PRECISION, HALF_UP))
-                    .withUpdatedTimestamp(u.getUpdatedTimestamp())
-                    .withSequenceIdentifier(u.getSequenceIdentifier()));
-        });
+        userService.getUserProfiles(filter).forEach(user -> { //
+                    representations.add(new ProfileListRowRepresentation()
+                            .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(updatedBaseline))
+                            .withUser(getUserRepresentationSimple(user))
+                            .withPersonalSummary(user.getPersonalSummary())
+                            .withCv(user.getCvId() == null ? null : documentMapper.getDocumentRepresentation(user.getCvId()))
+                            .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
+                            .withApplicationCount(user.getApplicationCount() == null ? null : user.getApplicationCount().intValue())
+                            .withApplicationRatingCount(user.getApplicationRatingCount() == null ? null : user.getApplicationRatingCount().intValue())
+                            .withApplicationRatingAverage(
+                                    user.getApplicationRatingAverage() == null ? null : user.getApplicationRatingAverage().setScale(RATING_PRECISION, HALF_UP))
+                            .withUpdatedTimestamp(user.getUpdatedTimestamp())
+                            .withSequenceIdentifier(user.getSequenceIdentifier()));
+                });
         return representations;
     }
 
     public UserRepresentationSimple getUserRepresentationSimple(User user) {
         return getUserRepresentation(user, UserRepresentationSimple.class);
+    }
+
+    public UserRepresentationProfile getUserRepresentationProfile(User user) {
+        UserRepresentationProfile representation = getUserRepresentation(user, UserRepresentationProfile.class);
+        representation.setEditable(userService.checkUserEditable(user));
+        return representation;
     }
 
     public UserRepresentationExtended getUserRepresentationExtended(User user) {
@@ -147,7 +155,8 @@ public class UserMapper {
     }
 
     public List<UserRepresentationInvitationBounced> getUserUnverifiedRepresentations(Resource resource, UserListFilterDTO filterDTO) {
-        String noDiagnosis = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(SYSTEM_NO_DIAGNOSTIC_INFORMATION);
+        String noDiagnosis = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem())
+                .loadLazy(SYSTEM_NO_DIAGNOSTIC_INFORMATION);
 
         return userService.getBouncedOrUnverifiedUsers(resource, filterDTO).stream()
                 .map(user -> getUserRepresentationUnverified(user, noDiagnosis)).collect(Collectors.toList());
@@ -169,7 +178,8 @@ public class UserMapper {
         return representation;
     }
 
-    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
+    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution,
+            PrismUserInstitutionIdentity identityType) {
         return new UserInstitutionIdentityRepresentation().withIdentityType(identityType).withIdentifier(
                 userService.getUserInstitutionIdentity(user, institution, identityType));
     }
@@ -222,7 +232,8 @@ public class UserMapper {
         Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
         return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
-                .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user)).withUnverifiedUserActivities(getUnverifiedUserRepresentations(user))
+                .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
+                .withUnverifiedUserActivities(getUnverifiedUserRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user)));
     }
 
@@ -233,7 +244,8 @@ public class UserMapper {
                 .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications()))
                 .withAwards(profileMapper.getAwardRepresentations(userAccount.getAwards()))
                 .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions()))
-                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees())).withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
+                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees()))
+                .withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
                 .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
                 .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
     }
@@ -252,8 +264,10 @@ public class UserMapper {
 
     public List<UserRolesRepresentation> getUserRoleRepresentations(User user) {
         HashMultimap<ResourceRepresentationIdentity, PrismRole> index = HashMultimap.create();
-        roleService.getUserRoles(user)
-                .forEach(userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
+        roleService
+                .getUserRoles(user)
+                .forEach(
+                        userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
 
         return index.keySet().stream()
                 .map(resource -> new UserRolesRepresentation(resource, newArrayList(index.get(resource))))
@@ -289,8 +303,10 @@ public class UserMapper {
                 userRepresentations = representation.getUsers();
             }
 
-            UserRepresentationUnverified userRepresentation = new UserRepresentationUnverified().withId(unverifiedUser.getUserId()).withFirstName(unverifiedUser.getUserFirstName())
-                    .withLastName(unverifiedUser.getUserLastName()).withEmail(unverifiedUser.getUserEmail()).withAccountProfileUrl(unverifiedUser.getUserLinkedinProfileUrl())
+            UserRepresentationUnverified userRepresentation = new UserRepresentationUnverified().withId(unverifiedUser.getUserId())
+                    .withFirstName(unverifiedUser.getUserFirstName())
+                    .withLastName(unverifiedUser.getUserLastName()).withEmail(unverifiedUser.getUserEmail())
+                    .withAccountProfileUrl(unverifiedUser.getUserLinkedinProfileUrl())
                     .withAccountImageUrl(unverifiedUser.getUserLinkedinImageUrl())
                     .withPortraitImage(documentMapper.getDocumentRepresentation(unverifiedUser.getUserPortraitImageId()));
 

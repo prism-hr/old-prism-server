@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
@@ -33,6 +34,14 @@ public class AddressDAO {
                 .createAlias("locations", "location", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.isNull("location.id")) //
                 .addOrder(Order.asc("id")) //
+                .list();
+    }
+
+    public List<Integer> getAddressesWithNoLocationParts() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Address.class) //
+                .setProjection(Projections.groupProperty("id"))
+                .createAlias("locations", "location", JoinType.LEFT_OUTER_JOIN)
+                .add(Restrictions.isNull("location.id")) //
                 .list();
     }
 

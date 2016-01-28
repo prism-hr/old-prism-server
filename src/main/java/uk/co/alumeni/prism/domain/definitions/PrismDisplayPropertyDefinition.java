@@ -1586,6 +1586,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_APPLICATION_OPTIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Application Options"),
     SYSTEM_RESOURCE_MANAGEMENT_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Resource Management"),
     SYSTEM_RESOURCE_ADVERT_CATEGORIES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Categories and Themes"),
+    SYSTEM_RESOURCE_ADVERT_BADGE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Share and Badges"),
     SYSTEM_RESOURCE_CATEGORIES_INCOMPLETE(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Provide some tags to help candidates discover your advert."),
     SYSTEM_RESOURCE_ADVERT_LOCATIONS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Locations"),
     SYSTEM_RESOURCE_FEES_PAYMENTS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Salary"),

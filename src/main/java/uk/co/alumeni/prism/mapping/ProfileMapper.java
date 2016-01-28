@@ -22,12 +22,14 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
+import uk.co.alumeni.prism.domain.profile.ProfileAdvertRelationSection;
 import uk.co.alumeni.prism.domain.profile.ProfileAward;
 import uk.co.alumeni.prism.domain.profile.ProfileDocument;
 import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
@@ -55,7 +57,8 @@ public class ProfileMapper {
     @Inject
     private UserMapper userMapper;
 
-    public <T extends ProfilePersonalDetail<?>> ProfilePersonalDetailRepresentation getPersonalDetailRepresentation(T personalDetail, boolean viewEqualOpportunities) {
+    public <T extends ProfilePersonalDetail<?>> ProfilePersonalDetailRepresentation getPersonalDetailRepresentation(T personalDetail,
+            boolean viewEqualOpportunities) {
         if (personalDetail != null) {
             Domicile nationality = personalDetail.getNationality();
             Domicile domicile = personalDetail.getDomicile();
@@ -81,7 +84,8 @@ public class ProfileMapper {
 
     public <T extends ProfileAddress<?>> ProfileAddressRepresentation getAddressRepresentation(T address) {
         if (address != null) {
-            ProfileAddressRepresentation representation = new ProfileAddressRepresentation().withCurrentAddress(getAddressRepresentation(address.getCurrentAddress()))
+            ProfileAddressRepresentation representation = new ProfileAddressRepresentation().withCurrentAddress(
+                    getAddressRepresentation(address.getCurrentAddress()))
                     .withContactAddress(getAddressRepresentation(address.getContactAddress()));
 
             if (address.getClass().equals(ApplicationAddress.class)) {
@@ -93,9 +97,9 @@ public class ProfileMapper {
         return null;
     }
 
-    public <T extends ProfileQualification<?>> List<ProfileQualificationRepresentation> getQualificationRepresentations(Set<T> qualifications) {
+    public <T extends ProfileQualification<?>> List<ProfileQualificationRepresentation> getQualificationRepresentations(Set<T> qualifications, User currentUser) {
         return qualifications.stream()
-                .map(this::getQualificationRepresentation)
+                .map(qualification -> getQualificationRepresentation(qualification, currentUser))
                 .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
                 .collect(Collectors.toList());
     }
@@ -107,16 +111,17 @@ public class ProfileMapper {
                 .collect(Collectors.toList());
     }
 
-    public <T extends ProfileEmploymentPosition<?>> List<ProfileEmploymentPositionRepresentation> getEmploymentPositionRepresentations(Set<T> employmentPositions) {
+    public <T extends ProfileEmploymentPosition<?>> List<ProfileEmploymentPositionRepresentation> getEmploymentPositionRepresentations(
+            Set<T> employmentPositions, User currentUser) {
         return employmentPositions.stream()
-                .map(this::getEmploymentPositionRepresentation)
+                .map(employmentPosition -> getEmploymentPositionRepresentation(employmentPosition, currentUser))
                 .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
                 .collect(Collectors.toList());
     }
 
-    public <T extends ProfileReferee<?>> List<ProfileRefereeRepresentation> getRefereeRepresentations(Set<T> referees) {
+    public <T extends ProfileReferee<?>> List<ProfileRefereeRepresentation> getRefereeRepresentations(Set<T> referees, User currentUser) {
         return referees.stream()
-                .map(this::getRefereeRepresentation)
+                .map(referee -> getRefereeRepresentation(referee, currentUser))
                 .sorted((o1, o2) -> o1.getResource().getUser().getFullName().compareTo(o2.getResource().getUser().getFullName()))
                 .collect(Collectors.toList());
     }
@@ -142,10 +147,12 @@ public class ProfileMapper {
         return null;
     }
 
-    public <T extends ProfileAdditionalInformation<?>> ProfileAdditionalInformationRepresentation getAdditionalInformationRepresentation(T additionalInformation,
+    public <T extends ProfileAdditionalInformation<?>> ProfileAdditionalInformationRepresentation getAdditionalInformationRepresentation(
+            T additionalInformation,
             boolean viewEqualOpportunities) {
         if (additionalInformation != null && viewEqualOpportunities) {
-            ProfileAdditionalInformationRepresentation representation = new ProfileAdditionalInformationRepresentation().withRequirements(additionalInformation.getRequirements())
+            ProfileAdditionalInformationRepresentation representation = new ProfileAdditionalInformationRepresentation().withRequirements(
+                    additionalInformation.getRequirements())
                     .withConvictions(additionalInformation.getConvictions());
 
             if (additionalInformation.getClass().equals(ApplicationAdditionalInformation.class)) {
@@ -165,7 +172,7 @@ public class ProfileMapper {
         return representation;
     }
 
-    private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification) {
+    private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification, User currentUser) {
         Document document = qualification.getDocument();
 
         Integer startYear = qualification.getStartYear();
@@ -175,12 +182,9 @@ public class ProfileMapper {
         LocalDate awardDate = awardYear == null ? null : new LocalDate(awardYear, qualification.getAwardMonth(), 1);
 
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
-                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(qualification.getAdvert().getResource()));
+                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(qualification.getAdvert().getResource(), currentUser));
 
-        if (qualification.getUser() != null) {
-            relation.setUser(userMapper.getUserRepresentationSimple(qualification.getUser()));
-        }
-
+        setUserRepresentation(qualification, relation, currentUser);
         ProfileQualificationRepresentation representation = new ProfileQualificationRepresentation().withId(qualification.getId()).withResource(relation)
                 .withGrade(qualification.getGrade()).withStartDate(startDate).withAwardDate(awardDate).withCompleted(qualification.getCompleted())
                 .withDocumentRepresentation(document == null ? null : documentMapper.getDocumentRepresentation(document));
@@ -198,7 +202,8 @@ public class ProfileMapper {
                 .withAwardDate(awardYear == null ? null : new LocalDate(awardYear, award.getAwardMonth(), 1));
     }
 
-    private <T extends ProfileEmploymentPosition<?>> ProfileEmploymentPositionRepresentation getEmploymentPositionRepresentation(T employmentPosition) {
+    private <T extends ProfileEmploymentPosition<?>> ProfileEmploymentPositionRepresentation getEmploymentPositionRepresentation(T employmentPosition,
+            User currentUser) {
         Integer startYear = employmentPosition.getStartYear();
         LocalDate startDate = startYear == null ? null : new LocalDate(startYear, employmentPosition.getStartMonth(), 1);
 
@@ -206,11 +211,9 @@ public class ProfileMapper {
         LocalDate endDate = endYear == null ? null : new LocalDate(endYear, employmentPosition.getEndMonth(), 1);
 
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
-                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(employmentPosition.getAdvert().getResource()));
-        if (employmentPosition.getUser() != null) {
-            relation.setUser(userMapper.getUserRepresentationSimple(employmentPosition.getUser()));
-        }
+                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(employmentPosition.getAdvert().getResource(), currentUser));
 
+        setUserRepresentation(employmentPosition, relation, currentUser);
         ProfileEmploymentPositionRepresentation representation = new ProfileEmploymentPositionRepresentation().withId(employmentPosition.getId())
                 .withResource(relation).withCurrent(employmentPosition.getCurrent()).withStartDate(startDate).withEndDate(endDate);
 
@@ -221,14 +224,11 @@ public class ProfileMapper {
         return representation;
     }
 
-    private <T extends ProfileReferee<?>> ProfileRefereeRepresentation getRefereeRepresentation(T referee) {
+    private <T extends ProfileReferee<?>> ProfileRefereeRepresentation getRefereeRepresentation(T referee, User currentUser) {
         ResourceRelationInvitationRepresentation relation = new ResourceRelationInvitationRepresentation()
-                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(referee.getAdvert().getResource()));
+                .withResource(resourceMapper.getResourceOpportunityRepresentationRelation(referee.getAdvert().getResource(), currentUser));
 
-        if (referee.getUser() != null) {
-            relation.setUser(userMapper.getUserRepresentationSimple(referee.getUser()));
-        }
-
+        setUserRepresentation(referee, relation, currentUser);
         ProfileRefereeRepresentation representation = new ProfileRefereeRepresentation().withId(referee.getId())
                 .withResource(relation).withPhone(referee.getPhone()).withSkype(referee.getSkype());
 
@@ -238,6 +238,14 @@ public class ProfileMapper {
         }
 
         return representation;
+    }
+
+    private <T extends ProfileAdvertRelationSection<?>> void setUserRepresentation(T entity, ResourceRelationInvitationRepresentation representation,
+            User currentUser) {
+        User user = entity.getUser();
+        if (user != null) {
+            representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
+        }
     }
 
 }

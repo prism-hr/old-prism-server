@@ -169,7 +169,7 @@ public class AdvertMapper {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
             ResourceParent resource = advert.getResource();
-            representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser()));
+            representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser(), userService.getCurrentUser()));
 
             Institution institution = resource.getInstitution();
             representation.setInstitution(resourceMapper.getResourceRepresentationSimple(institution));
@@ -192,7 +192,8 @@ public class AdvertMapper {
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
                 setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
-                representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption()).collect(toList()));
+                representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption())
+                        .collect(toList()));
             }
 
             setOpportunityCategories(representation, resource.getOpportunityCategories());
@@ -249,10 +250,17 @@ public class AdvertMapper {
         representation.setApplyHomepage(advert.getApplyHomepage());
         representation.setTelephone(advert.getTelephone());
 
-        representation.setAddress(new AddressRepresentation().withAddressLine1(advert.getAddressLine1()).withAddressLine2(advert.getAddressLine2())
-                .withAddressTown(advert.getAddressTown()).withAddressRegion(advert.getAddressRegion()).withAddressCode(advert.getAddressCode())
-                .withDomicile(advert.getAddressDomicileId()).withGoogleId(advert.getAddressGoogleId())
-                .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(advert.getAddressCoordinateLongitude())));
+        representation.setAddress(new AddressRepresentation()
+                .withAddressLine1(advert.getAddressLine1())
+                .withAddressLine2(advert.getAddressLine2())
+                .withAddressTown(advert.getAddressTown())
+                .withAddressRegion(advert.getAddressRegion())
+                .withAddressCode(advert.getAddressCode())
+                .withDomicile(advert.getAddressDomicileId())
+                .withGoogleId(advert.getAddressGoogleId())
+                .withCoordinates(
+                        new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(
+                                advert.getAddressCoordinateLongitude())));
 
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
@@ -345,8 +353,10 @@ public class AdvertMapper {
         Map<Integer, AdvertUserDTO> advertUsers = advertService.getAdvertUsers(otherAdvertIds);
 
         for (AdvertTargetDTO advertTarget : advertTargets) {
-            ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(advertTarget.getThisInstitutionId(),
-                    advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(), advertTarget.getThisDepartmentName());
+            ResourceRepresentationConnection thisResourceRepresentation = resourceMapper.getResourceRepresentationConnection(
+                    advertTarget.getThisInstitutionId(),
+                    advertTarget.getThisInstitutionName(), advertTarget.getThisLogoImageId(), advertTarget.getThisDepartmentId(),
+                    advertTarget.getThisDepartmentName());
 
             AdvertTargetRepresentation representation = representationIndex.get(thisResourceRepresentation);
             if (representation == null) {
@@ -468,7 +478,8 @@ public class AdvertMapper {
             TreeMultimap<Integer, AdvertLocationAddressPartRepresentation> representationIndex = TreeMultimap.create();
             summaryDTOs.forEach(summaryDTO -> {
                 Integer parentId = summaryDTO.getParentId();
-                AdvertLocationAddressPartRepresentation representation = new AdvertLocationAddressPartRepresentation().withId(summaryDTO.getId()).withName(summaryDTO.getName())
+                AdvertLocationAddressPartRepresentation representation = new AdvertLocationAddressPartRepresentation().withId(summaryDTO.getId())
+                        .withName(summaryDTO.getName())
                         .withAdvertCount(summaryDTO.getAdvertCount());
                 if (parentId == null) {
                     representations.add(representation);
@@ -522,7 +533,7 @@ public class AdvertMapper {
         advertService.getAdvertList(query, adverts).forEach(advert -> {
             PrismScope scope = advert.getScope();
             for (PrismScope advertScope : advertScopes) {
-                    if (advertScope.ordinal() <= scope.ordinal()) {
+                if (advertScope.ordinal() <= scope.ordinal()) {
                     ResourceFlatToNestedDTO enclosingResourceDTO = advert.getEnclosingResource(advertScope);
                     if (enclosingResourceDTO != null) {
                         resources.put(advertScope, enclosingResourceDTO.getId());
@@ -589,23 +600,25 @@ public class AdvertMapper {
         }
 
         Map<Integer, AdvertRepresentationExtended> representations = Maps.newLinkedHashMap();
-        advertIndex.keySet().forEach(advert -> {
-            AdvertRepresentationExtended representation = advertIndex.get(advert);
-            representation.setExternalConditions(newLinkedList(actionConditionIndex.get(advert)));
+        advertIndex.keySet().forEach(
+                advert -> {
+                    AdvertRepresentationExtended representation = advertIndex.get(advert);
+                    representation.setExternalConditions(newLinkedList(actionConditionIndex.get(advert)));
 
-            Set<PrismAdvertIndustry> industries = industryIndex.get(advert);
-            Set<PrismAdvertFunction> functions = functionIndex.get(advert);
-            Set<String> themes = themeIndex.get(advert);
-            Set<String> locations = locationIndex.get(advert);
+                    Set<PrismAdvertIndustry> industries = industryIndex.get(advert);
+                    Set<PrismAdvertFunction> functions = functionIndex.get(advert);
+                    Set<String> themes = themeIndex.get(advert);
+                    Set<String> locations = locationIndex.get(advert);
 
-            if (isNotEmpty(industries) || isNotEmpty(functions) || isNotEmpty(themes) || isNotEmpty(locations)) {
-                representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries)).withFunctions(newLinkedList(functions))
-                        .withThemesDisplay(newLinkedList(themes)).withLocationsDisplay(newLinkedList(locations)));
-            }
+                    if (isNotEmpty(industries) || isNotEmpty(functions) || isNotEmpty(themes) || isNotEmpty(locations)) {
+                        representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries))
+                                .withFunctions(newLinkedList(functions))
+                                .withThemesDisplay(newLinkedList(themes)).withLocationsDisplay(newLinkedList(locations)));
+                    }
 
-            representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
-            representations.put(advert, representation);
-        });
+                    representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
+                    representations.put(advert, representation);
+                });
 
         setAdvertCallToActionStates(user, advertIndex.keySet(), representations);
         return new AdvertListRepresentation().withRows(newLinkedList(representations.values())).withSummaries(getSummaryRepresentations(summaries));
@@ -622,7 +635,8 @@ public class AdvertMapper {
 
         Integer otherUserId = advertTarget.getOtherUserId();
         if (otherUserId != null) {
-            connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId()).withFirstName(advertTarget.getOtherUserFirstName())
+            connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId())
+                    .withFirstName(advertTarget.getOtherUserFirstName())
                     .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
                     .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
                     .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
@@ -654,7 +668,8 @@ public class AdvertMapper {
         return null;
     }
 
-    private void setAdvertFinancialDetailBenefitsRepresentation(String benefit, String benefitDescription, AdvertFinancialDetailRepresentation financialDetailRepresentation) {
+    private void setAdvertFinancialDetailBenefitsRepresentation(String benefit, String benefitDescription,
+            AdvertFinancialDetailRepresentation financialDetailRepresentation) {
         if (benefit != null) {
             financialDetailRepresentation.setBenefits(stream(benefit.split("\\|")).map(PrismAdvertBenefit::valueOf).collect(toList()));
             financialDetailRepresentation.setBenefitsDescription(benefitDescription);
@@ -690,7 +705,8 @@ public class AdvertMapper {
 
     private void setOpportunityCategories(AdvertRepresentationExtended representation, String opportunityCategories) {
         if (opportunityCategories != null) {
-            representation.setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf).collect(toList()));
+            representation.setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf)
+                    .collect(toList()));
         }
     }
 
@@ -708,10 +724,13 @@ public class AdvertMapper {
     }
 
     public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" }, advertIds);
-        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" }, advertIds);
+        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" },
+                advertIds);
+        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" },
+                advertIds);
         List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
-        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED", "STUDENT_REJECTED" }, advertIds);
+        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED",
+                "STUDENT_REJECTED" }, advertIds);
 
         representations.keySet().forEach(advert -> {
             representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
@@ -730,7 +749,8 @@ public class AdvertMapper {
 
     private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
+        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user,
+                new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
 
         HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
         HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();
@@ -788,10 +808,12 @@ public class AdvertMapper {
     }
 
     private boolean matchAdvertResourceContexts(Set<PrismResourceContext> ownerContexts, Set<PrismResourceContext> targetContexts) {
-        return (ownerContexts.contains(UNIVERSITY) && targetContexts.contains(EMPLOYER)) || (ownerContexts.contains(EMPLOYER) && targetContexts.contains(UNIVERSITY));
+        return (ownerContexts.contains(UNIVERSITY) && targetContexts.contains(EMPLOYER))
+                || (ownerContexts.contains(EMPLOYER) && targetContexts.contains(UNIVERSITY));
     }
 
-    private void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target, Integer ownerAdvert,
+    private void setAdvertConnectState(HashMultimap<Integer, Integer> pendingForIndex, HashMultimap<Integer, Integer> acceptedForIndex, AdvertTarget target,
+            Integer ownerAdvert,
             Integer targetAdvert) {
         if (target.getPartnershipState().equals(ENDORSEMENT_PROVIDED)) {
             acceptedForIndex.put(targetAdvert, ownerAdvert);
@@ -801,8 +823,9 @@ public class AdvertMapper {
     }
 
     private List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(Collection<Advert> locations) {
+        User currentUser = userService.getCurrentUser();
         return locations.stream()
-                .map(location -> resourceMapper.getResourceLocationRepresentationRelation(location.getResource()))
+                .map(location -> resourceMapper.getResourceLocationRepresentationRelation(location.getResource(), currentUser))
                 .collect(Collectors.toList());
     }
 

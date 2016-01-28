@@ -106,7 +106,7 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET)
     public ResourceRepresentationExtended getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceMapper.getResourceRepresentationClient(resource);
+        return resourceMapper.getResourceRepresentationClient(resource, userService.getCurrentUser());
     }
 
     @Transactional
@@ -122,7 +122,7 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public List<ResourceUserRolesRepresentation> getResourceUsers(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return roleMapper.getResourceUserRoleRepresentations(resource);
+        return roleMapper.getResourceUserRoleRepresentations(resource, userService.getCurrentUser());
     }
 
     @Transactional
@@ -138,7 +138,7 @@ public class ResourceController {
     @PreAuthorize("permitAll")
     public ResourceRepresentationRelation getResourceRelation(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return resourceMapper.getResourceRepresentationRelation(resource);
+        return resourceMapper.getResourceRepresentationRelation(resource, userService.getCurrentUser());
     }
 
     @Transactional
@@ -174,7 +174,8 @@ public class ResourceController {
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope, @RequestParam Optional<String> q) {
         Resource enclosingResource = loadResource(resourceId, resourceDescriptor);
-        List<ResourceChildCreationDTO> resources = resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, q.orElse(null));
+        List<ResourceChildCreationDTO> resources = resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope,
+                q.orElse(null));
         return resources.stream().map(resourceMapper::getResourceRepresentationChildCreation).collect(Collectors.toList());
     }
 
@@ -242,9 +243,9 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = body.getUser();
-        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), resource,
-                body.getMessage(), body.getRoles());
-        return userMapper.getUserRepresentationSimple(user);
+        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
+                resource, body.getMessage(), body.getRoles());
+        return userMapper.getUserRepresentationSimple(user, userService.getCurrentUser());
     }
 
     @RequestMapping(value = "{resourceId}/users/batch", method = RequestMethod.POST)
@@ -274,7 +275,8 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision,
+            @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestBody Map<?, ?> undertow) {
         boolean accept = decision.equals("accept");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);

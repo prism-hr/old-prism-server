@@ -37,6 +37,7 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentat
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ProfileService;
+import uk.co.alumeni.prism.services.UserService;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -56,6 +57,9 @@ public class ApplicationController {
 
     @Inject
     private ProfileMapper profileMapper;
+
+    @Inject
+    private UserService userService;
 
     @RequestMapping(value = "/{applicationId}/startDate", method = RequestMethod.GET)
     public ApplicationStartDateRepresentation getStartDateRepresentation() {
@@ -80,7 +84,7 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/qualifications", method = RequestMethod.GET)
     public List<ProfileQualificationRepresentation> getQualifications(@PathVariable Integer applicationId) {
         Application application = applicationService.getById(applicationId);
-        return profileMapper.getQualificationRepresentations(application.getQualifications());
+        return profileMapper.getQualificationRepresentations(application.getQualifications(), userService.getCurrentUser());
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications", method = RequestMethod.POST)
@@ -90,7 +94,8 @@ public class ApplicationController {
     }
 
     @RequestMapping(value = "/{applicationId}/qualifications/{qualificationId}", method = RequestMethod.PUT)
-    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId, @Valid @RequestBody ProfileQualificationDTO qualificationDTO) {
+    public void updateQualification(@PathVariable Integer applicationId, @PathVariable Integer qualificationId,
+            @Valid @RequestBody ProfileQualificationDTO qualificationDTO) {
         profileService.updateQualificationApplication(applicationId, qualificationId, qualificationDTO);
     }
 
@@ -124,7 +129,7 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.GET)
     public List<ProfileEmploymentPositionRepresentation> getEmploymentPositions(@PathVariable Integer applicationId) {
         Application application = applicationService.getById(applicationId);
-        return profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions());
+        return profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions(), userService.getCurrentUser());
     }
 
     @RequestMapping(value = "/{applicationId}/employmentPositions", method = RequestMethod.POST)
@@ -148,7 +153,7 @@ public class ApplicationController {
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.GET)
     public List<ProfileRefereeRepresentation> getReferees(@PathVariable Integer applicationId) {
         Application application = applicationService.getById(applicationId);
-        return profileMapper.getRefereeRepresentations(application.getReferees());
+        return profileMapper.getRefereeRepresentations(application.getReferees(), userService.getCurrentUser());
     }
 
     @RequestMapping(value = "/{applicationId}/referees", method = RequestMethod.POST)

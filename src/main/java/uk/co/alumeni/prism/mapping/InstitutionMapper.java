@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentationClient;
@@ -25,22 +26,25 @@ public class InstitutionMapper {
     @Inject
     private ResourceMapper resourceMapper;
 
-    public InstitutionRepresentation getInstitutionRepresentation(Institution institution, List<PrismRole> overridingRoles) {
-        return getInstitutionRepresentation(institution, InstitutionRepresentation.class, overridingRoles);
+    public InstitutionRepresentation getInstitutionRepresentation(Institution institution, List<PrismRole> overridingRoles, User currentUser) {
+        return getInstitutionRepresentation(institution, InstitutionRepresentation.class, overridingRoles, currentUser);
     }
 
-    public InstitutionRepresentationClient getInstitutionRepresentationClient(Institution institution, List<PrismRole> overridingRoles) {
-        InstitutionRepresentationClient representation = getInstitutionRepresentation(institution, InstitutionRepresentationClient.class, overridingRoles);
+    public InstitutionRepresentationClient getInstitutionRepresentationClient(Institution institution, List<PrismRole> overridingRoles, User currentUser) {
+        InstitutionRepresentationClient representation = getInstitutionRepresentation(institution, InstitutionRepresentationClient.class, overridingRoles,
+                currentUser);
         resourceMapper.appendResourceSummaryRepresentation(institution, representation);
         return representation;
     }
 
     public List<ResourceRepresentationLocation> getInstitutionRepresentations(String query, String[] googleIds) {
-        return institutionService.getInstitutions(query, googleIds).stream().map(resourceMapper::getResourceRepresentationCreation).collect(Collectors.toList());
+        return institutionService.getInstitutions(query, googleIds).stream().map(resourceMapper::getResourceRepresentationCreation)
+                .collect(Collectors.toList());
     }
 
-    private <T extends InstitutionRepresentation> T getInstitutionRepresentation(Institution institution, Class<T> returnType, List<PrismRole> overridingRoles) {
-        T representation = resourceMapper.getResourceParentRepresentation(institution, returnType, overridingRoles);
+    private <T extends InstitutionRepresentation> T getInstitutionRepresentation(Institution institution, Class<T> returnType, List<PrismRole> overridingRoles,
+            User currentUser) {
+        T representation = resourceMapper.getResourceParentRepresentation(institution, returnType, overridingRoles, currentUser);
         representation.setCurrency(institution.getCurrency());
         representation.setBusinessYearStartMonth(institution.getBusinessYearStartMonth());
         return representation;

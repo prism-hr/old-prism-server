@@ -407,16 +407,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return this;
     }
 
-    public User withFirstName2(String firstName2) {
-        this.firstName2 = firstName2;
-        return this;
-    }
-
-    public User withFirstName3(String firstName3) {
-        this.firstName3 = firstName3;
-        return this;
-    }
-
     public User withLastName(String lastName) {
         this.lastName = lastName;
         return this;

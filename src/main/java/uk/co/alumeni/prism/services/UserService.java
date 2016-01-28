@@ -193,6 +193,10 @@ public class UserService {
             transientUser.setParentUser(transientUser);
             return transientUser;
         } else {
+            if (checkUserEditable(duplicateUser, getCurrentUser())) {
+                duplicateUser.setFirstName(firstName);
+                duplicateUser.setLastName(lastName);
+            }
             return duplicateUser;
         }
     }
@@ -353,7 +357,9 @@ public class UserService {
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
 
         if (trimmedSearchTerm.length() >= 1) {
-            return userDAO.getSimilarUsers(trimmedSearchTerm);
+            List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(trimmedSearchTerm);
+            similarUsers.forEach(similarUser -> similarUser.setEditable(false));
+            return similarUsers;
         }
 
         return Lists.newArrayList();
@@ -518,9 +524,9 @@ public class UserService {
         return new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
-    public boolean checkUserEditable(User user) {
+    public boolean checkUserEditable(User user, User currentUser) {
         UserAccount userAccount = user.getUserAccount();
-        return userAccount == null || isFalse(userAccount.getEnabled()) && equal(user.getCreatorUser(), getCurrentUser());
+        return userAccount == null || isFalse(userAccount.getEnabled()) && equal(user.getCreatorUser(), currentUser);
     }
 
     @SuppressWarnings("unchecked")

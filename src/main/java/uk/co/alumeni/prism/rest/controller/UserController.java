@@ -112,7 +112,8 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.GET)
     public UserRepresentationExtended getUser() {
-        return userMapper.getUserRepresentationExtended(userService.getCurrentUser());
+        User currentUser = userService.getCurrentUser();
+        return userMapper.getUserRepresentationExtended(currentUser, currentUser);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -127,7 +128,7 @@ public class UserController {
         User parentUser = userService.getCurrentUser().getParentUser();
         User otherUser = userService.getUserByEmail(userLinkingDTO.getOtherEmail());
         userService.linkUsers(parentUser, otherUser);
-        return userMapper.getUserRepresentationSimple(otherUser);
+        return userMapper.getUserRepresentationSimple(otherUser, otherUser);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -179,7 +180,7 @@ public class UserController {
             status = "ACTIVATED";
             loginProvider = user.getUserAccount().getLinkedinId() != null ? "linkedin" : null;
         }
-        UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user);
+        UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, user);
 
         Map<String, Object> result = Maps.newHashMap();
         result.put("status", status);
@@ -235,7 +236,6 @@ public class UserController {
     }
 
     @InitBinder(value = "userRegistrationDTO")
-
     public void configureUserRegistrationBinding(WebDataBinder binder) {
         binder.setValidator(userRegistrationValidator);
     }
@@ -261,7 +261,7 @@ public class UserController {
     @RequestMapping(value = "/qualifications", method = RequestMethod.GET)
     public List<ProfileQualificationRepresentation> getQualifications() {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        return profileMapper.getQualificationRepresentations(userAccount.getQualifications());
+        return profileMapper.getQualificationRepresentations(userAccount.getQualifications(), userService.getCurrentUser());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -306,7 +306,7 @@ public class UserController {
     @RequestMapping(value = "/employmentPositions", method = RequestMethod.GET)
     public List<ProfileEmploymentPositionRepresentation> getEmploymentPositions() {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        return profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions());
+        return profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions(), userService.getCurrentUser());
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -326,7 +326,7 @@ public class UserController {
     @RequestMapping(value = "/referees", method = RequestMethod.GET)
     public List<ProfileRefereeRepresentation> getReferees() {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        return profileMapper.getRefereeRepresentations(userAccount.getReferees());
+        return profileMapper.getRefereeRepresentations(userAccount.getReferees(), userService.getCurrentUser());
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -34,7 +34,8 @@ public class DeclineController {
     private UserService userService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode, @RequestBody Map<?, ?> undertow) {
+    public void declineAction(@RequestParam Integer resourceId, @RequestParam PrismAction actionId, @RequestParam String activationCode,
+            @RequestBody Map<?, ?> undertow) {
         User user = userService.getUserByActivationCode(activationCode);
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setResource(new ResourceCreationDTO().withId(resourceId).withScope(actionId.getScope()));
@@ -53,7 +54,7 @@ public class DeclineController {
         }
 
         Resource resource = resourceService.getById(actionId.getScope().getResourceClass(), resourceId);
-        return resourceMapper.getResourceRepresentationStandard(resource);
+        return resourceMapper.getResourceRepresentationStandard(resource, userService.getCurrentUser());
     }
 
 }

@@ -99,14 +99,17 @@ public class CommentMapper {
                 Set<PrismActionRedactionType> actionRedactions = redactions.get(comment.getAction().getId());
                 if (groupRepresentation == null) {
                     groupRepresentation = new CommentGroupRepresentation().withStateGroup(comment.getTransitionState().getStateGroup().getId());
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, actionRedactions));
+                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles,
+                            actionRedactions));
                     timelineRepresentation.addCommentGroup(groupRepresentation);
                 } else if (comment.isStateGroupTransitionComment() && !comment.isSecondaryStateGroupTransitionComment()) {
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, actionRedactions));
+                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles,
+                            actionRedactions));
                     groupRepresentation = new CommentGroupRepresentation().withStateGroup(comment.getTransitionState().getStateGroup().getId());
                     timelineRepresentation.addCommentGroup(groupRepresentation);
                 } else {
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, actionRedactions));
+                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles,
+                            actionRedactions));
                 }
             }
         }
@@ -124,9 +127,10 @@ public class CommentMapper {
             Set<CommentAppointmentTimeslot> timeslots) {
         List<CommentAppointmentPreferenceRepresentation> representations = Lists.newLinkedList();
 
+        User currentUser = userService.getCurrentUser();
         for (User user : commentService.getAppointmentInvitees(schedulingComment)) {
             CommentAppointmentPreferenceRepresentation representation = new CommentAppointmentPreferenceRepresentation()
-                    .withUser(userMapper.getUserRepresentationSimple(user));
+                    .withUser(userMapper.getUserRepresentationSimple(user, currentUser));
 
             List<Integer> inviteePreferences = Lists.newLinkedList();
             Comment preferenceComment = commentService.getLatestAppointmentPreferenceComment(schedulingComment.getApplication(), schedulingComment, user);
@@ -179,7 +183,8 @@ public class CommentMapper {
     public CommentRepresentation getCommentRepresentationExtended(Comment comment) {
         return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
                 .withTransitionState(comment.getTransitionState().getId()).withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
-                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating())
+                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity())
+                .withRating(comment.getRating())
                 .withInterested(comment.getInterested()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
@@ -189,8 +194,9 @@ public class CommentMapper {
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }
-    
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles, List<PrismActionEnhancement> actionEnhancements,
+
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles,
+            List<PrismActionEnhancement> actionEnhancements,
             List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
         if (!onlyAsPartner && (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user))) {
@@ -211,7 +217,8 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentationSimple(Comment comment) {
-        CommentRepresentation representation = new CommentRepresentation().withId(comment.getId()).withUser(userMapper.getUserRepresentationSimple(comment.getUser()))
+        CommentRepresentation representation = new CommentRepresentation().withId(comment.getId())
+                .withUser(userMapper.getUserRepresentationSimple(comment.getUser(), userService.getCurrentUser()))
                 .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
                 .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp());
 
@@ -224,7 +231,8 @@ public class CommentMapper {
     }
 
     private CommentAssignedUserRepresentation getCommentAssignedUserRepresentation(CommentAssignedUser commentAssignedUser) {
-        return new CommentAssignedUserRepresentation().withUser(userMapper.getUserRepresentationSimple(commentAssignedUser.getUser()))
+        return new CommentAssignedUserRepresentation()
+                .withUser(userMapper.getUserRepresentationSimple(commentAssignedUser.getUser(), userService.getCurrentUser()))
                 .withRole(commentAssignedUser.getRole().getId()).withRoleTransitionType(commentAssignedUser.getRoleTransitionType());
     }
 
@@ -237,7 +245,7 @@ public class CommentMapper {
 
     private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {
         User delegate = comment.getDelegateUser();
-        return delegate == null ? null : userMapper.getUserRepresentationSimple(delegate);
+        return delegate == null ? null : userMapper.getUserRepresentationSimple(delegate, userService.getCurrentUser());
     }
 
     private List<CommentCompetenceGroupRepresentation> getCommentCompetenceRepresentations(Set<CommentCompetence> commentCompetences) {

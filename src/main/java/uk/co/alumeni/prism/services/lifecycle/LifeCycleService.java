@@ -52,6 +52,9 @@ public class LifeCycleService {
     @Value("${startup.section.completeness.initialize}")
     private Boolean initializeSectionCompleteness;
 
+    @Value("${startup.address.completeness.initialize}")
+    private Boolean initializeAddressCompleteness;
+
     @Value("${maintenance.run}")
     private Boolean maintain;
 
@@ -75,11 +78,11 @@ public class LifeCycleService {
             systemService.initializeWorkflow();
         }
 
-        if (BooleanUtils.isTrue(dropDisplayProperties)) {
+        if (isTrue(dropDisplayProperties)) {
             systemService.dropDisplayProperties();
         }
 
-        if (BooleanUtils.isTrue(initializeDisplayProperties)) {
+        if (isTrue(initializeDisplayProperties)) {
             systemService.initializeDisplayProperties();
         }
 
@@ -87,10 +90,14 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
-        if(BooleanUtils.isTrue(initializeSectionCompleteness)) {
+        if (isTrue(initializeSectionCompleteness)) {
             systemService.initializeSectionCompleteness();
         }
-        
+
+        if (isTrue(initializeAddressCompleteness)) {
+            systemService.initializeAddressCompleteness();
+        }
+
         if (!environment.equals("test")) {
             staticDataMapper.getData();
         }

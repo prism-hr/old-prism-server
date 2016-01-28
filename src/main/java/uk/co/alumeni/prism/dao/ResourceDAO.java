@@ -123,7 +123,8 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
-    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds, ResourceListFilterDTO filter,
+    public List<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> resourceIds,
+            ResourceListFilterDTO filter,
             boolean hasRedactions) {
         if (isNotEmpty(resourceIds)) {
             String scopeName = scope.getLowerCamelName();
@@ -197,7 +198,8 @@ public class ResourceDAO {
         return Collections.emptyList();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass,
+    public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
+            Class<T> responseClass,
             DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, columns) //
                 .add(Restrictions.eq("userRole.user", user));
@@ -207,7 +209,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
+    public <T> List<T> getResources(User user, PrismScope scope, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns,
+            Junction conditions,
             Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, parentScope, columns) //
                 .add(Restrictions.eq("userRole.user", user));
@@ -217,7 +220,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities, ResourceListFilterDTO filter,
+    public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities,
+            ResourceListFilterDTO filter,
             ProjectionList columns, Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(Restrictions.eq("userRole.user", user));
@@ -331,7 +335,8 @@ public class ResourceDAO {
                 .uniqueResult();
     }
 
-    public List<ResourceRepresentationIdentity> getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope, List<PrismState> relatedScopeStates,
+    public List<ResourceRepresentationIdentity> getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope,
+            List<PrismState> relatedScopeStates,
             HashMultimap<PrismScope, PrismState> enclosedScopes) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(relatedScope.getResourceClass())
                 .setProjection(Projections.projectionList()
@@ -494,6 +499,12 @@ public class ResourceDAO {
                 .add(Restrictions.isNotNull("opportunityRatingCount")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
+    }
+
+    public List<Integer> getResourceIds(PrismScope resourceScope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.property("id")) //
+                .list();
     }
 
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope) {

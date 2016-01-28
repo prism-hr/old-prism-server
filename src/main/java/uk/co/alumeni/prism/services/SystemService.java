@@ -58,8 +58,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
@@ -142,6 +140,9 @@ public class SystemService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AddressService addressService;
 
     @Inject
     private EntityService entityService;
@@ -260,14 +261,20 @@ public class SystemService {
         initializeDisplayPropertyConfigurations(getSystem());
     }
 
-    @Transactional(timeout = 600)
     public void initializeSectionCompleteness() throws Exception {
         logger.info("Initializing advert section completeness");
-        for (PrismScope scope : advertScopes) {
-            for (Resource resource : entityService.getAll(scope.getResourceClass())) {
-                resourceService.setResourceAdvertIncompleteSection((ResourceParent) resource);
+        for (PrismScope resourceScope : advertScopes) {
+            for (Integer resourceId : resourceService.getResourceIds(resourceScope)) {
+                resourceService.setResourceAdvertIncompleteSection(resourceScope, resourceId);
             }
 
+        }
+    }
+
+    public void initializeAddressCompleteness() throws Exception {
+        logger.info("Initializing address location completeness");
+        for (Integer addressId : addressService.getAddressesWithNoLocationParts()) {
+            addressService.geocodeAddressAsEstablishment(addressId);
         }
     }
 
@@ -309,14 +316,16 @@ public class SystemService {
 
     private void initializeOpportunityTypes() throws DeduplicationException {
         for (PrismOpportunityType prismOpportunityType : PrismOpportunityType.values()) {
-            entityService.createOrUpdate(new OpportunityType().withId(prismOpportunityType).withOpportunityCategory(prismOpportunityType.getOpportunityCategory())
+            entityService.createOrUpdate(new OpportunityType().withId(prismOpportunityType)
+                    .withOpportunityCategory(prismOpportunityType.getOpportunityCategory())
                     .withPublished(prismOpportunityType.isPublished()).withOrdinal(prismOpportunityType.ordinal()));
         }
     }
 
     private void initializeAgeRanges() throws DeduplicationException {
         for (PrismAgeRange prismAgeRange : PrismAgeRange.values()) {
-            entityService.createOrUpdate(new AgeRange().withId(prismAgeRange).withLowerBound(prismAgeRange.getLowerBound()).withUpperBound(prismAgeRange.getUpperBound())
+            entityService.createOrUpdate(new AgeRange().withId(prismAgeRange).withLowerBound(prismAgeRange.getLowerBound())
+                    .withUpperBound(prismAgeRange.getUpperBound())
                     .withOrdinal(prismAgeRange.ordinal()));
         }
     }
@@ -329,7 +338,8 @@ public class SystemService {
 
     private void initializeScopes() throws DeduplicationException {
         for (PrismScope prismScope : PrismScope.values()) {
-            entityService.createOrUpdate(new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory()).withShortCode(prismScope.getShortCode())
+            entityService.createOrUpdate(new Scope().withId(prismScope).withScopeCategory(prismScope.getScopeCategory())
+                    .withShortCode(prismScope.getShortCode())
                     .withDefaultShared(prismScope.isDefaultShared()).withOrdinal(prismScope.ordinal()));
         }
     }
@@ -348,7 +358,8 @@ public class SystemService {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = scopeService.getById(prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
-                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction()).withTransitionAction(prismAction.isTransitionAction())
+                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
+                    .withTransitionAction(prismAction.isTransitionAction())
                     .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
                     .withReplicableUserAssignmentAction(prismAction.isReplicableUserAssignmentAction()).withPartnershipState(prismAction.getPartnershipState())
                     .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
@@ -491,7 +502,8 @@ public class SystemService {
             PrismOpportunityType opportunityType = prismNotificationDefinition.getScope().ordinal() > DEPARTMENT.ordinal() ? PrismOpportunityType
                     .getSystemOpportunityType() : null;
 
-            NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject).withContent(content);
+            NotificationConfigurationDTO configurationDTO = new NotificationConfigurationDTO().withId(prismNotificationDefinition).withSubject(subject)
+                    .withContent(content);
             customizationService.createOrUpdateConfiguration(NOTIFICATION, system, opportunityType, configurationDTO);
         }
     }
@@ -583,7 +595,8 @@ public class SystemService {
                 }
             }
 
-            StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState).withTransitionAction(transitionAction)
+            StateTransition stateTransition = new StateTransition().withStateAction(stateAction).withTransitionState(transitionState)
+                    .withTransitionAction(transitionAction)
                     .withReplicableSequenceClose(prismStateTransition.getReplicableSequenceClose())
                     .withReplicableSequenceFilterTheme(prismStateTransition.getReplicableSequenceFilterTheme())
                     .withReplicableSequenceFilterSecondaryTheme(prismStateTransition.getReplicableSequenceFilterSecondaryTheme())

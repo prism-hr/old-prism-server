@@ -49,7 +49,6 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import jersey.repackaged.com.google.common.base.Objects;
 import jersey.repackaged.com.google.common.collect.Iterables;
 import jersey.repackaged.com.google.common.collect.Sets;
 
@@ -296,7 +295,8 @@ public class ResourceService {
                 throw new UnsupportedOperationException("Invalid resource relation creation attempt");
             }
 
-            ResourceParent resource = createResourceRelation(resourceRelationCreationDTO.getResource(), resourceRelationCreationDTO.getContext().getContext(), childOwner);
+            ResourceParent resource = createResourceRelation(resourceRelationCreationDTO.getResource(), resourceRelationCreationDTO.getContext().getContext(),
+                    childOwner);
             ResourceParent parentResource = firstNonNull(resource.getDepartment(), resource.getInstitution());
 
             if (viewer != null) {
@@ -459,7 +459,8 @@ public class ResourceService {
                     }
 
                     if (i == (commentsSize - 1)) {
-                        StateTransition stateTransition = stateService.getStateTransition(comment.getState(), comment.getAction(), comment.getTransitionState());
+                        StateTransition stateTransition = stateService
+                                .getStateTransition(comment.getState(), comment.getAction(), comment.getTransitionState());
                         validCloseTransition = toBoolean(stateTransition.getReplicableSequenceClose());
                     }
                 } else {
@@ -474,7 +475,7 @@ public class ResourceService {
                 boolean authentic = true;
                 User user = userService.getCurrentUser();
                 for (Comment comment : comments) {
-                    if (!Objects.equal(user, comment.getUser())) {
+                    if (!equal(user, comment.getUser())) {
                         authentic = false;
                     }
                 }
@@ -566,7 +567,8 @@ public class ResourceService {
         executeUpdate(resource, user, messageIndex, null, assignees);
     }
 
-    public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, PrismState transitionStateId, CommentAssignedUser... assignees) {
+    public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, PrismState transitionStateId,
+            CommentAssignedUser... assignees) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
             State transitionState = transitionStateId == null ? null : stateService.getById(transitionStateId);
@@ -598,7 +600,8 @@ public class ResourceService {
             Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
             Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resourceDTOs.isEmpty()) {
-            Map<Integer, Boolean> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(), lastSequenceIdentifier, maxRecords);
+            Map<Integer, Boolean> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(),
+                    lastSequenceIdentifier, maxRecords);
 
             Set<Integer> resourceIds = resources.keySet();
             if (isNotEmpty(resourceIds)) {
@@ -614,7 +617,8 @@ public class ResourceService {
                     LinkedHashMultimap<Integer, PrismState> secondaryStates = extended ? stateService.getSecondaryResourceStates(scope, filteredResources)
                             : LinkedHashMultimap.create();
 
-                    TreeMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(user, scope, targeterEntities, filteredResources)
+                    TreeMultimap<Integer, ActionDTO> permittedActions = extended ? actionService.getPermittedActions(user, scope, targeterEntities,
+                            filteredResources)
                             : TreeMultimap.create();
 
                     TreeMultimap<Integer, ActionDTO> creationActions = actionService.getCreateResourceActions(scope, filteredResources);
@@ -679,6 +683,10 @@ public class ResourceService {
         return resourceDAO.getResourceForWhichUserHasRoles(user, roles.toArray(new PrismRole[roles.size()]));
     }
 
+    public List<Integer> getResourceIds(PrismScope resourceScope) {
+        return resourceDAO.getResourceIds(resourceScope);
+    }
+
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope) {
         return resourceDAO.getResourceIds(enclosingResource, resourceScope);
     }
@@ -695,7 +703,8 @@ public class ResourceService {
         return new ArrayList<>(resources);
     }
 
-    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope, PrismScope creationScope) {
+    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
+            PrismScope creationScope) {
         return getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, null);
     }
 
@@ -720,7 +729,8 @@ public class ResourceService {
                     Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
                     processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
 
-                    for (ResourceListRowDTO row : getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null, onlyAsPartnerResources,
+                    for (ResourceListRowDTO row : getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null,
+                            onlyAsPartnerResources,
                             false)) {
                         ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
                         resource.setScope(responseScope);
@@ -756,17 +766,18 @@ public class ResourceService {
         for (PrismScope scope : scopes) {
             String scopeReference = scope.name();
 
-            getResources(user, scope, scopes.stream()
+            getResources(user, scope, scopes.stream() //
                     .filter(parentScope -> parentScope.ordinal() < scope.ordinal())
                     .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
-                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR).withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
+                    new ResourceListFilterDTO().withRoleCategory(ADMINISTRATOR)
+                            .withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
                             .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
                     Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("id")),
                     ResourceOpportunityCategoryDTO.class).forEach(resource -> {
-                        resources.put(scope, resource.getId());
-                    });
+                resources.put(scope, resource.getId());
+            });
         }
 
         return resources;
@@ -842,7 +853,8 @@ public class ResourceService {
 
             if (internal || external) {
                 resource.addResourceCondition(
-                        new ResourceCondition().withResource(resource).withActionCondition(condition.getActionCondition()).withInternalMode(internal).withExternalMode(external));
+                        new ResourceCondition().withResource(resource).withActionCondition(condition.getActionCondition()).withInternalMode(internal)
+                                .withExternalMode(external));
             }
         });
     }
@@ -858,7 +870,8 @@ public class ResourceService {
         }
 
         resource.getResourceStudyOptions()
-                .addAll(studyOptions.stream().map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption)).collect(Collectors.toList()));
+                .addAll(studyOptions.stream().map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption))
+                        .collect(Collectors.toList()));
     }
 
     public void updateResource(ResourceParent resource, ResourceParentDTO resourceDTO) {
@@ -988,19 +1001,6 @@ public class ResourceService {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
-        List<PrismScopeSectionDefinition> incompleteSections = Lists.newLinkedList();
-        for (PrismScopeSectionDefinition section : getRequiredSections(resource.getResourceScope())) {
-            ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(section.getCompletenessEvaluator());
-            if (!completenessEvaluator.evaluate(resource)) {
-                incompleteSections.add(section);
-            }
-        }
-
-        resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
-    }
-
     public ResourceParent getActiveResourceByName(Resource parentResource, PrismScope resourceScope, String name) {
         Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
         if (ResourceParent.class.isAssignableFrom(resourceClass)) {
@@ -1029,12 +1029,14 @@ public class ResourceService {
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
 
-    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
+    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+            List<Integer> targeterEntities,
             ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
-    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
+    public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+            List<Integer> targeterEntities,
             ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
@@ -1064,8 +1066,9 @@ public class ResourceService {
         if (actionService.getActions(resource).contains(action)) {
             String approvedMessage = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem())
                     .loadLazy(PrismDisplayPropertyDefinition.valueOf(scopePrefix + "_COMMENT_APPROVED"));
-            actionService.executeAction(resource, action, new Comment().withUser(user).withAction(action).withContent(approvedMessage).withDeclinedResponse(false)
-                    .withTransitionState(stateService.getById(PrismState.valueOf(scopePrefix + "_APPROVED"))).withCreatedTimestamp(new DateTime()));
+            actionService.executeAction(resource, action,
+                    new Comment().withUser(user).withAction(action).withContent(approvedMessage).withDeclinedResponse(false)
+                            .withTransitionState(stateService.getById(PrismState.valueOf(scopePrefix + "_APPROVED"))).withCreatedTimestamp(new DateTime()));
         }
     }
 
@@ -1118,22 +1121,46 @@ public class ResourceService {
         return resourceDAO.getResourcesByLocation(resourceScope, location);
     }
 
-    public List<Integer> getResourcesForStateActionPendingAssignment(User user, Resource templateResource, StateTransition stateTransition, List<Comment> templateComments) {
+    public List<Integer> getResourcesForStateActionPendingAssignment(User user, Resource templateResource, StateTransition stateTransition,
+            List<Comment> templateComments) {
         PrismScope templateScope = templateResource.getResourceScope();
         List<PrismAction> actions = templateComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList());
         List<Integer> replicableSequenceResources = getResources(user, templateScope,
                 resourceListFilterService.getReplicableActionFilter(templateResource, stateTransition, actions)).stream()
-                        .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
+                .map(replicableSequenceResource -> replicableSequenceResource.getId()).collect(Collectors.toList());
         replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(templateScope, actions));
 
-        templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> {
-            Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId().getReplicableActionExclusionSelector();
-            if (replicableActionExclusionSelector != null) {
-                replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(templateResource.getParentResource()));
-            }
-        });
+        templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> { //
+                    Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId()
+                            .getReplicableActionExclusionSelector();
+                    if (replicableActionExclusionSelector != null) {
+                        replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(
+                                templateResource.getParentResource()));
+                    }
+                });
 
         return replicableSequenceResources;
+    }
+
+    public void setResourceAdvertIncompleteSection(PrismScope resourceScope, Integer resourceId) {
+        Resource resource = getById(resourceScope, resourceId);
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            setResourceAdvertIncompleteSection((ResourceParent) resource);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
+        List<PrismScopeSectionDefinition> incompleteSections = Lists.newLinkedList();
+        for (PrismScopeSectionDefinition section : getRequiredSections(resource.getResourceScope())) {
+            ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(section
+                    .getCompletenessEvaluator());
+            if (!completenessEvaluator.evaluate(resource)) {
+                incompleteSections.add(section);
+            }
+        }
+
+        resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
@@ -1147,7 +1174,8 @@ public class ResourceService {
                 conditions, ResourceOpportunityCategoryDTO.class);
     }
 
-    private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
+    private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
+            List<Integer> targeterEntities,
             ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = Sets.newTreeSet();
         if (!(applyReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
@@ -1163,7 +1191,8 @@ public class ResourceService {
                 if (isNotEmpty(targeterEntities)) {
                     for (PrismScope targeterScope : organizationScopes) {
                         for (PrismScope targetScope : organizationScopes) {
-                            addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions, responseClass, baseline),
+                            addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions,
+                                    responseClass, baseline),
                                     resources, asPartner == null ? null : true);
                         }
                     }
@@ -1250,7 +1279,8 @@ public class ResourceService {
         }
     }
 
-    private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions, Set<U> commentStateDefinitions) {
+    private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions,
+            Set<U> commentStateDefinitions) {
         List<State> preservedStates = commentStateDefinitions.stream().map(CommentStateDefinition::getState)
                 .collect(Collectors.toList());
 
@@ -1345,9 +1375,10 @@ public class ResourceService {
 
         if (role != null) {
             if (canViewEdit) {
-                PrismState transitionState = viewEditAction.getId().name().endsWith("_COMPLETE") ? PrismState.valueOf(resource.getResourceScope().name() + "_UNSUBMITTED") : null;
-                executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"), transitionState,
-                        new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
+                PrismState transitionState = viewEditAction.getId().name().endsWith("_COMPLETE") ? PrismState.valueOf(resource.getResourceScope().name()
+                        + "_UNSUBMITTED") : null;
+                executeUpdate(resource, currentUser, PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"),
+                        transitionState, new CommentAssignedUser().withUser(user).withRole(role).withRoleTransitionType(CREATE));
             } else if (newRoleCreated) {
                 userService.getResourceUsers(resource, PrismRole.valueOf(resourceName + "_ADMINISTRATOR")).forEach(admin -> {
                     notificationService.sendJoinRequest(user, admin, resource);

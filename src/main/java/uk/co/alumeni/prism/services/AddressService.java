@@ -48,7 +48,8 @@ public class AddressService {
 
     private static final List<String> googleLocationTypes = Lists.newArrayList("country", "administrative_area_level_1", "administrative_area_level_2",
             "administrative_area_level_3", "administrative_area_level_4", "administrative_area_level_5", "political", "postal_town", "locality", "sublocality",
-            "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "premise", "subpremise", "airport");
+            "sublocality_level_1", "sublocality_level_2", "sublocality_level_3", "sublocality_level_4", "sublocality_level_5", "neighborhood", "premise",
+            "subpremise", "airport");
 
     @Value("${integration.google.api.key}")
     private String googleApiKey;
@@ -80,6 +81,10 @@ public class AddressService {
     @Inject
     private ApplicationContext applicationContext;
 
+    public Address getById(Integer id) {
+        return entityService.getById(Address.class, id);
+    }
+
     public Address cloneAddress(Address oldAddress) {
         if (oldAddress != null) {
             Address newAddress = new Address();
@@ -93,7 +98,8 @@ public class AddressService {
 
             AddressCoordinates oldAddressCoordinates = oldAddress.getAddressCoordinates();
             if (oldAddressCoordinates != null) {
-                newAddress.setAddressCoordinates(new AddressCoordinates().withLatitude(oldAddressCoordinates.getLatitude()).withLongitude(oldAddressCoordinates.getLongitude()));
+                newAddress.setAddressCoordinates(new AddressCoordinates().withLatitude(oldAddressCoordinates.getLatitude()).withLongitude(
+                        oldAddressCoordinates.getLongitude()));
             }
 
             return newAddress;
@@ -132,6 +138,14 @@ public class AddressService {
         address.setAddressCode(Strings.emptyToNull(addressDTO.getAddressCode()));
         address.setDomicile(prismService.getDomicileById(addressDTO.getDomicile()));
         address.setGoogleId(addressDTO.getGoogleId());
+    }
+
+    public List<Integer> getAddressesWithNoLocationParts() {
+        return addressDAO.getAddressesWithNoLocationParts();
+    }
+
+    public void geocodeAddressAsEstablishment(Integer addressId) throws Exception {
+        geocodeAddressAsEstablishment(getById(addressId));
     }
 
     private void geocodeAddress(Address address, String establishmentName) {

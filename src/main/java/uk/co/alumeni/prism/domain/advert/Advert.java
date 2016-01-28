@@ -24,8 +24,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -118,7 +116,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private String telephone;
 
     @OneToOne
-    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "address_id")
     private Address address;
 
@@ -419,13 +416,15 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Override
     public String toString() {
-        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null).map(resource -> resource.getAdvert().getName())
+        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null)
+                .map(resource -> resource.getAdvert().getName())
                 .collect(joining(SPACE + HYPHEN + SPACE));
     }
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program).addProperty("project", project);
+        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program)
+                .addProperty("project", project);
     }
 
 }

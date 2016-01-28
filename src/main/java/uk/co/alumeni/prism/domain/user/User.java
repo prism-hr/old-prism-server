@@ -85,6 +85,10 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private UserAccount userAccount;
 
     @ManyToOne
+    @JoinColumn(name = "creator_user_id")
+    private User creatorUser;
+    
+    @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
 
@@ -256,6 +260,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
+    
+    public User getCreatorUser() {
+        return creatorUser;
+    }
+
+    public void setCreatorUser(User creatorUser) {
+        this.creatorUser = creatorUser;
+    }
 
     public User getParentUser() {
         return parentUser;
@@ -420,23 +432,8 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return this;
     }
 
-    public User withEmailBouncedMessage(final String emailBouncedMessage) {
-        this.emailBouncedMessage = emailBouncedMessage;
-        return this;
-    }
-
-    public User withActivationCode(String activationCode) {
-        this.activationCode = activationCode;
-        return this;
-    }
-
-    public User withAccount(UserAccount account) {
-        this.userAccount = account;
-        return this;
-    }
-
-    public User withParentUser(User parentUser) {
-        this.parentUser = parentUser;
+    public User withCreatorUser(User creatorUser) {
+        this.creatorUser = creatorUser;
         return this;
     }
 

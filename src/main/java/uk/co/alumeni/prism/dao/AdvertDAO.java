@@ -84,6 +84,9 @@ import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+
 @Repository
 @SuppressWarnings("unchecked")
 public class AdvertDAO {

@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserFeedback;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.user.UserFeedbackDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
 import uk.co.alumeni.prism.services.UserFeedbackService;
+import uk.co.alumeni.prism.services.UserService;
 
 import com.google.common.collect.Lists;
 
@@ -26,6 +28,9 @@ public class UserFeedbackController {
 
     @Inject
     private UserMapper userMapper;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private UserFeedbackService userFeedbackService;
@@ -42,8 +47,10 @@ public class UserFeedbackController {
             @RequestParam("lastSequenceIdentifier") String lastSequenceIdentifier) {
         List<UserFeedback> userFeedbacks = userFeedbackService.getUserFeedback(ratingThreshold, lastSequenceIdentifier);
         List<UserFeedbackRepresentation> representations = Lists.newArrayListWithCapacity(userFeedbacks.size());
+
+        User currentUser = userService.getCurrentUser();
         for (UserFeedback userFeedback : userFeedbacks) {
-            representations.add(userMapper.getUserFeedbackRepresentation(userFeedback));
+            representations.add(userMapper.getUserFeedbackRepresentation(userFeedback, currentUser));
         }
         return representations;
     }

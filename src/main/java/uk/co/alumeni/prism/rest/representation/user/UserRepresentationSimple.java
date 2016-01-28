@@ -17,7 +17,9 @@ public class UserRepresentationSimple extends UserRepresentation {
     private String accountImageUrl;
 
     private DocumentRepresentation portraitImage;
-
+    
+    private Boolean editable;
+    
     public Integer getId() {
         return id;
     }
@@ -73,6 +75,14 @@ public class UserRepresentationSimple extends UserRepresentation {
     public void setPortraitImage(DocumentRepresentation portraitImage) {
         this.portraitImage = portraitImage;
     }
+    
+    public Boolean getEditable() {
+        return editable;
+    }
+
+    public void setEditable(Boolean editable) {
+        this.editable = editable;
+    }
 
     public UserRepresentationSimple withId(Integer id) {
         setId(id);
@@ -108,5 +118,5 @@ public class UserRepresentationSimple extends UserRepresentation {
         this.portraitImage = portraitImage;
         return this;
     }
-
+    
 }

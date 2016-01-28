@@ -46,7 +46,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserInstitutionIdentityRepre
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationProfile;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationUnverified;
 import uk.co.alumeni.prism.rest.representation.user.UserRolesRepresentation;
@@ -129,18 +128,12 @@ public class UserMapper {
         return representations;
     }
 
-    public UserRepresentationSimple getUserRepresentationSimple(User user) {
-        return getUserRepresentation(user, UserRepresentationSimple.class);
+    public UserRepresentationSimple getUserRepresentationSimple(User user, User currentUser) {
+        return getUserRepresentation(user, currentUser, UserRepresentationSimple.class);
     }
 
-    public UserRepresentationProfile getUserRepresentationProfile(User user) {
-        UserRepresentationProfile representation = getUserRepresentation(user, UserRepresentationProfile.class);
-        representation.setEditable(userService.checkUserEditable(user));
-        return representation;
-    }
-
-    public UserRepresentationExtended getUserRepresentationExtended(User user) {
-        UserRepresentationExtended representation = getUserRepresentation(user, UserRepresentationExtended.class);
+    public UserRepresentationExtended getUserRepresentationExtended(User user, User currentUser) {
+        UserRepresentationExtended representation = getUserRepresentation(user, currentUser, UserRepresentationExtended.class);
         representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendActivityNotification());
         representation.setUserRoles(getUserRoleRepresentations(user));
 
@@ -158,14 +151,15 @@ public class UserMapper {
         String noDiagnosis = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem())
                 .loadLazy(SYSTEM_NO_DIAGNOSTIC_INFORMATION);
 
+        User currentUser = userService.getCurrentUser();
         return userService.getBouncedOrUnverifiedUsers(resource, filterDTO).stream()
-                .map(user -> getUserRepresentationUnverified(user, noDiagnosis)).collect(Collectors.toList());
+                .map(user -> getUserRepresentationUnverified(user, currentUser, noDiagnosis)).collect(Collectors.toList());
     }
 
-    public UserFeedbackRepresentation getUserFeedbackRepresentation(UserFeedback userFeedback) {
+    public UserFeedbackRepresentation getUserFeedbackRepresentation(UserFeedback userFeedback, User currentUser) {
         UserFeedbackRepresentation representation = new UserFeedbackRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(userFeedback.getResource()))
-                .withUser(getUserRepresentationSimple(userFeedback.getUser())).withRoleCategory(userFeedback.getRoleCategory());
+                .withUser(getUserRepresentationSimple(userFeedback.getUser(), currentUser)).withRoleCategory(userFeedback.getRoleCategory());
 
         if (BooleanUtils.isFalse(userFeedback.getDeclinedResponse())) {
             representation.setRating(userFeedback.getRating());
@@ -184,8 +178,8 @@ public class UserMapper {
                 userService.getUserInstitutionIdentity(user, institution, identityType));
     }
 
-    private UserRepresentationInvitationBounced getUserRepresentationUnverified(User user, String noDiagnosisMessage) {
-        UserRepresentationInvitationBounced representation = getUserRepresentation(user, UserRepresentationInvitationBounced.class);
+    private UserRepresentationInvitationBounced getUserRepresentationUnverified(User user, User currentUser, String noDiagnosisMessage) {
+        UserRepresentationInvitationBounced representation = getUserRepresentation(user, currentUser, UserRepresentationInvitationBounced.class);
 
         String bounceMessage = user.getEmailBouncedMessage();
         if (bounceMessage != null) {
@@ -196,7 +190,7 @@ public class UserMapper {
         return representation;
     }
 
-    public <T extends UserRepresentationSimple> T getUserRepresentation(User user, Class<T> returnType) {
+    public <T extends UserRepresentationSimple> T getUserRepresentation(User user, User currentUser, Class<T> returnType) {
         T representation = BeanUtils.instantiate(returnType);
 
         representation.setId(user.getId());
@@ -214,13 +208,15 @@ public class UserMapper {
             representation.setPortraitImage(documentMapper.getDocumentRepresentation(userAccount.getPortraitImage()));
         }
 
+        representation.setEditable(userService.checkUserEditable(user, currentUser));
         return representation;
     }
 
     public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
+        User currentUser = userService.getCurrentUser();
         return users.stream()
                 .map(UserSelectionDTO::getUser)
-                .map(this::getUserRepresentationSimple)
+                .map(user -> getUserRepresentationSimple(user, currentUser))
                 .collect(Collectors.toList());
     }
 
@@ -238,13 +234,14 @@ public class UserMapper {
     }
 
     public UserProfileRepresentation getUserProfileRepresentation() {
-        UserAccount userAccount = userService.getCurrentUser().getUserAccount();
+        User currentUser = userService.getCurrentUser();
+        UserAccount userAccount = currentUser.getUserAccount();
         return new UserProfileRepresentation().withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
                 .withAddress(profileMapper.getAddressRepresentation(userAccount.getAddress()))
-                .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications()))
+                .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications(), currentUser))
                 .withAwards(profileMapper.getAwardRepresentations(userAccount.getAwards()))
-                .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions()))
-                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees()))
+                .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions(), currentUser))
+                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees(), currentUser))
                 .withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
                 .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
                 .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());

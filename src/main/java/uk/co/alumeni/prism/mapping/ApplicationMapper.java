@@ -79,7 +79,7 @@ import com.google.common.collect.Sets;
 @Service
 @Transactional
 public class ApplicationMapper {
-    
+
     @Inject
     private ApplicationService applicationService;
 
@@ -113,9 +113,10 @@ public class ApplicationMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles) {
-        ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, ApplicationRepresentationClient.class, overridingRoles);
-        
+    public ApplicationRepresentationClient getApplicationRepresentationClient(Application application, List<PrismRole> overridingRoles, User currentUser) {
+        ApplicationRepresentationClient representation = getApplicationRepresentationExtended(application, ApplicationRepresentationClient.class,
+                overridingRoles, currentUser);
+
         List<PrismStudyOption> studyOptions;
         Resource parent = application.getParentResource();
         if (ResourceOpportunity.class.isAssignableFrom(parent.getClass())) {
@@ -134,27 +135,29 @@ public class ApplicationMapper {
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
-        
+
         representation.setUsersPotentiallyInterestedInApplication(
                 userMapper.getUserRepresentations(userService.getUsersPotentiallyInterestedInApplication(application, usersInterested)));
 
         representation.setInterview(getApplicationInterviewRepresentation(application));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
-        
+
         representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(advert));
-        
+
         return representation;
     }
 
-    public ApplicationRepresentationExtended getApplicationRepresentationExtended(Application application, List<PrismRole> overridingRoles) {
-        return getApplicationRepresentationExtended(application, ApplicationRepresentationExtended.class, overridingRoles);
+    public ApplicationRepresentationExtended getApplicationRepresentationExtended(Application application, List<PrismRole> overridingRoles, User currentUser) {
+        return getApplicationRepresentationExtended(application, ApplicationRepresentationExtended.class, overridingRoles, currentUser);
     }
 
-    public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Class<T> returnType, List<PrismRole> overridingRoles) {
-        T representation = getApplicationRepresentation(application, returnType, overridingRoles);
+    public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Class<T> returnType,
+            List<PrismRole> overridingRoles, User currentUser) {
+        T representation = getApplicationRepresentation(application, returnType, overridingRoles, currentUser);
         representation.setWithoutReference(
-                applicationService.getApplicationRefereesNotResponded(application).stream().map(userMapper::getUserRepresentationSimple).collect(Collectors.toList()));
+                applicationService.getApplicationRefereesNotResponded(application).stream()
+                        .map(user -> userMapper.getUserRepresentationSimple(user, userService.getCurrentUser())).collect(Collectors.toList()));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
         return representation;
@@ -204,32 +207,34 @@ public class ApplicationMapper {
                 .withLatestDate(getNextMonday(baseline.plusYears(START_DATE_LATEST_BUFFER)));
     }
 
-    private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Class<T> returnType, List<PrismRole> overridingRoles) {
-        T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles);
+    private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Class<T> returnType,
+            List<PrismRole> overridingRoles, User currentUser) {
+        T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles, currentUser);
         representation.setClosingDate(application.getClosingDate());
         representation.setSubmittedTimestamp(application.getSubmittedTimestamp());
 
         boolean viewEqualOpportunities = applicationService.isCanViewEqualOpportunities(application, userService.getCurrentUser());
-
-        representation.setProgramDetail(getApplicationProgramDetailRepresentation(application));
+        representation.setProgramDetail(getApplicationProgramDetailRepresentation(application, currentUser));
         representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
-        representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications()));
+        representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications(), currentUser));
         representation.setAwards(profileMapper.getAwardRepresentations(application.getAwards()));
-        representation.setEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions()));
-        representation.setReferees(getApplicationRefereeRepresentations(application.getReferees(), overridingRoles));
+        representation.setEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions(), currentUser));
+        representation.setReferees(getApplicationRefereeRepresentations(application.getReferees(), overridingRoles, currentUser));
         representation.setDocument(profileMapper.getDocumentRepresentation(application.getDocument()));
-        representation.setAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(application.getAdditionalInformation(), viewEqualOpportunities));
+        representation.setAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(application.getAdditionalInformation(),
+                viewEqualOpportunities));
         return representation;
     }
 
-    private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application) {
+    private ApplicationProgramDetailRepresentation getApplicationProgramDetailRepresentation(Application application, User currentUser) {
         ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
         if (applicationProgramDetail != null) {
             String preferredFlag = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(SYSTEM_PREFERRED);
             return new ApplicationProgramDetailRepresentation().withPreferredFlag(preferredFlag).withStudyOption(applicationProgramDetail.getStudyOption())
                     .withStartDate(applicationProgramDetail.getStartDate()).withThemes(getApplicationThemeRepresentations(application))
-                    .withLocations(getApplicationLocationRepresentations(application)).withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
+                    .withLocations(getApplicationLocationRepresentations(application, currentUser))
+                    .withLastUpdatedTimestamp(applicationProgramDetail.getLastUpdatedTimestamp());
         }
         return null;
     }
@@ -242,28 +247,31 @@ public class ApplicationMapper {
         return representations;
     }
 
-    private List<ApplicationLocationRepresentation> getApplicationLocationRepresentations(Application application) {
+    private List<ApplicationLocationRepresentation> getApplicationLocationRepresentations(Application application, User currentUser) {
         List<ApplicationLocationRepresentation> representations = Lists.newLinkedList();
-        application.getLocations().forEach(applicationLocation -> {
-            Resource resource = applicationLocation.getTag().getResource();
-            Integer descriptionYear = applicationLocation.getDescriptionYear();
-            representations.add(new ApplicationLocationRepresentation()
-                    .withResource(resource.getResourceScope().getScopeCategory().equals(ORGANIZATION) ? resourceMapper.getResourceRepresentationRelation(resource)
-                            : resourceMapper.getResourceOpportunityRepresentationRelation(resource))
-                    .withDescription(applicationLocation.getDescription())
-                    .withDescriptionDate(descriptionYear == null ? null : new LocalDate(descriptionYear, applicationLocation.getDescriptionMonth(), 1))
-                    .withPreference(applicationLocation.getPreference()).withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp()));
-        });
+        application.getLocations().forEach(applicationLocation -> { //
+                    Resource resource = applicationLocation.getTag().getResource();
+                    Integer descriptionYear = applicationLocation.getDescriptionYear();
+                    representations.add(new ApplicationLocationRepresentation()
+                            .withResource(
+                                    resource.getResourceScope().getScopeCategory().equals(ORGANIZATION) ? resourceMapper
+                                            .getResourceRepresentationRelation(resource, currentUser) : resourceMapper
+                                            .getResourceOpportunityRepresentationRelation(resource, currentUser))
+                            .withDescription(applicationLocation.getDescription())
+                            .withDescriptionDate(descriptionYear == null ? null : new LocalDate(descriptionYear, applicationLocation.getDescriptionMonth(), 1))
+                            .withPreference(applicationLocation.getPreference()).withLastUpdateTimestamp(applicationLocation.getLastUpdatedTimestamp()));
+                });
         return representations;
     }
 
-    private List<ProfileRefereeRepresentation> getApplicationRefereeRepresentations(Set<ApplicationReferee> referees, List<PrismRole> overridingRoles) {
+    private List<ProfileRefereeRepresentation> getApplicationRefereeRepresentations(Set<ApplicationReferee> referees, List<PrismRole> overridingRoles,
+            User currentUser) {
         Map<Integer, ApplicationReferee> index = Maps.newHashMap();
         referees.forEach(r -> {
             index.put(r.getId(), r);
         });
 
-        List<ProfileRefereeRepresentation> representations = profileMapper.getRefereeRepresentations(referees);
+        List<ProfileRefereeRepresentation> representations = profileMapper.getRefereeRepresentations(referees, currentUser);
         representations.forEach(r -> {
             r.setComment(getApplicationReferenceRepresentation(index.get(r.getId()).getComment(), overridingRoles));
         });
@@ -303,7 +311,8 @@ public class ApplicationMapper {
 
             User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
-                sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager, sourceComment.getCreatedTimestamp());
+                sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager,
+                        sourceComment.getCreatedTimestamp());
             }
 
             if (sourceComment != null) {
@@ -382,9 +391,11 @@ public class ApplicationMapper {
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {
         Set<ApplicationAssignedHiringManagerRepresentation> supervisors = Sets.newLinkedHashSet();
 
+        User currentUser = userService.getCurrentUser();
         for (CommentAssignedUser assignee : commentService.getAssignedHiringManagers(comment)) {
             ApplicationAssignedHiringManagerRepresentation assignedSupervisorRepresentation = new ApplicationAssignedHiringManagerRepresentation()
-                    .withUser(userMapper.getUserRepresentationSimple(assignee.getUser())).withRole(assignee.getRole().getId()).withApprovedAppointment(true);
+                    .withUser(userMapper.getUserRepresentationSimple(assignee.getUser(), currentUser)).withRole(assignee.getRole().getId())
+                    .withApprovedAppointment(true);
             supervisors.add(assignedSupervisorRepresentation);
         }
 

@@ -42,11 +42,11 @@ public class RoleMapper {
     @Inject
     private PrismJsonMappingUtils prismJsonMappingUtils;
 
-    public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource) {
+    public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource, User currentUser) {
         resourceService.validateViewResource(resource);
 
         Set<ResourceUserRolesRepresentation> representations = Sets.newLinkedHashSet();
-        userService.getResourceUsers(resource).forEach(user -> representations.add(getResourceUserRolesRepresentation(resource, user)));
+        userService.getResourceUsers(resource).forEach(user -> representations.add(getResourceUserRolesRepresentation(resource, user, currentUser)));
 
         resource.getStateActionPendings().stream().forEach(stateActionPending -> { //
                     PrismRole assignRole = stateActionPending.getAssignUserRole().getId();
@@ -65,8 +65,8 @@ public class RoleMapper {
         return newLinkedList(representations);
     }
 
-    private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user) {
-        return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimple(user)).withRoles(
+    private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user, User currentUser) {
+        return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimple(user, currentUser)).withRoles(
                 roleService.getRolesForResourceStrict(resource, user));
     }
 

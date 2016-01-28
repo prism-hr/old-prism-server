@@ -82,9 +82,11 @@ public class ApplicationDownloadService {
             pdfDocument.open();
 
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
-            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION, Lists.newArrayList(applicationIds));
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION,
+                    Lists.newArrayList(applicationIds));
             HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
 
+            User currentUser = userService.getCurrentUser();
             for (Integer applicationId : applicationIds) {
                 Application application = applicationService.getById(applicationId);
                 Program program = application.getProgram();
@@ -104,7 +106,7 @@ public class ApplicationDownloadService {
                 try {
                     applicationContext.getBean(ApplicationDownloadBuilder.class)
                             .localize(specificPropertyLoaders.get(program), specificApplicationDownloadBuilderHelpers.get(program))
-                            .build(applicationMapper.getApplicationRepresentationExtended(application, overridingRoles), pdfDocument, pdfWriter);
+                            .build(applicationMapper.getApplicationRepresentationExtended(application, overridingRoles, currentUser), pdfDocument, pdfWriter);
                 } catch (PdfDocumentBuilderException e) {
                     logger.error("Error building download for application " + application.getCode(), e);
                 }

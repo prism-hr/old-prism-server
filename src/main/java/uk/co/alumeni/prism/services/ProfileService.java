@@ -847,12 +847,7 @@ public class ProfileService {
 
         UserDTO userConnectionDTO = resourceRelationDTO.getUser();
         if (userConnectionDTO != null) {
-            User user = userService.getUserByEmail(userConnectionDTO.getEmail());
-            if (userService.checkUserEditable(user)) {
-                user.setFirstName(userConnectionDTO.getFirstName());
-                user.setLastName(userConnectionDTO.getLastName());
-            }
-            advertRelation.setUser(user);
+            advertRelation.setUser(userService.getUserByEmail(userConnectionDTO.getEmail()));
         }
 
         Advert advert = resource.getAdvert();

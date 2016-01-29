@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
+import static com.google.common.base.Strings.emptyToNull;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -18,7 +19,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class ResourceRepresentationRelation extends ResourceRepresentationSimple {
@@ -123,7 +123,7 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
     }
 
     public String getDisplayName() {
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(Strings.emptyToNull(getOrganizationDisplayName()), Strings.emptyToNull(getPositionDisplayName()));
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(emptyToNull(getOrganizationDisplayName()), emptyToNull(getPositionDisplayName()));
     }
 
     @Override

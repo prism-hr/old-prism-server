@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
@@ -131,7 +133,7 @@ public class ApplicationMapper {
         Advert advert = application.getAdvert();
         AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert);
         representation.setPossibleThemes(advertCategories.getThemes());
-        representation.setPossibleLocations(advertCategories.getLocations());
+        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> isTrue(location.getSelected())).collect(toList()));
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));

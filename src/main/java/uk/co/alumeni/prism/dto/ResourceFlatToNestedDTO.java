@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.dto;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.copyProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.hasProperty;
@@ -25,6 +24,8 @@ public class ResourceFlatToNestedDTO implements Comparable<Object> {
     private String institutionName;
 
     private Integer logoImageId;
+
+    private String logoImageFileName;
 
     private Integer departmentId;
 
@@ -70,6 +71,14 @@ public class ResourceFlatToNestedDTO implements Comparable<Object> {
 
     public void setLogoImageId(Integer logoImageId) {
         this.logoImageId = logoImageId;
+    }
+
+    public String getLogoImageFileName() {
+        return logoImageFileName;
+    }
+
+    public void setLogoImageFileName(String logoImageFileName) {
+        this.logoImageFileName = logoImageFileName;
     }
 
     public Integer getDepartmentId() {
@@ -161,10 +170,6 @@ public class ResourceFlatToNestedDTO implements Comparable<Object> {
         return null;
     }
 
-    public Integer getInstitutionLogoImage() {
-        return getScope().equals(INSTITUTION) ? logoImageId : null;
-    }
-
     public ResourceFlatToNestedDTO getEnclosingResource(PrismScope scope) {
         return getEnclosingResource(scope, ResourceFlatToNestedDTO.class);
     }
@@ -218,6 +223,7 @@ public class ResourceFlatToNestedDTO implements Comparable<Object> {
                 copyProperty(this, enclosingResource, scopeReference + ID);
                 copyProperty(this, enclosingResource, scopeReference + NAME);
                 copyProperty(this, enclosingResource, "logoImageId");
+                copyProperty(this, enclosingResource, "logoImageFileName");
             }
         }
 

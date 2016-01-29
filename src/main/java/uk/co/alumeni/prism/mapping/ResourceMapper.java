@@ -685,7 +685,8 @@ public class ResourceMapper {
                 ResourceRepresentationSimple parentRepresentation = new ResourceRepresentationSimple().withScope(parentScope).withId(parentResource.getId())
                         .withName(parentResource.getName());
                 if (parentScope.equals(INSTITUTION)) {
-                    parentRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(parentResource.getLogoImageId()));
+                    parentRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(parentResource.getLogoImageId(),
+                            parentResource.getLogoImageFileName()));
                 }
                 representation.setParentResource(parentRepresentation);
             }

@@ -24,6 +24,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
+import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getUUID;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -186,19 +187,17 @@ public class UserService {
     public User getOrCreateUser(String firstName, String lastName, String email) {
         User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
                 .withCreatorUser(getCurrentUser());
-        User duplicateUser = entityService.getDuplicateEntity(transientUser);
-        if (duplicateUser == null) {
-            transientUser.setActivationCode(PrismEncryptionUtils.getUUID());
-            entityService.save(transientUser);
-            transientUser.setParentUser(transientUser);
-            return transientUser;
-        } else {
-            if (checkUserEditable(duplicateUser, getCurrentUser())) {
-                duplicateUser.setFirstName(firstName);
-                duplicateUser.setLastName(lastName);
-            }
-            return duplicateUser;
+        User persistentUser = entityService.getDuplicateEntity(transientUser);
+        if (persistentUser == null) {
+            persistentUser = transientUser;
+            persistentUser.setActivationCode(getUUID());
+            entityService.save(persistentUser);
+            persistentUser.setParentUser(persistentUser);
+        } else if (checkUserEditable(persistentUser, getCurrentUser())) {
+            persistentUser.setFirstName(firstName);
+            persistentUser.setLastName(lastName);
         }
+        return persistentUser;
     }
 
     public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
@@ -526,7 +525,7 @@ public class UserService {
 
     public boolean checkUserEditable(User user, User currentUser) {
         UserAccount userAccount = user.getUserAccount();
-        return userAccount == null || isFalse(userAccount.getEnabled()) && equal(user.getCreatorUser(), currentUser);
+        return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
     }
 
     @SuppressWarnings("unchecked")

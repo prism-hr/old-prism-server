@@ -15,6 +15,10 @@ public class DocumentMapper {
         return document != null ? new DocumentRepresentation().withId(document) : null;
     }
 
+    public DocumentRepresentation getDocumentRepresentation(Integer document, String fileName) {
+        return document != null ? new DocumentRepresentation().withId(document).withFileName(fileName) : null;
+    }
+
     public DocumentRepresentation getDocumentRepresentation(Document document) {
         return document != null ? new DocumentRepresentation().withId(document.getId()).withFileName(document.getFileName()) : null;
     }

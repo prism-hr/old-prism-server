@@ -89,7 +89,7 @@ public class InstitutionDAO {
                         .add(Projections.property("id").as("id")) //
                         .add(Projections.property("name").as("name")) //
                         .add(Projections.property("state.id").as("stateId")) //
-                        .add(Projections.property("logoImage.id").as("logoImageId"))
+                        .add(Projections.property("logoImage.id").as("logoImageId")) //
                         .add(Projections.property("address.addressLine1").as("addressLine1")) //
                         .add(Projections.property("address.addressLine2").as("addressLine2")) //
                         .add(Projections.property("address.addressTown").as("addressTown")) //

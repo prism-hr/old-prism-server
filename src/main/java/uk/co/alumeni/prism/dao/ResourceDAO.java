@@ -385,9 +385,16 @@ public class ResourceDAO {
             appendResourceProjections(parentScope, projections, false);
         });
 
+        if (resourceScope.equals(INSTITUTION)) {
+            criteria.createAlias("logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN);
+        }
+
         parentScopes.forEach(parentScope -> {
             String parentResourceReference = parentScope.getLowerCamelName();
             criteria.createAlias(parentResourceReference, parentResourceReference, JoinType.LEFT_OUTER_JOIN);
+            if (parentScope.equals(INSTITUTION)) {
+                criteria.createAlias(parentResourceReference + ".logoImage", "logoImage", JoinType.LEFT_OUTER_JOIN);
+            }
         });
 
         return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId()))
@@ -696,7 +703,8 @@ public class ResourceDAO {
             projections.add(Projections.property(accessorPrefix + "name").as(resourceReference + "Name"));
 
             if (resourceScope.equals(INSTITUTION)) {
-                projections.add(Projections.property(accessorPrefix + "logoImage.id").as("logoImageId"));
+                projections.add(Projections.property("logoImage.id").as("logoImageId"));
+                projections.add(Projections.property("logoImage.fileName").as("logoImageFileName"));
             }
         }
     }

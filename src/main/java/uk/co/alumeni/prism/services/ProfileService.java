@@ -608,7 +608,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> void updateQualification(
             T profile, U qualification, ProfileQualificationDTO qualificationDTO) {
-        createAdvertRelation(qualification, qualificationDTO);
+        updateAdvertRelation(qualification, qualificationDTO);
 
         qualification.setStartYear(qualificationDTO.getStartDate().getYear());
         qualification.setStartMonth(qualificationDTO.getStartDate().getMonthOfYear());
@@ -710,7 +710,7 @@ public class ProfileService {
     @SuppressWarnings("unchecked")
     private <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> void updateEmploymentPosition(
             T profile, U employmentPosition, ProfileEmploymentPositionDTO employmentPositionDTO) {
-        createAdvertRelation(employmentPosition, employmentPositionDTO);
+        updateAdvertRelation(employmentPosition, employmentPositionDTO);
 
         employmentPosition.setStartYear(employmentPositionDTO.getStartDate().getYear());
         employmentPosition.setStartMonth(employmentPositionDTO.getStartDate().getMonthOfYear());
@@ -763,7 +763,7 @@ public class ProfileService {
     private <U extends ProfileReferee<T>, T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> updateReferee(
             T profile, U referee, ProfileRefereeDTO refereeDTO) {
         List<CommentAssignedUser> refereeAssignments = assignReferee(profile, referee, refereeDTO);
-        createAdvertRelation(referee, refereeDTO);
+        updateAdvertRelation(referee, refereeDTO);
 
         referee.setPhone(refereeDTO.getPhone());
         referee.setSkype(Strings.emptyToNull(refereeDTO.getSkype()));
@@ -834,7 +834,7 @@ public class ProfileService {
         return emptyList();
     }
 
-    private void createAdvertRelation(ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
+    private void updateAdvertRelation(ProfileAdvertRelationSection<?> advertRelation, ApplicationAdvertRelationSectionDTO advertRelationDTO) {
         ResourceRelationCreationDTO resourceRelationDTO = advertRelationDTO.getResource();
         ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
 

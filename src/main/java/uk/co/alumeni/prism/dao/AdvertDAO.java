@@ -459,7 +459,8 @@ public class AdvertDAO {
 
     public List<Advert> getAdvertsTargetsForWhichUserCanEndorse(Advert advert, User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             List<Integer> targeterEntities) {
-        return (List<Advert>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
+        return (List<Advert>) workflowDAO
+                .getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("targeterTarget.targetAdvert"))
                 .add(Restrictions.eq("targeterTarget.advert", advert)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("targeterTarget.targetAdvertUser", user))
@@ -470,7 +471,8 @@ public class AdvertDAO {
                 .list();
     }
 
-    public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions, Collection<Integer> advertIds,
+    public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions,
+            Collection<Integer> advertIds,
             boolean strict, Class<T> responseClass) {
         Projection projections;
         boolean integerResponse = responseClass.equals(Integer.class);
@@ -623,7 +625,7 @@ public class AdvertDAO {
 
     public List<Integer> getAdvertsForTargets() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("advert.id")) ///
+                .setProjection(Projections.groupProperty("advert.id")) // /
                 .list();
     }
 
@@ -776,16 +778,20 @@ public class AdvertDAO {
                 .executeUpdate();
     }
 
-    public List<Advert> getPossibleAdvertLocations(Advert advert, Collection<Advert> exclusions) {
+    public List<Advert> getPossibleAdvertLocations(Advert advert, PrismScope locationScope, Collection<Advert> exclusions) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AdvertLocation.class) //
                 .setProjection(Projections.groupProperty("locationAdvert")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("locationAdvert", "locationAdvert", JoinType.INNER_JOIN)
+                .createAlias("locationAdvert", "locationAdvert", JoinType.INNER_JOIN) //
+                .createAlias("locationAdvert." + locationScope.getLowerCamelName(), "locationResource", JoinType.INNER_JOIN, //
+                        Restrictions.eqProperty("locationResource.advert.id", "locationAdvert.id")) //
+                .createAlias("locationResource.state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("advert.institution", advert.getInstitution())) //
                         .add(Restrictions.eq("advert.department", advert.getDepartment())) //
                         .add(Restrictions.eq("advert.program", advert.getProgram())) //
-                        .add(Restrictions.eq("advert.project", advert.getProject())));
+                        .add(Restrictions.eq("advert.project", advert.getProject()))) //
+                .add(WorkflowDAO.getResourceParentManageableStateConstraint(locationScope));
 
         if (isNotEmpty(exclusions)) {
             criteria.add(Restrictions.not( //

@@ -1007,9 +1007,10 @@ public class AdvertService {
 
         return newTreeSet(summaries.values());
     }
-    
+
     public void retireAdvertClosingDate(Advert advert) {
-        if (advert.getClosingDate().compareTo(LocalDate.now()) >= 0) {
+        LocalDate closingDate = advert.getClosingDate();
+        if (!(closingDate == null || advert.getClosingDate().compareTo(LocalDate.now()) == 1)) {
             advert.setClosingDate(null);
         }
     }

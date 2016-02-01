@@ -718,7 +718,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_REJECTION_REASON_APPLICATION_INTERVIEW_ATTENDANCE(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "You failed to present for interview as arranged."),
     SYSTEM_REJECTION_REASON_APPLICATION_WITHDRAWAL(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "You have informed us that you no longer wish to be considered."),
     SYSTEM_REJECTION_REASON_PARTNER(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "Your university has informed us that they cannot endorse your appointment."),
-
+    SYSTEM_REJECTION_REASON_ELIGIBILITY(PrismDisplayPropertyCategory.SYSTEM_REJECTION_REASON, "You do not fulfil the eligibility criteria for the advertised opportunity."),
+    
     /*
      * *************** SYSTEM YES NO UNSURE *********************
      */

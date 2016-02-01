@@ -345,12 +345,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     public Set<Application> getApplications() {
         return applications;
     }
-
-    public Advert withName(String name) {
-        this.name = name;
-        return this;
-    }
-
+    
     public ResourceParent getResource() {
         return ObjectUtils.firstNonNull(getResourceOpportunity(), getResourceParent());
     }

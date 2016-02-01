@@ -11,7 +11,7 @@ public class ProjectClosingDateResolver implements StateDurationResolver<Project
 
     @Override
     public LocalDate resolve(Project resource, Comment comment) {
-        return resource.getAdvert().getClosingDate();
+        return comment.isRestoreComment() ? null : resource.getAdvert().getClosingDate();
     }
 
 }

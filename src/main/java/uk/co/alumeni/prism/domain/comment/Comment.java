@@ -1,5 +1,26 @@
 package uk.co.alumeni.prism.domain.comment;
 
+import static org.joda.time.DateTimeZone.forTimeZone;
+import static uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse.UNSURE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
@@ -25,7 +46,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
@@ -34,12 +54,8 @@ import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
@@ -709,7 +725,7 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isApplicationCreatorEligibilityUnsure() {
-        return getEligible().equals(PrismYesNoUnsureResponse.UNSURE);
+        return getEligible().equals(UNSURE);
     }
 
     public User getActionOwner() {
@@ -717,62 +733,61 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isApplicationAssignReviewersComment() {
-        return action.getId().equals(PrismAction.APPLICATION_ASSIGN_REVIEWERS);
+        return action.getId().equals(APPLICATION_ASSIGN_REVIEWERS);
     }
 
     public boolean isApplicationProvideReferenceComment() {
-        return action.getId().equals(PrismAction.APPLICATION_PROVIDE_REFERENCE) || action.getId().equals(PrismAction.APPLICATION_UPLOAD_REFERENCE);
+        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) || action.getId().equals(APPLICATION_UPLOAD_REFERENCE);
     }
 
     public boolean isApplicationProvideReferenceDelegateComment() {
-        return action.getId().equals(PrismAction.APPLICATION_PROVIDE_REFERENCE) && delegateUser != null;
+        return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) && delegateUser != null;
     }
 
     public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId().equals(PrismAction.APPLICATION_CONFIRM_OFFER);
+        return action.getId().equals(APPLICATION_CONFIRM_OFFER);
     }
 
     public boolean isApplicationCreatedComment() {
-        return Arrays.asList(PrismAction.INSTITUTION_CREATE_APPLICATION, PrismAction.DEPARTMENT_CREATE_APPLICATION, PrismAction.PROJECT_CREATE_APPLICATION)
-                .contains(action.getId());
+        return action.getId().name().endsWith("CREATE_APPLICATION");
     }
 
     public boolean isApplicationCompleteComment() {
-        return action.getId().equals(PrismAction.APPLICATION_COMPLETE);
+        return action.getId().equals(APPLICATION_COMPLETE);
     }
 
     public boolean isApplicationProcessingCompletedComment() {
-        return Arrays.asList(PrismAction.APPLICATION_CONFIRM_OFFER, PrismAction.APPLICATION_CONFIRM_REJECTION, PrismAction.APPLICATION_WITHDRAW)
+        return Arrays.asList(APPLICATION_CONFIRM_OFFER, APPLICATION_CONFIRM_REJECTION, APPLICATION_WITHDRAW)
                 .contains(action.getId()) || isApplicationAutomatedRejectionComment() || isApplicationAutomatedWithdrawalComment();
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId().equals(PrismAction.APPLICATION_ESCALATE) && state.getStateGroup().getId() != PrismStateGroup.APPLICATION_REJECTED
-                && transitionState.getStateGroup().getId().equals(PrismStateGroup.APPLICATION_REJECTED);
+        return action.getId().equals(APPLICATION_ESCALATE) && state.getStateGroup().getId() != APPLICATION_REJECTED
+                && transitionState.getStateGroup().getId().equals(APPLICATION_REJECTED);
     }
 
     public boolean isApplicationAutomatedWithdrawalComment() {
-        return action.getId().equals(PrismAction.APPLICATION_ESCALATE) && state.getStateGroup().getId() != PrismStateGroup.APPLICATION_WITHDRAWN
-                && transitionState.getStateGroup().getId().equals(PrismStateGroup.APPLICATION_WITHDRAWN);
+        return action.getId().equals(APPLICATION_ESCALATE) && state.getStateGroup().getId() != APPLICATION_WITHDRAWN
+                && transitionState.getStateGroup().getId().equals(APPLICATION_WITHDRAWN);
     }
 
     public boolean isApplicationAssignRefereesComment() {
-        return (isStateGroupTransitionComment() && transitionState.getId().equals(PrismState.APPLICATION_REFERENCE)) ||
-                (isSecondaryStateGroupTransitionComment() && secondaryTransitionStates.contains(new State().withId(PrismState.APPLICATION_REFERENCE)));
+        return (isStateGroupTransitionComment() && transitionState.getId().equals(APPLICATION_REFERENCE)) ||
+                (isSecondaryStateGroupTransitionComment() && secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isApplicationUpdateRefereesComment() {
         return isApplicationViewEditComment()
-                && (transitionState.getId().equals(PrismState.APPLICATION_REFERENCE) || secondaryTransitionStates.contains(new State().withId(PrismState.APPLICATION_REFERENCE)));
+                && (transitionState.getId().equals(APPLICATION_REFERENCE) || secondaryTransitionStates.contains(new State().withId(APPLICATION_REFERENCE)));
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
-        return action.getId().equals(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) //
-                && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
+        return action.getId().equals(APPLICATION_ASSIGN_INTERVIEWERS)
+                && Arrays.asList(APPLICATION_INTERVIEW_PENDING_INTERVIEW, APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
     }
 
     public boolean isApplicationInterviewScheduledConfirmedComment() {
-        return action.getId().equals(PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
+        return action.getId().equals(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS);
     }
 
     public boolean isStateTransitionComment() {
@@ -798,15 +813,15 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isCreateComment() {
-        return action.getActionCategory().equals(PrismActionCategory.CREATE_RESOURCE);
+        return action.getActionCategory().equals(CREATE_RESOURCE);
     }
 
     public boolean isViewEditComment() {
-        return action.getActionCategory().equals(PrismActionCategory.VIEW_EDIT_RESOURCE);
+        return action.getActionCategory().equals(VIEW_EDIT_RESOURCE);
     }
 
     public boolean isApplicationViewEditComment() {
-        return action.getId().equals(PrismAction.APPLICATION_VIEW_EDIT);
+        return action.getId().equals(APPLICATION_VIEW_EDIT);
     }
 
     public boolean isUserComment() {
@@ -819,18 +834,22 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public boolean isApplicationInterviewScheduledComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
-        return interviewDateTime == null ? false
-                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isAfter(baseline);
+        return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
+                .toDateTime(forTimeZone(interviewAppointment.getInterviewTimeZone())).isAfter(baseline);
     }
 
     public boolean isApplicationInterviewRecordedComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
-        return interviewDateTime == null ? false
-                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
+        return interviewDateTime == null ? false : interviewAppointment.getInterviewDateTime()
+                .toDateTime(forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
     }
 
     public boolean isRatingComment(PrismScope scope) {
         return action.getId().getScope().equals(scope) && !(rating == null && competences.isEmpty());
+    }
+
+    public boolean isRestoreComment() {
+        return action.getId().name().endsWith("RESTORE");
     }
 
     public String getApplicationRatingDisplay() {

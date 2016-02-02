@@ -62,7 +62,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -301,13 +300,12 @@ public class AdvertService {
                 int element = partsArray.length;
                 List<String> partsList = newLinkedList();
                 while (counter < 2 && element > 0) {
-                    partsList.add(partsArray[(element - 1)]);
+                    partsList.add(partsArray[counter]);
                     counter++;
                     element--;
                 }
 
-                ArrayUtils.reverse(partsArray);
-                locations.put(location.getAdvertId(), Joiner.on(COMMA + SPACE).join(partsList));
+                locations.put(location.getAdvertId(), Joiner.on(COMMA + SPACE).join(Lists.reverse(partsList)));
             });
         }
         return locations;

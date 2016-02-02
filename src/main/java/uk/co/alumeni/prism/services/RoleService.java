@@ -289,12 +289,12 @@ public class RoleService {
     }
 
     public void updateUserRole(UserRole userRole, UserRole transitionUserRole, Comment comment) {
-        UserRole persistentRole = entityService.getDuplicateEntity(userRole);
-        if (persistentRole != null) {
-            notificationService.resetUserNotifications(persistentRole);
-            comment.addAssignedUser(userRole.getUser(), userRole.getRole(), DELETE);
+        UserRole persistentUserRole = entityService.getDuplicateEntity(userRole);
+        if (persistentUserRole != null) {
+            notificationService.resetUserNotifications(persistentUserRole);
+            comment.addAssignedUser(persistentUserRole.getUser(), persistentUserRole.getRole(), DELETE);
             comment.addAssignedUser(transitionUserRole.getUser(), transitionUserRole.getRole(), CREATE);
-            deleteUserRole(persistentRole.getResource(), persistentRole.getUser(), persistentRole.getRole());
+            deleteUserRole(persistentUserRole.getResource(), persistentUserRole.getUser(), persistentUserRole.getRole());
             getOrCreateUserRole(transitionUserRole);
         }
     }

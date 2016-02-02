@@ -18,7 +18,7 @@ public class NotificationServiceHelperUser extends PrismServiceHelperAbstract {
 
     @Override
     public void execute() {
-        processEmailBounces();
+        resetUserNotifications();
     }
 
     @Override
@@ -26,7 +26,7 @@ public class NotificationServiceHelperUser extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void processEmailBounces() {
+    private void resetUserNotifications() {
         if (!isShuttingDown()) {
             notificationService.resetUserNotifications();
         }

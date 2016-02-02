@@ -21,7 +21,7 @@ import uk.co.alumeni.prism.workflow.user.CommentAssignmentUserReassignmentProces
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id" }) })
+@Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id", "role_transition_type" }) })
 public class CommentAssignedUser implements UniqueEntity, UserAssignment<CommentAssignmentUserReassignmentProcessor> {
 
     @Id
@@ -129,7 +129,8 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("comment", comment).addProperty("user", user).addProperty("role", role);
+        return new EntitySignature().addProperty("comment", comment).addProperty("user", user).addProperty("role", role)
+                .addProperty("roleTransitionType", roleTransitionType);
     }
 
 }

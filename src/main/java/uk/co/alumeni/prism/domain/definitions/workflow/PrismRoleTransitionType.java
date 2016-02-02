@@ -11,11 +11,11 @@ public enum PrismRoleTransitionType {
 
     DELETE(true, DeleteResolver.class), //
     RETIRE(false, DeleteResolver.class), //
+    UPDATE(false, UpdateResolver.class), //
+    EXHUME(true, UpdateResolver.class), //
     CREATE(true, CreateResolver.class), //
     BRANCH(false, BranchResolver.class), //
-    REVIVE(false, ReviveResolver.class), //
-    UPDATE(false, UpdateResolver.class), //
-    EXHUME(true, UpdateResolver.class);
+    REVIVE(false, ReviveResolver.class);
 
     private boolean specified;
 

@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
 import static com.google.common.base.Strings.emptyToNull;
+import static java.util.stream.Collectors.toList;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -8,7 +9,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import jersey.repackaged.com.google.common.collect.Sets;
 
@@ -113,13 +113,15 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
     }
 
     public String getOrganizationDisplayName() {
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceFamily().stream().filter(r -> r == null ? false : r.getScope().getScopeCategory().equals(ORGANIZATION))
-                .map(rp -> getResourceName(rp)).collect(Collectors.toList()));
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceFamily().stream() //
+                .filter(resource -> resource == null ? false : resource.getScope().getScopeCategory().equals(ORGANIZATION)) //
+                .map(resourceParent -> getResourceName(resourceParent)).collect(toList()));
     }
 
     public String getPositionDisplayName() {
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceFamily().stream().filter(r -> r == null ? false : r.getScope().getScopeCategory().equals(OPPORTUNITY))
-                .map(ro -> getResourceName(ro)).collect(Collectors.toList()));
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceFamily().stream() //
+                .filter(resource -> resource == null ? false : resource.getScope().getScopeCategory().equals(OPPORTUNITY)) //
+                .map(resourceOrganization -> getResourceName(resourceOrganization)).collect(toList()));
     }
 
     public String getDisplayName() {
@@ -140,7 +142,8 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
             return false;
         }
         ResourceRepresentationRelation other = (ResourceRepresentationRelation) object;
-        return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment()) && Objects.equal(program, other.getProgram())
+        return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment())
+                && Objects.equal(program, other.getProgram())
                 && Objects.equal(project, other.getProject());
     }
 

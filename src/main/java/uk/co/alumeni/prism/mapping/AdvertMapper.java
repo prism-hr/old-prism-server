@@ -135,8 +135,8 @@ public class AdvertMapper {
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
                 setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
-                representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream().map(rso -> rso.getStudyOption())
-                        .collect(toList()));
+                representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream()
+                        .map(resourceStudyOption -> resourceStudyOption.getStudyOption()).collect(toList()));
             }
 
             setOpportunityCategories(representation, resource.getOpportunityCategories());
@@ -201,9 +201,8 @@ public class AdvertMapper {
                 .withAddressCode(advert.getAddressCode())
                 .withDomicile(advert.getAddressDomicileId())
                 .withGoogleId(advert.getAddressGoogleId())
-                .withCoordinates(
-                        new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()).withLongitude(
-                                advert.getAddressCoordinateLongitude())));
+                .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()) //
+                        .withLongitude(advert.getAddressCoordinateLongitude())));
 
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
@@ -278,8 +277,8 @@ public class AdvertMapper {
 
             AddressCoordinates addressCoordinates = address.getAddressCoordinates();
             if (addressCoordinates != null) {
-                representation.setCoordinates(new AddressCoordinatesRepresentation().withLatitude(addressCoordinates.getLatitude()).withLongitude(
-                        addressCoordinates.getLongitude()));
+                representation.setCoordinates(new AddressCoordinatesRepresentation().withLatitude(addressCoordinates.getLatitude()) //
+                        .withLongitude(addressCoordinates.getLongitude()));
             }
 
             return representation;
@@ -379,7 +378,8 @@ public class AdvertMapper {
                 }
             }
 
-            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations);
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations)
+                    .withThemesDisplay(displayThemes).withLocationsDisplay(displayLocations);
         }
         return null;
     }

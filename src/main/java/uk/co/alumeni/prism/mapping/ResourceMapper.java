@@ -34,7 +34,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -148,9 +147,6 @@ public class ResourceMapper {
 
     @Inject
     private AdvertMapper advertMapper;
-
-    @Inject
-    private AddressMapper addressMapper;
 
     @Inject
     private ApplicationMapper applicationMapper;
@@ -612,9 +608,8 @@ public class ResourceMapper {
             List<FilterExpressionRepresentation> filterExpressions = property.getPermittedExpressions().stream()
                     .map(filterExpression -> new FilterExpressionRepresentation(filterExpression, filterExpression.isNegatable()))
                     .collect(Collectors.toList());
-            filters.add(
-                    new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes(), property
-                            .isPermittedInBulkMode()));
+            filters.add(new ResourceListFilterRepresentation(property, filterExpressions, property.getPropertyType(), property.getPermittedScopes(), property
+                    .isPermittedInBulkMode()));
         }
         return filters;
     }
@@ -693,12 +688,7 @@ public class ResourceMapper {
         }
 
         if (returnType.equals(ResourceLocationRepresentationRelation.class)) {
-            Address address = resource.getAdvert().getAddress();
-            if (address != null) {
-                AddressRepresentation addressRepresentation = addressMapper.transform(address, AddressRepresentation.class);
-                addressRepresentation.setDomicile(address.getDomicile().getId());
-                ((ResourceLocationRepresentationRelation) representation).setAddress(addressRepresentation);
-            }
+            ((ResourceLocationRepresentationRelation) representation).setAddress(advertMapper.getAdvertAddressRepresentation(resource.getAdvert()));
         }
 
         return representation;

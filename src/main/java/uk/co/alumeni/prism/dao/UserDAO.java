@@ -552,6 +552,33 @@ public class UserDAO {
 
         return (List<Integer>) criteria.list();
     }
+    
+    public List<Integer> getUsersForReminderNotification(PrismScope scope, DateTime baseline) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
+                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
+                .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userNotification.id")) //
+                        .add(Restrictions.lt("userNotification.notifiedTimestamp", baseline))) //
+                .add(Restrictions.lt("userRole.assignedTimestamp", baseline)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("userAccount.id")) //
+                        .add(Restrictions.ne("userAccount.enabled", true))) //
+                .add(Restrictions.eq("userAccount.sendActivityNotification", true));
+
+        if (contains(advertScopes, scope)) {
+            criteria.add(Restrictions.ne("resourceState.state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
+        }
+
+        return (List<Integer>) criteria.list();
+    }
 
     public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> void deleteUserProfileSection(
             Class<T> userProfileSectionClass, Class<U> applicationSectionClass, Integer propertyId) {

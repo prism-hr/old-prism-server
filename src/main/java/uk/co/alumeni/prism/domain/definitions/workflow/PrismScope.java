@@ -63,7 +63,7 @@ import uk.co.alumeni.prism.workflow.transition.processors.preprocessors.Applicat
 
 import com.google.common.collect.Sets;
 
-public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>,PrismLocalizableDefinition {
+public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>, PrismLocalizableDefinition {
 
     SYSTEM(PrismScopeCategory.SYSTEM, "SM", true, //
             new PrismScopeDefinition() //

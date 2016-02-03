@@ -115,6 +115,22 @@ public class UserActivityRepresentation {
         return hasResourceActivity || isNotEmpty(appointmentActivities) || isNotEmpty(unverifiedUserActivities) || isNotEmpty(advertTargetActivities);
     }
 
+    public boolean hasNotifiableReminders() {
+        if (isNotEmpty(resourceActivities)) {
+            for (ResourceActivityRepresentation resourceActivity : resourceActivities) {
+                List<ActionActivityRepresentation> actionActivities = resourceActivity.getActions();
+                if (isNotEmpty(actionActivities)) {
+                    for (ActionActivityRepresentation actionActivity : actionActivities) {
+                        if (actionActivity.getUrgentCount() > 0) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static class ResourceActivityRepresentation {
 
         private PrismScope scope;

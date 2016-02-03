@@ -38,6 +38,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
@@ -449,16 +450,20 @@ public class AdvertService {
 
     public void updateLocations(ResourceOpportunity resource, List<ResourceRelationDTO> locations) {
         Advert advert = resource.getAdvert();
+        advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
+
         AdvertCategories categories = advert.getCategories();
         Set<AdvertLocation> advertLocations = categories.getLocations();
         if (CollectionUtils.isNotEmpty(locations)) {
-            PrismResourceContext context = PrismScope.getResourceContexts(resource.getOpportunityCategories()).iterator().next();
+            PrismResourceContext context = getResourceContexts(resource.getOpportunityCategories()).iterator().next();
             User user = resource.getUser();
             for (ResourceRelationDTO locationDTO : locations) {
                 ResourceParent locationResource = resourceService.createResourceRelation(locationDTO, context, user);
                 persistAdvertLocation(advert, advertLocations, locationResource.getAdvert());
             }
         }
+
+        executeUpdate(resource, "COMMENT_UPDATED_LOCATION");
     }
 
     public void updateAdvertVisibility(Advert advert, ResourceParentDTO resourceDTO) {
@@ -486,7 +491,63 @@ public class AdvertService {
 
     public void updateCategories(PrismScope resourceScope, Integer resourceId, AdvertCategoriesDTO categoriesDTO) {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
-        updateCategories(resource.getAdvert(), categoriesDTO);
+
+        Advert advert = resource.getAdvert();
+        AdvertCategories categories = advert.getCategories();
+        if (categories == null) {
+            categories = new AdvertCategories();
+            advert.setCategories(categories);
+        } else {
+            advertDAO.deleteAdvertAttributes(advert, AdvertIndustry.class);
+            categories.getIndustries().clear();
+
+            advertDAO.deleteAdvertAttributes(advert, AdvertFunction.class);
+            categories.getFunctions().clear();
+
+            Set<AdvertTheme> themes = categories.getThemes();
+            for (AdvertTheme advertTheme : themes) {
+                Theme theme = advertTheme.getTheme();
+                theme.setAdoptedCount(theme.getAdoptedCount() - 1);
+                entityService.delete(advertTheme);
+            }
+
+            advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
+            categories.getLocations().clear();
+
+            entityService.flush();
+        }
+
+        Set<AdvertIndustry> advertIndustries = categories.getIndustries();
+        if (isNotEmpty(advertIndustries)) {
+            categoriesDTO.getIndustries().stream().forEach(industryDTO -> {
+                AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(industryDTO);
+                entityService.save(advertIndustry);
+                advertIndustries.add(advertIndustry);
+            });
+        }
+
+        Set<AdvertFunction> advertFunctions = categories.getFunctions();
+        if (isNotEmpty(advertFunctions)) {
+            categoriesDTO.getFunctions().stream().forEach(functionDTO -> {
+                AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(functionDTO);
+                entityService.save(advertFunction);
+                advertFunctions.add(advertFunction);
+            });
+
+        }
+
+        Set<AdvertTheme> advertThemes = categories.getThemes();
+        if (isNotEmpty(advertThemes)) {
+            categoriesDTO.getThemes().stream().forEach(themeDTO -> {
+                Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
+                AdvertTheme advertTheme = new AdvertTheme();
+                advertTheme.setAdvert(advert);
+                advertTheme.setTheme(theme);
+                entityService.save(advertTheme);
+                advertThemes.add(advertTheme);
+            });
+        }
+
         executeUpdate(resource, "COMMENT_UPDATED_CATEGORY");
     }
 
@@ -1089,63 +1150,6 @@ public class AdvertService {
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withPartnershipState(partnershipState));
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
-    }
-
-    private void updateCategories(Advert advert, AdvertCategoriesDTO categoriesDTO) {
-        AdvertCategories categories = advert.getCategories();
-        if (categories == null) {
-            categories = new AdvertCategories();
-            advert.setCategories(categories);
-        } else {
-            advertDAO.deleteAdvertAttributes(advert, AdvertIndustry.class);
-            categories.getIndustries().clear();
-
-            advertDAO.deleteAdvertAttributes(advert, AdvertFunction.class);
-            categories.getFunctions().clear();
-
-            Set<AdvertTheme> themes = categories.getThemes();
-            for (AdvertTheme advertTheme : themes) {
-                Theme theme = advertTheme.getTheme();
-                theme.setAdoptedCount(theme.getAdoptedCount() - 1);
-                entityService.delete(advertTheme);
-            }
-
-            advertDAO.deleteAdvertAttributes(advert, AdvertLocation.class);
-            categories.getLocations().clear();
-
-            entityService.flush();
-        }
-
-        Set<AdvertIndustry> advertIndustries = categories.getIndustries();
-        if (isNotEmpty(advertIndustries)) {
-            categoriesDTO.getIndustries().stream().forEach(industryDTO -> {
-                AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(industryDTO);
-                entityService.save(advertIndustry);
-                advertIndustries.add(advertIndustry);
-            });
-        }
-
-        Set<AdvertFunction> advertFunctions = categories.getFunctions();
-        if (isNotEmpty(advertFunctions)) {
-            categoriesDTO.getFunctions().stream().forEach(functionDTO -> {
-                AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(functionDTO);
-                entityService.save(advertFunction);
-                advertFunctions.add(advertFunction);
-            });
-
-        }
-
-        Set<AdvertTheme> advertThemes = categories.getThemes();
-        if (isNotEmpty(advertThemes)) {
-            categoriesDTO.getThemes().stream().forEach(themeDTO -> {
-                Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
-                AdvertTheme advertTheme = new AdvertTheme();
-                advertTheme.setAdvert(advert);
-                advertTheme.setTheme(theme);
-                entityService.save(advertTheme);
-                advertThemes.add(advertTheme);
-            });
-        }
     }
 
     private boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {

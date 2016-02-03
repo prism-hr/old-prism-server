@@ -17,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
@@ -159,6 +160,17 @@ public class NotificationService {
         }
     }
 
+    public void sendUserReminderNotification(Integer user, UserActivityRepresentation userActivityRepresentation) {
+        if (userActivityRepresentation.hasNotifiableReminders()) {
+            User recipient = userService.getById(user);
+            System resource = systemService.getSystem();
+            NotificationDefinition definition = getById(SYSTEM_REMINDER_NOTIFICATION);
+            NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient).withResource(resource)
+                    .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation);
+            sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+        }
+    }
+    
     public void sendInvitationRequest(Integer userRoleId, Set<UserRoleCategoryDTO> sent) {
         UserRole userRole = roleService.getUserRoleById(userRoleId);
         Resource resource = userRole.getResource();

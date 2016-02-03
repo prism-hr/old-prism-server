@@ -106,7 +106,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NO_POSITION_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "no position specified"),
     SYSTEM_PREFERRED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preferred"),
     SYSTEM_RECOMMENDED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Recommended"), 
-
+    SYSTEM_FOR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "for"),
+    
     /*
      * *************** SYSTEM COMMENT *********************
      */
@@ -1056,6 +1057,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Registration Forgotten Request"),
     SYSTEM_NOTIFICATION_SYSTEM_PASSWORD_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Password Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_ACTIVITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Activity Update Notification"),
+    SYSTEM_NOTIFICATION_SYSTEM_REMINDER_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Reminder Update Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_CONNECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Connection Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_CONNECTION_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Connection Request"),
     SYSTEM_NOTIFICATION_SYSTEM_JOIN_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Join Notification"),
@@ -1216,6 +1218,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect feedback on an interview"),
     SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Appointment Confirmation Duration"),
     SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for a hiring manager to provide confirmation of appointment"),
+    SYSTEM_APPLICATION_RESERVE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reserve Duration"),
+    SYSTEM_APPLICATION_RESERVE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect an application to held in reserve for"),
+    SYSTEM_APPLICATION_RESERVE_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reserve Escalation Duration"),
+    SYSTEM_APPLICATION_RESERVE_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for an application to be moved out of the held in reserve state ino the rejected state, after an initial warning has been issued"),
     SYSTEM_APPLICATION_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Escalation Duration"),
     SYSTEM_APPLICATION_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     SYSTEM_APPLICATION_PURGE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Expiry Duration"),

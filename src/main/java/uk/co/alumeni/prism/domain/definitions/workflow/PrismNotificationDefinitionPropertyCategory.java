@@ -25,7 +25,8 @@ public enum PrismNotificationDefinitionPropertyCategory {
     SYSTEM_INSTITUTION, //
     SYSTEM_USER_PASSWORD, //
     SYSTEM_USER_ACTIVATION, //
-    SYSTEM_ACTIVITY;
+    SYSTEM_ACTIVITY, //
+    SYSTEM_REMINDER;
 
     public List<PrismNotificationDefinitionProperty> getProperties() {
         return PrismNotificationDefinitionProperty.getProperties(this);

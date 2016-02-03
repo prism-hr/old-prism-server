@@ -14,7 +14,7 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.PrismConstants.ACTIVITY_NOTIFICATION_INTERVAL;
+import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -491,13 +491,22 @@ public class UserService {
 
     public Set<Integer> getUsersForActivityRepresentation() {
         Set<Integer> users = Sets.newHashSet();
-        DateTime baseline = now().minusDays(ACTIVITY_NOTIFICATION_INTERVAL);
+        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
         stream(values()).forEach(scope -> {
             users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
         });
         return users;
     }
 
+    public Set<Integer> getUsersForReminderRepresentation() {
+        Set<Integer> users = Sets.newHashSet();
+        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+        stream(values()).forEach(scope -> {
+            users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
+        });
+        return users;
+    }
+    
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
 

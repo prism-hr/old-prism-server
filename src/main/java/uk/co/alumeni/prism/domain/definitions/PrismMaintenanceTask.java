@@ -7,6 +7,7 @@ import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperExpor
 import uk.co.alumeni.prism.services.lifecycle.helpers.EmailBounceServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperActivity;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperInvitation;
+import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperReminder;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperUser;
 import uk.co.alumeni.prism.services.lifecycle.helpers.PrismServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperEscalation;
@@ -18,6 +19,7 @@ public enum PrismMaintenanceTask {
     SYSTEM_EXECUTE_PENDING_STATE_ACTION(StateServiceHelperPending.class), //
     SYSTEM_EXECUTE_ESCALATED_STATE_TRANSITION(StateServiceHelperEscalation.class), //
     SYSTEM_EXECUTE_PROPAGATED_STATE_TRANSITION(StateServiceHelperPropagation.class), //
+    SYSTEM_SEND_USER_REMINDER_NOTIFICATION(NotificationServiceHelperReminder.class), //
     SYSTEM_SEND_USER_ACTIVITY_NOTIFICATION(NotificationServiceHelperActivity.class), //
     SYSTEM_SEND_USER_INVITATION_NOTIFICATION(NotificationServiceHelperInvitation.class), //
     SYSTEM_CREATE_ADVERT_TARGET(AdvertServiceHelperAdvertTargetPending.class), //

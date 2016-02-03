@@ -7,6 +7,7 @@ import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
@@ -313,7 +314,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities, Resource resource,
+    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+            Resource resource,
             PrismAction... actions) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
                 .add(getUsersWithActionsConstraint(resource, actions)) //
@@ -552,7 +554,7 @@ public class UserDAO {
 
         return (List<Integer>) criteria.list();
     }
-    
+
     public List<Integer> getUsersForReminderNotification(PrismScope scope, DateTime baseline) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -560,8 +562,8 @@ public class UserDAO {
                 .createAlias("userRole." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_ACTIVITY_NOTIFICATION)) //
+                .createAlias("userNotifications", "userNotification", JoinType.LEFT_OUTER_JOIN, //
+                        Restrictions.eq("userNotification.notificationDefinition.id", SYSTEM_REMINDER_NOTIFICATION)) //
                 .createAlias("userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.disjunction() //
@@ -570,8 +572,7 @@ public class UserDAO {
                 .add(Restrictions.lt("userRole.assignedTimestamp", baseline)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userAccount.id")) //
-                        .add(Restrictions.ne("userAccount.enabled", true))) //
-                .add(Restrictions.eq("userAccount.sendActivityNotification", true));
+                        .add(Restrictions.ne("userAccount.enabled", true)));
 
         if (contains(advertScopes, scope)) {
             criteria.add(Restrictions.ne("resourceState.state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
@@ -591,8 +592,10 @@ public class UserDAO {
 
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
-        enclosedResources.keySet()
-                .forEach(enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
+        enclosedResources
+                .keySet()
+                .forEach(
+                        enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
         criteria.add(resourceConstraint);
     }
 

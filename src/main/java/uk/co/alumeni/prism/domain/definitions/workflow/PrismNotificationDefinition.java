@@ -12,6 +12,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_REMINDER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TARGET_GLOBAL;
@@ -118,7 +119,9 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_ACTIVITY_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
-            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_ACTIVITY, SYSTEM_USER_ACTIVATION));
+            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_ACTIVITY, SYSTEM_USER_ACTIVATION)), //
+    SYSTEM_REMINDER_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
+            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_REMINDER, SYSTEM_USER_ACTIVATION));
 
     private final PrismNotificationType notificationType;
 
@@ -129,7 +132,7 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     private final List<PrismNotificationDefinitionPropertyCategory> propertyCategories;
 
     private PrismNotificationDefinition(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
-                                        List<PrismNotificationDefinitionPropertyCategory> propertyCategories) {
+            List<PrismNotificationDefinitionPropertyCategory> propertyCategories) {
         this.notificationType = notificationType;
         this.notificationPurpose = notificationPurpose;
         this.scope = scope;

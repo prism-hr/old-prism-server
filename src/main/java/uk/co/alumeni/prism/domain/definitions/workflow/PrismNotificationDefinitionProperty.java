@@ -67,6 +67,7 @@ import uk.co.alumeni.prism.workflow.notification.property.SystemDepartmentHomepa
 import uk.co.alumeni.prism.workflow.notification.property.SystemInstitutionHomepageBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemProgramHomepageBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemProjectHomepageBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.SystemReminderSummaryBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemUserAccountActivationBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemUserNewPasswordBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TargetResourceAcceptNameBuilder;
@@ -159,7 +160,7 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false, SystemUserAccountActivationBuilder.class), //
     SYSTEM_ACTIVITY_SUMMARY(SYSTEM_ACTIVITY, false, SystemActivitySummaryBuilder.class), //
     SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class), 
-    SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemActivitySummaryBuilder.class);
+    SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class);
 
     private PrismNotificationDefinitionPropertyCategory category;
 

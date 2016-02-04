@@ -2265,7 +2265,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_ELIGIBLE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Assess whether the applicant is eligible."),
     APPLICATION_ACTION_SELECT_REFEREE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Referee"),
     APPLICATION_ACTION_SELECT_REFEREE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Select the referee that you wish to upload a reference for"),
-    APPLICATION_ACTION_PROVIDE_REFERENCE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Are you happy to provide a reference?"),
+    APPLICATION_ACTION_PROVIDE_REFERENCE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Are you happy to proceed?"),
     APPLICATION_ACTION_PROVIDE_REFERENCE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are happy to provide a reference. You may decline if you wish"),
     APPLICATION_ACTION_CONFIRM_OFFER_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Are you happy to accept an offer?"),
     APPLICATION_ACTION_CONFIRM_OFFER_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Confirm that you are happy to accept an offer. You may decline if you wish"),

@@ -1,1 +1,1 @@
-REMINDER: pending tasks in ${TEMPLATE_SYSTEM_NAME}
+Request to Join ${TEMPLATE_SYSTEM_NAME} - Reminder

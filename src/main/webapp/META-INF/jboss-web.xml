@@ -1,0 +1,6 @@
+<jboss-web>
+   <class-loading> 
+   <!-- override default hibernate-core jar in JBoss with newer one -->
+      <loader-repository>org.hibernate:archive=hibernate-core</loader-repository> 
+   </class-loading>
+</jboss-web>

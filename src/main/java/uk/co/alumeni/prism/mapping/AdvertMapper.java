@@ -403,18 +403,20 @@ public class AdvertMapper {
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
             List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
 
-            List<ResourceLocationRepresentationRelation> locations = newLinkedList();
-            Map<String, ResourceLocationRepresentationRelation> locationsIndex = Maps.newTreeMap();
+            Set<ResourceLocationRepresentationRelation> locationsIndex = Sets.newHashSet();
+            Map<String, ResourceLocationRepresentationRelation> locationsOrder = Maps.newTreeMap();
 
             getAdvertLocationRepresentations(categories).stream().forEach(location -> {
-                locationsIndex.put(location.getDisplayName(), location);
+                locationsIndex.add(location);
+                locationsOrder.put(location.getDisplayName(), location);
             });
 
             getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert)).forEach(location -> {
-                locationsIndex.put(location.getDisplayName(), location);
+                if (!locationsIndex.contains(location)) {
+                    locationsIndex.add(location);
+                    locationsOrder.put(location.getDisplayName(), location);
+                }
             });
-
-            locations.addAll(locationsIndex.values());
 
             Resource resource = advert.getResource();
             List<String> displayThemes = newLinkedList();
@@ -435,8 +437,8 @@ public class AdvertMapper {
                 }
             }
 
-            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes).withLocations(locations)
-                    .withThemesDisplay(displayThemes).withLocationsDisplay(displayLocations);
+            return new AdvertCategoriesRepresentation().withIndustries(industries).withFunctions(functions).withThemes(themes)
+                    .withLocations(newLinkedList(locationsOrder.values())).withThemesDisplay(displayThemes).withLocationsDisplay(displayLocations);
         }
         return null;
     }
@@ -817,9 +819,7 @@ public class AdvertMapper {
         Set<AdvertLocation> advertLocations = categories.getLocations();
         List<ResourceLocationRepresentationRelation> advertLocationRepresentations = getAdvertLocationRepresentations(
                 advertLocations.stream().map(AdvertLocation::getLocationAdvert).collect(Collectors.toList()));
-
         advertLocationRepresentations.stream().forEach(representation -> representation.setSelected(true));
-
         return advertLocationRepresentations;
     }
 

@@ -143,8 +143,7 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
         }
         ResourceRepresentationRelation other = (ResourceRepresentationRelation) object;
         return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment())
-                && Objects.equal(program, other.getProgram())
-                && Objects.equal(project, other.getProject());
+                && Objects.equal(program, other.getProgram()) && Objects.equal(project, other.getProject());
     }
 
     @Override

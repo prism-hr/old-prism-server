@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -105,9 +104,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PREVIEW(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preview"),
     SYSTEM_NO_POSITION_SPECIFIED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "no position specified"),
     SYSTEM_PREFERRED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preferred"),
-    SYSTEM_RECOMMENDED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Recommended"), 
+    SYSTEM_RECOMMENDED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Recommended"),
     SYSTEM_FOR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "for"),
-    
+
     /*
      * *************** SYSTEM COMMENT *********************
      */
@@ -1421,9 +1420,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_DURATION_FROM(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "from {{durationMinimum}} Months"),
     SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_DURATION_FROM_TO(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "from {{durationMinimum}} to {{durationMaximum}} Months"),
     SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_FROM(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "from {{durationMinimum}}"),
-    SYSTEM_OPPORTUNITIES_PROPERTY_FEE_PAY_FROM_TO(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "{{minimum}} to {{maximum}} {{currency}}"),
+    SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Location"),
+    SYSTEM_OPPORTUNITIES_PROPERTY_PAY_FROM(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "From {{minimum}} {{currency}}"),
+    SYSTEM_OPPORTUNITIES_PROPERTY_PAY_TO(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "To {{maximum}} {{currency}}"),
+    SYSTEM_OPPORTUNITIES_PROPERTY_PAY_FROM_TO(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "From {{minimum}} to {{maximum}} {{currency}}"),
     SYSTEM_OPPORTUNITIES_PROPERTY_PAY_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Salary:"),
-    SYSTEM_OPPORTUNITIES_PROPERTY_LOCATIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Locations:"),
     SYSTEM_OPPORTUNITIES_PROPERTY_FUNCTIONS_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Functions:"),
     SYSTEM_OPPORTUNITIES_PROPERTY_INDUSTRIES_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Industries:"),
     SYSTEM_OPPORTUNITIES_PROPERTY_COMPETENCIES_LABEL(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Competencies:"),
@@ -1584,7 +1585,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCE_NEXT_STATE_LABEL(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "What do you want to do next?"),
     SYSTEM_RESOURCE_NEXT_STATE_HINT(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Please choose the next state."),
     SYSTEM_RESOURCE_TIMELINE_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Timeline"),
-    SYSTEM_RESOURCE_MESSAGES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Messages"), 
+    SYSTEM_RESOURCE_MESSAGES_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Messages"),
     SYSTEM_RESOURCE_MANAGE_USERS_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Manage Users"),
     SYSTEM_RESOURCE_NOTIFICATION_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Email Templates"),
     SYSTEM_RESOURCE_CONFIGURATION_HEADER(PrismDisplayPropertyCategory.SYSTEM_RESOURCE, "Configuration"),

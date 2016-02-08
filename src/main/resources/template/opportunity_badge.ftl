@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -41,7 +41,7 @@
                         [#if pay??]
                         <li>
                             <span class="title">${payLabel}</span>
-                            ${pay},
+                            ${pay}
                         </li>
                         [/#if]
                         <li>
@@ -56,7 +56,7 @@
                 </div>
             </div>
             <div class="prism-apply-holder">
-                <a href="${applicationUrl}" class="btn btn-default enquire" target="_blank">Other Opportunities</a>
+                <a href="${applicationUrl}/#!/employer/applicant?institution=${advert.institution.id}&tab=opportunities" class="btn btn-default enquire" target="_blank">Other Opportunities</a>
                 <a href="${applicationUrl}/#!/applicant/main?${advert.resource.resourceScope?lower_case}=${advert.resource.id}"
                    class="btn btn-success ng-scope" target="_blank">Apply Now</a>
             </div>

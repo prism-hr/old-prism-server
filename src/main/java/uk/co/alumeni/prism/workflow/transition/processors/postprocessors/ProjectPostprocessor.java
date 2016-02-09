@@ -20,6 +20,10 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
     @Override
     public void process(Project resource, Comment comment) {
+        if (comment.isRestoreComment()) {
+            advertService.retireAdvertClosingDate(resource.getAdvert());
+        }
+        
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
 

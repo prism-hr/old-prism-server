@@ -19,6 +19,10 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
 
     @Override
     public void process(Program resource, Comment comment) {
+        if (comment.isRestoreComment()) {
+            advertService.retireAdvertClosingDate(resource.getAdvert());
+        }
+
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
 

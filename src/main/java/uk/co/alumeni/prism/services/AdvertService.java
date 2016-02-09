@@ -1063,6 +1063,12 @@ public class AdvertService {
         return newTreeSet(summaries.values());
     }
 
+    public void retireAdvertClosingDate(Advert advert) {
+        if (advert.getClosingDate().compareTo(LocalDate.now()) >= 0) {
+            advert.setClosingDate(null);
+        }
+    }
+
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds,
             boolean strict,
             Class<T> responseClass) {

@@ -772,6 +772,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return action.getId().getScope().equals(scope) && !(rating == null && competences.isEmpty());
     }
 
+    public boolean isRestoreComment() {
+        return action.getId().name().endsWith("RESTORE");
+    }
+
     public String getApplicationRatingDisplay() {
         return rating == null ? null : rating.toPlainString();
     }

@@ -559,6 +559,7 @@ public class ApplicationDownloadBuilder {
     private void addReferenceCommentAssessmentCriteria(Document pdfDocument, List<CommentCompetenceGroupRepresentation> competenceGroupRepresentations)
             throws Exception {
         Joiner joiner = Joiner.on(COLON + SPACE).skipNulls();
+        
         PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(SYSTEM_RESOURCE_COMPETENCES_HEADER));
         competenceGroupRepresentations.stream().forEach(competenceGroupRepresentation -> {
             competenceGroupRepresentation.getCompetences().stream().forEach(competenceRepresentation -> { 
@@ -566,6 +567,8 @@ public class ApplicationDownloadBuilder {
                         competenceRepresentation.getRemark()), body);
             });
         });
+        
+        applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 
     private Phrase buildTarget(PrismDisplayPropertyDefinition title, Anchor anchor) throws Exception {

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 
@@ -21,12 +22,10 @@ import uk.co.alumeni.prism.domain.resource.Program;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.exceptions.PdfDocumentBuilderException;
 import uk.co.alumeni.prism.mapping.ApplicationMapper;
-import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationExtended;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilder;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderHelper;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -55,20 +54,6 @@ public class ApplicationDownloadService {
     @Inject
     private ApplicationContext applicationContext;
 
-    public void build(ApplicationRepresentationExtended application, PropertyLoader propertyLoader,
-            ApplicationDownloadBuilderHelper applicationDownloadBuilderHelper, final OutputStream outputStream) {
-        try {
-            Document pdfDocument = applicationDownloadBuilderHelper.startDocument();
-            PdfWriter pdfWriter = applicationDownloadBuilderHelper.startDocumentWriter(outputStream, pdfDocument);
-            applicationContext.getBean(ApplicationDownloadBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                    .build(application, pdfDocument, pdfWriter);
-            pdfDocument.newPage();
-            pdfDocument.close();
-        } catch (Exception e) {
-            logger.error("Error building download for application " + application.getCode(), e);
-        }
-    }
-
     public void build(OutputStream oStream, Integer... applicationIds) {
         User user = userService.getCurrentUser();
 
@@ -82,8 +67,7 @@ public class ApplicationDownloadService {
             pdfDocument.open();
 
             HashMap<Program, PropertyLoader> specificPropertyLoaders = Maps.newHashMap();
-            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION,
-                    Lists.newArrayList(applicationIds));
+            List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(userService.getCurrentUser(), APPLICATION, newArrayList(applicationIds));
             HashMap<Program, ApplicationDownloadBuilderHelper> specificApplicationDownloadBuilderHelpers = Maps.newHashMap();
 
             User currentUser = userService.getCurrentUser();

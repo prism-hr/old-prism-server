@@ -1,6 +1,9 @@
 package uk.co.alumeni.prism.services.builders.download;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_NOT_PROVIDED;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,7 +16,6 @@ import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderColor;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 
 import com.google.common.io.Resources;
 import com.itextpdf.text.Anchor;
@@ -51,7 +53,7 @@ public class ApplicationDownloadBuilderHelper {
         return pdfWriter;
     }
 
-	public PdfPTable startSection(Document pdfDocument, String title) throws Exception {
+    public PdfPTable startSection(Document pdfDocument, String title) throws Exception {
         pdfDocument.add(newSectionHeader(title));
         pdfDocument.add(newSectionSeparator());
         return newSectionBody();
@@ -66,9 +68,9 @@ public class ApplicationDownloadBuilderHelper {
     }
 
     public void addContentRow(String title, String content, ApplicationDownloadBuilderFontSize fontSize, PdfPTable table) {
-        String fontSizePostfix = WordUtils.capitalizeFully(fontSize.name());
-        table.addCell((PdfPCell) PrismReflectionUtils.invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
-        table.addCell((PdfPCell) PrismReflectionUtils.invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? StringUtils.EMPTY : content));
+        String fontSizePostfix = capitalizeFully(fontSize.name());
+        table.addCell((PdfPCell) invokeMethod(this, "newTitleCell" + fontSizePostfix, title));
+        table.addCell((PdfPCell) invokeMethod(this, "newContentCell" + fontSizePostfix, content == null ? StringUtils.EMPTY : content));
     }
 
     public void closeSection(Document pdfDocument, PdfPTable body) throws DocumentException {
@@ -144,7 +146,7 @@ public class ApplicationDownloadBuilderHelper {
 
     private PdfPCell newTableCell(String content, ApplicationDownloadBuilderFontSize fontSize, String index) throws Exception {
         Phrase phrase;
-        if (StringUtils.isBlank(content)) {
+        if (isBlank(content)) {
             phrase = new Phrase(propertyLoader.loadLazy(SYSTEM_VALUE_NOT_PROVIDED), ApplicationDownloadBuilderConfiguration.getEmptyFont(fontSize));
         } else if (index == null) {
             phrase = new Phrase(content, ApplicationDownloadBuilderConfiguration.getFont(fontSize));

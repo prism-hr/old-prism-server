@@ -417,7 +417,6 @@ public class ResourceService {
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
             }
-
         }
         return actionOutcome;
     }

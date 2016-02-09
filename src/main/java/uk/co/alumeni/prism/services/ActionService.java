@@ -154,7 +154,13 @@ public class ActionService {
 
     public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) {
         validateInvokeAction(resource, action, comment.getUser(), comment.getDeclinedResponse());
-        return executeAction(resource, action, comment);
+
+        if (isTrue(comment.getSubmit())) {
+            return executeAction(resource, action, comment);
+        } else {
+            commentService.createOrUpdateComment(resource, comment);
+            return new ActionOutcomeDTO().withUser(comment.getUser()).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+        }
     }
 
     public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) {

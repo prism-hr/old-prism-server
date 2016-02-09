@@ -33,6 +33,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
@@ -181,7 +182,8 @@ public class CommentMapper {
     }
 
     public CommentRepresentation getCommentRepresentationExtended(Comment comment) {
-        return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(comment.getState().getId())
+        State state = comment.getState();
+        return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(state == null ? null : state.getId())
                 .withTransitionState(comment.getTransitionState().getId()).withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
                 .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity())
                 .withRating(comment.getRating()).withInterested(comment.getInterested())

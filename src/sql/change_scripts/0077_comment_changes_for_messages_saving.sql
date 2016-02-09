@@ -1,10 +1,8 @@
 create table comment_thread (
 	id int(10) unsigned not null auto_increment,
 	subject varchar(255) not null,
-	created_timestamp datetime not null,
 	primary key (id),
-	index (subject),
-	index (created_timestamp))
+	index (subject))
 collate = utf8_general_ci
 engine = innodb
 ;

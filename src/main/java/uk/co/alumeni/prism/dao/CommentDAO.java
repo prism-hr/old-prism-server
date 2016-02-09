@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.dao;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -72,6 +73,19 @@ public class CommentDAO {
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
+    }
+
+    public List<Comment> getUnsubmittedComments(Resource resource, Collection<PrismAction> prismActions, User user) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("action.id", prismActions)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("user", user)) //
+                        .add(Restrictions.eq("delegateUser", user))) //
+                .addOrder(Order.asc("action.id")) //
+                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("id")) //
+                .list();
     }
 
     public List<User> getAppointmentInvitees(Comment comment) {

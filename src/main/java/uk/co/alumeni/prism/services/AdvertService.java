@@ -1068,13 +1068,6 @@ public class AdvertService {
     }
 
     public void retireAdvertClosingDate(Advert advert) {
-        LocalDate closingDate = advert.getClosingDate();
-        if (!(closingDate == null || advert.getClosingDate().compareTo(LocalDate.now()) == 1)) {
-            advert.setClosingDate(null);
-        }
-    }
-
-    public void retireAdvertClosingDate(Advert advert) {
         if (advert.getClosingDate().compareTo(LocalDate.now()) >= 0) {
             advert.setClosingDate(null);
         }

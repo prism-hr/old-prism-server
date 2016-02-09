@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 
 import java.math.BigDecimal;
@@ -22,6 +21,8 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 
 public class CommentDTO {
+
+    private Integer id;
 
     private Integer user;
 
@@ -49,9 +50,9 @@ public class CommentDTO {
     private Integer applicantKnownDuration;
 
     private String applicantKnownCapacity;
-    
+
     private BigDecimal rating;
-    
+
     private Boolean interested;
 
     @Valid
@@ -108,6 +109,16 @@ public class CommentDTO {
 
     @Valid
     private List<DocumentDTO> documents;
+
+    private Boolean submit;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public Integer getUser() {
         return user;
@@ -180,7 +191,7 @@ public class CommentDTO {
     public void setEligible(PrismYesNoUnsureResponse eligible) {
         this.eligible = eligible;
     }
-    
+
     public Boolean getApplicantKnown() {
         return applicantKnown;
     }
@@ -389,17 +400,16 @@ public class CommentDTO {
         this.documents = documents;
     }
 
-    public CommentDTO withAction(PrismAction action) {
-        this.action = action;
-        return this;
+    public Boolean getSubmit() {
+        return submit;
+    }
+
+    public void setSubmit(Boolean submit) {
+        this.submit = submit;
     }
 
     public boolean isCreateComment() {
         return action.getActionCategory().equals(CREATE_RESOURCE);
-    }
-
-    public boolean isViewEditComment() {
-        return action.getActionCategory().equals(VIEW_EDIT_RESOURCE);
     }
 
     public boolean isClaimComment() {

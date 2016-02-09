@@ -103,6 +103,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
+    @ManyToOne
+    @JoinColumn(name = "comment_thread_id")
+    private CommentThread thread;
+
     @Lob
     @Column(name = "content")
     private String content;
@@ -318,12 +322,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.action = action;
     }
 
-    public Boolean getDeclinedResponse() {
-        return declinedResponse;
+    public CommentThread getThread() {
+        return thread;
     }
 
-    public void setDeclinedResponse(Boolean declinedResponse) {
-        this.declinedResponse = declinedResponse;
+    public void setThread(CommentThread thread) {
+        this.thread = thread;
     }
 
     public String getContent() {
@@ -332,6 +336,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Boolean getDeclinedResponse() {
+        return declinedResponse;
+    }
+
+    public void setDeclinedResponse(Boolean declinedResponse) {
+        this.declinedResponse = declinedResponse;
     }
 
     public State getState() {
@@ -686,12 +698,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public boolean isApplicationUpdateRefereesComment() {
         return isApplicationViewEditComment()
-                && (transitionState.getId().equals(PrismState.APPLICATION_REFERENCE) || secondaryTransitionStates.contains(new State().withId(PrismState.APPLICATION_REFERENCE)));
+                && (transitionState.getId().equals(PrismState.APPLICATION_REFERENCE) || secondaryTransitionStates.contains(new State()
+                        .withId(PrismState.APPLICATION_REFERENCE)));
     }
 
     public boolean isInterviewScheduledExpeditedComment() {
         return action.getId().equals(PrismAction.APPLICATION_ASSIGN_INTERVIEWERS) //
-                && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(transitionState.getId());
+                && Arrays.asList(PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW, PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK).contains(
+                        transitionState.getId());
     }
 
     public boolean isApplicationInterviewScheduledConfirmedComment() {
@@ -743,13 +757,15 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     public boolean isApplicationInterviewScheduledComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
         return interviewDateTime == null ? false
-                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isAfter(baseline);
+                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()))
+                        .isAfter(baseline);
     }
 
     public boolean isApplicationInterviewRecordedComment(DateTime baseline) {
         LocalDateTime interviewDateTime = interviewAppointment == null ? null : interviewAppointment.getInterviewDateTime();
         return interviewDateTime == null ? false
-                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone())).isBefore(baseline);
+                : interviewAppointment.getInterviewDateTime().toDateTime(DateTimeZone.forTimeZone(interviewAppointment.getInterviewTimeZone()))
+                        .isBefore(baseline);
     }
 
     public boolean isRatingComment(PrismScope scope) {

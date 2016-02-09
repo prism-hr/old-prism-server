@@ -17,7 +17,9 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -67,6 +69,7 @@ import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 @Transactional
@@ -332,6 +335,17 @@ public class CommentService {
 
         comment.setSubmit(commentDTO.getSubmit());
         return comment;
+    }
+
+    public Map<PrismAction, Comment> getUnsubmittedComments(Resource resource, Collection<PrismAction> prismActions, User user) {
+        Map<PrismAction, Comment> comments = Maps.newHashMap();
+        commentDAO.getUnsubmittedComments(resource, prismActions, user).stream().forEach(comment -> {
+            PrismAction prismAction = comment.getAction().getId();
+            if (!comments.containsKey(prismAction)) {
+                comments.put(prismAction, comment);
+            }
+        });
+        return comments;
     }
 
     private void prepareProcessApplicationComment(Application application, User user, Action action, Comment comment, CommentDTO commentDTO) {

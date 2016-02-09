@@ -352,6 +352,7 @@ public class CommentService {
         PrismAction actionId = action.getId();
         boolean isCompleteAction = actionId.equals(APPLICATION_COMPLETE);
 
+        comment.setContent(commentDTO.getContent());
         comment.setApplicantKnown(commentDTO.getApplicantKnown());
         comment.setApplicantKnownDuration(commentDTO.getApplicantKnownDuration());
         comment.setApplicantKnownCapacity(commentDTO.getApplicantKnownCapacity());

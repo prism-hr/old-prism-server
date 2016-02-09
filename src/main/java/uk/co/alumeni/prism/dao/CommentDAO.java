@@ -82,6 +82,7 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
                         .add(Restrictions.eq("delegateUser", user))) //
+                .add(Restrictions.isNull("submittedTimestamp")) // 
                 .addOrder(Order.asc("action.id")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //

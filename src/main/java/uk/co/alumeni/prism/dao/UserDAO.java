@@ -116,7 +116,7 @@ public class UserDAO {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
+                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -131,7 +131,7 @@ public class UserDAO {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
+                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //

@@ -38,7 +38,8 @@ public class CommentDAO {
         return (Comment) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.in("action.id", prismActions)) //
-                .addOrder(Order.desc("createdTimestamp")) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -51,7 +52,8 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
                         .add(Restrictions.eq("delegateUser", user))) //
-                .addOrder(Order.desc("createdTimestamp")) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -64,8 +66,9 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
                         .add(Restrictions.eq("delegateUser", user))) //
-                .add(Restrictions.ge("createdTimestamp", baseline)) //
-                .addOrder(Order.desc("createdTimestamp")) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .add(Restrictions.ge("submittedTimestamp", baseline)) //
+                .addOrder(Order.desc("submittedTimestamp")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -79,6 +82,7 @@ public class CommentDAO {
                 .add(Restrictions.in("role.id", Lists.newArrayList(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE, //
                         PrismRole.APPLICATION_POTENTIAL_INTERVIEWER, PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER))) //
                 .add(Restrictions.in("roleTransitionType", Arrays.asList(PrismRoleTransitionType.CREATE, PrismRoleTransitionType.BRANCH))) //
+                .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
@@ -89,6 +93,7 @@ public class CommentDAO {
         return (List<LocalDateTime>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentPreference.class) //
                 .setProjection(Projections.property("dateTime")) //
                 .add(Restrictions.eq("comment", comment)) //
+                .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
                 .addOrder(Order.asc("dateTime")) //
                 .list();
     }
@@ -98,6 +103,7 @@ public class CommentDAO {
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(APPLICATION_HIRING_MANAGER))) //
+                .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.lastName")) //
                 .addOrder(Order.asc("user.firstName")) //
@@ -108,9 +114,10 @@ public class CommentDAO {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("user.email")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.ge("createdTimestamp", comment.getCreatedTimestamp())) //
                 .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS)) //
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .add(Restrictions.ge("submittedTimestamp", comment.getSubmittedTimestamp())) //
                 .list();
     }
 
@@ -128,7 +135,8 @@ public class CommentDAO {
                                                 .add(Restrictions.ne("action.systemInvocationOnly", true))) //
                                         .add(Restrictions.isNotNull("action.creationScope"))))
                         .add(Restrictions.eq("action.visibleAction", true))) //
-                .addOrder(Order.asc("createdTimestamp")) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .addOrder(Order.asc("submittedTimestamp")) //
                 .addOrder(Order.asc("id")) //
                 .list();
     }
@@ -138,6 +146,7 @@ public class CommentDAO {
                 .setProjection(Projections.property("user")) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", roles)) //
+                .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
                 .list();
     }
 
@@ -146,6 +155,7 @@ public class CommentDAO {
                 .add(Restrictions.in("comment.id", commentIds)) //
                 .add(Restrictions.in("role.id", roleIds)) //
                 .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
+                .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("id")) //
                 .list();
@@ -159,6 +169,7 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
                         .add(Restrictions.eqProperty("delegateUser", resourceReference + ".user"))) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .list();
     }
 
@@ -170,6 +181,24 @@ public class CommentDAO {
                 .createAlias(resourceReferenceComment, resourceReference, JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReferenceComment, resource)) //
                 .add(Restrictions.eqProperty("user", resourceReference + ".user")) //
+                .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
+                .list();
+    }
+
+    public List<Comment> getComments(List<Integer> commentIds) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.in("id", commentIds)) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .addOrder(Order.asc("sequenceIdentifier")) //
+                .list();
+    }
+
+    public List<Comment> getTransitionCommentHistory(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.neProperty("state", "transitionState")) //
+                .add(Restrictions.isNotNull("submittedTimestamp")) //
+                .addOrder(Order.desc("id")) //
                 .list();
     }
 
@@ -180,21 +209,6 @@ public class CommentDAO {
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN);
-    }
-
-    public List<Comment> getComments(List<Integer> commentIds) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.in("id", commentIds)) //
-                .addOrder(Order.asc("sequenceIdentifier")) //
-                .list();
-    }
-
-    public List<Comment> getTransitionCommentHistory(Resource resource) {
-        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.neProperty("state", "transitionState")) //
-                    .addOrder(Order.desc("id")) //
-                .list();
     }
 
 }

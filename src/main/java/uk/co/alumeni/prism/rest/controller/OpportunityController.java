@@ -1,8 +1,21 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import com.google.gson.Gson;
+import static org.apache.commons.lang3.StringUtils.removeEnd;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
@@ -14,13 +27,7 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationExtend
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.WidgetService;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.apache.commons.lang3.StringUtils.removeEnd;
+import com.google.gson.Gson;
 
 @RestController
 @RequestMapping("/api/opportunities")

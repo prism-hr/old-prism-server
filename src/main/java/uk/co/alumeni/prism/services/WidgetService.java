@@ -16,6 +16,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,6 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
-
-import javax.inject.Inject;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Service
 @Transactional

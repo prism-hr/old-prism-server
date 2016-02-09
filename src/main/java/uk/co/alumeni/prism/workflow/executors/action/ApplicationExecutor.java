@@ -19,7 +19,6 @@ import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
-import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.UserService;
 
 @Component
@@ -35,16 +34,13 @@ public class ApplicationExecutor implements ActionExecutor {
     private CommentService commentService;
 
     @Inject
-    private EntityService entityService;
-
-    @Inject
     private UserService userService;
 
     @Override
     public ActionOutcomeDTO execute(CommentDTO commentDTO) {
         PrismAction actionId = commentDTO.getAction();
         User user = userService.getById(commentDTO.getUser());
-        Application application = entityService.getById(Application.class, commentDTO.getResource().getId());
+        Application application = applicationService.getById(commentDTO.getResource().getId());
 
         if (actionId.equals(APPLICATION_COMPLETE)) {
             BeanPropertyBindingResult errors = applicationService.validateApplication(application);

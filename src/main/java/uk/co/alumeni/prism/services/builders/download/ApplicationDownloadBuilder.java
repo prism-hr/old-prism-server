@@ -1,6 +1,10 @@
 package uk.co.alumeni.prism.services.builders.download;
 
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.PrismConstants.COLON;
+import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CODE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_DECLINED_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CONFIRMED_START_DATE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_DOCUMENT_PERSONAL_SUMMARY_LABEL;
@@ -57,6 +61,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_APPENDIX;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_AVERAGE_RATING;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CLOSING_DATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DATE_FORMAT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL;
@@ -71,6 +76,8 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PAGE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RATING;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_COMPETENCES_HEADER;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_SEE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALUE_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_YES;
@@ -90,11 +97,9 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismDisability;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
@@ -105,6 +110,7 @@ import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.PdfDocumentBuilderException;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceGroupRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
@@ -124,6 +130,7 @@ import uk.co.alumeni.prism.services.DocumentService;
 import uk.co.alumeni.prism.services.builders.download.ApplicationDownloadBuilderConfiguration.ApplicationDownloadBuilderFontSize;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.Chunk;
@@ -157,9 +164,6 @@ public class ApplicationDownloadBuilder {
 
     @Inject
     private DocumentService documentService;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     public void build(ApplicationRepresentationExtended application, Document pdfDocument, PdfWriter writer) throws PdfDocumentBuilderException {
         try {
@@ -512,23 +516,56 @@ public class ApplicationDownloadBuilder {
                 DocumentRepresentation document = (DocumentRepresentation) content;
                 pdfDocument.add(buildTarget(bookmark.getLabel(), anchor));
                 addDocument(document, pdfDocument, pdfWriter);
-            } else if (content instanceof Comment) {
-                CommentRepresentation referenceComment = (CommentRepresentation) content;
+            } else if (content instanceof CommentRepresentation) {
+                CommentRepresentation commentRepresentation = (CommentRepresentation) content;
                 pdfDocument.add(buildTarget(PROFILE_REFEREE_REFERENCE_APPENDIX, anchor));
 
                 pdfDocument.add(applicationDownloadBuilderHelper.newSectionSeparator());
+                addReferenceComment(pdfDocument, commentRepresentation);
 
-                PdfPTable subBody = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(PROFILE_REFEREE_REFERENCE_COMMENT));
-                applicationContext.getBean(ApplicationDownloadReferenceBuilder.class).localize(propertyLoader, applicationDownloadBuilderHelper)
-                        .addReferenceComment(pdfDocument, subBody, pdfWriter, application, referenceComment);
+                List<CommentCompetenceGroupRepresentation> competenceGroupRepresentations = commentRepresentation.getCompetenceGroups();
+                if (isNotEmpty(competenceGroupRepresentations)) {
+                    addReferenceCommentAssessmentCriteria(pdfDocument, competenceGroupRepresentations);
+                }
 
-                for (DocumentRepresentation document : referenceComment.getDocuments()) {
+                for (DocumentRepresentation document : commentRepresentation.getDocuments()) {
                     addDocument(document, pdfDocument, pdfWriter);
                 }
             }
 
             index++;
         }
+    }
+
+    private void addReferenceComment(Document pdfDocument, CommentRepresentation commentRepresentation) throws Exception {
+        PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(PROFILE_REFEREE_REFERENCE_COMMENT));
+
+        String commentHeader = propertyLoader.loadLazy(SYSTEM_COMMENT_HEADER);
+        if (commentRepresentation.getDeclinedResponse()) {
+            applicationDownloadBuilderHelper.addContentRowMedium(commentHeader, propertyLoader.loadLazy(APPLICATION_COMMENT_DECLINED_REFEREE), body);
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+        } else {
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(PROFILE_REFEREE_SUBHEADER), commentRepresentation.getUser()
+                    .getFullName(), body);
+            applicationDownloadBuilderHelper.addContentRowMedium(commentHeader, commentRepresentation.getContent(), body);
+
+            BigDecimal rating = commentRepresentation.getRating();
+            applicationDownloadBuilderHelper.addContentRowMedium(propertyLoader.loadLazy(SYSTEM_RATING), rating == null ? null : rating.toPlainString(), body);
+
+            applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
+        }
+    }
+
+    private void addReferenceCommentAssessmentCriteria(Document pdfDocument, List<CommentCompetenceGroupRepresentation> competenceGroupRepresentations)
+            throws Exception {
+        Joiner joiner = Joiner.on(COLON + SPACE).skipNulls();
+        PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(SYSTEM_RESOURCE_COMPETENCES_HEADER));
+        competenceGroupRepresentations.stream().forEach(competenceGroupRepresentation -> {
+            competenceGroupRepresentation.getCompetences().stream().forEach(competenceRepresentation -> { 
+                applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(), joiner.join(competenceRepresentation.getRating().toString(),
+                        competenceRepresentation.getRemark()), body);
+            });
+        });
     }
 
     private Phrase buildTarget(PrismDisplayPropertyDefinition title, Anchor anchor) throws Exception {

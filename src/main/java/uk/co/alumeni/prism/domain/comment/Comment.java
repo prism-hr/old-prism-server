@@ -103,12 +103,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @Column(name = "declined_response", nullable = false)
-    private Boolean declinedResponse;
-
     @Lob
     @Column(name = "content")
     private String content;
+
+    @Column(name = "declined_response", nullable = false)
+    private Boolean declinedResponse;
 
     @ManyToOne
     @JoinColumn(name = "state_id")
@@ -176,6 +176,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
 
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime submittedTimestamp;
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -216,6 +220,9 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     @Transient
     private Set<State> secondaryTransitionStates = Sets.newHashSet();
+
+    @Transient
+    private Boolean submit;
 
     @Override
     public Integer getId() {
@@ -515,6 +522,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.createdTimestamp = createdTimestamp;
     }
 
+    public DateTime getSubmittedTimestamp() {
+        return submittedTimestamp;
+    }
+
+    public void setSubmittedTimestamp(DateTime submittedTimestamp) {
+        this.submittedTimestamp = submittedTimestamp;
+    }
+
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
@@ -533,34 +548,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         secondaryTransitionStates.add(state);
     }
 
-    public Comment withId(Integer id) {
-        this.id = id;
-        return this;
+    public Boolean getSubmit() {
+        return submit;
     }
 
-    public Comment withSystem(System system) {
-        this.system = system;
-        return this;
-    }
-
-    public Comment withInstitution(Institution institution) {
-        this.institution = institution;
-        return this;
-    }
-
-    public Comment withProgram(Program program) {
-        this.program = program;
-        return this;
-    }
-
-    public Comment withProject(Project project) {
-        this.project = project;
-        return this;
-    }
-
-    public Comment withApplication(Application application) {
-        this.application = application;
-        return this;
+    public void setSubmit(Boolean submit) {
+        this.submit = submit;
     }
 
     public Comment withResource(Resource resource) {
@@ -600,76 +593,6 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public Comment withTransitionState(State transitionState) {
         this.transitionState = transitionState;
-        return this;
-    }
-
-    public Comment withApplicantKnown(Boolean applicantKnown) {
-        this.applicantKnown = applicantKnown;
-        return this;
-    }
-
-    public Comment withShared(Boolean shared) {
-        this.shared = shared;
-        return this;
-    }
-
-    public Comment withOnCourse(Boolean onCourse) {
-        this.onCourse = onCourse;
-        return this;
-    }
-
-    public Comment withApplicantKnownDuration(Integer applicantKnownDuration) {
-        this.applicantKnownDuration = applicantKnownDuration;
-        return this;
-    }
-
-    public Comment withApplicantKnownCapcity(String applicantKnownCapacity) {
-        this.applicantKnownCapacity = applicantKnownCapacity;
-        return this;
-    }
-
-    public Comment withRating(BigDecimal rating) {
-        this.rating = rating;
-        return this;
-    }
-
-    public Comment withEligible(PrismYesNoUnsureResponse eligible) {
-        this.eligible = eligible;
-        return this;
-    }
-
-    public Comment withInterested(Boolean interested) {
-        this.interested = interested;
-        return this;
-    }
-
-    public Comment withInterviewAppointment(CommentInterviewAppointment interviewAppointment) {
-        this.interviewAppointment = interviewAppointment;
-        return this;
-    }
-
-    public Comment withInterviewInstruction(CommentInterviewInstruction interviewInstruction) {
-        this.interviewInstruction = interviewInstruction;
-        return this;
-    }
-
-    public Comment withInterviewAvailable(Boolean interviewAvailable) {
-        this.interviewAvailable = interviewAvailable;
-        return this;
-    }
-
-    public Comment withRecruiterAcceptAppointment(Boolean recruiterAcceptAppointment) {
-        this.recruiterAcceptAppointment = recruiterAcceptAppointment;
-        return this;
-    }
-
-    public Comment withPartnerAcceptAppointment(Boolean partnerAcceptAppointment) {
-        this.partnerAcceptAppointment = partnerAcceptAppointment;
-        return this;
-    }
-
-    public Comment withApplicantAcceptAppointment(Boolean applicantAcceptAppointment) {
-        this.applicantAcceptAppointment = applicantAcceptAppointment;
         return this;
     }
 

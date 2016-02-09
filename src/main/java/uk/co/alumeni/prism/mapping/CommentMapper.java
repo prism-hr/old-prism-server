@@ -220,7 +220,8 @@ public class CommentMapper {
         CommentRepresentation representation = new CommentRepresentation().withId(comment.getId())
                 .withUser(userMapper.getUserRepresentationSimple(comment.getUser(), userService.getCurrentUser()))
                 .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
-                .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp());
+                .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp())
+                .withSubmittedTimestamp(comment.getSubmittedTimestamp());
 
         if (comment.isApplicationCompleteComment()) {
             representation.setShared(comment.getShared());

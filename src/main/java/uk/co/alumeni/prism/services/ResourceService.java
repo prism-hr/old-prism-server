@@ -417,7 +417,6 @@ public class ResourceService {
             if (actionExecutor != null) {
                 actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
             }
-
         }
         return actionOutcome;
     }
@@ -516,7 +515,7 @@ public class ResourceService {
         deleteResourceStates(resourceStates, commentTransitionStates);
         entityService.flush();
 
-        LocalDate baseline = comment.getCreatedTimestamp().toLocalDate();
+        LocalDate baseline = comment.getSubmittedTimestamp().toLocalDate();
         insertResourceStates(resource, resourcePreviousStates, commentStates, ResourcePreviousState.class, baseline);
         insertResourceStates(resource, resourceStates, commentTransitionStates, ResourceState.class, baseline);
         entityService.flush();

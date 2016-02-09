@@ -6,7 +6,6 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -30,6 +29,7 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 
 import com.google.common.collect.Lists;
@@ -41,6 +41,9 @@ public class ActionMapper {
 
     @Inject
     private CommentMapper commentMapper;
+
+    @Inject
+    private CommentService commentService;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -84,6 +87,13 @@ public class ActionMapper {
             representations.put(action.getActionId(), getActionRepresentationExtended(resource, action, user));
         }
 
+        Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
+        representations.keySet().stream().forEach(prismAction -> {
+            if (unsubmittedComments.containsKey(prismAction)) {
+                representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction)));
+            }
+        });
+
         actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(a -> a.getActionId()).collect(toList()))
                 .forEach(ae -> representations.get(ae.getAction()).addActionEnhancement(ae.getActionEnhancement()));
 
@@ -109,23 +119,26 @@ public class ActionMapper {
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
-        ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation().withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
+        ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
+                .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
 
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
-            representation.setReplicable(new ActionOutcomeReplicableRepresentation()
-                    .withFilter(resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(), actionOutcomeDTO.getStateTransition(),
+            representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
+                    resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
+                            actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
-                    .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(Collectors.toList())));
+                    .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(toList())));
         }
 
         return representation;
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
-        return getActionRepresentationSimple(action, ActionRepresentationExtended.class).addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId()))
+        return getActionRepresentationSimple(action, ActionRepresentationExtended.class).addNextStates(
+                stateMapper.getStateRepresentations(resource, action.getActionId()))
                 .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
     }
 

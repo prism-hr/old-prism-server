@@ -16,6 +16,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,15 +34,6 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Service
 @Transactional
@@ -85,13 +77,13 @@ public class WidgetService {
 
         if (durationMinimum != null) {
             String durationString;
-            if (durationMaximum != null && durationMaximum != durationMinimum) {
+            if (durationMaximum != null && !Objects.equals(durationMaximum, durationMinimum)) {
                 durationString = propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_DURATION_FROM_TO);
             } else {
                 durationString = propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_DURATION_FROM);
             }
-            durationString = durationString.replace("{{durationMinimum}}", Integer.toString(durationMinimum));
-            durationString = durationString.replace("{{durationMaximum}}", Integer.toString(durationMaximum));
+            durationString = durationString.replace("{{durationMinimum}}", "" + durationMinimum);
+            durationString = durationString.replace("{{durationMaximum}}", "" + durationMaximum);
             model.put("duration", durationString);
         }
 

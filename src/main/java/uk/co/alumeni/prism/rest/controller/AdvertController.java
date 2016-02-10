@@ -1,19 +1,9 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.dto.AdvertTargetDTO;
@@ -27,8 +17,14 @@ import uk.co.alumeni.prism.rest.dto.advert.AdvertSettingsDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation.AdvertTargetConnectionRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions}/{resourceId}")
@@ -50,6 +46,16 @@ public class AdvertController {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         List<AdvertTargetDTO> advertTargets = advertService.getAdvertTargets(advert);
         return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets);
+    }
+
+    @RequestMapping(value = "/locations", method = RequestMethod.GET)
+    public List<ResourceLocationRepresentationRelation> getLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId) {
+        Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
+        AdvertCategories categories = advertService.getAdvertCategories(advert);
+        if (categories != null) {
+            return advertMapper.getAllAdvertLocationRepresentations(advert, categories);
+        }
+        return Collections.emptyList();
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.PUT)

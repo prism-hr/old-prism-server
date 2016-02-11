@@ -144,7 +144,7 @@ public class ActionService {
     }
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(User user, Resource resource, PrismAction action) {
-        return getPermittedActionEnhancements(user, resource, newArrayList(action), advertService.getAdvertTargeterEntities(user, resource.getResourceScope())).stream()
+        return getPermittedActionEnhancements(user, resource, newArrayList(action), advertService.getAdvertTargeterEntities(user, resource.getResourceScope()))
                 .stream().map(ae -> ae.getActionEnhancement()).collect(toList()); //
     }
 
@@ -231,7 +231,8 @@ public class ActionService {
             PrismScope prismCreationScope = creationScope.getId();
 
             Action action = actionCreationScope.getAction();
-            action.setActionCondition(prismCreationScope.ordinal() > INSTITUTION.ordinal() ? PrismActionCondition.valueOf("ACCEPT_" + prismCreationScope.name()) : null);
+            action.setActionCondition(prismCreationScope.ordinal() > INSTITUTION.ordinal() ? PrismActionCondition.valueOf("ACCEPT_" + prismCreationScope.name())
+                    : null);
             action.setActionCondition(prismCreationScope.ordinal() > INSTITUTION.ordinal() ? PrismActionCondition.valueOf("ACCEPT_" + prismCreationScope.name())
                     : null);
             action.setCreationScope(creationScope);
@@ -349,32 +350,34 @@ public class ActionService {
                 }
             }
 
-        StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
-        Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
-        Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
+            StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
+            Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
+            Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                .withTransitionAction(transitionAction).withStateTransition(stateTransition);
+            ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
+                    .withTransitionAction(transitionAction).withStateTransition(stateTransition);
 
-        LinkedList<Comment> replicableSequenceComments = null;
-        if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
-            replicableSequenceComments = Lists.newLinkedList();
-            for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
-                replicableSequenceComments.push(transitionComment);
-                StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
-                if (isTrue(stateAction.getReplicableSequenceStart())) {
-                    break;
+            LinkedList<Comment> replicableSequenceComments = null;
+            if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
+                replicableSequenceComments = Lists.newLinkedList();
+                for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
+                    replicableSequenceComments.push(transitionComment);
+                    StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
+                    if (isTrue(stateAction.getReplicableSequenceStart())) {
+                        break;
+                    }
                 }
             }
-        }
 
-        if (isNotEmpty(replicableSequenceComments)) {
-            if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition, replicableSequenceComments))) {
-                actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
+            if (isNotEmpty(replicableSequenceComments)) {
+                if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition,
+                        replicableSequenceComments))) {
+                    actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
+                }
             }
-        }
 
-        return actionOutcome;
+            return actionOutcome;
+        }
 
         commentService.createOrUpdateComment(resource, comment);
         return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
@@ -393,7 +396,8 @@ public class ActionService {
         return expected;
     }
 
-    private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, Resource resource, Collection<PrismAction> actions, Collection<Integer> targeterEntities) {
+    private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, Resource resource, Collection<PrismAction> actions,
+            Collection<Integer> targeterEntities) {
         PrismScope scope = resource.getResourceScope();
         Set<ActionEnhancementDTO> enhancements = Sets.newHashSet();
         for (String enhancementProperty : new String[] { "stateAction.actionEnhancement", "stateActionAssignment.actionEnhancement" }) {
@@ -402,12 +406,14 @@ public class ActionService {
         return newArrayList(enhancements);
     }
 
-    private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
+    private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities,
+            Collection<Integer> resources,
             PrismAction action) {
         return getPermittedActions(user, scope, targeterEntities, resources, action == null ? null : newArrayList(action));
     }
 
-    private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
+    private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities,
+            Collection<Integer> resources,
             Collection<PrismAction> actions) {
         TreeMultimap<Integer, ActionDTO> permittedActions = TreeMultimap.create();
         getActionEntities(user, scope, targeterEntities, resources, actions,
@@ -423,7 +429,8 @@ public class ActionService {
         return permittedActions;
     }
 
-    private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
+    private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, PrismScope scope, Collection<Integer> targeterEntities,
+            Collection<Integer> resources,
             Collection<PrismAction> actions, String column) {
         return newArrayList(getActionEntities(user, scope, targeterEntities, resources, actions,
                 Projections.projectionList() //
@@ -433,12 +440,14 @@ public class ActionService {
                 ActionEnhancementDTO.class));
     }
 
-    private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources, Collection<PrismAction> actions,
+    private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
+            Collection<PrismAction> actions,
             ProjectionList columns, Class<T> responseClass) {
         return getActionEntities(user, scope, targeterEntities, resources, actions, columns, null, responseClass);
     }
 
-    private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources, Collection<PrismAction> actions,
+    private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
+            Collection<PrismAction> actions,
             ProjectionList columns, Criterion restriction, Class<T> responseClass) {
         Set<T> actionEntities = Sets.newHashSet();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
@@ -453,7 +462,8 @@ public class ActionService {
                 for (PrismScope targeterScope : organizationScopes) {
                     for (PrismScope targetScope : organizationScopes) {
                         actionEntities.addAll(
-                                actionDAO.getActionEntities(user, scope, targeterScope, targetScope, targeterEntities, resources, actions, columns, restriction, responseClass));
+                                actionDAO.getActionEntities(user, scope, targeterScope, targetScope, targeterEntities, resources, actions, columns,
+                                        restriction, responseClass));
                     }
                 }
             }

@@ -139,7 +139,7 @@ public class CommentService {
         Set<CommentCompetence> persistentCompetences = newHashSet(transientCompetences);
         transientCompetences.clear();
 
-        if (comment.getId() != null) {
+        if (comment.getId() == null) {
             entityService.save(comment);
             setSequenceIdentifier(comment, comment.getCreatedTimestamp());
         }

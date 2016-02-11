@@ -357,7 +357,7 @@ public class ActionService {
 
             LinkedList<Comment> replicableSequenceComments = null;
             if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
-                replicableSequenceComments = Lists.newLinkedList();
+                replicableSequenceComments = newLinkedList();
                 for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
                     replicableSequenceComments.push(transitionComment);
                     StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());

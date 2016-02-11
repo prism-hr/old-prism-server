@@ -348,6 +348,13 @@ public class CommentService {
         return comments;
     }
 
+    public Boolean prepareComment(Comment comment) {
+        Boolean submit = comment.getSubmit();
+        submit = submit == null ? true : submit;
+        comment.setSubmit(submit);
+        return submit;
+    }
+
     private void prepareProcessApplicationComment(Application application, User user, Action action, Comment comment, CommentDTO commentDTO) {
         PrismAction actionId = action.getId();
         boolean isCompleteAction = actionId.equals(APPLICATION_COMPLETE);

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
@@ -26,6 +27,7 @@ import org.hibernate.sql.JoinType;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -143,7 +145,8 @@ public class WorkflowDAO {
 
     public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
         return Restrictions
-                .not(Restrictions.in("state.id", values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
+                .not(Restrictions.in("state.id",
+                        values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
     }
 
     public static Junction getResourceParentManageableConstraint(PrismScope resourceScope, User user) {
@@ -168,6 +171,10 @@ public class WorkflowDAO {
 
     public static Criterion getLikeConstraint(String property, String query) {
         return Restrictions.like(property, query, MatchMode.ANYWHERE);
+    }
+
+    public static MatchMode getMatchMode(PrismResourceListFilterExpression expression) {
+        return expression.equals(EQUAL) ? MatchMode.EXACT : MatchMode.ANYWHERE;
     }
 
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {

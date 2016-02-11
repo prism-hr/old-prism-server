@@ -76,6 +76,7 @@ import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelation;
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
@@ -229,7 +230,7 @@ public class ResourceService {
 
         PrismState initialState = resourceDTO.getInitialState();
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
-                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
+                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withSubmit(true).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
         ActionOutcomeDTO outcome;
@@ -1112,12 +1113,12 @@ public class ResourceService {
         return resources;
     }
 
-    public List<Integer> getResourcesByTheme(PrismScope resourceScope, String theme) {
-        return resourceDAO.getResourcesByTheme(resourceScope, theme);
+    public List<Integer> getResourcesByTheme(PrismScope resourceScope, PrismResourceListFilterExpression expression, String theme) {
+        return resourceDAO.getResourcesByTheme(resourceScope, expression, theme);
     }
 
-    public List<Integer> getResourcesByLocation(PrismScope resourceScope, String location) {
-        return resourceDAO.getResourcesByLocation(resourceScope, location);
+    public List<Integer> getResourcesByLocation(PrismScope resourceScope, PrismResourceListFilterExpression expression, String location) {
+        return resourceDAO.getResourcesByLocation(resourceScope, expression, location);
     }
 
     public List<Integer> getResourcesForStateActionPendingAssignment(User user, Resource templateResource, StateTransition stateTransition,

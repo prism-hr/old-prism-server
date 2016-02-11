@@ -613,6 +613,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
+    public Comment withSubmit(Boolean submit) {
+        this.submit = submit;
+        return this;
+    }
+
     public Comment withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
         return this;

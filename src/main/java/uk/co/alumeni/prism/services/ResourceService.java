@@ -230,7 +230,7 @@ public class ResourceService {
 
         PrismState initialState = resourceDTO.getInitialState();
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
-                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withSubmit(true).withCreatedTimestamp(new DateTime())
+                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
         ActionOutcomeDTO outcome;

@@ -142,8 +142,9 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
             return false;
         }
         ResourceRepresentationRelation other = (ResourceRepresentationRelation) object;
-        return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment())
-                && Objects.equal(program, other.getProgram()) && Objects.equal(project, other.getProject());
+        return (Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId()))
+                || (Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment())
+                        && Objects.equal(program, other.getProgram()) && Objects.equal(project, other.getProject()));
     }
 
     @Override
@@ -153,7 +154,8 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
             int compare = institution.compareTo(otherActivity.getInstitution());
             compare = compare == 0 ? ObjectUtils.compare(department, otherActivity.getDepartment(), true) : compare;
             compare = compare == 0 ? ObjectUtils.compare(program, otherActivity.getProgram(), true) : compare;
-            return compare == 0 ? ObjectUtils.compare(project, otherActivity.getProject(), true) : compare;
+            compare = compare == 0 ? ObjectUtils.compare(project, otherActivity.getProject(), true) : compare;
+            return compare == 0 ? ObjectUtils.compare(this, other) : compare;
         }
         return super.compareTo(other);
     }

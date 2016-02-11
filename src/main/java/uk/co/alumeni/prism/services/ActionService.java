@@ -155,13 +155,7 @@ public class ActionService {
 
     public ActionOutcomeDTO executeUserAction(Resource resource, Action action, Comment comment) {
         validateInvokeAction(resource, action, comment.getUser(), comment.getDeclinedResponse());
-
-        if (isTrue(comment.getSubmit())) {
-            return executeAction(resource, action, comment);
-        } else {
-            commentService.createOrUpdateComment(resource, comment);
-            return new ActionOutcomeDTO().withUser(comment.getUser()).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
-        }
+        return executeAction(resource, action, comment);
     }
 
     public ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment) {
@@ -352,34 +346,38 @@ public class ActionService {
                     throw new WorkflowPermissionException(resource, action);
                 }
             }
-        }
 
-        StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
-        Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
-        Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
+            StateTransition stateTransition = stateService.executeStateTransition(resource, action, comment, notify);
+            Action transitionAction = stateTransition == null ? action.getFallbackAction() : stateTransition.getTransitionAction();
+            Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
-        ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                .withTransitionAction(transitionAction).withStateTransition(stateTransition);
+            ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
+                    .withTransitionAction(transitionAction).withStateTransition(stateTransition);
 
-        LinkedList<Comment> replicableSequenceComments = null;
-        if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
-            replicableSequenceComments = Lists.newLinkedList();
-            for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
-                replicableSequenceComments.push(transitionComment);
-                StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
-                if (isTrue(stateAction.getReplicableSequenceStart())) {
-                    break;
+            LinkedList<Comment> replicableSequenceComments = null;
+            if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
+                replicableSequenceComments = Lists.newLinkedList();
+                for (Comment transitionComment : commentService.getTransitionCommentHistory(transitionResource)) {
+                    replicableSequenceComments.push(transitionComment);
+                    StateAction stateAction = stateService.getStateAction(transitionComment.getState(), transitionComment.getAction());
+                    if (isTrue(stateAction.getReplicableSequenceStart())) {
+                        break;
+                    }
                 }
             }
-        }
 
-        if (isNotEmpty(replicableSequenceComments)) {
-            if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition, replicableSequenceComments))) {
-                actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
+            if (isNotEmpty(replicableSequenceComments)) {
+                if (isNotEmpty(resourceService.getResourcesForStateActionPendingAssignment(user, transitionResource, stateTransition,
+                        replicableSequenceComments))) {
+                    actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
+                }
             }
-        }
 
-        return actionOutcome;
+            return actionOutcome;
+        } else {
+            commentService.createOrUpdateComment(resource, comment);
+            return new ActionOutcomeDTO().withUser(comment.getUser()).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+        }
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

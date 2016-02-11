@@ -79,7 +79,7 @@ public class CommentDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("user", user)) //
                         .add(Restrictions.eq("delegateUser", user))) //
-                .add(Restrictions.isNull("submittedTimestamp")) // 
+                .add(Restrictions.isNull("submittedTimestamp")) //
                 .addOrder(Order.asc("action.id")) //
                 .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("id")) //
@@ -206,8 +206,12 @@ public class CommentDAO {
 
     public List<Comment> getTransitionCommentHistory(Resource resource) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.neProperty("state", "transitionState")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.neProperty("state", "transitionState")) //
+                        .add(Restrictions.eq("action.replicableUserAssignmentAction", true))) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .addOrder(Order.desc("id")) //
                 .list();
     }

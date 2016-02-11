@@ -145,8 +145,7 @@ public class ActionService {
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(User user, Resource resource, PrismAction action) {
         return getPermittedActionEnhancements(user, resource, newArrayList(action), advertService.getAdvertTargeterEntities(user, resource.getResourceScope()))
-                .stream()
-                .map(ae -> ae.getActionEnhancement()).collect(toList());
+                .stream().map(ae -> ae.getActionEnhancement()).collect(toList()); //
     }
 
     public List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, Resource resource, Collection<PrismAction> actions) {
@@ -334,16 +333,18 @@ public class ActionService {
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();
 
-        boolean createAction = action.getActionCategory().equals(CREATE_RESOURCE);
-        if (createAction || action.getActionCategory().equals(VIEW_EDIT_RESOURCE)) {
-            Resource duplicate = entityService.getDuplicateEntity(resource);
+        if (commentService.prepareComment(comment)) {
+            boolean createAction = action.getActionCategory().equals(CREATE_RESOURCE);
+            if (createAction || action.getActionCategory().equals(VIEW_EDIT_RESOURCE)) {
+                Resource duplicate = entityService.getDuplicateEntity(resource);
 
-            if (duplicate != null) {
-                if (createAction) {
-                    return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
-                            .withTransitionAction(getViewEditAction(duplicate));
-                } else if (!equal(resource.getId(), duplicate.getId())) {
-                    throw new WorkflowPermissionException(resource, action);
+                if (duplicate != null) {
+                    if (createAction) {
+                        return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
+                                .withTransitionAction(getViewEditAction(duplicate));
+                    } else if (!equal(resource.getId(), duplicate.getId())) {
+                        throw new WorkflowPermissionException(resource, action);
+                    }
                 }
             }
 
@@ -374,10 +375,10 @@ public class ActionService {
             }
 
             return actionOutcome;
-        } else {
-            commentService.createOrUpdateComment(resource, comment);
-            return new ActionOutcomeDTO().withUser(comment.getUser()).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
         }
+
+        commentService.createOrUpdateComment(resource, comment);
+        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

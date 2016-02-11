@@ -295,16 +295,6 @@ public class ResourceListFilterDTO {
         return this;
     }
 
-    public ResourceListFilterDTO withUrgentOnly(Boolean urgentOnly) {
-        this.urgentOnly = urgentOnly;
-        return this;
-    }
-
-    public ResourceListFilterDTO withUpdateOnly(Boolean updateOnly) {
-        this.updateOnly = updateOnly;
-        return this;
-    }
-
     public ResourceListFilterDTO withMatchMode(PrismFilterMatchMode matchMode) {
         this.matchMode = matchMode;
         return this;
@@ -320,13 +310,19 @@ public class ResourceListFilterDTO {
         return this;
     }
 
-    public ResourceListFilterDTO withConstraints(List<ResourceListFilterConstraintDTO> constraints) {
-        this.constraints = constraints;
+    public ResourceListFilterDTO withUrgentOnly(Boolean urgentOnly) {
+        this.urgentOnly = urgentOnly;
         return this;
     }
 
-    public void addConstraint(ResourceListFilterConstraintDTO constraint) {
-        constraints.add(constraint);
+    public ResourceListFilterDTO withUpdateOnly(Boolean updateOnly) {
+        this.updateOnly = updateOnly;
+        return this;
+    }
+
+    public ResourceListFilterDTO withConstraints(List<ResourceListFilterConstraintDTO> constraints) {
+        this.constraints = constraints;
+        return this;
     }
 
     public boolean isUrgentOnly() {

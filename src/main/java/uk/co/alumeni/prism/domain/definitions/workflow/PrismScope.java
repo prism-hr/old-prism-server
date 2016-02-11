@@ -34,10 +34,6 @@ import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.rest.dto.application.ApplicationDTO;
-import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceOpportunityDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
 import uk.co.alumeni.prism.workflow.executors.action.ApplicationExecutor;
 import uk.co.alumeni.prism.workflow.executors.action.DepartmentExecutor;
@@ -72,35 +68,30 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     INSTITUTION(PrismScopeCategory.ORGANIZATION, "IN", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Institution.class) //
-                    .withResourceDTOClass(InstitutionDTO.class) //
                     .withActionExecutor(InstitutionExecutor.class) //
                     .withResourceCreator(InstitutionCreator.class) //
                     .withResourcePostprocessor(InstitutionPostprocessor.class)), //
     DEPARTMENT(PrismScopeCategory.ORGANIZATION, "DT", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Department.class) //
-                    .withResourceDTOClass(ResourceParentDTO.class) //
                     .withActionExecutor(DepartmentExecutor.class) //
                     .withResourceCreator(DepartmentCreator.class) //
                     .withResourcePostprocessor(DepartmentPostprocessor.class)), //
     PROGRAM(PrismScopeCategory.OPPORTUNITY, "PM", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Program.class) //
-                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
                     .withActionExecutor(ResourceOpportunityExecutor.class) //
                     .withResourceCreator(ProgramCreator.class) //
                     .withResourcePostprocessor(ProgramPostprocessor.class)), //
     PROJECT(PrismScopeCategory.OPPORTUNITY, "PT", true, //
             new PrismScopeDefinition() //
                     .withResourceClass(Project.class) //
-                    .withResourceDTOClass(ResourceOpportunityDTO.class) //
                     .withActionExecutor(ResourceOpportunityExecutor.class) //
                     .withResourceCreator(ProjectCreator.class) //
                     .withResourcePostprocessor(ProjectPostprocessor.class)), //
     APPLICATION(PrismScopeCategory.APPLICATION, "AN", false, //
             new PrismScopeDefinition() //
                     .withResourceClass(Application.class) //
-                    .withResourceDTOClass(ApplicationDTO.class) //
                     .withActionExecutor(ApplicationExecutor.class) //
                     .withResourceCreator(ApplicationCreator.class) //
                     .withResourcePopulator(ApplicationPopulator.class) //
@@ -158,10 +149,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     public Class<? extends Resource> getResourceClass() {
         return definition.getResourceClass();
-    }
-
-    public Class<?> getResourceDTOClass() {
-        return definition.getResourceDTOClass();
     }
 
     public Class<? extends ActionExecutor> getActionExecutor() {
@@ -232,8 +219,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         private Class<? extends Resource> resourceClass;
 
-        private Class<?> resourceDTOClass;
-
         private Class<? extends ActionExecutor> actionExecutor;
 
         private Class<? extends ResourceCreator<?>> resourceCreator;
@@ -248,10 +233,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public Class<? extends Resource> getResourceClass() {
             return resourceClass;
-        }
-
-        public Class<?> getResourceDTOClass() {
-            return resourceDTOClass;
         }
 
         public Class<? extends ActionExecutor> getActionExecutor() {
@@ -280,11 +261,6 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
         public PrismScopeDefinition withResourceClass(Class<? extends Resource> resourceClass) {
             this.resourceClass = resourceClass;
-            return this;
-        }
-
-        public PrismScopeDefinition withResourceDTOClass(Class<?> resourceDTOClass) {
-            this.resourceDTOClass = resourceDTOClass;
             return this;
         }
 

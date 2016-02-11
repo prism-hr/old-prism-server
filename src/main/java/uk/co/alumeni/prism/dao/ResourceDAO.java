@@ -4,6 +4,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
@@ -38,6 +39,7 @@ import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
@@ -574,17 +576,18 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesByTheme(PrismScope resourceScope, String theme) {
+    public List<Integer> getResourcesByTheme(PrismScope resourceScope, PrismResourceListFilterExpression expression, String theme) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("advert.categories.themes", "advertTheme", JoinType.INNER_JOIN) //
                 .createAlias("advertTheme.theme", "theme", JoinType.INNER_JOIN) //
-                .add(Restrictions.like("theme.name", theme, MatchMode.ANYWHERE)) //
+                .add(Restrictions.like("theme.name", theme, getMatchMode(expression))) //
                 .list();
     }
 
-    public List<Integer> getResourcesByLocation(PrismScope resourceScope, String location) {
+    public List<Integer> getResourcesByLocation(PrismScope resourceScope, PrismResourceListFilterExpression expression, String location) {
+        MatchMode matchMode = getMatchMode(expression);
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
@@ -595,10 +598,10 @@ public class ResourceDAO {
                 .createAlias("locationAdvert.program", "locationProgram", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("locationAdvert.project", "locationProject", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.like("locationInstitution.name", location, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("locationDepartment.name", location, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
+                        .add(Restrictions.like("locationInstitution.name", location, matchMode)) //
+                        .add(Restrictions.like("locationDepartment.name", location, matchMode)) //
+                        .add(Restrictions.like("locationProgram.name", location, matchMode)) //
+                        .add(Restrictions.like("locationProject.name", location, matchMode))) //
                 .list();
     }
 

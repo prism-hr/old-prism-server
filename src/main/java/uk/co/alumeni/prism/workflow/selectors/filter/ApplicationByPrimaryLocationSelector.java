@@ -18,7 +18,7 @@ public class ApplicationByPrimaryLocationSelector implements PrismResourceListFi
 
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-        return applicationService.getApplicationsByLocation(constraint.getValueString(), true);
+        return applicationService.getApplicationsByLocation(constraint.getValueString(), constraint.getFilterExpression(), true);
     }
 
 }

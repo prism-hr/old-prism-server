@@ -18,7 +18,7 @@ public class ResourceByLocationSelector implements PrismResourceListFilterSelect
 
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-        return resourceService.getResourcesByLocation(scope, constraint.getValueString());
+        return resourceService.getResourcesByLocation(scope, constraint.getFilterExpression(), constraint.getValueString());
     }
 
 }

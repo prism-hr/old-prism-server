@@ -62,6 +62,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
@@ -399,12 +400,12 @@ public class ApplicationService {
         return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
     }
 
-    public List<Integer> getApplicationsByTheme(String theme, Boolean preference) {
-        return applicationDAO.getApplicationsByTheme(theme, preference);
+    public List<Integer> getApplicationsByTheme(String theme, PrismResourceListFilterExpression expression, Boolean preference) {
+        return applicationDAO.getApplicationsByTheme(theme, expression, preference);
     }
 
-    public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
-        return applicationDAO.getApplicationsByLocation(location, preference);
+    public List<Integer> getApplicationsByLocation(String location, PrismResourceListFilterExpression expression, Boolean preference) {
+        return applicationDAO.getApplicationsByLocation(location, expression, preference);
     }
 
     public void updateApplicationOpportunityCategories(Advert advert) {

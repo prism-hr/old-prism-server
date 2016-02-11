@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
@@ -47,6 +48,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationTheme;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -100,29 +102,29 @@ public class ApplicationDAO {
                         + "left join application.program as program " //
                         + "left join application.project as project " //
                         + "left join application.themes as primaryTheme " //
-                            + "with primaryTheme.preference is true " //
+                        + "with primaryTheme.preference is true " //
                         + "left join primaryTheme.tag as primaryThemeTag "
                         + "left join application.themes as secondaryTheme " //
-                            + "with secondaryTheme.preference is false " //
+                        + "with secondaryTheme.preference is false " //
                         + "left join secondaryTheme.tag as secondaryThemeTag "
                         + "left join application.locations as primaryLocation " //
-                            + "with primaryLocation.preference is true " //
+                        + "with primaryLocation.preference is true " //
                         + "left join primaryLocation.tag as primaryLocationTag " //
                         + "left join primaryLocationTag.institution as primaryLocationInstitution " //
                         + "left join primaryLocationTag.department as primaryLocationDepartment " //
                         + "left join application.locations as secondaryLocation " //
-                            + "with secondaryLocation.preference is false " //
+                        + "with secondaryLocation.preference is false " //
                         + "left join secondaryLocation.tag as secondaryLocationTag " //
                         + "left join secondaryLocationTag.institution as secondaryLocationInstitution " //
                         + "left join secondaryLocationTag.department as secondaryLocationDepartment " //
                         + "left join application.state as state " //
                         + "left join application.referees as referee " //
                         + "left join application.comments as provideReferenceComment " //
-                            + "with provideReferenceComment.action.id = :provideReferenceAction " //
-                            + "and provideReferenceComment.declinedResponse is false " //
+                        + "with provideReferenceComment.action.id = :provideReferenceAction " //
+                        + "and provideReferenceComment.declinedResponse is false " //
                         + "left join application.comments as declineReferenceComment " //
-                            + "with declineReferenceComment.action.id = :provideReferenceAction " //
-                            + "and declineReferenceComment.declinedResponse is true " //
+                        + "with declineReferenceComment.action.id = :provideReferenceAction " //
+                        + "and declineReferenceComment.declinedResponse is true " //
                         + "where application.id in :assignedApplications " //
                         + "group by application.id, secondaryTheme.id, secondaryLocation.id " //
                         + "order by application.sequenceIdentifier desc") //
@@ -132,28 +134,31 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_year.ftl")
-                        .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
-                        .list();
+                .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
+                .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_month.ftl")
-                        .addScalar("applicationMonth", IntegerType.INSTANCE) //
-                        .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
-                        .list();
+                .addScalar("applicationMonth", IntegerType.INSTANCE) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
+                .list();
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         return (List<ApplicationProcessingSummaryDTO>) getApplicationProcessingSummaryQuery(resource, constraints,
                 "sql/application_processing_summary_week.ftl")
-                        .addScalar("applicationMonth", IntegerType.INSTANCE) //
-                        .addScalar("applicationWeek", IntegerType.INSTANCE) //
-                        .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
-                        .list();
+                .addScalar("applicationMonth", IntegerType.INSTANCE) //
+                .addScalar("applicationWeek", IntegerType.INSTANCE) //
+                .setResultTransformer(Transformers.aliasToBean(ApplicationProcessingSummaryDTO.class))
+                .list();
     }
 
     public <T extends Application> ResourceRatingSummaryDTO getApplicationRatingSummary(T application) {
@@ -299,7 +304,8 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public <T extends ApplicationTagSection<U>, U extends UniqueEntity> void togglePrimaryApplicationTag(Class<T> applicationTagClass, Application application, U tag) {
+    public <T extends ApplicationTagSection<U>, U extends UniqueEntity> void togglePrimaryApplicationTag(Class<T> applicationTagClass, Application application,
+            U tag) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + applicationTagClass.getSimpleName() + " " //
                         + "set preference = 0 " //
@@ -318,16 +324,17 @@ public class ApplicationDAO {
                 .executeUpdate();
     }
 
-    public List<Integer> getApplicationsByTheme(String theme, Boolean preference) {
+    public List<Integer> getApplicationsByTheme(String theme, PrismResourceListFilterExpression expression, Boolean preference) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationTheme.class) //
                 .setProjection(Projections.groupProperty("association.id")) //
                 .createAlias("tag", "theme") //
-                .add(Restrictions.like("theme.name", theme, MatchMode.ANYWHERE)) //
+                .add(Restrictions.like("theme.name", theme, getMatchMode(expression))) //
                 .add(Restrictions.eq("preference", preference)) //
                 .list();
     }
 
-    public List<Integer> getApplicationsByLocation(String location, Boolean preference) {
+    public List<Integer> getApplicationsByLocation(String location, PrismResourceListFilterExpression expression, Boolean preference) {
+        MatchMode matchMode = getMatchMode(expression);
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ApplicationLocation.class) //
                 .setProjection(Projections.groupProperty("association.id")) //
                 .createAlias("tag", "locationAdvert", JoinType.INNER_JOIN) //
@@ -336,10 +343,10 @@ public class ApplicationDAO {
                 .createAlias("locationAdvert.program", "locationProgram", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("locationAdvert.project", "locationProject", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.like("locationInstitution.name", location, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("locationDepartment.name", location, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("locationProgram.name", location, MatchMode.ANYWHERE)) //
-                        .add(Restrictions.like("locationProject.name", location, MatchMode.ANYWHERE))) //
+                        .add(Restrictions.like("locationInstitution.name", location, matchMode)) //
+                        .add(Restrictions.like("locationDepartment.name", location, matchMode)) //
+                        .add(Restrictions.like("locationProgram.name", location, matchMode)) //
+                        .add(Restrictions.like("locationProject.name", location, matchMode))) //
                 .add(Restrictions.eq("preference", preference)) //
                 .list();
     }
@@ -406,12 +413,14 @@ public class ApplicationDAO {
         String columnExpression = Joiner.on(",\n\t").join(getColumns());
 
         List<String> filterConstraintExpressions = newLinkedList();
-        constraints.keySet().forEach(fe -> {
-            Set<String> constraintValues = constraints.get(fe);
-            if (CollectionUtils.isNotEmpty(constraintValues)) {
-                filterConstraintExpressions.add(fe.getFilterColumn() + " in (" + constraintValues.stream().map(cv -> "'" + cv + "'").collect(joining(", ")) + ")");
-            }
-        });
+        constraints.keySet().forEach(
+                fe -> {
+                    Set<String> constraintValues = constraints.get(fe);
+                    if (CollectionUtils.isNotEmpty(constraintValues)) {
+                        filterConstraintExpressions.add(fe.getFilterColumn() + " in ("
+                                + constraintValues.stream().map(cv -> "'" + cv + "'").collect(joining(", ")) + ")");
+                    }
+                });
 
         String constraintExpression = "where application." + resource.getResourceScope().getLowerCamelName() + "_id = '" + resource.getId() + "'";
         String filterConstraintExpression = Joiner.on("\n\tand ").join(filterConstraintExpressions);

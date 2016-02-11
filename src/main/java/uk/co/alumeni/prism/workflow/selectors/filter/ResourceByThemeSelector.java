@@ -18,7 +18,7 @@ public class ResourceByThemeSelector implements PrismResourceListFilterSelector<
 
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-        return resourceService.getResourcesByTheme(scope, constraint.getValueString());
+        return resourceService.getResourcesByTheme(scope, constraint.getFilterExpression(), constraint.getValueString());
     }
 
 }

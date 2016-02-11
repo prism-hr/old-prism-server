@@ -18,7 +18,7 @@ public class ApplicationByPrimaryThemeSelector implements PrismResourceListFilte
 
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-        return applicationService.getApplicationsByTheme(constraint.getValueString(), true);
+        return applicationService.getApplicationsByTheme(constraint.getValueString(), constraint.getFilterExpression(), true);
     }
 
 }

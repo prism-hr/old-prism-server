@@ -18,7 +18,7 @@ public class ApplicationBySecondaryThemeSelector implements PrismResourceListFil
 
     @Override
     public List<Integer> getPossible(PrismScope scope, ResourceListFilterConstraintDTO constraint) {
-        return applicationService.getApplicationsByTheme(constraint.getValueString(), false);
+        return applicationService.getApplicationsByTheme(constraint.getValueString(), constraint.getFilterExpression(), false);
     }
 
 }

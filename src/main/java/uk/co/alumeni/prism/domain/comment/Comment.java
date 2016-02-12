@@ -104,7 +104,7 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     private Action action;
 
     @ManyToOne
-    @JoinColumn(name = "comment_thread_id")
+    @JoinColumn(name = "message_thread_id")
     private CommentThread thread;
 
     @Lob

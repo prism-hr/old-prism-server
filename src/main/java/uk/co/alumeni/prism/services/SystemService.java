@@ -554,21 +554,22 @@ public class SystemService {
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismStateActionAssignment.getRole());
-            StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
+            StateActionAssignment stateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
                     .withExternalMode(prismStateActionAssignment.getExternalMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
-            entityService.save(assignment);
-            stateAction.getStateActionAssignments().add(assignment);
+            entityService.save(stateActionAssignment);
+            prismStateActionAssignment.getRecipients().forEach(recipient -> stateActionAssignment.addRecipient(roleService.getById(recipient)));
+            stateAction.getStateActionAssignments().add(stateActionAssignment);
         }
     }
 
     private void initializeStateActionNotifications(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionNotification prismStateActionNotification : prismStateAction.getNotifications()) {
             Role role = roleService.getById(prismStateActionNotification.getRole());
-            NotificationDefinition template = notificationService.getById(prismStateActionNotification.getNotification());
-            StateActionNotification notification = new StateActionNotification().withStateAction(stateAction).withRole(role)
-                    .withNotificationDefinition(template);
-            entityService.save(notification);
-            stateAction.getStateActionNotifications().add(notification);
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotification());
+            StateActionNotification stateActionNotification = new StateActionNotification().withStateAction(stateAction).withRole(role)
+                    .withNotificationDefinition(notificationDefinition);
+            entityService.save(stateActionNotification);
+            stateAction.getStateActionNotifications().add(stateActionNotification);
         }
     }
 

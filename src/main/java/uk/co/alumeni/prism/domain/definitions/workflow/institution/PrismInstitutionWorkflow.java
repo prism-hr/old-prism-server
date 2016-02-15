@@ -108,7 +108,7 @@ public class PrismInstitutionWorkflow {
 
     private static PrismStateAction institutionEmailCreatorAbstract() {
         return new PrismStateAction() //
-                .withAction(PrismAction.INSTITUTION_EMAIL_CREATOR) //
+                .withAction(PrismAction.INSTITUTION_SEND_MESSAGE) //
                 .withAssignments(PrismRole.SYSTEM_ADMINISTRATOR);
     }
 

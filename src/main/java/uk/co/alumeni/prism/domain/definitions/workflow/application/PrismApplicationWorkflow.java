@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_EMAIL_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
@@ -89,7 +89,7 @@ public class PrismApplicationWorkflow {
 
     public static PrismStateAction applicationEmailCreator() {
         return new PrismStateAction() //
-                .withAction(APPLICATION_EMAIL_CREATOR) //
+                .withAction(APPLICATION_SEND_MESSAGE) //
                 .withAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE) //
                 .withPartnerAssignments(INSTITUTION_ADMINISTRATOR) //

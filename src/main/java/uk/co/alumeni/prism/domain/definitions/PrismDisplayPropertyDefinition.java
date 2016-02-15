@@ -213,7 +213,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
-    SYSTEM_ACTION_APPLICATION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
+    SYSTEM_ACTION_APPLICATION_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_APPLICATION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Hiring Manager Approval"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Interview Availability"),
@@ -240,7 +240,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Position"),
     SYSTEM_ACTION_INSTITUTION_CREATE_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_INSTITUTION_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_INSTITUTION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
+    SYSTEM_ACTION_INSTITUTION_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_INSTITUTION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_INSTITUTION_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_INSTITUTION_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
@@ -257,7 +257,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_DEPARTMENT_CREATE_PROGRAM(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Program"),
     SYSTEM_ACTION_DEPARTMENT_CREATE_PROJECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Position"),
     SYSTEM_ACTION_DEPARTMENT_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_DEPARTMENT_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
+    SYSTEM_ACTION_DEPARTMENT_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_DEPARTMENT_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_DEPARTMENT_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_DEPARTMENT_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
@@ -272,7 +272,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROGRAM_CREATE_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_PROGRAM_CREATE_PROJECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Position"),
     SYSTEM_ACTION_PROGRAM_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_PROGRAM_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
+    SYSTEM_ACTION_PROGRAM_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_PROGRAM_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROGRAM_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROGRAM_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
@@ -286,7 +286,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROJECT_CORRECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Further Information"),
     SYSTEM_ACTION_PROJECT_CREATE_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_PROJECT_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_PROJECT_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
+    SYSTEM_ACTION_PROJECT_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_PROJECT_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROJECT_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROJECT_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),

@@ -34,6 +34,8 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.message.Message;
+import uk.co.alumeni.prism.domain.message.MessageRecipient;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -180,6 +182,12 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<AdvertTargetPending> advertTargetPendings = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Message> messages = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<MessageRecipient> messageRecipients = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -395,6 +403,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<AdvertTargetPending> getAdvertTargetPendings() {
         return advertTargetPendings;
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
+
+    public Set<MessageRecipient> getMessageRecipients() {
+        return messageRecipients;
     }
 
     public User withId(Integer id) {

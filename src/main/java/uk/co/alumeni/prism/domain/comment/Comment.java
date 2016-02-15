@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -41,6 +42,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -103,9 +105,9 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "message_thread_id")
-    private CommentThread thread;
+    private MessageThread thread;
 
     @Lob
     @Column(name = "content")
@@ -322,11 +324,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.action = action;
     }
 
-    public CommentThread getThread() {
+    public MessageThread getThread() {
         return thread;
     }
 
-    public void setThread(CommentThread thread) {
+    public void setThread(MessageThread thread) {
         this.thread = thread;
     }
 

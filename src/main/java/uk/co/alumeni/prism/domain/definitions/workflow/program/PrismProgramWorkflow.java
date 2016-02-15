@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.program;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_EMAIL_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_TERMINATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_WITHDRAW;
@@ -121,7 +121,7 @@ public class PrismProgramWorkflow {
 
     private static PrismStateAction programEmailCreatorAbstract() {
         return new PrismStateAction() //
-                .withAction(PROGRAM_EMAIL_CREATOR) //
+                .withAction(PROGRAM_SEND_MESSAGE) //
                 .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP);
     }
 

@@ -20,6 +20,7 @@ import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationDocument;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -97,6 +98,9 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     @OneToOne(mappedBy = "document")
     private NotificationConfigurationDocument notificationConfigurationDocument;
+
+    @OneToOne(mappedBy = "document")
+    private MessageDocument messageDocument;
 
     public void setId(Integer id) {
         this.id = id;
@@ -204,6 +208,10 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     public NotificationConfigurationDocument getNotificationConfigurationDocument() {
         return notificationConfigurationDocument;
+    }
+
+    public MessageDocument getMessageDocument() {
+        return messageDocument;
     }
 
     public Document withId(Integer id) {

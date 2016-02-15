@@ -22,11 +22,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
@@ -42,7 +40,6 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationId
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserInstitutionIdentityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
@@ -170,12 +167,6 @@ public class UserMapper {
         }
 
         return representation;
-    }
-
-    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution,
-            PrismUserInstitutionIdentity identityType) {
-        return new UserInstitutionIdentityRepresentation().withIdentityType(identityType).withIdentifier(
-                userService.getUserInstitutionIdentity(user, institution, identityType));
     }
 
     private UserRepresentationInvitationBounced getUserRepresentationUnverified(User user, User currentUser, String noDiagnosisMessage) {

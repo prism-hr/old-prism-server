@@ -38,18 +38,15 @@ import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationAdvertRelationSection;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismOauthProvider;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAdvertRelationSection;
-import uk.co.alumeni.prism.domain.user.UserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
@@ -100,16 +97,6 @@ public class UserDAO {
                 .add(Restrictions.in(roleIds[0].getScope().getLowerCamelName(), resources)) //
                 .add(Restrictions.in("role.id", roleIds)) //
                 .list();
-    }
-
-    public String getUserInstitutionId(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(UserInstitutionIdentity.class) //
-                .setProjection(Projections.property("identifier")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eqOrIsNull("identityType", identityType)) //
-                .setMaxResults(1) //
-                .uniqueResult();
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {

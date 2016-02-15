@@ -4,6 +4,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategor
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.PROPAGATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_ACTIVITY_LIST;
@@ -56,7 +57,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_CONFIRM_OFFER(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE(getDefaultProcessApplicationActionDefinition()), //
     APPLICATION_CONFIRM_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_SEND_MESSAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_SEND_MESSAGE(getDefaultMessageApplicationActionDefinition()), //
     APPLICATION_ESCALATE(getDefaultEscalateResourceActionDefinition(APPLICATION)), //
     APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
@@ -79,7 +80,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROJECT_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROJECT)), //
     PROJECT_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(PROJECT)), //
-    PROJECT_SEND_MESSAGE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
+    PROJECT_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(PROJECT)), //
     PROJECT_ESCALATE(getDefaultEscalateResourceActionDefinition(PROJECT)), //
     PROJECT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
@@ -93,7 +94,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_VIEW_EDIT(getDefaultViewEditResourceActionDefinition(PROGRAM)), //
     PROGRAM_CORRECT(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionInvisible(PROGRAM)), //
-    PROGRAM_SEND_MESSAGE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
+    PROGRAM_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(PROGRAM)), //
     PROGRAM_ESCALATE(getDefaultEscalateResourceActionDefinition(PROGRAM)), //
     PROGRAM_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
@@ -107,7 +108,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionInvisible(DEPARTMENT)), //
     DEPARTMENT_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
-    DEPARTMENT_SEND_MESSAGE(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
+    DEPARTMENT_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_ESCALATE(getDefaultEscalateResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
@@ -121,7 +122,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     INSTITUTION_CREATE_PROGRAM(getDefaultCreateResourceActionDefinitionInvisible(INSTITUTION)), //
     INSTITUTION_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
-    INSTITUTION_SEND_MESSAGE(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
+    INSTITUTION_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_ESCALATE(getDefaultEscalateResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_RESTORE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(INSTITUTION)), //
@@ -360,10 +361,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
                 .withPartnershipTransitionState(partnershipTransitionState);
     }
 
-    private static PrismActionDefinition getDefaultProcessApplicationActionDefinition() {
-        return getDefaultApplicationActionDefinition(PROCESS_RESOURCE);
-    }
-
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments() {
         return getDefaultProcessApplicationActionDefinition() //
                 .withRedactions(getDefaultApplicationActionRedactions()) //
@@ -373,6 +370,19 @@ public enum PrismAction implements PrismLocalizableDefinition {
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactions() {
         return getDefaultProcessApplicationActionDefinition() //
                 .withRedactions(getDefaultApplicationActionRedactions());
+    }
+
+    private static PrismActionDefinition getDefaultProcessApplicationActionDefinition() {
+        return getDefaultApplicationActionDefinition(PROCESS_RESOURCE);
+    }
+
+    private static PrismActionDefinition getDefaultMessageApplicationActionDefinition() {
+        return getDefaultApplicationActionDefinition(MESSAGE_RESOURCE) //
+                .withRedactions(getDefaultApplicationActionRedactions());
+    }
+
+    private static PrismActionDefinition getDefaultApplicationActionDefinition(PrismActionCategory actionCategory) {
+        return getDefaultResourceActionDefinitionVisible(actionCategory, APPLICATION);
     }
 
     private static PrismActionDefinition getDefaultPropagateResourceActionDefinitionVisible(PrismScope scope) {
@@ -393,8 +403,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
                 .withVisibleAction();
     }
 
-    private static PrismActionDefinition getDefaultApplicationActionDefinition(PrismActionCategory actionCategory) {
-        return getDefaultResourceActionDefinitionVisible(actionCategory, APPLICATION);
+    private static PrismActionDefinition getDefaultMessageResourceActionDefinition(PrismScope scope) {
+        return getDefaultResourceActionDefinition(MESSAGE_RESOURCE, scope) //
+                .withVisibleAction();
     }
 
     private static PrismActionDefinition getDefaultResourceActionDefinitionSystemInvocation(PrismActionCategory actionCategory, PrismScope scope) {

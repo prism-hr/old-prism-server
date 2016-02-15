@@ -1,5 +1,10 @@
 package uk.co.alumeni.prism.integration.helpers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
@@ -8,13 +13,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.SYSTEM_RUNNING;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -31,9 +29,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -56,6 +51,10 @@ import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.SystemService;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -157,8 +156,8 @@ public class WorkflowConfigurationHelper {
                 assigneeRoleScopes.add(stateActionAssignment.getRole().getScope().getId());
             });
 
-            if (isTrue(stateAction.getRaisesUrgentFlag()) && assigneeRoleScopes.contains(action.getScope().getId())) {
-                assertNotNull(stateAction.getNotificationDefinition());
+            if (stateAction.getNotificationDefinition() != null) {
+                assertTrue(stateAction.getRaisesUrgentFlag());
             }
 
             if (actionCategory == ESCALATE_RESOURCE) {

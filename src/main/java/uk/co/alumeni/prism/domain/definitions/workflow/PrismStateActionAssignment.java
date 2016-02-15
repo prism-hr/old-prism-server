@@ -1,6 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import java.util.List;
+
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class PrismStateActionAssignment {
 
@@ -9,6 +12,8 @@ public class PrismStateActionAssignment {
     private Boolean externalMode = false;
 
     private PrismActionEnhancement actionEnhancement;
+
+    private List<PrismRole> recipients = Lists.newArrayList();
 
     public PrismRole getRole() {
         return role;
@@ -20,6 +25,10 @@ public class PrismStateActionAssignment {
 
     public PrismActionEnhancement getActionEnhancement() {
         return actionEnhancement;
+    }
+
+    public List<PrismRole> getRecipients() {
+        return recipients;
     }
 
     public PrismStateActionAssignment withRole(PrismRole role) {
@@ -42,9 +51,14 @@ public class PrismStateActionAssignment {
         return this;
     }
 
+    public PrismStateActionAssignment addRecipient(PrismRole recipient) {
+        recipients.add(recipient);
+        return this;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, externalMode, actionEnhancement);
+        return Objects.hashCode(role, externalMode, actionEnhancement, recipients);
     }
 
     @Override
@@ -57,7 +71,8 @@ public class PrismStateActionAssignment {
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
         return Objects.equal(role, other.getRole()) && Objects.equal(externalMode, other.getExternalMode())
-                && Objects.equal(actionEnhancement, other.getActionEnhancement());
+                && Objects.equal(actionEnhancement, other.getActionEnhancement()) && recipients.size() == other.getRecipients().size()
+                && recipients.containsAll(other.getRecipients());
     }
 
 }

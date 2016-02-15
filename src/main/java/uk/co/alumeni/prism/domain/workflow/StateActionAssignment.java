@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.domain.workflow;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,12 +10,16 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
+
+import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "state_action_assignment", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "external_mode" }) })
@@ -36,6 +43,11 @@ public class StateActionAssignment implements UniqueEntity {
     @Column(name = "action_enhancement")
     @Enumerated(EnumType.STRING)
     private PrismActionEnhancement actionEnhancement;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "state_action_recipient", joinColumns = { @JoinColumn(name = "state_action_assignment_id", nullable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "role_id", nullable = false) })
+    private Set<Role> recipients = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -77,6 +89,10 @@ public class StateActionAssignment implements UniqueEntity {
         this.actionEnhancement = actionEnhancement;
     }
 
+    public Set<Role> getRecipients() {
+        return recipients;
+    }
+
     public StateActionAssignment withStateAction(StateAction stateAction) {
         this.stateAction = stateAction;
         return this;
@@ -94,6 +110,11 @@ public class StateActionAssignment implements UniqueEntity {
 
     public StateActionAssignment withActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancement = actionEnhancement;
+        return this;
+    }
+
+    public StateActionAssignment addRecipient(Role recipient) {
+        recipients.add(role);
         return this;
     }
 

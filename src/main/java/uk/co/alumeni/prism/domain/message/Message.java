@@ -31,11 +31,11 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "message_thread_id")
+    @JoinColumn(name = "message_thread_id", nullable = false)
     private MessageThread thread;
 
     @Lob
@@ -48,6 +48,9 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
 
     @OneToMany(mappedBy = "message")
     private Set<MessageRecipient> recipients = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "document")
+    private Set<MessageDocument> documents = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -91,6 +94,10 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
 
     public Set<MessageRecipient> getRecipients() {
         return recipients;
+    }
+
+    public Set<MessageDocument> getDocuments() {
+        return documents;
     }
 
     @Override

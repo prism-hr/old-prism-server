@@ -26,7 +26,7 @@ public class MessageRecipient implements UserAssignment<MessageRecipientReassign
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "message_id")
+    @JoinColumn(name = "message_id", nullable = false)
     private Message message;
 
     @ManyToOne
@@ -37,11 +37,11 @@ public class MessageRecipient implements UserAssignment<MessageRecipientReassign
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Column(name = "send_timestamp", nullable = false)
+    @Column(name = "send_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime sendTimestamp;
 
-    @Column(name = "view_timestamp", nullable = false)
+    @Column(name = "view_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime viewTimestamp;
 

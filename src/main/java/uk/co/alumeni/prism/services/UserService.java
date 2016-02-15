@@ -64,7 +64,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
@@ -308,10 +307,6 @@ public class UserService {
 
     public List<User> getLinkedUsers(User user) {
         return userDAO.getLinkedUsers(user);
-    }
-
-    public String getUserInstitutionIdentity(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
-        return userDAO.getUserInstitutionId(user, institution, identityType);
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {

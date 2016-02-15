@@ -25,6 +25,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
 import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getUUID;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -87,7 +88,6 @@ import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -459,7 +459,7 @@ public class UserService {
 
         T mergedAssignmentConflict = entityService.getDuplicateEntity((Class<T>) oldAssignment.getClass(), newSignature);
         if (mergedAssignmentConflict == null) {
-            PrismReflectionUtils.invokeMethod(oldAssignment, "set" + capitalize(userProperty), newUser);
+            invokeMethod(oldAssignment, "set" + capitalize(userProperty), newUser);
             return true;
         }
         return false;
@@ -506,7 +506,7 @@ public class UserService {
         });
         return users;
     }
-    
+
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
 

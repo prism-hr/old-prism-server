@@ -107,7 +107,7 @@ public class PrismDepartmentWorkflow {
 
     private static PrismStateAction departmentEmailCreatorAbstract() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_EMAIL_CREATOR) //
+                .withAction(PrismAction.DEPARTMENT_SEND_MESSAGE) //
                 .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP);
     }
 

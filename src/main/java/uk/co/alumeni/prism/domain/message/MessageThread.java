@@ -1,4 +1,4 @@
-package uk.co.alumeni.prism.domain.comment;
+package uk.co.alumeni.prism.domain.message;
 
 import java.util.Set;
 
@@ -7,13 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import uk.co.alumeni.prism.domain.comment.Comment;
 
 import com.google.common.collect.Sets;
 
 @Entity
-@Table(name = "comment_thread")
-public class CommentThread {
+@Table(name = "message_thread")
+public class MessageThread {
 
     @Id
     @GeneratedValue
@@ -22,9 +25,12 @@ public class CommentThread {
     @Column(name = "subject", nullable = false)
     private String subject;
 
+    @OneToOne(mappedBy = "thread")
+    private Comment comment;
+
     @OneToMany(mappedBy = "thread")
-    private Set<Comment> comments = Sets.newHashSet();
-    
+    private Set<Message> messages = Sets.newHashSet();
+
     public Integer getId() {
         return id;
     }
@@ -40,5 +46,17 @@ public class CommentThread {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
+
 }

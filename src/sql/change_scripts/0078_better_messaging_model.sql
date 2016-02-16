@@ -1,16 +1,13 @@
 rename table comment_thread to message_thread
 ;
 
-set foreign_key_checks = 0
+ALTER TABLE comment
+DROP INDEX comment_thread_id,
+ADD INDEX message_thread_id (comment_thread_id)
 ;
 
-alter table comment
-	drop index comment_thread_id,
-	change column comment_thread_id message_thread_id int(10) unsigned,
-	add index (message_thread_id)
-;
-
-set foreign_key_checks = 1
+ALTER TABLE comment
+CHANGE COLUMN comment_thread_id `message_thread_id` INT(10) UNSIGNED NULL AFTER `action_id`
 ;
 
 create table message (

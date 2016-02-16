@@ -1,32 +1,11 @@
 package uk.co.alumeni.prism.mapping;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
-
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import org.joda.time.LocalDateTime;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.Competence;
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;
-import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
-import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
-import uk.co.alumeni.prism.domain.comment.CommentCompetence;
-import uk.co.alumeni.prism.domain.comment.CommentInterviewAppointment;
-import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
-import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
-import uk.co.alumeni.prism.domain.comment.CommentPositionDetail;
+import uk.co.alumeni.prism.domain.comment.*;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
@@ -35,27 +14,19 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentAssignedUserRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceGroupRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentOfferDetailRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentPositionDetailRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.*;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.CommentService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.*;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 
 @Service
 @Transactional
@@ -125,7 +96,7 @@ public class CommentMapper {
     }
 
     public List<CommentAppointmentPreferenceRepresentation> getCommentAppointmentPreferenceRepresentations(Comment schedulingComment,
-            Set<CommentAppointmentTimeslot> timeslots) {
+                                                                                                           Set<CommentAppointmentTimeslot> timeslots) {
         List<CommentAppointmentPreferenceRepresentation> representations = Lists.newLinkedList();
 
         User currentUser = userService.getCurrentUser();
@@ -133,15 +104,13 @@ public class CommentMapper {
             CommentAppointmentPreferenceRepresentation representation = new CommentAppointmentPreferenceRepresentation()
                     .withUser(userMapper.getUserRepresentationSimple(user, currentUser));
 
-            List<Integer> inviteePreferences = Lists.newLinkedList();
             Comment preferenceComment = commentService.getLatestAppointmentPreferenceComment(schedulingComment.getApplication(), schedulingComment, user);
             if (preferenceComment != null) {
                 List<LocalDateTime> preferences = commentService.getAppointmentPreferences(preferenceComment);
-                for (CommentAppointmentTimeslot timeslot : timeslots) {
-                    if (preferences.contains(timeslot.getDateTime())) {
-                        inviteePreferences.add(timeslot.getId());
-                    }
-                }
+
+                List<Integer> inviteePreferences = timeslots.stream()
+                        .filter(timeslot -> preferences.contains(timeslot.getDateTime()))
+                        .map(CommentAppointmentTimeslot::getId).collect(Collectors.toList());
                 representation.setPreferences(inviteePreferences);
             }
 
@@ -198,9 +167,16 @@ public class CommentMapper {
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
     }
 
-    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles,
-            List<PrismActionEnhancement> actionEnhancements,
-            List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
+    public List<CommentAssignedUserRepresentation> getCommentAssignedUserRepresentations(Comment comment, List<PrismRole> creatableRoles) {
+        return comment.getAssignedUsers().stream()
+                .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
+                .map(this::getCommentAssignedUserRepresentation)
+                .collect(Collectors.toList());
+    }
+
+    private CommentRepresentation getCommentRepresentation(
+            User user, Comment comment, List<PrismRole> creatableRoles,
+            List<PrismActionEnhancement> actionEnhancements, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
         if (!onlyAsPartner && (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user))) {
             CommentRepresentation representation = getCommentRepresentationExtended(comment);
@@ -237,13 +213,6 @@ public class CommentMapper {
         return new CommentAssignedUserRepresentation()
                 .withUser(userMapper.getUserRepresentationSimple(commentAssignedUser.getUser(), userService.getCurrentUser()))
                 .withRole(commentAssignedUser.getRole().getId()).withRoleTransitionType(commentAssignedUser.getRoleTransitionType());
-    }
-
-    private List<CommentAssignedUserRepresentation> getCommentAssignedUserRepresentations(Comment comment, List<PrismRole> creatableRoles) {
-        return comment.getAssignedUsers().stream()
-                .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
-                .map(this::getCommentAssignedUserRepresentation)
-                .collect(Collectors.toList());
     }
 
     private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {

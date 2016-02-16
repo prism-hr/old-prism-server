@@ -1,39 +1,35 @@
 package uk.co.alumeni.prism.mapping;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.action.*;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
+import uk.co.alumeni.prism.services.RoleService;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 @Service
 @Transactional
@@ -53,6 +49,9 @@ public class ActionMapper {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private RoleService roleService;
 
     @Inject
     private ResourceListFilterService resourceListFilterService;
@@ -83,26 +82,30 @@ public class ActionMapper {
         boolean onlyAsPartner = true;
         List<ActionDTO> actions = actionService.getPermittedActions(user, resource);
         for (ActionDTO action : actions) {
-            onlyAsPartner = !onlyAsPartner ? false : isTrue(action.getOnlyAsPartner());
-            representations.put(action.getActionId(), getActionRepresentationExtended(resource, action, user));
+            onlyAsPartner = onlyAsPartner && isTrue(action.getOnlyAsPartner());
+            representations.put(action.getActionId(), getActionRepresentationExtended(resource, action));
         }
 
+        List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
         Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
         representations.keySet().stream().forEach(prismAction -> {
             if (unsubmittedComments.containsKey(prismAction)) {
-                representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction)));
+                Comment comment = unsubmittedComments.get(prismAction);
+                CommentRepresentation commentRepresentation = commentMapper.getCommentRepresentationExtended(comment);
+                commentRepresentation.setAssignedUsers(commentMapper.getCommentAssignedUserRepresentations(comment, creatableRoles));
+                representations.get(prismAction).setComment(commentRepresentation);
             }
         });
 
-        actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(a -> a.getActionId()).collect(toList()))
+        actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(ActionDTO::getActionId).collect(toList()))
                 .forEach(ae -> representations.get(ae.getAction()).addActionEnhancement(ae.getActionEnhancement()));
 
-        List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, asList(resource.getId()));
+        List<ActionDTO> publicActions = actionService.getPermittedUnsecuredActions(scope, Collections.singletonList(resource.getId()));
         for (ActionDTO publicAction : publicActions) {
             boolean applicationAction = publicAction.getActionId().name().endsWith("_CREATE_APPLICATION");
             if (!onlyAsPartner || applicationAction) {
                 Advert advert = resource.getAdvert();
-                ActionRepresentationExtended actionRepresentation = getActionRepresentationExtended(resource, publicAction, user);
+                ActionRepresentationExtended actionRepresentation = getActionRepresentationExtended(resource, publicAction);
 
                 if (advert != null) {
                     String applyHomepage = advert.getApplyHomepage();
@@ -136,7 +139,7 @@ public class ActionMapper {
         return representation;
     }
 
-    private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action, User user) {
+    private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, ActionDTO action) {
         return getActionRepresentationSimple(action, ActionRepresentationExtended.class).addNextStates(
                 stateMapper.getStateRepresentations(resource, action.getActionId()))
                 .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));

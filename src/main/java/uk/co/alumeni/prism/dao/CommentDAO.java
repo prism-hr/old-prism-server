@@ -1,11 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -16,7 +11,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
@@ -26,7 +20,11 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -111,6 +109,7 @@ public class CommentDAO {
     public List<CommentAssignedUser> getAssignedHiringManagers(Comment comment) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("comment", "comment")
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(APPLICATION_HIRING_MANAGER))) //
                 .addOrder(Order.asc("role.id")) //
@@ -151,6 +150,7 @@ public class CommentDAO {
     public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
+                .createAlias("comment", "comment")
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", roles)) //
                 .list();

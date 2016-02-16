@@ -2,7 +2,6 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
@@ -144,9 +143,7 @@ public class CommentService {
             setSequenceIdentifier(comment, comment.getCreatedTimestamp());
         }
 
-        comment.getAssignedUsers().addAll(persistentAssignees.stream().map(assignee -> assignee.withRoleTransitionType( //
-                assignee.getRoleTransitionType() == null ? CREATE : assignee.getRoleTransitionType())).collect(toSet()));
-
+        comment.getAssignedUsers().addAll(persistentAssignees);
         comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
@@ -433,8 +430,7 @@ public class CommentService {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
                 User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
-                comment.getAssignedUsers().add(
-                        new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                comment.addAssignedUser(commentUser, entityService.getById(Role.class, assignedUserDTO.getRole()), CREATE);
             }
         }
     }

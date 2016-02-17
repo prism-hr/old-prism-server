@@ -93,6 +93,21 @@ public class MessageRecipient implements UserAssignment<MessageRecipientReassign
         this.viewTimestamp = viewTimestamp;
     }
 
+    public MessageRecipient withMessage(Message message) {
+        this.message = message;
+        return this;
+    }
+
+    public MessageRecipient withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public MessageRecipient withRole(Role role) {
+        this.role = role;
+        return this;
+    }
+
     @Override
     public Class<MessageRecipientReassignmentProcessor> getUserReassignmentProcessor() {
         return MessageRecipientReassignmentProcessor.class;
@@ -105,7 +120,7 @@ public class MessageRecipient implements UserAssignment<MessageRecipientReassign
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("id", id);
+        return new EntitySignature().addProperty("message", message).addProperty("user", user).addProperty("role", role);
     }
 
 }

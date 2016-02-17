@@ -1,6 +1,11 @@
 package uk.co.alumeni.prism.dao;
 
-import com.google.common.collect.Lists;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -11,6 +16,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
@@ -20,11 +26,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import com.google.common.collect.Lists;
 
 @Repository
 @SuppressWarnings("unchecked")

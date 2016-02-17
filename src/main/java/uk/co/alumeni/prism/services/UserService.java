@@ -532,6 +532,10 @@ public class UserService {
         return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
     }
 
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... prismRoles) {
+        return resource == null ? newArrayList() : userDAO.getUserWithRoles(resource, prismRoles);
+    }
+
     @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {
         for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {

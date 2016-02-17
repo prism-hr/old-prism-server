@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.MESSAGE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
@@ -53,6 +54,8 @@ import uk.co.alumeni.prism.workflow.notification.property.DepartmentUserContactB
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionCodeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionUserContactBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.MessageInitiatorFullNameBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.MessageSubjectBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.NotificationPropertyBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramCodeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramNameBuilder;
@@ -119,6 +122,8 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
+    MESSAGE_INITIATIOR_FULL_NAME(MESSAGE_GLOBAL, true, MessageInitiatorFullNameBuilder.class), //
+    MESSAGE_SUBJECT(MESSAGE_GLOBAL, true, MessageSubjectBuilder.class), //
     TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, TargetResourceOtherNameBuilder.class), //
     TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, TargetResourceAcceptNameBuilder.class), //
     APPLICATION_CREATOR_EMAIL(APPLICATION_GLOBAL, true, ApplicationCreatorEmailBuilder.class), //
@@ -159,7 +164,7 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false, SystemUserAccountActivationBuilder.class), //
     SYSTEM_ACTIVITY_SUMMARY(SYSTEM_ACTIVITY, false, SystemActivitySummaryBuilder.class), //
-    SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class), 
+    SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class),
     SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class);
 
     private PrismNotificationDefinitionPropertyCategory category;

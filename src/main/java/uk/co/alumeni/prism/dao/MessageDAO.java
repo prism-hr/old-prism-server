@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
-import java.util.Collection;
+import static org.joda.time.DateTime.now;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageRecipient;
-import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 
@@ -25,34 +25,26 @@ public class MessageDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public List<MessageRecipient> getMessagesPendingAllocation() {
-        return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+    public List<Integer> getMessagesRecipientsPendingAllocation() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNotNull("role")) //
                 .add(Restrictions.isNull("user")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
-    
-    public List<MessageRecipient> getMessagesPendingNotification() {
-        return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+
+    public List<Integer> getMessagesRecipientsPendingNotification() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNotNull("user")) //
                 .add(Restrictions.isNull("sendTimestamp")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 
-    public List<Message> getMessagesByThreads(Collection<MessageThread> threads) {
-        return (List<Message>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
-                .setProjection(Projections.groupProperty("message")) //
-                .createAlias("message", "message", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("message.thread", threads)) //
-                .add(Restrictions.isNotNull("sendTimestamp")) //
-                .addOrder(Order.desc("message.thread.id")) //
-                .addOrder(Order.desc("message.id")) //
-                .list();
-    }
-
-    public List<MessageThread> getMessageThreadsByResourceAndUser(Resource resource, User user) {
-        return (List<MessageThread>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
-                .setProjection(Projections.groupProperty("thread")) //
+    public List<Message> getMessagesByResourceAndUser(Resource resource, User user) {
+        return (List<Message>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
                 .createAlias("thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
                 .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
@@ -60,7 +52,23 @@ public class MessageDAO {
                 .add(Restrictions.eq("recipient.user", user)) //
                 .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
                 .addOrder(Order.desc("thread.id")) //
+                .addOrder(Order.desc("id")) //
                 .list();
+    }
+
+    public void setMessageThreadViewed(Integer thread, Integer message) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update MessageRecipient " //
+                        + "set viewTimestamp = :baseline "
+                        + "where message in ("
+                            + "from Message " //
+                            + "where thread.id = :thread "
+                            + "and id <= :message) " //
+                        + "and viewTimestamp is null") //
+                .setParameter("baseline", now()) //
+                .setParameter("thread", thread) //
+                .setParameter("message", message) //
+                .executeUpdate();
     }
 
 }

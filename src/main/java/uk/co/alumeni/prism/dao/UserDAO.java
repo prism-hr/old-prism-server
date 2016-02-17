@@ -577,6 +577,14 @@ public class UserDAO {
                 .executeUpdate();
     }
 
+    public List<User> getUserWithRoles(Resource resource, PrismRole... prismRoles) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("role.id", prismRoles)) //
+                .list();
+    }
+    
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
         enclosedResources

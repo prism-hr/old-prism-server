@@ -1,17 +1,49 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_BULK_PROCESSED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.dao.CommentDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.comment.*;
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;
+import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
+import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
+import uk.co.alumeni.prism.domain.comment.CommentCompetence;
+import uk.co.alumeni.prism.domain.comment.CommentInterviewAppointment;
+import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
+import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
+import uk.co.alumeni.prism.domain.comment.CommentPositionDetail;
+import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -25,23 +57,18 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
-import uk.co.alumeni.prism.rest.dto.comment.*;
+import uk.co.alumeni.prism.rest.dto.comment.CommentAssignedUserDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentCompetenceDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewAppointmentDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentInterviewInstructionDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentOfferDetailDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentPositionDetailDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import javax.inject.Inject;
-import java.util.*;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static org.apache.commons.lang.BooleanUtils.*;
-import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_BULK_PROCESSED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @Service
 @Transactional

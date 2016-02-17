@@ -107,6 +107,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PREFERRED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preferred"),
     SYSTEM_RECOMMENDED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Recommended"),
     SYSTEM_FOR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "for"),
+    SYSTEM_CANDIDATES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Candidates"),
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -1545,6 +1546,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_DOWNLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Download selected as PDF"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_NUMBER(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Resource #"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_TITLE(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Title"),
+    SYSTEM_RESOURCES_RESOURCE_COLUMN_LOCATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Location"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_UPDATED(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Updated"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_RATING(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Rating"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_STATUS(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Status"),

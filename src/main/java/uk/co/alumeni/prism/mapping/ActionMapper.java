@@ -101,15 +101,18 @@ public class ActionMapper {
         }
 
         List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-        Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
-        representations.keySet().stream().forEach(prismAction -> {
-            if (unsubmittedComments.containsKey(prismAction)) {
-                Comment comment = unsubmittedComments.get(prismAction);
-                CommentRepresentation commentRepresentation = commentMapper.getCommentRepresentationExtended(comment);
-                commentRepresentation.setAssignedUsers(commentMapper.getCommentAssignedUserRepresentations(comment, creatableRoles));
-                representations.get(prismAction).setComment(commentRepresentation);
-            }
-        });
+
+        if (isNotEmpty(actions)) {
+            Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
+            representations.keySet().stream().forEach(prismAction -> {
+                if (unsubmittedComments.containsKey(prismAction)) {
+                    Comment comment = unsubmittedComments.get(prismAction);
+                    CommentRepresentation commentRepresentation = commentMapper.getCommentRepresentationExtended(comment);
+                    commentRepresentation.setAssignedUsers(commentMapper.getCommentAssignedUserRepresentations(comment, creatableRoles));
+                    representations.get(prismAction).setComment(commentRepresentation);
+                }
+            });
+        }
 
         actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(ActionDTO::getActionId).collect(toList()))
                 .forEach(actionEnancement -> representations.get(actionEnancement.getAction()).addActionEnhancement(actionEnancement.getActionEnhancement()));

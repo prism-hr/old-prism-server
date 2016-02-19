@@ -37,6 +37,7 @@ import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ResourceMapper;
 import uk.co.alumeni.prism.mapping.RoleMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
+import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
@@ -344,7 +345,7 @@ public class ResourceController {
 
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
-        return getResourceDescriptor(resourceScope);
+        return PrismRestUtils.getResourceDescriptor(resourceScope);
     }
 
     private Resource loadResource(Integer resourceId, ResourceDescriptor resourceDescriptor) {

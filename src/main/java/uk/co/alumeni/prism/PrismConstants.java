@@ -30,10 +30,12 @@ public class PrismConstants {
 
     public static final String NULL = "null";
 
+    public static final String ZERO = "0";
+
     public static final Integer RATING_PRECISION = 2;
 
     public static final Integer ORDERING_PRECISION = 10;
-    
+
     public static final Integer GEOCODING_PRECISION = 14;
 
     public static final Integer EARTH_RADIUS_MILES = 3959;

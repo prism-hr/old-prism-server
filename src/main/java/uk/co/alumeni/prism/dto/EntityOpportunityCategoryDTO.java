@@ -1,7 +1,8 @@
 package uk.co.alumeni.prism.dto;
 
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
+import java.math.BigDecimal;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 
@@ -15,7 +16,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
 
     private PrismOpportunityType opportunityType;
 
-    private Boolean prioritize;
+    private BigDecimal priority;
 
     private String sequenceIdentifier;
 
@@ -43,12 +44,12 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
         this.opportunityType = opportunityType;
     }
 
-    public Boolean getPrioritize() {
-        return prioritize;
+    public BigDecimal getPriority() {
+        return priority;
     }
 
-    public void setPrioritize(Boolean prioritize) {
-        this.prioritize = prioritize;
+    public void setPriority(BigDecimal priority) {
+        this.priority = priority;
     }
 
     public String getSequenceIdentifier() {
@@ -79,12 +80,12 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
 
     @Override
     public String toString() {
-        return (BooleanUtils.toBoolean(prioritize) ? 1 : 0) + sequenceIdentifier;
+        return priority.toPlainString() + sequenceIdentifier;
     }
 
     @Override
     public int compareTo(T other) {
-        return ObjectUtils.compare(other.toString(), toString());
+        return compare(other.toString(), toString());
     }
 
 }

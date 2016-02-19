@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.utils;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +23,7 @@ import com.google.common.collect.Sets;
 
 public class PrismListUtils {
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowSummaries(Set<T> entities, Map<String, Integer> summaries) {
+    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Map<String, Integer> summaries) {
         processRowDescriptors(entities, null, summaries);
     }
 
@@ -36,8 +37,8 @@ public class PrismListUtils {
         processRowDescriptors(entities, null, summaries, opportunityTypes);
     }
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Set<Integer> onlyAsPartnerEntityIds, Map<String, Integer> summaries,
-            List<PrismOpportunityType> opportunityTypes) {
+    public static <T extends EntityOpportunityCategoryDTO<?>> void processRowDescriptors(Set<T> entities, Set<Integer> onlyAsPartnerEntityIds,
+            Map<String, Integer> summaries, List<PrismOpportunityType> opportunityTypes) {
         boolean processOnlyAsPartner = false;
         boolean filterByOpportunityType = isNotEmpty(opportunityTypes);
 
@@ -72,8 +73,9 @@ public class PrismListUtils {
         return representations;
     }
 
-    public static <T extends EntityOpportunityCategoryDTO<?>> Map<Integer, Boolean> getRowsToReturn(Collection<T> entities, PrismOpportunityCategory filterOpportunityCategory,
-            Collection<PrismOpportunityType> filterOpportunityTypes, String lastSequenceIdentifier, Integer maxEntities) {
+    public static <T extends EntityOpportunityCategoryDTO<?>> Map<Integer, BigDecimal> getRowsToReturn(Collection<T> entities,
+            PrismOpportunityCategory filterOpportunityCategory, Collection<PrismOpportunityType> filterOpportunityTypes, String lastSequenceIdentifier,
+            Integer maxEntities) {
         Integer returned = 0;
         boolean returning = lastSequenceIdentifier == null;
 
@@ -81,7 +83,7 @@ public class PrismListUtils {
         boolean filteringOpportunityType = isNotEmpty(filterOpportunityTypes);
         String filterOpportunityCategoryName = filteringOpportunityCategory ? filterOpportunityCategory.name() : null;
 
-        Map<Integer, Boolean> entityIndex = Maps.newLinkedHashMap();
+        Map<Integer, BigDecimal> entityIndex = Maps.newLinkedHashMap();
         for (EntityOpportunityCategoryDTO<?> entity : entities) {
             if (returning) {
                 boolean included;
@@ -94,7 +96,7 @@ public class PrismListUtils {
                 }
 
                 if (included) {
-                    entityIndex.put(entity.getId(), entity.getPrioritize());
+                    entityIndex.put(entity.getId(), entity.getPriority());
                     returned++;
                 }
 

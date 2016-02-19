@@ -1078,6 +1078,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_UNAVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are unavailable to attend"),
     SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding task(s) that require your attention"),
     SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "update(s) to applications, opportunities and organizations that you are following"),
+    SYSTEM_NOTIFICATION_MESSAGES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "messages(s) for applications, opportunities and organizations that you are following"),
     SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointment(s)"),
     SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "request(s) to join organizations that you manage"),
     SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "request(s) to connect from organizations in your network"),

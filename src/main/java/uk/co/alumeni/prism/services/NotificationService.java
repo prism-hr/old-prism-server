@@ -277,14 +277,14 @@ public class NotificationService {
                 .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
         sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
     }
-    
+
     public void sendMessageNotification(MessageRecipient messageRecipient) {
         User initiator = systemService.getSystem().getUser();
         Message message = messageRecipient.getMessage();
         Resource resource = message.getThread().getComment().getResource();
         NotificationDefinition definition = getById(PrismNotificationDefinition.valueOf(resource.getResourceScope().name() + "_MESSAGE_NOTIFICATION"));
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(messageRecipient.getUser())
-                .withResource(resource).withMessage(message).withTransitionAction(actionService.getViewEditAction(resource).getId());
+                .withResource(resource).withMessage(message).withTransitionAction(actionService.getMessageAction(resource).getId());
         sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
     }
 

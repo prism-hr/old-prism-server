@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.mapping;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
@@ -14,7 +15,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
-import static uk.co.alumeni.prism.utils.PrismListUtils.processRowSummaries;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
@@ -191,6 +191,11 @@ public class ResourceMapper {
         Map<String, Integer> summaries = Maps.newHashMap();
         Set<Integer> onlyAsPartnerResourceIds = Sets.newHashSet();
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
+
+        if (isTrue(filter.getWithNewMessages())) {
+            filter.setResourceIds(resourceService.getResourcesWithUnreadMessages(scope, user));
+        }
+
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
         processRowDescriptors(resources, onlyAsPartnerResourceIds, summaries);
 
@@ -266,9 +271,9 @@ public class ResourceMapper {
                 });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
-        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(r -> BooleanUtils.isTrue(r.getPrioritize()))
+        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(resource -> BooleanUtils.isTrue(resource.getRaisesUrgentFlag()))
                 .collect(Collectors.toSet());
-        processRowSummaries(urgentResources, urgentSummaries);
+        processRowDescriptors(urgentResources, urgentSummaries);
 
         return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries))
                 .withUrgentSummaries(getSummaryRepresentations(urgentSummaries));

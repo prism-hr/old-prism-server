@@ -201,8 +201,7 @@ public class ResourceDAO {
     }
 
     public <T> List<T> getResources(User user, PrismScope scope, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions,
-            Class<T> responseClass,
-            DateTime updateBaseline) {
+            Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, columns) //
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
@@ -212,8 +211,7 @@ public class ResourceDAO {
     }
 
     public <T> List<T> getResources(User user, PrismScope scope, PrismScope parentScope, ResourceListFilterDTO filter, ProjectionList columns,
-            Junction conditions,
-            Class<T> responseClass, DateTime updateBaseline) {
+            Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, parentScope, columns) //
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
@@ -223,8 +221,7 @@ public class ResourceDAO {
     }
 
     public <T> List<T> getResources(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, List<Integer> targeterEntities,
-            ResourceListFilterDTO filter,
-            ProjectionList columns, Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
+            ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass, DateTime updateBaseline) {
         Criteria criteria = workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
@@ -233,8 +230,8 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getSimilarResources(PrismScope resourceScope, String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+    public List<Integer> getSimilarResources(PrismScope scope, String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.like("code", searchTerm, MatchMode.ANYWHERE)) //
@@ -242,18 +239,45 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Resource> getResourcesByUser(PrismScope prismScope, User user) {
-        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(prismScope.getResourceClass()) //
+    public List<Resource> getResourcesByUser(PrismScope scope, User user) {
+        return (List<Resource>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .add(Restrictions.eq("user", user)) //
                 .list();
     }
 
-    public List<Integer> getResourcesByUserAndRole(PrismScope prismScope, String searchTerm, List<PrismRole> prismRoles) {
+    public List<Integer> getResourcesByUserAndRole(PrismScope scope, String searchTerm, List<PrismRole> prismRoles) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property(prismScope.getLowerCamelName() + ".id")) //
+                .setProjection(Projections.property(scope.getLowerCamelName() + ".id")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(getSimilarUserConstraint("user", searchTerm)) //
                 .add(Restrictions.in("role.id", prismRoles)) //
+                .list();
+    }
+
+    public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, User user) {
+        String resourceIdReference = scope.getLowerCamelName() + ".id";
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.groupProperty(resourceIdReference)) //
+                .createAlias("thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message") //
+                .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("recipient.user", user)) //
+                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
+                .add(Restrictions.isNull("recipient.viewTimestamp")) //
+                .list();
+    }
+
+    public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, Collection<Integer> resourceIds, User user) {
+        String resourceIdReference = scope.getLowerCamelName() + ".id";
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.groupProperty(resourceIdReference)) //
+                .createAlias("thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message") //
+                .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceIdReference, resourceIds)) //
+                .add(Restrictions.eq("recipient.user", user)) //
+                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
+                .add(Restrictions.isNull("recipient.viewTimestamp")) //
                 .list();
     }
 

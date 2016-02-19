@@ -15,6 +15,7 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
 import static org.joda.time.Days.daysBetween;
+import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
@@ -1149,7 +1150,7 @@ public class ResourceService {
             setResourceAdvertIncompleteSection((ResourceParent) resource);
         }
     }
-    
+
     public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, User user) {
         return resourceDAO.getResourcesWithUnreadMessages(scope, user);
     }
@@ -1164,7 +1165,7 @@ public class ResourceService {
         resources.forEach(resource -> {
             boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || isTrue(resource.getRaisesMessageFlag()));
             Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
-            resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated))));
+            resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)),
                     HALF_UP).setScale(ORDERING_PRECISION));
         });
     }

@@ -61,10 +61,11 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            Collection<Integer> targeterEntities, Collection<Integer> resourceIds) {
+            Collection<Integer> targeterEntities,
+            Collection<Integer> resourceIds) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("role.id"))
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
-                .add(WorkflowDAO.getTargetActionConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .list();
     }
 
@@ -149,6 +150,22 @@ public class RoleDAO {
                 .add(Restrictions.isNotNull(resourceReference)) //
                 .add(Restrictions.eq("user", user)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
+                .list();
+    }
+
+    public List<User> getRoleUsers(Resource resource, Role... roles) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("role", roles)) //
+                .list();
+    }
+
+    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("role.id", prismRoles)) //
                 .list();
     }
 
@@ -332,8 +349,6 @@ public class RoleDAO {
         return criteria.createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
                 .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
                 .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource.id", resourceId)) //
-                .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.asc("recipientRoleScope.ordinal")) //
                 .addOrder(Order.asc("recipientRole.id"));

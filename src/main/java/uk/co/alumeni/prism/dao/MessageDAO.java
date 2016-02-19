@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
-import static org.joda.time.DateTime.now;
-
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -11,12 +10,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.message.Message;
+import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.message.MessageRecipient;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.MessageThreadDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -43,32 +46,58 @@ public class MessageDAO {
                 .list();
     }
 
-    public List<Message> getMessagesByResourceAndUser(Resource resource, User user) {
-        return (List<Message>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
-                .createAlias("thread", "thread", JoinType.INNER_JOIN) //
+    public List<MessageThreadDTO> getMessageThreads(Resource resource, User user) {
+        return (List<MessageThreadDTO>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("message.thread").as("thread")) //
+                        .add(Projections.max("message.updatedTimestamp").as("updatedTimestamp"))) //
+                .createAlias("message", "message", JoinType.INNER_JOIN) //
+                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
                 .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("recipient.user", user)) //
-                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
-                .addOrder(Order.desc("thread.id")) //
-                .addOrder(Order.desc("id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("sendTimestamp")) //
+                .addOrder(Order.desc("updatedTimestamp")) //
+                .addOrder(Order.desc("thread")) //
+                .setResultTransformer(Transformers.aliasToBean(MessageThreadDTO.class)) //
                 .list();
     }
 
-    public void viewMessageThread(Integer thread, Integer message) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "update MessageRecipient " //
-                        + "set viewTimestamp = :baseline "
-                        + "where message in ("
-                            + "from Message " //
-                            + "where thread.id = :thread "
-                            + "and id <= :message) " //
-                        + "and viewTimestamp is null") //
-                .setParameter("baseline", now()) //
-                .setParameter("thread", thread) //
-                .setParameter("message", message) //
-                .executeUpdate();
+    public List<Message> getMessages(Collection<MessageThread> threads, User user) {
+        return (List<Message>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("message")) //
+                .createAlias("message", "message", JoinType.INNER_JOIN) //
+                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message.thread", threads)) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("sendTimestamp")) //
+                .addOrder(Order.desc("message")) //
+                .list();
+    }
+
+    public List<MessageRecipient> getMessageRecipients(Collection<Message> messages) {
+        return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .createAlias("message", "message", JoinType.INNER_JOIN) //
+                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message", messages)) //
+                .add(Restrictions.neProperty("user", "message.user")) //
+                .addOrder(Order.desc("message")) //
+                .addOrder(Order.asc("user.fullName")) //
+                .list();
+    }
+
+    public List<MessageDocument> getMessageDocuments(Collection<Message> messages) {
+        return (List<MessageDocument>) sessionFactory.getCurrentSession().createCriteria(MessageDocument.class) //
+                .createAlias("document", "document", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message", messages)) //
+                .addOrder(Order.desc("message")) //
+                .addOrder(Order.asc("id")) //
+                .list();
     }
 
 }

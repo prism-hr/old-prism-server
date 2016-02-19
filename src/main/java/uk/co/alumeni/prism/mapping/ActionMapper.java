@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -13,7 +14,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,7 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.ActionRecipientRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
@@ -37,8 +38,8 @@ import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.UserService;
 
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 
 @Service
@@ -68,9 +69,6 @@ public class ActionMapper {
 
     @Inject
     private RoleService roleService;
-
-    @Inject
-    private UserService userService;
 
     public ActionRepresentation getActionRepresentation(PrismAction action) {
         return getActionRepresentation(action, ActionRepresentation.class);
@@ -144,7 +142,7 @@ public class ActionMapper {
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
 
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
-        if (CollectionUtils.isNotEmpty(replicableSequenceComments)) {
+        if (isNotEmpty(replicableSequenceComments)) {
             representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
                     resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
                             actionOutcomeDTO.getStateTransition(),
@@ -156,16 +154,20 @@ public class ActionMapper {
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, User user, ActionDTO action) {
-        ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class).addNextStates(
-                stateMapper.getStateRepresentations(resource, action.getActionId())).addRecommendedNextStates(
-                stateMapper.getRecommendedNextStateRepresentations(resource));
+        ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class) //
+                .addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId())) //
+                .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
 
         if (action.getActionId().getActionCategory().equals(MESSAGE_RESOURCE)) {
             List<PrismRole> messagableRoles = roleService.getRolesUserCanMessage(user, resource);
             if (isNotEmpty(messagableRoles)) {
-                representation.addMessagableUsers(userService.getUsersWithRoles(resource, messagableRoles).stream()
-                        .map(messagableUser -> userMapper.getUserRepresentationSimple(messagableUser, user)).collect(toList()));
-                representation.addMessagableRoles(messagableRoles);
+                List<ActionRecipientRepresentation> recipients = newLinkedList();
+                LinkedHashMultimap<PrismRole, User> messagableUsers = roleService.getUserRoles(resource, messagableRoles);
+                messagableUsers.keySet().stream().forEach(mr -> {
+                    recipients.add(new ActionRecipientRepresentation().withRole(mr).withUsers(
+                            messagableUsers.get(mr).stream().map(mu -> userMapper.getUserRepresentationSimple(mu, user)).collect(toList())));
+                });
+                representation.addMessagableUsers(recipients);
             }
         }
 

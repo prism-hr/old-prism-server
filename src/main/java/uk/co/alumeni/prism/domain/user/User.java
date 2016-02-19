@@ -89,7 +89,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @ManyToOne
     @JoinColumn(name = "creator_user_id")
     private User creatorUser;
-    
+
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
@@ -146,9 +146,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<UserNotification> userNotifications = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
-    private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<UserCompetence> userCompetences = Sets.newHashSet();
@@ -268,7 +265,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
-    
+
     public User getCreatorUser() {
         return creatorUser;
     }
@@ -355,10 +352,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserNotification> getUserNotifications() {
         return userNotifications;
-    }
-
-    public Set<UserInstitutionIdentity> getInstitutionIdentities() {
-        return institutionIdentities;
     }
 
     public Set<UserCompetence> getUserCompetences() {

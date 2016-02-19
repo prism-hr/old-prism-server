@@ -20,8 +20,6 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.rest.dto.message.MessageDTO;
-import uk.co.alumeni.prism.rest.dto.message.MessageThreadDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 
 @Service

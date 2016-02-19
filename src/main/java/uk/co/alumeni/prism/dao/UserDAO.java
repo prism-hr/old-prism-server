@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
@@ -497,6 +496,14 @@ public class UserDAO {
                 .list();
     }
 
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... roles) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("role.id", roles)) //
+                .list();
+    }
+
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
@@ -576,29 +583,6 @@ public class UserDAO {
                         + "where " + applicationSectionClass.getSimpleName().toLowerCase() + " = :propertyId") //
                 .setParameter("propertyId", propertyId) //
                 .executeUpdate();
-    }
-
-    public List<User> getUserWithRoles(Resource resource, PrismRole... prismRoles) {
-        HashMultimap<PrismScope, PrismRole> prismRolesByScope = HashMultimap.create();
-        stream(prismRoles).forEach(prismRole -> prismRolesByScope.put(prismRole.getScope(), prismRole));
-
-        Junction userRoleConstraint = Restrictions.disjunction();
-        prismRolesByScope.keySet().forEach(prismScope -> {
-            Resource enclosingResource = resource.getEnclosingResource(prismScope);
-            if (enclosingResource != null) {
-                userRoleConstraint.add(Restrictions.conjunction() //
-                        .add(Restrictions.eq(prismScope.getLowerCamelName(), enclosingResource)) //
-                        .add(Restrictions.in("role.id", prismRolesByScope.get(prismScope))));
-            }
-        });
-
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(userRoleConstraint) //
-                .addOrder(Order.asc("user.fullName")) //
-                .list();
     }
 
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {

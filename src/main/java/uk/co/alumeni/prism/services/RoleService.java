@@ -48,6 +48,7 @@ import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -263,24 +264,30 @@ public class RoleService {
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
         Set<PrismRole> roles = Sets.newHashSet();
-        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, resourceId));
+        roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, resourceId));
 
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScope : parentScopes) {
-                roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, parentScope, resourceId));
+                roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, parentScope, resourceId));
             }
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
             if (isNotEmpty(targeterEntities)) {
                 for (PrismScope targeterScope : organizationScopes) {
                     for (PrismScope targetScope : organizationScopes) {
-                        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
+                        roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
                     }
                 }
             }
         }
 
         return newArrayList(roles);
+    }
+
+    public LinkedHashMultimap<PrismRole, User> getUserRoles(Resource resource, List<PrismRole> roles) {
+        LinkedHashMultimap<PrismRole, User> userRoles = LinkedHashMultimap.create();
+        roleDAO.getUserRoles(resource, roles).stream().forEach(userRole -> userRoles.put(userRole.getRole(), userRole.getUser()));
+        return userRoles;
     }
 
     public List<PrismRole> getRolesForResource(Resource resource, User user) {

@@ -148,9 +148,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
     private Set<UserCompetence> userCompetences = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
@@ -355,10 +352,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<UserNotification> getUserNotifications() {
         return userNotifications;
-    }
-
-    public Set<UserInstitutionIdentity> getInstitutionIdentities() {
-        return institutionIdentities;
     }
 
     public Set<UserCompetence> getUserCompetences() {

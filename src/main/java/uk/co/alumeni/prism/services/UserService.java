@@ -30,7 +30,6 @@ import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -507,6 +506,10 @@ public class UserService {
         return newLinkedList(profiles);
     }
 
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... roles) {
+        return (resource == null || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(resource, roles);
+    }
+
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, resources, roles);
     }
@@ -522,14 +525,6 @@ public class UserService {
     public boolean checkUserEditable(User user, User currentUser) {
         UserAccount userAccount = user.getUserAccount();
         return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
-    }
-
-    public List<User> getUsersWithRoles(Resource resource, Collection<PrismRole> prismRoles) {
-        return getUsersWithRoles(resource, prismRoles.toArray(new PrismRole[prismRoles.size()]));
-    }
-
-    public List<User> getUsersWithRoles(Resource resource, PrismRole... prismRoles) {
-        return userDAO.getUserWithRoles(resource, prismRoles);
     }
 
     @SuppressWarnings("unchecked")

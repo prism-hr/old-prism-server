@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
@@ -39,7 +40,6 @@ import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Service
 @Transactional
@@ -93,7 +93,7 @@ public class ActionMapper {
 
     public List<ActionRepresentationExtended> getActionRepresentations(Resource resource, User user) {
         PrismScope scope = resource.getResourceScope();
-        Map<PrismAction, ActionRepresentationExtended> representations = Maps.newLinkedHashMap();
+        Map<PrismAction, ActionRepresentationExtended> representations = newLinkedHashMap();
 
         boolean onlyAsPartner = true;
         List<ActionDTO> actions = actionService.getPermittedActions(user, resource);
@@ -165,7 +165,7 @@ public class ActionMapper {
             if (isNotEmpty(messagableRoles)) {
                 representation.addMessagableUsers(userService.getUsersWithRoles(resource, messagableRoles).stream()
                         .map(messagableUser -> userMapper.getUserRepresentationSimple(messagableUser, user)).collect(toList()));
-                representation.addMessagableRoles(roleService.getRolesUserCanMessage(user, resource));
+                representation.addMessagableRoles(messagableRoles);
             }
         }
 

@@ -25,7 +25,7 @@ public class MessageDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public List<Integer> getMessagesRecipientsPendingAllocation() {
+    public List<Integer> getMessageRecipientsPendingAllocation() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNotNull("role")) //
@@ -34,7 +34,7 @@ public class MessageDAO {
                 .list();
     }
 
-    public List<Integer> getMessagesRecipientsPendingNotification() {
+    public List<Integer> getMessageRecipientsPendingNotification() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNotNull("user")) //

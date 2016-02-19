@@ -19,22 +19,22 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionRe
 @Component
 public class ApplicationProvidedReferenceResolver implements StateTransitionResolver<Application> {
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private UserService userService;
 
-	@Inject
-	private StateService stateService;
+    @Inject
+    private StateService stateService;
 
-	@Override
-	public StateTransition resolve(Application resource, Comment comment) {
-		if (resource.getState().getStateGroup().getId().equals(PrismStateGroup.APPLICATION_REFERENCE)) {
-			if (userService.getUsersWithRoles(resource, APPLICATION_REFEREE).size() == 1) {
-				return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REFERENCE_PENDING_COMPLETION);
-			}
-			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REFERENCE);
-		} else {
-			return stateService.getStateTransition(resource, comment.getAction());
-		}
-	}
+    @Override
+    public StateTransition resolve(Application resource, Comment comment) {
+        if (resource.getState().getStateGroup().getId().equals(PrismStateGroup.APPLICATION_REFERENCE)) {
+            if (userService.getUsersWithRoles(resource, APPLICATION_REFEREE).size() == 1) {
+                return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REFERENCE_PENDING_COMPLETION);
+            }
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REFERENCE);
+        } else {
+            return stateService.getStateTransition(resource, comment.getAction());
+        }
+    }
 
 }

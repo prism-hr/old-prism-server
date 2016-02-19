@@ -34,8 +34,8 @@ public class MessageService {
         return entityService.getById(MessageRecipient.class, messageRecipientId);
     }
 
-    public List<Integer> getMessagesRecipientsPendingAllocation() {
-        return messageDAO.getMessagesRecipientsPendingAllocation();
+    public List<Integer> getMessageRecipientsPendingAllocation() {
+        return messageDAO.getMessageRecipientsPendingAllocation();
     }
 
     public void allocateMessageRecipients(Integer messageRecipientId) {
@@ -50,7 +50,7 @@ public class MessageService {
     }
 
     public List<Integer> getMessagesRecipientsPendingNotification() {
-        return messageDAO.getMessagesRecipientsPendingNotification();
+        return messageDAO.getMessageRecipientsPendingNotification();
     }
 
     public void notifyMessageRecipients(Integer messageRecipientId, DateTime baseline) {

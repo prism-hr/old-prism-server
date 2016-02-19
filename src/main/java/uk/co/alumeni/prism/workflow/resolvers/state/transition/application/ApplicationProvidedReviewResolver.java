@@ -18,18 +18,18 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionRe
 @Component
 public class ApplicationProvidedReviewResolver implements StateTransitionResolver<Application> {
 
-	@Inject
-	private UserService userService;
+    @Inject
+    private UserService userService;
 
-	@Inject
-	private StateService stateService;
+    @Inject
+    private StateService stateService;
 
-	@Override
-	public StateTransition resolve(Application resource, Comment comment) {
-		if (userService.getUsersWithRoles(resource, APPLICATION_REVIEWER).size() == 1) {
-			return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REVIEW_PENDING_COMPLETION);
-		}
-		return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REVIEW_PENDING_FEEDBACK);
-	}
+    @Override
+    public StateTransition resolve(Application resource, Comment comment) {
+        if (userService.getUsersWithRoles(resource, APPLICATION_REVIEWER).size() == 1) {
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REVIEW_PENDING_COMPLETION);
+        }
+        return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_REVIEW_PENDING_FEEDBACK);
+    }
 
 }

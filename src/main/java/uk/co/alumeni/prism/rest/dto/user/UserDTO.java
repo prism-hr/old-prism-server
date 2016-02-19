@@ -17,8 +17,8 @@ public class UserDTO {
     @Size(max = 40)
     private String lastName;
 
-    @NotEmpty
     @Email
+    @NotEmpty
     private String email;
 
     public Integer getId() {

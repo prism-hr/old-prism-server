@@ -590,6 +590,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
+    public Comment withThread(MessageThread thread) {
+        this.thread = thread;
+        return this;
+    }
+
     public Comment withContent(String content) {
         this.content = content;
         return this;

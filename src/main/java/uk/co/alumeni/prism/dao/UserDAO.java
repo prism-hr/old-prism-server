@@ -104,7 +104,7 @@ public class UserDAO {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
+                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -119,7 +119,7 @@ public class UserDAO {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("createdTimestamp"), "eventTimestamp")) //
+                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -578,6 +578,7 @@ public class UserDAO {
                 .executeUpdate();
     }
 
+    public List<User> getUserWithRoles(Resource resource, PrismRole... prismRoles) {
         HashMultimap<PrismScope, PrismRole> prismRolesByScope = HashMultimap.create();
         stream(prismRoles).forEach(prismRole -> prismRolesByScope.put(prismRole.getScope(), prismRole));
 
@@ -591,9 +592,14 @@ public class UserDAO {
             }
         });
 
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(userRoleConstraint) //
                 .addOrder(Order.asc("user.fullName")) //
+                .list();
+    }
 
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();

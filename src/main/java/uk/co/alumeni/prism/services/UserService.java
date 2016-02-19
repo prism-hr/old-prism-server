@@ -537,7 +537,10 @@ public class UserService {
         return getUsersWithRoles(resource, prismRoles.toArray(new PrismRole[prismRoles.size()]));
     }
 
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... prismRoles) {
         return userDAO.getUserWithRoles(resource, prismRoles);
+    }
+
     @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {
         for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {

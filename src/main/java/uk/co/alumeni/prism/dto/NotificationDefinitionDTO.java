@@ -4,6 +4,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
@@ -21,6 +22,8 @@ public class NotificationDefinitionDTO {
     private Resource resource;
 
     private Comment comment;
+
+    private Message message;
 
     private AdvertTarget advertTarget;
 
@@ -62,6 +65,10 @@ public class NotificationDefinitionDTO {
 
     public Comment getComment() {
         return comment;
+    }
+
+    public Message getMessage() {
+        return message;
     }
 
     public AdvertTarget getAdvertTarget() {
@@ -125,6 +132,11 @@ public class NotificationDefinitionDTO {
 
     public NotificationDefinitionDTO withComment(Comment comment) {
         this.comment = comment;
+        return this;
+    }
+
+    public NotificationDefinitionDTO withMessage(Message message) {
+        this.message = message;
         return this;
     }
 

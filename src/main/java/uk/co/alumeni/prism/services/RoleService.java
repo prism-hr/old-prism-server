@@ -177,7 +177,8 @@ public class RoleService {
                     }
                 } else {
                     getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
-                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED")))).withAssignedTimestamp(now()));
+                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED"))))
+                            .withAssignedTimestamp(now()));
                 }
                 entityService.delete(userRole);
             }
@@ -256,16 +257,38 @@ public class RoleService {
         return newArrayList(roles);
     }
 
+    public List<PrismRole> getRolesUserCanMessage(User user, Resource resource) {
+        Integer resourceId = resource.getId();
+        PrismScope scope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        Set<PrismRole> roles = Sets.newHashSet();
+        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, resourceId));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, parentScope, resourceId));
+            }
+
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
+                        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
+                    }
+                }
+            }
+        }
+
+        return newArrayList(roles);
+    }
+
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
         return roleDAO.getRolesForResource(resource, user);
     }
 
     public List<PrismRole> getRolesForResourceStrict(Resource resource, User user) {
         return roleDAO.getRolesForResourceStrict(resource, user);
-    }
-
-    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
@@ -399,11 +422,13 @@ public class RoleService {
         }
     }
 
-    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify,
+            PrismRole... roles) {
         updateUserRoles(invoker, resource, newHashSet(user), transitionType, message, notify, roles);
     }
 
-    private void updateUserRoles(User invoker, Resource resource, Set<User> users, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, Set<User> users, PrismRoleTransitionType transitionType, String message, boolean notify,
+            PrismRole... roles) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);

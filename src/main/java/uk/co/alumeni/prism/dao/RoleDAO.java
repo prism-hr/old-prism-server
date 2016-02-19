@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.dao;
 
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
 import java.util.Collection;
@@ -59,20 +60,35 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
+            Collection<Integer> targeterEntities,
             Collection<Integer> resourceIds) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("role.id"))
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
-                .add(WorkflowDAO.getTargetActionConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .list();
     }
 
+    public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, Integer resourceId) {
         return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, //
                 Projections.groupProperty("recipientRole.id")), resourceId, user) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, PrismScope parentScope, Integer resourceId) {
         return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, parentScope, //
                 Projections.groupProperty("recipientRole.id")), resourceId, user) //
+                .list();
+    }
+
+    public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
+            Collection<Integer> targeterEntities, Integer resourceId) {
         return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, //
                 Projections.groupProperty("recipientRole.id")), resourceId, user) //
+                .add(getTargetActionConstraint()) //
+                .list();
+    }
+
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
                 .setProjection(Projections.groupProperty("role.id")) //
@@ -336,4 +352,6 @@ public class RoleDAO {
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.asc("recipientRoleScope.ordinal")) //
                 .addOrder(Order.asc("recipientRole.id"));
+    }
+
 }

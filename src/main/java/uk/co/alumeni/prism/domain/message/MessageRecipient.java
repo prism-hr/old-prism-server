@@ -108,6 +108,16 @@ public class MessageRecipient implements UserAssignment<MessageRecipientReassign
         return this;
     }
 
+    public MessageRecipient withSendTimestamp(DateTime sendTimestamp) {
+        this.sendTimestamp = sendTimestamp;
+        return this;
+    }
+
+    public MessageRecipient withViewTimestamp(DateTime viewTimestamp) {
+        this.viewTimestamp = viewTimestamp;
+        return this;
+    }
+
     @Override
     public Class<MessageRecipientReassignmentProcessor> getUserReassignmentProcessor() {
         return MessageRecipientReassignmentProcessor.class;

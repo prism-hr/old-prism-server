@@ -56,7 +56,7 @@ public class MessageDAO {
                 .list();
     }
 
-    public void setMessageThreadViewed(Integer thread, Integer message) {
+    public void viewMessageThread(Integer thread, Integer message) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update MessageRecipient " //
                         + "set viewTimestamp = :baseline "

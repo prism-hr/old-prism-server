@@ -14,6 +14,7 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
 import static org.joda.time.Days.daysBetween;
+import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
@@ -67,6 +68,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.PrismConstants;
 import uk.co.alumeni.prism.dao.ResourceDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
@@ -1164,7 +1166,8 @@ public class ResourceService {
         resources.forEach(resource -> {
             boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || isTrue(resource.getRaisesMessageFlag()));
             Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
-            resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated))));
+            resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)),
+                    ORDERING_PRECISION));
         });
     }
 

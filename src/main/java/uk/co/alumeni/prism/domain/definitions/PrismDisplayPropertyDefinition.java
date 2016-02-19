@@ -1950,6 +1950,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PERFORMANCE_INDICATOR_AVERAGE_PROCESSING_TIME(PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR, "Average Application Processing Time (Days)"),
 
     /*
+     * *************** SYSTEM COMMENT *********************
+     */
+
+    SYSTEM_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "Started a conversation"),
+    SYSTEM_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "view messages"),
+    
+    /*
      * *************** INSTITUTION COMMENT *********************
      */
 
@@ -1959,6 +1966,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_REJECTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "We are sorry to inform you that your organization has been rejected"),
     INSTITUTION_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Initialized organization"),
     INSTITUTION_COMMENT_UPDATED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization"),
+    INSTITUTION_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Started a conversation"),
+    INSTITUTION_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "view messages"),
     INSTITUTION_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization user roles"),
     INSTITUTION_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization notification configuration"),
     INSTITUTION_COMMENT_RESTORED_NOTIFICATION_CONFIGURATION_DEFAULT(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Restored system default notification configuration"),
@@ -1990,6 +1999,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_REJECTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are sorry to inform you that your Department has been rejected"),
     DEPARTMENT_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Initialized department"),
     DEPARTMENT_COMMENT_UPDATED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated department"),
+    DEPARTMENT_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Started a conversation"),
+    DEPARTMENT_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "view messages"),
     DEPARTMENT_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated department user roles"),
     DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated department notification configuration"),
     DEPARTMENT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Restored organization default notification configuration"),
@@ -2015,6 +2026,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
     PROGRAM_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program"),
+    PROGRAM_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Started a conversation"),
+    PROGRAM_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "view messages"),
     PROGRAM_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program user roles"),
     PROGRAM_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program notification configuration"),
     PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored Department default notification configuration"),
@@ -2041,6 +2054,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Further information is required to activate your position. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are sorry to inform you that your position has been rejected"),
     PROJECT_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position"),
+    PROJECT_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Started a conversation"),
+    PROJECT_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "view messages"),
     PROJECT_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position user roles"),
     PROJECT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position notification configuration"),
     PROJECT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Restored program default notification configuration"),
@@ -2331,6 +2346,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** APPLICATION COMMENT *********************
      */
 
+    APPLICATION_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Started a conversation"),
+    APPLICATION_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "view messages"),
     APPLICATION_COMMENT_DECLINED_REFEREE(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Declined to provide a reference"),
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Recommended offer conditions"),
     APPLICATION_COMMENT_POSITION_DESCRIPTION_UNEXPORTABLE(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Refer to program administrator for position description"),

@@ -100,6 +100,36 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
         return documents;
     }
 
+    public Message withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public Message withThread(MessageThread thread) {
+        this.thread = thread;
+        return this;
+    }
+
+    public Message withContent(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public Message withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public Message addRecipient(MessageRecipient recipient) {
+        recipients.add(recipient);
+        return this;
+    }
+
+    public Message addDocument(MessageDocument document) {
+        documents.add(document);
+        return this;
+    }
+
     @Override
     public Class<MessageReassignmentProcessor> getUserReassignmentProcessor() {
         return MessageReassignmentProcessor.class;

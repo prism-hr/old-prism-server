@@ -19,8 +19,8 @@ public class ProfilePersonalDetailDTO {
 
     private PrismGender gender;
 
-    @NotNull
     @Valid
+    @NotNull
     private UserSimpleDTO user;
 
     @DatePast

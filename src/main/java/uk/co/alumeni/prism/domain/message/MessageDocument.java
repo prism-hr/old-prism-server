@@ -50,4 +50,14 @@ public class MessageDocument {
         this.document = document;
     }
 
+    public MessageDocument withMessage(Message message) {
+        this.message = message;
+        return this;
+    }
+
+    public MessageDocument withDocument(Document document) {
+        this.document = document;
+        return this;
+    }
+
 }

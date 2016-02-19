@@ -18,7 +18,7 @@ public class MessageServiceHelperAllocation extends PrismServiceHelperAbstract {
 
     @Override
     public void execute() {
-        messageService.getMessagesRecipientsPendingAllocation().forEach(messageRecipient -> allocateMessageRecipients(messageRecipient));
+        messageService.getMessageRecipientsPendingAllocation().forEach(messageRecipient -> allocateMessageRecipients(messageRecipient));
     }
 
     @Override

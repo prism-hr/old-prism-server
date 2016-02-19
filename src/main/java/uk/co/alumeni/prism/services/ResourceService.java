@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
@@ -1164,6 +1165,7 @@ public class ResourceService {
             boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || isTrue(resource.getRaisesMessageFlag()));
             Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
             resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated))));
+                    HALF_UP).setScale(ORDERING_PRECISION));
         });
     }
 

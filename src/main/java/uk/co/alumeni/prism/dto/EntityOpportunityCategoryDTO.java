@@ -1,6 +1,10 @@
 package uk.co.alumeni.prism.dto;
 
+import static org.apache.commons.lang.StringUtils.rightPad;
 import static org.apache.commons.lang3.ObjectUtils.compare;
+import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
+import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
+import static uk.co.alumeni.prism.PrismConstants.ZERO;
 
 import java.math.BigDecimal;
 
@@ -80,7 +84,8 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
 
     @Override
     public String toString() {
-        return priority.toPlainString() + sequenceIdentifier;
+        String prefix = (priority == null ? new BigDecimal(0) : priority).toPlainString().replace(FULL_STOP, "");
+        return rightPad(prefix, (ORDERING_PRECISION + 1), ZERO) + sequenceIdentifier;
     }
 
     @Override

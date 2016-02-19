@@ -10,6 +10,7 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
@@ -175,7 +176,11 @@ public class ActionService {
     }
 
     public Action getViewEditAction(Resource resource) {
-        return actionDAO.getViewEditAction(resource);
+        return actionDAO.getActionsByActionCategory(resource, VIEW_EDIT_RESOURCE).get(0);
+    }
+
+    public Action getMessageAction(Resource resource) {
+        return actionDAO.getActionsByActionCategory(resource, MESSAGE_RESOURCE).get(0);
     }
 
     public List<Action> getActions() {

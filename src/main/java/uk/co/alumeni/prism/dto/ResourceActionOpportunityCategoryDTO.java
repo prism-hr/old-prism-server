@@ -1,17 +1,12 @@
 package uk.co.alumeni.prism.dto;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 
 import com.google.common.base.Objects;
 
-public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCategoryDTO<ResourceActionOpportunityCategoryDTO> {
+public class ResourceActionOpportunityCategoryDTO extends ResourceOpportunityCategoryDTO {
 
     private PrismAction actionId;
-
-    private DateTime updatedTimestamp;
 
     public PrismAction getActionId() {
         return actionId;
@@ -19,14 +14,6 @@ public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCateg
 
     public void setActionId(PrismAction actionId) {
         this.actionId = actionId;
-    }
-
-    public DateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
     }
 
     @Override
@@ -42,11 +29,6 @@ public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCateg
     @Override
     public String toString() {
         return actionId.getZeroPaddedOrdinal() + getSequenceIdentifier();
-    }
-
-    @Override
-    public int compareTo(ResourceActionOpportunityCategoryDTO other) {
-        return ObjectUtils.compare(toString(), other.toString());
     }
 
 }

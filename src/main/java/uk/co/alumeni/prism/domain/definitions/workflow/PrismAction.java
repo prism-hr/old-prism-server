@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static org.apache.commons.lang3.StringUtils.leftPad;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
@@ -29,8 +30,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Arrays;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
@@ -194,7 +193,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     }
 
     public String getZeroPaddedOrdinal() {
-        return StringUtils.leftPad(String.valueOf(this.ordinal()), (String.valueOf(values().length).length() - 1), "0");
+        return leftPad(String.valueOf(this.ordinal()), (String.valueOf(values().length).length() - 1), "0");
     }
 
     private static class PrismActionDefinition {

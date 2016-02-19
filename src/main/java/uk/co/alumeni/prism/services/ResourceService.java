@@ -13,6 +13,7 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
+import static org.joda.time.Days.daysBetween;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
@@ -37,6 +38,7 @@ import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -600,7 +602,7 @@ public class ResourceService {
             Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
             Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resourceDTOs.isEmpty()) {
-            Map<Integer, Boolean> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(),
+            Map<Integer, BigDecimal> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(),
                     lastSequenceIdentifier, maxRecords);
 
             Set<Integer> resourceIds = resources.keySet();
@@ -1030,14 +1032,12 @@ public class ResourceService {
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-            List<Integer> targeterEntities,
-            ProjectionList columns, Class<T> responseClass) {
+            List<Integer> targeterEntities, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-            List<Integer> targeterEntities,
-            ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
+            List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
@@ -1148,6 +1148,24 @@ public class ResourceService {
             setResourceAdvertIncompleteSection((ResourceParent) resource);
         }
     }
+    
+    public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, User user) {
+        return resourceDAO.getResourcesWithUnreadMessages(scope, user);
+    }
+
+    public <T extends ResourceOpportunityCategoryDTO> void setRaisesMessageFlags(PrismScope scope, Set<T> resources, User user) {
+        Map<Integer, ResourceOpportunityCategoryDTO> resourcesIndex = Maps.newHashMap();
+        resources.forEach(resource -> resourcesIndex.put(resource.getId(), resource));
+        resourceDAO.getResourcesWithUnreadMessages(scope, resourcesIndex.keySet(), user).stream()
+                .forEach(resource -> resourcesIndex.get(resource).setRaisesMessageFlag(true));
+
+        LocalDate baseline = LocalDate.now();
+        resources.forEach(resource -> {
+            boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || isTrue(resource.getRaisesMessageFlag()));
+            Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
+            resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated))));
+        });
+    }
 
     @SuppressWarnings("unchecked")
     private <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
@@ -1165,13 +1183,20 @@ public class ResourceService {
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
-        return getResources(user, scope, parentScopes, targeterEntities, filter, //
+        Set<ResourceOpportunityCategoryDTO> resources = getResources(user, scope, parentScopes, targeterEntities, filter, //
                 Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id").as("id")) //
-                        .add(Projections.max("stateAction.raisesUrgentFlag").as("prioritize")) //
+                        .add(Projections.max("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
+                        .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")) //
                         .add(Projections.property("resource.opportunityCategories").as("opportunityCategories")) //
                         .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")), //
                 conditions, ResourceOpportunityCategoryDTO.class);
+
+        if (isNotEmpty(resources)) {
+            setRaisesMessageFlags(scope, resources, user);
+        }
+
+        return resources;
     }
 
     private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,

@@ -95,7 +95,7 @@ public class UserActivityRepresentation {
         boolean hasResourceActivity = false;
         if (isNotEmpty(resourceActivities)) {
             for (ResourceActivityRepresentation resourceActivity : resourceActivities) {
-                if (resourceActivity.getUpdateCount() > 0) {
+                if (resourceActivity.getUpdateCount() > 0 || resourceActivity.getMessageCount() > 0) {
                     hasResourceActivity = true;
                     break;
                 } else {
@@ -143,6 +143,8 @@ public class UserActivityRepresentation {
 
         private Integer updateCount;
 
+        private Integer messageCount;
+
         private List<ActionActivityRepresentation> actions;
 
         public PrismScope getScope() {
@@ -185,6 +187,14 @@ public class UserActivityRepresentation {
             this.updateCount = updateCount;
         }
 
+        public Integer getMessageCount() {
+            return messageCount;
+        }
+
+        public void setMessageCount(Integer messageCount) {
+            this.messageCount = messageCount;
+        }
+
         public List<ActionActivityRepresentation> getActions() {
             return actions;
         }
@@ -215,6 +225,11 @@ public class UserActivityRepresentation {
 
         public ResourceActivityRepresentation withUpdateCount(Integer updateCount) {
             this.updateCount = updateCount;
+            return this;
+        }
+
+        public ResourceActivityRepresentation withMessageCount(Integer messageCount) {
+            this.messageCount = messageCount;
             return this;
         }
 

@@ -67,6 +67,12 @@ public class RoleDAO {
                 .list();
     }
 
+        return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, //
+                Projections.groupProperty("recipientRole.id")), resourceId, user) //
+        return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, parentScope, //
+                Projections.groupProperty("recipientRole.id")), resourceId, user) //
+        return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, //
+                Projections.groupProperty("recipientRole.id")), resourceId, user) //
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
                 .setProjection(Projections.groupProperty("role.id")) //
@@ -323,4 +329,11 @@ public class RoleDAO {
                 .add(Restrictions.eq("userAccount.enabled", true));
     }
 
+    public Criteria getRolesUserCanMessageCriteriaList(Criteria criteria, Integer resourceId, User user) {
+        return criteria.createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
+                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
+                .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .addOrder(Order.asc("recipientRoleScope.ordinal")) //
+                .addOrder(Order.asc("recipientRole.id"));
 }

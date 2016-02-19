@@ -30,6 +30,7 @@ import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -532,6 +533,11 @@ public class UserService {
         return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
     }
 
+    public List<User> getUsersWithRoles(Resource resource, Collection<PrismRole> prismRoles) {
+        return getUsersWithRoles(resource, prismRoles.toArray(new PrismRole[prismRoles.size()]));
+    }
+
+        return userDAO.getUserWithRoles(resource, prismRoles);
     @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {
         for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {

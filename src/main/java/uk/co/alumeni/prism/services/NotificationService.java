@@ -272,6 +272,7 @@ public class NotificationService {
         sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
     }
 
+                .withResource(resource).withMessage(message).withTransitionAction(actionService.getMessageAction(resource).getId());
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
         return (List<PrismNotificationDefinition>) (List<?>) customizationService.getDefinitions(NOTIFICATION, scope);
     }

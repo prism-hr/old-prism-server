@@ -69,37 +69,22 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, Integer resourceId) {
-        return workflowDAO.getWorkflowCriteriaList(scope, Projections.groupProperty("recipientRole.id")) //
-                .createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
-                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
-                .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
-                .add(getRolesUserCanMessageConstraint(user, resourceId)) //
-                .addOrder(Order.asc("recipientRoleScope.ordinal")) //
-                .addOrder(Order.asc("recipientRole.id")) //
+        return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, //
+                Projections.groupProperty("recipientRole.id")), resourceId, user) //
                 .list();
     }
 
     public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, PrismScope parentScope, Integer resourceId) {
-        return workflowDAO.getWorkflowCriteriaList(scope, parentScope, Projections.groupProperty("recipientRole.id")) //
-                .createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
-                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
-                .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
-                .add(getRolesUserCanMessageConstraint(user, resourceId)) //
-                .addOrder(Order.asc("recipientRoleScope.ordinal")) //
-                .addOrder(Order.asc("recipientRole.id")) //
+        return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, parentScope, //
+                Projections.groupProperty("recipientRole.id")), resourceId, user) //
                 .list();
     }
 
     public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             Collection<Integer> targeterEntities, Integer resourceId) {
-        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("recipientRole.id")) //
-                .createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
-                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
-                .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
-                .add(getRolesUserCanMessageConstraint(user, resourceId)) //
+        return getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, //
+                Projections.groupProperty("recipientRole.id")), resourceId, user) //
                 .add(getTargetActionConstraint()) //
-                .addOrder(Order.asc("recipientRoleScope.ordinal")) //
-                .addOrder(Order.asc("recipientRole.id")) //
                 .list();
     }
 
@@ -343,11 +328,15 @@ public class RoleDAO {
                 .add(Restrictions.eq("userAccount.enabled", true));
     }
 
-    private static Junction getRolesUserCanMessageConstraint(User user, Integer resourceId) {
-        return Restrictions.conjunction() //
+    public Criteria getRolesUserCanMessageCriteriaList(Criteria criteria, Integer resourceId, User user) {
+        return criteria.createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
+                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
+                .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resourceId)) //
                 .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("userAccount.enabled", true));
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .addOrder(Order.asc("recipientRoleScope.ordinal")) //
+                .addOrder(Order.asc("recipientRole.id"));
     }
 
 }

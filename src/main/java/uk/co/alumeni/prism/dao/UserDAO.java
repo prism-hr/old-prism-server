@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
@@ -578,19 +579,32 @@ public class UserDAO {
     }
 
     public List<User> getUserWithRoles(Resource resource, PrismRole... prismRoles) {
+        HashMultimap<PrismScope, PrismRole> prismRolesByScope = HashMultimap.create();
+        stream(prismRoles).forEach(prismRole -> prismRolesByScope.put(prismRole.getScope(), prismRole));
+
+        Junction userRoleConstraint = Restrictions.disjunction();
+        prismRolesByScope.keySet().forEach(prismScope -> {
+            Resource enclosingResource = resource.getEnclosingResource(prismScope);
+            if (enclosingResource != null) {
+                userRoleConstraint.add(Restrictions.conjunction() //
+                        .add(Restrictions.eq(prismScope.getLowerCamelName(), enclosingResource)) //
+                        .add(Restrictions.in("role.id", prismRolesByScope.get(prismScope))));
+            }
+        });
+
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.in("role.id", prismRoles)) //
+                .add(userRoleConstraint) //
+                .addOrder(Order.asc("user.fullName")) //
                 .list();
     }
-    
+
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
-        enclosedResources
-                .keySet()
-                .forEach(
-                        enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
+        enclosedResources.keySet().forEach( //
+                enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
         criteria.add(resourceConstraint);
     }
 

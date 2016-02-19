@@ -45,8 +45,7 @@ public class MessageService {
         Message message = messageRecipient.getMessage();
         List<User> users = userService.getUsersWithRoles(message.getThread().getComment().getResource(), role.getId());
         if (users.size() > 0) {
-            users.forEach(user -> entityService.getOrCreate(new MessageRecipient().withMessage(message).withUser(user).withRole(role)));
-            entityService.delete(messageRecipient);
+            users.forEach(user -> entityService.getOrCreate(new MessageRecipient().withMessage(message).withUser(user)));
         }
     }
 

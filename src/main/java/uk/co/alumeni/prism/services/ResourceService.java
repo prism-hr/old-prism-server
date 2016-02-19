@@ -2,7 +2,6 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
-import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
@@ -69,6 +68,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import uk.co.alumeni.prism.PrismConstants;
 import uk.co.alumeni.prism.dao.ResourceDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
@@ -234,7 +234,7 @@ public class ResourceService {
 
         PrismState initialState = resourceDTO.getInitialState();
         Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
-                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withSubmit(true).withCreatedTimestamp(new DateTime())
+                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
                 .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
 
         ActionOutcomeDTO outcome;
@@ -520,7 +520,7 @@ public class ResourceService {
         deleteResourceStates(resourceStates, commentTransitionStates);
         entityService.flush();
 
-        LocalDate baseline = comment.getCreatedTimestamp().toLocalDate();
+        LocalDate baseline = comment.getSubmittedTimestamp().toLocalDate();
         insertResourceStates(resource, resourcePreviousStates, commentStates, ResourcePreviousState.class, baseline);
         insertResourceStates(resource, resourceStates, commentTransitionStates, ResourceState.class, baseline);
         entityService.flush();
@@ -1167,7 +1167,7 @@ public class ResourceService {
             boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || isTrue(resource.getRaisesMessageFlag()));
             Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
             resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)),
-                    HALF_UP).setScale(ORDERING_PRECISION));
+                    ORDERING_PRECISION));
         });
     }
 

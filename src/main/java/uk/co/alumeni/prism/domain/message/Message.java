@@ -20,6 +20,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.workflow.user.MessageReassignmentProcessor;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 @Entity
@@ -128,6 +129,23 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
     public Message addDocument(MessageDocument document) {
         documents.add(document);
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        Message other = (Message) object;
+        return Objects.equal(id, other.getId());
     }
 
     @Override

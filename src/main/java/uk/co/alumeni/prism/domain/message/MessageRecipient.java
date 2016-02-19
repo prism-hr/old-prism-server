@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -17,8 +18,10 @@ import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.workflow.user.MessageRecipientReassignmentProcessor;
 
+import com.google.common.base.Objects;
+
 @Entity
-@Table(name = "message_recipient")
+@Table(name = "message_recipient", uniqueConstraints = { @UniqueConstraint(columnNames = { "message_id", "user_id", "role_id" }) })
 public class MessageRecipient implements UserAssignment<MessageRecipientReassignmentProcessor>, UniqueEntity {
 
     @Id
@@ -116,6 +119,23 @@ public class MessageRecipient implements UserAssignment<MessageRecipientReassign
     public MessageRecipient withViewTimestamp(DateTime viewTimestamp) {
         this.viewTimestamp = viewTimestamp;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(message, user, role);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        MessageRecipient other = (MessageRecipient) object;
+        return Objects.equal(message, other.getMessage()) && Objects.equal(user, other.getUser()) && Objects.equal(role, other.getRole());
     }
 
     @Override

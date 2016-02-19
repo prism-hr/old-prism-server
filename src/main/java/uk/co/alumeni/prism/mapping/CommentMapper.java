@@ -83,11 +83,9 @@ public class CommentMapper {
     private UserService userService;
 
     public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource resource) {
-        resourceService.validateViewResource(resource);
-
+        User user = resourceService.validateViewResource(resource);
         List<Comment> comments = commentService.getTimelineComments(resource);
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
-        User user = userService.getCurrentUser();
 
         CommentTimelineRepresentation timelineRepresentation = new CommentTimelineRepresentation();
         if (!comments.isEmpty()) {
@@ -125,7 +123,7 @@ public class CommentMapper {
     }
 
     public List<CommentAppointmentPreferenceRepresentation> getCommentAppointmentPreferenceRepresentations(Comment schedulingComment,
-                                                                                                           Set<CommentAppointmentTimeslot> timeslots) {
+            Set<CommentAppointmentTimeslot> timeslots) {
         List<CommentAppointmentPreferenceRepresentation> representations = Lists.newLinkedList();
 
         User currentUser = userService.getCurrentUser();

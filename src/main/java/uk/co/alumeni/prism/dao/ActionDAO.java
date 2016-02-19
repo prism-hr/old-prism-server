@@ -153,7 +153,7 @@ public class ActionDAO {
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("action.actionCategory", actionCategory)) //
-                .uniqueResult();
+                .list();
     }
 
     public List<PrismAction> getEscalationActions() {

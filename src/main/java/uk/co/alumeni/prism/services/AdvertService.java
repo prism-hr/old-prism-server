@@ -63,7 +63,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -232,14 +231,14 @@ public class AdvertService {
     public Collection<uk.co.alumeni.prism.dto.AdvertDTO> getAdvertList(OpportunitiesQueryDTO query, Collection<EntityOpportunityCategoryDTO<?>> advertDTOs) {
         TreeMap<String, uk.co.alumeni.prism.dto.AdvertDTO> adverts = Maps.newTreeMap();
         if (!advertDTOs.isEmpty()) {
-            Map<Integer, Boolean> advertIndex = getRowsToReturn(advertDTOs, query.getOpportunityCategory(), query.getOpportunityTypes(),
-                    query.getLastSequenceIdentifier(),
-                    ADVERT_LIST_PAGE_ROW_COUNT);
+            Map<Integer, BigDecimal> advertIndex = getRowsToReturn(advertDTOs, query.getOpportunityCategory(), query.getOpportunityTypes(),
+                    query.getLastSequenceIdentifier(), ADVERT_LIST_PAGE_ROW_COUNT);
 
             Set<Integer> advertIds = advertIndex.keySet();
             if (CollectionUtils.isNotEmpty(advertIds)) {
+                BigDecimal priority = new BigDecimal(1);
                 advertDAO.getAdverts(query, advertIndex.keySet()).forEach(advert -> {
-                    Boolean recommended = BooleanUtils.toBoolean(advertIndex.get(advert.getAdvertId()));
+                    Boolean recommended = advertIndex.get(advert.getAdvertId()).compareTo(priority) == 0;
                     String sequenceIdentifier = (recommended ? 1 : 0) + advert.getSequenceIdentifier();
                     advert.setSequenceIdentifier(sequenceIdentifier);
                     advert.setRecommended(recommended);
@@ -808,8 +807,7 @@ public class AdvertService {
 
                 advertDAO.getVisibleAdverts(scope, advertStates, actionCondition, nodeAdverts, userAdverts, query).forEach(advert -> {
                     Integer visibleAdvertId = advert.getId();
-                    boolean prioritize = userAdverts.contains(visibleAdvertId);
-                    advert.setPrioritize(prioritize);
+                    advert.setPriority(new BigDecimal(userAdverts.contains(visibleAdvertId) ? 1 : 0));
                     adverts.add(advert);
                 });
             }

@@ -7,17 +7,17 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.services.RoleService;
+import uk.co.alumeni.prism.services.UserService;
 
 @Component
 public class ApplicationProvidedReferenceTerminationResolver implements StateTerminationResolver<Application> {
 
     @Inject
-    private RoleService roleService;
+    private UserService userService;
 
     @Override
     public boolean resolve(Application resource) {
-        return roleService.getRoleUsers(resource, APPLICATION_REFEREE).size() == 1;
+        return userService.getUsersWithRoles(resource, APPLICATION_REFEREE).size() == 1;
     }
 
 }

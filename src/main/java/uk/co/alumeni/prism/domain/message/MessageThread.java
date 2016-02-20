@@ -59,4 +59,14 @@ public class MessageThread {
         return messages;
     }
 
+    public MessageThread withSubject(String subject) {
+        this.subject = subject;
+        return this;
+    }
+
+    public MessageThread addMessage(Message message) {
+        messages.add(message);
+        return this;
+    }
+
 }

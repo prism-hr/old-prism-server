@@ -16,6 +16,8 @@ public class PrismConstants {
 
     public static final String COLON = ":";
 
+    public static final String FULL_STOP = ".";
+
     public static final String ANGULAR_HASH = "#!";
 
     public static final Integer DEFAULT_RATING = 3;
@@ -28,7 +30,11 @@ public class PrismConstants {
 
     public static final String NULL = "null";
 
+    public static final String ZERO = "0";
+
     public static final Integer RATING_PRECISION = 2;
+
+    public static final Integer ORDERING_PRECISION = 10;
 
     public static final Integer GEOCODING_PRECISION = 14;
 

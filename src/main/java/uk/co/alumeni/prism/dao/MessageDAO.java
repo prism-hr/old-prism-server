@@ -10,13 +10,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.message.Message;
+import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.message.MessageRecipient;
 import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.MessageThreadDTO;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -25,41 +28,75 @@ public class MessageDAO {
     @Inject
     private SessionFactory sessionFactory;
 
-    public List<MessageRecipient> getMessagesPendingAllocation() {
-        return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+    public List<Integer> getMessageRecipientsPendingAllocation() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNotNull("role")) //
                 .add(Restrictions.isNull("user")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
-    
-    public List<MessageRecipient> getMessagesPendingNotification() {
-        return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+
+    public List<Integer> getMessageRecipientsPendingNotification() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("id")) //
                 .add(Restrictions.isNotNull("user")) //
                 .add(Restrictions.isNull("sendTimestamp")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 
-    public List<Message> getMessagesByThreads(Collection<MessageThread> threads) {
-        return (List<Message>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
-                .setProjection(Projections.groupProperty("message")) //
+    public List<MessageThreadDTO> getMessageThreads(Resource resource, User user) {
+        return (List<MessageThreadDTO>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("message.thread").as("thread")) //
+                        .add(Projections.max("message.updatedTimestamp").as("updatedTimestamp"))) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("message.thread", threads)) //
-                .add(Restrictions.isNotNull("sendTimestamp")) //
-                .addOrder(Order.desc("message.thread.id")) //
-                .addOrder(Order.desc("message.id")) //
-                .list();
-    }
-
-    public List<MessageThread> getMessageThreadsByResourceAndUser(Resource resource, User user) {
-        return (List<MessageThread>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
-                .setProjection(Projections.groupProperty("thread")) //
-                .createAlias("thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
                 .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("recipient.user", user)) //
-                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
-                .addOrder(Order.desc("thread.id")) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("sendTimestamp")) //
+                .addOrder(Order.desc("updatedTimestamp")) //
+                .addOrder(Order.desc("thread")) //
+                .setResultTransformer(Transformers.aliasToBean(MessageThreadDTO.class)) //
+                .list();
+    }
+
+    public List<Message> getMessages(Collection<MessageThread> threads, User user) {
+        return (List<Message>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("message")) //
+                .createAlias("message", "message", JoinType.INNER_JOIN) //
+                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message.thread", threads)) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.isNotNull("sendTimestamp")) //
+                .addOrder(Order.desc("message")) //
+                .list();
+    }
+
+    public List<MessageRecipient> getMessageRecipients(Collection<Message> messages) {
+        return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .createAlias("message", "message", JoinType.INNER_JOIN) //
+                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message", messages)) //
+                .add(Restrictions.neProperty("user", "message.user")) //
+                .addOrder(Order.desc("message")) //
+                .addOrder(Order.asc("user.fullName")) //
+                .list();
+    }
+
+    public List<MessageDocument> getMessageDocuments(Collection<Message> messages) {
+        return (List<MessageDocument>) sessionFactory.getCurrentSession().createCriteria(MessageDocument.class) //
+                .createAlias("document", "document", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message", messages)) //
+                .addOrder(Order.desc("message")) //
+                .addOrder(Order.asc("id")) //
                 .list();
     }
 

@@ -21,6 +21,8 @@ public class ResourceListFilterDTO {
 
     private PrismActionEnhancement[] actionEnhancements;
 
+    private Boolean withNewMessages;
+
     private List<Integer> resourceIds;
 
     private ResourceIdentityDTO parentResource;
@@ -79,6 +81,14 @@ public class ResourceListFilterDTO {
 
     public void setActionEnhancements(PrismActionEnhancement[] actionEnhancements) {
         this.actionEnhancements = actionEnhancements;
+    }
+
+    public Boolean getWithNewMessages() {
+        return withNewMessages;
+    }
+
+    public void setWithNewMessages(Boolean withNewMessages) {
+        this.withNewMessages = withNewMessages;
     }
 
     public List<Integer> getResourceIds() {

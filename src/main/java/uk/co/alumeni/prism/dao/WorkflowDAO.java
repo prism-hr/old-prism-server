@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
@@ -11,6 +12,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -31,8 +33,11 @@ import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
+
+import com.google.common.base.Joiner;
 
 @Component
 public class WorkflowDAO {
@@ -175,6 +180,17 @@ public class WorkflowDAO {
 
     public static MatchMode getMatchMode(PrismResourceListFilterExpression expression) {
         return expression.equals(EQUAL) ? MatchMode.EXACT : MatchMode.ANYWHERE;
+    }
+
+    public static Junction getUserRoleResourceConstraint(Resource resource, String userRoleAlias) {
+        Junction constraint = Restrictions.disjunction();
+        Arrays.stream(PrismScope.values()).forEach(prismScope -> {
+            Resource enclosingResource = resource.getEnclosingResource(prismScope);
+            if (enclosingResource != null) {
+                constraint.add(Restrictions.eq(Joiner.on(FULL_STOP).skipNulls().join(userRoleAlias, prismScope.getLowerCamelName()), enclosingResource));
+            }
+        });
+        return constraint;
     }
 
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {

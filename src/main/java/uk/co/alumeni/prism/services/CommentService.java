@@ -289,6 +289,9 @@ public class CommentService {
         Comment comment = commentId == null ? new Comment() : getById(commentId);
 
         comment.getAssignedUsers().clear();
+        comment.getAppointmentTimeslots().clear();
+        comment.getAppointmentPreferences().clear();
+        comment.getCompetences().clear();
         comment.setUser(user);
         comment.setDelegateUser(userService.getById(commentDTO.getDelegateUser()));
         comment.setResource(resource);
@@ -299,7 +302,7 @@ public class CommentService {
         comment.setDeclinedResponse(toBoolean(commentDTO.getDeclinedResponse()));
 
         if (resource.getResourceScope().equals(APPLICATION)) {
-            prepareProcessApplicationComment((Application) resource, user, action, comment, commentDTO);
+            prepareProcessApplicationComment((Application) resource, action, comment, commentDTO);
         } else {
             prepareProcessResourceParentComment((ResourceParent) resource, user, action, comment, commentDTO);
         }
@@ -326,7 +329,7 @@ public class CommentService {
         return submit;
     }
 
-    private void prepareProcessApplicationComment(Application application, User user, Action action, Comment comment, CommentDTO commentDTO) {
+    private void prepareProcessApplicationComment(Application application, Action action, Comment comment, CommentDTO commentDTO) {
         PrismAction actionId = action.getId();
         boolean isCompleteAction = actionId.equals(APPLICATION_COMPLETE);
 
@@ -336,6 +339,7 @@ public class CommentService {
         comment.setApplicantKnownCapacity(commentDTO.getApplicantKnownCapacity());
         comment.setEligible(commentDTO.getEligible());
         comment.setInterested(commentDTO.getInterested());
+        comment.setInterviewStatus(commentDTO.getInterviewStatus());
         comment.setInterviewAvailable(commentDTO.getInterviewAvailable());
         comment.setRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment());
         comment.setPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment());

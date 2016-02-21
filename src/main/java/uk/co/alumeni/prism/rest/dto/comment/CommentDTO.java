@@ -1,16 +1,7 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import org.joda.time.LocalDateTime;
-
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewStatus;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
@@ -20,10 +11,18 @@ import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
+
 public class CommentDTO {
 
     private Integer id;
-    
+
     private Integer user;
 
     private Integer delegateUser;
@@ -54,6 +53,8 @@ public class CommentDTO {
     private BigDecimal rating;
 
     private Boolean interested;
+
+    private PrismInterviewStatus interviewStatus;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -111,7 +112,7 @@ public class CommentDTO {
     private List<DocumentDTO> documents;
 
     private Boolean submit;
-    
+
     public Integer getId() {
         return id;
     }
@@ -230,6 +231,14 @@ public class CommentDTO {
 
     public void setInterested(Boolean interested) {
         this.interested = interested;
+    }
+
+    public PrismInterviewStatus getInterviewStatus() {
+        return interviewStatus;
+    }
+
+    public void setInterviewStatus(PrismInterviewStatus interviewStatus) {
+        this.interviewStatus = interviewStatus;
     }
 
     public CommentInterviewAppointmentDTO getInterviewAppointment() {

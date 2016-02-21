@@ -1,11 +1,6 @@
 package uk.co.alumeni.prism.workflow.executors.action;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
-
-import javax.inject.Inject;
-
 import org.springframework.stereotype.Component;
-
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -20,6 +15,8 @@ import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
+
+import javax.inject.Inject;
 
 @Component
 public class ResourceOpportunityExecutor implements ActionExecutor {
@@ -46,7 +43,7 @@ public class ResourceOpportunityExecutor implements ActionExecutor {
         ResourceOpportunity opportunity = (ResourceOpportunity) resourceService.getById(resourceScope, resourceId);
 
         ResourceCreationDTO opportunityDTO = commentDTO.getResource();
-        if (opportunityDTO.getScope().getScopeCategory().equals(OPPORTUNITY)) {
+        if (opportunityDTO.getClass().equals(ResourceOpportunityDTO.class)) {
             resourceService.updateOpportunity(resourceScope, resourceId, (ResourceOpportunityDTO) opportunityDTO);
         }
 

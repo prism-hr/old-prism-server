@@ -1,29 +1,13 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.stream;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.RoleDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -47,10 +31,23 @@ import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.stream;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 @Service
 @Transactional
@@ -217,7 +214,8 @@ public class RoleService {
         for (PrismRole prismRole : prismRoles) {
             PrismScope roleScope = prismRole.getScope();
             if (roleScope.ordinal() <= resource.getResourceScope().ordinal()) {
-                if (roleDAO.getUserRole(resource.getEnclosingResource(roleScope), user, prismRole) != null) {
+                Resource enclosingResource = resource.getEnclosingResource(roleScope);
+                if (enclosingResource != null && roleDAO.getUserRole(enclosingResource, user, prismRole) != null) {
                     return true;
                 }
             }
@@ -265,7 +263,7 @@ public class RoleService {
     }
 
     public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
+        return resource == null ? Lists.<User>newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {

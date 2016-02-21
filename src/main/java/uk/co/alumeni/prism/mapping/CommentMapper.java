@@ -157,7 +157,7 @@ public class CommentMapper {
                 .withTransitionState(transitionState == null ? null : transitionState.getId()).withEligible(comment.getEligible())
                 .withApplicantKnown(comment.getApplicantKnown()).withApplicantKnownDuration(comment.getApplicantKnownDuration())
                 .withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating()).withInterested(comment.getInterested())
-                .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+                .withInterviewStatus(comment.getInterviewStatus()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())
@@ -230,7 +230,8 @@ public class CommentMapper {
         for (CommentCompetence commentCompetence : commentCompetences) {
             Competence competence = commentCompetence.getCompetence();
             CommentCompetenceGroupRepresentation group = groups.get(commentCompetence.getImportance());
-            group.getCompetences().add(new CommentCompetenceRepresentation().withName(competence.getName())
+            group.getCompetences().add(new CommentCompetenceRepresentation()
+                    .withCompetenceId(competence.getId()).withName(competence.getName())
                     .withDescription(competence.getDescription()).withRating(commentCompetence.getRating())
                     .withRemark(commentCompetence.getRemark()));
         }

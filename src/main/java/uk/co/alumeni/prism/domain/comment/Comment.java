@@ -1,27 +1,7 @@
 package uk.co.alumeni.prism.domain.comment;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TimeZone;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
@@ -29,37 +9,27 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewStatus;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.MessageThread;
-import uk.co.alumeni.prism.domain.resource.Department;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Program;
-import uk.co.alumeni.prism.domain.resource.Project;
-import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.*;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateGroup;
-import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
+import uk.co.alumeni.prism.domain.workflow.*;
 import uk.co.alumeni.prism.workflow.user.CommentReassignmentProcessor;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TimeZone;
 
 @Entity
 @Table(name = "comment")
@@ -149,6 +119,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     @Column(name = "application_interested")
     private Boolean interested;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "application_interview_status")
+    private PrismInterviewStatus interviewStatus;
 
     @Embedded
     private CommentInterviewAppointment interviewAppointment;
@@ -426,6 +400,14 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public void setInterested(Boolean interested) {
         this.interested = interested;
+    }
+
+    public PrismInterviewStatus getInterviewStatus() {
+        return interviewStatus;
+    }
+
+    public void setInterviewStatus(PrismInterviewStatus interviewStatus) {
+        this.interviewStatus = interviewStatus;
     }
 
     public CommentInterviewAppointment getInterviewAppointment() {

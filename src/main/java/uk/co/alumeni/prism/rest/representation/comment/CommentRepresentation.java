@@ -1,17 +1,17 @@
 package uk.co.alumeni.prism.rest.representation.comment;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewStatus;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class CommentRepresentation {
 
@@ -46,6 +46,8 @@ public class CommentRepresentation {
     private BigDecimal rating;
 
     private Boolean interested;
+
+    private PrismInterviewStatus interviewStatus;
 
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
@@ -203,6 +205,14 @@ public class CommentRepresentation {
 
     public void setInterested(Boolean interested) {
         this.interested = interested;
+    }
+
+    public PrismInterviewStatus getInterviewStatus() {
+        return interviewStatus;
+    }
+
+    public void setInterviewStatus(PrismInterviewStatus interviewStatus) {
+        this.interviewStatus = interviewStatus;
     }
 
     public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
@@ -402,6 +412,11 @@ public class CommentRepresentation {
 
     public CommentRepresentation withInterested(Boolean interested) {
         this.interested = interested;
+        return this;
+    }
+
+    public CommentRepresentation withInterviewStatus(final PrismInterviewStatus interviewStatus) {
+        this.interviewStatus = interviewStatus;
         return this;
     }
 

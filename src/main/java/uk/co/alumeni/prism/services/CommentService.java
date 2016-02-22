@@ -327,7 +327,8 @@ public class CommentService {
         comment.setTransitionState(entityService.getById(State.class, commentDTO.getTransitionState()));
         comment.setCreatedTimestamp(now());
         comment.setDeclinedResponse(toBoolean(commentDTO.getDeclinedResponse()));
-
+        entityService.flush();
+        
         if (resource.getResourceScope().equals(APPLICATION)) {
             prepareProcessApplicationComment((Application) resource, action, comment, commentDTO);
         } else {
@@ -335,7 +336,6 @@ public class CommentService {
         }
 
         comment.setSubmit(commentDTO.getSubmit());
-        entityService.flush();
         return comment;
     }
 

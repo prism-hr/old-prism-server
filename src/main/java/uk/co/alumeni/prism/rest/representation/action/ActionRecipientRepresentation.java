@@ -28,7 +28,7 @@ public class ActionRecipientRepresentation {
     }
 
     public ActionRecipientRepresentation withUsers(Collection<UserRepresentationSimple> users) {
-        users.addAll(users);
+        this.users.addAll(users);
         return this;
     }
 

@@ -387,8 +387,7 @@ public class RoleDAO {
     }
 
     public Criteria getRolesUserCanMessageCriteriaList(Criteria criteria, Integer resourceId, User user) {
-        return criteria.createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
-                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN) //
+        return criteria.createAlias("stateActionAssignment.recipients", "recipientRole", JoinType.INNER_JOIN) //
                 .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .addOrder(Order.asc("recipientRoleScope.ordinal")) //

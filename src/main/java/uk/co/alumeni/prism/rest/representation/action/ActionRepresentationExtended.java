@@ -47,27 +47,27 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
     }
 
     public ActionRepresentationExtended addActionEnhancement(PrismActionEnhancement actionEnhancement) {
-        actionEnhancements.add(actionEnhancement);
+        this.actionEnhancements.add(actionEnhancement);
         return this;
     }
 
     public ActionRepresentationExtended addActionEnhancements(Collection<PrismActionEnhancement> actionEnhancements) {
-        actionEnhancements.addAll(actionEnhancements);
+        this.actionEnhancements.addAll(actionEnhancements);
         return this;
     }
 
     public ActionRepresentationExtended addNextStates(Collection<StateRepresentationExtended> nextStates) {
-        nextStates.addAll(nextStates);
+        this.nextStates.addAll(nextStates);
         return this;
     }
 
     public ActionRepresentationExtended addRecommendedNextStates(Collection<StateRepresentationSimple> recommendedNextStates) {
-        recommendedNextStates.addAll(recommendedNextStates);
+        this.recommendedNextStates.addAll(recommendedNextStates);
         return this;
     }
 
     public ActionRepresentationExtended addMessagableUsers(Collection<ActionRecipientRepresentation> recipients) {
-        recipients.addAll(recipients);
+        this.recipients.addAll(recipients);
         return this;
     }
 

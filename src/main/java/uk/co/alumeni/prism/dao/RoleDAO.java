@@ -70,19 +70,19 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<PrismRole> getUserRolesUserCanMessage(User user, PrismScope scope, Integer resourceId) {
+    public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, Integer resourceId) {
         return (List<PrismRole>) getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, //
                 Projections.groupProperty("recipientRole.id")), resourceId, user) //
                 .list();
     }
 
-    public List<PrismRole> getUserRolesUserCanMessage(User user, PrismScope scope, PrismScope parentScope, Integer resourceId) {
+    public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, PrismScope parentScope, Integer resourceId) {
         return (List<PrismRole>) getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, parentScope, //
                 Projections.groupProperty("recipientRole.id")), resourceId, user) //
                 .list();
     }
 
-    public List<PrismRole> getUserRolesUserCanMessage(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
+    public List<PrismRole> getRolesUserCanMessage(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             Collection<Integer> targeterEntities, Integer resourceId) {
         return (List<PrismRole>) getRolesUserCanMessageCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, //
                 Projections.groupProperty("recipientRole.id")), resourceId, user) //
@@ -91,16 +91,26 @@ public class RoleDAO {
     }
 
     public List<UserRoleDTO> getUserRoles(Resource resource, List<PrismRole> roles) {
+        return getUserRoles(resource, null, roles);
+    }
+
+    public List<UserRoleDTO> getUserRoles(Resource resource, User user, List<PrismRole> roles) {
         HashMultimap<PrismScope, PrismRole> rolesByScope = HashMultimap.create();
         roles.forEach(role -> rolesByScope.put(role.getScope(), role));
 
-        Junction constraint = Restrictions.disjunction();
-        rolesByScope.keySet().forEach(scope -> {
-            Resource enclosingResource = resource.getEnclosingResource(scope);
+        Junction constraints = Restrictions.disjunction();
+        rolesByScope.keySet().forEach(enclosingScope -> {
+            Resource enclosingResource = resource.getEnclosingResource(enclosingScope);
             if (enclosingResource != null) {
-                constraint.add(Restrictions.conjunction() //
-                        .add(Restrictions.eq(scope.getLowerCamelName(), enclosingResource)) //
-                        .add(Restrictions.in("role.id", rolesByScope.get(scope))));
+                Junction constraint = Restrictions.conjunction() //
+                        .add(Restrictions.eq(enclosingScope.getLowerCamelName(), enclosingResource));
+
+                if (user != null) {
+                    constraint.add(Restrictions.eq("user", user));
+                }
+
+                constraint.add(Restrictions.in("role.id", rolesByScope.get(enclosingScope)));
+                constraints.add(constraint);
             }
         });
 
@@ -112,7 +122,7 @@ public class RoleDAO {
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "roleScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(constraint) //
+                .add(constraints) //
                 .addOrder(Order.asc("roleScope.ordinal")) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.fullName")) //

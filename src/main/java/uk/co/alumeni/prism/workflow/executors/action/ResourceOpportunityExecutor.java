@@ -1,6 +1,9 @@
 package uk.co.alumeni.prism.workflow.executors.action;
 
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
+
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -15,8 +18,6 @@ import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.UserService;
-
-import javax.inject.Inject;
 
 @Component
 public class ResourceOpportunityExecutor implements ActionExecutor {

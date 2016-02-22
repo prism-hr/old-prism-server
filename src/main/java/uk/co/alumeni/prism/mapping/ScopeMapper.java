@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -20,8 +22,6 @@ import javax.inject.Inject;
 import jersey.repackaged.com.google.common.collect.Lists;
 import jersey.repackaged.com.google.common.collect.Maps;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Projections;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
@@ -75,8 +75,10 @@ public class ScopeMapper {
                     Integer frequency = occurrences.get(scope);
                     frequency = frequency == null ? 1 : (frequency + 1);
                     occurrences.put(scope, frequency);
-                    scopeRepresentations.put(scope,
-                            new ResourceRelationComponentRepresentation(scope, s.getAutoSuggest(), s.getDescription(), s.getUser(), s.getOpportunityCategories()));
+                    scopeRepresentations.put(
+                            scope,
+                            new ResourceRelationComponentRepresentation(scope, s.getAutoSuggest(), s.getDescription(), s.getUser(), s
+                                    .getOpportunityCategories()));
                 });
             });
 
@@ -108,49 +110,58 @@ public class ScopeMapper {
         List<PrismScope> scopes = Arrays.asList(PrismScope.values());
         List<ResourceActivityRepresentation> representations = Lists.newLinkedList();
         for (PrismScope scope : scopes) {
-            Set<ResourceActionOpportunityCategoryDTO> resourceActionDTOs = resourceService.getResources(user, scope, scopes.stream()
-                    .filter(filterScope -> filterScope.ordinal() < scope.ordinal())
-                    .collect(Collectors.toList()), //
-                    advertService.getAdvertTargeterEntities(user, scope), //
-                    Projections.projectionList() //
+            Set<ResourceActionOpportunityCategoryDTO> resourceActions = resourceService.getResources(user, scope, scopes.stream()
+                    .filter(filterScope -> filterScope.ordinal() < scope.ordinal()).collect(Collectors.toList()), //
+                    advertService.getAdvertTargeterEntities(user, scope), Projections.projectionList() //
                             .add(Projections.groupProperty("resource.id").as("id")) //
                             .add(Projections.groupProperty("stateAction.action.id").as("actionId")) //
-                            .add(Projections.property("stateAction.raisesUrgentFlag").as("prioritize")) //
+                            .add(Projections.property("stateAction.raisesUrgentFlag").as("raisesUrgentFlag")) //
                             .add(Projections.property("resource.updatedTimestamp").as("updatedTimestamp")) //
                             .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")),
                     ResourceActionOpportunityCategoryDTO.class);
 
+            if (isNotEmpty(resourceActions)) {
+                resourceService.setRaisesMessageFlags(scope, resourceActions, user);
+            }
+
             Set<Integer> resources = Sets.newHashSet();
-            Set<Integer> updatedResources = Sets.newHashSet();
-            Map<PrismAction, Integer> actionCounts = Maps.newLinkedHashMap();
-            for (ResourceActionOpportunityCategoryDTO resourceActionDTO : resourceActionDTOs) {
+            Set<Integer> updateResources = Sets.newHashSet();
+            Set<Integer> messageResources = Sets.newHashSet();
+            Map<PrismAction, Integer> urgentCounts = Maps.newLinkedHashMap();
+            for (ResourceActionOpportunityCategoryDTO resourceActionDTO : resourceActions) {
                 Integer resourceId = resourceActionDTO.getId();
                 resources.add(resourceId);
 
-                if (BooleanUtils.isTrue(resourceActionDTO.getPrioritize())) {
+                if (isTrue(resourceActionDTO.getRaisesUrgentFlag())) {
                     PrismAction actionId = resourceActionDTO.getActionId();
-                    Integer existingCount = actionCounts.get(actionId);
-                    actionCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);
+                    Integer existingCount = urgentCounts.get(actionId);
+                    urgentCounts.put(actionId, existingCount == null ? 1 : existingCount + 1);
                 }
 
                 if (resourceActionDTO.getUpdatedTimestamp().isAfter(baseline)) {
-                    updatedResources.add(resourceId);
+                    updateResources.add(resourceId);
+                }
+
+                if (isTrue(resourceActionDTO.getRaisesMessageFlag())) {
+                    messageResources.add(resourceId);
                 }
             }
 
-            List<ActionActivityRepresentation> actions = actionCounts.entrySet().stream()
-                    .map(entry -> new ActionActivityRepresentation().withAction(actionMapper.getActionRepresentation(entry.getKey())).withUrgentCount(entry.getValue()))
+            List<ActionActivityRepresentation> actions = urgentCounts.entrySet().stream() //
+                    .map(urgentCountEntry -> new ActionActivityRepresentation().withAction(actionMapper.getActionRepresentation(urgentCountEntry.getKey()))
+                            .withUrgentCount(urgentCountEntry.getValue()))
                     .collect(Collectors.toList());
 
             Integer resourceForWhichCanCreateCount = 0;
-            if (scope.equals(INSTITUTION) && CollectionUtils.isNotEmpty(scopesCreatorFor)) {
+            if (scope.equals(INSTITUTION) && isNotEmpty(scopesCreatorFor)) {
                 resourceForWhichCanCreateCount = 1;
             } else if (isResourceCreator(scope, scopesCreatorFor)) {
                 resourceForWhichCanCreateCount = resourceService.getResourcesForWhichUserCanCreateResource(system, INSTITUTION, scope).size();
             }
 
             representations.add(new ResourceActivityRepresentation().withScope(scope).withDefaultRoleCategory(defaultRoleCategories.get(scope))
-                    .withResourceCreator(resourceForWhichCanCreateCount > 0).withCount(resources.size()).withUpdateCount(updatedResources.size()).withActions(actions));
+                    .withResourceCreator(resourceForWhichCanCreateCount > 0).withCount(resources.size()).withUpdateCount(updateResources.size())
+                    .withMessageCount(messageResources.size()).withActions(actions));
         }
 
         return representations;

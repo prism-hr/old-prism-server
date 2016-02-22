@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.resource;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 import java.util.Set;
 
@@ -20,7 +21,6 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 
 import com.google.common.base.Joiner;
 
@@ -163,7 +163,7 @@ public abstract class Resource implements Activity, UniqueEntity {
     }
 
     public Resource getEnclosingResource(PrismScope resourceScope) {
-        return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
+        return (Resource) getProperty(this, resourceScope.getLowerCamelName());
     }
 
     public boolean sameAs(Object object) {

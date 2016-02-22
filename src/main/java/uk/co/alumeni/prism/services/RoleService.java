@@ -2,9 +2,11 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
@@ -215,16 +217,8 @@ public class RoleService {
         return hasUserRole(resource, user, prismRoles.getRoles());
     }
 
-    public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
-        for (PrismRole prismRole : prismRoles) {
-            PrismScope roleScope = prismRole.getScope();
-            if (roleScope.ordinal() <= resource.getResourceScope().ordinal()) {
-                if (roleDAO.getUserRole(resource.getEnclosingResource(roleScope), user, prismRole) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public boolean hasUserRole(Resource resource, User user, PrismRole... roles) {
+        return isNotEmpty(roles) ? isNotEmpty(roleDAO.getUserRoles(resource, user, asList(roles))) : false;
     }
 
     public List<PrismRole> getRolesOverridingRedactions(Resource resource) {
@@ -264,18 +258,18 @@ public class RoleService {
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
         Set<PrismRole> roles = Sets.newHashSet();
-        roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, resourceId));
+        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, resourceId));
 
         if (!scope.equals(SYSTEM)) {
             for (PrismScope parentScope : parentScopes) {
-                roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, parentScope, resourceId));
+                roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, parentScope, resourceId));
             }
 
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
             if (isNotEmpty(targeterEntities)) {
                 for (PrismScope targeterScope : organizationScopes) {
                     for (PrismScope targetScope : organizationScopes) {
-                        roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
+                        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
                     }
                 }
             }

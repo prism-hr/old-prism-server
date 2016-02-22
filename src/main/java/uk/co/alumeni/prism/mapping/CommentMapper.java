@@ -184,7 +184,7 @@ public class CommentMapper {
                 .withTransitionState(transitionState == null ? null : transitionState.getId()).withEligible(comment.getEligible())
                 .withApplicantKnown(comment.getApplicantKnown()).withApplicantKnownDuration(comment.getApplicantKnownDuration())
                 .withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating()).withInterested(comment.getInterested())
-                .withInterviewStatus(comment.getInterviewStatus()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+                .withInterviewStatus(comment.getInterviewState()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())

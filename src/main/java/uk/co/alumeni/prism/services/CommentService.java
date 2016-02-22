@@ -117,6 +117,13 @@ public class CommentService {
         return (Objects.equals(comment.getUser().getId(), userId) || (ownerDelegate != null && Objects.equals(ownerDelegate.getId(), userId)));
     }
 
+    public void persistComment(Resource resource, Comment comment) {
+        createOrUpdateComment(resource, comment);
+        DateTime baseline = comment.getCreatedTimestamp();
+        comment.setSubmittedTimestamp(baseline);
+        setSequenceIdentifier(comment, baseline);
+    }
+
     public void createOrUpdateComment(Resource resource, Comment comment) {
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = newHashSet(transientAssignees);
@@ -151,13 +158,6 @@ public class CommentService {
         resource.addComment(comment);
 
         entityService.flush();
-    }
-
-    public void persistComment(Resource resource, Comment comment) {
-        createOrUpdateComment(resource, comment);
-        DateTime baseline = comment.getCreatedTimestamp();
-        comment.setSubmittedTimestamp(baseline);
-        setSequenceIdentifier(comment, baseline);
     }
 
     public Comment replicateComment(Resource resource, Comment templateComment) {
@@ -335,6 +335,7 @@ public class CommentService {
         }
 
         comment.setSubmit(commentDTO.getSubmit());
+        entityService.flush();
         return comment;
     }
 
@@ -366,7 +367,7 @@ public class CommentService {
         comment.setApplicantKnownCapacity(commentDTO.getApplicantKnownCapacity());
         comment.setEligible(commentDTO.getEligible());
         comment.setInterested(commentDTO.getInterested());
-        comment.setInterviewStatus(commentDTO.getInterviewStatus());
+        comment.setInterviewState(commentDTO.getInterviewState());
         comment.setInterviewAvailable(commentDTO.getInterviewAvailable());
         comment.setRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment());
         comment.setPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment());

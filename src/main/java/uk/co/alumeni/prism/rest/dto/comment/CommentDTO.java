@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDateTime;
 
-import uk.co.alumeni.prism.domain.definitions.PrismInterviewStatus;
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
@@ -56,7 +56,7 @@ public class CommentDTO {
 
     private Boolean interested;
 
-    private PrismInterviewStatus interviewStatus;
+    private PrismInterviewState interviewState;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -235,12 +235,12 @@ public class CommentDTO {
         this.interested = interested;
     }
 
-    public PrismInterviewStatus getInterviewStatus() {
-        return interviewStatus;
+    public PrismInterviewState getInterviewState() {
+        return interviewState;
     }
 
-    public void setInterviewStatus(PrismInterviewStatus interviewStatus) {
-        this.interviewStatus = interviewStatus;
+    public void setInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
     }
 
     public CommentInterviewAppointmentDTO getInterviewAppointment() {

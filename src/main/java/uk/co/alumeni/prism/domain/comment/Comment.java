@@ -33,7 +33,7 @@ import org.joda.time.LocalDateTime;
 import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismInterviewStatus;
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -152,8 +152,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     private Boolean interested;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "application_interview_status")
-    private PrismInterviewStatus interviewStatus;
+    @Column(name = "application_interview_state")
+    private PrismInterviewState interviewState;
 
     @Embedded
     private CommentInterviewAppointment interviewAppointment;
@@ -433,12 +433,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         this.interested = interested;
     }
 
-    public PrismInterviewStatus getInterviewStatus() {
-        return interviewStatus;
+    public PrismInterviewState getInterviewState() {
+        return interviewState;
     }
 
-    public void setInterviewStatus(PrismInterviewStatus interviewStatus) {
-        this.interviewStatus = interviewStatus;
+    public void setInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
     }
 
     public CommentInterviewAppointment getInterviewAppointment() {
@@ -663,16 +663,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return this;
     }
 
-    public boolean isApplicationCreatorEligibilityUnsure() {
-        return getEligible().equals(PrismYesNoUnsureResponse.UNSURE);
-    }
-
     public User getActionOwner() {
         return delegateUser == null ? user : delegateUser;
-    }
-
-    public boolean isApplicationAssignReviewersComment() {
-        return action.getId().equals(PrismAction.APPLICATION_ASSIGN_REVIEWERS);
     }
 
     public boolean isApplicationProvideReferenceComment() {

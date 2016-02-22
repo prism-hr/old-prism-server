@@ -6,7 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
-import uk.co.alumeni.prism.domain.definitions.PrismInterviewStatus;
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -48,7 +48,7 @@ public class CommentRepresentation {
 
     private Boolean interested;
 
-    private PrismInterviewStatus interviewStatus;
+    private PrismInterviewState interviewStatus;
 
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
@@ -210,11 +210,11 @@ public class CommentRepresentation {
         this.interested = interested;
     }
 
-    public PrismInterviewStatus getInterviewStatus() {
+    public PrismInterviewState getInterviewStatus() {
         return interviewStatus;
     }
 
-    public void setInterviewStatus(PrismInterviewStatus interviewStatus) {
+    public void setInterviewStatus(PrismInterviewState interviewStatus) {
         this.interviewStatus = interviewStatus;
     }
 
@@ -426,7 +426,7 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withInterviewStatus(final PrismInterviewStatus interviewStatus) {
+    public CommentRepresentation withInterviewStatus(final PrismInterviewState interviewStatus) {
         this.interviewStatus = interviewStatus;
         return this;
     }

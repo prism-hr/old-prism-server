@@ -7,6 +7,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_APPOINTMENTS;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_CONNECTS;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_JOINS;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_MESSAGES;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_UPDATES;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
         if (isNotEmpty(resourceActivityRepresentations)) {
             Integer actionCount = 0;
             Integer updateCount = 0;
+            Integer messageCount = 0;
             for (ResourceActivityRepresentation resourceActivityRepresentation : resourceActivityRepresentations) {
                 List<ActionActivityRepresentation> actionActivityRepresentations = resourceActivityRepresentation.getActions();
                 if (isNotEmpty(actionActivityRepresentations)) {
@@ -53,9 +55,10 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
                 }
 
                 Integer resourceUpdateCount = resourceActivityRepresentation.getUpdateCount();
-                if (resourceUpdateCount != null) {
-                    updateCount = updateCount + resourceUpdateCount;
-                }
+                updateCount = resourceUpdateCount == null ? updateCount : (updateCount + resourceUpdateCount);
+
+                Integer resourceMessageCount = resourceActivityRepresentation.getMessageCount();
+                messageCount = resourceMessageCount == null ? messageCount : (messageCount + resourceMessageCount);
             }
 
             if (actionCount > 0) {
@@ -64,6 +67,10 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
 
             if (updateCount > 0) {
                 bullets.add(updateCount.toString() + SPACE + displayPropertyLoader.loadLazy(SYSTEM_NOTIFICATION_UPDATES));
+            }
+            
+            if (messageCount > 0) {
+                bullets.add(messageCount.toString() + SPACE + displayPropertyLoader.loadLazy(SYSTEM_NOTIFICATION_MESSAGES));
             }
         }
 

@@ -1,13 +1,29 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.stream;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.dao.RoleDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -31,23 +47,11 @@ import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.Arrays.stream;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.joda.time.DateTime.now;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -174,7 +178,8 @@ public class RoleService {
                     }
                 } else {
                     getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
-                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED")))).withAssignedTimestamp(now()));
+                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED"))))
+                            .withAssignedTimestamp(now()));
                 }
                 entityService.delete(userRole);
             }
@@ -214,8 +219,7 @@ public class RoleService {
         for (PrismRole prismRole : prismRoles) {
             PrismScope roleScope = prismRole.getScope();
             if (roleScope.ordinal() <= resource.getResourceScope().ordinal()) {
-                Resource enclosingResource = resource.getEnclosingResource(roleScope);
-                if (enclosingResource != null && roleDAO.getUserRole(enclosingResource, user, prismRole) != null) {
+                if (roleDAO.getUserRole(resource.getEnclosingResource(roleScope), user, prismRole) != null) {
                     return true;
                 }
             }
@@ -254,16 +258,44 @@ public class RoleService {
         return newArrayList(roles);
     }
 
+    public List<PrismRole> getRolesUserCanMessage(User user, Resource resource) {
+        Integer resourceId = resource.getId();
+        PrismScope scope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        Set<PrismRole> roles = Sets.newHashSet();
+        roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, resourceId));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, parentScope, resourceId));
+            }
+
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
+                        roles.addAll(roleDAO.getUserRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
+                    }
+                }
+            }
+        }
+
+        return newArrayList(roles);
+    }
+
+    public LinkedHashMultimap<PrismRole, User> getUserRoles(Resource resource, List<PrismRole> roles) {
+        LinkedHashMultimap<PrismRole, User> userRoles = LinkedHashMultimap.create();
+        roleDAO.getUserRoles(resource, roles).stream().forEach(userRole -> userRoles.put(userRole.getRole(), userRole.getUser()));
+        return userRoles;
+    }
+
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
         return roleDAO.getRolesForResource(resource, user);
     }
 
     public List<PrismRole> getRolesForResourceStrict(Resource resource, User user) {
         return roleDAO.getRolesForResourceStrict(resource, user);
-    }
-
-    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return resource == null ? Lists.<User>newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
@@ -397,11 +429,13 @@ public class RoleService {
         }
     }
 
-    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify,
+            PrismRole... roles) {
         updateUserRoles(invoker, resource, newHashSet(user), transitionType, message, notify, roles);
     }
 
-    private void updateUserRoles(User invoker, Resource resource, Set<User> users, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, Set<User> users, PrismRoleTransitionType transitionType, String message, boolean notify,
+            PrismRole... roles) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);

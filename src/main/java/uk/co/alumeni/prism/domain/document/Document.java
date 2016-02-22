@@ -31,6 +31,8 @@ import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.workflow.user.DocumentReassignmentProcessor;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "document")
 public class Document implements UniqueEntity, UserAssignment<DocumentReassignmentProcessor> {
@@ -269,6 +271,23 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     public String getExportFilenameAmazon() {
         return id.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        Document other = (Document) object;
+        return Objects.equal(id, other.getId());
     }
 
     @Override

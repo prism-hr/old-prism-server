@@ -60,7 +60,6 @@ import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -70,7 +69,6 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.user.UserCompetence;
-import uk.co.alumeni.prism.domain.user.UserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
@@ -367,13 +365,6 @@ public class UserService {
         return userDAO.getResourceUsers(resource, role);
     }
 
-    public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
-        UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
-                .withInstitution(application.getInstitution()).withIdentityType(PrismUserInstitutionIdentity.STUDY_APPLICANT)
-                .withIdentitier(exportUserId);
-        entityService.createOrUpdate(transientUserInstitutionIdentity);
-    }
-
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
@@ -513,6 +504,10 @@ public class UserService {
         resources.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resources.get(scope), filter)));
 
         return newLinkedList(profiles);
+    }
+
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... roles) {
+        return (resource == null || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(resource, roles);
     }
 
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {

@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-public enum PrismInterviewStatus {
+public enum PrismInterviewState {
 
     TAKEN_PLACE,
     SCHEDULED,

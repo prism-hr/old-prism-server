@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
@@ -130,6 +131,11 @@ public enum PrismRole implements PrismLocalizableDefinition {
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ROLE_" + name());
+    }
+
+    public int compareWith(PrismRole other) {
+        int compare = compare(getScope().ordinal(), other.getScope().ordinal());
+        return compare == 0 ? compare(name(), other.name()) : compare;
     }
 
     public enum PrismRoleCategory {

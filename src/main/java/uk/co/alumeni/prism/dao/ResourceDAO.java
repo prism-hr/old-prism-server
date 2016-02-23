@@ -61,6 +61,7 @@ import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
+import uk.co.alumeni.prism.dto.ResourceMessageCountDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
@@ -267,18 +268,12 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, Collection<Integer> resourceIds, User user) {
-        String resourceIdReference = scope.getLowerCamelName() + ".id";
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.groupProperty(resourceIdReference)) //
-                .createAlias("thread", "thread", JoinType.INNER_JOIN) //
-                .createAlias("thread.messages", "message") //
-                .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(resourceIdReference, resourceIds)) //
-                .add(Restrictions.eq("recipient.user", user)) //
-                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
-                .add(Restrictions.isNull("recipient.viewTimestamp")) //
-                .list();
+    public List<ResourceMessageCountDTO> getResourceReadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
+        return getResourceMessageCounts(scope, resourceIds, user, true);
+    }
+
+    public List<ResourceMessageCountDTO> getResourceUnreadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
+        return getResourceMessageCounts(scope, resourceIds, user, false);
     }
 
     public ResourceStudyOption getResourceStudyOption(ResourceOpportunity resource, PrismStudyOption studyOption) {
@@ -734,6 +729,22 @@ public class ResourceDAO {
                 projections.add(Projections.property("logoImage.fileName").as("logoImageFileName"));
             }
         }
+    }
+
+    private List<ResourceMessageCountDTO> getResourceMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user, boolean read) {
+        String resourceIdReference = scope.getLowerCamelName() + ".id";
+        return (List<ResourceMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty(resourceIdReference)) //
+                        .add(Projections.countDistinct("message.id"))) //
+                .createAlias("thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message") //
+                .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
+                .add(Restrictions.in(resourceIdReference, resourceIds)) //
+                .add(Restrictions.eq("recipient.user", user)) //
+                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
+                .add(read ? Restrictions.isNotNull("recipient.viewTimestamp") : Restrictions.isNull("recipient.viewTimestamp")) //
+                .list();
     }
 
 }

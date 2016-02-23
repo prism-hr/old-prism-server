@@ -26,7 +26,7 @@ public class PrismProgramParentApproval extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT)
                         .withRoleTransitions(PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP)));
 
-        stateActions.add(PrismProgramWorkflow.programEmailCreatorUnnapproved()); //
+        stateActions.add(PrismProgramWorkflow.programSendMessageUnnapproved()); //
         stateActions.add(PrismProgramWorkflow.programEscalateUnapproved()); //
         stateActions.add(PrismProgramWorkflow.programTerminateUnapproved());
         stateActions.add(PrismProgramWorkflow.programViewEditApproval(state)); //

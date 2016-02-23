@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
+import static com.google.common.base.Objects.equal;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 
 import com.google.common.base.Objects;
@@ -23,7 +24,14 @@ public class ResourceActionOpportunityCategoryDTO extends ResourceOpportunityCat
 
     @Override
     public boolean equals(Object object) {
-        return super.equals(object) && actionId.equals(((ResourceActionOpportunityCategoryDTO) object).getActionId());
+        if (object == null) {
+            return false;
+        }
+        if (!getClass().equals(object.getClass())) {
+            return false;
+        }
+        ResourceActionOpportunityCategoryDTO other = (ResourceActionOpportunityCategoryDTO) object;
+        return equal(actionId, other.getActionId()) && super.equals(object);
     }
 
     @Override

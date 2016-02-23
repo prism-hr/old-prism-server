@@ -1,7 +1,11 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
+
 import java.util.Collection;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -10,7 +14,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -23,13 +26,16 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.ResourceStateTransitionSummary;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
+import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionPending;
 import uk.co.alumeni.prism.dto.ResourceStateDTO;
+import uk.co.alumeni.prism.dto.StateActionRecipientDTO;
 import uk.co.alumeni.prism.dto.StateSelectableDTO;
 import uk.co.alumeni.prism.dto.StateTransitionDTO;
 import uk.co.alumeni.prism.dto.StateTransitionPendingDTO;
@@ -38,7 +44,10 @@ import uk.co.alumeni.prism.dto.StateTransitionPendingDTO;
 @SuppressWarnings("unchecked")
 public class StateDAO {
 
-    @Autowired
+    @Inject
+    private WorkflowDAO workflowDAO;
+
+    @Inject
     private SessionFactory sessionFactory;
 
     public List<StateTransition> getPotentialStateTransitions(Resource resource, Action action) {
@@ -320,6 +329,51 @@ public class StateDAO {
                 .setProjection(Projections.property("id")) //
                 .addOrder(Order.asc("id")) //
                 .list();
+    }
+
+    public List<Integer> getStateActionAssignments(User user, PrismScope scope, Integer resourceId, Action action) {
+        return (List<Integer>) getStateActionAssignmentsCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, //
+                Projections.groupProperty("stateActionAssignment.id")), user, resourceId, action) //
+                .list();
+    }
+
+    public List<Integer> getStateActionAssignments(User user, PrismScope scope, PrismScope parentScope, Integer resourceId, Action action) {
+        return (List<Integer>) getStateActionAssignmentsCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, parentScope, //
+                Projections.groupProperty("stateActionAssignment.id")), user, resourceId, action) //
+                .list();
+    }
+
+    public List<Integer> getStateActionAssignments(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
+            Collection<Integer> targeterEntities, Integer resourceId, Action action) {
+        return (List<Integer>) getStateActionAssignmentsCriteriaList(workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, //
+                Projections.groupProperty("stateActionAssignment.id")), user, resourceId, action) //
+                .add(getTargetActionConstraint()) //
+                .list();
+    }
+
+    public List<StateActionRecipientDTO> getStateActionRecipients(List<Integer> stateActionAssignments) {
+        return (List<StateActionRecipientDTO>) sessionFactory.getCurrentSession().createCriteria(StateActionRecipient.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("role.id").as("role")) //
+                        .add(Projections.groupProperty("externalMode").as("externalMode")))
+                .setProjection(Projections.property("role.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("stateActionAssignment.id", stateActionAssignments)) //
+                .addOrder(Order.asc("externalMode")) //
+                .addOrder(Order.asc("scope.ordinal")) //
+                .addOrder(Order.asc("role.id")) //
+                .setResultTransformer(Transformers.aliasToBean(StateActionRecipientDTO.class)) //
+                .list();
+    }
+
+    private Criteria getStateActionAssignmentsCriteriaList(Criteria criteria, User user, Integer resourceId, Action action) {
+        return criteria.createAlias("stateActionAssignment.recipients", "recipientRole", JoinType.INNER_JOIN) //
+                .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.id", resourceId)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("userAccount.enabled", true)) //
+                .add(Restrictions.eq("stateAction.action", action));
     }
 
 }

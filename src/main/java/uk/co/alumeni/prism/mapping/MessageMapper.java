@@ -21,7 +21,6 @@ import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.MessageService;
-import uk.co.alumeni.prism.services.ResourceService;
 
 import com.google.common.collect.LinkedHashMultimap;
 
@@ -33,16 +32,13 @@ public class MessageMapper {
     private MessageService messageService;
 
     @Inject
-    private ResourceService resourceService;
-
-    @Inject
     private DocumentMapper documentMapper;
 
     @Inject
     private UserMapper userMapper;
 
     public List<MessageThreadRepresentation> getMessageThreadRepresentations(Resource resource) {
-        User user = resourceService.validateViewResource(resource);
+        User user = messageService.validateViewMessages(resource);
         List<MessageThreadRepresentation> threadRepresentations = newLinkedList();
 
         List<MessageThread> threads = messageService.getMessageThreads(resource, user);

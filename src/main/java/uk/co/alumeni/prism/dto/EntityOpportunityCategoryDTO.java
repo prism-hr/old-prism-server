@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
+import static com.google.common.base.Objects.equal;
 import static org.apache.commons.lang.StringUtils.rightPad;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
@@ -79,7 +80,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
             return false;
         }
         T other = (T) object;
-        return id.equals(other.getId());
+        return equal(id, other.getId());
     }
 
     @Override

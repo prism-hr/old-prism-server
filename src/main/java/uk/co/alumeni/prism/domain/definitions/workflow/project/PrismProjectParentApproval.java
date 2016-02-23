@@ -16,7 +16,7 @@ public class PrismProjectParentApproval extends PrismWorkflowState {
                         .withTransitionState(PrismState.PROJECT_APPROVED) //
                         .withTransitionAction(PrismAction.PROJECT_COMPLETE_PARENT_APPROVAL_STAGE)));
 
-        stateActions.add(PrismProjectWorkflow.projectEmailCreatorUnnapproved());
+        stateActions.add(PrismProjectWorkflow.projectSendMessageUnnapproved());
         stateActions.add(PrismProjectWorkflow.projectEscalateUnapproved());
         stateActions.add(PrismProjectWorkflow.projectTerminateUnapproved());
         stateActions.add(PrismProjectWorkflow.projectViewEditApproval(state));

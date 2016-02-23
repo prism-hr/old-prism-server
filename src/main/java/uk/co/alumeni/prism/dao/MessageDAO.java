@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -54,7 +56,6 @@ public class MessageDAO {
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNotNull("sendTimestamp")) //
@@ -64,13 +65,16 @@ public class MessageDAO {
                 .list();
     }
 
+    public List<Message> getMessages(MessageThread thread, User user) {
+        return getMessages(newArrayList(thread), user);
+    }
+
     public List<Message> getMessages(Collection<MessageThread> threads, User user) {
         return (List<Message>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.property("message")) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message.thread", threads)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNotNull("sendTimestamp")) //
@@ -83,7 +87,6 @@ public class MessageDAO {
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message", messages)) //
                 .add(Restrictions.neProperty("user", "message.user")) //
                 .addOrder(Order.desc("message")) //

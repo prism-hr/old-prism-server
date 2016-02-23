@@ -345,7 +345,7 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     public Set<Application> getApplications() {
         return applications;
     }
-    
+
     public ResourceParent getResource() {
         return ObjectUtils.firstNonNull(getResourceOpportunity(), getResourceParent());
     }
@@ -375,6 +375,17 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
                 if (parentResource != null) {
                     parentResources.add(parentResource);
                 }
+            }
+        }
+        return parentResources;
+    }
+
+    public List<ResourceParent> getEnclosingResources() {
+        List<ResourceParent> parentResources = Lists.newArrayList();
+        for (PrismScope advertScope : advertScopes) {
+            ResourceParent parentResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
+            if (parentResource != null) {
+                parentResources.add(parentResource);
             }
         }
         return parentResources;
@@ -414,13 +425,15 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Override
     public String toString() {
-        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null).map(resource -> resource.getAdvert().getName())
+        return stream(new ResourceParent[] { institution, department, program, project }).filter(resource -> resource != null)
+                .map(resource -> resource.getAdvert().getName())
                 .collect(joining(SPACE + HYPHEN + SPACE));
     }
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program).addProperty("project", project);
+        return new EntitySignature().addProperty("institution", institution).addProperty("department", department).addProperty("program", program)
+                .addProperty("project", project);
     }
 
 }

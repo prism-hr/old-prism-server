@@ -8,8 +8,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PRO
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PENDING_CORRECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectSendMessageUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
@@ -28,7 +28,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
                         .withStateTransitionEvaluation(PROJECT_APPROVED_OUTCOME)));
 
-        stateActions.add(projectEmailCreatorUnnapproved());
+        stateActions.add(projectSendMessageUnnapproved());
         stateActions.add(projectEscalateUnapproved());
         stateActions.add(projectTerminateUnapproved());
         stateActions.add(projectViewEditApproval(state));

@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
@@ -45,12 +46,12 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
+import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -136,7 +137,7 @@ public class RoleService {
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {
-        if (roleDAO.getRolesForResourceStrict(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
+        if (roleDAO.getRolesForResource(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
 
@@ -162,7 +163,7 @@ public class RoleService {
     }
 
     public void deleteUserRoles(User invoker, Resource resource, User user) {
-        List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
+        List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
         deleteUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
     }
 
@@ -200,7 +201,7 @@ public class RoleService {
     }
 
     public void setResourceOwner(Resource resource, User user) {
-        if (roleDAO.getRolesForResourceStrict(resource, user).isEmpty()) {
+        if (roleDAO.getRolesForResource(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
         }
 
@@ -252,44 +253,20 @@ public class RoleService {
         return newArrayList(roles);
     }
 
-    public List<PrismRole> getRolesUserCanMessage(User user, Resource resource) {
-        Integer resourceId = resource.getId();
-        PrismScope scope = resource.getResourceScope();
-        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-
-        Set<PrismRole> roles = Sets.newHashSet();
-        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, resourceId));
-
-        if (!scope.equals(SYSTEM)) {
-            for (PrismScope parentScope : parentScopes) {
-                roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, parentScope, resourceId));
-            }
-
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : organizationScopes) {
-                    for (PrismScope targetScope : organizationScopes) {
-                        roles.addAll(roleDAO.getRolesUserCanMessage(user, scope, targeterScope, targetScope, targeterEntities, resourceId));
-                    }
-                }
-            }
-        }
-
-        return newArrayList(roles);
+    public List<PrismRole> getUserRoles(Resource resource, User user) {
+        return roleDAO.getUserRoles(resource, user).stream().map(userRole -> userRole.getRole()).collect(toList());
     }
 
-    public LinkedHashMultimap<PrismRole, User> getUserRoles(Resource resource, List<PrismRole> roles) {
-        LinkedHashMultimap<PrismRole, User> userRoles = LinkedHashMultimap.create();
-        roleDAO.getUserRoles(resource, roles).stream().forEach(userRole -> userRoles.put(userRole.getRole(), userRole.getUser()));
-        return userRoles;
+    public List<UserRoleDTO> getUserRoles(Resource resource, List<PrismRole> roles) {
+        return roleDAO.getUserRoles(resource, roles);
     }
 
-    public List<PrismRole> getRolesForResource(Resource resource, User user) {
-        return roleDAO.getRolesForResource(resource, user);
+    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, List<PrismRole> roles) {
+        return roleDAO.getUserRoles(resources, roles);
     }
 
     public List<PrismRole> getRolesForResourceStrict(Resource resource, User user) {
-        return roleDAO.getRolesForResourceStrict(resource, user);
+        return roleDAO.getRolesForResource(resource, user);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {

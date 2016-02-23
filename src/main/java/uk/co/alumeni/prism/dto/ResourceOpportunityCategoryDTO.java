@@ -6,7 +6,9 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
 
     private Boolean raisesUrgentFlag;
 
-    private Boolean raisesMessageFlag;
+    private Integer readMessageCount;
+
+    private Integer unreadMessageCount;
 
     private DateTime updatedTimestamp;
 
@@ -20,12 +22,20 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public Boolean getRaisesMessageFlag() {
-        return raisesMessageFlag;
+    public Integer getReadMessageCount() {
+        return readMessageCount;
     }
 
-    public void setRaisesMessageFlag(Boolean raisesMessageFlag) {
-        this.raisesMessageFlag = raisesMessageFlag;
+    public void setReadMessageCount(Integer readMessageCount) {
+        this.readMessageCount = readMessageCount;
+    }
+
+    public Integer getUnreadMessageCount() {
+        return unreadMessageCount;
+    }
+
+    public void setUnreadMessageCount(Integer unreadMessageCount) {
+        this.unreadMessageCount = unreadMessageCount;
     }
 
     public DateTime getUpdatedTimestamp() {

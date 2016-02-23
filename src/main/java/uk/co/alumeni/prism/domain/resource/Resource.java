@@ -1,10 +1,12 @@
 package uk.co.alumeni.prism.domain.resource;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -166,6 +168,17 @@ public abstract class Resource implements Activity, UniqueEntity {
         return (Resource) getProperty(this, resourceScope.getLowerCamelName());
     }
 
+    public Map<PrismScope, Resource> getEnclosingResources() {
+        Map<PrismScope, Resource> enclosingResources = newLinkedHashMap();
+        for (PrismScope enclosingScope : getResourceScope().getEnclosingScopes()) {
+            Resource enclosingResource = getEnclosingResource(enclosingScope);
+            if (enclosingResource != null) {
+                enclosingResources.put(enclosingScope, enclosingResource);
+            }
+        }
+        return enclosingResources;
+    }
+
     public boolean sameAs(Object object) {
         if (object == null) {
             return false;
@@ -188,8 +201,9 @@ public abstract class Resource implements Activity, UniqueEntity {
             return application.getParentResource().getDisplayName() + SPACE + HYPHEN + SPACE + application.getUser().getFullName();
         }
 
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceName(getInstitution()), getResourceName(getDepartment()), getResourceName(getProgram()),
-                getResourceName(getProject()));
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls()
+                .join(getResourceName(getInstitution()), getResourceName(getDepartment()), getResourceName(getProgram()),
+                        getResourceName(getProject()));
     }
 
     @Override

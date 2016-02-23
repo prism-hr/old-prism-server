@@ -6,7 +6,7 @@ public class PrismDepartmentWithdrawn extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
-        stateActions.add(PrismDepartmentWorkflow.departmentEmailCreatorUnnapproved()); //
+        stateActions.add(PrismDepartmentWorkflow.departmentSendMessageUnnapproved()); //
         stateActions.add(PrismDepartmentWorkflow.departmentViewEditInactive()); //
     }
 

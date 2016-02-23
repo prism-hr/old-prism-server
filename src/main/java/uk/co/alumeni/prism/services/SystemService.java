@@ -51,6 +51,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionAssignment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionNotification;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionRecipient;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
@@ -72,6 +73,7 @@ import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
 import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
+import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
 import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.StateTermination;
@@ -554,11 +556,21 @@ public class SystemService {
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getAssignments()) {
             Role role = roleService.getById(prismStateActionAssignment.getRole());
-            StateActionAssignment stateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
+            StateActionAssignment transientStateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
                     .withExternalMode(prismStateActionAssignment.getExternalMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
-            entityService.save(stateActionAssignment);
-            prismStateActionAssignment.getRecipients().forEach(recipient -> stateActionAssignment.addRecipient(roleService.getById(recipient)));
-            stateAction.getStateActionAssignments().add(stateActionAssignment);
+            StateActionAssignment persistentStateActionAssignment = entityService.getOrCreate(transientStateActionAssignment);
+            stateAction.getStateActionAssignments().add(persistentStateActionAssignment);
+            initializeStateActionRecipients(prismStateActionAssignment, persistentStateActionAssignment);
+        }
+    }
+
+    private void initializeStateActionRecipients(PrismStateActionAssignment prismStateActionAssignment, StateActionAssignment stateActionAssignment) {
+        for (PrismStateActionRecipient prismStateActionRecipient : prismStateActionAssignment.getStateActionRecipients()) {
+            Role recipientRole = roleService.getById(prismStateActionRecipient.getRole());
+            StateActionRecipient transientStateActionRecipient = new StateActionRecipient().withStateActionAssignment(stateActionAssignment)
+                    .withRole(recipientRole).withExternalMode(prismStateActionRecipient.getExternalMode());
+            StateActionRecipient persistentStateActionRecipient = entityService.getOrCreate(transientStateActionRecipient);
+            stateActionAssignment.addStateActionRecipient(persistentStateActionRecipient);
         }
     }
 

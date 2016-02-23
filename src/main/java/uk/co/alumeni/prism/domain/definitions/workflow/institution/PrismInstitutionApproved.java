@@ -20,7 +20,7 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(PrismInstitutionWorkflow.institutionCreateDepartment());
         stateActions.add(PrismInstitutionWorkflow.institutionCreateProgram());
         stateActions.add(PrismInstitutionWorkflow.institutionCreateProject());
-        stateActions.add(PrismInstitutionWorkflow.institutionEmailCreatorApproved()); //
+        stateActions.add(PrismInstitutionWorkflow.institutionSendMessageApproved()); //
 
         stateActions.add(PrismInstitutionWorkflow.institutionTerminateApproved());
         stateActions.add(PrismInstitutionWorkflow.institutionViewEditApproved()); //

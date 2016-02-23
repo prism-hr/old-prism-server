@@ -19,7 +19,7 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
 
         stateActions.add(PrismDepartmentWorkflow.departmentCreateProgram()); //
         stateActions.add(PrismDepartmentWorkflow.departmentCreateProject()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentEmailCreatorApproved());
+        stateActions.add(PrismDepartmentWorkflow.departmentSendMessageApproved());
 
         stateActions.add(PrismDepartmentWorkflow.departmentTerminateApproved()); //
         stateActions.add(PrismDepartmentWorkflow.departmentViewEditApproved()); //

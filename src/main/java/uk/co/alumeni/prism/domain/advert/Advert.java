@@ -382,6 +382,17 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         return parentResources;
     }
 
+    public List<ResourceParent> getEnclosingResources() {
+        List<ResourceParent> parentResources = Lists.newArrayList();
+        for (PrismScope advertScope : advertScopes) {
+            ResourceParent parentResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
+            if (parentResource != null) {
+                parentResources.add(parentResource);
+            }
+        }
+        return parentResources;
+    }
+
     public boolean isAdvertOfScope(PrismScope scope) {
         return getResource().getResourceScope().equals(scope);
     }

@@ -1,9 +1,13 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +40,7 @@ import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
 import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
+import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
 import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
@@ -43,6 +48,7 @@ import uk.co.alumeni.prism.domain.workflow.StateTermination;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionPending;
+import uk.co.alumeni.prism.dto.StateActionRecipientDTO;
 import uk.co.alumeni.prism.dto.StateSelectableDTO;
 import uk.co.alumeni.prism.dto.StateTransitionDTO;
 import uk.co.alumeni.prism.dto.StateTransitionPendingDTO;
@@ -92,6 +98,9 @@ public class StateService {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private ScopeService scopeService;
 
     @Inject
     private SystemService systemService;
@@ -158,6 +167,7 @@ public class StateService {
         entityService.deleteAll(StateTermination.class);
         entityService.deleteAll(StateTransition.class);
         entityService.deleteAll(StateTransitionEvaluation.class);
+        entityService.deleteAll(StateActionRecipient.class);
         entityService.deleteAll(StateActionAssignment.class);
         entityService.deleteAll(StateActionNotification.class);
         entityService.deleteAll(StateAction.class);
@@ -407,7 +417,8 @@ public class StateService {
     }
 
     public StateActionPending createStateActionPending(Resource resource, Comment templateComment) {
-        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(templateComment.getUser()).withAction(templateComment.getAction())
+        StateActionPending stateActionPending = new StateActionPending().withResource(resource).withUser(templateComment.getUser())
+                .withAction(templateComment.getAction())
                 .withTemplateComment(templateComment);
         entityService.save(stateActionPending);
         return stateActionPending;
@@ -420,6 +431,44 @@ public class StateService {
                 .withAssignUserMessage(stateActionPendingDTO.getAssignUserMessage());
         entityService.save(stateActionPending);
         return stateActionPending;
+    }
+
+    public List<StateActionRecipientDTO> getStateActionRecipients(User user, Resource resource) {
+        Action messageAction = actionService.getMessageAction(resource);
+        if (messageAction != null) {
+            List<Integer> stateActionAssignments = getStateActionAssignments(user, resource, messageAction);
+            if (!stateActionAssignments.isEmpty()) {
+                return stateDAO.getStateActionRecipients(stateActionAssignments);
+            }
+        }
+        return newArrayList();
+    }
+
+    public List<Integer> getStateActionAssignments(User user, Resource resource, Action action) {
+        Integer resourceId = resource.getId();
+        PrismScope scope = resource.getResourceScope();
+        Set<Integer> stateActionAssignments = Sets.newHashSet();
+
+        stateActionAssignments.addAll(stateDAO.getStateActionAssignments(user, scope, resourceId, action));
+
+        if (!scope.equals(SYSTEM)) {
+            List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+            for (PrismScope parentScope : parentScopes) {
+                stateActionAssignments.addAll(stateDAO.getStateActionAssignments(user, scope, parentScope, resourceId, action));
+            }
+
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
+            if (isNotEmpty(targeterEntities)) {
+                for (PrismScope targeterScope : organizationScopes) {
+                    for (PrismScope targetScope : organizationScopes) {
+                        stateActionAssignments.addAll(stateDAO.getStateActionAssignments(user, scope, targeterScope, targetScope, targeterEntities, resourceId,
+                                action));
+                    }
+                }
+            }
+        }
+
+        return newArrayList(stateActionAssignments);
     }
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {

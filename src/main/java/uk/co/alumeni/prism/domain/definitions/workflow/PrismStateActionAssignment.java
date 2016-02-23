@@ -13,7 +13,7 @@ public class PrismStateActionAssignment {
 
     private PrismActionEnhancement actionEnhancement;
 
-    private List<PrismRole> recipients = Lists.newArrayList();
+    private List<PrismStateActionRecipient> stateActionRecipients = Lists.newArrayList();
 
     public PrismRole getRole() {
         return role;
@@ -27,8 +27,8 @@ public class PrismStateActionAssignment {
         return actionEnhancement;
     }
 
-    public List<PrismRole> getRecipients() {
-        return recipients;
+    public List<PrismStateActionRecipient> getStateActionRecipients() {
+        return stateActionRecipients;
     }
 
     public PrismStateActionAssignment withRole(PrismRole role) {
@@ -51,14 +51,23 @@ public class PrismStateActionAssignment {
         return this;
     }
 
-    public PrismStateActionAssignment addRecipient(PrismRole recipient) {
-        recipients.add(recipient);
+    public PrismStateActionAssignment withRecipients(PrismRole... roles) {
+        for (PrismRole role : roles) {
+            this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role));
+        }
+        return this;
+    }
+
+    public PrismStateActionAssignment withPartnerRecipients(PrismRole... roles) {
+        for (PrismRole role : roles) {
+            this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role).withExternalMode());
+        }
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, externalMode, actionEnhancement, recipients);
+        return Objects.hashCode(role, externalMode, actionEnhancement, stateActionRecipients);
     }
 
     @Override
@@ -71,8 +80,8 @@ public class PrismStateActionAssignment {
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
         return Objects.equal(role, other.getRole()) && Objects.equal(externalMode, other.getExternalMode())
-                && Objects.equal(actionEnhancement, other.getActionEnhancement()) && recipients.size() == other.getRecipients().size()
-                && recipients.containsAll(other.getRecipients());
+                && Objects.equal(actionEnhancement, other.getActionEnhancement()) && stateActionRecipients.size() == other.getStateActionRecipients().size()
+                && stateActionRecipients.containsAll(other.getStateActionRecipients());
     }
 
 }

@@ -22,6 +22,8 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
 
     private Set<ActionRecipientRepresentation> recipients = newLinkedHashSet();
 
+    private Set<ActionRecipientRepresentation> partnerRecipients = newLinkedHashSet();
+
     public CommentRepresentation getComment() {
         return comment;
     }
@@ -46,6 +48,10 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return recipients;
     }
 
+    public Set<ActionRecipientRepresentation> getPartnerRecipients() {
+        return partnerRecipients;
+    }
+
     public ActionRepresentationExtended addActionEnhancement(PrismActionEnhancement actionEnhancement) {
         this.actionEnhancements.add(actionEnhancement);
         return this;
@@ -66,8 +72,13 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return this;
     }
 
-    public ActionRepresentationExtended addMessagableUsers(Collection<ActionRecipientRepresentation> recipients) {
+    public ActionRepresentationExtended addRecipients(Collection<ActionRecipientRepresentation> recipients) {
         this.recipients.addAll(recipients);
+        return this;
+    }
+
+    public ActionRepresentationExtended addPartnerRecipients(Collection<ActionRecipientRepresentation> partnerRecipients) {
+        this.partnerRecipients.addAll(partnerRecipients);
         return this;
     }
 

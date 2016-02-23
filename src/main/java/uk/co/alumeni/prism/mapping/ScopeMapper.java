@@ -121,7 +121,7 @@ public class ScopeMapper {
                     ResourceActionOpportunityCategoryDTO.class);
 
             if (isNotEmpty(resourceActions)) {
-                resourceService.setRaisesMessageFlags(scope, resourceActions, user);
+                resourceService.setResourceMessageCounts(scope, resourceActions, user);
             }
 
             Set<Integer> resources = Sets.newHashSet();
@@ -142,7 +142,7 @@ public class ScopeMapper {
                     updateResources.add(resourceId);
                 }
 
-                if (isTrue(resourceActionDTO.getRaisesMessageFlag())) {
+                if (resourceActionDTO.getUnreadMessageCount() > 0) {
                     messageResources.add(resourceId);
                 }
             }

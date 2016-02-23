@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.user;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -49,7 +51,7 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor> {
+public class User implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor>, Comparable<User> {
 
     private static final long serialVersionUID = 5910410212695389060L;
 
@@ -505,6 +507,13 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @Override
     public boolean isResourceUserAssignmentProperty() {
         return false;
+    }
+
+    @Override
+    public int compareTo(User other) {
+        int compare = compare(firstName, other.getFirstName());
+        compare = compare == 0 ? compare(lastName, other.getLastName()) : compare;
+        return compare == 0 ? compare(email, other.getEmail()) : compare;
     }
 
     @Override

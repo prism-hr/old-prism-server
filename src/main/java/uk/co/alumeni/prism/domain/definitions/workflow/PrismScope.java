@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.time.Month.APRIL;
 import static java.time.Month.OCTOBER;
 import static org.apache.commons.lang.ArrayUtils.contains;
@@ -16,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVER
 
 import java.time.Month;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -203,7 +205,7 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     public static Set<PrismResourceContext> getResourceContexts(String opportunityCategories) {
         Set<PrismResourceContext> contexts = Sets.newLinkedHashSet();
         if (isNotEmpty(opportunityCategories)) {
-            for(String categoryString : opportunityCategories.split("\\|")) {
+            for (String categoryString : opportunityCategories.split("\\|")) {
                 PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(categoryString);
                 defaults.keySet().forEach(key -> {
                     if (contains(defaults.get(key).getDefaultOpportunityCategories(), opportunityCategory)) {
@@ -213,6 +215,17 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             }
         }
         return contexts;
+    }
+
+    public List<PrismScope> getEnclosingScopes() {
+        int thisOrdinal = this.ordinal();
+        List<PrismScope> enclosingScopes = newArrayList();
+        for (PrismScope scope : PrismScope.values()) {
+            if (scope.ordinal() <= thisOrdinal) {
+                enclosingScopes.add(scope);
+            }
+        }
+        return enclosingScopes;
     }
 
     private static class PrismScopeDefinition {

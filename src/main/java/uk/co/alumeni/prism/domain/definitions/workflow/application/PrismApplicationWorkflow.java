@@ -31,6 +31,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_VIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_UPDATE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
@@ -44,7 +45,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
@@ -63,15 +63,12 @@ public class PrismApplicationWorkflow {
                 .withAction(APPLICATION_COMMENT)
                 .withAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
                 .withAssignments(APPLICATION_VIEWER_REFEREE) //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withPartnerAssignments(INSTITUTION_APPROVER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR) //
-                .withPartnerAssignments(DEPARTMENT_APPROVER); //
+                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP); //
     }
 
-    public static PrismStateAction applicationCommentWithViewerRecruiter() {
+    public static PrismStateAction applicationCommentViewerRecruiter() {
         return applicationComment() //
-                .withAssignments(PrismRole.APPLICATION_VIEWER_RECRUITER);
+                .withAssignments(APPLICATION_VIEWER_RECRUITER);
     }
 
     public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees) {
@@ -87,20 +84,20 @@ public class PrismApplicationWorkflow {
                         .withRoleTransitionsAndExclusions(applicationNextStateExclusions(state), roleTransitions));
     }
 
-    public static PrismStateAction applicationEmailCreator() {
+    public static PrismStateAction applicationSendMessage() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_SEND_MESSAGE) //
-                .withAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
-                .withAssignments(APPLICATION_VIEWER_REFEREE) //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withPartnerAssignments(INSTITUTION_APPROVER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR) //
-                .withPartnerAssignments(DEPARTMENT_APPROVER);
+                .withAssignment(APPLICATION_VIEWER_REFEREE, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_VIEWER_REFEREE) //
+                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CREATOR) //
+                .withAssignments(APPLICATION_PARENT_VIEWER_GROUP, APPLICATION_PARENT_VIEWER_GROUP) //
+                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, APPLICATION_CREATOR);
     }
 
-    public static PrismStateAction applicationEmailCreatorWithViewerRecruiter() {
-        return applicationEmailCreator() //
-                .withAssignments(APPLICATION_VIEWER_RECRUITER);
+    public static PrismStateAction applicationSendMessageViewerRecruiter() {
+        return applicationSendMessage() //
+                .withAssignment(APPLICATION_VIEWER_RECRUITER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_VIEWER_RECRUITER);
     }
 
     public static PrismStateAction applicationEscalate(PrismState state) {

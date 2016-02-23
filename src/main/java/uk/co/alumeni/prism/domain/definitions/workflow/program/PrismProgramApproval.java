@@ -3,8 +3,8 @@ package uk.co.alumeni.prism.domain.definitions.workflow.program;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROGRAM_APPROVAL_PENDING_CORRECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programCreateProject;
-import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programEmailCreatorUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programSendMessageUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programTerminateUnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programWithdraw;
@@ -29,7 +29,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
                         .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROGRAM_APPROVED_OUTCOME))); //
 
         stateActions.add(programCreateProject());
-        stateActions.add(programEmailCreatorUnnapproved()); //
+        stateActions.add(programSendMessageUnnapproved()); //
         stateActions.add(programEscalateUnapproved()); //
         stateActions.add(programTerminateUnapproved());
         stateActions.add(programViewEditApproval(state)); //

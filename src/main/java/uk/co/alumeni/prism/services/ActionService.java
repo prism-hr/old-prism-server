@@ -194,7 +194,7 @@ public class ActionService {
     public HashMultimap<PrismAction, PrismActionRedactionType> getRedactions(Resource resource, User user, List<PrismRole> overridingRoles) {
         HashMultimap<PrismAction, PrismActionRedactionType> actionRedactions = HashMultimap.create();
         if (overridingRoles.isEmpty()) {
-            List<PrismRole> roleIds = roleService.getRolesForResource(resource, user);
+            List<PrismRole> roleIds = roleService.getUserRoles(resource, user);
             if (!roleIds.isEmpty()) {
                 List<ActionRedactionDTO> redactions = actionDAO.getRedactions(resource, roleIds);
                 for (ActionRedactionDTO redaction : redactions) {
@@ -290,7 +290,7 @@ public class ActionService {
         return actionDAO.getExternalConditions(resource);
     }
 
-    public boolean checkActionVisible(Resource resource, Action action, User user) {
+    public boolean checkActionAvailable(Resource resource, Action action, User user) {
         boolean visible = true;
         Set<PrismActionEnhancement> expectedActionEnhancements = getExpectedActionEnhancements(resource, action);
         if (expectedActionEnhancements.size() > 0) {

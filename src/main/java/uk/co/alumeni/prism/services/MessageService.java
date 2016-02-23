@@ -24,6 +24,7 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Role;
+import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 
 import com.google.common.base.Objects;
@@ -111,9 +112,8 @@ public class MessageService {
 
     public void postMessage(Resource resource, MessageDTO messageDTO) {
         DateTime baseline = now();
-
         User user = userService.getCurrentUser();
-        Action action = actionService.getMessageAction(resource);
+        Action messageAction = actionService.getMessageAction(resource);
 
         MessageThread thread = null;
         Integer messageThreadId = messageDTO.getId();
@@ -121,41 +121,47 @@ public class MessageService {
             thread = new MessageThread().withSubject(messageDTO.getSubject());
             entityService.save(thread);
 
-            Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withThread(thread).withDeclinedResponse(false)
+            Comment comment = new Comment().withResource(resource).withUser(user).withAction(messageAction).withThread(thread).withDeclinedResponse(false)
                     .withCreatedTimestamp(baseline);
-            actionService.executeUserAction(resource, action, comment);
+            actionService.executeUserAction(resource, messageAction, comment);
             thread.setComment(comment);
-        } else if (actionService.checkActionExecutable(resource, action, user)) {
+        } else if (actionService.checkActionAvailable(resource, messageAction, user)) {
             thread = getMessageThreadById(messageThreadId);
+        } else {
+            Action viewEditAction = actionService.getViewEditAction(resource);
+            if (actionService.checkActionAvailable(resource, viewEditAction, user)) {
+                thread = getMessageThreadById(messageThreadId);
+                if (messageDAO.getMessages(thread, user).size() == 0) {
+                    return;
+                }
+            }
         }
 
-        if (thread != null) {
-            Message message = new Message().withUser(user).withThread(thread).withContent(messageDTO.getContent()).withCreatedTimestamp(baseline);
-            entityService.save(message);
-            thread.addMessage(message);
+        Message message = new Message().withUser(user).withThread(thread).withContent(messageDTO.getContent()).withCreatedTimestamp(baseline);
+        entityService.save(message);
+        thread.addMessage(message);
 
-            MessageRecipient sender = new MessageRecipient().withMessage(message).withUser(user).withSendTimestamp(baseline).withViewTimestamp(baseline);
-            entityService.save(sender);
-            message.addRecipient(sender);
+        MessageRecipient sender = new MessageRecipient().withMessage(message).withUser(user).withSendTimestamp(baseline).withViewTimestamp(baseline);
+        entityService.save(sender);
+        message.addRecipient(sender);
 
-            messageDTO.getRecipientUsers().forEach(userDTO -> {
-                MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getUserByEmail(userDTO.getEmail()));
-                entityService.getOrCreate(recipient);
-                message.addRecipient(recipient);
-            });
+        messageDTO.getRecipientUsers().forEach(userDTO -> {
+            MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getUserByEmail(userDTO.getEmail()));
+            entityService.getOrCreate(recipient);
+            message.addRecipient(recipient);
+        });
 
-            messageDTO.getRecipientRoles().forEach(roleDTO -> {
-                MessageRecipient recipient = new MessageRecipient().withMessage(message).withRole(roleService.getById(roleDTO));
-                entityService.getOrCreate(recipient);
-                message.addRecipient(recipient);
-            });
+        messageDTO.getRecipientRoles().forEach(roleDTO -> {
+            MessageRecipient recipient = new MessageRecipient().withMessage(message).withRole(roleService.getById(roleDTO));
+            entityService.getOrCreate(recipient);
+            message.addRecipient(recipient);
+        });
 
-            messageDTO.getDocuments().forEach(documentDTO -> {
-                MessageDocument document = new MessageDocument().withMessage(message).withDocument(documentService.getById(documentDTO.getId()));
-                entityService.getOrCreate(document);
-                message.addDocument(document);
-            });
-        }
+        messageDTO.getDocuments().forEach(documentDTO -> {
+            MessageDocument document = new MessageDocument().withMessage(message).withDocument(documentService.getById(documentDTO.getId()));
+            entityService.getOrCreate(document);
+            message.addDocument(document);
+        });
     }
 
     public void viewMessage(Integer recipientId) {
@@ -163,6 +169,19 @@ public class MessageService {
         if (Objects.equal(userService.getCurrentUser(), recipient.getUser())) {
             recipient.setViewTimestamp(now());
         }
+    }
+
+    public User validateViewMessages(Resource resource) {
+        User user = userService.getCurrentUser();
+        Action messageAction = actionService.getMessageAction(resource);
+        if (messageAction == null || !actionService.checkActionAvailable(resource, messageAction, user)) {
+            Action viewEditAction = actionService.getViewEditAction(resource);
+            if (viewEditAction == null || !actionService.checkActionAvailable(resource, viewEditAction, user)
+                    || messageDAO.getMessageThreads(resource, user).size() == 0) {
+                throw new PrismForbiddenException("User cannot view or edit messages for the given resource");
+            }
+        }
+        return user;
     }
 
 }

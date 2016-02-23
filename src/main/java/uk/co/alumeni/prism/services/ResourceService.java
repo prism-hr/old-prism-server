@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -14,7 +15,6 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
-import static org.joda.time.Days.daysBetween;
 import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
@@ -64,6 +64,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -1093,7 +1094,7 @@ public class ResourceService {
     public <T extends Resource> User validateViewResource(T resource) {
         User user = userService.getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
-        if (action == null || !actionService.checkActionVisible(resource, action, user)) {
+        if (action == null || !actionService.checkActionAvailable(resource, action, user)) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
         return user;
@@ -1156,16 +1157,23 @@ public class ResourceService {
         return resourceDAO.getResourcesWithUnreadMessages(scope, user);
     }
 
-    public <T extends ResourceOpportunityCategoryDTO> void setRaisesMessageFlags(PrismScope scope, Set<T> resources, User user) {
-        Map<Integer, ResourceOpportunityCategoryDTO> resourcesIndex = Maps.newHashMap();
-        resources.forEach(resource -> resourcesIndex.put(resource.getId(), resource));
-        resourceDAO.getResourcesWithUnreadMessages(scope, resourcesIndex.keySet(), user).stream()
-                .forEach(resource -> resourcesIndex.get(resource).setRaisesMessageFlag(true));
+    public <T extends ResourceOpportunityCategoryDTO> void setResourceMessageCounts(PrismScope scope, Set<T> resources, User user) {
+        Map<Integer, T> resourceIndex = newHashMap();
+        resources.stream().forEach(resource -> resourceIndex.put(resource.getId(), resource));
+
+        Set<Integer> resourceIds = resourceIndex.keySet();
+        resourceDAO.getResourceReadMessageCounts(scope, resourceIds, user).forEach(resource -> {
+            resourceIndex.get(resource.getId()).setReadMessageCount(resource.getMessageCount().intValue());
+        });
+
+        resourceDAO.getResourceUnreadMessageCounts(scope, resourceIds, user).forEach(resource -> {
+            resourceIndex.get(resource.getId()).setUnreadMessageCount(resource.getMessageCount().intValue());
+        });
 
         LocalDate baseline = LocalDate.now();
         resources.forEach(resource -> {
-            boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || isTrue(resource.getRaisesMessageFlag()));
-            Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
+            boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || resource.getUnreadMessageCount() > 0);
+            Integer daysSinceLastUpdated = Days.daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
             resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)),
                     HALF_UP).setScale(ORDERING_PRECISION));
         });
@@ -1197,7 +1205,7 @@ public class ResourceService {
                 conditions, ResourceOpportunityCategoryDTO.class);
 
         if (isNotEmpty(resources)) {
-            setRaisesMessageFlags(scope, resources, user);
+            setResourceMessageCounts(scope, resources, user);
         }
 
         return resources;
@@ -1220,8 +1228,7 @@ public class ResourceService {
                     for (PrismScope targeterScope : organizationScopes) {
                         for (PrismScope targetScope : organizationScopes) {
                             addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions,
-                                    responseClass, baseline),
-                                    resources, asPartner == null ? null : true);
+                                    responseClass, baseline), resources, asPartner == null ? null : true);
                         }
                     }
                 }

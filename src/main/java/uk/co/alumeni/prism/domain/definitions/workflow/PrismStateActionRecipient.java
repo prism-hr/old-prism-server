@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
+
 import com.google.common.base.Objects;
 
 public class PrismStateActionRecipient {
@@ -45,7 +47,7 @@ public class PrismStateActionRecipient {
             return false;
         }
         final PrismStateActionRecipient other = (PrismStateActionRecipient) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(externalMode, other.getExternalMode());
+        return equal(role, other.getRole()) && equal(externalMode, other.getExternalMode());
     }
 
 }

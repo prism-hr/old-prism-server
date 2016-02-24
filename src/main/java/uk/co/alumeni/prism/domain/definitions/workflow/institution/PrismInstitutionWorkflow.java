@@ -71,7 +71,8 @@ public class PrismInstitutionWorkflow {
                 .withAssignment(INSTITUTION_ADMINISTRATOR, INSTITUTION_STAFF_GROUP) //
                 .withAssignment(INSTITUTION_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR_GROUP) //
                 .withAssignments(INSTITUTION_STAFF_GROUP, INSTITUTION_ADMINISTRATOR) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, INSTITUTION_ADMINISTRATOR);
+                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withPartnerRecipientAssignments(INSTITUTION_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction institutionEscalateUnapproved() {

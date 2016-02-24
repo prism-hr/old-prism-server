@@ -198,7 +198,7 @@ public class PrismStateAction {
 
     public PrismStateAction withPartnerRecipientAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
         for (PrismRole role : roles.getRoles()) {
-            PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role).withExternalMode();
+            PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role);
             for (PrismRole recipient : recipients.getRoles()) {
                 addRecipientAssignment(newAssignment, recipient, "partnerRecipient");
             }
@@ -235,12 +235,11 @@ public class PrismStateAction {
     private PrismStateAction addRecipientAssignment(PrismStateActionAssignment newAssignment, PrismRole recipient, String recipientProperty) {
         for (PrismStateActionAssignment assignment : this.assignments) {
             if (assignment.equals(newAssignment)) {
-                assignment.addRecipient(recipient);
+                invokeMethod(assignment, "add" + capitalize(recipientProperty), recipient);
                 return this;
             }
         }
         this.assignments.add((PrismStateActionAssignment) invokeMethod(newAssignment, "add" + capitalize(recipientProperty), recipient));
         return this;
     }
-
 }

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.integration.helpers;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import org.apache.commons.lang.BooleanUtils;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,7 +125,6 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyStateGroupCreation() {
-
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().ordinal(), stateGroup.getOrdinal());
             assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
@@ -161,7 +161,7 @@ public class SystemInitialisationHelper {
         assertEquals(systemUser.getEmail(), systemUserEmail);
 
         for (UserRole userRole : systemUser.getUserRoles()) {
-            assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
+            assertEquals(userRole.getRole().getId(), SYSTEM_ADMINISTRATOR);
         }
     }
 

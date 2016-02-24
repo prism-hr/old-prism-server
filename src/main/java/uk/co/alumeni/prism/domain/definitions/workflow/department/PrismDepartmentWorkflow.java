@@ -58,7 +58,8 @@ public class PrismDepartmentWorkflow {
                 .withAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_STAFF_GROUP) //
                 .withAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withAssignments(DEPARTMENT_STAFF_GROUP, DEPARTMENT_ADMINISTRATOR) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR);
+                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withPartnerRecipientAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentEscalateUnapproved() {

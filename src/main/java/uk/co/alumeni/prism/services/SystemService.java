@@ -545,7 +545,7 @@ public class SystemService {
     }
 
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
-        List<PrismStateTransition> stateTransitions = prismStateAction.getTransitions();
+        Set<PrismStateTransition> stateTransitions = prismStateAction.getTransitions();
         if (stateTransitions.isEmpty()) {
             stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
                     .withTransitionAction(stateAction.getAction().getId()));

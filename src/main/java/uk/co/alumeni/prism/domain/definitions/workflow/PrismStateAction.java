@@ -198,7 +198,7 @@ public class PrismStateAction {
 
     public PrismStateAction withPartnerRecipientAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
         for (PrismRole role : roles.getRoles()) {
-            PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role);
+            PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role).withExternalMode();
             for (PrismRole recipient : recipients.getRoles()) {
                 addRecipientAssignment(newAssignment, recipient, "partnerRecipient");
             }

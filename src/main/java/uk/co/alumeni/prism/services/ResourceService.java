@@ -1172,7 +1172,8 @@ public class ResourceService {
 
         LocalDate baseline = LocalDate.now();
         resources.forEach(resource -> {
-            boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || resource.getUnreadMessageCount() > 0);
+            Integer unreadMessageCount = resource.getUnreadMessageCount();
+            boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || (unreadMessageCount == null ? 0 : unreadMessageCount) > 0);
             Integer daysSinceLastUpdated = Days.daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baseline).getDays();
             resource.setPriority(prioritize ? new BigDecimal(1) : new BigDecimal(1).divide(new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)),
                     HALF_UP).setScale(ORDERING_PRECISION));

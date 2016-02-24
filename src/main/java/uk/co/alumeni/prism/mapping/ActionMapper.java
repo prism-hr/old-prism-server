@@ -26,6 +26,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
@@ -168,48 +169,53 @@ public class ActionMapper {
         return representation;
     }
 
-    private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, User user, ActionDTO action) {
-        ActionRepresentationExtended representation = getActionRepresentationSimple(action, ActionRepresentationExtended.class) //
-                .addNextStates(stateMapper.getStateRepresentations(resource, action.getActionId())) //
+    private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, User user, ActionDTO actionDTO) {
+        ActionRepresentationExtended representation = getActionRepresentationSimple(actionDTO, ActionRepresentationExtended.class) //
+                .addNextStates(stateMapper.getStateRepresentations(resource, actionDTO.getActionId())) //
                 .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
 
-        if (action.getActionId().getActionCategory().equals(MESSAGE_RESOURCE)) {
+        if (actionDTO.getActionId().getActionCategory().equals(MESSAGE_RESOURCE)) {
             List<PrismRole> recipientRoles = newLinkedList();
             List<PrismRole> partnerRecipientRoles = newLinkedList();
-            stateService.getStateActionRecipients(user, resource).stream().forEach(stateActionRecipient -> {
-                if (isFalse(stateActionRecipient.getExternalMode())) {
-                    recipientRoles.add(stateActionRecipient.getRole());
-                } else {
-                    partnerRecipientRoles.add(stateActionRecipient.getRole());
-                }
-            });
-
-            if (!recipientRoles.isEmpty()) {
-                List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
-                representation.addRecipients(getActionRecipientRepresentations(user, recipientUserRoles));
-            }
-
-            if (!partnerRecipientRoles.isEmpty()) {
-                Map<Integer, Advert> resourceAdverts = newHashMap();
-                resource.getAdvert().getEnclosingResources().stream().forEach(enclosingResource -> {
-                    Advert enclosingAdvert = enclosingResource.getAdvert();
-                    resourceAdverts.put(enclosingAdvert.getId(), enclosingAdvert);
+            
+            Action action = actionService.getById(actionDTO.getActionId());
+            List<Integer> stateActionAssignments = stateService.getStateActionAssignments(user, resource, action);
+            if (!stateActionAssignments.isEmpty()) {
+                stateService.getStateActionRecipients(stateActionAssignments).stream().forEach(stateActionRecipient -> {
+                    if (isFalse(stateActionRecipient.getExternalMode())) {
+                        recipientRoles.add(stateActionRecipient.getRole());
+                    } else {
+                        partnerRecipientRoles.add(stateActionRecipient.getRole());
+                    }
                 });
 
-                Map<ResourceDTO, Resource> targetingResources = newHashMap();
-                advertService.getTargetingAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
-                    targetingAdvert.getEnclosingResources().stream().forEach(targetingResource -> {
-                        ResourceDTO targetingResourceDTO = new ResourceDTO().withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
-                        targetingResources.put(targetingResourceDTO, targetingResource);
+                if (!recipientRoles.isEmpty()) {
+                    List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
+                    representation.addRecipients(getActionRecipientRepresentations(user, recipientUserRoles));
+                }
+
+                if (!partnerRecipientRoles.isEmpty()) {
+                    Map<Integer, Advert> resourceAdverts = newHashMap();
+                    resource.getAdvert().getEnclosingResources().stream().forEach(enclosingResource -> {
+                        Advert enclosingAdvert = enclosingResource.getAdvert();
+                        resourceAdverts.put(enclosingAdvert.getId(), enclosingAdvert);
                     });
-                });
 
-                if (!targetingResources.isEmpty()) {
-                    List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
-                    representation.addPartnerRecipients(getActionRecipientRepresentations(user, recipientPartnerUserRoles));
+                    Map<ResourceDTO, Resource> targetingResources = newHashMap();
+                    advertService.getTargetingAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
+                        targetingAdvert.getEnclosingResources().stream().forEach(targetingResource -> {
+                            ResourceDTO targetingResourceDTO = new ResourceDTO().withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
+                            targetingResources.put(targetingResourceDTO, targetingResource);
+                        });
+                    });
+
+                    if (!targetingResources.isEmpty()) {
+                        List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
+                        representation.addPartnerRecipients(getActionRecipientRepresentations(user, recipientPartnerUserRoles));
+                    }
                 }
             }
-        }
+            }
 
         return representation;
     }

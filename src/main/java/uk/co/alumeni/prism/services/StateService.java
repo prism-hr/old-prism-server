@@ -433,17 +433,6 @@ public class StateService {
         return stateActionPending;
     }
 
-    public List<StateActionRecipientDTO> getStateActionRecipients(User user, Resource resource) {
-        Action messageAction = actionService.getMessageAction(resource);
-        if (messageAction != null) {
-            List<Integer> stateActionAssignments = getStateActionAssignments(user, resource, messageAction);
-            if (!stateActionAssignments.isEmpty()) {
-                return stateDAO.getStateActionRecipients(stateActionAssignments);
-            }
-        }
-        return newArrayList();
-    }
-
     public List<Integer> getStateActionAssignments(User user, Resource resource, Action action) {
         Integer resourceId = resource.getId();
         PrismScope scope = resource.getResourceScope();
@@ -469,6 +458,10 @@ public class StateService {
         }
 
         return newArrayList(stateActionAssignments);
+    }
+
+    public List<StateActionRecipientDTO> getStateActionRecipients(List<Integer> stateActionAssignments) {
+        return stateDAO.getStateActionRecipients(stateActionAssignments);
     }
 
     private StateTransition getStateTransition(Resource resource, Action action, Comment comment) {

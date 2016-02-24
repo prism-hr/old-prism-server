@@ -1,69 +1,32 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.BooleanUtils;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedaction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionAssignment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionNotification;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.ActionRedaction;
-import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
-import uk.co.alumeni.prism.domain.workflow.OpportunityType;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.domain.workflow.RoleTransition;
-import uk.co.alumeni.prism.domain.workflow.Scope;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
-import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.StateGroup;
-import uk.co.alumeni.prism.domain.workflow.StateTermination;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
-import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.CustomizationService;
-import uk.co.alumeni.prism.services.NotificationService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.ScopeService;
-import uk.co.alumeni.prism.services.StateService;
-import uk.co.alumeni.prism.services.SystemService;
+import uk.co.alumeni.prism.domain.workflow.*;
+import uk.co.alumeni.prism.services.*;
 import uk.co.alumeni.prism.utils.PrismFileUtils;
+
+import java.util.List;
+import java.util.Set;
+
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.junit.Assert.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 
 @Service
 @Transactional
@@ -294,7 +257,7 @@ public class SystemInitialisationHelper {
         for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
                     .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
-            stateActionAssignment.getStateActionRecipients().forEach(recipient -> {
+            stateActionAssignment.getRecipients().forEach(recipient -> {
                 if (isFalse(recipient.getExternalMode())) {
                     prismStateActionAssignment.withRecipients(recipient.getRole().getId());
                 } else {

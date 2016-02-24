@@ -1,23 +1,11 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import java.util.Set;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
+import com.google.common.collect.Sets;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 
-import com.google.common.collect.Sets;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "state_action_assignment", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id", "external_mode" }) })
@@ -42,8 +30,8 @@ public class StateActionAssignment implements UniqueEntity {
     @Enumerated(EnumType.STRING)
     private PrismActionEnhancement actionEnhancement;
 
-    @OneToMany(mappedBy = "stateActionAssignment")
-    private Set<StateActionRecipient> stateActionRecipients = Sets.newHashSet();
+    @OneToMany(mappedBy = "assignment")
+    private Set<StateActionRecipient> recipients = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -85,8 +73,8 @@ public class StateActionAssignment implements UniqueEntity {
         this.actionEnhancement = actionEnhancement;
     }
 
-    public Set<StateActionRecipient> getStateActionRecipients() {
-        return stateActionRecipients;
+    public Set<StateActionRecipient> getRecipients() {
+        return recipients;
     }
 
     public StateActionAssignment withStateAction(StateAction stateAction) {
@@ -109,8 +97,8 @@ public class StateActionAssignment implements UniqueEntity {
         return this;
     }
 
-    public StateActionAssignment addStateActionRecipient(StateActionRecipient stateActionRecipient) {
-        this.stateActionRecipients.add(stateActionRecipient);
+    public StateActionAssignment addRecipient(StateActionRecipient recipient) {
+        this.recipients.add(recipient);
         return this;
     }
 

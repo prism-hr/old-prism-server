@@ -1,15 +1,8 @@
 package uk.co.alumeni.prism.domain.workflow;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import uk.co.alumeni.prism.domain.UniqueEntity;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "state_action_recipient", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_assignment_id", "role_id", "external_mode" }) })
@@ -21,7 +14,7 @@ public class StateActionRecipient implements UniqueEntity {
 
     @ManyToOne
     @JoinColumn(name = "state_action_assignment_id", nullable = false)
-    private StateActionAssignment stateActionAssignment;
+    private StateActionAssignment assignment;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
@@ -38,12 +31,12 @@ public class StateActionRecipient implements UniqueEntity {
         this.id = id;
     }
 
-    public StateActionAssignment getStateActionAssignment() {
-        return stateActionAssignment;
+    public StateActionAssignment getAssignment() {
+        return assignment;
     }
 
-    public void setStateActionAssignment(StateActionAssignment stateActionAssignment) {
-        this.stateActionAssignment = stateActionAssignment;
+    public void setAssignment(StateActionAssignment assignment) {
+        this.assignment = assignment;
     }
 
     public Role getRole() {
@@ -62,8 +55,8 @@ public class StateActionRecipient implements UniqueEntity {
         this.externalMode = externalMode;
     }
 
-    public StateActionRecipient withStateActionAssignment(StateActionAssignment stateActionAssignment) {
-        this.stateActionAssignment = stateActionAssignment;
+    public StateActionRecipient withAssignment(final StateActionAssignment assignment) {
+        this.assignment = assignment;
         return this;
     }
 
@@ -79,7 +72,7 @@ public class StateActionRecipient implements UniqueEntity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("stateActionAssignment", stateActionAssignment).addProperty("role", role)
+        return new EntitySignature().addProperty("assignment", assignment).addProperty("role", role)
                 .addProperty("externalMode", externalMode);
     }
 

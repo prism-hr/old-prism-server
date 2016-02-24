@@ -235,11 +235,15 @@ public class PrismStateAction {
     private PrismStateAction addRecipientAssignment(PrismStateActionAssignment newAssignment, PrismRole recipient, String recipientProperty) {
         for (PrismStateActionAssignment assignment : this.assignments) {
             if (assignment.equals(newAssignment)) {
-                invokeMethod(assignment, "add" + capitalize(recipientProperty), recipient);
+                addRecipient(assignment, recipient, recipientProperty);
                 return this;
             }
         }
-        this.assignments.add((PrismStateActionAssignment) invokeMethod(newAssignment, "add" + capitalize(recipientProperty), recipient));
+        this.assignments.add(addRecipient(newAssignment, recipient, recipientProperty));
         return this;
+    }
+
+    private PrismStateActionAssignment addRecipient(PrismStateActionAssignment assignment, PrismRole recipient, String recipientProperty) {
+        return (PrismStateActionAssignment) invokeMethod(assignment, "add" + capitalize(recipientProperty), recipient);
     }
 }

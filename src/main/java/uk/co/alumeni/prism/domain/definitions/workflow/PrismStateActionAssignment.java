@@ -1,9 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import java.util.List;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newHashSet;
+
+import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 public class PrismStateActionAssignment {
 
@@ -13,7 +15,7 @@ public class PrismStateActionAssignment {
 
     private PrismActionEnhancement actionEnhancement;
 
-    private List<PrismStateActionRecipient> stateActionRecipients = Lists.newArrayList();
+    private Set<PrismStateActionRecipient> stateActionRecipients = newHashSet();
 
     public PrismRole getRole() {
         return role;
@@ -27,7 +29,7 @@ public class PrismStateActionAssignment {
         return actionEnhancement;
     }
 
-    public List<PrismStateActionRecipient> getStateActionRecipients() {
+    public Set<PrismStateActionRecipient> getStateActionRecipients() {
         return stateActionRecipients;
     }
 
@@ -67,7 +69,7 @@ public class PrismStateActionAssignment {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, externalMode, actionEnhancement, stateActionRecipients);
+        return Objects.hashCode(role, externalMode, actionEnhancement);
     }
 
     @Override
@@ -79,9 +81,7 @@ public class PrismStateActionAssignment {
             return false;
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(externalMode, other.getExternalMode())
-                && Objects.equal(actionEnhancement, other.getActionEnhancement()) && stateActionRecipients.size() == other.getStateActionRecipients().size()
-                && stateActionRecipients.containsAll(other.getStateActionRecipients());
+        return equal(role, other.getRole()) && equal(externalMode, other.getExternalMode()) && equal(actionEnhancement, other.getActionEnhancement());
     }
 
 }

@@ -119,6 +119,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -568,9 +569,9 @@ public enum PrismStateTransitionGroup {
         for (PrismStateTransition stateTransition : getStateTransitions()) {
             PrismState transitionState = stateTransition.getTransitionState();
             if (!exclusionsList.contains(transitionState)) {
-                List<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
-                List<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
-                List<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
+                Set<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
+                Set<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
+                Set<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
                 stateTransitions.add(new PrismStateTransition() //
                         .withTransitionState(stateTransition.getTransitionState()) //
                         .withTransitionAction(stateTransition.getTransitionAction()) //

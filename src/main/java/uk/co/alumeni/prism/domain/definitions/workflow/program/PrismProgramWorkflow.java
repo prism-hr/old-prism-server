@@ -49,7 +49,8 @@ public class PrismProgramWorkflow {
                 .withAssignment(PROGRAM_ADMINISTRATOR, PROGRAM_STAFF_GROUP) //
                 .withAssignment(PROGRAM_ADMINISTRATOR, PROGRAM_ADMINISTRATOR_GROUP) //
                 .withAssignments(PROGRAM_STAFF_GROUP, PROGRAM_ADMINISTRATOR) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, PROGRAM_ADMINISTRATOR);
+                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, PROGRAM_ADMINISTRATOR_GROUP) //
+                .withPartnerRecipientAssignments(PROGRAM_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction programEscalateUnapproved() {

@@ -21,7 +21,7 @@ public class StateActionRecipient implements UniqueEntity {
 
     @ManyToOne
     @JoinColumn(name = "state_action_assignment_id", nullable = false)
-    private StateActionAssignment assignment;
+    private StateActionAssignment stateActionAssignment;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
@@ -38,12 +38,12 @@ public class StateActionRecipient implements UniqueEntity {
         this.id = id;
     }
 
-    public StateActionAssignment getAssignment() {
-        return assignment;
+    public StateActionAssignment getStateActionAssignment() {
+        return stateActionAssignment;
     }
 
-    public void setAssignment(StateActionAssignment assignment) {
-        this.assignment = assignment;
+    public void setStateActionAssignment(StateActionAssignment stateActionAssignment) {
+        this.stateActionAssignment = stateActionAssignment;
     }
 
     public Role getRole() {
@@ -62,8 +62,8 @@ public class StateActionRecipient implements UniqueEntity {
         this.externalMode = externalMode;
     }
 
-    public StateActionRecipient withAssignment(final StateActionAssignment assignment) {
-        this.assignment = assignment;
+    public StateActionRecipient withStateActionAssignment(StateActionAssignment stateActionAssignment) {
+        this.stateActionAssignment = stateActionAssignment;
         return this;
     }
 
@@ -79,7 +79,7 @@ public class StateActionRecipient implements UniqueEntity {
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("assignment", assignment).addProperty("role", role)
+        return new EntitySignature().addProperty("stateActionAssignment", stateActionAssignment).addProperty("role", role)
                 .addProperty("externalMode", externalMode);
     }
 

@@ -355,8 +355,7 @@ public class StateDAO {
         return (List<StateActionRecipientDTO>) sessionFactory.getCurrentSession().createCriteria(StateActionRecipient.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("role.id").as("role")) //
-                        .add(Projections.groupProperty("externalMode").as("externalMode")))
-                .setProjection(Projections.property("role.id")) //
+                        .add(Projections.groupProperty("externalMode").as("externalMode"))) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("stateActionAssignment.id", stateActionAssignments)) //

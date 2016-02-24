@@ -5,6 +5,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
 
@@ -15,7 +16,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -177,7 +177,7 @@ public class ActionMapper {
             List<PrismRole> recipientRoles = newLinkedList();
             List<PrismRole> partnerRecipientRoles = newLinkedList();
             stateService.getStateActionRecipients(user, resource).stream().forEach(stateActionRecipient -> {
-                if (BooleanUtils.isFalse(stateActionRecipient.getExternalMode())) {
+                if (isFalse(stateActionRecipient.getExternalMode())) {
                     recipientRoles.add(stateActionRecipient.getRole());
                 } else {
                     partnerRecipientRoles.add(stateActionRecipient.getRole());

@@ -10,6 +10,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -106,22 +107,29 @@ public class RoleDAO {
             enclosingResources.keySet().forEach(enclosingScope -> constrainingResources.put(enclosingScope, enclosingResources.get(enclosingScope)));
         });
 
+        boolean constrainedByUser = user != null;
+        boolean constrainedByRole = isNotEmpty(roles);
         HashMultimap<PrismScope, PrismRole> rolesByScope = HashMultimap.create();
-        roles.forEach(role -> rolesByScope.put(role.getScope(), role));
+        if (constrainedByRole) {
+            roles.forEach(role -> rolesByScope.put(role.getScope(), role));
+        }
 
         constrainingResources.keySet().forEach(constrainingScope -> {
-            Junction constraint = Restrictions.conjunction() //
-                    .add(Restrictions.in(constrainingScope.getLowerCamelName(), constrainingResources.get(constrainingScope)));
+            Set<PrismRole> constrainingRoles = rolesByScope.get(constrainingScope);
+            if (!(constrainedByRole && constrainingRoles.isEmpty())) {
+                Junction constraint = Restrictions.conjunction() //
+                        .add(Restrictions.in(constrainingScope.getLowerCamelName(), constrainingResources.get(constrainingScope)));
 
-            if (user != null) {
-                constraint.add(Restrictions.eq("user", user));
+                if (constrainedByUser) {
+                    constraint.add(Restrictions.eq("user", user));
+                }
+
+                if (isNotEmpty(constrainingRoles)) {
+                    constraint.add(Restrictions.in("role.id", constrainingRoles));
+                }
+
+                constraints.add(constraint);
             }
-
-            if (isNotEmpty(roles)) {
-                constraint.add(Restrictions.in("role.id", rolesByScope.get(constrainingScope)));
-            }
-
-            constraints.add(constraint);
         });
 
         return (List<UserRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //

@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSys
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 
 import java.util.List;
@@ -24,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedaction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -161,7 +161,6 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyStateGroupCreation() {
-
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().ordinal(), stateGroup.getOrdinal());
             assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
@@ -198,7 +197,7 @@ public class SystemInitialisationHelper {
         assertEquals(systemUser.getEmail(), systemUserEmail);
 
         for (UserRole userRole : systemUser.getUserRoles()) {
-            assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
+            assertEquals(userRole.getRole().getId(), SYSTEM_ADMINISTRATOR);
         }
     }
 

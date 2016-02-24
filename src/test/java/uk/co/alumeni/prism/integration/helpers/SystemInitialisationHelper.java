@@ -259,9 +259,9 @@ public class SystemInitialisationHelper {
                     .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
             stateActionAssignment.getStateActionRecipients().forEach(recipient -> {
                 if (isFalse(recipient.getExternalMode())) {
-                    prismStateActionAssignment.withRecipients(recipient.getRole().getId());
+                    prismStateActionAssignment.addRecipient(recipient.getRole().getId());
                 } else {
-                    prismStateActionAssignment.withPartnerRecipients(recipient.getRole().getId());
+                    prismStateActionAssignment.addPartnerRecipient(recipient.getRole().getId());
                 }
             });
             assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));

@@ -368,8 +368,8 @@ public class StateDAO {
     }
 
     private Criteria getStateActionAssignmentsCriteriaList(Criteria criteria, User user, Integer resourceId, Action action) {
-        return criteria.createAlias("stateActionAssignment.recipients", "recipient", JoinType.INNER_JOIN) //
-                .createAlias("recipient.role", "recipientRole", JoinType.INNER_JOIN)
+        return criteria.createAlias("stateActionAssignment.stateActionRecipients", "stateActionRecipient", JoinType.INNER_JOIN) //
+                .createAlias("stateActionRecipient.role", "recipientRole", JoinType.INNER_JOIN)
                 .createAlias("recipientRole.scope", "recipientRoleScope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.id", resourceId)) //
                 .add(Restrictions.eq("userRole.user", user)) //

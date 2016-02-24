@@ -43,7 +43,7 @@ public class StateActionAssignment implements UniqueEntity {
     private PrismActionEnhancement actionEnhancement;
 
     @OneToMany(mappedBy = "assignment")
-    private Set<StateActionRecipient> recipients = Sets.newHashSet();
+    private Set<StateActionRecipient> stateActionRecipients = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -85,8 +85,8 @@ public class StateActionAssignment implements UniqueEntity {
         this.actionEnhancement = actionEnhancement;
     }
 
-    public Set<StateActionRecipient> getRecipients() {
-        return recipients;
+    public Set<StateActionRecipient> getStateActionRecipients() {
+        return stateActionRecipients;
     }
 
     public StateActionAssignment withStateAction(StateAction stateAction) {
@@ -109,8 +109,8 @@ public class StateActionAssignment implements UniqueEntity {
         return this;
     }
 
-    public StateActionAssignment addRecipient(StateActionRecipient recipient) {
-        this.recipients.add(recipient);
+    public StateActionAssignment addStateActionRecipient(StateActionRecipient stateActionRecipient) {
+        this.stateActionRecipients.add(stateActionRecipient);
         return this;
     }
 

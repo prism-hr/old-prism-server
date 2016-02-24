@@ -53,17 +53,13 @@ public class PrismStateActionAssignment {
         return this;
     }
 
-    public PrismStateActionAssignment withRecipients(PrismRole... roles) {
-        for (PrismRole role : roles) {
-            this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role));
-        }
+    public PrismStateActionAssignment addRecipient(PrismRole role) {
+        this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role));
         return this;
     }
 
-    public PrismStateActionAssignment withPartnerRecipients(PrismRole... roles) {
-        for (PrismRole role : roles) {
-            this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role).withExternalMode());
-        }
+    public PrismStateActionAssignment addPartnerRecipient(PrismRole role) {
+        this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role).withExternalMode());
         return this;
     }
 

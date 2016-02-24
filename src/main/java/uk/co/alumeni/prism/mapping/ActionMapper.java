@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
@@ -47,7 +48,6 @@ import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.StateService;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 
@@ -230,7 +230,7 @@ public class ActionMapper {
         index.keySet().stream().forEach(key -> {
             List<UserRepresentationSimple> userRepresentations = newLinkedList();
             index.get(key).stream().forEach(value -> {
-                if (!Objects.equal(value, user)) {
+                if (!equal(value, user)) {
                     userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
                 }
             });

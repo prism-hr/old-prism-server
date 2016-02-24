@@ -42,7 +42,7 @@ public class StateActionAssignment implements UniqueEntity {
     @Enumerated(EnumType.STRING)
     private PrismActionEnhancement actionEnhancement;
 
-    @OneToMany(mappedBy = "assignment")
+    @OneToMany(mappedBy = "stateActionAssignment")
     private Set<StateActionRecipient> stateActionRecipients = Sets.newHashSet();
 
     public Integer getId() {

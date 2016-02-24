@@ -1,7 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newHashSet;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -19,11 +22,11 @@ public class PrismStateAction {
 
     private PrismNotificationDefinition notification;
 
-    private List<PrismStateActionAssignment> assignments = Lists.newLinkedList();
+    private Set<PrismStateActionAssignment> assignments = newHashSet();
 
-    private List<PrismStateActionNotification> notifications = Lists.newLinkedList();
+    private Set<PrismStateActionNotification> notifications = newHashSet();
 
-    private List<PrismStateTransition> transitions = Lists.newLinkedList();
+    private Set<PrismStateTransition> transitions = newHashSet();
 
     public PrismAction getAction() {
         return action;
@@ -49,15 +52,15 @@ public class PrismStateAction {
         return notification;
     }
 
-    public List<PrismStateActionAssignment> getAssignments() {
+    public Set<PrismStateActionAssignment> getAssignments() {
         return assignments;
     }
 
-    public List<PrismStateActionNotification> getNotifications() {
+    public Set<PrismStateActionNotification> getNotifications() {
         return notifications;
     }
 
-    public List<PrismStateTransition> getTransitions() {
+    public Set<PrismStateTransition> getTransitions() {
         return transitions;
     }
 
@@ -175,6 +178,13 @@ public class PrismStateAction {
     public PrismStateAction withPartnerAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
         for (PrismRole role : roles.getRoles()) {
             withPartnerAssignment(role, recipients);
+        }
+        return this;
+    }
+
+    public PrismStateAction withPartnerRecipientAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
+        for (PrismRole role : roles.getRoles()) {
+            this.assignments.add(new PrismStateActionAssignment().withRole(role).withPartnerRecipients(recipients.getRoles()));
         }
         return this;
     }

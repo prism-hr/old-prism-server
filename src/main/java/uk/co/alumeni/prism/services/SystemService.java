@@ -567,10 +567,10 @@ public class SystemService {
     private void initializeStateActionRecipients(PrismStateActionAssignment prismStateActionAssignment, StateActionAssignment stateActionAssignment) {
         for (PrismStateActionRecipient prismStateActionRecipient : prismStateActionAssignment.getStateActionRecipients()) {
             Role recipientRole = roleService.getById(prismStateActionRecipient.getRole());
-            StateActionRecipient stateActionRecipient = new StateActionRecipient().withAssignment(stateActionAssignment)
+            StateActionRecipient stateActionRecipient = new StateActionRecipient().withStateActionAssignment(stateActionAssignment)
                     .withRole(recipientRole).withExternalMode(prismStateActionRecipient.getExternalMode());
             entityService.save(stateActionRecipient);
-            stateActionAssignment.addRecipient(stateActionRecipient);
+            stateActionAssignment.addStateActionRecipient(stateActionRecipient);
         }
     }
 

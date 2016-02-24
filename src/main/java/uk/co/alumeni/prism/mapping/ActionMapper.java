@@ -215,7 +215,7 @@ public class ActionMapper {
                     }
                 }
             }
-            }
+        }
 
         return representation;
     }

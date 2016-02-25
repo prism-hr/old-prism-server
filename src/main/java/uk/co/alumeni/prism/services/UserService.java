@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.HashMultimap.create;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.math.RoundingMode.HALF_UP;
@@ -16,6 +17,7 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -30,7 +32,6 @@ import static uk.co.alumeni.prism.utils.PrismStringUtils.obfuscateEmail;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -325,7 +326,7 @@ public class UserService {
             }
         }
 
-        return Lists.newLinkedList(orderedUsers.values());
+        return newLinkedList(orderedUsers.values());
     }
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {
@@ -500,9 +501,9 @@ public class UserService {
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
         User user = getCurrentUser();
 
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        Arrays.stream(WorkflowDAO.organizationScopes).forEach(ts -> resources.putAll(ts,
-                resourceService.getResources(user, ts, scopeService.getParentScopesDescending(ts, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
+        HashMultimap<PrismScope, Integer> resources = create();
+        stream(organizationScopes).forEach(organizationScope -> resources.putAll(organizationScope,
+                resourceService.getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
 
         Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
         resources.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resources.get(scope), filter)));

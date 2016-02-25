@@ -2,10 +2,10 @@ package uk.co.alumeni.prism.domain.definitions.workflow.program;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_CREATE_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_TERMINATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_WITHDRAW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROGRAM_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_AS_USER;
@@ -126,7 +126,7 @@ public class PrismProgramWorkflow {
 
     private static PrismStateAction programSendMessageAbstract() {
         return new PrismStateAction() //
-                .withAction(PROJECT_SEND_MESSAGE) //
+                .withAction(PROGRAM_SEND_MESSAGE) //
                 .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP, PROGRAM_ADMINISTRATOR);
     }
 

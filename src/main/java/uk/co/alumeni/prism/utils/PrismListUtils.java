@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.utils;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.representation.ListSummaryRepresentation;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class PrismListUtils {
@@ -83,14 +83,14 @@ public class PrismListUtils {
         boolean filteringOpportunityType = isNotEmpty(filterOpportunityTypes);
         String filterOpportunityCategoryName = filteringOpportunityCategory ? filterOpportunityCategory.name() : null;
 
-        Map<Integer, BigDecimal> entityIndex = Maps.newLinkedHashMap();
+        Map<Integer, BigDecimal> entityIndex = newLinkedHashMap();
         for (EntityOpportunityCategoryDTO<?> entity : entities) {
             if (returning) {
                 boolean included;
                 if (!(filteringOpportunityCategory || filteringOpportunityType)) {
                     included = true;
                 } else if (filteringOpportunityCategory) {
-                    included = Arrays.stream(entity.getOpportunityCategories().split("\\|")).anyMatch(oc -> oc.equals(filterOpportunityCategoryName));
+                    included = stream(entity.getOpportunityCategories().split("\\|")).anyMatch(oc -> oc.equals(filterOpportunityCategoryName));
                 } else {
                     included = filterOpportunityTypes.contains(entity.getOpportunityType());
                 }

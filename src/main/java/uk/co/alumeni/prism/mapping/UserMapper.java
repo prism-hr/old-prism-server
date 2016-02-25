@@ -209,7 +209,7 @@ public class UserMapper {
         List<UserRepresentationSimple> representations = newLinkedList();
         users.stream().forEach(user -> {
             UserRepresentationSimple representation = getUserRepresentationSimple(user.getUser(), currentUser);
-            representation.setEmail(PrismStringUtils.obfuscateEmail(representation.getEmail()));
+            representation.setEmail(PrismStringUtils.getObfuscatedEmail(representation.getEmail()));
             representations.add(representation);
         });
         return representations;

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -108,6 +107,7 @@ public class CommentDAO {
     public List<LocalDateTime> getAppointmentPreferences(Comment comment) {
         return (List<LocalDateTime>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentPreference.class) //
                 .setProjection(Projections.property("dateTime")) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
                 .addOrder(Order.asc("dateTime")) //
@@ -139,7 +139,12 @@ public class CommentDAO {
     }
 
     public List<Comment> getTimelineComments(Resource resource) {
-        return getCommentTimelineCriteria() //
+        return sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -170,6 +175,7 @@ public class CommentDAO {
 
     public List<CommentAssignedUser> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("comment.id", commentIds)) //
                 .add(Restrictions.in("role.id", roleIds)) //
                 .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //

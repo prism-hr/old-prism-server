@@ -32,6 +32,7 @@ import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation
 import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.UserService;
 
 @RestController
 @RequestMapping("api/{resourceScope:projects|programs|departments|institutions}/{resourceId}")
@@ -47,12 +48,15 @@ public class AdvertController {
     @Inject
     private AdvertMapper advertMapper;
 
+    @Inject
+    private UserService userService;
+
     @RequestMapping(value = "/targets", method = RequestMethod.GET)
     public List<AdvertTargetConnectionRepresentation> getTargets(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         List<AdvertTargetDTO> advertTargets = advertService.getAdvertTargets(advert);
-        return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets);
+        return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets, userService.getCurrentUser());
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.GET)
@@ -66,12 +70,14 @@ public class AdvertController {
     }
 
     @RequestMapping(value = "/details", method = RequestMethod.PUT)
-    public void updateResourceDetails(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody ResourceParentDTO resourceDTO) {
+    public void updateResourceDetails(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @Valid @RequestBody ResourceParentDTO resourceDTO) {
         advertService.updateResourceDetails(resourceDescriptor.getResourceScope(), resourceId, resourceDTO);
     }
 
     @RequestMapping(value = "/settings", method = RequestMethod.PUT)
-    public void updateAdvertSettings(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertSettingsDTO advertSettingsDTO) {
+    public void updateAdvertSettings(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @Valid @RequestBody AdvertSettingsDTO advertSettingsDTO) {
         advertService.updateAdvertSettings(resourceDescriptor.getResourceScope(), resourceId, advertSettingsDTO);
     }
 
@@ -82,19 +88,21 @@ public class AdvertController {
     }
 
     @RequestMapping(value = "/locations", method = RequestMethod.PUT)
-    public void updateLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody List<ResourceRelationDTO> locations) {
+    public void updateLocations(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @Valid @RequestBody List<ResourceRelationDTO> locations) {
         ResourceOpportunity resource = (ResourceOpportunity) resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
         advertService.updateLocations(resource, locations);
     }
 
     @RequestMapping(value = "/categories", method = RequestMethod.PUT)
-    public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId, @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) {
+    public void updateCategories(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
+            @Valid @RequestBody AdvertCategoriesDTO categoriesDTO) {
         advertService.updateCategories(resourceDescriptor.getResourceScope(), resourceId, categoriesDTO);
     }
 
     @RequestMapping(value = "/competences", method = RequestMethod.PUT)
     public void updateCompetences(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                  @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
+            @Valid @RequestBody List<AdvertCompetenceDTO> competencesDTO) {
         advertService.updateCompetences(resourceDescriptor.getResourceScope(), resourceId, competencesDTO);
     }
 

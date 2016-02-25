@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.PrismConstants.HASH;
+import static uk.co.alumeni.prism.PrismConstants.ASTERISK;
+import static uk.co.alumeni.prism.PrismConstants.AT;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,28 +24,24 @@ public class PrismStringUtils {
     }
 
     public static String getObfuscatedEmail(String email) {
-        char hashChar = HASH.charAt(0);
-        String[] parts = email.split("@");
+        char hashChar = ASTERISK.charAt(0);
+        String[] emailParts = email.split("@");
 
-        List<List<String>> newParts = newLinkedList();
-        for (String part : parts) {
-            String[] subParts = part.split("\\.");
-            List<String> newSubParts = newLinkedList();
-            for (String subPart : subParts) {
-                int subPartLength = subPart.length();
-                for (int i = 0; i < subPartLength; i++) {
-                    if (i > 0 && !(i > 2 && i == (subPartLength - 1))) {
-                        StringBuilder subPartBuilder = new StringBuilder(subPart);
-                        subPartBuilder.setCharAt(i, hashChar);
-                        subPart = subPartBuilder.toString();
-                    }
+        List<String> newNameParts = newLinkedList();
+        String[] nameParts = emailParts[0].split("\\.");
+        for (String namePart : nameParts) {
+            int subPartLength = namePart.length();
+            for (int i = 0; i < subPartLength; i++) {
+                if (i > 0 && !(i > 2 && i == (subPartLength - 1))) {
+                    StringBuilder addressPartBuilder = new StringBuilder(namePart);
+                    addressPartBuilder.setCharAt(i, hashChar);
+                    namePart = addressPartBuilder.toString();
                 }
-                newSubParts.add(subPart);
             }
-            newParts.add(newSubParts);
+            newNameParts.add(namePart);
         }
 
-        return Joiner.on("@").join(newParts.stream().map(newPart -> Joiner.on(".").join(newPart)).collect(toList()));
+        return Joiner.on(".").join(newNameParts) + AT + emailParts[1];
     }
 
 }

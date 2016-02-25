@@ -107,12 +107,13 @@ public class UserMapper {
     private ApplicationContext applicationContext;
 
     public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
+        User currentUser = userService.getCurrentUser();
         DateTime updatedBaseline = DateTime.now().minusDays(1);
         List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
         userService.getUserProfiles(filter).forEach(user -> { //
                     representations.add(new ProfileListRowRepresentation()
                             .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(updatedBaseline))
-                            .withUser(getUserRepresentationSimple(user))
+                            .withUser(getUserRepresentationSimple(user, currentUser))
                             .withPersonalSummary(user.getPersonalSummary())
                             .withCv(user.getCvId() == null ? null : documentMapper.getDocumentRepresentation(user.getCvId()))
                             .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
@@ -191,7 +192,7 @@ public class UserMapper {
         representation.setFirstName3(user.getFirstName3());
         representation.setLastName(user.getLastName());
         representation.setFullName(user.getFullName());
-        representation.setEmail(user.getEmail());
+        representation.setEmail(userService.getSecuredUserEmailAddress(user.getEmail(), currentUser));
 
         UserAccount userAccount = user.getUserAccount();
         if (userAccount != null) {
@@ -225,7 +226,7 @@ public class UserMapper {
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
                 .withUnverifiedUserActivities(getUnverifiedUserRepresentations(user))
-                .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user)));
+                .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));
     }
 
     public UserProfileRepresentation getUserProfileRepresentation() {
@@ -242,24 +243,22 @@ public class UserMapper {
                 .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
     }
 
-    public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity) {
+    public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity, User currentUser) {
         UserRepresentationSimple representation = new UserRepresentationSimple();
         representation.setId(profileEntity.getUserId());
         representation.setFirstName(profileEntity.getUserFirstName());
         representation.setFirstName2(profileEntity.getUserFirstName2());
         representation.setFirstName3(profileEntity.getUserFirstName3());
         representation.setLastName(profileEntity.getUserLastName());
-        representation.setEmail(profileEntity.getUserEmail());
+        representation.setEmail(userService.getSecuredUserEmailAddress(profileEntity.getUserEmail(), currentUser));
         representation.setAccountImageUrl(profileEntity.getUserAccountImageUrl());
         return representation;
     }
 
     public List<UserRolesRepresentation> getUserRoleRepresentations(User user) {
         HashMultimap<ResourceRepresentationIdentity, PrismRole> index = HashMultimap.create();
-        roleService
-                .getUserRoles(user)
-                .forEach(
-                        userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
+        roleService.getUserRoles(user).forEach( //
+                userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
 
         return index.keySet().stream()
                 .map(resource -> new UserRolesRepresentation(resource, newArrayList(index.get(resource))))

@@ -1,9 +1,16 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
+import static com.google.common.collect.Sets.newTreeSet;
+import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
+import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -22,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -29,6 +37,8 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
@@ -196,16 +206,33 @@ public class ResourceMapper {
             filter.setResourceIds(resourceService.getResourcesWithUnreadMessages(scope, user));
         }
 
+        Map<Integer, String> resourceIndex = newHashMap();
+        Set<ResourceOpportunityCategoryDTO> resourceOrder = newTreeSet();
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
-        processRowDescriptors(resources, onlyAsPartnerResourceIds, summaries);
+        if (isNotEmpty(resources)) {
+            resourceService.setResourceMessageCounts(scope, resources, user);
 
-        List<ResourceListRowRepresentation> representations = Lists.newLinkedList();
+            LocalDate baselineDate = baseline.toLocalDate();
+            resources.forEach(resource -> {
+                Integer unreadMessageCount = resource.getUnreadMessageCount();
+                boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || (unreadMessageCount == null ? 0 : unreadMessageCount) > 0);
+                Integer daysSinceLastUpdated = Days.daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baselineDate).getDays();
+                resource.setPriority(prioritize ? new BigDecimal(1).setScale(ORDERING_PRECISION) : new BigDecimal(1).divide(
+                        new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)), HALF_UP).setScale(ORDERING_PRECISION));
+                resourceIndex.put(resource.getId(), resource.toString());
+                resourceOrder.add(resource);
+            });
+        }
+
+        TreeMap<String, ResourceListRowRepresentation> rowIndex = newTreeMap();
+        processRowDescriptors(resourceOrder, onlyAsPartnerResourceIds, summaries);
         resourceService.getResourceList(user, scope, parentScopes, targeterEntities, resources, filter, lastSequenceIdentifier, RESOURCE_LIST_PAGE_ROW_COUNT,
                 onlyAsPartnerResourceIds, true)
                 .forEach(row -> {
                     ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
                     representation.setScope(scope);
-                    representation.setId(row.getResourceId());
+                    Integer resourceId = row.getResourceId();
+                    representation.setId(resourceId);
 
                     Integer institutionId = row.getInstitutionId();
                     Integer departmentId = row.getDepartmentId();
@@ -261,13 +288,15 @@ public class ResourceMapper {
 
                     setRaisesUrgentFlag(representation, actions);
                     setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
-                    representation.setSequenceIdentifier(row.getSequenceIdentifier());
+
+                    String sequenceIdentifier = resourceIndex.get(resourceId);
+                    representation.setSequenceIdentifier(sequenceIdentifier);
 
                     representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
                     representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
 
                     representation.setActions(actions);
-                    representations.add(representation);
+                    rowIndex.put(sequenceIdentifier, representation);
                 });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
@@ -275,7 +304,7 @@ public class ResourceMapper {
                 .collect(Collectors.toSet());
         processRowDescriptors(urgentResources, urgentSummaries);
 
-        return new ResourceListRepresentation().withRows(representations).withSummaries(getSummaryRepresentations(summaries))
+        return new ResourceListRepresentation().withRows(newLinkedList(rowIndex.descendingMap().values())).withSummaries(getSummaryRepresentations(summaries))
                 .withUrgentSummaries(getSummaryRepresentations(urgentSummaries));
     }
 

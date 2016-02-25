@@ -53,6 +53,7 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserFeedbackService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+import uk.co.alumeni.prism.utils.PrismStringUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -205,10 +206,13 @@ public class UserMapper {
 
     public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
         User currentUser = userService.getCurrentUser();
-        return users.stream()
-                .map(UserSelectionDTO::getUser)
-                .map(user -> getUserRepresentationSimple(user, currentUser))
-                .collect(Collectors.toList());
+        List<UserRepresentationSimple> representations = newLinkedList();
+        users.stream().forEach(user -> {
+            UserRepresentationSimple representation = getUserRepresentationSimple(user.getUser(), currentUser);
+            representation.setEmail(PrismStringUtils.obfuscateEmail(representation.getEmail()));
+            representations.add(representation);
+        });
+        return representations;
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(Integer user) {

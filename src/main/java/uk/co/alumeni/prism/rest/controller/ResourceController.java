@@ -172,9 +172,10 @@ public class ResourceController {
     public List<ResourceRepresentationCreation> getResources(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope childResourceScope, @RequestParam Optional<String> q) {
+        User user = userService.getCurrentUser();
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getResources(resource, childResourceScope, q).stream()
-                .map(resourceMapper::getResourceRepresentationCreation).collect(toList());
+                .map(rr -> resourceMapper.getResourceRepresentationLocation(rr, user)).collect(toList());
     }
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)

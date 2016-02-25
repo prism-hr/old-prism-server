@@ -15,6 +15,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLo
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.institution.InstitutionRepresentationClient;
 import uk.co.alumeni.prism.services.InstitutionService;
+import uk.co.alumeni.prism.services.UserService;
 
 @Service
 @Transactional
@@ -22,6 +23,9 @@ public class InstitutionMapper {
 
     @Inject
     private InstitutionService institutionService;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -38,7 +42,8 @@ public class InstitutionMapper {
     }
 
     public List<ResourceRepresentationLocation> getInstitutionRepresentations(String query, String[] googleIds) {
-        return institutionService.getInstitutions(query, googleIds).stream().map(resourceMapper::getResourceRepresentationCreation)
+        return institutionService.getInstitutions(query, googleIds).stream()
+                .map(rr -> resourceMapper.getResourceRepresentationLocation(rr, userService.getCurrentUser()))
                 .collect(Collectors.toList());
     }
 

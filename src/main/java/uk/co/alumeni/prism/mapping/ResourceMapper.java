@@ -274,7 +274,7 @@ public class ResourceMapper {
                     }
 
                     representation.setCode(row.getCode());
-                    representation.setUser(userMapper.getUserRepresentationSimple(row));
+                    representation.setUser(userMapper.getUserRepresentationSimple(row, user));
                     representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
                     representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
@@ -314,8 +314,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    public <T extends ResourceSimpleDTO> ResourceRepresentationLocation getResourceRepresentationCreation(T resource) {
-        return getResourceRepresentationLocation(resource, ResourceRepresentationLocation.class);
+    public <T extends ResourceSimpleDTO> ResourceRepresentationLocation getResourceRepresentationLocation(T resource, User user) {
+        return getResourceRepresentationLocation(resource, ResourceRepresentationLocation.class, user);
     }
 
     public <T extends Resource> ResourceRepresentationSimple getResourceRepresentationSimple(T resource) {
@@ -752,7 +752,8 @@ public class ResourceMapper {
         return representation;
     }
 
-    private <T extends ResourceSimpleDTO, U extends ResourceRepresentationLocation> U getResourceRepresentationLocation(T resource, Class<U> returnType) {
+    private <T extends ResourceSimpleDTO, U extends ResourceRepresentationLocation> U getResourceRepresentationLocation(T resource, Class<U> returnType,
+            User user) {
         U representation = BeanUtils.instantiate(returnType);
 
         representation.setId(resource.getId());
@@ -769,7 +770,7 @@ public class ResourceMapper {
                     .withDomicile(resourceLocation.getAddressDomicileId()).withGoogleId(resourceLocation.getAddressGoogleId());
 
             representation.setUser(new UserRepresentation().withId(resourceLocation.getUserId()).withFirstName(resourceLocation.getUserFirstName())
-                    .withLastName(resourceLocation.getUserLastName()).withEmail(resourceLocation.getUserEmail()));
+                    .withLastName(resourceLocation.getUserLastName()).withEmail(userService.getSecuredUserEmailAddress(resourceLocation.getUserEmail(), user)));
 
             AddressCoordinatesRepresentation coordinatesRepresentation = null;
             BigDecimal locationLatitude = resourceLocation.getAddressCoordinateLatitude();

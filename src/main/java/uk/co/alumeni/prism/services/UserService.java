@@ -26,6 +26,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
 import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getUUID;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.obfuscateEmail;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -350,7 +351,10 @@ public class UserService {
 
         if (trimmedSearchTerm.length() >= 1) {
             List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(trimmedSearchTerm);
-            similarUsers.forEach(similarUser -> similarUser.setEditable(false));
+            similarUsers.forEach(similarUser -> {
+                similarUser.setEmail(obfuscateEmail(similarUser.getEmail()));
+                similarUser.setEditable(false);
+            });
             return similarUsers;
         }
 

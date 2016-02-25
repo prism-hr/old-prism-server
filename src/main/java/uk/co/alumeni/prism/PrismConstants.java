@@ -18,6 +18,8 @@ public class PrismConstants {
 
     public static final String FULL_STOP = ".";
 
+    public static final String HASH = "#";
+    
     public static final String ANGULAR_HASH = "#!";
 
     public static final Integer DEFAULT_RATING = 3;

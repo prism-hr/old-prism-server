@@ -230,13 +230,4 @@ public class CommentDAO {
                 .list();
     }
 
-    private Criteria getCommentTimelineCriteria() {
-        return sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN);
-    }
-
 }

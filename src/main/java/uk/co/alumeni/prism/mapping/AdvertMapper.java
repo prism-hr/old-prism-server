@@ -202,7 +202,7 @@ public class AdvertMapper {
             Boolean recommended = userAdverts.contains(advert.getId());
             representation.setRecommended(recommended);
 
-            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert)));
+            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert), user));
             representation.setName(advert.getName());
 
             AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
@@ -345,7 +345,7 @@ public class AdvertMapper {
         return null;
     }
 
-    public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets) {
+    public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets, User user) {
         Map<ResourceRepresentationConnection, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
         TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> filteredRepresentations = TreeMultimap.create();
 
@@ -376,7 +376,7 @@ public class AdvertMapper {
                 advertTarget.setOtherUserPortraitImageId(advertUser.getUserPortraitImageId());
             }
 
-            AdvertTargetConnectionRepresentation targetRepresentation = getAdvertTargetConnectionRepresentation(advertTarget);
+            AdvertTargetConnectionRepresentation targetRepresentation = getAdvertTargetConnectionRepresentation(advertTarget, user);
             filteredRepresentations.put(representation, targetRepresentation);
         }
 
@@ -389,9 +389,9 @@ public class AdvertMapper {
         return representations;
     }
 
-    public List<AdvertTargetConnectionRepresentation> getAdvertTargetConnectionRepresentations(List<AdvertTargetDTO> advertTargets) {
+    public List<AdvertTargetConnectionRepresentation> getAdvertTargetConnectionRepresentations(List<AdvertTargetDTO> advertTargets, User currentUser) {
         Set<AdvertTargetConnectionRepresentation> representations = Sets.newTreeSet();
-        getAdvertTargetRepresentations(advertTargets).forEach(advertTarget -> {
+        getAdvertTargetRepresentations(advertTargets, currentUser).forEach(advertTarget -> {
             representations.addAll(advertTarget.getConnections());
         });
         return newLinkedList(representations);
@@ -445,6 +445,7 @@ public class AdvertMapper {
                 locationsOrder.put(location.getDisplayName(), location);
             }
         });
+
         return new ArrayList<>(locationsOrder.values());
     }
 
@@ -623,7 +624,7 @@ public class AdvertMapper {
         return new AdvertListRepresentation().withRows(newLinkedList(representations.values())).withSummaries(getSummaryRepresentations(summaries));
     }
 
-    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget) {
+    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget, User user) {
         boolean canManage = isTrue(advertTarget.getCanManage());
         boolean severed = isTrue(advertTarget.getThisAdvertSevered()) || isTrue(advertTarget.getOtherAdvertSevered());
         AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
@@ -636,7 +637,8 @@ public class AdvertMapper {
         if (otherUserId != null) {
             connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId())
                     .withFirstName(advertTarget.getOtherUserFirstName())
-                    .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
+                    .withLastName(advertTarget.getOtherUserLastName())
+                    .withEmail(userService.getSecuredUserEmailAddress(advertTarget.getOtherUserEmail(), user))
                     .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
                     .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
         }

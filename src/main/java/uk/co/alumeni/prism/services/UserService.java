@@ -348,18 +348,23 @@ public class UserService {
     }
 
     public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
+        User currentUser = getCurrentUser();
         String trimmedSearchTerm = StringUtils.trim(searchTerm);
 
         if (trimmedSearchTerm.length() >= 1) {
             List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(trimmedSearchTerm);
             similarUsers.forEach(similarUser -> {
-                similarUser.setEmail(getObfuscatedEmail(similarUser.getEmail()));
+                similarUser.setEmail(getSecuredUserEmailAddress(similarUser.getEmail(), currentUser));
                 similarUser.setEditable(false);
             });
             return similarUsers;
         }
 
         return Lists.newArrayList();
+    }
+
+    public String getSecuredUserEmailAddress(String email, User currentUser) {
+        return Objects.equals(email, currentUser.getEmail()) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource) {
@@ -502,8 +507,11 @@ public class UserService {
         User user = getCurrentUser();
 
         HashMultimap<PrismScope, Integer> resources = create();
-        stream(organizationScopes).forEach(organizationScope -> resources.putAll(organizationScope,
-                resourceService.getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
+        stream(organizationScopes).forEach(
+                organizationScope -> resources.putAll(
+                        organizationScope,
+                        resourceService.getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM)).stream()
+                                .map(d -> d.getId()).collect(toList())));
 
         Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
         resources.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resources.get(scope), filter)));

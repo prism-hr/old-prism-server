@@ -3,10 +3,10 @@ package uk.co.alumeni.prism.domain.definitions.workflow.department;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_WITHDRAW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
@@ -124,7 +124,7 @@ public class PrismDepartmentWorkflow {
 
     private static PrismStateAction departmentSendMessageAbstract() {
         return new PrismStateAction() //
-                .withAction(PROJECT_SEND_MESSAGE) //
+                .withAction(DEPARTMENT_SEND_MESSAGE) //
                 .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR);
     }
 

@@ -2,8 +2,6 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
-import static java.math.RoundingMode.HALF_UP;
-import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
@@ -16,7 +14,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -33,8 +30,6 @@ import uk.co.alumeni.prism.dto.ProfileEntityDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
@@ -105,27 +100,6 @@ public class UserMapper {
 
     @Inject
     private ApplicationContext applicationContext;
-
-    public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
-        User currentUser = userService.getCurrentUser();
-        DateTime updatedBaseline = DateTime.now().minusDays(1);
-        List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
-        userService.getUserProfiles(filter).forEach(user -> { //
-                    representations.add(new ProfileListRowRepresentation()
-                            .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(updatedBaseline))
-                            .withUser(getUserRepresentationSimple(user, currentUser))
-                            .withPersonalSummary(user.getPersonalSummary())
-                            .withCv(user.getCvId() == null ? null : documentMapper.getDocumentRepresentation(user.getCvId()))
-                            .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
-                            .withApplicationCount(user.getApplicationCount() == null ? null : user.getApplicationCount().intValue())
-                            .withApplicationRatingCount(user.getApplicationRatingCount() == null ? null : user.getApplicationRatingCount().intValue())
-                            .withApplicationRatingAverage(
-                                    user.getApplicationRatingAverage() == null ? null : user.getApplicationRatingAverage().setScale(RATING_PRECISION, HALF_UP))
-                            .withUpdatedTimestamp(user.getUpdatedTimestamp())
-                            .withSequenceIdentifier(user.getSequenceIdentifier()));
-                });
-        return representations;
-    }
 
     public UserRepresentationSimple getUserRepresentationSimple(User user, User currentUser) {
         return getUserRepresentation(user, currentUser, UserRepresentationSimple.class);

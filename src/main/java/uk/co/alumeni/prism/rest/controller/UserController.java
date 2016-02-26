@@ -53,6 +53,7 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPosition
 import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
@@ -382,7 +383,13 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "profiles", method = RequestMethod.GET)
     public List<ProfileListRowRepresentation> getUserProfiles(@RequestBody ProfileListFilterDTO filter) {
-        return userMapper.getProfileListRowRepresentations(filter);
+        return profileMapper.getProfileListRowRepresentations(filter);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "profiles/{userId}/summary", method = RequestMethod.GET)
+    public ProfileRepresentationSummary getUserProfileSummary(@PathVariable Integer userId) {
+        return profileMapper.getProfileRepresentationSummary(userId);
     }
 
 }

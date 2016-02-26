@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileListRowRepresentation {
@@ -12,10 +11,6 @@ public class ProfileListRowRepresentation {
     private boolean raisesUpdateFlag;
 
     private UserRepresentationSimple user;
-
-    private String personalSummary;
-
-    private DocumentRepresentation cv;
 
     private String linkedInProfileUrl;
 
@@ -43,22 +38,6 @@ public class ProfileListRowRepresentation {
 
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
-    }
-
-    public String getPersonalSummary() {
-        return personalSummary;
-    }
-
-    public void setPersonalSummary(String personalSummary) {
-        this.personalSummary = personalSummary;
-    }
-
-    public DocumentRepresentation getCv() {
-        return cv;
-    }
-
-    public void setCv(DocumentRepresentation cv) {
-        this.cv = cv;
     }
 
     public String getLinkedInProfileUrl() {
@@ -116,16 +95,6 @@ public class ProfileListRowRepresentation {
 
     public ProfileListRowRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
-        return this;
-    }
-
-    public ProfileListRowRepresentation withPersonalSummary(String personalSummary) {
-        this.personalSummary = personalSummary;
-        return this;
-    }
-
-    public ProfileListRowRepresentation withCv(DocumentRepresentation cv) {
-        this.cv = cv;
         return this;
     }
 

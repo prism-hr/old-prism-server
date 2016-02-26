@@ -8,7 +8,7 @@
 </b></p>
 
 <p>
-    The reference stage is now due for completion. Follow the link below to advance the application to 
+    The messaging stage is now due for completion. Follow the link below to advance the application to 
     the next stage of consideration.
 </p>
 

@@ -1,15 +1,17 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.util.List;
+import org.joda.time.DateTime;
+
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public interface ResourceRepresentationClient {
 
-    List<ResourceCountRepresentation> getCounts();
+    UserRepresentationSimple getUser();
 
-    void setCounts(List<ResourceCountRepresentation> counts);
+    void setUser(UserRepresentationSimple user);
 
-    ResourceSummaryPlotRepresentation getPlot();
+    DateTime getCreatedTimestamp();
 
-    void setPlot(ResourceSummaryPlotRepresentation plot);
+    void setCreatedTimestamp(DateTime createdTimestamp);
 
 }

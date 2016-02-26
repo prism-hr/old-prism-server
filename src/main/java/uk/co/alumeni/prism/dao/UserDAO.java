@@ -35,9 +35,7 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationAdvertRelationSection;
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.PrismOauthProvider;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -46,7 +44,6 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
-import uk.co.alumeni.prism.domain.user.UserAdvertRelationSection;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
@@ -445,16 +442,12 @@ public class UserDAO {
                         .add(Projections.property("user.firstName3").as("userFirstName3")) //
                         .add(Projections.property("user.lastName").as("userLastName")) //
                         .add(Projections.property("userAccount.linkedinImageUrl").as("userAccountImageUrl")) //
-                        .add(Projections.property("userDocument.personalSummary").as("personalSummary")) //
-                        .add(Projections.property("userDocument.cv.id").as("cvId")) //
-                        .add(Projections.property("externalAccount.accountProfileUrl").as("linkedInProfileUrl")) //
+                        .add(Projections.property("userAccount.linkedProfileUrl").as("linkedInProfileUrl")) //
                         .add(Projections.countDistinct("application.id").as("applicationCount")) //
                         .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //
                         .add(Projections.avg("application.applicationRatingAverage").as("applicationRatingAverage")) //
                         .add(Projections.property("updatedTimestamp").as("updatedTimestamp")) //
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
-                .createAlias("externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("externalAccount.accountType", PrismOauthProvider.LINKEDIN)) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN,
                         Restrictions.eq("userRole.role.id", PrismRole.DEPARTMENT_STUDENT)) //
@@ -467,6 +460,11 @@ public class UserDAO {
                 .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.eq("shared", true));
+
+        Integer userId = filter.getUserId();
+        if (userId != null) {
+            criteria.add(Restrictions.eq("user.id", userId));
+        }
 
         String keyword = filter.getKeyword();
         if (keyword != null) {
@@ -576,13 +574,13 @@ public class UserDAO {
         return (List<Integer>) criteria.list();
     }
 
-    public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> void deleteUserProfileSection(
-            Class<T> userProfileSectionClass, Class<U> applicationSectionClass, Integer propertyId) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete " + userProfileSectionClass.getSimpleName() + " " //
-                        + "where " + applicationSectionClass.getSimpleName().toLowerCase() + " = :propertyId") //
-                .setParameter("propertyId", propertyId) //
-                .executeUpdate();
+    public DateTime getUserCreatedTimestamp(User user) {
+        return (DateTime) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property("acceptedTimestamp")) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.asc("acceptedTimestamp")) //
+                .setMaxResults(1)
+                .uniqueResult();
     }
 
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {

@@ -178,8 +178,8 @@ public class ApplicationDAO {
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference), "resource") //
+                        .add(Projections.countDistinct("id"), "resourceCount") //
                         .add(Projections.sum("applicationRatingCount"), "ratingCount") //
-                        .add(Projections.countDistinct("id"), "ratingResources") //
                         .add(Projections.avg("applicationRatingAverage"), "ratingAverage")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.isNotNull("applicationRatingCount")) //
@@ -393,6 +393,17 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("comment")) //
                 .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .list();
+    }
+
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(User user) {
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.count("id").as("resourceCount")) //
+                        .add(Projections.sum("applicationRatingCount").as("ratingCount")) //
+                        .add(Projections.avg("applicationRatingAverage").as("ratingAverage"))) //
+                .add(Restrictions.eq("user", user)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
+                .uniqueResult();
     }
 
     private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaryIds, List<Integer> secondaryIds) {

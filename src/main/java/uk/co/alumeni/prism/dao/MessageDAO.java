@@ -52,14 +52,14 @@ public class MessageDAO {
         return (List<MessageThreadDTO>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("message.thread").as("thread")) //
-                        .add(Projections.max("message.updatedTimestamp").as("updatedTimestamp"))) //
+                        .add(Projections.max("message.createdTimestamp").as("createdTimestamp"))) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNotNull("sendTimestamp")) //
-                .addOrder(Order.desc("updatedTimestamp")) //
+                .addOrder(Order.desc("createdTimestamp")) //
                 .addOrder(Order.desc("thread")) //
                 .setResultTransformer(Transformers.aliasToBean(MessageThreadDTO.class)) //
                 .list();

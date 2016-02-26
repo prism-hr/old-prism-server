@@ -1218,8 +1218,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM STATE DURATION *********************
      */
 
-    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
-    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
+    SYSTEM_APPLICATION_MESSAGE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Message Escalation Duration"),
+    SYSTEM_APPLICATION_MESSAGE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to process an application via messaging"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reference Duration"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant references"),
     SYSTEM_APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Review Duration"),

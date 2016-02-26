@@ -1,20 +1,13 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.stream.Collectors.toList;
-import static org.joda.time.DateTime.now;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.LinkedHashMultimap;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.MessageDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageDocument;
@@ -25,10 +18,17 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
+import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.LinkedHashMultimap;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.stream.Collectors.toList;
+import static org.joda.time.DateTime.now;
 
 @Service
 @Transactional
@@ -145,23 +145,25 @@ public class MessageService {
         entityService.save(sender);
         message.addRecipient(sender);
 
-        messageDTO.getRecipientUsers().forEach(userDTO -> {
+        for (UserEmailDTO userDTO : messageDTO.getRecipientUsers()) {
             MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getUserByEmail(userDTO.getEmail()));
             entityService.getOrCreate(recipient);
             message.addRecipient(recipient);
-        });
+        }
 
-        messageDTO.getRecipientRoles().forEach(roleDTO -> {
-            MessageRecipient recipient = new MessageRecipient().withMessage(message).withRole(roleService.getById(roleDTO));
+        for (PrismRole role : messageDTO.getRecipientRoles()) {
+            MessageRecipient recipient = new MessageRecipient().withMessage(message).withRole(roleService.getById(role));
             entityService.getOrCreate(recipient);
             message.addRecipient(recipient);
-        });
+        }
 
-        messageDTO.getDocuments().forEach(documentDTO -> {
-            MessageDocument document = new MessageDocument().withMessage(message).withDocument(documentService.getById(documentDTO.getId()));
-            entityService.getOrCreate(document);
-            message.addDocument(document);
-        });
+        if (messageDTO.getDocuments() != null) {
+            for (DocumentDTO documentDTO : messageDTO.getDocuments()) {
+                MessageDocument document = new MessageDocument().withMessage(message).withDocument(documentService.getById(documentDTO.getId()));
+                entityService.getOrCreate(document);
+                message.addDocument(document);
+            }
+        }
     }
 
     public void viewMessage(Integer recipientId) {

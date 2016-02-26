@@ -205,6 +205,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_COMMENT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Comment"),
     SYSTEM_ACTION_APPLICATION_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Application"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_VALIDATION_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Screening Stage"),
+    SYSTEM_ACTION_APPLICATION_COMPLETE_MESSAGING_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Messaging Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REFERENCE_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Reference Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REVIEW_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Review Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_INTERVIEW_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Interview Stage"),

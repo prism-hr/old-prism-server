@@ -1,10 +1,18 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.LinkedHashMultimap;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.stream.Collectors.toList;
+import static org.joda.time.DateTime.now;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.dao.MessageDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -22,13 +30,8 @@ import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.stream.Collectors.toList;
-import static org.joda.time.DateTime.now;
+import com.google.common.base.Objects;
+import com.google.common.collect.LinkedHashMultimap;
 
 @Service
 @Transactional

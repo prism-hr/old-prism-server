@@ -204,7 +204,7 @@ public class ActionMapper {
                     });
 
                     Map<ResourceDTO, Resource> targetingResources = newHashMap();
-                    advertService.getTargetingAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
+                    advertService.getTargeterAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
                         targetingAdvert.getEnclosingResources().stream().forEach(targetingResource -> {
                             ResourceDTO targetingResourceDTO = new ResourceDTO().withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
                             targetingResources.put(targetingResourceDTO, targetingResource);

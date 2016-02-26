@@ -503,9 +503,7 @@ public class UserService {
         return users;
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
-        User user = getCurrentUser();
-
+    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user) {
         HashMultimap<PrismScope, Integer> resources = create();
         stream(organizationScopes).forEach(
                 organizationScope -> resources.putAll(
@@ -538,6 +536,10 @@ public class UserService {
     public boolean checkUserEditable(User user, User currentUser) {
         UserAccount userAccount = user.getUserAccount();
         return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
+    }
+
+    public DateTime getUserCreatedTimestamp(User user) {
+        return getUserCreatedTimestamp(user);
     }
 
     @SuppressWarnings("unchecked")

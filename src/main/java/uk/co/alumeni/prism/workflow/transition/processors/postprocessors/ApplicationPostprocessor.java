@@ -110,7 +110,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             if (parent != null) {
                 ResourceRatingSummaryDTO parentRatingSummary = applicationService.getApplicationRatingSummary(parent);
                 Integer ratingCount = parentRatingSummary.getRatingCount().intValue();
-                Integer ratingApplications = parentRatingSummary.getRatingResources().intValue();
+                Integer ratingApplications = parentRatingSummary.getResourceCount().intValue();
                 parent.setApplicationRatingCount(ratingCount);
                 parent.setApplicationRatingFrequency(new BigDecimal(ratingCount).divide(new BigDecimal(ratingApplications), RATING_PRECISION, HALF_UP));
                 parent.setApplicationRatingAverage(BigDecimal.valueOf(parentRatingSummary.getRatingAverage()).setScale(RATING_PRECISION, HALF_UP));

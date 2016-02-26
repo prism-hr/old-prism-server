@@ -47,6 +47,7 @@ import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -328,7 +329,7 @@ public class CommentService {
         comment.setCreatedTimestamp(now());
         comment.setDeclinedResponse(toBoolean(commentDTO.getDeclinedResponse()));
         entityService.flush();
-        
+
         if (resource.getResourceScope().equals(APPLICATION)) {
             prepareProcessApplicationComment((Application) resource, action, comment, commentDTO);
         } else {
@@ -348,6 +349,14 @@ public class CommentService {
             }
         });
         return comments;
+    }
+
+    public List<Comment> getRatingComments(Resource resource) {
+        return commentDAO.getRatingComments(resource);
+    }
+
+    public List<Comment> getRatingComments(PrismScope scope, User user) {
+        return commentDAO.getRatingComments(scope, user);
     }
 
     public Boolean prepareComment(Comment comment) {

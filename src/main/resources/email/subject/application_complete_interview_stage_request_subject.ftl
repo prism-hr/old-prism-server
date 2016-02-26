@@ -1,1 +1,1 @@
-${APPLICATION_CREATOR_FULL_NAME} Application ${APPLICATION_CODE} - Interview Stage Completed
+${APPLICATION_CREATOR_FULL_NAME} Application ${APPLICATION_CODE} - Interview Stage Completion

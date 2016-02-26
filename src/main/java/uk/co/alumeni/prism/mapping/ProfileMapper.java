@@ -1,11 +1,19 @@
 package uk.co.alumeni.prism.mapping;
 
+import static java.math.RoundingMode.HALF_UP;
+import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
+import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
+
+import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +27,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
@@ -30,16 +39,30 @@ import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.domain.user.UserDocument;
+import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
+import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
+import uk.co.alumeni.prism.services.ApplicationService;
+import uk.co.alumeni.prism.services.CommentService;
+import uk.co.alumeni.prism.services.ProfileService;
+import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional
@@ -49,6 +72,9 @@ public class ProfileMapper {
     private AddressMapper addressMapper;
 
     @Inject
+    private CommentMapper commentMapper;
+
+    @Inject
     private DocumentMapper documentMapper;
 
     @Inject
@@ -56,6 +82,40 @@ public class ProfileMapper {
 
     @Inject
     private UserMapper userMapper;
+
+    @Inject
+    private ApplicationService applicationService;
+
+    @Inject
+    private CommentService commentService;
+
+    @Inject
+    private ProfileService profileService;
+
+    @Inject
+    private UserService userService;
+
+    public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
+        User currentUser = userService.getCurrentUser();
+        DateTime updatedBaseline = DateTime.now().minusDays(1);
+        List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
+        userService.getUserProfiles(filter, currentUser).forEach(user -> { //
+                    Long applicationCount = user.getApplicationCount();
+                    Long applicationRatingCount = user.getApplicationRatingCount();
+                    BigDecimal applicationRatingAverage = user.getApplicationRatingAverage();
+                    representations.add(new ProfileListRowRepresentation()
+                            .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(updatedBaseline))
+                            .withUser(userMapper.getUserRepresentationSimple(user, currentUser))
+                            .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
+                            .withApplicationCount(applicationCount == null ? null : applicationCount.intValue())
+                            .withApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue())
+                            .withApplicationRatingAverage(
+                                    applicationRatingAverage == null ? null : applicationRatingAverage.setScale(RATING_PRECISION, HALF_UP))
+                            .withUpdatedTimestamp(user.getUpdatedTimestamp())
+                            .withSequenceIdentifier(user.getSequenceIdentifier()));
+                });
+        return representations;
+    }
 
     public <T extends ProfilePersonalDetail<?>> ProfilePersonalDetailRepresentation getPersonalDetailRepresentation(T personalDetail,
             boolean viewEqualOpportunities) {
@@ -97,14 +157,15 @@ public class ProfileMapper {
         return null;
     }
 
-    public <T extends ProfileQualification<?>> List<ProfileQualificationRepresentation> getQualificationRepresentations(Set<T> qualifications, User currentUser) {
+    public <T extends ProfileQualification<?>> List<ProfileQualificationRepresentation> getQualificationRepresentations(Collection<T> qualifications,
+            User currentUser) {
         return qualifications.stream()
                 .map(qualification -> getQualificationRepresentation(qualification, currentUser))
                 .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
                 .collect(Collectors.toList());
     }
 
-    public <T extends ProfileAward<?>> List<ProfileAwardRepresentation> getAwardRepresentations(Set<T> awards) {
+    public <T extends ProfileAward<?>> List<ProfileAwardRepresentation> getAwardRepresentations(Collection<T> awards) {
         return awards.stream()
                 .map(this::getAwardRepresentation)
                 .sorted((o1, o2) -> o1.getAwardDate().compareTo(o2.getAwardDate()))
@@ -112,14 +173,14 @@ public class ProfileMapper {
     }
 
     public <T extends ProfileEmploymentPosition<?>> List<ProfileEmploymentPositionRepresentation> getEmploymentPositionRepresentations(
-            Set<T> employmentPositions, User currentUser) {
+            Collection<T> employmentPositions, User currentUser) {
         return employmentPositions.stream()
                 .map(employmentPosition -> getEmploymentPositionRepresentation(employmentPosition, currentUser))
                 .sorted((o1, o2) -> o1.getStartDate().compareTo(o2.getStartDate()))
                 .collect(Collectors.toList());
     }
 
-    public <T extends ProfileReferee<?>> List<ProfileRefereeRepresentation> getRefereeRepresentations(Set<T> referees, User currentUser) {
+    public <T extends ProfileReferee<?>> List<ProfileRefereeRepresentation> getRefereeRepresentations(Collection<T> referees, User currentUser) {
         return referees.stream()
                 .map(referee -> getRefereeRepresentation(referee, currentUser))
                 .sorted((o1, o2) -> o1.getResource().getUser().getFullName().compareTo(o2.getResource().getUser().getFullName()))
@@ -170,6 +231,38 @@ public class ProfileMapper {
         Domicile domicile = address.getDomicile();
         representation.setDomicile(domicile == null ? null : domicile.getId());
         return representation;
+    }
+
+    public ProfileRepresentationSummary getProfileRepresentationSummary(Integer userId) {
+        User user = userService.getById(userId);
+        User currentUser = userService.getCurrentUser();
+        if (user.equals(currentUser) || userService.getUserProfiles(new ProfileListFilterDTO().withUserId(userId), currentUser) != null) {
+            ProfileRepresentationSummary representation = new ProfileRepresentationSummary();
+            representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
+            representation.setCreatedTimestamp(userService.getUserCreatedTimestamp(user));
+
+            ResourceRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(user);
+            representation.setApplicationCount(longToInteger(ratingSummary.getResourceCount()));
+            representation.setApplicationRatingCount(longToInteger(ratingSummary.getRatingCount()));
+            representation.setApplicationRatingAverage(doubleToBigDecimal(ratingSummary.getRatingAverage(), RATING_PRECISION));
+
+            List<Comment> ratingComments = commentService.getRatingComments(APPLICATION, user);
+            representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(ratingComments));
+
+            UserAccount userAccount = user.getUserAccount();
+            representation.setRecentQualifications(getQualificationRepresentations(
+                    profileService.getRecentQualifications(userAccount, UserQualification.class), currentUser));
+            representation.setRecentEmploymentPositions(getEmploymentPositionRepresentations(
+                    profileService.getRecentEmploymentPositions(userAccount, UserEmploymentPosition.class), currentUser));
+
+            UserDocument document = userAccount.getDocument();
+            if (document != null) {
+                representation.setCv(documentMapper.getDocumentRepresentation(document.getCv()));
+                representation.setPersonalSummary(document.getPersonalSummary());
+            }
+        }
+
+        return null;
     }
 
     private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification, User currentUser) {

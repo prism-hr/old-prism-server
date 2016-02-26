@@ -37,7 +37,7 @@ public class InstitutionMapper {
     public InstitutionRepresentationClient getInstitutionRepresentationClient(Institution institution, List<PrismRole> overridingRoles, User currentUser) {
         InstitutionRepresentationClient representation = getInstitutionRepresentation(institution, InstitutionRepresentationClient.class, overridingRoles,
                 currentUser);
-        resourceMapper.appendResourceSummaryRepresentation(institution, representation);
+        resourceMapper.appendResourceParentRepresentationSummary(institution, representation);
         return representation;
     }
 

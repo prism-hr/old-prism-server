@@ -172,7 +172,8 @@ public class ApplicationService {
 
         resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
-        List<Integer> applications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId()).collect(toList());
+        List<Integer> applications = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter).stream().map(a -> a.getId())
+                .collect(toList());
 
         boolean hasRedactions = actionService.hasRedactions(user, scope, applications);
         DataTable table = new DataTable();
@@ -266,7 +267,7 @@ public class ApplicationService {
         }
     }
 
-    public <T extends Application> ResourceRatingSummaryDTO getApplicationRatingSummary(T application) {
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(Application application) {
         return applicationDAO.getApplicationRatingSummary(application);
     }
 
@@ -284,15 +285,18 @@ public class ApplicationService {
         return errors;
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByYear(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByYear(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByMonth(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByMonth(resource, constraints);
     }
 
-    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource, HashMultimap<PrismFilterEntity, String> constraints) {
+    public List<ApplicationProcessingSummaryDTO> getApplicationProcessingSummariesByWeek(ResourceParent resource,
+            HashMultimap<PrismFilterEntity, String> constraints) {
         return applicationDAO.getApplicationProcessingSummariesByWeek(resource, constraints);
     }
 
@@ -311,7 +315,7 @@ public class ApplicationService {
                 && !application.getState().equals(APPLICATION_APPROVED);
     }
 
-    public <T extends Application> void synchronizeApplicationRating(T application) {
+    public void synchronizeApplicationRating(Application application) {
         ResourceRatingSummaryDTO ratingSummary = getApplicationRatingSummary(application);
         application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
@@ -428,6 +432,10 @@ public class ApplicationService {
         return applicationDAO.getApplicationsWithReferencesProvided(parentResource);
     }
 
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(User user) {
+        return applicationDAO.getApplicationRatingSummary(user);
+    }
+
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {
         programDetail.setOpportunityType(opportunityType);
         application.setOpportunityCategories(opportunityType.getOpportunityCategory().name());
@@ -469,8 +477,10 @@ public class ApplicationService {
         }
 
         ResourceParent organization = (ResourceParent) resourceService.getById(organizationScope, organizationId);
-        Advert locationAdvert = resourceService.createResourceRelation(resourceRelation, PrismScope.getResourceContexts(organization.getOpportunityCategories()).iterator().next(),
-                resourceRelation.getResource().getScope().getScopeCategory().equals(OPPORTUNITY) ? userService.getCurrentUser() : organization.getUser()).getAdvert();
+        Advert locationAdvert = resourceService.createResourceRelation(resourceRelation,
+                PrismScope.getResourceContexts(organization.getOpportunityCategories()).iterator().next(),
+                resourceRelation.getResource().getScope().getScopeCategory().equals(OPPORTUNITY) ? userService.getCurrentUser() : organization.getUser())
+                .getAdvert();
         boolean preference = BooleanUtils.isTrue(locationDTO.getPreference());
 
         ApplicationLocation duplicateApplicationLocation = getDuplicateApplicationTag(ApplicationLocation.class, application, locationAdvert);
@@ -498,7 +508,8 @@ public class ApplicationService {
         return duplicateApplicationLocation;
     }
 
-    private <T extends ApplicationTagSection<U>, U extends UniqueEntity> T getDuplicateApplicationTag(Class<T> applicationTagClass, Application application, U tag) {
+    private <T extends ApplicationTagSection<U>, U extends UniqueEntity> T getDuplicateApplicationTag(Class<T> applicationTagClass, Application application,
+            U tag) {
         return entityService.getDuplicateEntity(applicationTagClass, new EntitySignature().addProperty("association", application).addProperty("tag", tag));
     }
 

@@ -377,12 +377,8 @@ public class ResourceDAO {
         return (Long) sessionFactory.getCurrentSession().createCriteria(childResourceScope.getResourceClass()) //
                 .setProjection(Projections.countDistinct("id")) //
                 .createAlias("resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("action.actionCondition", "resourceCondition.actionCondition"))
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("resourceState.state.id", PrismState.valueOf(childResourceScope.name() + "_APPROVED")))
                 .uniqueResult();
     }
 

@@ -8,8 +8,8 @@
 </b></p>
 
 <p>
-    All of the requested authorizations have been provided to proceed with making an offer or issuing a 
-    rejection. Follow the link below to advance the application to the next stage of consideration.
+    The approval stage is now due for completion. Follow the link below to advance the application to 
+    the next stage of consideration.
 </p>
 
 ${ACTION_COMPLETE}

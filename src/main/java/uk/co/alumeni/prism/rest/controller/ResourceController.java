@@ -57,6 +57,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationId
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceUserRolesRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
@@ -117,6 +118,13 @@ public class ResourceController {
     public ResourceRepresentationExtended getResource(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceMapper.getResourceRepresentationClient(resource, userService.getCurrentUser());
+    }
+
+    @Transactional
+    @RequestMapping(value = "/{resourceId}/summary", method = RequestMethod.GET)
+    public ResourceRepresentationSummary getResourceSummary(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationSummary(resource);
     }
 
     @Transactional

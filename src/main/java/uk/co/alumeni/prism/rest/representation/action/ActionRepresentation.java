@@ -1,11 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.action;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
 
 import com.google.common.base.Objects;
 
-public class ActionRepresentation {
+public class ActionRepresentation implements Comparable<ActionRepresentation> {
 
     private PrismAction id;
 
@@ -62,6 +63,13 @@ public class ActionRepresentation {
         }
         ActionRepresentation other = (ActionRepresentation) object;
         return Objects.equal(getId(), other.getId());
+    }
+
+    @Override
+    public int compareTo(ActionRepresentation other) {
+        PrismAction otherAction = other.getId();
+        int compare = compare(id.getScope(), otherAction.getScope());
+        return compare == 0 ? compare(id.name(), otherAction.name()) : compare;
     }
 
 }

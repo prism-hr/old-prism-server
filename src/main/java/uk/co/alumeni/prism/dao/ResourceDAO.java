@@ -735,8 +735,8 @@ public class ResourceDAO {
         String resourceIdReference = scope.getLowerCamelName() + ".id";
         return (List<ResourceMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty(resourceIdReference)) //
-                        .add(Projections.countDistinct("message.id"))) //
+                        .add(Projections.groupProperty(resourceIdReference).as("id")) //
+                        .add(Projections.countDistinct("message.id").as("messageCount"))) //
                 .createAlias("thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.messages", "message") //
                 .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //

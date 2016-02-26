@@ -206,8 +206,8 @@ public class ResourceMapper {
             filter.setResourceIds(resourceService.getResourcesWithUnreadMessages(scope, user));
         }
 
-        Map<Integer, String> indexedResources = newHashMap();
         Set<ResourceOpportunityCategoryDTO> orderedResources = newTreeSet();
+        Map<Integer, ResourceOpportunityCategoryDTO> indexedResources = newHashMap();
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
         if (isNotEmpty(resources)) {
             resourceService.setResourceMessageCounts(scope, resources, user);
@@ -219,7 +219,7 @@ public class ResourceMapper {
                 Integer daysSinceLastUpdated = Days.daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baselineDate).getDays();
                 resource.setPriority(prioritize ? new BigDecimal(1).setScale(ORDERING_PRECISION) : new BigDecimal(1).divide(
                         new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)), HALF_UP).setScale(ORDERING_PRECISION));
-                indexedResources.put(resource.getId(), resource.toString());
+                indexedResources.put(resource.getId(), resource);
                 orderedResources.add(resource);
             });
         }
@@ -286,9 +286,14 @@ public class ResourceMapper {
                     representation.setUpdatedTimestamp(updatedTimestamp);
 
                     setRaisesUrgentFlag(representation, actions);
+
+                    ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
+                    representation.setReadMessageCount(indexResource.getReadMessageCount());
+                    representation.setUnreadMessageCount(indexResource.getUnreadMessageCount());
+
                     setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
-                    String sequenceIdentifier = indexedResources.get(resourceId);
+                    String sequenceIdentifier = indexResource.toString();
                     representation.setSequenceIdentifier(sequenceIdentifier);
 
                     representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));

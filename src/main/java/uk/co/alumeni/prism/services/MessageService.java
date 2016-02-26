@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.joda.time.DateTime.now;
 
 import java.util.Collection;
@@ -148,23 +149,32 @@ public class MessageService {
         entityService.save(sender);
         message.addRecipient(sender);
 
-        for (UserEmailDTO userDTO : messageDTO.getRecipientUsers()) {
-            MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getUserByEmail(userDTO.getEmail()));
-            entityService.getOrCreate(recipient);
-            message.addRecipient(recipient);
+        List<UserEmailDTO> recipientUsers = messageDTO.getRecipientUsers();
+        if (isNotEmpty(recipientUsers)) {
+            for (UserEmailDTO userDTO : recipientUsers) {
+                MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getUserByEmail(userDTO.getEmail()));
+                entityService.getOrCreate(recipient);
+                message.addRecipient(recipient);
+            }
         }
 
-        for (PrismRole role : messageDTO.getRecipientRoles()) {
-            MessageRecipient recipient = new MessageRecipient().withMessage(message).withRole(roleService.getById(role));
-            entityService.getOrCreate(recipient);
-            message.addRecipient(recipient);
+        List<PrismRole> recipientRoles = messageDTO.getRecipientRoles();
+        if (isNotEmpty(recipientRoles)) {
+            for (PrismRole role : messageDTO.getRecipientRoles()) {
+                MessageRecipient recipient = new MessageRecipient().withMessage(message).withRole(roleService.getById(role));
+                entityService.getOrCreate(recipient);
+                message.addRecipient(recipient);
+            }
         }
 
-        if (messageDTO.getDocuments() != null) {
-            for (DocumentDTO documentDTO : messageDTO.getDocuments()) {
-                MessageDocument document = new MessageDocument().withMessage(message).withDocument(documentService.getById(documentDTO.getId()));
-                entityService.getOrCreate(document);
-                message.addDocument(document);
+        List<DocumentDTO> documents = messageDTO.getDocuments();
+        if (isNotEmpty(documents)) {
+            if (messageDTO.getDocuments() != null) {
+                for (DocumentDTO documentDTO : messageDTO.getDocuments()) {
+                    MessageDocument document = new MessageDocument().withMessage(message).withDocument(documentService.getById(documentDTO.getId()));
+                    entityService.getOrCreate(document);
+                    message.addDocument(document);
+                }
             }
         }
     }

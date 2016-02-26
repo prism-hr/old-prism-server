@@ -744,6 +744,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("recipient.user", user)) //
                 .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
                 .add(read ? Restrictions.isNotNull("recipient.viewTimestamp") : Restrictions.isNull("recipient.viewTimestamp")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceMessageCountDTO.class)) //
                 .list();
     }
 

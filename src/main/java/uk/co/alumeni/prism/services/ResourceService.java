@@ -1185,7 +1185,7 @@ public class ResourceService {
 
     private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
-        Set<T> resources = Sets.newTreeSet();
+        Set<T> resources = newTreeSet();
         if (!(applyReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
             DateTime baseline = DateTime.now().minusDays(1);
             Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;

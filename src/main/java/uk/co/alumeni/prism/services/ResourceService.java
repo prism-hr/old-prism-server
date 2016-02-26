@@ -56,7 +56,6 @@ import jersey.repackaged.com.google.common.collect.Sets;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -532,7 +531,7 @@ public class ResourceService {
         }
 
         StateDurationDefinition stateDurationDefinition = resource.getState().getStateDurationDefinition();
-        if (comment.isStateTransitionComment() || (stateDurationDefinition != null && BooleanUtils.isTrue(stateDurationDefinition.getEscalation()))) {
+        if (comment.isStateTransitionComment() || (stateDurationDefinition != null && isTrue(stateDurationDefinition.getEscalation()))) {
             PrismStateDurationEvaluation stateDurationEvaluation = resource.getState().getStateDurationEvaluation();
             if (stateDurationEvaluation != null) {
                 StateDurationResolver<T> resolver = (StateDurationResolver<T>) applicationContext.getBean(stateDurationEvaluation.getResolver());
@@ -544,6 +543,7 @@ public class ResourceService {
                 }
             }
         }
+        
         entityService.flush();
     }
 
@@ -1143,7 +1143,7 @@ public class ResourceService {
         return resourceDAO.getResourcesWithUnreadMessages(scope, user);
     }
 
-    public <T extends ResourceOpportunityCategoryDTO> void setResourceMessageCounts(PrismScope scope, Set<T> resources, User user) {
+    public <T extends ResourceOpportunityCategoryDTO> void setResourceMessageAttributes(PrismScope scope, Set<T> resources, User user) {
         Map<Integer, T> resourceIndex = newHashMap();
         resources.stream().forEach(resource -> resourceIndex.put(resource.getId(), resource));
 

@@ -10,6 +10,8 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
 
     private Integer unreadMessageCount;
 
+    private Integer creatorMessageCount;
+
     private DateTime updatedTimestamp;
 
     private Boolean onlyAsPartner;
@@ -36,6 +38,14 @@ public class ResourceOpportunityCategoryDTO extends EntityOpportunityCategoryDTO
 
     public void setUnreadMessageCount(Integer unreadMessageCount) {
         this.unreadMessageCount = unreadMessageCount;
+    }
+
+    public Integer getCreatorMessageCount() {
+        return creatorMessageCount;
+    }
+
+    public void setCreatorMessageCount(Integer creatorMessageCount) {
+        this.creatorMessageCount = creatorMessageCount;
     }
 
     public DateTime getUpdatedTimestamp() {

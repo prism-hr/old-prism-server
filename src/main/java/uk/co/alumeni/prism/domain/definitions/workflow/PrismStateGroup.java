@@ -7,6 +7,7 @@ public enum PrismStateGroup implements PrismLocalizableDefinition {
 
     APPLICATION_UNSUBMITTED(PrismScope.APPLICATION), //
     APPLICATION_VALIDATION(PrismScope.APPLICATION), //
+    APPLICATION_MESSAGING(PrismScope.APPLICATION), //
     APPLICATION_REVIEW(PrismScope.APPLICATION), //
     APPLICATION_INTERVIEW(PrismScope.APPLICATION), //
     APPLICATION_APPROVAL(PrismScope.APPLICATION), //

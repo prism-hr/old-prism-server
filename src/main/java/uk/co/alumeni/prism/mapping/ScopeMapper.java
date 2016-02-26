@@ -121,7 +121,7 @@ public class ScopeMapper {
                     ResourceActionOpportunityCategoryDTO.class);
 
             if (isNotEmpty(resourceActions)) {
-                resourceService.setResourceMessageCounts(scope, resourceActions, user);
+                resourceService.setResourceMessageAttributes(scope, resourceActions, user);
             }
 
             Set<Integer> resources = Sets.newHashSet();

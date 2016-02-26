@@ -52,7 +52,7 @@ public class MessageDAO {
         return (List<MessageThreadDTO>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("message.thread").as("thread")) //
-                        .add(Projections.max("message.createdTimestamp").as("createdTimestamp"))) //
+                        .add(Projections.max("message.createdTimestamp").as("updatedTimestamp"))) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //

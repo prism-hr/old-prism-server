@@ -22,6 +22,7 @@ import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 
@@ -227,6 +228,23 @@ public class CommentDAO {
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .addOrder(Order.desc("id")) //
+                .list();
+    }
+
+    public List<Comment> getRatingComments(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("action.ratingAction", true)) //
+                .list();
+    }
+
+    public List<Comment> getRatingComments(PrismScope scope, User user) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNotNull(scope.getLowerCamelName())) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("action.ratingAction", true)) //
                 .list();
     }
 

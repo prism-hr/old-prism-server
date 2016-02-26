@@ -8,9 +8,9 @@
 </b></p>
 
 <p>
-    The reserved duration will soon expire for this application. Follow the link below to advance the 
-    application to a different stage of consideration. You have a limited time to do this before the 
-    application will be rejected automatically.
+    The reserved stage is now due for completion. Follow the link below to advance the application to a 
+    different stage of consideration. You have a limited time to do this before the application will be 
+    rejected automatically.
 </p>
 
 ${ACTION_COMPLETE}

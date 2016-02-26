@@ -1,7 +1,13 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static jersey.repackaged.com.google.common.collect.Sets.newTreeSet;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -45,6 +51,7 @@ import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructi
 import uk.co.alumeni.prism.rest.representation.comment.CommentOfferDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentPositionDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentationRatingSummary;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
@@ -199,6 +206,30 @@ public class CommentMapper {
                 .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
                 .map(this::getCommentAssignedUserRepresentation)
                 .collect(Collectors.toList());
+    }
+
+    public List<CommentRepresentationRatingSummary> getRatingCommentSummaryRepresentations(List<Comment> ratingComments) {
+        Map<PrismAction, CommentRepresentationRatingSummary> commentRepresentations = newHashMap();
+        ratingComments.stream().forEach(comment -> {
+            PrismAction prismAction = comment.getAction().getId();
+            CommentRepresentationRatingSummary commentRepresentation = commentRepresentations.get(prismAction);
+            if (commentRepresentation == null) {
+                commentRepresentation = new CommentRepresentationRatingSummary();
+                commentRepresentations.put(prismAction, commentRepresentation);
+            }
+
+            if (isTrue(comment.getDeclinedResponse())) {
+                setRatingCommentSummaryCount(commentRepresentation, "declinedCount");
+            } else {
+                setRatingCommentSummaryCount(commentRepresentation, "providedCount");
+            }
+        });
+        return newLinkedList(newTreeSet(commentRepresentations.values()));
+    }
+
+    private void setRatingCommentSummaryCount(CommentRepresentationRatingSummary commentRepresentation, String countProperty) {
+        Integer count = (Integer) getProperty(commentRepresentation, countProperty);
+        setProperty(commentRepresentation, countProperty, count == null ? 1 : (count + 1));
     }
 
     private CommentRepresentation getCommentRepresentation(

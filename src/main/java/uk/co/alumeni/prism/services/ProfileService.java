@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.springframework.beans.BeanUtils.instantiate;
@@ -406,6 +407,22 @@ public class ProfileService {
         applicationAdditionalInformation.setLastUpdatedTimestamp(DateTime.now());
         application.setAdditionalInformation(applicationAdditionalInformation);
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
+    }
+
+    public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> List<U> getRecentQualifications(T profile,
+            Class<U> qualificationClass) {
+        List<U> qualifications = newLinkedList();
+        qualifications.add(profileDAO.getCurrentQualification(profile, qualificationClass));
+        qualifications.add(profileDAO.getMostRecentQualification(profile, qualificationClass));
+        return qualifications;
+    }
+
+    public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> List<U> getRecentEmploymentPositions(T profile,
+            Class<U> qualificationClass) {
+        List<U> employmentPositions = newLinkedList();
+        employmentPositions.add(profileDAO.getCurrentEmploymentPosition(profile, qualificationClass));
+        employmentPositions.add(profileDAO.getMostRecentEmploymentPosition(profile, qualificationClass));
+        return employmentPositions;
     }
 
     private void fillApplicationPersonalDetail(Application application, UserAccount userAccount) {

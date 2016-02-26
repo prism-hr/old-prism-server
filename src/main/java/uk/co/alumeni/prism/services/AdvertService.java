@@ -1067,8 +1067,8 @@ public class AdvertService {
         }
     }
 
-    public List<Advert> getTargetingAdverts(Collection<Advert> adverts) {
-        return advertDAO.getTargetingAdverts(adverts);
+    public List<Advert> getTargeterAdverts(Collection<Advert> adverts) {
+        return advertDAO.getTargeterAdverts(adverts);
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds,

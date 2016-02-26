@@ -838,7 +838,7 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Advert> getTargetingAdverts(Collection<Advert> adverts) {
+    public List<Advert> getTargeterAdverts(Collection<Advert> adverts) {
         return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert")) //
                 .add(Restrictions.in("targetAdvert", adverts)) //

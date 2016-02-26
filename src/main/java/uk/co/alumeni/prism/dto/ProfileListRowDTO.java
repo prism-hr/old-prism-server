@@ -22,10 +22,6 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
 
     private String userAccountImageUrl;
 
-    private String personalSummary;
-
-    private Integer cvId;
-
     private String linkedInProfileUrl;
 
     private Long applicationCount;
@@ -92,22 +88,6 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
 
     public void setUserAccountImageUrl(String userAccountImageUrl) {
         this.userAccountImageUrl = userAccountImageUrl;
-    }
-
-    public String getPersonalSummary() {
-        return personalSummary;
-    }
-
-    public void setPersonalSummary(String personalSummary) {
-        this.personalSummary = personalSummary;
-    }
-
-    public Integer getCvId() {
-        return cvId;
-    }
-
-    public void setCvId(Integer cvId) {
-        this.cvId = cvId;
     }
 
     public String getLinkedInProfileUrl() {

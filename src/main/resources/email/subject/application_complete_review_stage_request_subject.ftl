@@ -1,1 +1,1 @@
-${APPLICATION_CREATOR_FULL_NAME} Application ${APPLICATION_CODE} - Review Stage Completed
+${APPLICATION_CREATOR_FULL_NAME} Application ${APPLICATION_CODE} - Review Stage Completion

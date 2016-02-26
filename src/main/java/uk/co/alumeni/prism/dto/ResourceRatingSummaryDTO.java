@@ -6,9 +6,9 @@ public class ResourceRatingSummaryDTO {
 
     private Resource resource;
 
+    private Long resourceCount;
+    
     private Long ratingCount;
-
-    private Long ratingResources;
 
     private Double ratingAverage;
 
@@ -20,20 +20,20 @@ public class ResourceRatingSummaryDTO {
         this.resource = resource;
     }
 
+    public Long getResourceCount() {
+        return resourceCount;
+    }
+
+    public void setResourceCount(Long resourceCount) {
+        this.resourceCount = resourceCount;
+    }
+    
     public Long getRatingCount() {
         return ratingCount;
     }
 
     public void setRatingCount(Long ratingCount) {
         this.ratingCount = ratingCount;
-    }
-
-    public Long getRatingResources() {
-        return ratingResources;
-    }
-
-    public void setRatingResources(Long ratingApplications) {
-        this.ratingResources = ratingApplications;
     }
 
     public Double getRatingAverage() {

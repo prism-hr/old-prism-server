@@ -20,6 +20,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
@@ -53,6 +55,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Department;
@@ -94,8 +97,9 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepre
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationClient;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationChildCreation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
@@ -105,6 +109,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRo
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationStandard;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
@@ -210,7 +215,7 @@ public class ResourceMapper {
         Map<Integer, ResourceOpportunityCategoryDTO> indexedResources = newHashMap();
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
         if (isNotEmpty(resources)) {
-            resourceService.setResourceMessageCounts(scope, resources, user);
+            resourceService.setResourceMessageAttributes(scope, resources, user);
 
             LocalDate baselineDate = baseline.toLocalDate();
             resources.forEach(resource -> {
@@ -428,7 +433,7 @@ public class ResourceMapper {
     public <T extends ResourceOpportunity, V extends ResourceOpportunityRepresentationClient> V getResourceOpportunityRepresentationClient(T resource,
             Class<V> returnType, List<PrismRole> overridingRoles, User currentUser) {
         V representation = getResourceOpportunityRepresentation(resource, returnType, overridingRoles, currentUser);
-        appendResourceSummaryRepresentation(resource, representation);
+        appendResourceParentRepresentationSummary(resource, representation);
         return representation;
     }
 
@@ -456,25 +461,48 @@ public class ResourceMapper {
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource, User currentUser) {
         resourceService.validateViewResource(resource);
 
-        Class<?> resourceClass = resource.getClass();
+        PrismScope resourceScope = resource.getResourceScope();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
 
-        if (Institution.class.equals(resourceClass)) {
+        if (resourceScope.equals(INSTITUTION)) {
             return institutionMapper.getInstitutionRepresentation((Institution) resource, overridingRoles, currentUser);
-        } else if (Department.class.equals(resourceClass)) {
+        } else if (resourceScope.equals(DEPARTMENT)) {
             return departmentMapper.getDepartmentRepresentation((Department) resource, overridingRoles, currentUser);
-        } else if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
+        } else if (resourceScope.getScopeCategory().equals(OPPORTUNITY)) {
             return getResourceOpportunityRepresentation((ResourceOpportunity) resource, ResourceOpportunityRepresentation.class, overridingRoles, currentUser);
-        } else if (Application.class.isAssignableFrom(resourceClass)) {
+        } else if (resourceScope.equals(APPLICATION)) {
             return applicationMapper.getApplicationRepresentationExtended((Application) resource, overridingRoles, currentUser);
         }
 
         return getResourceRepresentationExtended(resource, ResourceRepresentationExtended.class, overridingRoles, currentUser);
     }
 
-    public <T extends ResourceParent, U extends ResourceRepresentationClient> void appendResourceSummaryRepresentation(T resource, U representation) {
+    public <T extends Resource> ResourceRepresentationSummary getResourceRepresentationSummary(T resource) {
+        resourceService.validateViewResource(resource);
+
+        PrismScope resourceScope = resource.getResourceScope();
+        PrismScopeCategory resourceScopeCategory = resourceScope.getScopeCategory();
+        if (resourceScopeCategory.equals(OPPORTUNITY) || resourceScopeCategory.equals(ORGANIZATION)) {
+            ResourceParentRepresentationSummary representation = getResourceSummaryRepresentation(resource, ResourceParentRepresentationSummary.class);
+            appendResourceParentRepresentationSummary((ResourceParent) resource, representation);
+            return representation;
+        } else if (resourceScope.equals(APPLICATION)) {
+            return applicationMapper.getApplicationRepresentationSummary((Application) resource);
+        }
+
+        return getResourceSummaryRepresentation(resource, ResourceRepresentationSummary.class);
+    }
+
+    public <T extends Resource, U extends ResourceRepresentationSummary> U getResourceSummaryRepresentation(T resource, Class<U> representationClass) {
+        U representation = BeanUtils.instantiate(representationClass);
+        representation.setUser(userMapper.getUserRepresentationSimple(resource.getUser(), userService.getCurrentUser()));
+        representation.setCreatedTimestamp(resource.getCreatedTimestamp());
+        return representation;
+    }
+
+    public <T extends ResourceParent, U extends ResourceParentRepresentationClient> void appendResourceParentRepresentationSummary(T resource, U representation) {
         List<ResourceCountRepresentation> counts = Lists.newLinkedList();
-        for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope(), SYSTEM)) {
+        for (PrismScope childScope : scopeService.getChildScopesAscending(resource.getResourceScope(), PROJECT)) {
             counts.add(new ResourceCountRepresentation().withResourceScope(childScope).withResourceCount(
                     resourceService.getActiveChildResourceCount(resource, childScope)));
             if (childScope.equals(PROJECT)) {

@@ -30,7 +30,8 @@ import com.google.common.collect.Sets;
 @Entity
 @Table(name = "user_account")
 public class UserAccount
-        implements Activity,
+        implements
+        Activity,
         ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserAward, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
 
     @Id

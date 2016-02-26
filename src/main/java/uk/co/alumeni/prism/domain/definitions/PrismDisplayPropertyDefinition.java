@@ -134,6 +134,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Unsubmitted"),
     SYSTEM_STATE_GROUP_APPLICATION_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Screening"),
+    SYSTEM_STATE_GROUP_APPLICATION_MESSAGING(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Messaging"),
     SYSTEM_STATE_GROUP_APPLICATION_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Reference Collection"),
     SYSTEM_STATE_GROUP_APPLICATION_REVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Review"),
     SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Interview"),
@@ -176,6 +177,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_TRANSITION_APPLICATION_APPROVED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Make an Offer"),
     SYSTEM_STATE_TRANSITION_APPLICATION_RESERVED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Hold in reserve"),
     SYSTEM_STATE_TRANSITION_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Arrange an interview"),
+    SYSTEM_STATE_TRANSITION_APPLICATION_MESSAGING(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Start a conversation"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REJECTED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Issue a rejection"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Collect references"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Collect reviews"),
@@ -1027,6 +1029,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Validation Stage Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_MESSAGING_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Messaging Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Review Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Interview Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),

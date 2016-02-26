@@ -1,23 +1,22 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ResourceRepresentationStandard extends ResourceRepresentationRelation {
 
     private Boolean raisesUrgentFlag;
-    
+
     private Integer readMessageCount;
 
     private Integer unreadMessageCount;
-    
+
     private Boolean raisesUpdateFlag;
-    
+
     private BigDecimal applicationRatingAverage;
 
     private StateRepresentationSimple previousState;
@@ -34,14 +33,14 @@ public class ResourceRepresentationStandard extends ResourceRepresentationRelati
 
     private Integer stateActionPendingCount;
 
-    public boolean getRaisesUrgentFlag() {
+    public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
 
-    public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
-    
+
     public Integer getReadMessageCount() {
         return readMessageCount;
     }

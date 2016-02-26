@@ -206,8 +206,8 @@ public class ResourceMapper {
             filter.setResourceIds(resourceService.getResourcesWithUnreadMessages(scope, user));
         }
 
-        Map<Integer, String> resourceIndex = newHashMap();
-        Set<ResourceOpportunityCategoryDTO> resourceOrder = newTreeSet();
+        Map<Integer, String> indexedResources = newHashMap();
+        Set<ResourceOpportunityCategoryDTO> orderedResources = newTreeSet();
         Set<ResourceOpportunityCategoryDTO> resources = resourceService.getResources(user, scope, parentScopes, targeterEntities, filter);
         if (isNotEmpty(resources)) {
             resourceService.setResourceMessageCounts(scope, resources, user);
@@ -219,16 +219,15 @@ public class ResourceMapper {
                 Integer daysSinceLastUpdated = Days.daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baselineDate).getDays();
                 resource.setPriority(prioritize ? new BigDecimal(1).setScale(ORDERING_PRECISION) : new BigDecimal(1).divide(
                         new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)), HALF_UP).setScale(ORDERING_PRECISION));
-                resourceIndex.put(resource.getId(), resource.toString());
-                resourceOrder.add(resource);
+                indexedResources.put(resource.getId(), resource.toString());
+                orderedResources.add(resource);
             });
         }
 
         TreeMap<String, ResourceListRowRepresentation> rowIndex = newTreeMap();
-        processRowDescriptors(resourceOrder, onlyAsPartnerResourceIds, summaries);
-        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, resources, filter, lastSequenceIdentifier, RESOURCE_LIST_PAGE_ROW_COUNT,
-                onlyAsPartnerResourceIds, true)
-                .forEach(row -> {
+        processRowDescriptors(orderedResources, onlyAsPartnerResourceIds, summaries);
+        resourceService.getResourceList(user, scope, parentScopes, targeterEntities, orderedResources, filter, lastSequenceIdentifier,
+                RESOURCE_LIST_PAGE_ROW_COUNT, onlyAsPartnerResourceIds, true).forEach(row -> { //
                     ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
                     representation.setScope(scope);
                     Integer resourceId = row.getResourceId();
@@ -289,7 +288,7 @@ public class ResourceMapper {
                     setRaisesUrgentFlag(representation, actions);
                     setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
-                    String sequenceIdentifier = resourceIndex.get(resourceId);
+                    String sequenceIdentifier = indexedResources.get(resourceId);
                     representation.setSequenceIdentifier(sequenceIdentifier);
 
                     representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));

@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.dao.ActionDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
@@ -176,11 +177,11 @@ public class ActionService {
     }
 
     public Action getViewEditAction(Resource resource) {
-        return actionDAO.getActionsByActionCategory(resource, VIEW_EDIT_RESOURCE).get(0);
+        return getActionByActionCategory(resource, VIEW_EDIT_RESOURCE);
     }
 
     public Action getMessageAction(Resource resource) {
-        return actionDAO.getActionsByActionCategory(resource, MESSAGE_RESOURCE).get(0);
+        return getActionByActionCategory(resource, MESSAGE_RESOURCE);
     }
 
     public List<Action> getActions() {
@@ -475,6 +476,11 @@ public class ActionService {
         }
 
         return actionEntities;
+    }
+
+    private Action getActionByActionCategory(Resource resource, PrismActionCategory actionCategory) {
+        List<Action> actions = actionDAO.getActionsByActionCategory(resource, actionCategory);
+        return actions.size() > 0 ? actions.get(0) : null;
     }
 
 }

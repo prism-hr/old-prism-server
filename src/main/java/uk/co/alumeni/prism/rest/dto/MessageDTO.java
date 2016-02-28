@@ -1,19 +1,14 @@
 package uk.co.alumeni.prism.rest.dto;
 
-import java.util.List;
-
-import javax.validation.constraints.Size;
-
 import org.hibernate.validator.constraints.NotEmpty;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 
+import javax.validation.constraints.Size;
+import java.util.List;
+
 public class MessageDTO {
 
-    private Integer id;
-
-    @NotEmpty
     @Size(max = 255)
     private String subject;
 
@@ -25,14 +20,6 @@ public class MessageDTO {
     private List<PrismRole> recipientRoles;
 
     private List<DocumentDTO> documents;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getSubject() {
         return subject;

@@ -1,12 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -14,7 +7,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
-
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.message.MessageRecipient;
@@ -22,6 +14,12 @@ import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.MessageThreadDTO;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -59,7 +57,7 @@ public class MessageDAO {
                 .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNotNull("sendTimestamp")) //
-                .addOrder(Order.desc("createdTimestamp")) //
+                .addOrder(Order.desc("updatedTimestamp")) //
                 .addOrder(Order.desc("thread")) //
                 .setResultTransformer(Transformers.aliasToBean(MessageThreadDTO.class)) //
                 .list();
@@ -87,6 +85,7 @@ public class MessageDAO {
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
+                .createAlias("message.user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message", messages)) //
                 .add(Restrictions.neProperty("user", "message.user")) //
                 .addOrder(Order.desc("message")) //

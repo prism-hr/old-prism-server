@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
@@ -33,7 +34,7 @@ import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUserUnverifiedRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
@@ -53,7 +54,6 @@ import uk.co.alumeni.prism.utils.PrismStringUtils;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -105,9 +105,13 @@ public class UserMapper {
         return getUserRepresentation(user, currentUser, UserRepresentationSimple.class);
     }
 
+    public UserRepresentationSimple getUserRepresentationSimpleWithEmail(User user, User currentUser) {
+        return getUserRepresentation(user, currentUser, true, UserRepresentationSimple.class);
+    }
+
     public UserRepresentationExtended getUserRepresentationExtended(User user, User currentUser) {
         UserRepresentationExtended representation = getUserRepresentation(user, currentUser, UserRepresentationExtended.class);
-        representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendActivityNotification());
+        representation.setSendActivityNotification(user.getUserAccount().getSendActivityNotification());
         representation.setUserRoles(getUserRoleRepresentations(user));
 
         representation.setParentUser(user.getEmail());
@@ -126,7 +130,7 @@ public class UserMapper {
 
         User currentUser = userService.getCurrentUser();
         return userService.getBouncedOrUnverifiedUsers(resource, filterDTO).stream()
-                .map(user -> getUserRepresentationUnverified(user, currentUser, noDiagnosis)).collect(Collectors.toList());
+                .map(user -> getUserRepresentationInvitationBounced(user, currentUser, noDiagnosis)).collect(Collectors.toList());
     }
 
     public UserFeedbackRepresentation getUserFeedbackRepresentation(UserFeedback userFeedback, User currentUser) {
@@ -145,8 +149,8 @@ public class UserMapper {
         return representation;
     }
 
-    private UserRepresentationInvitationBounced getUserRepresentationUnverified(User user, User currentUser, String noDiagnosisMessage) {
-        UserRepresentationInvitationBounced representation = getUserRepresentation(user, currentUser, UserRepresentationInvitationBounced.class);
+    private UserRepresentationInvitationBounced getUserRepresentationInvitationBounced(User user, User currentUser, String noDiagnosisMessage) {
+        UserRepresentationInvitationBounced representation = getUserRepresentation(user, currentUser, true, UserRepresentationInvitationBounced.class);
 
         String bounceMessage = user.getEmailBouncedMessage();
         if (bounceMessage != null) {
@@ -158,25 +162,11 @@ public class UserMapper {
     }
 
     public <T extends UserRepresentationSimple> T getUserRepresentation(User user, User currentUser, Class<T> returnType) {
-        T representation = BeanUtils.instantiate(returnType);
+        return getUserRepresentation(user, currentUser, false, returnType);
+    }
 
-        representation.setId(user.getId());
-        representation.setFirstName(user.getFirstName());
-        representation.setFirstName2(user.getFirstName2());
-        representation.setFirstName3(user.getFirstName3());
-        representation.setLastName(user.getLastName());
-        representation.setFullName(user.getFullName());
-        representation.setEmail(userService.getSecuredUserEmailAddress(user.getEmail(), currentUser));
-
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount != null) {
-            representation.setAccountProfileUrl(userAccount.getLinkedinProfileUrl());
-            representation.setAccountImageUrl(userAccount.getLinkedinImageUrl());
-            representation.setPortraitImage(documentMapper.getDocumentRepresentation(userAccount.getPortraitImage()));
-        }
-
-        representation.setEditable(userService.checkUserEditable(user, currentUser));
-        return representation;
+    public <T extends UserRepresentationSimple> T getUserRepresentationWithEmail(User user, User currentUser, Class<T> returnType) {
+        return getUserRepresentation(user, currentUser, true, returnType);
     }
 
     public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
@@ -199,7 +189,7 @@ public class UserMapper {
         return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
-                .withUnverifiedUserActivities(getUnverifiedUserRepresentations(user))
+                .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));
     }
 
@@ -247,8 +237,30 @@ public class UserMapper {
         return representations;
     }
 
-    private List<ResourceUnverifiedUserRepresentation> getUnverifiedUserRepresentations(User user) {
-        Map<String, ResourceUnverifiedUserRepresentation> representations = Maps.newLinkedHashMap();
+    private <T extends UserRepresentationSimple> T getUserRepresentation(User user, User currentUser, boolean forceReturnEmail, Class<T> returnType) {
+        T representation = BeanUtils.instantiate(returnType);
+
+        representation.setId(user.getId());
+        representation.setFirstName(user.getFirstName());
+        representation.setFirstName2(user.getFirstName2());
+        representation.setFirstName3(user.getFirstName3());
+        representation.setLastName(user.getLastName());
+        representation.setFullName(user.getFullName());
+        representation.setEmail(userService.getSecuredUserEmailAddress(user.getEmail(), currentUser, forceReturnEmail));
+
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount != null) {
+            representation.setAccountProfileUrl(userAccount.getLinkedinProfileUrl());
+            representation.setAccountImageUrl(userAccount.getLinkedinImageUrl());
+            representation.setPortraitImage(documentMapper.getDocumentRepresentation(userAccount.getPortraitImage()));
+        }
+
+        representation.setEditable(userService.checkUserEditable(user, currentUser));
+        return representation;
+    }
+
+    private List<ResourceUserUnverifiedRepresentation> getUserUnverifiedRepresentations(User user) {
+        Map<String, ResourceUserUnverifiedRepresentation> representations = newLinkedHashMap();
         TreeMultimap<UserRepresentationUnverified, PrismRoleContext> userRepresentationIndex = TreeMultimap.create();
         for (UnverifiedUserDTO unverifiedUser : userService.getUsersToVerify(user)) {
             Integer departmentId = unverifiedUser.getDepartmentId();
@@ -256,10 +268,10 @@ public class UserMapper {
             String resourceKey = Joiner.on("|").skipNulls().join(institutionId, departmentId);
 
             List<UserRepresentationUnverified> userRepresentations;
-            ResourceUnverifiedUserRepresentation representation = representations.get(resourceKey);
+            ResourceUserUnverifiedRepresentation representation = representations.get(resourceKey);
             if (representation == null) {
                 userRepresentations = newLinkedList();
-                representation = new ResourceUnverifiedUserRepresentation()
+                representation = new ResourceUserUnverifiedRepresentation()
                         .withResource(resourceMapper.getResourceRepresentationConnection(institutionId, unverifiedUser.getInstitutionName(),
                                 unverifiedUser.getLogoImageId(), departmentId, unverifiedUser.getDepartmentName()))
                         .withUsers(userRepresentations);

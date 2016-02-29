@@ -22,7 +22,7 @@ public class UserActivityRepresentation {
 
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
-    private List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities;
+    private List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities;
 
     private List<AdvertTargetRepresentation> advertTargetActivities;
 
@@ -50,11 +50,11 @@ public class UserActivityRepresentation {
         this.appointmentActivities = appointmentActivities;
     }
 
-    public List<ResourceUnverifiedUserRepresentation> getUnverifiedUserActivities() {
+    public List<ResourceUserUnverifiedRepresentation> getUnverifiedUserActivities() {
         return unverifiedUserActivities;
     }
 
-    public void setUnverifiedUserActivities(List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities) {
+    public void setUnverifiedUserActivities(List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities) {
         this.unverifiedUserActivities = unverifiedUserActivities;
     }
 
@@ -81,7 +81,7 @@ public class UserActivityRepresentation {
         return this;
     }
 
-    public UserActivityRepresentation withUnverifiedUserActivities(List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities) {
+    public UserActivityRepresentation withUnverifiedUserActivities(List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities) {
         this.unverifiedUserActivities = unverifiedUserActivities;
         return this;
     }
@@ -323,7 +323,7 @@ public class UserActivityRepresentation {
 
     }
 
-    public static class ResourceUnverifiedUserRepresentation {
+    public static class ResourceUserUnverifiedRepresentation {
 
         private ResourceRepresentationConnection resource;
 
@@ -345,12 +345,12 @@ public class UserActivityRepresentation {
             this.users = users;
         }
 
-        public ResourceUnverifiedUserRepresentation withResource(ResourceRepresentationConnection resource) {
+        public ResourceUserUnverifiedRepresentation withResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
             return this;
         }
 
-        public ResourceUnverifiedUserRepresentation withUsers(List<UserRepresentationUnverified> users) {
+        public ResourceUserUnverifiedRepresentation withUsers(List<UserRepresentationUnverified> users) {
             this.users = users;
             return this;
         }

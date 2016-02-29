@@ -12,6 +12,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
@@ -45,7 +46,6 @@ import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
@@ -348,10 +348,9 @@ public class UserService {
 
     public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
         User currentUser = getCurrentUser();
-        String trimmedSearchTerm = StringUtils.trim(searchTerm);
 
-        if (trimmedSearchTerm.length() >= 1) {
-            List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(trimmedSearchTerm);
+        if (isNotBlank(searchTerm)) {
+            List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(searchTerm);
             similarUsers.forEach(similarUser -> {
                 similarUser.setEmail(getSecuredUserEmailAddress(similarUser.getEmail(), currentUser));
                 similarUser.setEditable(false);

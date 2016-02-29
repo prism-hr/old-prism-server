@@ -1,13 +1,17 @@
 package uk.co.alumeni.prism.dao;
 
 import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -65,6 +69,27 @@ public class MessageDAO {
                 .list();
     }
 
+    public List<MessageThreadDTO> getMatchingMessageThreads(Collection<MessageThread> threads, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("message.thread").as("thread")) //
+                        .add(Projections.max("message.createdTimestamp").as("updatedTimestamp"))) //
+                .createAlias("message", "message", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("message.thread", threads)) //
+                .add(Restrictions.isNotNull("sendTimestamp"));
+
+        if (isNotBlank(searchTerm)) {
+            criteria.add(getMatchingMessageConstraint(searchTerm)
+                    .add(Restrictions.like("thread.subject", searchTerm)));
+        }
+
+        return (List<MessageThreadDTO>) criteria //
+                .addOrder(Order.desc("updatedTimestamp")) //
+                .addOrder(Order.desc("thread")) //
+                .setResultTransformer(Transformers.aliasToBean(MessageThreadDTO.class)) //
+                .list();
+    }
+
     public List<Message> getMessages(MessageThread thread, User user) {
         return getMessages(newArrayList(thread), user);
     }
@@ -73,8 +98,6 @@ public class MessageDAO {
         return (List<Message>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.property("message")) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
-                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
-                .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message.thread", threads)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNotNull("sendTimestamp")) //
@@ -82,14 +105,27 @@ public class MessageDAO {
                 .list();
     }
 
+    public List<Message> getMatchingMessages(Collection<Message> messages, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
+                .setProjection(Projections.property("message")) //
+                .add(Restrictions.in("message", messages)) //
+                .add(Restrictions.isNotNull("sendTimestamp"));
+
+        if (isNotBlank(searchTerm)) {
+            criteria.add(getMatchingMessageConstraint(searchTerm));
+        }
+
+        return (List<Message>) criteria //
+                .addOrder(Order.desc("message")) //
+                .list();
+    }
+
     public List<MessageRecipient> getMessageRecipients(Collection<Message> messages) {
         return (List<MessageRecipient>) sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
-                .createAlias("message.thread", "thread", JoinType.INNER_JOIN) //
-                .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("message.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("message.user", "sender", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message", messages)) //
-                .add(Restrictions.neProperty("user", "message.user")) //
+                .add(Restrictions.neProperty("user", "message.sender")) //
                 .addOrder(Order.desc("message")) //
                 .addOrder(Order.asc("user.fullName")) //
                 .list();
@@ -102,6 +138,12 @@ public class MessageDAO {
                 .addOrder(Order.desc("message")) //
                 .addOrder(Order.asc("id")) //
                 .list();
+    }
+
+    private Junction getMatchingMessageConstraint(String searchTerm) {
+        return Restrictions.disjunction() //
+                .add(getSimilarUserConstraint("user", searchTerm)) //
+                .add(Restrictions.like("message.content", searchTerm));
     }
 
 }

@@ -39,13 +39,13 @@ public class MessageMapper {
     @Inject
     private UserMapper userMapper;
 
-    public List<MessageThreadRepresentation> getMessageThreadRepresentations(Resource resource) {
+    public List<MessageThreadRepresentation> getMessageThreadRepresentations(Resource resource, String searchTerm) {
         User user = messageService.validateViewMessages(resource);
         List<MessageThreadRepresentation> threadRepresentations = newLinkedList();
 
-        List<MessageThread> threads = messageService.getMessageThreads(resource, user);
+        List<MessageThread> threads = messageService.getMessageThreads(resource, user, searchTerm);
         if (isNotEmpty(threads)) {
-            LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, user);
+            LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, user, searchTerm);
 
             Collection<Message> unindexedMessages = messages.values();
             LinkedHashMultimap<Message, MessageRecipient> users = messageService.getMessageRecipients(unindexedMessages);

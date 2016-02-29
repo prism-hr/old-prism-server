@@ -369,12 +369,12 @@ public class UserService {
         return (forceReturnEmail || Objects.equals(email, currentUser.getEmail())) ? email : getObfuscatedEmail(email);
     }
 
-    public List<User> getResourceUsers(Resource resource) {
-        return userDAO.getResourceUsers(resource);
-    }
-
     public List<User> getResourceUsers(Resource resource, PrismRole role) {
         return userDAO.getResourceUsers(resource, role);
+    }
+    
+    public List<User> getResourceUsers(Resource resource, PrismRole searchRole, String searchTerm) {
+        return userDAO.getResourceUsers(resource, searchRole, searchTerm);
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {

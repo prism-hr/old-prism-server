@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.dao;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
@@ -208,16 +209,6 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getResourceUsers(Resource resource) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.desc("user.lastName")) //
-                .addOrder(Order.desc("user.firstName")) //
-                .list();
-    }
-
     public List<User> getResourceUsers(Resource resource, PrismRole role) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("user")) //
@@ -226,6 +217,25 @@ public class UserDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.eq("role.id", role))
+                .list();
+    }
+
+    public List<User> getResourceUsers(Resource resource, PrismRole searchRole, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
+
+        if (searchRole != null) {
+            criteria.add(Restrictions.eq("role.id", searchRole));
+        }
+
+        if (isNotBlank(searchTerm)) {
+            criteria.add(getSimilarUserConstraint("user", searchTerm));
+        }
+
+        return (List<User>) criteria.addOrder(Order.desc("user.lastName")) //
+                .addOrder(Order.desc("user.firstName")) //
                 .list();
     }
 

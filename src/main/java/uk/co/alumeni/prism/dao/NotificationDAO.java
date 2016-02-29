@@ -71,7 +71,8 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(PrismScope scope, PrismScope parentScope, Resource resource) {
-        return getIndividualRequestDefinitionCriteria(workflowDAO.getWorkflowCriteriaList(scope, parentScope, getInvidualRequestDefinitionsProjection()), resource)
+        return getIndividualRequestDefinitionCriteria(workflowDAO.getWorkflowCriteriaList(scope, parentScope, getInvidualRequestDefinitionsProjection()),
+                resource)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
@@ -80,9 +81,9 @@ public class NotificationDAO {
             Collection<Integer> targeterEntities, Resource resource) {
         return getIndividualRequestDefinitionCriteria(
                 workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getInvidualRequestDefinitionsProjection()), resource)
-                        .add(WorkflowDAO.getTargetActionConstraint())
-                        .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
-                        .list();
+                .add(WorkflowDAO.getTargetActionConstraint())
+                .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
+                .list();
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, Comment comment, Collection<User> exclusions) {
@@ -101,7 +102,8 @@ public class NotificationDAO {
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Comment comment, Collection<User> exclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Comment comment,
+            Collection<User> exclusions) {
         Criteria criteria = getWorkflowCriteriaListComment(scope) //
                 .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
                 .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN) //
@@ -212,6 +214,7 @@ public class NotificationDAO {
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id")) //
                                 .add(Restrictions.eq("userNotification.active", true))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
+                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.isNull("userNotification.id"));
     }

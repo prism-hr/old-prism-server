@@ -70,6 +70,8 @@ public class CommentRepresentation {
 
     private DateTime createdTimestamp;
 
+    private DateTime submittedTimestamp;
+
     private List<CommentAssignedUserRepresentation> assignedUsers;
 
     private List<CommentCompetenceGroupRepresentation> competenceGroups;
@@ -296,6 +298,14 @@ public class CommentRepresentation {
         this.createdTimestamp = createdTimestamp;
     }
 
+    public DateTime getSubmittedTimestamp() {
+        return submittedTimestamp;
+    }
+
+    public void setSubmittedTimestamp(DateTime submittedTimestamp) {
+        this.submittedTimestamp = submittedTimestamp;
+    }
+
     public List<CommentAssignedUserRepresentation> getAssignedUsers() {
         return assignedUsers;
     }
@@ -468,6 +478,11 @@ public class CommentRepresentation {
 
     public CommentRepresentation withCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+        return this;
+    }
+
+    public CommentRepresentation withSubmittedTimestamp(DateTime submittedTimestamp) {
+        this.submittedTimestamp = submittedTimestamp;
         return this;
     }
 

@@ -1,5 +1,30 @@
 package uk.co.alumeni.prism.services;
 
+import com.google.common.collect.*;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.dao.ActionDAO;
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.workflow.*;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
+import uk.co.alumeni.prism.dto.*;
+import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
+
+import javax.inject.Inject;
+import java.util.*;
+
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
@@ -9,58 +34,9 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.dao.ActionDAO;
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.domain.workflow.Scope;
-import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ActionCreationScopeDTO;
-import uk.co.alumeni.prism.dto.ActionDTO;
-import uk.co.alumeni.prism.dto.ActionEnhancementDTO;
-import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
-import uk.co.alumeni.prism.dto.ActionRedactionDTO;
-import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
-import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -147,7 +123,7 @@ public class ActionService {
 
     public List<PrismActionEnhancement> getPermittedActionEnhancements(User user, Resource resource, PrismAction action) {
         return getPermittedActionEnhancements(user, resource, newArrayList(action), advertService.getAdvertTargeterEntities(user, resource.getResourceScope()))
-                .stream().map(ae -> ae.getActionEnhancement()).collect(toList()); //
+                .stream().map(ActionEnhancementDTO::getActionEnhancement).collect(toList()); //
     }
 
     public List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, Resource resource, Collection<PrismAction> actions) {
@@ -177,11 +153,11 @@ public class ActionService {
     }
 
     public Action getViewEditAction(Resource resource) {
-        return getActionByActionCategory(resource, VIEW_EDIT_RESOURCE);
+        return actionDAO.getActionsByActionCategory(resource, VIEW_EDIT_RESOURCE).stream().findFirst().orElse(null);
     }
 
     public Action getMessageAction(Resource resource) {
-        return getActionByActionCategory(resource, MESSAGE_RESOURCE);
+        return actionDAO.getActionsByActionCategory(resource, MESSAGE_RESOURCE).stream().findFirst().orElse(null);
     }
 
     public List<Action> getActions() {
@@ -212,8 +188,8 @@ public class ActionService {
             return false;
         }
 
-        List<PrismRole> rolesOverridingRedations = roleService.getRolesOverridingRedactions(user, resourceScope, resources);
-        if (!rolesOverridingRedations.isEmpty()) {
+        List<PrismRole> rolesOverridingRedactions = roleService.getRolesOverridingRedactions(user, resourceScope, resources);
+        if (!rolesOverridingRedactions.isEmpty()) {
             return false;
         }
 
@@ -297,7 +273,7 @@ public class ActionService {
         if (expectedActionEnhancements.size() > 0) {
             visible = getPermittedActionEnhancements(user, resource, action.getId()).stream().anyMatch(ae -> ae.name().contains("_VIEW"));
         }
-        return visible ? checkActionAvailable(resource, action, user, false) : false;
+        return visible && checkActionAvailable(resource, action, user, false);
     }
 
     public boolean checkActionExecutable(Resource resource, Action action, User user) {
@@ -310,7 +286,7 @@ public class ActionService {
         if (expectedActionEnhancements.size() > 0) {
             executable = getPermittedActionEnhancements(user, resource, action.getId()).stream().anyMatch(ae -> ae.name().contains("_VIEW_EDIT"));
         }
-        return executable ? checkActionAvailable(resource, action, user, declinedResponse) : false;
+        return executable && checkActionAvailable(resource, action, user, declinedResponse);
     }
 
     public boolean checkActionAvailable(Resource resource, Action action, User user, boolean declinedResponse) {
@@ -470,11 +446,6 @@ public class ActionService {
         }
 
         return actionEntities;
-    }
-
-    private Action getActionByActionCategory(Resource resource, PrismActionCategory actionCategory) {
-        List<Action> actions = actionDAO.getActionsByActionCategory(resource, actionCategory);
-        return actions.size() > 0 ? actions.get(0) : null;
     }
 
 }

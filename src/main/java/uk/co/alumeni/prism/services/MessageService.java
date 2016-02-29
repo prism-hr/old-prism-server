@@ -1,19 +1,10 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.joda.time.DateTime.now;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Objects;
+import com.google.common.collect.LinkedHashMultimap;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.MessageDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -31,8 +22,14 @@ import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.LinkedHashMultimap;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.joda.time.DateTime.now;
 
 @Service
 @Transactional
@@ -114,14 +111,13 @@ public class MessageService {
         return documents;
     }
 
-    public void postMessage(Resource resource, MessageDTO messageDTO) {
+    public void postMessage(Resource resource, Integer threadId, MessageDTO messageDTO) {
         DateTime baseline = now();
         User user = userService.getCurrentUser();
         Action messageAction = actionService.getMessageAction(resource);
 
         MessageThread thread = null;
-        Integer messageThreadId = messageDTO.getId();
-        if (messageThreadId == null) {
+        if (threadId == null) {
             thread = new MessageThread().withSubject(messageDTO.getSubject());
             entityService.save(thread);
 
@@ -130,11 +126,11 @@ public class MessageService {
             actionService.executeUserAction(resource, messageAction, comment);
             thread.setComment(comment);
         } else if (actionService.checkActionAvailable(resource, messageAction, user)) {
-            thread = getMessageThreadById(messageThreadId);
+            thread = getMessageThreadById(threadId);
         } else {
             Action viewEditAction = actionService.getViewEditAction(resource);
             if (actionService.checkActionAvailable(resource, viewEditAction, user)) {
-                thread = getMessageThreadById(messageThreadId);
+                thread = getMessageThreadById(threadId);
                 if (messageDAO.getMessages(thread, user).size() == 0) {
                     return;
                 }

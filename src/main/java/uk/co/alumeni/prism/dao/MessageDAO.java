@@ -1,5 +1,12 @@
 package uk.co.alumeni.prism.dao;
 
+import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -7,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.message.MessageRecipient;
@@ -14,12 +22,6 @@ import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.MessageThreadDTO;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 
 @Repository
 @SuppressWarnings("unchecked")

@@ -122,7 +122,7 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
-    MESSAGE_INITIATIOR_FULL_NAME(MESSAGE_GLOBAL, true, MessageInitiatorFullNameBuilder.class), //
+    MESSAGE_INITIATOR_FULL_NAME(MESSAGE_GLOBAL, true, MessageInitiatorFullNameBuilder.class), //
     MESSAGE_SUBJECT(MESSAGE_GLOBAL, true, MessageSubjectBuilder.class), //
     TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, TargetResourceOtherNameBuilder.class), //
     TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, TargetResourceAcceptNameBuilder.class), //

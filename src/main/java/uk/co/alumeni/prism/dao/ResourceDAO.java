@@ -63,6 +63,7 @@ import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceMessageCountDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
+import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
@@ -644,6 +645,22 @@ public class ResourceDAO {
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.categories.locations", "location", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("location.locationAdvert.id", advertLocations)) //
+                .list();
+    }
+
+    public List<ResourceRoleDTO> getResourceRoles(User user, PrismScope resourceScope) {
+        String resourceReference = resourceScope.getLowerCamelName();
+        return (List<ResourceRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("role.scope.id").as("scope")) //
+                        .add(Projections.property(resourceReference + ".id").as("id")) //
+                        .add(Projections.property("role.id").as("role")) //
+                        .add(Projections.property("role.verified").as("verified")) //
+                        .add(Projections.property("role.directlyAssignable").as("directlyAssignable"))) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.isNotNull(resourceReference)) //
+                .add(Restrictions.eq("user", user)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
                 .list();
     }
 

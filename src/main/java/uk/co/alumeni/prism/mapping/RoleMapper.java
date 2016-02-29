@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
-import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.List;
@@ -22,6 +22,8 @@ import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
+
+import com.google.common.collect.HashMultimap;
 
 @Service
 @Transactional
@@ -48,8 +50,14 @@ public class RoleMapper {
         User currentUser = userService.getCurrentUser();
 
         Set<ResourceUserRolesRepresentation> representations = newTreeSet();
-        userService.getResourceUsers(resource, searchRole, searchTerm).forEach(
-                user -> representations.add(getResourceUserRolesRepresentation(resource, user, currentUser)));
+        HashMultimap<User, PrismRole> userRoles = roleService.getUserRolesStrict(resource, searchRole, searchTerm);
+        userRoles.keySet().stream().forEach(user -> {
+            representations.add(new ResourceUserRolesRepresentation()
+                    .withUser(userMapper.getUserRepresentationSimpleWithEmail(user, currentUser))
+                    .withRoles(userRoles.get(user)) //
+                    .withOwner(user.equals(resource.getUser()))
+                    .withPending(false));
+        });
 
         boolean filterRole = searchRole != null;
         boolean filterTerm = isNotBlank(searchTerm);
@@ -65,7 +73,7 @@ public class RoleMapper {
                             || userRepresentation.getEmail().contains(searchTerm)) {
                         representations.add(new ResourceUserRolesRepresentation()
                                 .withUser(userRepresentation)
-                                .withRoles(singletonList(assignRole))
+                                .withRoles(newHashSet(assignRole))
                                 .withMessage(stateActionPending.getAssignUserMessage())
                                 .withPending(true));
                     }
@@ -75,10 +83,4 @@ public class RoleMapper {
 
         return newLinkedList(representations);
     }
-
-    private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user, User currentUser) {
-        return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimpleWithEmail(user, currentUser))
-                .withRoles(roleService.getRolesForResourceStrict(resource, user));
-    }
-
 }

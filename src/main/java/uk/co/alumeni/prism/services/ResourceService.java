@@ -118,6 +118,7 @@ import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
@@ -1154,6 +1155,14 @@ public class ResourceService {
         resourceDAO.getResourceUnreadMessageCounts(scope, resourceIds, user).forEach(resource -> {
             resourceIndex.get(resource.getId()).setUnreadMessageCount(resource.getMessageCount().intValue());
         });
+    }
+
+    public List<ResourceRoleDTO> getResourceRoles(User user) {
+        List<ResourceRoleDTO> resourceRoles = Lists.newArrayList();
+        for (PrismScope resourceScope : PrismScope.values()) {
+            resourceRoles.addAll(resourceDAO.getResourceRoles(user, resourceScope));
+        }
+        return resourceRoles;
     }
 
     @SuppressWarnings("unchecked")

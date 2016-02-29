@@ -34,6 +34,7 @@ import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -206,7 +207,8 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message, List<PrismRole> roles) {
+    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message,
+            Collection<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
@@ -371,10 +373,6 @@ public class UserService {
 
     public List<User> getResourceUsers(Resource resource, PrismRole role) {
         return userDAO.getResourceUsers(resource, role);
-    }
-    
-    public List<User> getResourceUsers(Resource resource, PrismRole searchRole, String searchTerm) {
-        return userDAO.getResourceUsers(resource, searchRole, searchTerm);
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {

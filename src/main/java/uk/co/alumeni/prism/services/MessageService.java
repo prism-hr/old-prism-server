@@ -29,7 +29,7 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.LinkedHashMultimap;
@@ -148,10 +148,10 @@ public class MessageService {
         entityService.save(sender);
         message.addRecipient(sender);
 
-        List<UserEmailDTO> recipientUsers = messageDTO.getRecipientUsers();
+        List<UserDTO> recipientUsers = messageDTO.getRecipientUsers();
         if (isNotEmpty(recipientUsers)) {
-            for (UserEmailDTO userDTO : recipientUsers) {
-                MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getUserByEmail(userDTO.getEmail()));
+            for (UserDTO userDTO : recipientUsers) {
+                MessageRecipient recipient = new MessageRecipient().withMessage(message).withUser(userService.getById(userDTO.getId()));
                 entityService.getOrCreate(recipient);
                 message.addRecipient(recipient);
             }

@@ -18,6 +18,7 @@ import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -61,7 +62,6 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -81,7 +81,6 @@ import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserCorrectionDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
@@ -225,21 +224,21 @@ public class UserService {
     }
 
     public void updateUser(UserSimpleDTO userDTO) {
-        User user = getCurrentUser();
-        User userByEmail = getUserByEmail(userDTO.getEmail());
-        if (!(userByEmail == null || user.equals(userByEmail))) {
+        User currentUser = getCurrentUser();
+        User dereferencedUser = getById(userDTO.getId());
+        if (!(dereferencedUser == null || currentUser.equals(dereferencedUser))) {
             BeanPropertyBindingResult errors = new BeanPropertyBindingResult(userDTO, "userDTO");
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
-            errors.rejectValue("email", null, propertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
+            errors.rejectValue("email", null, propertyLoader.loadLazy(SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
             throw new PrismValidationException("Cannot update user", errors);
         }
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setFullName(user.getFirstName() + " " + user.getLastName());
-        user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
-        user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
-        user.setEmail(userDTO.getEmail());
+        currentUser.setFirstName(userDTO.getFirstName());
+        currentUser.setLastName(userDTO.getLastName());
+        currentUser.setFullName(currentUser.getFirstName() + " " + currentUser.getLastName());
+        currentUser.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
+        currentUser.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
+        currentUser.setEmail(userDTO.getEmail());
     }
 
     public void updateUserAccount(UserAccountDTO userAccountDTO) {
@@ -364,7 +363,11 @@ public class UserService {
     }
 
     public String getSecuredUserEmailAddress(String email, User currentUser) {
-        return Objects.equals(email, currentUser.getEmail()) ? email : getObfuscatedEmail(email);
+        return getSecuredUserEmailAddress(email, currentUser, false);
+    }
+
+    public String getSecuredUserEmailAddress(String email, User currentUser, boolean forceReturnEmail) {
+        return (forceReturnEmail || Objects.equals(email, currentUser.getEmail())) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource) {
@@ -385,25 +388,25 @@ public class UserService {
         return Lists.<User> newArrayList();
     }
 
-    public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
+    public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserDTO userDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
         if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
-            User bouncedOrUnverifiedUser = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
+            User userBouncedOrUnverified = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
 
-            String email = userCorrectionDTO.getEmail();
+            String email = userDTO.getEmail();
             User userDuplicate = getUserByEmail(email);
 
-            if (bouncedOrUnverifiedUser != null && userDuplicate == null) {
-                bouncedOrUnverifiedUser.setFirstName(userCorrectionDTO.getFirstName());
-                bouncedOrUnverifiedUser.setLastName(userCorrectionDTO.getLastName());
-                bouncedOrUnverifiedUser.setFullName(bouncedOrUnverifiedUser.getFirstName() + " " + bouncedOrUnverifiedUser.getLastName());
-                bouncedOrUnverifiedUser.setEmail(userCorrectionDTO.getEmail());
-                bouncedOrUnverifiedUser.setEmailBouncedMessage(null);
-                notificationService.resetUserNotifications(bouncedOrUnverifiedUser);
+            if (userBouncedOrUnverified != null && userDuplicate == null) {
+                userBouncedOrUnverified.setFirstName(userDTO.getFirstName());
+                userBouncedOrUnverified.setLastName(userDTO.getLastName());
+                userBouncedOrUnverified.setFullName(userBouncedOrUnverified.getFirstName() + " " + userBouncedOrUnverified.getLastName());
+                userBouncedOrUnverified.setEmail(userDTO.getEmail());
+                userBouncedOrUnverified.setEmailBouncedMessage(null);
+                notificationService.resetUserNotifications(userBouncedOrUnverified);
             } else if (userDuplicate != null) {
-                mergeUsers(bouncedOrUnverifiedUser, userDuplicate);
+                mergeUsers(userBouncedOrUnverified, userDuplicate);
             } else {
                 throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
             }

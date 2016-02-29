@@ -46,7 +46,7 @@ import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserCorrectionDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
@@ -326,9 +326,9 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
     @PreAuthorize("isAuthenticated()")
     public void reassignBouncedOrUnverifiedUser(@PathVariable Integer resourceId, @PathVariable Integer userId,
-            @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @Valid @RequestBody UserDTO userDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        userService.reassignBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
+        userService.reassignBouncedOrUnverifiedUser(resource, userId, userDTO);
     }
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.GET)
@@ -349,7 +349,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/threads/{threadId}/messages", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void postMessage(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @PathVariable Integer threadId, @Valid @RequestBody MessageDTO messageDTO) {
+            @PathVariable Integer threadId, @Valid @RequestBody MessageDTO messageDTO) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         messageService.postMessage(resource, threadId, messageDTO);
     }

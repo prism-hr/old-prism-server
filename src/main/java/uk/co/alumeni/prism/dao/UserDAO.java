@@ -187,11 +187,12 @@ public class UserDAO {
     public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
         return (List<UserRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("firstName"), "firstName") //
-                        .add(Projections.property("lastName"), "lastName") //
-                        .add(Projections.groupProperty("email"), "email") //
-                        .add(Projections.property("userAccount.linkedinImageUrl"), "accountImageUrl") //
-                        .add(Projections.property("userAccount.linkedinProfileUrl"), "accountProfileUrl")) //
+                        .add(Projections.groupProperty("id").as("id"))
+                        .add(Projections.property("firstName").as("firstName")) //
+                        .add(Projections.property("lastName").as("lastName")) //
+                        .add(Projections.property("email").as("email")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("accountImageUrl")) //
+                        .add(Projections.property("userAccount.linkedinProfileUrl").as("accountProfileUrl"))) //
                 .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //

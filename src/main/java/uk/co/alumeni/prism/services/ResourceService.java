@@ -275,14 +275,14 @@ public class ResourceService {
         throw new UnsupportedOperationException("Invalid resource relation invitation attempt");
     }
 
-    public ResourceParent createResourceRelation(ResourceRelationCreationDTO resourceRelationCreationDTO) {
-        if (validateResourceRelationCreation(resourceRelationCreationDTO)) {
+    public ResourceParent createResourceRelation(ResourceRelationCreationDTO resourceDTO) {
+        if (validateResourceRelationCreation(resourceDTO)) {
             User viewer = null;
             User student = null;
             User childOwner = null;
-            switch (resourceRelationCreationDTO.getContext()) {
+            switch (resourceDTO.getContext()) {
             case QUALIFICATION:
-                viewer = userService.getOrCreateUser(resourceRelationCreationDTO.getUser());
+                viewer = userService.getOrCreateUser(resourceDTO.getUser());
                 student = userService.getCurrentUser();
                 childOwner = student;
                 break;
@@ -290,15 +290,14 @@ public class ResourceService {
                 childOwner = userService.getCurrentUser();
                 break;
             case REFEREE:
-                viewer = userService.getOrCreateUser(resourceRelationCreationDTO.getUser());
+                viewer = userService.getOrCreateUser(resourceDTO.getUser());
                 childOwner = viewer;
                 break;
             default:
                 throw new UnsupportedOperationException("Invalid resource relation creation attempt");
             }
 
-            ResourceParent resource = createResourceRelation(resourceRelationCreationDTO.getResource(), resourceRelationCreationDTO.getContext().getContext(),
-                    childOwner);
+            ResourceParent resource = createResourceRelation(resourceDTO.getResource(), resourceDTO.getContext().getContext(), childOwner);
             ResourceParent parentResource = firstNonNull(resource.getDepartment(), resource.getInstitution());
 
             if (viewer != null) {
@@ -543,7 +542,7 @@ public class ResourceService {
                 }
             }
         }
-        
+
         entityService.flush();
     }
 

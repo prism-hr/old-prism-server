@@ -863,9 +863,9 @@ public class ProfileService {
         ResourceRelationCreationDTO resourceRelationDTO = advertRelationDTO.getResource();
         ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
 
-        UserDTO userConnectionDTO = resourceRelationDTO.getUser();
-        if (userConnectionDTO != null) {
-            advertRelation.setUser(userService.getUserByEmail(userConnectionDTO.getEmail()));
+        UserDTO userDTO = resourceRelationDTO.getUser();
+        if (userDTO != null) {
+            advertRelation.setUser(resource.getUser());
         }
 
         Advert advert = resource.getAdvert();

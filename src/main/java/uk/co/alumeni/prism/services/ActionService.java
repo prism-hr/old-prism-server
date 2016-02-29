@@ -411,14 +411,12 @@ public class ActionService {
     }
 
     private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities,
-            Collection<Integer> resources,
-            PrismAction action) {
+            Collection<Integer> resources, PrismAction action) {
         return getPermittedActions(user, scope, targeterEntities, resources, action == null ? null : newArrayList(action));
     }
 
     private TreeMultimap<Integer, ActionDTO> getPermittedActions(User user, PrismScope scope, Collection<Integer> targeterEntities,
-            Collection<Integer> resources,
-            Collection<PrismAction> actions) {
+            Collection<Integer> resources, Collection<PrismAction> actions) {
         TreeMultimap<Integer, ActionDTO> permittedActions = TreeMultimap.create();
         getActionEntities(user, scope, targeterEntities, resources, actions,
                 Projections.projectionList() //
@@ -434,8 +432,7 @@ public class ActionService {
     }
 
     private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, PrismScope scope, Collection<Integer> targeterEntities,
-            Collection<Integer> resources,
-            Collection<PrismAction> actions, String column) {
+            Collection<Integer> resources, Collection<PrismAction> actions, String column) {
         return newArrayList(getActionEntities(user, scope, targeterEntities, resources, actions,
                 Projections.projectionList() //
                         .add(Projections.groupProperty("action.id").as("action")) //
@@ -445,8 +442,7 @@ public class ActionService {
     }
 
     private <T> Set<T> getActionEntities(User user, PrismScope scope, Collection<Integer> targeterEntities, Collection<Integer> resources,
-            Collection<PrismAction> actions,
-            ProjectionList columns, Class<T> responseClass) {
+            Collection<PrismAction> actions, ProjectionList columns, Class<T> responseClass) {
         return getActionEntities(user, scope, targeterEntities, resources, actions, columns, null, responseClass);
     }
 

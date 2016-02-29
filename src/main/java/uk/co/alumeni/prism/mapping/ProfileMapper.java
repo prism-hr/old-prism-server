@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
 import static java.math.RoundingMode.HALF_UP;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
@@ -97,7 +98,7 @@ public class ProfileMapper {
 
     public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
         User currentUser = userService.getCurrentUser();
-        DateTime updatedBaseline = DateTime.now().minusDays(1);
+        DateTime updatedBaseline = now().minusDays(1);
         List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
         userService.getUserProfiles(filter, currentUser).forEach(user -> { //
                     Long applicationCount = user.getApplicationCount();

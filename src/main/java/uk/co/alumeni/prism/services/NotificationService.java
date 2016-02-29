@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
@@ -28,8 +30,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-
-import jersey.repackaged.com.google.common.collect.Maps;
 
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationContext;
@@ -313,7 +313,7 @@ public class NotificationService {
         PrismScope scope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-        Set<UserNotificationDefinitionDTO> requests = Sets.newHashSet();
+        Set<UserNotificationDefinitionDTO> requests = newHashSet();
         requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, resource));
 
         if (!scope.equals(SYSTEM)) {
@@ -331,10 +331,10 @@ public class NotificationService {
             }
         }
 
-        Set<User> recipients = Sets.newHashSet();
+        Set<User> recipients = newHashSet();
         if (requests.size() > 0) {
             User initiator = comment.getUser();
-            Map<UserNotificationDTO, Long> recentRequests = Maps.newHashMap();
+            Map<UserNotificationDTO, Long> recentRequests = newHashMap();
             notificationDAO.getRecentRequestCounts(requests, DateTime.now().minusDays(1)).forEach(rr -> recentRequests.put(rr, rr.getSentCount()));
 
             for (UserNotificationDefinitionDTO request : requests) {

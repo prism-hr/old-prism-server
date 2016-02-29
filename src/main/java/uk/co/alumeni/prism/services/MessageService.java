@@ -1,10 +1,19 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.LinkedHashMultimap;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.joda.time.DateTime.now;
+
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.dao.MessageDAO;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -22,14 +31,8 @@ import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
-
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.joda.time.DateTime.now;
+import com.google.common.base.Objects;
+import com.google.common.collect.LinkedHashMultimap;
 
 @Service
 @Transactional
@@ -90,7 +93,7 @@ public class MessageService {
     }
 
     public List<MessageThread> getMessageThreads(Resource resource, User user) {
-        return newLinkedList(messageDAO.getMessageThreads(resource, user).stream().map(mt -> mt.getThread()).collect(toList()));
+        return newLinkedList(messageDAO.getMessageThreads(resource, user).stream().map(t -> t.getThread()).collect(toList()));
     }
 
     public LinkedHashMultimap<MessageThread, Message> getMessages(Collection<MessageThread> threads, User user) {
@@ -99,9 +102,9 @@ public class MessageService {
         return messages;
     }
 
-    public LinkedHashMultimap<Message, User> getMessageRecipients(Collection<Message> messages) {
-        LinkedHashMultimap<Message, User> recipients = LinkedHashMultimap.create();
-        messageDAO.getMessageRecipients(messages).stream().forEach(r -> recipients.put(r.getMessage(), r.getUser()));
+    public LinkedHashMultimap<Message, MessageRecipient> getMessageRecipients(Collection<Message> messages) {
+        LinkedHashMultimap<Message, MessageRecipient> recipients = LinkedHashMultimap.create();
+        messageDAO.getMessageRecipients(messages).stream().forEach(r -> recipients.put(r.getMessage(), r));
         return recipients;
     }
 

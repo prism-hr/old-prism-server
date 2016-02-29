@@ -1,5 +1,10 @@
 package uk.co.alumeni.prism.rest.validation;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_ACCOUNT_NOT_ACTIVATED;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_BAD_CREDENTIALS;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_INVALID_PASSWORD;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_USER_ALREADY_LINKED;
+
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -9,7 +14,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.dto.user.UserLinkingDTO;
 import uk.co.alumeni.prism.security.UserAuthenticationService;
@@ -38,9 +42,9 @@ public class UserLinkingValidator extends LocalValidatorFactoryBean implements V
         User otherUser = userService.getUserByEmail(userLinkingDTO.getOtherEmail());
 
         if (!userAuthenticationService.validateCredentials(currentUser, userLinkingDTO.getCurrentPassword())) {
-            errors.rejectValue("currentPassword", PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_INVALID_PASSWORD.name());
+            errors.rejectValue("currentPassword", SYSTEM_VALIDATION_INVALID_PASSWORD.name());
         } else if (otherUser == null) {
-            errors.rejectValue("otherEmail", PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_BAD_CREDENTIALS.name());
+            errors.rejectValue("otherEmail", SYSTEM_VALIDATION_BAD_CREDENTIALS.name());
         } else {
             boolean alreadyLinked = false;
             Set<User> linkedUsers = currentUser.getChildUsers();
@@ -50,11 +54,11 @@ public class UserLinkingValidator extends LocalValidatorFactoryBean implements V
                 }
             }
             if (alreadyLinked) {
-                errors.rejectValue("otherEmail", PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_USER_ALREADY_LINKED.name());
+                errors.rejectValue("otherEmail", SYSTEM_VALIDATION_USER_ALREADY_LINKED.name());
             } else if (!otherUser.isEnabled()) {
-                errors.rejectValue("otherEmail", PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_ACCOUNT_NOT_ACTIVATED.name());
+                errors.rejectValue("otherEmail", SYSTEM_VALIDATION_ACCOUNT_NOT_ACTIVATED.name());
             } else if (!userAuthenticationService.validateCredentials(otherUser, userLinkingDTO.getOtherPassword())) {
-                errors.rejectValue("otherEmail", PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_BAD_CREDENTIALS.name());
+                errors.rejectValue("otherEmail", SYSTEM_VALIDATION_BAD_CREDENTIALS.name());
             }
         }
     }

@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
 public class MessageDTO {
 
@@ -17,7 +17,7 @@ public class MessageDTO {
     @NotEmpty
     private String content;
 
-    private List<UserEmailDTO> recipientUsers;
+    private List<UserDTO> recipientUsers;
 
     private List<PrismRole> recipientRoles;
 
@@ -39,11 +39,11 @@ public class MessageDTO {
         this.content = content;
     }
 
-    public List<UserEmailDTO> getRecipientUsers() {
+    public List<UserDTO> getRecipientUsers() {
         return recipientUsers;
     }
 
-    public void setRecipientUsers(List<UserEmailDTO> recipientUsers) {
+    public void setRecipientUsers(List<UserDTO> recipientUsers) {
         this.recipientUsers = recipientUsers;
     }
 

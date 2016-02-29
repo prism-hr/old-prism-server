@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Collections.singletonList;
 
 import java.util.List;
@@ -20,8 +21,6 @@ import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
-
-import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -45,7 +44,7 @@ public class RoleMapper {
     public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource, User currentUser) {
         resourceService.validateViewResource(resource);
 
-        Set<ResourceUserRolesRepresentation> representations = Sets.newLinkedHashSet();
+        Set<ResourceUserRolesRepresentation> representations = newLinkedHashSet();
         userService.getResourceUsers(resource).forEach(user -> representations.add(getResourceUserRolesRepresentation(resource, user, currentUser)));
 
         resource.getStateActionPendings().stream().forEach(stateActionPending -> { //
@@ -66,8 +65,8 @@ public class RoleMapper {
     }
 
     private ResourceUserRolesRepresentation getResourceUserRolesRepresentation(Resource resource, User user, User currentUser) {
-        return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimple(user, currentUser)).withRoles(
-                roleService.getRolesForResourceStrict(resource, user));
+        return new ResourceUserRolesRepresentation().withUser(userMapper.getUserRepresentationSimpleWithEmail(user, currentUser))
+                .withRoles(roleService.getRolesForResourceStrict(resource, user));
     }
 
 }

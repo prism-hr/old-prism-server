@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.joda.time.DateTime.now;
 
 import java.util.Collection;
@@ -92,14 +93,22 @@ public class MessageService {
         messageRecipient.setSendTimestamp(baseline);
     }
 
-    public List<MessageThread> getMessageThreads(Resource resource, User user) {
-        return newLinkedList(messageDAO.getMessageThreads(resource, user).stream().map(t -> t.getThread()).collect(toList()));
+    public List<MessageThread> getMessageThreads(Resource resource, User user, String searchTerm) {
+        List<MessageThread> threads = newLinkedList(messageDAO.getMessageThreads(resource, user).stream().map(t -> t.getThread()).collect(toList()));
+        if (threads.size() > 0 && isNotBlank(searchTerm)) {
+            threads = newLinkedList(messageDAO.getMatchingMessageThreads(threads, searchTerm).stream().map(t -> t.getThread()).collect(toList()));
+        }
+        return threads;
     }
 
-    public LinkedHashMultimap<MessageThread, Message> getMessages(Collection<MessageThread> threads, User user) {
-        LinkedHashMultimap<MessageThread, Message> messages = LinkedHashMultimap.create();
-        messageDAO.getMessages(threads, user).stream().forEach(m -> messages.put(m.getThread(), m));
-        return messages;
+    public LinkedHashMultimap<MessageThread, Message> getMessages(Collection<MessageThread> threads, User user, String searchTerm) {
+        List<Message> messages = messageDAO.getMessages(threads, user);
+        if (messages.size() > 0 && isNotBlank(searchTerm)) {
+            messages = messageDAO.getMatchingMessages(messages, searchTerm);
+        }
+        LinkedHashMultimap<MessageThread, Message> messagesMap = LinkedHashMultimap.create();
+        messages.stream().forEach(m -> messagesMap.put(m.getThread(), m));
+        return messagesMap;
     }
 
     public LinkedHashMultimap<Message, MessageRecipient> getMessageRecipients(Collection<Message> messages) {

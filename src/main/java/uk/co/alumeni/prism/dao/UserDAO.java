@@ -6,6 +6,7 @@ import static org.apache.commons.lang.ArrayUtils.contains;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
@@ -199,7 +200,7 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userRole.id")) //
                         .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR))) //
-                .add(WorkflowDAO.getSimilarUserConstraint(searchTerm)) //
+                .add(getSimilarUserConstraint(searchTerm)) //
                 .addOrder(Order.desc("lastName")) //
                 .addOrder(Order.desc("firstName")) //
                 .setMaxResults(10) //

@@ -45,7 +45,6 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
@@ -105,21 +104,13 @@ public class RoleService {
         return entityService.getAll(Role.class);
     }
 
-    public UserRole getUserRole(Resource resource, User user, Role role) {
-        return roleDAO.getUserRole(resource, user, role);
+    public UserRole getUserRoleStrict(Resource resource, User user, Role role) {
+        return roleDAO.getUserRoleStrict(resource, user, role);
     }
 
-    public List<ResourceRoleDTO> getUserRoles(User user) {
-        List<ResourceRoleDTO> userRoles = Lists.newArrayList();
-        for (PrismScope resourceScope : PrismScope.values()) {
-            userRoles.addAll(roleDAO.getUserRoles(user, resourceScope));
-        }
-        return userRoles;
-    }
-
-    public HashMultimap<User, PrismRole> getUserRoles(Resource resource) {
+    public HashMultimap<User, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
         HashMultimap<User, PrismRole> userRoles = HashMultimap.create();
-        roleDAO.getUserRoles(resource).forEach(userRole -> {
+        roleDAO.getUserRolesStrict(resource, searchRole, searchTerm).forEach(userRole -> {
             userRoles.put(userRole.getUser(), userRole.getRole());
         });
         return userRoles;
@@ -141,7 +132,7 @@ public class RoleService {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
 
-        UserRole userRole = getUserRole(resource, user, role);
+        UserRole userRole = getUserRoleStrict(resource, user, role);
         entityService.delete(userRole);
         entityService.flush();
     }
@@ -263,10 +254,6 @@ public class RoleService {
 
     public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, List<PrismRole> roles) {
         return roleDAO.getUserRoles(resources, roles);
-    }
-
-    public List<PrismRole> getRolesForResourceStrict(Resource resource, User user) {
-        return roleDAO.getRolesForResource(resource, user);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
@@ -416,7 +403,7 @@ public class RoleService {
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
 
             User owner = resource.getUser();
-            HashMultimap<User, PrismRole> existingUserRoles = getUserRoles(resource);
+            HashMultimap<User, PrismRole> existingUserRoles = getUserRolesStrict(resource);
             users.forEach(user -> {
                 boolean delete = transitionType.equals(DELETE);
                 boolean deleteOwnerRole = delete && user.equals(owner);
@@ -435,11 +422,15 @@ public class RoleService {
             if (notify && transitionType.equals(CREATE)) {
                 Invitation invitation = invitationService.createInvitation(invoker, message);
                 comment.getAssignedUsers().forEach(assignee -> {
-                    UserRole userRole = getUserRole(resource, assignee.getUser(), assignee.getRole());
+                    UserRole userRole = getUserRoleStrict(resource, assignee.getUser(), assignee.getRole());
                     userRole.setInvitation(invitation);
                 });
             }
         }
+    }
+
+    private HashMultimap<User, PrismRole> getUserRolesStrict(Resource resource) {
+        return getUserRolesStrict(resource, null, null);
     }
 
 }

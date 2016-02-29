@@ -3,7 +3,9 @@ package uk.co.alumeni.prism.dao;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 
@@ -39,7 +41,6 @@ import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 
 import com.google.common.collect.HashMultimap;
@@ -87,19 +88,19 @@ public class RoleDAO {
         return getUserRoles(resource, user, null);
     }
 
-    public List<UserRoleDTO> getUserRoles(Resource resource, List<PrismRole> roles) {
+    public List<UserRoleDTO> getUserRoles(Resource resource, Collection<PrismRole> roles) {
         return getUserRoles(resource, null, roles);
     }
 
-    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, List<PrismRole> roles) {
+    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, Collection<PrismRole> roles) {
         return getUserRoles(resources, null, roles);
     }
 
-    public List<UserRoleDTO> getUserRoles(Resource resource, User user, List<PrismRole> roles) {
+    public List<UserRoleDTO> getUserRoles(Resource resource, User user, Collection<PrismRole> roles) {
         return getUserRoles(newArrayList(resource), user, roles);
     }
 
-    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, User user, List<PrismRole> roles) {
+    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, User user, Collection<PrismRole> roles) {
         Junction constraints = Restrictions.disjunction();
         LinkedHashMultimap<PrismScope, Resource> constrainingResources = LinkedHashMultimap.create();
         resources.stream().forEach(resource -> {
@@ -147,7 +148,7 @@ public class RoleDAO {
                 .list();
     }
 
-    public UserRole getUserRole(Resource resource, User user, Role role) {
+    public UserRole getUserRoleStrict(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
@@ -155,53 +156,23 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    public UserRole getUserRole(Resource resource, User user, PrismRole prismRole) {
-        return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.id", prismRole)) //
-                .uniqueResult();
-    }
-
-    public List<UserRoleDTO> getUserRoles(Resource resource) {
-        return (List<UserRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+    public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("user").as("user")) //
                         .add(Projections.property("role.id").as("role"))) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
+
+        if (searchRole != null) {
+            criteria.add(Restrictions.eq("role.id", searchRole));
+        }
+
+        if (isNotBlank(searchTerm)) {
+            criteria.add(getSimilarUserConstraint("user", searchTerm));
+        }
+
+        return (List<UserRoleDTO>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(UserRoleDTO.class))
-                .list();
-    }
-
-    public List<ResourceRoleDTO> getUserRoles(User user, PrismScope resourceScope) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<ResourceRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("role.scope.id").as("scope")) //
-                        .add(Projections.property(resourceReference + ".id").as("id")) //
-                        .add(Projections.property("role.id").as("role")) //
-                        .add(Projections.property("role.verified").as("verified")) //
-                        .add(Projections.property("role.directlyAssignable").as("directlyAssignable"))) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull(resourceReference)) //
-                .add(Restrictions.eq("user", user)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
-                .list();
-    }
-
-    public List<User> getRoleUsers(Resource resource, Role... roles) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.in("role", roles)) //
-                .list();
-    }
-
-    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.in("role.id", prismRoles)) //
                 .list();
     }
 

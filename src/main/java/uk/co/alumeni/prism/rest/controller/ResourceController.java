@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -241,8 +242,7 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-
-        List<PrismRole> roles = body.getRoles();
+        Set<PrismRole> roles = body.getRoles();
         roleService.createUserRoles(userService.getCurrentUser(), resource, user, body.getMessage(), roles.toArray(new PrismRole[roles.size()]));
     }
 

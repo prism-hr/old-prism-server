@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -47,7 +47,7 @@ public class RoleMapper {
         resourceService.validateViewResource(resource);
         User currentUser = userService.getCurrentUser();
 
-        Set<ResourceUserRolesRepresentation> representations = newLinkedHashSet();
+        Set<ResourceUserRolesRepresentation> representations = newTreeSet();
         userService.getResourceUsers(resource, searchRole, searchTerm).forEach(
                 user -> representations.add(getResourceUserRolesRepresentation(resource, user, currentUser)));
 

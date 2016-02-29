@@ -234,8 +234,8 @@ public class UserDAO {
             criteria.add(getSimilarUserConstraint("user", searchTerm));
         }
 
-        return (List<User>) criteria.addOrder(Order.desc("user.lastName")) //
-                .addOrder(Order.desc("user.firstName")) //
+        return (List<User>) criteria //
+                .addOrder(Order.desc("user.fullName")) //
                 .list();
     }
 

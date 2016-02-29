@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -7,7 +10,7 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 import com.google.common.base.Objects;
 
-public class ResourceUserRolesRepresentation {
+public class ResourceUserRolesRepresentation implements Comparable<ResourceUserRolesRepresentation> {
 
     private UserRepresentationSimple user;
 
@@ -82,8 +85,13 @@ public class ResourceUserRolesRepresentation {
         if (getClass() != object.getClass()) {
             return false;
         }
-        ResourceUserRolesRepresentation other = (ResourceUserRolesRepresentation) object;
-        return Objects.equal(user, other.getUser());
+        final ResourceUserRolesRepresentation other = (ResourceUserRolesRepresentation) object;
+        return equal(user, other.getUser());
+    }
+
+    @Override
+    public int compareTo(ResourceUserRolesRepresentation other) {
+        return compare(user, other.getUser());
     }
 
 }

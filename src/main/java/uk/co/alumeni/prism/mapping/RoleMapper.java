@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Collections.singletonList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.List;
 import java.util.Set;
@@ -41,25 +42,36 @@ public class RoleMapper {
     @Inject
     private PrismJsonMappingUtils prismJsonMappingUtils;
 
-    public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource, User currentUser) {
+    @SuppressWarnings("unchecked")
+    public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource, PrismRole searchRole, String searchTerm) {
         resourceService.validateViewResource(resource);
+        User currentUser = userService.getCurrentUser();
 
         Set<ResourceUserRolesRepresentation> representations = newLinkedHashSet();
-        userService.getResourceUsers(resource).forEach(user -> representations.add(getResourceUserRolesRepresentation(resource, user, currentUser)));
+        userService.getResourceUsers(resource, searchRole, searchTerm).forEach(
+                user -> representations.add(getResourceUserRolesRepresentation(resource, user, currentUser)));
 
-        resource.getStateActionPendings().stream().forEach(stateActionPending -> { //
-                    PrismRole assignRole = stateActionPending.getAssignUserRole().getId();
-                    @SuppressWarnings("unchecked")
-                    List<UserRepresentationSimple> userRepresentations = prismJsonMappingUtils.readCollection(stateActionPending.getAssignUserList(),
-                            List.class, UserRepresentationSimple.class);
-                    userRepresentations.stream().forEach(userRepresentation -> {
+        boolean filterRole = searchRole != null;
+        boolean filterTerm = isNotBlank(searchTerm);
+        resource.getStateActionPendings().stream().forEach(stateActionPending -> {
+            PrismRole assignRole = stateActionPending.getAssignUserRole().getId();
+            if (!filterRole || assignRole.equals(searchRole)) {
+                List<UserRepresentationSimple> userRepresentations = prismJsonMappingUtils.readCollection(stateActionPending.getAssignUserList(),
+                        List.class, UserRepresentationSimple.class);
+                userRepresentations.stream().forEach(userRepresentation -> {
+                    if (!filterTerm || (userRepresentation.getFirstName().contains(searchTerm)
+                            || userRepresentation.getLastName().contains(searchTerm)
+                            || userRepresentation.getFullName().contains(searchTerm))
+                            || userRepresentation.getEmail().contains(searchTerm)) {
                         representations.add(new ResourceUserRolesRepresentation()
                                 .withUser(userRepresentation)
                                 .withRoles(singletonList(assignRole))
                                 .withMessage(stateActionPending.getAssignUserMessage())
                                 .withPending(true));
-                    });
+                    }
                 });
+            }
+        });
 
         return newLinkedList(representations);
     }

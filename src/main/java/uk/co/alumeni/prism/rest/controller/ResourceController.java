@@ -138,9 +138,10 @@ public class ResourceController {
     @Transactional
     @RequestMapping(value = "/{resourceId}/users", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<ResourceUserRolesRepresentation> getResourceUsers(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public List<ResourceUserRolesRepresentation> getResourceUsers(@PathVariable Integer resourceId, @RequestParam(required = false) PrismRole qRole,
+            @RequestParam(required = false) String qTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return roleMapper.getResourceUserRoleRepresentations(resource, userService.getCurrentUser());
+        return roleMapper.getResourceUserRoleRepresentations(resource, qRole, qTerm);
     }
 
     @Transactional

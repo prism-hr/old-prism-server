@@ -11,13 +11,15 @@ public class MessageRepresentation {
 
     private UserRepresentationSimple user;
 
-    private List<UserRepresentationSimple> recipients;
+    private List<MessageRecipientRepresentation> recipients;
 
     private String content;
 
     private List<DocumentRepresentation> documents;
 
     private DateTime createdTimestamp;
+
+    private DateTime viewTimestamp;
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -27,11 +29,11 @@ public class MessageRepresentation {
         this.user = user;
     }
 
-    public List<UserRepresentationSimple> getRecipients() {
+    public List<MessageRecipientRepresentation> getRecipients() {
         return recipients;
     }
 
-    public void setRecipients(List<UserRepresentationSimple> recipients) {
+    public void setRecipients(List<MessageRecipientRepresentation> recipients) {
         this.recipients = recipients;
     }
 
@@ -57,6 +59,14 @@ public class MessageRepresentation {
 
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+    }
+
+    public DateTime getViewTimestamp() {
+        return viewTimestamp;
+    }
+
+    public void setViewTimestamp(DateTime viewTimestamp) {
+        this.viewTimestamp = viewTimestamp;
     }
 
     public MessageRepresentation withUser(UserRepresentationSimple user) {

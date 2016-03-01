@@ -125,7 +125,6 @@ public class MessageDAO {
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .createAlias("message.user", "sender", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message", messages)) //
-                .add(Restrictions.neProperty("user", "message.user")) //
                 .addOrder(Order.desc("message")) //
                 .addOrder(Order.asc("sender.fullName")) //
                 .list();

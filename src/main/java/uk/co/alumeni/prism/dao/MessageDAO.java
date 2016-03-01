@@ -62,7 +62,6 @@ public class MessageDAO {
                 .createAlias("thread.comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.isNotNull("sendTimestamp")) //
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .addOrder(Order.desc("thread")) //
                 .setResultTransformer(Transformers.aliasToBean(MessageThreadDTO.class)) //
@@ -75,8 +74,7 @@ public class MessageDAO {
                         .add(Projections.groupProperty("message.thread").as("thread")) //
                         .add(Projections.max("message.createdTimestamp").as("updatedTimestamp"))) //
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("message.thread", threads)) //
-                .add(Restrictions.isNotNull("sendTimestamp"));
+                .add(Restrictions.in("message.thread", threads));
 
         if (isNotBlank(searchTerm)) {
             criteria.add(getMatchingMessageConstraint(searchTerm)
@@ -100,7 +98,6 @@ public class MessageDAO {
                 .createAlias("message", "message", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("message.thread", threads)) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.isNotNull("sendTimestamp")) //
                 .addOrder(Order.desc("message")) //
                 .list();
     }
@@ -108,8 +105,7 @@ public class MessageDAO {
     public List<Message> getMatchingMessages(Collection<Message> messages, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(MessageRecipient.class) //
                 .setProjection(Projections.property("message")) //
-                .add(Restrictions.in("message", messages)) //
-                .add(Restrictions.isNotNull("sendTimestamp"));
+                .add(Restrictions.in("message", messages));
 
         if (isNotBlank(searchTerm)) {
             criteria.add(getMatchingMessageConstraint(searchTerm));

@@ -54,7 +54,7 @@ public class RoleMapper {
         userRoles.keySet().stream().forEach(user -> {
             representations.add(new ResourceUserRolesRepresentation()
                     .withUser(userMapper.getUserRepresentationSimpleWithEmail(user, currentUser))
-                    .withRoles(userRoles.get(user)) //
+                    .withRoles(userRoles.get(user))
                     .withOwner(user.equals(resource.getUser()))
                     .withPending(false));
         });

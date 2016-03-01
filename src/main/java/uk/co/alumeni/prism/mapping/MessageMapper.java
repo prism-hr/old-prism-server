@@ -48,8 +48,8 @@ public class MessageMapper {
             LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, user, searchTerm);
 
             Collection<Message> unindexedMessages = messages.values();
-            LinkedHashMultimap<Message, MessageRecipient> users = messageService.getMessageRecipients(unindexedMessages);
             LinkedHashMultimap<Message, Document> documents = messageService.getMessageDocuments(unindexedMessages);
+            LinkedHashMultimap<Message, MessageRecipient> users = messageService.getMessageRecipients(unindexedMessages);
 
             threads.stream().forEach(t -> {
                 List<MessageRepresentation> messageRepresentations = newLinkedList();

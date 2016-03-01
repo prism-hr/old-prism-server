@@ -117,6 +117,7 @@ import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
+import uk.co.alumeni.prism.dto.ResourceMessageCountDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
@@ -1157,6 +1158,14 @@ public class ResourceService {
         });
     }
 
+    public Integer getResourceReadMessageCount(Resource resource, User user) {
+        return getFirstResourceMessageCount(resourceDAO.getResourceReadMessageCounts(resource.getResourceScope(), newArrayList(resource.getId()), user));
+    }
+
+    public Integer getResourceUnreadMessageCount(Resource resource, User user) {
+        return getFirstResourceMessageCount(resourceDAO.getResourceUnreadMessageCounts(resource.getResourceScope(), newArrayList(resource.getId()), user));
+    }
+
     public List<ResourceRoleDTO> getResourceRoles(User user) {
         List<ResourceRoleDTO> resourceRoles = Lists.newArrayList();
         for (PrismScope resourceScope : PrismScope.values()) {
@@ -1410,6 +1419,13 @@ public class ResourceService {
             }
         }
         return false;
+    }
+
+    private Integer getFirstResourceMessageCount(List<ResourceMessageCountDTO> counts) {
+        for (ResourceMessageCountDTO count : counts) {
+            return count.getMessageCount().intValue();
+        }
+        return null;
     }
 
 }

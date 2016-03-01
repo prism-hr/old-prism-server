@@ -362,7 +362,7 @@ public class ResourceMapper {
     public <T extends Resource, V extends ResourceRepresentationExtended> V getResourceRepresentationExtended(T resource, Class<V> returnType,
             List<PrismRole> overridingRoles, User currentUser) {
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        V representation = getResourceRepresentationRelation(resource, returnType, actions, overridingRoles, currentUser);
+        V representation = getResourceRepresentationStandard(resource, returnType, actions, overridingRoles, currentUser);
         representation.setStateActionPendingCount(resource.getStateActionPendings().size());
         representation.setActions(actions);
         representation.setConditions(getResourceConditionRepresentations(resource));
@@ -371,7 +371,7 @@ public class ResourceMapper {
 
     public <T extends Resource> ResourceRepresentationStandard getResourceRepresentationStandard(T resource, User currentUser) {
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        return getResourceRepresentationRelation(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource),
+        return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource),
                 currentUser);
     }
 
@@ -761,14 +761,17 @@ public class ResourceMapper {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationRelation(
-            T resource, Class<V> returnType, List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles, User currentUser) {
-        V representation = getResourceRepresentationRelation(resource, returnType, currentUser);
+    private <T extends Resource, V extends ResourceRepresentationStandard> V getResourceRepresentationStandard(
+            T resource, Class<V> returnType, List<ActionRepresentationExtended> actions, List<PrismRole> overridingRoles, User user) {
+        V representation = getResourceRepresentationRelation(resource, returnType, user);
 
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
 
         setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
         setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
+
+        representation.setReadMessageCount(resourceService.getResourceReadMessageCount(resource, user));
+        representation.setUnreadMessageCount(resourceService.getResourceUnreadMessageCount(resource, user));
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
         if (!resourceClass.equals(System.class) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {

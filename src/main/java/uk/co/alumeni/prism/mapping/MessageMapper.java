@@ -1,17 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import com.google.common.collect.LinkedHashMultimap;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageRecipient;
@@ -24,7 +15,13 @@ import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.services.MessageService;
 
-import com.google.common.collect.LinkedHashMultimap;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import java.util.Collection;
+import java.util.List;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 @Service
 @Transactional
@@ -66,7 +63,7 @@ public class MessageMapper {
                     users.get(message).stream().forEach(recipient -> {
                         User recipientUser = recipient.getUser();
                         DateTime viewTimestamp = recipient.getViewTimestamp();
-                        messageRecipientRepresentations.add(new MessageRecipientRepresentation()
+                        messageRecipientRepresentations.add(new MessageRecipientRepresentation().withId(recipient.getId())
                                 .withUser(userMapper.getUserRepresentationSimple(recipientUser, user)).withViewTimestamp(viewTimestamp));
 
                         if (recipientUser.equals(user)) {

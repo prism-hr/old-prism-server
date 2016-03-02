@@ -1345,6 +1345,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
       */
 
     SYSTEM_ACTIVITY_RECENTLY_UPDATED(PrismDisplayPropertyCategory.SYSTEM_ACTIVITY_SECTION, "Recently Updated"),
+    SYSTEM_ACTIVITY_MESSAGE_COUNT(PrismDisplayPropertyCategory.SYSTEM_ACTIVITY_SECTION, "New Messages"),
 
     /*
      * *************** SYSTEM CONNECT SECTION *********************
@@ -1969,7 +1970,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "Started a conversation"),
     SYSTEM_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "view messages"),
-    
+
     /*
      * *************** INSTITUTION COMMENT *********************
      */

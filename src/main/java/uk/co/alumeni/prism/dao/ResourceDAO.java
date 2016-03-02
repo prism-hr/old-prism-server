@@ -264,7 +264,6 @@ public class ResourceDAO {
                 .createAlias("thread.messages", "message") //
                 .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("recipient.user", user)) //
-                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
                 .add(Restrictions.isNull("recipient.viewTimestamp")) //
                 .list();
     }
@@ -755,7 +754,6 @@ public class ResourceDAO {
                 .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.eq("recipient.user", user)) //
-                .add(Restrictions.isNotNull("recipient.sendTimestamp")) //
                 .add(read ? Restrictions.isNotNull("recipient.viewTimestamp") : Restrictions.isNull("recipient.viewTimestamp")) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceMessageCountDTO.class)) //
                 .list();

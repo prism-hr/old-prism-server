@@ -8,9 +8,11 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static jersey.repackaged.com.google.common.base.Objects.equal;
+import static jersey.repackaged.com.google.common.collect.Sets.newHashSet;
 import static jersey.repackaged.com.google.common.collect.Sets.newTreeSet;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
@@ -55,7 +57,6 @@ import jersey.repackaged.com.google.common.collect.Iterables;
 import jersey.repackaged.com.google.common.collect.Sets;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -1203,8 +1204,8 @@ public class ResourceService {
     private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
             List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = newTreeSet();
-        if (!(applyReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
-            DateTime baseline = DateTime.now().minusDays(1);
+        if (!(setReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
+            DateTime baseline = now().minusDays(1);
             Boolean asPartner = responseClass.equals(ResourceOpportunityCategoryDTO.class) ? false : null;
             addResources(resourceDAO.getResources(user, scope, filter, columns, conditions, responseClass, baseline), resources, asPartner);
 
@@ -1227,12 +1228,12 @@ public class ResourceService {
         return resources;
     }
 
-    private boolean applyReplicableActionFilter(PrismScope scope, ResourceListFilterDTO filter) {
+    private boolean setReplicableActionFilter(PrismScope scope, ResourceListFilterDTO filter) {
         List<Integer> filterThemes = getReplicableActionFilterCollection(filter.getThemes());
         List<Integer> filterLocations = getReplicableActionFilterCollection(filter.getLocations());
 
         boolean filterApplied = false;
-        Set<Integer> resourceIds = Sets.newHashSet();
+        Set<Integer> resourceIds = newHashSet();
         if (scope.equals(APPLICATION)) {
             if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
                 List<Integer> secondaryFilterThemes = null;
@@ -1251,7 +1252,7 @@ public class ResourceService {
                 resourceIds.addAll(applicationService.getApplicationsByApplicationLocation(filterLocations, secondaryFilterLocations));
                 filterApplied = true;
             }
-        } else if (ArrayUtils.contains(advertScopes, scope)) {
+        } else if (contains(advertScopes, scope)) {
             if (isNotEmpty(filterThemes) && isTrue(filter.getThemesApplied())) {
                 resourceIds.addAll(resourceDAO.getResourcesByAdvertTheme(scope, filterThemes));
                 filterApplied = true;
@@ -1263,7 +1264,10 @@ public class ResourceService {
             }
         }
 
-        filter.setResourceIds(newArrayList(resourceIds));
+        if (filterApplied) {
+            filter.setResourceIds(newArrayList(resourceIds));
+        }
+
         return filterApplied;
     }
 

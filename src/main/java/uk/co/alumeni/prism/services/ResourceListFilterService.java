@@ -1,10 +1,13 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ArrayUtils.contains;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder.DESCENDING;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.STATE_GROUP_NAME;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.getPermittedFilters;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -22,7 +25,6 @@ import uk.co.alumeni.prism.domain.Theme;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertCategories;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -41,7 +43,6 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterTagDTO;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 @Service
@@ -75,7 +76,7 @@ public class ResourceListFilterService {
                         .withValueDateClose(constraintDTO.getValueDateClose()).withValueDecimalStart(constraintDTO.getValueDecimalStart())
                         .withValueDecimalClose(constraintDTO.getValueDecimalClose());
 
-                if (filterProperty == PrismResourceListConstraint.STATE_GROUP_NAME) {
+                if (filterProperty == STATE_GROUP_NAME) {
                     transientConstraint.setValueStateGroup(stateService.getStateGroupById(constraintDTO.getValueStateGroup()));
                 }
 
@@ -201,7 +202,7 @@ public class ResourceListFilterService {
         String valueString = filterDTO.getValueString();
         List<ResourceListFilterConstraintDTO> constraintDTOs = filterDTO.getConstraints();
 
-        if (!Strings.isNullOrEmpty(valueString) && constraintDTOs == null) {
+        if (!isNullOrEmpty(valueString) && constraintDTOs == null) {
             List<ResourceListFilterConstraintDTO> constraints = Lists.newLinkedList();
             int displayPosition = 0;
             for (PrismResourceListConstraint property : getPermittedFilters(scope.getId())) {
@@ -214,7 +215,7 @@ public class ResourceListFilterService {
                 }
             }
             filterDTO.setConstraints(constraints);
-            filterDTO.withMatchMode(PrismFilterMatchMode.ANY);
+            filterDTO.withMatchMode(ANY);
         }
     }
 

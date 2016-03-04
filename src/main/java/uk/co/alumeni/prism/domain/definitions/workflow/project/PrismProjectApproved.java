@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_REENDORSE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_MANAGER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
@@ -10,7 +12,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProje
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
@@ -28,12 +29,12 @@ public class PrismProjectApproved extends PrismWorkflowState {
         stateActions.add(projectEscalateApproved());
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.PROJECT_UNENDORSE) //
+                .withAction(PROJECT_UNENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
                 .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.PROJECT_REENDORSE) //
+                .withAction(PROJECT_REENDORSE) //
                 .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
                 .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 

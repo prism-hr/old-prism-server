@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_RESTORE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_AS_USER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_VIEWER_GROUP;
@@ -19,14 +21,14 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
         stateActions.add(projectEmailCreatorApproved());
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.PROJECT_RESTORE) //
+                .withAction(PROJECT_RESTORE) //
                 .withAssignments(PROJECT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT)));
 
         stateActions.add(projectViewEditAbstract()
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
+                .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
                 .withAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER));
     }

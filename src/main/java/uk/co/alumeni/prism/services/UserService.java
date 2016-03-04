@@ -368,7 +368,7 @@ public class UserService {
     }
 
     public String getSecuredUserEmailAddress(String email, User currentUser, boolean forceReturnEmail) {
-        return (forceReturnEmail || Objects.equals(email, currentUser.getEmail())) ? email : getObfuscatedEmail(email);
+        return (forceReturnEmail || Objects.equals(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource, PrismRole role) {

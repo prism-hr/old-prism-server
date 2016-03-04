@@ -1,10 +1,15 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentSendMessageApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditApproved;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismDepartmentApproved extends PrismWorkflowState {
@@ -12,17 +17,17 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_CREATE_APPLICATION) //
-                .withActionCondition(PrismActionCondition.ACCEPT_APPLICATION) //
-                .withStateTransitions(PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION //
-                        .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP))); //
+                .withAction(DEPARTMENT_CREATE_APPLICATION) //
+                .withActionCondition(ACCEPT_APPLICATION) //
+                .withStateTransitions(APPLICATION_CREATE_TRANSITION //
+                        .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
-        stateActions.add(PrismDepartmentWorkflow.departmentCreateProgram()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentCreateProject()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentSendMessageApproved());
+        stateActions.add(departmentCreateProgram()); //
+        stateActions.add(departmentCreateProject()); //
+        stateActions.add(departmentSendMessageApproved());
 
-        stateActions.add(PrismDepartmentWorkflow.departmentTerminateApproved()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentViewEditApproved()); //
+        stateActions.add(departmentTerminateApproved()); //
+        stateActions.add(departmentViewEditApproved()); //
     }
 
 }

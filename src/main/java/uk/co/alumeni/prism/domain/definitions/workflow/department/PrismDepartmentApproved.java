@@ -6,7 +6,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentSendMessageApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEmailCreatorApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditApproved;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
@@ -24,7 +24,7 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
 
         stateActions.add(departmentCreateProgram()); //
         stateActions.add(departmentCreateProject()); //
-        stateActions.add(departmentSendMessageApproved());
+        stateActions.add(departmentEmailCreatorApproved());
 
         stateActions.add(departmentTerminateApproved()); //
         stateActions.add(departmentViewEditApproved()); //

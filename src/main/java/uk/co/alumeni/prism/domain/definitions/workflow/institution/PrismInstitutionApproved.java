@@ -1,10 +1,16 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.institution;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateDepartment;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProgram;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProject;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionSendMessageApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionTerminateApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproved;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionApproved extends PrismWorkflowState {
@@ -12,18 +18,18 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.INSTITUTION_CREATE_APPLICATION) //
-                .withActionCondition(PrismActionCondition.ACCEPT_APPLICATION) //
-                .withStateTransitions(PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION //
-                        .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP))); //
+                .withAction(INSTITUTION_CREATE_APPLICATION) //
+                .withActionCondition(ACCEPT_APPLICATION) //
+                .withStateTransitions(APPLICATION_CREATE_TRANSITION //
+                        .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
 
-        stateActions.add(PrismInstitutionWorkflow.institutionCreateDepartment());
-        stateActions.add(PrismInstitutionWorkflow.institutionCreateProgram());
-        stateActions.add(PrismInstitutionWorkflow.institutionCreateProject());
-        stateActions.add(PrismInstitutionWorkflow.institutionSendMessageApproved()); //
+        stateActions.add(institutionCreateDepartment());
+        stateActions.add(institutionCreateProgram());
+        stateActions.add(institutionCreateProject());
+        stateActions.add(institutionSendMessageApproved()); //
 
-        stateActions.add(PrismInstitutionWorkflow.institutionTerminateApproved());
-        stateActions.add(PrismInstitutionWorkflow.institutionViewEditApproved()); //
+        stateActions.add(institutionTerminateApproved());
+        stateActions.add(institutionViewEditApproved()); //
     }
 
 }

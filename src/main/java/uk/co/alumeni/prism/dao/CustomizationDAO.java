@@ -35,58 +35,6 @@ public class CustomizationDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static String getSystemInheritanceCriterion(String opportunityTypeCriterion) {
-        return "and (institution in (" //
-                + "from Institution " //
-                + "where system = :system) " //
-                + "or department in (" //
-                + "from Department " //
-                + "where system = :system) " //
-                + "or program in (" //
-                + "from Program " //
-                + "where system = :system " //
-                + "and opportunityType.id = :opportunityType) "
-                + "or project in (" //
-                + "from Project " //
-                + "where system = :system " //
-                + "and opportunityType.id = :opportunityType) "
-                + opportunityTypeCriterion + ")";
-    }
-
-    private static String getInstitutionInheritanceCriterion(String opportunityTypeCriterion) {
-        return "and (department in (" //
-                + "from Department " //
-                + "where institution = :institution) " //
-                + "or program in (" //
-                + "from Program " //
-                + "where institution = :institution " //
-                + "and opportunityType.id = :opportunityType) "
-                + "or project in (" //
-                + "from Project " //
-                + "where institution = :institution " //
-                + "and opportunityType.id = :opportunityType) "
-                + opportunityTypeCriterion + ")";
-    }
-
-    private static String getDepartmentInheritanceCriterion(String opportunityTypeCriterion) {
-        return "and (program in (" //
-                + "from Program " //
-                + "where institution = :department " //
-                + "and opportunityType.id = :opportunityType) "
-                + "or project in (" //
-                + "from Project " //
-                + "and opportunityType.id = :opportunityType) "
-                + opportunityTypeCriterion + ")";
-    }
-
-    private static String getProgramInheritanceCriterion(String opportunityTypeCriterion) {
-        return "and (project in (" //
-                + "from Project " //
-                + "where program = :program " //
-                + "and opportunityType.id = :opportunityType) "
-                + opportunityTypeCriterion + ")";
-    }
-
     public WorkflowConfiguration<?> getConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType, WorkflowDefinition definition) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(configurationType.getConfigurationClass()) //
                 .add(getResourceLocalizationCriterion(resource, definition.getScope().getId(), opportunityType)) //
@@ -275,12 +223,12 @@ public class CustomizationDAO {
         if (prismOpportunityType == null) {
             return "and opportunityType is null ";
         }
-        return "and (program is not null and " //
+        return "and ((program is not null and " //
                 + "opportunityType is null " //
                 + "or opportunityType.id = :opportunityType) " //
                 + "or (project is not null and " //
                 + "opportunityType is null " //
-                + "or opportunityType.id = :opportunityType) ";
+                + "or opportunityType.id = :opportunityType)) ";
     }
 
     private void addActiveVersionCriterion(PrismConfiguration configurationType, Criteria criteria) {
@@ -332,6 +280,58 @@ public class CustomizationDAO {
             throw new Error();
         }
         return query;
+    }
+    
+    private static String getSystemInheritanceCriterion(String opportunityTypeCriterion) {
+        return "and (institution in (" //
+                + "from Institution " //
+                + "where system = :system) " //
+                + "or department in (" //
+                + "from Department " //
+                + "where system = :system) " //
+                + "or program in (" //
+                + "from Program " //
+                + "where system = :system " //
+                + "and opportunityType.id = :opportunityType) "
+                + "or project in (" //
+                + "from Project " //
+                + "where system = :system " //
+                + "and opportunityType.id = :opportunityType) "
+                + opportunityTypeCriterion + "))";
+    }
+
+    private static String getInstitutionInheritanceCriterion(String opportunityTypeCriterion) {
+        return "and (department in (" //
+                + "from Department " //
+                + "where institution = :institution) " //
+                + "or program in (" //
+                + "from Program " //
+                + "where institution = :institution " //
+                + "and opportunityType.id = :opportunityType) "
+                + "or project in (" //
+                + "from Project " //
+                + "where institution = :institution " //
+                + "and opportunityType.id = :opportunityType) "
+                + opportunityTypeCriterion + "))";
+    }
+
+    private static String getDepartmentInheritanceCriterion(String opportunityTypeCriterion) {
+        return "and (program in (" //
+                + "from Program " //
+                + "where institution = :department " //
+                + "and opportunityType.id = :opportunityType) "
+                + "or project in (" //
+                + "from Project " //
+                + "and opportunityType.id = :opportunityType) "
+                + opportunityTypeCriterion + "))";
+    }
+
+    private static String getProgramInheritanceCriterion(String opportunityTypeCriterion) {
+        return "and (project in (" //
+                + "from Project " //
+                + "where program = :program " //
+                + "and opportunityType.id = :opportunityType) "
+                + opportunityTypeCriterion + "))";
     }
 
 }

@@ -8,12 +8,14 @@
 </b></p>
 
 <p>
-   	${APPLICATION_CREATOR_FULL_NAME} has accepted your offer.
+   	${APPLICATION_CREATOR_FULL_NAME} has declined your offer.
 </p>
 
-<p>Login to view the history of the application.</p>
+<p>They gave the following reason: <b>${COMMENT_CONTENT}</b>.</p>
 
-${ACTION_VIEW_EDIT}
+<p>Follow the link below to make a counter offer or issue a rejection.</p>
+
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

@@ -339,7 +339,7 @@ public enum PrismRoleTransitionGroup {
 
     PROGRAM_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //
-                    .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                    .withRole(PROGRAM_ADMINISTRATOR) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(PROGRAM_ADMINISTRATOR) //
                     .withRestrictToOwner() //

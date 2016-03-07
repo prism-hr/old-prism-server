@@ -48,7 +48,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_TIME_FORMAT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "HH:mm"),
     SYSTEM_YES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Yes"),
     SYSTEM_NO(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "No"),
-    SYSTEM_DRAFTED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Drafted"),
     SYSTEM_LOWER_IN(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "in"),
     SYSTEM_LOWER_AT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "at"),
     SYSTEM_LOWER_OR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "or"),
@@ -108,7 +107,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PREFERRED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Preferred"),
     SYSTEM_RECOMMENDED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Recommended"),
     SYSTEM_FOR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "for"),
-    SYSTEM_CANDIDATES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Candidates"),
 
     /*
      * *************** SYSTEM COMMENT *********************
@@ -134,7 +132,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_STATE_GROUP_APPLICATION_UNSUBMITTED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Unsubmitted"),
     SYSTEM_STATE_GROUP_APPLICATION_VALIDATION(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Screening"),
-    SYSTEM_STATE_GROUP_APPLICATION_MESSAGING(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Messaging"),
     SYSTEM_STATE_GROUP_APPLICATION_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Reference Collection"),
     SYSTEM_STATE_GROUP_APPLICATION_REVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Review"),
     SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Interview"),
@@ -177,7 +174,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_TRANSITION_APPLICATION_APPROVED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Make an Offer"),
     SYSTEM_STATE_TRANSITION_APPLICATION_RESERVED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Hold in reserve"),
     SYSTEM_STATE_TRANSITION_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Arrange an interview"),
-    SYSTEM_STATE_TRANSITION_APPLICATION_MESSAGING(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Start a conversation"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REJECTED(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Issue a rejection"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Collect references"),
     SYSTEM_STATE_TRANSITION_APPLICATION_REVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_TRANSITION, "Collect reviews"),
@@ -205,7 +201,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_COMMENT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Comment"),
     SYSTEM_ACTION_APPLICATION_COMPLETE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Application"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_VALIDATION_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Screening Stage"),
-    SYSTEM_ACTION_APPLICATION_COMPLETE_MESSAGING_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Messaging Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REFERENCE_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Reference Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_REVIEW_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Review Stage"),
     SYSTEM_ACTION_APPLICATION_COMPLETE_INTERVIEW_STAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Complete Interview Stage"),
@@ -217,8 +212,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Availability"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
+    SYSTEM_ACTION_APPLICATION_REVISE_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Revise Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
-    SYSTEM_ACTION_APPLICATION_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
+    SYSTEM_ACTION_APPLICATION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_APPLICATION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Hiring Manager Approval"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Interview Availability"),
@@ -245,7 +241,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_CREATE_PROJECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Position"),
     SYSTEM_ACTION_INSTITUTION_CREATE_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_INSTITUTION_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_INSTITUTION_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
+    SYSTEM_ACTION_INSTITUTION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_INSTITUTION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_INSTITUTION_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_INSTITUTION_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
@@ -262,7 +258,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_DEPARTMENT_CREATE_PROGRAM(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Program"),
     SYSTEM_ACTION_DEPARTMENT_CREATE_PROJECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Position"),
     SYSTEM_ACTION_DEPARTMENT_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_DEPARTMENT_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
+    SYSTEM_ACTION_DEPARTMENT_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_DEPARTMENT_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_DEPARTMENT_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_DEPARTMENT_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
@@ -277,7 +273,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROGRAM_CREATE_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_PROGRAM_CREATE_PROJECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Position"),
     SYSTEM_ACTION_PROGRAM_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_PROGRAM_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
+    SYSTEM_ACTION_PROGRAM_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_PROGRAM_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROGRAM_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROGRAM_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
@@ -291,7 +287,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROJECT_CORRECT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Further Information"),
     SYSTEM_ACTION_PROJECT_CREATE_APPLICATION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Create Application"),
     SYSTEM_ACTION_PROJECT_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
-    SYSTEM_ACTION_PROJECT_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
+    SYSTEM_ACTION_PROJECT_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_PROJECT_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_PROJECT_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROJECT_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
@@ -1030,7 +1026,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Validation Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_MESSAGING_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Messaging Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Review Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Interview Stage Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
@@ -1040,6 +1035,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Interview Availability Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Offer Acceptance Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_REVISED_OFFER_ACCEPTANCE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Revised Offer Acceptance Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Confirm Rejection Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Hiring Manager Appproval Request"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Interview Availability Notification"),
@@ -1049,21 +1045,17 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_HAVE_RESPONDED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "All the referees have responded"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REVIEW_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Review Request"),
     SYSTEM_NOTIFICATION_APPLICATION_REVERSE_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Rejection Reversed Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_REVISE_OFFER_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Revise Offer Request"),
     SYSTEM_NOTIFICATION_APPLICATION_TERMINATE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Terminate Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Update Interview Availability Notification"),
     SYSTEM_NOTIFICATION_INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_INSTITUTION_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
-    SYSTEM_NOTIFICATION_INSTITUTION_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
     SYSTEM_NOTIFICATION_DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_DEPARTMENT_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
-    SYSTEM_NOTIFICATION_DEPARTMENT_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
     SYSTEM_NOTIFICATION_PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_PROGRAM_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
-    SYSTEM_NOTIFICATION_PROGRAM_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
     SYSTEM_NOTIFICATION_PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
     SYSTEM_NOTIFICATION_PROJECT_CORRECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Correct Request"),
-    SYSTEM_NOTIFICATION_PROJECT_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_COMPLETE_REGISTRATION_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Registration Request"),
     SYSTEM_NOTIFICATION_SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Registration Forgotten Request"),
     SYSTEM_NOTIFICATION_SYSTEM_PASSWORD_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Password Notification"),
@@ -1073,7 +1065,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_SYSTEM_CONNECTION_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Connection Request"),
     SYSTEM_NOTIFICATION_SYSTEM_JOIN_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Join Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_JOIN_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Join Request"),
-    SYSTEM_NOTIFICATION_SYSTEM_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_USER_INVITATION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "User Invitation Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Organization Invitation Notification"),
     SYSTEM_NOTIFICATION_CONFIGURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Email Template"),
@@ -1085,13 +1076,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_CONFIGURATION_ATTACHMENTS_LABEL(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Attachments"),
     SYSTEM_NOTIFICATION_CONFIGURATION_ATTACHMENTS_HINT(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Upload files that will be attached to the email"),
     SYSTEM_NOTIFICATION_NO_RECOMMENDATIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that due to an unexpected glitch in our system we have no current recommendations for you"),
-    SYSTEM_NOTIFICATION_APPLICANT_ACCEPTED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are pleased to inform you that the applicant accepted your offer"),
-    SYSTEM_NOTIFICATION_APPLICANT_DECLINED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "We are sorry to inform you that the applicant declined your offer"),
     SYSTEM_NOTIFICATION_AVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are available to attend"),
     SYSTEM_NOTIFICATION_UNAVAILABLE(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "They are unavailable to attend"),
     SYSTEM_NOTIFICATION_ACTIONS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "outstanding task(s) that require your attention"),
     SYSTEM_NOTIFICATION_UPDATES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "update(s) to applications, opportunities and organizations that you are following"),
-    SYSTEM_NOTIFICATION_MESSAGES(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "messages(s) for applications, opportunities and organizations that you are following"),
     SYSTEM_NOTIFICATION_APPOINTMENTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "upcoming interview appointment(s)"),
     SYSTEM_NOTIFICATION_JOINS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "request(s) to join organizations that you manage"),
     SYSTEM_NOTIFICATION_CONNECTS(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "request(s) to connect from organizations in your network"),
@@ -1219,8 +1207,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM STATE DURATION *********************
      */
 
-    SYSTEM_APPLICATION_MESSAGE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Message Escalation Duration"),
-    SYSTEM_APPLICATION_MESSAGE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to process an application via messaging"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to confirm the eligibility of an applicant"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reference Duration"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect applicant references"),
     SYSTEM_APPLICATION_PROVIDE_REVIEW_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Review Duration"),
@@ -1306,7 +1294,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_ACTION_PERFORMED_CONFIRMATION(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Action completed successfully"),
     SYSTEM_HTML_COMMON_EDIT_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Edit"),
     SYSTEM_HTML_COMMON_SAVE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Save"),
-    SYSTEM_HTML_COMMON_SAVE_FOR_LATER_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Save for later"),
     SYSTEM_HTML_COMMON_UPDATE_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Update"),
     SYSTEM_HTML_COMMON_OK_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "OK"),
     SYSTEM_HTML_COMMON_CANCEL_BUTTON(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Cancel"),
@@ -1346,7 +1333,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
       */
 
     SYSTEM_ACTIVITY_RECENTLY_UPDATED(PrismDisplayPropertyCategory.SYSTEM_ACTIVITY_SECTION, "Recently Updated"),
-    SYSTEM_ACTIVITY_MESSAGE_COUNT(PrismDisplayPropertyCategory.SYSTEM_ACTIVITY_SECTION, "New Messages"),
 
     /*
      * *************** SYSTEM CONNECT SECTION *********************
@@ -1553,7 +1539,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_RESOURCES_DOWNLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Download selected as PDF"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_NUMBER(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Resource #"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_TITLE(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Title"),
-    SYSTEM_RESOURCES_RESOURCE_COLUMN_LOCATION(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Location"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_UPDATED(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Updated"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_RATING(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Rating"),
     SYSTEM_RESOURCES_RESOURCE_COLUMN_STATUS(PrismDisplayPropertyCategory.SYSTEM_RESOURCES, "Status"),
@@ -1966,13 +1951,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_PERFORMANCE_INDICATOR_AVERAGE_PROCESSING_TIME(PrismDisplayPropertyCategory.SYSTEM_PERFORMANCE_INDICATOR, "Average Application Processing Time (Days)"),
 
     /*
-     * *************** SYSTEM COMMENT *********************
-     */
-
-    SYSTEM_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "Started a conversation"),
-    SYSTEM_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "view messages"),
-
-    /*
      * *************** INSTITUTION COMMENT *********************
      */
 
@@ -1982,8 +1960,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     INSTITUTION_COMMENT_REJECTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "We are sorry to inform you that your organization has been rejected"),
     INSTITUTION_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Initialized organization"),
     INSTITUTION_COMMENT_UPDATED(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization"),
-    INSTITUTION_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Started a conversation"),
-    INSTITUTION_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "view messages"),
     INSTITUTION_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization user roles"),
     INSTITUTION_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Updated organization notification configuration"),
     INSTITUTION_COMMENT_RESTORED_NOTIFICATION_CONFIGURATION_DEFAULT(PrismDisplayPropertyCategory.INSTITUTION_COMMENT, "Restored system default notification configuration"),
@@ -2015,8 +1991,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     DEPARTMENT_COMMENT_REJECTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "We are sorry to inform you that your Department has been rejected"),
     DEPARTMENT_COMMENT_SUBMITTED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Initialized department"),
     DEPARTMENT_COMMENT_UPDATED(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated department"),
-    DEPARTMENT_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Started a conversation"),
-    DEPARTMENT_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "view messages"),
     DEPARTMENT_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated department user roles"),
     DEPARTMENT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Updated department notification configuration"),
     DEPARTMENT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.DEPARTMENT_COMMENT, "Restored organization default notification configuration"),
@@ -2042,8 +2016,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROGRAM_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Further information is required to activate your program. Please login to address the reviewers comments"),
     PROGRAM_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "We are sorry to inform you that your program has been rejected"),
     PROGRAM_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program"),
-    PROGRAM_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Started a conversation"),
-    PROGRAM_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "view messages"),
     PROGRAM_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program user roles"),
     PROGRAM_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Updated program notification configuration"),
     PROGRAM_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.PROGRAM_COMMENT, "Restored Department default notification configuration"),
@@ -2070,8 +2042,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROJECT_COMMENT_CORRECTION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Further information is required to activate your position. Please login to address the reviewers comments"),
     PROJECT_COMMENT_REJECTED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "We are sorry to inform you that your position has been rejected"),
     PROJECT_COMMENT_UPDATED(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position"),
-    PROJECT_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Started a conversation"),
-    PROJECT_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "view messages"),
     PROJECT_COMMENT_UPDATED_USER_ROLE(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position user roles"),
     PROJECT_COMMENT_UPDATED_NOTIFICATION(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Updated position notification configuration"),
     PROJECT_COMMENT_RESTORED_NOTIFICATION_DEFAULT(PrismDisplayPropertyCategory.PROJECT_COMMENT, "Restored program default notification configuration"),
@@ -2362,8 +2332,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** APPLICATION COMMENT *********************
      */
 
-    APPLICATION_COMMENT_STARTED_CONVERSATION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Started a conversation"),
-    APPLICATION_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "view messages"),
     APPLICATION_COMMENT_DECLINED_REFEREE(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Declined to provide a reference"),
     APPLICATION_COMMENT_RECOMMENDED_OFFER_CONDITION(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Recommended offer conditions"),
     APPLICATION_COMMENT_POSITION_DESCRIPTION_UNEXPORTABLE(PrismDisplayPropertyCategory.APPLICATION_COMMENT, "Refer to program administrator for position description"),

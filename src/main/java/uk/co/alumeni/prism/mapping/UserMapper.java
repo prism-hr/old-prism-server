@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.stream.Collectors.toList;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
@@ -214,10 +215,7 @@ public class UserMapper {
 
     public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
         User currentUser = userService.getCurrentUser();
-        return users.stream()
-                .map(UserSelectionDTO::getUser)
-                .map(user -> getUserRepresentationSimple(user, currentUser))
-                .collect(Collectors.toList());
+        return users.stream().map(UserSelectionDTO::getUser).map(user -> getUserRepresentationSimple(user, currentUser)).collect(toList());
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(Integer user) {

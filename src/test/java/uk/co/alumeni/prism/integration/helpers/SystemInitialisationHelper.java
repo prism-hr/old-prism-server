@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -293,13 +292,6 @@ public class SystemInitialisationHelper {
         for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
                     .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
-            stateActionAssignment.getStateActionRecipients().forEach(recipient -> {
-                if (isFalse(recipient.getExternalMode())) {
-                    prismStateActionAssignment.addRecipient(recipient.getRole().getId());
-                } else {
-                    prismStateActionAssignment.addPartnerRecipient(recipient.getRole().getId());
-                }
-            });
             assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
         }
     }

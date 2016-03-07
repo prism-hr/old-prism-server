@@ -13,6 +13,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
@@ -346,7 +347,7 @@ public class ApplicationMapper {
     }
 
     private ApplicationOfferRepresentation getApplicationOfferRecommendationRepresentation(Application application) {
-        Comment sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
+        Comment sourceComment = commentService.getLatestComment(application, APPLICATION_REVISE_OFFER, APPLICATION_CONFIRM_OFFER);
 
         if (sourceComment != null) {
             return getApplicationOfferRecommendationRepresentation(sourceComment);
@@ -410,7 +411,7 @@ public class ApplicationMapper {
     }
 
     private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application, User currentUser) {
-        Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
+        Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_REVISE_OFFER, APPLICATION_CONFIRM_OFFER);
 
         if (assignmentComment != null) {
             return newArrayList(getApplicationHiringManagerRepresentations(assignmentComment));
@@ -431,7 +432,7 @@ public class ApplicationMapper {
                 return newArrayList(assignedSupervisors);
             } else {
                 List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors = newArrayList();
-                
+
                 for (ApplicationReferee applicationReferee : application.getReferees()) {
                     Comment referenceComment = applicationReferee.getComment();
                     if (referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) {
@@ -439,7 +440,7 @@ public class ApplicationMapper {
                                 applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
                     }
                 }
-                
+
                 return assignedSupervisors;
             }
         }

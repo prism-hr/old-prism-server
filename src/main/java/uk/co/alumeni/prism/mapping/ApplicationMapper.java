@@ -385,6 +385,7 @@ public class ApplicationMapper {
                 return newArrayList(assignedSupervisors);
             } else {
                 List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors = newArrayList();
+                
                 for (ApplicationReferee applicationReferee : application.getReferees()) {
                     Comment referenceComment = applicationReferee.getComment();
                     if (referenceComment == null || BooleanUtils.isFalse(referenceComment.getDeclinedResponse())) {
@@ -392,10 +393,10 @@ public class ApplicationMapper {
                                 applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
                     }
                 }
+                
+                return assignedSupervisors;
             }
         }
-
-        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

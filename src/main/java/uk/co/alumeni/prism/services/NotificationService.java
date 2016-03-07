@@ -19,7 +19,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST_EAGER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -432,7 +433,7 @@ public class NotificationService {
     private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition,
             NotificationDefinitionDTO definitionDTO, Long recentRequestCount) {
         recentRequestCount = recentRequestCount == null ? 0 : recentRequestCount;
-        if (recentRequestCount < REQUEST_BUFFER) {
+        if (definition.getNotificationPurpose().equals(REQUEST_EAGER) || recentRequestCount < REQUEST_BUFFER) {
             sendNotification(definition, definitionDTO.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));
             createUserNotification(resource, recipient, definition);
             return recipient;
@@ -453,12 +454,11 @@ public class NotificationService {
     }
 
     private void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
-        if (definition.getNotificationPurpose().equals(REQUEST)) {
-            entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
-                    .withNotifiedTimestamp(DateTime.now()));
-        } else {
+        if (definition.getNotificationPurpose().equals(UPDATE)) {
             entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
-                    .withActive(true)
+                    .withActive(true).withNotifiedTimestamp(DateTime.now()));
+        } else {
+            entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
                     .withNotifiedTimestamp(DateTime.now()));
         }
     }

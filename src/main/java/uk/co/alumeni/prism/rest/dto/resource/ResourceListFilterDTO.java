@@ -1,9 +1,7 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apache.commons.lang.BooleanUtils;
-
 import uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterSortOrder;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
@@ -13,6 +11,9 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 
+import java.util.List;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResourceListFilterDTO {
 
     private PrismRoleCategory roleCategory;

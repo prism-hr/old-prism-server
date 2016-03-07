@@ -212,6 +212,7 @@ public class NotificationDAO {
                         Restrictions.conjunction() //
                                 .add(Restrictions.eq("userNotification." + resource.getResourceScope().getLowerCamelName(), resource)) //
                                 .add(Restrictions.eqProperty("notificationDefinition.id", "userNotification.notificationDefinition.id")) //
+                                .add(Restrictions.eq("notificationDefinition.notificationPurpose", REQUEST))
                                 .add(Restrictions.eq("userNotification.active", true))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
                 .add(Restrictions.eq("action.transitionAction", true)) //

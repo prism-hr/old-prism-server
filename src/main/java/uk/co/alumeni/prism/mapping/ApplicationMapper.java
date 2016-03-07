@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
@@ -28,7 +29,6 @@ import javax.transaction.Transactional;
 
 import jersey.repackaged.com.google.common.collect.Maps;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
@@ -434,7 +434,7 @@ public class ApplicationMapper {
                 
                 for (ApplicationReferee applicationReferee : application.getReferees()) {
                     Comment referenceComment = applicationReferee.getComment();
-                    if (referenceComment == null || BooleanUtils.isFalse(referenceComment.getDeclinedResponse())) {
+                    if (referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) {
                         assignedSupervisors.add(new ApplicationAssignedHiringManagerRepresentation().withUser(userMapper.getUserRepresentationSimple(
                                 applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
                     }

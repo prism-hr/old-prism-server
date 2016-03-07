@@ -1,11 +1,8 @@
 package uk.co.alumeni.prism.services;
 
-import static java.util.Arrays.asList;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +18,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
@@ -212,10 +208,9 @@ public class CustomizationService {
 
     public boolean isSystemDefault(Resource resource, WorkflowDefinition definition, PrismOpportunityType opportunityType) {
         if (resource.getResourceScope().equals(SYSTEM)) {
-            PrismScopeCategory definitionScopeCategory = definition.getScope().getScopeCategory();
-            if (definitionScopeCategory.equals(OPPORTUNITY) && opportunityType.equals(getSystemOpportunityType())) {
-                return true;
-            } else if (asList(PrismScopeCategory.SYSTEM, ORGANIZATION).contains(definitionScopeCategory) && opportunityType == null) {
+            if (definition.getScope().getScopeCategory().hasOpportunityTypeConfigurations()) {
+                return opportunityType.equals(getSystemOpportunityType());
+            } else {
                 return true;
             }
         }

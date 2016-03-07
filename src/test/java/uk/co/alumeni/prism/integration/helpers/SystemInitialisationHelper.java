@@ -1,14 +1,16 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 
 import java.util.List;
 import java.util.Set;
@@ -23,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedaction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -160,7 +161,6 @@ public class SystemInitialisationHelper {
     }
 
     public void verifyStateGroupCreation() {
-
         for (StateGroup stateGroup : stateService.getStateGroups()) {
             assertEquals(stateGroup.getId().ordinal(), stateGroup.getOrdinal());
             assertEquals(stateGroup.getId().getScope(), stateGroup.getScope().getId());
@@ -197,7 +197,7 @@ public class SystemInitialisationHelper {
         assertEquals(systemUser.getEmail(), systemUserEmail);
 
         for (UserRole userRole : systemUser.getUserRoles()) {
-            assertEquals(userRole.getRole().getId(), PrismRole.SYSTEM_ADMINISTRATOR);
+            assertEquals(userRole.getRole().getId(), SYSTEM_ADMINISTRATOR);
         }
     }
 
@@ -231,7 +231,7 @@ public class SystemInitialisationHelper {
 
             OpportunityType opportunityType = configuration.getOpportunityType();
             assertEquals((opportunityType == null ? null : opportunityType.getId()),
-                    (definition.getScope().getOrdinal() > DEPARTMENT.ordinal() ? getSystemOpportunityType() : null));
+                    (definition.getScope().getScopeCategory().hasOpportunityTypeConfigurations() ? getSystemOpportunityType() : null));
             assertEquals(configuration.getDefinition(), definition);
             assertTrue(configuration.getSystemDefault());
 
@@ -293,6 +293,13 @@ public class SystemInitialisationHelper {
         for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
                     .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
+            stateActionAssignment.getStateActionRecipients().forEach(recipient -> {
+                if (isFalse(recipient.getExternalMode())) {
+                    prismStateActionAssignment.addRecipient(recipient.getRole().getId());
+                } else {
+                    prismStateActionAssignment.addPartnerRecipient(recipient.getRole().getId());
+                }
+            });
             assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
         }
     }

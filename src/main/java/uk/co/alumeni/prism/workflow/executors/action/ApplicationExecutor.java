@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.workflow.executors.action;
 
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 
@@ -48,8 +48,8 @@ public class ApplicationExecutor implements ActionExecutor {
                 throw new PrismValidationException("Application not completed", errors);
             }
 
-            application.setShared(BooleanUtils.isTrue(commentDTO.getShared()));
-            application.setOnCourse(BooleanUtils.isTrue(commentDTO.getOnCourse()));
+            application.setShared(isTrue(commentDTO.getShared()));
+            application.setOnCourse(isTrue(commentDTO.getOnCourse()));
         }
 
         Action action = actionService.getById(actionId);

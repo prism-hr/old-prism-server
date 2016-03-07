@@ -14,7 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
-public class PrismApplicationApprovedPendingOfferAcceptance extends PrismWorkflowState {
+public class PrismApplicationApprovedPendingOfferRevisionAcceptance extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {

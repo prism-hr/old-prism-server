@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
@@ -27,6 +28,7 @@ import javax.transaction.Transactional;
 
 import jersey.repackaged.com.google.common.collect.Maps;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
@@ -142,9 +144,6 @@ public class ApplicationMapper {
                 userMapper.getUserRepresentations(userService.getUsersPotentiallyInterestedInApplication(application, usersInterested)));
 
         representation.setInterview(getApplicationInterviewRepresentation(application));
-        representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
-        representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
-
         representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(advert));
 
         return representation;
@@ -161,7 +160,7 @@ public class ApplicationMapper {
                 applicationService.getApplicationRefereesNotResponded(application).stream()
                         .map(user -> userMapper.getUserRepresentationSimple(user, userService.getCurrentUser())).collect(Collectors.toList()));
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
-        representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
+        representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application, currentUser));
         return representation;
     }
 
@@ -364,11 +363,11 @@ public class ApplicationMapper {
                 .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());
     }
 
-    private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application) {
+    private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application, User currentUser) {
         Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
 
         if (assignmentComment != null) {
-            return Lists.newArrayList(getApplicationHiringManagerRepresentations(assignmentComment));
+            return newArrayList(getApplicationHiringManagerRepresentations(assignmentComment));
         } else {
             assignmentComment = commentService.getLatestComment(application, APPLICATION_ASSIGN_HIRING_MANAGERS);
 
@@ -383,11 +382,20 @@ public class ApplicationMapper {
                     }
                 }
 
-                return Lists.newArrayList(assignedSupervisors);
+                return newArrayList(assignedSupervisors);
+            } else {
+                List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors = newArrayList();
+                for (ApplicationReferee applicationReferee : application.getReferees()) {
+                    Comment referenceComment = applicationReferee.getComment();
+                    if (referenceComment == null || BooleanUtils.isFalse(referenceComment.getDeclinedResponse())) {
+                        assignedSupervisors.add(new ApplicationAssignedHiringManagerRepresentation().withUser(userMapper.getUserRepresentationSimple(
+                                applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
+                    }
+                }
             }
         }
 
-        return Lists.newArrayList();
+        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

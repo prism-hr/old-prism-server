@@ -381,6 +381,7 @@ public class CommentService {
         comment.setRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment());
         comment.setPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment());
         comment.setPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment());
+        comment.setApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment());
         comment.setRejectionReason(commentDTO.getRejectionReason());
 
         if (isCompleteAction) {

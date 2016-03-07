@@ -29,6 +29,8 @@ import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicat
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferAcceptance;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevision;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevisionAcceptance;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingPartnerAcceptance;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingAvailability;
@@ -136,6 +138,9 @@ public enum PrismState {
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApprovedPendingPartnerAcceptance.class),
     APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferAcceptance.class),
+    APPLICATION_APPROVED_PENDING_OFFER_REVISION(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferRevision.class),
+    APPLICATION_APPROVED_PENDING_OFFER_REVISION_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null,
+            PrismApplicationApprovedPendingOfferRevisionAcceptance.class),
     APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedCompleted.class),
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationRejected.class),

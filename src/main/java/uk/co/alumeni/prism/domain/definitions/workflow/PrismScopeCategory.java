@@ -7,4 +7,8 @@ public enum PrismScopeCategory {
     ORGANIZATION, //
     SYSTEM; //
 
+    public boolean hasOpportunityTypeConfigurations() {
+        return this.equals(APPLICATION) || this.equals(OPPORTUNITY);
+    }
+
 }

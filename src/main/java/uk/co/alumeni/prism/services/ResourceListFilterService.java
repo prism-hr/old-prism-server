@@ -1,5 +1,31 @@
 package uk.co.alumeni.prism.services;
 
+import com.google.common.collect.Lists;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.domain.Theme;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertCategories;
+import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.*;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
+import uk.co.alumeni.prism.exceptions.DeduplicationException;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterTagDTO;
+
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ArrayUtils.contains;
@@ -11,39 +37,6 @@ import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint.getPermittedFilters;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.domain.Theme;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertCategories;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.Institution;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
-import uk.co.alumeni.prism.domain.resource.ResourceListFilterConstraint;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Scope;
-import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
-import uk.co.alumeni.prism.exceptions.DeduplicationException;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterTagDTO;
-
-import com.google.common.collect.Lists;
 
 @Service
 @Transactional
@@ -171,7 +164,7 @@ public class ResourceListFilterService {
         Class<? extends Resource> parentResourceClass = parentResource.getClass();
         ResourceIdentityDTO parentResourceDTO = new ResourceIdentityDTO().withId(parentResource.getId()).withScope(parentResource.getResourceScope());
         if (ResourceParent.class.isAssignableFrom(parentResourceClass)) {
-            parentResourceDTO.setName(((ResourceParent) parentResource).getAdvert().getName());
+            parentResourceDTO.setName(parentResource.getAdvert().getName());
             if (parentResourceClass.equals(Institution.class)) {
                 Document logoImage = ((Institution) parentResource).getLogoImage();
                 if (logoImage != null) {

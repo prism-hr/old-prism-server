@@ -32,6 +32,16 @@ public class UserSelectionDTO {
         return user.getFullName();
     }
 
+    public UserSelectionDTO withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public UserSelectionDTO withEventTimestamp(DateTime eventTimestamp) {
+        this.eventTimestamp = eventTimestamp;
+        return this;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(user.getId());

@@ -1,11 +1,6 @@
 package uk.co.alumeni.prism.services.helpers;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -16,11 +11,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
@@ -28,10 +21,8 @@ import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -114,23 +105,6 @@ public class NotificationPropertyLoader {
         Resource resource = notificationDefinitionDTO.getResource();
         String url = getRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
         return getRedirectionControl(url, linkLabel, declineLinkLabel);
-    }
-
-    public String getInvitationAcceptControl() {
-        return getRedirectionControl(applicationApiUrl + "/mail/activate?resourceId=" + notificationDefinitionDTO.getResource().getId() + "&actionId="
-                + notificationDefinitionDTO.getTransitionAction().name() + "&targetInvitation=" + notificationDefinitionDTO.getAdvertTarget().getId()
-                + "&activationCode=" + notificationDefinitionDTO.getRecipient().getActivationCode(), SYSTEM_PROCEED);
-    }
-
-    public String getCommentAssigneesAsString(PrismRole roleId) {
-        Set<CommentAssignedUser> assigneeObjects = notificationDefinitionDTO.getComment().getAssignedUsers();
-        Set<String> assigneeStrings = Sets.newTreeSet();
-        for (CommentAssignedUser assigneeObject : assigneeObjects) {
-            if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType().equals(CREATE)) {
-                assigneeStrings.add(assigneeObject.getUser().getFullName());
-            }
-        }
-        return Joiner.on(", ").join(assigneeStrings);
     }
 
     public String getRedirectionUrl(Integer resourceId, PrismAction actionId, User user) {

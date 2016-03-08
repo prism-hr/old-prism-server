@@ -15,7 +15,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationSendMessageViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
@@ -37,7 +36,6 @@ public class PrismApplicationReview extends PrismWorkflowState {
         stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_REVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP));
         stateActions.add(applicationSendMessageViewerRecruiter());
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));
-        stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditWithViewerRecruiter(state));
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP,
@@ -60,10 +58,6 @@ public class PrismApplicationReview extends PrismWorkflowState {
         return applicationSendMessageViewerRecruiter() //
                 .withAssignment(APPLICATION_REVIEWER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REVIEWER);
-    }
-
-    public static PrismStateAction applicationTerminateReview() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP, APPLICATION_RETIRE_REVIEWER_GROUP);
     }
 
     public static PrismStateAction applicationViewEditReview(PrismState state) {

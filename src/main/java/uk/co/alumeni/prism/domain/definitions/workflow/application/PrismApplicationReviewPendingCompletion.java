@@ -9,7 +9,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview.applicationCompleteReview;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview.applicationProvideReview;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview.applicationSendMessageReview;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview.applicationTerminateReview;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview.applicationViewEditReview;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReview.applicationWithdrawReview;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
@@ -39,7 +38,6 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                         .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP))); //
 
-        stateActions.add(applicationTerminateReview());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditReview(state)); //
         stateActions.add(applicationWithdrawReview());

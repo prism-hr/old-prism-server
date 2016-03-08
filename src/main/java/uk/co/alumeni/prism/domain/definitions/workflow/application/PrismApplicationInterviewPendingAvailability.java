@@ -8,7 +8,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationConfirmInterviewArrangements;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationProvideInterviewAvailability;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationSendMessageInterviewScheduling;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationUpdateInterviewAvailability;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduling;
@@ -32,8 +31,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
         stateActions.add(applicationProvideInterviewAvailability() //
                 .withStateTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_TRANSITION //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP))); //
-
-        stateActions.add(applicationTerminateInterviewScheduling());
 
         stateActions.add(applicationUpdateInterviewAvailability(APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //

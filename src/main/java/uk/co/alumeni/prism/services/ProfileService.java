@@ -1,99 +1,50 @@
 package uk.co.alumeni.prism.services;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import uk.co.alumeni.prism.dao.ProfileDAO;
+import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
+import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.application.*;
+import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.profile.*;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.user.*;
+import uk.co.alumeni.prism.domain.workflow.Role;
+import uk.co.alumeni.prism.rest.dto.AddressDTO;
+import uk.co.alumeni.prism.rest.dto.DocumentDTO;
+import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
+import uk.co.alumeni.prism.rest.dto.profile.*;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.springframework.beans.BeanUtils.instantiate;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_AWARD;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_QUALIFICATION_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_UPDATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import uk.co.alumeni.prism.dao.ProfileDAO;
-import uk.co.alumeni.prism.domain.UniqueEntity;
-import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
-import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationAdditionalInformation;
-import uk.co.alumeni.prism.domain.application.ApplicationAddress;
-import uk.co.alumeni.prism.domain.application.ApplicationAward;
-import uk.co.alumeni.prism.domain.application.ApplicationDocument;
-import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
-import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
-import uk.co.alumeni.prism.domain.application.ApplicationQualification;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
-import uk.co.alumeni.prism.domain.profile.ProfileAddress;
-import uk.co.alumeni.prism.domain.profile.ProfileAdvertRelationSection;
-import uk.co.alumeni.prism.domain.profile.ProfileAward;
-import uk.co.alumeni.prism.domain.profile.ProfileDocument;
-import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
-import uk.co.alumeni.prism.domain.profile.ProfileEntity;
-import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
-import uk.co.alumeni.prism.domain.profile.ProfileQualification;
-import uk.co.alumeni.prism.domain.profile.ProfileReferee;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserAccount;
-import uk.co.alumeni.prism.domain.user.UserAdditionalInformation;
-import uk.co.alumeni.prism.domain.user.UserAddress;
-import uk.co.alumeni.prism.domain.user.UserAward;
-import uk.co.alumeni.prism.domain.user.UserDocument;
-import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
-import uk.co.alumeni.prism.domain.user.UserPersonalDetail;
-import uk.co.alumeni.prism.domain.user.UserQualification;
-import uk.co.alumeni.prism.domain.user.UserReferee;
-import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.rest.dto.AddressDTO;
-import uk.co.alumeni.prism.rest.dto.DocumentDTO;
-import uk.co.alumeni.prism.rest.dto.application.ApplicationAdvertRelationSectionDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileQualificationDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileRefereeDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserDTO;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 @Service
 @Transactional
@@ -414,7 +365,7 @@ public class ProfileService {
         List<U> qualifications = newLinkedList();
         qualifications.add(profileDAO.getCurrentQualification(profile, qualificationClass));
         qualifications.add(profileDAO.getMostRecentQualification(profile, qualificationClass));
-        return qualifications;
+        return qualifications.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> List<U> getRecentEmploymentPositions(T profile,
@@ -422,7 +373,7 @@ public class ProfileService {
         List<U> employmentPositions = newLinkedList();
         employmentPositions.add(profileDAO.getCurrentEmploymentPosition(profile, qualificationClass));
         employmentPositions.add(profileDAO.getMostRecentEmploymentPosition(profile, qualificationClass));
-        return employmentPositions;
+        return employmentPositions.stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private void fillApplicationPersonalDetail(Application application, UserAccount userAccount) {
@@ -651,7 +602,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("association", qualification.getAssociation()).addProperty("advert", qualification.getAdvert())
                         .addProperty("startYear",
                                 qualification.getStartYear()));
-        if (!(duplicateQualification == null || Objects.equal(qualification.getId(), duplicateQualification.getId()))) {
+        if (!(duplicateQualification == null || Objects.equals(qualification.getId(), duplicateQualification.getId()))) {
             entityService.delete(duplicateQualification);
         }
 
@@ -692,7 +643,7 @@ public class ProfileService {
         U duplicateAward = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) award.getClass(),
                 new EntitySignature().addProperty("association", award.getAssociation()).addProperty("name", award.getName()).addProperty("awardYear",
                         award.getAwardYear()).addProperty("awardMonth", award.getAwardMonth()));
-        if (!(duplicateAward == null || Objects.equal(award.getId(), duplicateAward.getId()))) {
+        if (!(duplicateAward == null || Objects.equals(award.getId(), duplicateAward.getId()))) {
             entityService.delete(duplicateAward);
         }
 
@@ -752,7 +703,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("association", employmentPosition.getAssociation()).addProperty("advert", employmentPosition.getAdvert())
                         .addProperty("startYear",
                                 employmentPosition.getStartYear()).addProperty("startMonth", employmentPosition.getStartMonth()));
-        if (!(duplicateEmploymentPosition == null || Objects.equal(employmentPosition.getId(), duplicateEmploymentPosition.getId()))) {
+        if (!(duplicateEmploymentPosition == null || Objects.equals(employmentPosition.getId(), duplicateEmploymentPosition.getId()))) {
             entityService.delete(duplicateEmploymentPosition);
         }
 
@@ -798,7 +749,7 @@ public class ProfileService {
                 (Class<? extends UniqueEntity>) referee.getClass(),
                 new EntitySignature().addProperty("association", referee.getAssociation()).addProperty("advert", referee.getAdvert())
                         .addProperty("user", referee.getUser()));
-        if (!(duplicateReferee == null || Objects.equal(referee.getId(), duplicateReferee.getId()))) {
+        if (!(duplicateReferee == null || Objects.equals(referee.getId(), duplicateReferee.getId()))) {
             entityService.delete(duplicateReferee);
         }
 
@@ -905,7 +856,7 @@ public class ProfileService {
         if (application.isSubmitted()) {
             Role role = roleService.getById(prismRole);
             assignees.add(new CommentAssignedUser().withUser(newUser).withRole(role).withRoleTransitionType(CREATE));
-            if (!(oldUser == null || Objects.equal(newUser.getId(), oldUser.getId()))) {
+            if (!(oldUser == null || Objects.equals(newUser.getId(), oldUser.getId()))) {
                 assignees.add(new CommentAssignedUser().withUser(oldUser).withRole(role).withRoleTransitionType(DELETE));
             }
         }

@@ -54,7 +54,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
     private Set<StateActionAssignment> stateActionAssignments = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")
-    private Set<StateActionNotification> stateActionNotifications = Sets.newHashSet();
+    private Set<StateTransitionNotification> stateActionNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "role")
     private Set<ActionRedaction> actionRedactions = Sets.newHashSet();
@@ -118,7 +118,7 @@ public class Role extends WorkflowDefinition implements GrantedAuthority {
         return stateActionAssignments;
     }
 
-    public Set<StateActionNotification> getStateActionNotifications() {
+    public Set<StateTransitionNotification> getStateActionNotifications() {
         return stateActionNotifications;
     }
 

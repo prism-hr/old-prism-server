@@ -30,7 +30,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_ASSIGN_HIRING_MANAGERS) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_APPROVER_GROUP) //
+                .withStateActionAssignments(APPLICATION_APPROVER_GROUP) //
                 .withStateTransitions(APPLICATION_ASSIGN_HIRING_MANAGERS_TRANSITION)); //
 
         stateActions.add(applicationCommentViewerRecruiter()); //
@@ -51,7 +51,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
                 .withAction(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST) //
-                .withAssignments(APPLICATION_HIRING_MANAGER);
+                .withStateActionAssignments(APPLICATION_HIRING_MANAGER);
     }
 
     public static PrismStateAction applicationSendMessageApproval() {
@@ -62,7 +62,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 
     public static PrismStateAction applicationViewEditApproval(PrismState state) {
         return applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(APPLICATION_HIRING_MANAGER, APPLICATION_VIEW_AS_RECRUITER);
+                .withStateActionAssignments(APPLICATION_HIRING_MANAGER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationWithdrawApproval() {

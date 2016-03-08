@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_EMAIL_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_ESCALATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_TERMINATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_WITHDRAW;
@@ -13,11 +13,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROGRAM_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROGRAM_VIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_VIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_MANAGE_USERS_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_REJECTED;
@@ -29,17 +28,13 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 
 public class PrismProjectWorkflow {
 
-    public static PrismStateAction projectSendMessageUnnapproved() {
-        return projectSendMessageAbstract();
+    public static PrismStateAction projectEmailCreatorUnnapproved() {
+        return projectEmailCreatorAbstract();
     }
 
-    public static PrismStateAction projectSendMessageApproved() {
-        return projectSendMessageAbstract() //
-                .withAssignment(PROJECT_ADMINISTRATOR, PROJECT_STAFF_GROUP) //
-                .withAssignment(PROJECT_ADMINISTRATOR, PROJECT_ADMINISTRATOR_GROUP) //
-                .withAssignments(PROJECT_STAFF_GROUP, PROJECT_ADMINISTRATOR) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, PROJECT_ADMINISTRATOR_GROUP) //
-                .withPartnerRecipientAssignments(PROJECT_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
+    public static PrismStateAction projectEmailCreatorApproved() {
+        return projectEmailCreatorAbstract() //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction projectEscalateUnapproved() {
@@ -72,8 +67,8 @@ public class PrismProjectWorkflow {
 
     public static PrismStateAction projectViewEditApproval(PrismState state) {
         return projectViewEditAbstract()
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(PROJECT_VIEW_EDIT)
@@ -82,14 +77,14 @@ public class PrismProjectWorkflow {
 
     public static PrismStateAction projectViewEditApproved() {
         return projectViewEditAbstract()
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
-                .withAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROGRAM_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROJECT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
-                .withPartnerAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withStateTransitions(PROJECT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROJECT_MANAGE_USERS_GROUP));
     }
@@ -97,13 +92,13 @@ public class PrismProjectWorkflow {
     public static PrismStateAction projectViewEditInactive() {
         return projectViewEditAbstract()
                 .withActionEnhancement(PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction projectWithdraw() {
         return new PrismStateAction() //
                 .withAction(PROJECT_WITHDRAW) //
-                .withAssignments(PROJECT_ADMINISTRATOR)
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR)
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST));
@@ -114,10 +109,10 @@ public class PrismProjectWorkflow {
                 .withAction(PROJECT_VIEW_EDIT);
     }
 
-    private static PrismStateAction projectSendMessageAbstract() {
+    private static PrismStateAction projectEmailCreatorAbstract() {
         return new PrismStateAction() //
-                .withAction(PROJECT_SEND_MESSAGE) //
-                .withAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP, PROJECT_ADMINISTRATOR);
+                .withAction(PROJECT_EMAIL_CREATOR) //
+                .withStateActionAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP);
     }
 
     private static PrismStateAction projectEscalateAbstract() {

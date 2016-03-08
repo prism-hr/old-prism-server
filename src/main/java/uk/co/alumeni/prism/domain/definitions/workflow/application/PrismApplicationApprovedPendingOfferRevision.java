@@ -21,7 +21,7 @@ public class PrismApplicationApprovedPendingOfferRevision extends PrismWorkflowS
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_REVISE_OFFER) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withStateTransitions(APPLICATION_REVISE_OFFER_TRANSITION) //
                 .withNotification(APPLICATION_REVISE_OFFER_REQUEST));
 

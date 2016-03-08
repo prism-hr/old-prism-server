@@ -1,36 +1,7 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.BooleanUtils.isTrue;
-import static org.springframework.beans.BeanUtils.instantiate;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_AWARD;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_DOCUMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_EMPLOYMENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_QUALIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDITIONAL_INFORMATION_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_ADDRESS_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_AWARD_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_DOCUMENT_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_EMPLOYMENT_POSITION_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_PERSONAL_DETAIL_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_QUALIFICATION_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_REFEREE_UPDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
-import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -263,7 +234,7 @@ public class ProfileService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
-            ProfileEmploymentPositionDTO employmentPositionDTO) {
+                                                                             ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId,
                 employmentPositionDTO);
@@ -391,7 +362,7 @@ public class ProfileService {
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> List<U> getRecentQualifications(T profile,
-            Class<U> qualificationClass) {
+                                                                                                                                Class<U> qualificationClass) {
         List<U> qualifications = newLinkedList();
         qualifications.add(profileDAO.getCurrentQualification(profile, qualificationClass));
         qualifications.add(profileDAO.getMostRecentQualification(profile, qualificationClass));
@@ -399,7 +370,7 @@ public class ProfileService {
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> List<U> getRecentEmploymentPositions(T profile,
-            Class<U> qualificationClass) {
+                                                                                                                                          Class<U> qualificationClass) {
         List<U> employmentPositions = newLinkedList();
         employmentPositions.add(profileDAO.getCurrentEmploymentPosition(profile, qualificationClass));
         employmentPositions.add(profileDAO.getMostRecentEmploymentPosition(profile, qualificationClass));

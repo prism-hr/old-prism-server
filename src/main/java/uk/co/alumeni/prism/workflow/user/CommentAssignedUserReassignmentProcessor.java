@@ -9,7 +9,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.UserService;
 
 @Component
-public class CommentAssignmentUserReassignmentProcessor implements PrismUserReassignmentProcessor {
+public class CommentAssignedUserReassignmentProcessor implements PrismUserReassignmentProcessor {
 
     @Inject
     private UserService userService;

@@ -11,6 +11,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
@@ -689,8 +690,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return action.getId().equals(APPLICATION_PROVIDE_REFERENCE) && delegateUser != null;
     }
 
-    public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId().equals(APPLICATION_CONFIRM_OFFER);
+    public boolean isApplicationOfferRecommendationComment() {
+        return asList(APPLICATION_CONFIRM_OFFER, APPLICATION_REVISE_OFFER).contains(action.getId());
     }
 
     public boolean isApplicationCreatedComment() {

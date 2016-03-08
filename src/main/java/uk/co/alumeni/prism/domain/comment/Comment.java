@@ -1,5 +1,31 @@
 package uk.co.alumeni.prism.domain.comment;
 
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_ACCEPTANCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
@@ -663,8 +689,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return action.getId().equals(PrismAction.APPLICATION_PROVIDE_REFERENCE) && delegateUser != null;
     }
 
-    public boolean isApplicationConfirmOfferRecommendationComment() {
-        return action.getId().equals(PrismAction.APPLICATION_CONFIRM_OFFER);
+    public boolean isApplicationOfferRecommendationComment() {
+        return asList(APPLICATION_CONFIRM_OFFER, APPLICATION_REVISE_OFFER).contains(action.getId());
     }
 
     public boolean isApplicationCreatedComment() {

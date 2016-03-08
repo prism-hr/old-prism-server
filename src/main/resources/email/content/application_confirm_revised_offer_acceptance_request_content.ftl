@@ -7,17 +7,17 @@
 </b></p>
 
 <p>
-    We have completed our assessment and we are pleased to inform you that you have been successful.
+    We have considered your comments on our previous offer and we wish to make you a revised offer.
 </p>
 
 <p>
     We now need you to login at your earliest convenience to confirm that you are happy to accept our
-    terms of offer. <b>Please do this quickly, so that we have the opportunity to offer the opportunity to
-    another applicant should you wish to decline.</b>
+    revised terms of offer. <b>Please do this quickly, so that we have the opportunity to offer the opportunity 
+    to another applicant should you wish to decline.</b>
 </p>
 
 <p>
-	Our terms of offer are as follows:
+	Our revised terms of offer are as follows:
 </p>
 
 <ul>

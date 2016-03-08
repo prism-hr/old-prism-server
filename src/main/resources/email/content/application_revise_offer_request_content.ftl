@@ -8,12 +8,9 @@
 </b></p>
 
 <p>
-   	${APPLICATION_CREATOR_FULL_NAME} has accepted the terms of offer:
+   	${APPLICATION_CREATOR_FULL_NAME} has declined the terms of offer:
 </p>
 
-<p><b>
-	${APPLICATION_OFFER_ACCEPTANCE}.
-</p></b>
 <ul>
 	<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
 	<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
@@ -21,9 +18,11 @@
 	<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
 </ul>
 
-<p>Login to view the history of the application.</p>
+<p>They gave the following reason: <b>${COMMENT_CONTENT}</b>.</p>
 
-${ACTION_VIEW_EDIT}
+<p>Follow the link below to make a counter offer or issue a rejection.</p>
+
+${ACTION_COMPLETE}
 
 <p>
     Yours sincerely,

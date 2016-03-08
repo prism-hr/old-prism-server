@@ -126,7 +126,7 @@ public class NotificationPropertyLoader {
         Set<CommentAssignedUser> assigneeObjects = notificationDefinitionDTO.getComment().getAssignedUsers();
         Set<String> assigneeStrings = Sets.newTreeSet();
         for (CommentAssignedUser assigneeObject : assigneeObjects) {
-            if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType() == CREATE) {
+            if (assigneeObject.getRole().getId() == roleId && assigneeObject.getRoleTransitionType().equals(CREATE)) {
                 assigneeStrings.add(assigneeObject.getUser().getFullName());
             }
         }

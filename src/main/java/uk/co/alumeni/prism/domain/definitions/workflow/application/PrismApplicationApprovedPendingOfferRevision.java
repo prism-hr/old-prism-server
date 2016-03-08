@@ -5,8 +5,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_REVISE_OFFER_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedWithAppointee;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationSendMessageApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
@@ -16,7 +16,7 @@ public class PrismApplicationApprovedPendingOfferRevision extends PrismWorkflowS
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
         stateActions.add(applicationCompleteApprovedWithAppointee(state));
 
         stateActions.add(new PrismStateAction() //
@@ -26,7 +26,7 @@ public class PrismApplicationApprovedPendingOfferRevision extends PrismWorkflowS
                 .withStateTransitions(APPLICATION_REVISE_OFFER_TRANSITION) //
                 .withNotification(APPLICATION_REVISE_OFFER_REQUEST));
 
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationSendMessageApproved()); //
         stateActions.add(applicationTerminateSubmitted()); //
         stateActions.add(applicationViewEdit()); //
     }

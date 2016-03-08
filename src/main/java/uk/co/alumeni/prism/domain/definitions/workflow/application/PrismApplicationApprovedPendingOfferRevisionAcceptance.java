@@ -7,8 +7,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICAT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedWithAppointee;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationSendMessageApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
@@ -26,9 +26,9 @@ public class PrismApplicationApprovedPendingOfferRevisionAcceptance extends Pris
                 .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                 .withStateTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION));
 
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
         stateActions.add(applicationCompleteApprovedWithAppointee(state)); //
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationSendMessageApproved()); //
         stateActions.add(applicationTerminateSubmitted()); //
         stateActions.add(applicationViewEdit()); //
     }

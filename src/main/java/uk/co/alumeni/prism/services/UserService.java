@@ -543,7 +543,7 @@ public class UserService {
     }
 
     public DateTime getUserCreatedTimestamp(User user) {
-        return getUserCreatedTimestamp(user);
+        return userDAO.getUserCreatedTimestamp(user);
     }
 
     @SuppressWarnings("unchecked")

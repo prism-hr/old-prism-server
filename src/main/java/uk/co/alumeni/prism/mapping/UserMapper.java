@@ -6,6 +6,7 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,6 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserFeedbackService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismStringUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -174,7 +174,7 @@ public class UserMapper {
         List<UserRepresentationSimple> representations = newLinkedList();
         users.stream().forEach(user -> {
             UserRepresentationSimple representation = getUserRepresentationSimple(user.getUser(), currentUser);
-            representation.setEmail(PrismStringUtils.getObfuscatedEmail(representation.getEmail()));
+            representation.setEmail(getObfuscatedEmail(representation.getEmail()));
             representations.add(representation);
         });
         return representations;

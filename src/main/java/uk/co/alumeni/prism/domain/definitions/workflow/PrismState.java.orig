@@ -97,11 +97,15 @@ public enum PrismState {
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationUnsubmitted.class),
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
+<<<<<<< local
             PrismApplicationValidation.class),
     APPLICATION_MESSAGING(PrismStateGroup.APPLICATION_MESSAGING, APPLICATION_MESSAGE_DURATION, null,
             PrismApplicationMessaging.class),
     APPLICATION_MESSAGING_PENDING_COMPLETION(PrismStateGroup.APPLICATION_MESSAGING, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationMessagingPendingCompletion.class),
+=======
+            PrismApplicationValidation.class),
+>>>>>>> graft
     APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationReview.class),
     APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null,
@@ -136,6 +140,15 @@ public enum PrismState {
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApproved.class),
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
+<<<<<<< local
+            PrismApplicationApprovedPendingPartnerAcceptance.class),
+    APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferAcceptance.class),
+    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedCompleted.class),
+    APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null,
+            PrismApplicationRejected.class),
+    APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompleted.class),
+    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedUnsubmitted.class),
+=======
             PrismApplicationApprovedPendingPartnerAcceptance.class),
     APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferAcceptance.class),
     APPLICATION_APPROVED_PENDING_OFFER_REVISION(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferRevision.class),
@@ -146,6 +159,7 @@ public enum PrismState {
             PrismApplicationRejected.class),
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompleted.class),
     APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedUnsubmitted.class),
+>>>>>>> graft
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompleted.class),
 
     PROJECT_UNSUBMITTED(PrismStateGroup.PROJECT_UNSUBMITTED, null, null, PrismProjectUnsubmitted.class),

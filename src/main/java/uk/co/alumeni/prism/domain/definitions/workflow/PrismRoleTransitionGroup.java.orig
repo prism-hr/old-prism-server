@@ -77,9 +77,15 @@ public enum PrismRoleTransitionGroup {
 
     APPLICATION_PROVIDE_REFERENCE_GROUP( //
             new PrismRoleTransition() //
+<<<<<<< local
                     .withRole(APPLICATION_REFEREE) //
                     .withTransitionType(UPDATE) //
                     .withTransitionRole(APPLICATION_VIEWER_REFEREE) //
+=======
+                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                    .withTransitionType(UPDATE) //
+                    .withTransitionRole(APPLICATION_VIEWER_REFEREE) //
+>>>>>>> graft
                     .withRestrictToOwner()), //
 
     APPLICATION_CREATE_REVIEWER_GROUP( //
@@ -339,9 +345,15 @@ public enum PrismRoleTransitionGroup {
 
     PROGRAM_CREATE_ADMINISTRATOR_GROUP( //
             new PrismRoleTransition() //
+<<<<<<< local
+                    .withRole(PrismRole.PROGRAM_ADMINISTRATOR) //
+                    .withTransitionType(CREATE) //
+                    .withTransitionRole(PROGRAM_ADMINISTRATOR) //
+=======
                     .withRole(PROGRAM_ADMINISTRATOR) //
                     .withTransitionType(CREATE) //
                     .withTransitionRole(PROGRAM_ADMINISTRATOR) //
+>>>>>>> graft
                     .withRestrictToOwner() //
                     .withMinimumPermitted(1) //
                     .withMaximumPermitted(1)),

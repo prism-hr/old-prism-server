@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -158,9 +159,16 @@ public class Application extends Resource implements
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate completionDate;
 
-    @Column(name = "confirmed_start_date")
+    @Column(name = "offered_position_name")
+    private String offeredPositionName;
+    
+    @Lob
+    @Column(name = "offered_position_description")
+    private String offeredPositionDescription;
+    
+    @Column(name = "offered_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate confirmedStartDate;
+    private LocalDate offeredStartDate;
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
@@ -512,12 +520,12 @@ public class Application extends Resource implements
         this.completionDate = completionDate;
     }
 
-    public LocalDate getConfirmedStartDate() {
-        return confirmedStartDate;
+    public LocalDate getOfferedStartDate() {
+        return offeredStartDate;
     }
 
-    public void setConfirmedStartDate(LocalDate confirmedStartDate) {
-        this.confirmedStartDate = confirmedStartDate;
+    public void setOfferedStartDate(LocalDate offeredStartDate) {
+        this.offeredStartDate = offeredStartDate;
     }
 
     @Override

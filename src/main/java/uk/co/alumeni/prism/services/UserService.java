@@ -66,8 +66,6 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -330,15 +328,6 @@ public class UserService {
             DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
             if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
                 orderedUsers.put(userInterested.getIndexName(), userInterested);
-            }
-        }
-
-        DateTime baseline = now();
-        for (ApplicationReferee applicationReferee : application.getReferees()) {
-            User referee = applicationReferee.getUser();
-            Comment referenceComment = applicationReferee.getComment();
-            if ((referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) && !userNotInterestedIndex.contains(referee)) {
-                orderedUsers.put(referee.getFullName(), new UserSelectionDTO().withUser(referee).withEventTimestamp(baseline));
             }
         }
 

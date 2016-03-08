@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
@@ -430,20 +429,10 @@ public class ApplicationMapper {
                 }
 
                 return newArrayList(assignedSupervisors);
-            } else {
-                List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors = newArrayList();
-
-                for (ApplicationReferee applicationReferee : application.getReferees()) {
-                    Comment referenceComment = applicationReferee.getComment();
-                    if (referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) {
-                        assignedSupervisors.add(new ApplicationAssignedHiringManagerRepresentation().withUser(userMapper.getUserRepresentationSimple(
-                                applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
-                    }
-                }
-
-                return assignedSupervisors;
             }
         }
+        
+        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

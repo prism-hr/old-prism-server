@@ -41,9 +41,7 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentat
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserInstitutionIdentityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;

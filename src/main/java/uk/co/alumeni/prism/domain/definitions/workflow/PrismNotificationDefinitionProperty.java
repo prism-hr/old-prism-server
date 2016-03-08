@@ -38,7 +38,6 @@ import uk.co.alumeni.prism.workflow.notification.property.ApplicationInterviewTi
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationIntervieweeInstructionsBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationInterviewerInstructionsBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationManagerBuilder;
-import uk.co.alumeni.prism.workflow.notification.property.ApplicationOfferAcceptanceBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationOfferConditionBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationOpportunityTypeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationPositionDescriptionBuilder;
@@ -142,7 +141,6 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_START_DATE(APPLICATION_APPROVED, true, ApplicationStartDateBuilder.class), //
     APPLICATION_MANAGER(APPLICATION_APPROVED, true, ApplicationManagerBuilder.class), //
     APPLICATION_OFFER_CONDITION(APPLICATION_APPROVED, true, ApplicationOfferConditionBuilder.class), //
-    APPLICATION_OFFER_ACCEPTANCE(APPLICATION_APPROVED, true, ApplicationOfferAcceptanceBuilder.class), //
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //
     PROJECT_NAME(PROJECT_GLOBAL, true, ProjectNameBuilder.class), //
     PROJECT_CODE(PROJECT_GLOBAL, true, ProjectCodeBuilder.class), //

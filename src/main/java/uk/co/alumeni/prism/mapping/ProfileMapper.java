@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static java.math.RoundingMode.HALF_UP;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;

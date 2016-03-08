@@ -30,7 +30,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_ASSIGN_REVIEWERS) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(APPLICATION_ASSIGN_REVIEWERS_TRANSITION));
 
         stateActions.add(applicationCommentWithViewerRecruiter());
@@ -52,7 +52,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
                 .withAction(APPLICATION_PROVIDE_REVIEW) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_PROVIDE_REVIEW_REQUEST)
-                .withAssignments(APPLICATION_REVIEWER);
+                .withStateActionAssignments(APPLICATION_REVIEWER);
     }
 
     public static PrismStateAction applicationTerminateReview() {
@@ -61,7 +61,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
 
     public static PrismStateAction applicationViewEditReview(PrismState state) {
         return PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(APPLICATION_REVIEWER, APPLICATION_VIEW_AS_RECRUITER);
+                .withStateActionAssignments(APPLICATION_REVIEWER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationWithdrawReview() {

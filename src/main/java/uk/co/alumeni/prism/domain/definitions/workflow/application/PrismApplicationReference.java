@@ -80,7 +80,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
                 .withAction(APPLICATION_PROVIDE_REFERENCE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_PROVIDE_REFERENCE_REQUEST) //
-                .withAssignments(APPLICATION_REFEREE);
+                .withStateActionAssignments(APPLICATION_REFEREE);
     }
 
     public static PrismStateAction applicationTerminateReference() {
@@ -90,7 +90,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
 
     public static PrismStateAction applicationViewEditReference(PrismState state) {
         return applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(APPLICATION_REFEREE, APPLICATION_VIEW_AS_REFEREE);
+                .withStateActionAssignments(APPLICATION_REFEREE, APPLICATION_VIEW_AS_REFEREE);
     }
 
     public static PrismStateAction applicationWithdrawReference() {

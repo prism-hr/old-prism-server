@@ -25,7 +25,7 @@ public class PrismApplicationApproved extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_CONFIRM_OFFER) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withStateTransitions(APPLICATION_CONFIRM_OFFER_TRANSITION)); //
 
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //
@@ -33,7 +33,22 @@ public class PrismApplicationApproved extends PrismWorkflowState {
         stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
-        stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
+        stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP,
+                APPLICATION_RETIRE_REFEREE_GROUP));
+    }
+
+    public static PrismStateAction applicationCompleteApprovedWithAppointee(PrismState state) {
+        return applicationCompleteApproved(state, true);
+    }
+
+    private static PrismStateAction applicationCompleteApproved(PrismState state, boolean retireAppointee) {
+        PrismStateAction stateAction = applicationCompleteState(APPLICATION_COMPLETE_APPROVED_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP);
+
+        if (retireAppointee) {
+            stateAction.getStateTransitions().forEach(transition -> transition.withRoleTransitions(APPLICATION_RETIRE_APPOINTEE_GROUP));
+        }
+
+        return stateAction;
     }
 
 }

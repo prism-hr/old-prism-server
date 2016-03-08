@@ -45,7 +45,7 @@ public class PrismProgramWorkflow {
 
     public static PrismStateAction programEmailCreatorApproved() {
         return programEmailCreatorAbstract() //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction programEscalateUnapproved() {
@@ -78,8 +78,8 @@ public class PrismProgramWorkflow {
 
     public static PrismStateAction programViewEditApproval(PrismState state) {
         return programViewEditAbstract()
-                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(PROGRAM_VIEW_EDIT)
@@ -88,13 +88,13 @@ public class PrismProgramWorkflow {
 
     public static PrismStateAction programViewEditApproved() {
         return programViewEditAbstract() //
-                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
-                .withAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROGRAM_VIEWER_GROUP, PROGRAM_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
-                .withPartnerAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_VIEWER_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withStateTransitions(PROGRAM_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PROGRAM_MANAGE_USERS_GROUP));
     }
@@ -102,13 +102,13 @@ public class PrismProgramWorkflow {
     public static PrismStateAction programViewEditInactive() {
         return programViewEditAbstract() //
                 .withActionEnhancement(PROGRAM_VIEW_AS_USER) //
-                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction programWithdraw() {
         return new PrismStateAction() //
                 .withAction(PROGRAM_WITHDRAW) //
-                .withAssignments(PROGRAM_ADMINISTRATOR) //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_PROGRAM_LIST));
@@ -122,7 +122,7 @@ public class PrismProgramWorkflow {
     private static PrismStateAction programEmailCreatorAbstract() {
         return new PrismStateAction() //
                 .withAction(PROGRAM_EMAIL_CREATOR) //
-                .withAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(PROGRAM_PARENT_ADMINISTRATOR_GROUP);
     }
 
     private static PrismStateAction programEscalateAbstract() {

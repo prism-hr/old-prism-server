@@ -42,7 +42,7 @@ public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentEmailCreatorApproved() {
         return departmentEmailCreatorAbstract() //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentEscalateUnapproved() {
@@ -69,8 +69,8 @@ public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentViewEditApproval(PrismState state) {
         return departmentViewEditAbstract()
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(PrismAction.DEPARTMENT_VIEW_EDIT)
@@ -79,8 +79,8 @@ public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentViewEditApproved() {
         return departmentViewEditAbstract() //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withAssignments(DEPARTMENT_VIEWER_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_VIEWER_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(PrismStateTransitionGroup.DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
@@ -88,13 +88,13 @@ public class PrismDepartmentWorkflow {
     public static PrismStateAction departmentViewEditInactive() {
         return departmentViewEditAbstract() //
                 .withActionEnhancement(PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentWithdraw() {
         return new PrismStateAction() //
                 .withAction(PrismAction.DEPARTMENT_WITHDRAW) //
-                .withAssignments(PrismRole.DEPARTMENT_ADMINISTRATOR) //
+                .withStateActionAssignments(PrismRole.DEPARTMENT_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_WITHDRAWN) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST));
@@ -108,7 +108,7 @@ public class PrismDepartmentWorkflow {
     private static PrismStateAction departmentEmailCreatorAbstract() {
         return new PrismStateAction() //
                 .withAction(PrismAction.DEPARTMENT_EMAIL_CREATOR) //
-                .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP);
     }
 
     private static PrismStateAction departmentTerminateAbstract() {

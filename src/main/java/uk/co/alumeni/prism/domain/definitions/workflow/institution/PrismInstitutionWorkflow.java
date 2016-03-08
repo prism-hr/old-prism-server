@@ -43,7 +43,7 @@ public class PrismInstitutionWorkflow {
 
     public static PrismStateAction institutionEmailCreatorApproved() {
         return institutionEmailCreatorAbstract() //
-                .withPartnerAssignments(PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP);
+                .withPartnerStateActionAssignments(PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction institutionEscalateUnapproved() {
@@ -70,8 +70,8 @@ public class PrismInstitutionWorkflow {
 
     public static PrismStateAction institutionViewEditApproval(PrismState state) {
         return institutionViewEditAbstract()
-                .withAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER) //
-                .withPartnerAssignments(PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
+                .withStateActionAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT)
@@ -80,8 +80,8 @@ public class PrismInstitutionWorkflow {
 
     public static PrismStateAction institutionViewEditApproved() {
         return institutionViewEditAbstract()
-                .withAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER) //
-                .withAssignments(PrismRoleGroup.INSTITUTION_VIEWER_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
+                .withStateActionAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(PrismRoleGroup.INSTITUTION_VIEWER_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
                 .withStateTransitions(PrismStateTransitionGroup.INSTITUTION_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(PrismRoleTransitionGroup.INSTITUTION_MANAGE_USERS_GROUP));
     }
@@ -89,13 +89,13 @@ public class PrismInstitutionWorkflow {
     public static PrismStateAction institutionViewEditInactive() {
         return institutionViewEditAbstract() //
                 .withActionEnhancement(PrismActionEnhancement.INSTITUTION_VIEW_AS_USER)
-                .withAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction institutionWithdraw() {
         return new PrismStateAction() //
                 .withAction(PrismAction.INSTITUTION_WITHDRAW) //
-                .withAssignments(PrismRole.INSTITUTION_ADMINISTRATOR) //
+                .withStateActionAssignments(PrismRole.INSTITUTION_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PrismState.INSTITUTION_WITHDRAWN) //
                         .withTransitionAction(PrismAction.SYSTEM_VIEW_INSTITUTION_LIST));
@@ -109,7 +109,7 @@ public class PrismInstitutionWorkflow {
     private static PrismStateAction institutionEmailCreatorAbstract() {
         return new PrismStateAction() //
                 .withAction(PrismAction.INSTITUTION_EMAIL_CREATOR) //
-                .withAssignments(PrismRole.SYSTEM_ADMINISTRATOR);
+                .withStateActionAssignments(PrismRole.SYSTEM_ADMINISTRATOR);
     }
 
     private static PrismStateAction institutionTerminateAbstract() {

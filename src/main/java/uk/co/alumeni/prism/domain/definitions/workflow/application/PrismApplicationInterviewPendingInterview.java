@@ -76,10 +76,6 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                                 .withStateTransitionEvaluation(APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_REVIVE_SCHEDULED_INTERVIEWEE_GROUP, APPLICATION_REVIVE_SCHEDULED_INTERVIEWER_GROUP)));
 
-        stateActions.add(PrismApplicationWorkflow.applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP,
-                APPLICATION_RETIRE_SCHEDULED_INTERVIEWEE_GROUP, APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP, APPLICATION_RETIRE_SCHEDULED_INTERVIEWER_GROUP, //
-                APPLICATION_RETIRE_CONFIRMED_INTERVIEWER_GROUP));
-
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditInterviewScheduled(state)); //
 

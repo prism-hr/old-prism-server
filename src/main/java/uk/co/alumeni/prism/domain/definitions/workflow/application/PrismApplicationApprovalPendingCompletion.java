@@ -8,7 +8,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationCompleteApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationProvideHiringManagerApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationSendMessageApproval;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationTerminateApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
@@ -38,7 +37,6 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_HIRING_MANAGER_GROUP));
 
-        stateActions.add(applicationTerminateApproval());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditApproval(state)); //
         stateActions.add(applicationWithdrawApproval());

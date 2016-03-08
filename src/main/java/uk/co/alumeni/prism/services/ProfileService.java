@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
@@ -542,9 +543,7 @@ public class ProfileService {
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
             applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            if (applicationDocument.getCv() != null) {
-                applicationDocument.setLastUpdatedTimestamp(new DateTime());
-            }
+            applicationDocument.setLastUpdatedTimestamp(now());
         }
     }
 

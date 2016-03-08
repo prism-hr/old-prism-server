@@ -16,7 +16,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationSendMessageApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -45,7 +44,6 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
                                 .withRoleTransitions(APPLICATION_CREATE_APPOINTEE_GROUP)));
 
         stateActions.add(applicationSendMessageApproved()); //
-        stateActions.add(applicationTerminateSubmitted()); //
         stateActions.add(applicationViewEdit()); //
     }
 

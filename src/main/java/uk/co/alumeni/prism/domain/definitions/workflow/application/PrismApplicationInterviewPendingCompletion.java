@@ -9,7 +9,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationCompleteInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationProvideInterviewFeedback;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationSendMessageInterviewFeedback;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
@@ -38,7 +37,6 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
                         .withTransitionAction(APPLICATION_COMPLETE_INTERVIEW_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));
 
-        stateActions.add(applicationTerminateInterviewScheduled());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditInterviewScheduled(state)); //
         stateActions.add(applicationWithdrawInterviewScheduled());

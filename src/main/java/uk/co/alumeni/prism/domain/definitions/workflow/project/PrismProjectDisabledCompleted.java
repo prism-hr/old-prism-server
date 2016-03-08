@@ -20,15 +20,15 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.PROJECT_RESTORE) //
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROJECT_APPROVED) //
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT)));
 
         stateActions.add(projectViewEditAbstract()
-                .withAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
-                .withAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER));
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER));
     }
 
 }

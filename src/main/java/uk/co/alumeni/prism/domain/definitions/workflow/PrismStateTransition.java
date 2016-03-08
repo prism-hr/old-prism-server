@@ -24,7 +24,9 @@ public class PrismStateTransition {
 
     private Boolean replicableSequenceFilterSecondaryLocation = false;
 
-    private PrismStateTransitionEvaluation transitionEvaluation;
+    private PrismStateTransitionEvaluation stateTransitionEvaluation;
+
+    private List<PrismStateTransitionNotification> stateTransitionNotifications = Lists.newLinkedList();
 
     private List<PrismRoleTransition> roleTransitions = Lists.newLinkedList();
 
@@ -60,8 +62,12 @@ public class PrismStateTransition {
         return replicableSequenceFilterSecondaryLocation;
     }
 
-    public PrismStateTransitionEvaluation getTransitionEvaluation() {
-        return transitionEvaluation;
+    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
+        return stateTransitionEvaluation;
+    }
+
+    public List<PrismStateTransitionNotification> getStateTransitionNotifications() {
+        return stateTransitionNotifications;
     }
 
     public List<PrismRoleTransition> getRoleTransitions() {
@@ -137,7 +143,19 @@ public class PrismStateTransition {
     }
 
     public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
-        this.transitionEvaluation = transitionEvaluation;
+        this.stateTransitionEvaluation = transitionEvaluation;
+        return this;
+    }
+
+    public PrismStateTransition withStateTransitionNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition stateTransitionNotification) {
+        for (PrismRole role : roleGroup.getRoles()) {
+            withStateTransitionNotifications(role, stateTransitionNotification);
+        }
+        return this;
+    }
+
+    public PrismStateTransition withStateTransitionNotifications(PrismRole role, PrismNotificationDefinition stateTransitionNotification) {
+        stateTransitionNotifications.add(new PrismStateTransitionNotification().withRole(role).withDefinition(stateTransitionNotification));
         return this;
     }
 
@@ -165,7 +183,7 @@ public class PrismStateTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
+        return Objects.hashCode(transitionState, transitionAction, stateTransitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
     }
 
     @Override
@@ -181,7 +199,7 @@ public class PrismStateTransition {
         List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
         List<PrismStateTermination> otherStateTerminations = other.getStateTerminations();
         return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
-                && Objects.equal(transitionEvaluation, other.getTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
+                && Objects.equal(stateTransitionEvaluation, other.getStateTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
                 && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
                 && propagatedActions.containsAll(otherPropagatedActions) && stateTerminations.size() == otherStateTerminations.size()
                 && stateTerminations.containsAll(otherStateTerminations);

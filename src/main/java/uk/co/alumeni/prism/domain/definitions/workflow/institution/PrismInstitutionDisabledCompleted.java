@@ -17,16 +17,16 @@ public class PrismInstitutionDisabledCompleted extends PrismWorkflowState {
         stateActions.add(institutionEmailCreatorApproved()); //
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.INSTITUTION_RESTORE) //
-                .withAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withAction(INSTITUTION_RESTORE) //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PrismState.INSTITUTION_APPROVED) //
                         .withTransitionAction(PrismAction.INSTITUTION_VIEW_EDIT)));
 
         stateActions.add(institutionViewEditAbstract() //
-                .withAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
-                .withAssignments(PrismRoleGroup.INSTITUTION_VIEWER_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER) //
-                .withPartnerAssignments(PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP, PrismActionEnhancement.INSTITUTION_VIEW_AS_USER)); //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER)); //
     }
 
 }

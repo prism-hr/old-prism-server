@@ -29,12 +29,12 @@ public class PrismProjectApproved extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.PROJECT_UNENDORSE) //
-                .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_MANAGER_GROUP) //
                 .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.PROJECT_REENDORSE) //
-                .withPartnerAssignments(PARTNERSHIP_MANAGER_GROUP) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_MANAGER_GROUP) //
                 .withStateTransitions(PROJECT_ENDORSE_TRANSITION));
 
         stateActions.add(projectTerminateApproved()); //

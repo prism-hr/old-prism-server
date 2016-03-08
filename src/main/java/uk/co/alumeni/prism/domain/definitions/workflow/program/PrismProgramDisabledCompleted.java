@@ -17,16 +17,16 @@ public class PrismProgramDisabledCompleted extends PrismWorkflowState {
         stateActions.add(programEmailCreatorApproved()); //
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.PROGRAM_RESTORE) //
-                .withAssignments(PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP) //
+                .withAction(PROGRAM_RESTORE) //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PrismState.PROGRAM_APPROVED) //
                         .withTransitionAction(PrismAction.PROGRAM_VIEW_EDIT)));
 
         stateActions.add(programViewEditAbstract() //
-                .withAssignments(PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP, PrismActionEnhancement.PROGRAM_VIEW_AS_USER) //
-                .withAssignments(PrismRoleGroup.PROGRAM_VIEWER_GROUP, PrismActionEnhancement.PROGRAM_VIEW_AS_USER) //
-                .withPartnerAssignments(PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.PROGRAM_VIEW_AS_USER)); //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(PROGRAM_VIEWER_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER)); //
     }
 
 }

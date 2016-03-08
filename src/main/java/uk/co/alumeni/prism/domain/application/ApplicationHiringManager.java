@@ -24,7 +24,7 @@ public class ApplicationHiringManager implements UniqueEntity, UserAssignment<Ap
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "application_id", nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = "application_id")
     private Application application;
 
     @ManyToOne

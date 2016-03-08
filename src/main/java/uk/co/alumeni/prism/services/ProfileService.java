@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
@@ -275,7 +276,8 @@ public class ProfileService {
 
     public UserEmploymentPosition updateEmploymentPositionUser(Integer employmentPositionId, ProfileEmploymentPositionDTO employmentPositionDTO) {
         UserAccount userAccount = userService.getCurrentUser().getUserAccount();
-        UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
+        UserEmploymentPosition employmentPosition = updateEmploymentPosition(userAccount, UserEmploymentPosition.class, employmentPositionId,
+                employmentPositionDTO);
         userAccountService.updateUserAccount(userAccount, PROFILE_EMPLOYMENT_POSITION_UPDATE);
         return employmentPosition;
     }
@@ -283,7 +285,8 @@ public class ProfileService {
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
             ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
-        ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId, employmentPositionDTO);
+        ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId,
+                employmentPositionDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
         profileDAO.deleteUserProfileSection(UserEmploymentPosition.class, ApplicationEmploymentPosition.class, employmentPositionId);
@@ -397,7 +400,8 @@ public class ProfileService {
                 additionalInformationDTO);
 
         UserAccount userAccount = application.getUser().getUserAccount();
-        UserAdditionalInformation userAdditionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class, additionalInformationDTO);
+        UserAdditionalInformation userAdditionalInformation = updateAdditionalInformation(userAccount, UserAdditionalInformation.class,
+                additionalInformationDTO);
         userAccount.setAdditionalInformation(userAdditionalInformation);
         userAccountService.updateUserAccount(userAccount, PROFILE_ADDITIONAL_INFORMATION_UPDATE);
 
@@ -521,9 +525,7 @@ public class ProfileService {
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
             applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            if (applicationDocument.getCv() != null) {
-                applicationDocument.setLastUpdatedTimestamp(new DateTime());
-            }
+            applicationDocument.setLastUpdatedTimestamp(now());
         }
     }
 
@@ -627,9 +629,11 @@ public class ProfileService {
             ((ApplicationQualification) qualification).setLastUpdatedTimestamp(DateTime.now());
         }
 
-        U duplicateQualification = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) qualification.getClass(),
-                new EntitySignature().addProperty("association", qualification.getAssociation()).addProperty("advert", qualification.getAdvert()).addProperty("startYear",
-                        qualification.getStartYear()));
+        U duplicateQualification = (U) entityService.getDuplicateEntity(
+                (Class<? extends UniqueEntity>) qualification.getClass(),
+                new EntitySignature().addProperty("association", qualification.getAssociation()).addProperty("advert", qualification.getAdvert())
+                        .addProperty("startYear",
+                                qualification.getStartYear()));
         if (!(duplicateQualification == null || Objects.equal(qualification.getId(), duplicateQualification.getId()))) {
             entityService.delete(duplicateQualification);
         }
@@ -728,8 +732,9 @@ public class ProfileService {
         }
 
         U duplicateEmploymentPosition = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) employmentPosition.getClass(),
-                new EntitySignature().addProperty("association", employmentPosition.getAssociation()).addProperty("advert", employmentPosition.getAdvert()).addProperty("startYear",
-                        employmentPosition.getStartYear()).addProperty("startMonth", employmentPosition.getStartMonth()));
+                new EntitySignature().addProperty("association", employmentPosition.getAssociation()).addProperty("advert", employmentPosition.getAdvert())
+                        .addProperty("startYear",
+                                employmentPosition.getStartYear()).addProperty("startMonth", employmentPosition.getStartMonth()));
         if (!(duplicateEmploymentPosition == null || Objects.equal(employmentPosition.getId(), duplicateEmploymentPosition.getId()))) {
             entityService.delete(duplicateEmploymentPosition);
         }
@@ -772,8 +777,10 @@ public class ProfileService {
             ((ApplicationReferee) referee).setLastUpdatedTimestamp(DateTime.now());
         }
 
-        U duplicateReferee = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) referee.getClass(),
-                new EntitySignature().addProperty("association", referee.getAssociation()).addProperty("advert", referee.getAdvert()).addProperty("user", referee.getUser()));
+        U duplicateReferee = (U) entityService.getDuplicateEntity(
+                (Class<? extends UniqueEntity>) referee.getClass(),
+                new EntitySignature().addProperty("association", referee.getAssociation()).addProperty("advert", referee.getAdvert())
+                        .addProperty("user", referee.getUser()));
         if (!(duplicateReferee == null || Objects.equal(referee.getId(), duplicateReferee.getId()))) {
             entityService.delete(duplicateReferee);
         }

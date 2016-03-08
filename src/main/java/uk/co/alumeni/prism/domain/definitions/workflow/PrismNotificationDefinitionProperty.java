@@ -135,10 +135,10 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_INTERVIEWEE_INSTRUCTIONS(APPLICATION_INTERVIEW_SCHEDULED, true, ApplicationIntervieweeInstructionsBuilder.class), //
     APPLICATION_INTERVIEW_LOCATION(APPLICATION_INTERVIEW_SCHEDULED, false, ApplicationInterviewLocationBuilder.class), //
     APPLICATION_INTERVIEW_AVAILABLE(APPLICATION_INTERVIEW_SCHEDULED, false, ApplicationInterviewAvailableBuilder.class), //
+    APPLICATION_MANAGER(APPLICATION_APPROVED, true, ApplicationManagerBuilder.class), //
     APPLICATION_POSITION_NAME(APPLICATION_APPROVED, true, ApplicationPositionNameBuilder.class), //
     APPLICATION_POSITION_DESCRIPTION(APPLICATION_APPROVED, true, ApplicationPositionDescriptionBuilder.class), //
     APPLICATION_START_DATE(APPLICATION_APPROVED, true, ApplicationStartDateBuilder.class), //
-    APPLICATION_MANAGER(APPLICATION_APPROVED, true, ApplicationManagerBuilder.class), //
     APPLICATION_OFFER_CONDITION(APPLICATION_APPROVED, true, ApplicationOfferConditionBuilder.class), //
     APPLICATION_OFFER_ACCEPTANCE(APPLICATION_APPROVED, true, ApplicationOfferAcceptanceBuilder.class), //
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //

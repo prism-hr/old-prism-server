@@ -5,10 +5,8 @@ import static uk.co.alumeni.prism.PrismConstants.CONFIDENCE_MEDIUM;
 import static uk.co.alumeni.prism.PrismConstants.DEFAULT_RATING;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 
@@ -28,8 +26,6 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
 import uk.co.alumeni.prism.domain.comment.CommentCompetence;
-import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
-import uk.co.alumeni.prism.domain.comment.CommentPositionDetail;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -83,10 +79,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
         if (comment.isInterviewScheduledExpeditedComment()) {
             appendInterviewScheduledExpeditedComments(comment);
-        }
-
-        if (comment.isApplicationConfirmOfferRecommendationComment()) {
-            synchronizeOfferRecommendation(resource, comment);
         }
 
         if (comment.isApplicationProcessingCompletedComment()) {
@@ -161,27 +153,6 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             commentService.persistComment(application, preferenceComment);
             application.addComment(preferenceComment);
         }
-    }
-
-    private void synchronizeOfferRecommendation(Application application, Comment comment) {
-        CommentPositionDetail positionDetail = comment.getPositionDetail();
-        if (positionDetail != null) {
-            application.setOfferedPositionName(positionDetail.getPositionName());
-            application.setOfferedPositionDescription(positionDetail.getPositionDescription());
-        }
-
-        CommentOfferDetail offerDetail = comment.getOfferDetail();
-        if (offerDetail != null) {
-            application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
-            application.setOfferedAppointmentConditions(offerDetail.getAppointmentConditions());
-        }
-
-        application.getHiringManagers().clear();
-        comment.getAssignedUsers().stream().forEach(assignedUser -> {
-            if (assignedUser.getRole().getId().equals(APPLICATION_HIRING_MANAGER) && assignedUser.getRoleTransitionType().equals(CREATE)) {
-                application.addHiringManager(assignedUser.getUser());
-            }
-        });
     }
 
 }

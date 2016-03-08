@@ -190,12 +190,14 @@ public class StateService {
         commentService.persistComment(resource, comment);
 
         resourceService.preProcessResource(resource, comment);
-        State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
+        State state = resource.getState();
         State transitionState = stateTransition.getTransitionState();
         transitionState = transitionState == null ? state : transitionState;
         state = state == null ? transitionState : state;
+
+        Set<UserNotificationDefinitionDTO> updates = notificationService.getIndividualUpdateDefinitions(resource, stateTransition);
 
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
@@ -203,7 +205,6 @@ public class StateService {
         advertService.recordPartnershipStateTransition(resource, comment);
 
         resourceService.processResource(resource, comment);
-        Set<UserNotificationDefinitionDTO> updates = notificationService.getIndividualUpdateDefinitions(resource, stateTransition);
         roleService.executeRoleTransitions(resource, comment, stateTransition);
 
         List<StateTransition> secondaryStateTransitions = getSecondaryStateTransitions(resource, action, comment);

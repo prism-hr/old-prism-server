@@ -244,9 +244,7 @@ public class Application extends Resource
     @OneToMany(mappedBy = "application")
     private Set<StateActionPending> stateActionPendings = Sets.newHashSet();
 
-    @OrderBy(clause = "id")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "application_id", unique = true)
+    @OneToMany(mappedBy = "application")
     private Set<ApplicationHiringManager> hiringManagers = Sets.newHashSet();
 
     @Override
@@ -678,8 +676,8 @@ public class Application extends Resource
         return this;
     }
 
-    public Application addHiringManager(User user) {
-        this.hiringManagers.add(new ApplicationHiringManager().withApplication(this).withUser(user));
+    public Application addHiringManager(ApplicationHiringManager hiringManager) {
+        this.hiringManagers.add(hiringManager);
         return this;
     }
 

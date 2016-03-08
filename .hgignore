@@ -1,0 +1,14 @@
+syntax: glob
+.classpath
+.project
+.settings
+.metadata
+.DS_Store
+target/*
+testIndexes/*
+bin/*
+.externalToolBuilders/*
+.idea/*
+prism.iml
+prism-development.ppk
+mvn

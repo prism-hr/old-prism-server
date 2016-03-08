@@ -8,8 +8,15 @@
 </b></p>
 
 <p>
-   	${APPLICATION_CREATOR_FULL_NAME} has declined your offer.
+   	${APPLICATION_CREATOR_FULL_NAME} has declined the terms of offer:
 </p>
+
+<ul>
+	<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
+	<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
+	<li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
+	<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
+</ul>
 
 <p>They gave the following reason: <b>${COMMENT_CONTENT}</b>.</p>
 

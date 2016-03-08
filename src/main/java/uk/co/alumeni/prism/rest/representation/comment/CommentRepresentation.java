@@ -426,7 +426,7 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withInterviewStatus(final PrismInterviewState interviewStatus) {
+    public CommentRepresentation withInterviewState(PrismInterviewState interviewStatus) {
         this.interviewStatus = interviewStatus;
         return this;
     }

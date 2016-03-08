@@ -50,13 +50,12 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionAssignment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionNotification;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionRecipient;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionNotification;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
@@ -72,13 +71,12 @@ import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
-import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
 import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.StateTermination;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
@@ -549,44 +547,21 @@ public class SystemService {
         state.getStateActions().add(stateAction);
 
         initializeStateActionAssignments(prismStateAction, stateAction);
-        initializeStateActionNotifications(prismStateAction, stateAction);
         initializeStateTransitions(prismStateAction, stateAction);
     }
 
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
-        for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getAssignments()) {
+        for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getStateActionAssignments()) {
             Role role = roleService.getById(prismStateActionAssignment.getRole());
-            StateActionAssignment stateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
+            StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
                     .withExternalMode(prismStateActionAssignment.getExternalMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
-            entityService.save(stateActionAssignment);
-            stateAction.getStateActionAssignments().add(stateActionAssignment);
-            initializeStateActionRecipients(prismStateActionAssignment, stateActionAssignment);
-        }
-    }
-
-    private void initializeStateActionRecipients(PrismStateActionAssignment prismStateActionAssignment, StateActionAssignment stateActionAssignment) {
-        for (PrismStateActionRecipient prismStateActionRecipient : prismStateActionAssignment.getStateActionRecipients()) {
-            Role recipientRole = roleService.getById(prismStateActionRecipient.getRole());
-            StateActionRecipient stateActionRecipient = new StateActionRecipient().withStateActionAssignment(stateActionAssignment)
-                    .withRole(recipientRole).withExternalMode(prismStateActionRecipient.getExternalMode());
-            entityService.save(stateActionRecipient);
-            stateActionAssignment.addStateActionRecipient(stateActionRecipient);
-        }
-    }
-
-    private void initializeStateActionNotifications(PrismStateAction prismStateAction, StateAction stateAction) {
-        for (PrismStateActionNotification prismStateActionNotification : prismStateAction.getNotifications()) {
-            Role role = roleService.getById(prismStateActionNotification.getRole());
-            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotification());
-            StateActionNotification stateActionNotification = new StateActionNotification().withStateAction(stateAction).withRole(role)
-                    .withNotificationDefinition(notificationDefinition);
-            entityService.save(stateActionNotification);
-            stateAction.getStateActionNotifications().add(stateActionNotification);
+            entityService.save(assignment);
+            stateAction.getStateActionAssignments().add(assignment);
         }
     }
 
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
-        Set<PrismStateTransition> stateTransitions = prismStateAction.getTransitions();
+        List<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
         if (stateTransitions.isEmpty()) {
             stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
                     .withTransitionAction(stateAction.getAction().getId()));
@@ -597,7 +572,7 @@ public class SystemService {
             Action transitionAction = actionService.getById(prismStateTransition.getTransitionAction());
 
             StateTransitionEvaluation stateTransitionEvaluation = null;
-            PrismStateTransitionEvaluation prismStateTransitionEvaluation = prismStateTransition.getTransitionEvaluation();
+            PrismStateTransitionEvaluation prismStateTransitionEvaluation = prismStateTransition.getStateTransitionEvaluation();
             if (prismStateTransitionEvaluation != null) {
                 stateTransitionEvaluation = stateService.getStateTransitionEvaluationById(prismStateTransitionEvaluation);
                 if (stateTransitionEvaluation == null) {
@@ -619,9 +594,21 @@ public class SystemService {
             entityService.save(stateTransition);
             stateAction.getStateTransitions().add(stateTransition);
 
+            initializeStateTransitionNotifications(prismStateTransition, stateTransition);
             initializeRoleTransitions(prismStateTransition, stateTransition);
             initializeStateTerminations(prismStateTransition, stateTransition);
             initializePropagatedActions(prismStateTransition, stateTransition);
+        }
+    }
+
+    private void initializeStateTransitionNotifications(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
+        for (PrismStateTransitionNotification prismStateActionNotification : prismStateTransition.getStateTransitionNotifications()) {
+            Role role = roleService.getById(prismStateActionNotification.getRole());
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotification());
+            StateTransitionNotification stateTransitionNotification = new StateTransitionNotification().withStateAction(stateTransition).withRole(role)
+                    .withNotificationDefinition(notificationDefinition);
+            entityService.save(stateTransitionNotification);
+            stateTransition.getStateTransitionNotifications().add(stateTransitionNotification);
         }
     }
 

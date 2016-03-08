@@ -2,7 +2,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 
 import com.google.common.base.Objects;
 
-public class PrismStateActionNotification {
+public class PrismStateTransitionNotification {
 
     private PrismRole role;
 
@@ -16,12 +16,12 @@ public class PrismStateActionNotification {
         return notification;
     }
 
-    public PrismStateActionNotification withRole(PrismRole role) {
+    public PrismStateTransitionNotification withRole(PrismRole role) {
         this.role = role;
         return this;
     }
 
-    public PrismStateActionNotification withDefinition(PrismNotificationDefinition notification) {
+    public PrismStateTransitionNotification withDefinition(PrismNotificationDefinition notification) {
         this.notification = notification;
         return this;
     }
@@ -39,7 +39,7 @@ public class PrismStateActionNotification {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateActionNotification other = (PrismStateActionNotification) object;
+        final PrismStateTransitionNotification other = (PrismStateTransitionNotification) object;
         return Objects.equal(role, other.getRole()) && Objects.equal(notification, other.getNotification());
     }
 

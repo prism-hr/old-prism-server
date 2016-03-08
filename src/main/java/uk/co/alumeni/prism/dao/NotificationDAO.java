@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
 import java.util.Collection;
@@ -21,7 +22,6 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -182,7 +182,7 @@ public class NotificationDAO {
         });
 
         return criteria.add(Restrictions.ge("notifiedTimestamp", baseline)) //
-                .add(Restrictions.eq("notificationDefinition.notificationPurpose", PrismNotificationPurpose.REQUEST)) //
+                .add(Restrictions.eq("notificationDefinition.notificationPurpose", REQUEST)) //
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDTO.class)) //
                 .list();
     }

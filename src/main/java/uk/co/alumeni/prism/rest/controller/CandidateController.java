@@ -30,7 +30,7 @@ public class CandidateController {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "{userId}/summary", method = RequestMethod.GET)
+    @RequestMapping(value = "{userId}", method = RequestMethod.GET, params = "type=summary")
     public ProfileRepresentationSummary getUserProfileSummary(@PathVariable Integer userId) {
         return profileMapper.getProfileRepresentationSummary(userId);
     }

@@ -82,7 +82,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             appendInterviewScheduledExpeditedComments(comment);
         }
 
-        if (comment.isApplicationConfirmOfferRecommendationComment()) {
+        if (comment.isApplicationOfferRecommendationComment()) {
             synchronizeOfferRecommendation(resource, comment);
         }
 
@@ -163,7 +163,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     private void synchronizeOfferRecommendation(Application application, Comment comment) {
         CommentOfferDetail offerDetail = comment.getOfferDetail();
         if (offerDetail != null) {
-            application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
+            application.setOfferedStartDate(offerDetail.getPositionProvisionalStartDate());
         }
     }
 

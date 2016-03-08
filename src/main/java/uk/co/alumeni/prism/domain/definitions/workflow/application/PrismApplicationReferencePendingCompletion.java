@@ -7,7 +7,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE_PENDING_COMPLETION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference.applicationCompleteReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference.applicationProvideReference;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference.applicationTerminateReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference.applicationViewEditReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference.applicationWithdrawReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
@@ -36,7 +35,6 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
                         .withTransitionAction(APPLICATION_COMPLETE_REFERENCE_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REFERENCE_GROUP))); //
 
-        stateActions.add(applicationTerminateReference());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditReference(state)); //
         stateActions.add(applicationWithdrawReference());

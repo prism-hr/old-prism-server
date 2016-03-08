@@ -22,8 +22,6 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
                 .withStateTransitions(PrismStateTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_TRANSITION //
                         .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP))); //
 
-        stateActions.add(PrismApplicationInterview.applicationTerminateInterviewScheduling());
-
         stateActions.add(PrismApplicationInterview.applicationUpdateInterviewAvailability(PrismRoleGroup.APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //

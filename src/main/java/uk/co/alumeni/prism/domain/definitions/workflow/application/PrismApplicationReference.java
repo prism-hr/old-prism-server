@@ -19,7 +19,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
@@ -64,7 +63,6 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                         .withTerminationState(APPLICATION_REFERENCE) //
                                         .withStateTerminationEvaluation(APPLICATION_REFERENCED_TERMINATION)))); //
 
-        stateActions.add(applicationTerminateReference());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditReference(state)); //
         stateActions.add(applicationWithdrawReference());
@@ -81,11 +79,6 @@ public class PrismApplicationReference extends PrismWorkflowState {
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_PROVIDE_REFERENCE_REQUEST) //
                 .withAssignments(APPLICATION_REFEREE);
-    }
-
-    public static PrismStateAction applicationTerminateReference() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_REFEREE_GROUP);
     }
 
     public static PrismStateAction applicationViewEditReference(PrismState state) {

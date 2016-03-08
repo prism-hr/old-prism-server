@@ -223,7 +223,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_PROVIDE_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Reference"),
     SYSTEM_ACTION_APPLICATION_PROVIDE_REVIEW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Provide Review"),
     SYSTEM_ACTION_APPLICATION_REVERSE_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Reverse Rejection"),
-    SYSTEM_ACTION_APPLICATION_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Update Interview Availability"),
     SYSTEM_ACTION_APPLICATION_UPLOAD_REFERENCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Upload Reference"),
     SYSTEM_ACTION_APPLICATION_VIEW_EDIT(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View / Edit"),

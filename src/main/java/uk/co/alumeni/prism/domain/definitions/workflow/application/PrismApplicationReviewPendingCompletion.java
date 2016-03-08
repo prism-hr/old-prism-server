@@ -34,7 +34,6 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                         .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP))); //
 
-        stateActions.add(PrismApplicationReview.applicationTerminateReview());
         stateActions.add(PrismApplicationWorkflow.applicationUploadReference(state));
         stateActions.add(PrismApplicationReview.applicationViewEditReview(state)); //
         stateActions.add(PrismApplicationReview.applicationWithdrawReview());

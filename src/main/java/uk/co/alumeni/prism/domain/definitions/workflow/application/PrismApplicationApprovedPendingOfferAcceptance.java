@@ -9,7 +9,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedWithAppointee;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
@@ -29,7 +28,6 @@ public class PrismApplicationApprovedPendingOfferAcceptance extends PrismWorkflo
         stateActions.add(applicationCommentWithViewerRecruiter()); //
         stateActions.add(applicationCompleteApprovedWithAppointee(state)); //
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
-        stateActions.add(applicationTerminateSubmitted()); //
         stateActions.add(applicationViewEdit()); //
     }
 

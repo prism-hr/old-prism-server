@@ -16,7 +16,6 @@ public class PrismApplicationApprovalPendingFeedback extends PrismWorkflowState 
                 .withStateTransitions(PrismStateTransitionGroup.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_TRANSITION //
                         .withRoleTransitions(PrismRoleTransitionGroup.APPLICATION_CONFIRM_APPOINTMENT_GROUP)));
 
-        stateActions.add(PrismApplicationApproval.applicationTerminateApproval());
         stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(PrismApplicationWorkflow.applicationEscalate(PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION)); //
         stateActions.add(PrismApplicationWorkflow.applicationUploadReference(state));

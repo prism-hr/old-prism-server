@@ -45,6 +45,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
@@ -312,6 +313,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME) //
                     .withStateTransitionNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
+                    .withStateTransitionNotifications(APPLICATION_HIRING_MANAGER, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                     .withRoleTransitions(APPLICATION_RETIRE_APPOINTEE_GROUP), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_REVISION) //

@@ -95,8 +95,8 @@ public class NotificationDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.stateTransitionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("userRole.role", "stateActionNotification.role"));
+                .createAlias("stateTransition.stateTransitionNotifications", "stateTransitionNotification", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("userRole.role", "stateTransitionNotification.role"));
 
         return getIndividualUpdateDefinitionCriteria(criteria, resource, stateTransition)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
@@ -113,8 +113,8 @@ public class NotificationDAO {
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
-                .createAlias("stateTransition.stateTransitionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("userRole.role", "stateActionNotification.role"));
+                .createAlias("stateTransition.stateTransitionNotifications", "stateTransitionNotification", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("userRole.role", "stateTransitionNotification.role"));
 
         return getIndividualUpdateDefinitionCriteria(criteria, resource, stateTransition)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();

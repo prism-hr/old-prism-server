@@ -16,7 +16,7 @@ import uk.co.alumeni.prism.workflow.user.ApplicationAssignedUserReassignmentProc
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "application_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
+@Table(name = "application_hiring_manager", uniqueConstraints = { @UniqueConstraint(columnNames = { "application_id", "user_id" }) })
 public class ApplicationHiringManager implements UniqueEntity, UserAssignment<ApplicationAssignedUserReassignmentProcessor> {
 
     @Id

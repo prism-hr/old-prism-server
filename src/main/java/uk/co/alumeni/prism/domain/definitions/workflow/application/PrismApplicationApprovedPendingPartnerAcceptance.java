@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow.application;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_APPROVER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
@@ -33,6 +34,7 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
                 .withRaisesUrgentFlag() //
+                .withNotification(APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST) //
                 .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR, INSTITUTION_APPROVER, DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_APPROVED)

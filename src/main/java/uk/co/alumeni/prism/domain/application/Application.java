@@ -47,7 +47,8 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "application")
-public class Application extends Resource implements
+public class Application extends Resource
+        implements
         ProfileEntity<ApplicationPersonalDetail, ApplicationAddress, ApplicationQualification, ApplicationAward, ApplicationEmploymentPosition, ApplicationReferee, ApplicationDocument, ApplicationAdditionalInformation> {
 
     @Id
@@ -161,14 +162,18 @@ public class Application extends Resource implements
 
     @Column(name = "offered_position_name")
     private String offeredPositionName;
-    
+
     @Lob
     @Column(name = "offered_position_description")
     private String offeredPositionDescription;
-    
+
     @Column(name = "offered_start_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate offeredStartDate;
+
+    @Lob
+    @Column(name = "offered_appointment_conditions")
+    private String offeredAppointmentConditions;
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
@@ -238,6 +243,10 @@ public class Application extends Resource implements
 
     @OneToMany(mappedBy = "application")
     private Set<StateActionPending> stateActionPendings = Sets.newHashSet();
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "application_id", unique = true)
+    private Set<ApplicationHiringManager> hiringManagers = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -520,12 +529,36 @@ public class Application extends Resource implements
         this.completionDate = completionDate;
     }
 
+    public String getOfferedPositionName() {
+        return offeredPositionName;
+    }
+
+    public void setOfferedPositionName(String offeredPositionName) {
+        this.offeredPositionName = offeredPositionName;
+    }
+
+    public String getOfferedPositionDescription() {
+        return offeredPositionDescription;
+    }
+
+    public void setOfferedPositionDescription(String offeredPositionDescription) {
+        this.offeredPositionDescription = offeredPositionDescription;
+    }
+
     public LocalDate getOfferedStartDate() {
         return offeredStartDate;
     }
 
     public void setOfferedStartDate(LocalDate offeredStartDate) {
         this.offeredStartDate = offeredStartDate;
+    }
+
+    public String getOfferedAppointmentConditions() {
+        return offeredAppointmentConditions;
+    }
+
+    public void setOfferedAppointmentConditions(String offeredAppointmentConditions) {
+        this.offeredAppointmentConditions = offeredAppointmentConditions;
     }
 
     @Override
@@ -573,6 +606,10 @@ public class Application extends Resource implements
     @Override
     public Set<StateActionPending> getStateActionPendings() {
         return stateActionPendings;
+    }
+
+    public Set<ApplicationHiringManager> getHiringManagers() {
+        return hiringManagers;
     }
 
     @Override
@@ -640,6 +677,11 @@ public class Application extends Resource implements
         return this;
     }
 
+    public Application addHiringManager(User user) {
+        this.hiringManagers.add(new ApplicationHiringManager().withUser(user));
+        return this;
+    }
+
     public String getCreatedTimestampDisplay(String dateFormat) {
         return createdTimestamp == null ? null : createdTimestamp.toString(dateFormat);
     }
@@ -650,6 +692,10 @@ public class Application extends Resource implements
 
     public String getClosingDateDisplay(String dateFormat) {
         return closingDate == null ? null : closingDate.toString(dateFormat);
+    }
+
+    public String getOfferedStartDateDisplay(String dateFormat) {
+        return offeredStartDate == null ? null : offeredStartDate.toString(dateFormat);
     }
 
     public boolean isSubmitted() {

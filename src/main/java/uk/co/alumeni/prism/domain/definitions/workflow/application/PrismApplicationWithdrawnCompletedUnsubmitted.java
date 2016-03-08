@@ -12,7 +12,7 @@ public class PrismApplicationWithdrawnCompletedUnsubmitted extends PrismWorkflow
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.APPLICATION_VIEW_EDIT) //
-                .withAssignments(PrismRole.APPLICATION_CREATOR, PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR)); //
+                .withStateActionAssignments(PrismRole.APPLICATION_CREATOR, PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR)); //
     }
 
 }

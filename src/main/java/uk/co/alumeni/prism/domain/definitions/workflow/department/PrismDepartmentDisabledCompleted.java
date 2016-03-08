@@ -20,15 +20,15 @@ public class PrismDepartmentDisabledCompleted extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_RESTORE) //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_APPROVED) //
                         .withTransitionAction(DEPARTMENT_VIEW_EDIT)));
 
         stateActions.add(departmentViewEditAbstract() //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER)); //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER)); //
     }
 
 }

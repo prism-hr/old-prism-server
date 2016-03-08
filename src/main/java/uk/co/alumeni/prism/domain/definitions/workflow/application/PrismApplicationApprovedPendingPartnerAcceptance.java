@@ -33,7 +33,7 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
                 .withRaisesUrgentFlag() //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR, INSTITUTION_APPROVER, DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER) //
+                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR, INSTITUTION_APPROVER, DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_APPROVED)
                         .withTransitionAction(APPLICATION_CONFIRM_OFFER) //

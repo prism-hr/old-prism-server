@@ -22,15 +22,15 @@ public class PrismProgramDisabledCompleted extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_RESTORE) //
-                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVED) //
                         .withTransitionAction(PROGRAM_VIEW_EDIT)));
 
         stateActions.add(programViewEditAbstract() //
-                .withAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
-                .withAssignments(PROGRAM_VIEWER_GROUP, PROGRAM_VIEW_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER)); //
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(PROGRAM_VIEWER_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER)); //
     }
 
 }

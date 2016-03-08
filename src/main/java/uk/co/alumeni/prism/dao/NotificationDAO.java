@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
@@ -20,17 +20,17 @@ import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 
-import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.comment.CommentState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserNotification;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
-import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
+import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
 import uk.co.alumeni.prism.dto.UserNotificationDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 
@@ -51,7 +51,7 @@ public class NotificationDAO {
     }
 
     public List<NotificationDefinition> getWorkflowUpdateDefinitions() {
-        return (List<NotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(StateActionNotification.class) //
+        return (List<NotificationDefinition>) sessionFactory.getCurrentSession().createCriteria(StateTransitionNotification.class) //
                 .setProjection(Projections.groupProperty("notificationDefinition")) //
                 .list();
     }
@@ -81,29 +81,29 @@ public class NotificationDAO {
             Collection<Integer> targeterEntities, Resource resource) {
         return getIndividualRequestDefinitionCriteria(
                 workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getInvidualRequestDefinitionsProjection()), resource)
-                .add(WorkflowDAO.getTargetActionConstraint())
+                .add(getTargetActionConstraint())
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, Comment comment, Collection<User> exclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, Resource resource, StateTransition stateTransition) {
         Criteria criteria = getWorkflowCriteriaListComment(scope) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("comment.action", "stateAction.action")) //
-                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.stateTransitionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("userRole.role", "stateActionNotification.role"));
 
-        return getIndividualUpdateDefinitionCriteria(criteria, comment, exclusions)
+        return getIndividualUpdateDefinitionCriteria(criteria, resource, stateTransition)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
-    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Comment comment,
-            Collection<User> exclusions) {
+    public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Resource resource,
+            StateTransition stateTransition) {
         Criteria criteria = getWorkflowCriteriaListComment(scope) //
                 .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
                 .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN) //
@@ -111,12 +111,12 @@ public class NotificationDAO {
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("comment.action", "stateAction.action")) //
-                .createAlias("stateAction.stateActionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateTransitions", "stateTransition", JoinType.INNER_JOIN) //
+                .createAlias("stateTransition.stateTransitionNotifications", "stateActionNotification", JoinType.INNER_JOIN,
                         Restrictions.eqProperty("userRole.role", "stateActionNotification.role"));
 
-        return getIndividualUpdateDefinitionCriteria(criteria, comment, exclusions)
+        return getIndividualUpdateDefinitionCriteria(criteria, resource, stateTransition)
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)).list();
     }
 
@@ -219,24 +219,18 @@ public class NotificationDAO {
                 .add(Restrictions.isNull("userNotification.id"));
     }
 
-    private static Criteria getIndividualUpdateDefinitionCriteria(Criteria criteria, Comment comment, Collection<User> exclusions) {
-        criteria.createAlias("stateActionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
+    private static Criteria getIndividualUpdateDefinitionCriteria(Criteria criteria, Resource resource, StateTransition stateTransition) {
+        return criteria.createAlias("stateTransitionNotification.notificationDefinition", "notificationDefinition", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
-                .add(Restrictions.eq("comment.id", comment.getId())); //
-
-        if (isNotEmpty(exclusions)) {
-            criteria.add(Restrictions.not( //
-                    Restrictions.in("userRole.user", exclusions))); //
-        }
-
-        return criteria.add(Restrictions.eq("userAccount.enabled", true));
+                .add(Restrictions.eq("resource.id", resource.getId())) //
+                .add(Restrictions.eq("stateTransition.id", stateTransition.getId())) //
+                .add(Restrictions.eq("userAccount.enabled", true));
     }
 
     private Criteria getWorkflowCriteriaListComment(PrismScope scope) {
-        return sessionFactory.getCurrentSession().createCriteria(CommentState.class) //
+        return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(getIndividualUpdateDefinitionsProjection()) //
-                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
-                .createAlias("comment." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN); //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN); //
     }
 
 }

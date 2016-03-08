@@ -1,14 +1,18 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_PROJECT_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_APPROVAL_PENDING_CORRECTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEmailCreatorUnnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectTerminateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectViewEditApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectWithdraw;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismProjectApproval extends PrismWorkflowState {
@@ -18,23 +22,22 @@ public class PrismProjectApproval extends PrismWorkflowState {
         stateActions.add(projectCompleteApproval() //
                 .withRaisesUrgentFlag() //
                 .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(PrismState.PROJECT_APPROVAL_PENDING_CORRECTION) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_PROJECT_LIST) //
-                        .withStateTransitionEvaluation(PrismStateTransitionEvaluation.PROJECT_APPROVED_OUTCOME)));
+                        .withTransitionState(PROJECT_APPROVAL_PENDING_CORRECTION) //
+                        .withTransitionAction(SYSTEM_VIEW_PROJECT_LIST) //
+                        .withStateTransitionEvaluation(PROJECT_APPROVED_OUTCOME)));
 
-        stateActions.add(PrismProjectWorkflow.projectEmailCreatorUnnapproved());
-        stateActions.add(PrismProjectWorkflow.projectEscalateUnapproved());
-        stateActions.add(PrismProjectWorkflow.projectTerminateUnapproved());
-        stateActions.add(PrismProjectWorkflow.projectViewEditApproval(state));
-        stateActions.add(PrismProjectWorkflow.projectWithdraw());
+        stateActions.add(projectEmailCreatorUnnapproved());
+        stateActions.add(projectEscalateUnapproved());
+        stateActions.add(projectTerminateUnapproved());
+        stateActions.add(projectViewEditApproval(state));
+        stateActions.add(projectWithdraw());
     }
 
     public static PrismStateAction projectCompleteApproval() {
         return new PrismStateAction() //
-                .withAction(PrismAction.PROJECT_COMPLETE_APPROVAL_STAGE) //
-                .withAssignments(PrismRoleGroup.PROJECT_PARENT_ADMINISTRATOR_GROUP) //
-                .withNotifications(PrismRole.PROJECT_ADMINISTRATOR, PrismNotificationDefinition.PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
-                .withStateTransitions(PrismStateTransitionGroup.PROJECT_APPROVE_TRANSITION);
+                .withAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
+                .withStateActionAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateTransitions(PROJECT_APPROVE_TRANSITION);
     }
 
 }

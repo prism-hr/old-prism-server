@@ -70,7 +70,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_UPLOAD_REFERENCE(getDefaultRateApplicationActionDefinitionDeclinable()), //
     APPLICATION_VIEW_EDIT(getDefaultViewEditApplicationActionDefinition()), //
-    APPLICATION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(APPLICATION)), //
     APPLICATION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(APPLICATION)),
 
     PROJECT_UNENDORSE(getDefaultPartnerActionDefinition(PROJECT, ENDORSEMENT_PROVIDED, ENDORSEMENT_REVOKED)), //

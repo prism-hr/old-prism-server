@@ -61,6 +61,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REVIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SCHEDULED_INTERVIEWEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SCHEDULED_INTERVIEWER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION;
@@ -233,8 +234,14 @@ public enum PrismStateTransitionGroup {
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withReplicableSequenceClose() //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_OUTCOME) //
-                    .withRoleTransitions(APPLICATION_CREATE_APPOINTEE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP)
+                    .withRoleTransitions(APPLICATION_CREATE_HIRING_MANAGER_GROUP, APPLICATION_CREATE_APPOINTEE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP)
                     .withStateTerminations(APPLICATION_TERMINATE_REFERENCE_GROUP.getStateTerminations())),
+
+    APPLICATION_REVISE_OFFER_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_REVISION_ACCEPTANCE) //
+                    .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
+                    .withRoleTransitions(APPLICATION_RETIRE_HIRING_MANAGER_GROUP, APPLICATION_CREATE_HIRING_MANAGER_GROUP)),
 
     APPLICATION_CONFIRM_REJECTION_TRANSITION( //
             new PrismStateTransition() //

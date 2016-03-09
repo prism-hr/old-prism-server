@@ -6,6 +6,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICAT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CONFIRM_OFFER_TRANSITION;
@@ -33,14 +34,18 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                 .withStateTransitions(APPLICATION_CONFIRM_OFFER_TRANSITION)); //
 
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //
-        stateActions.add(applicationCompleteApproved(state, false));
+        stateActions.add(applicationCompleteApproved(state));
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditWithViewerRecruiter(state)); //
         stateActions.add(applicationWithdrawSubmitted(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_TERMINATE_REFERENCE_GROUP,
                 APPLICATION_RETIRE_REFEREE_GROUP));
     }
 
-    public static PrismStateAction applicationCompleteApprovedWithAppointee(PrismState state) {
+    public static PrismStateAction applicationCompleteApproved(PrismState state) {
+        return applicationCompleteApproved(state, false);
+    }
+
+    public static PrismStateAction applicationCompleteApprovedWithAppointeeHiringManager(PrismState state) {
         return applicationCompleteApproved(state, true);
     }
 
@@ -54,7 +59,8 @@ public class PrismApplicationApproved extends PrismWorkflowState {
         PrismStateAction stateAction = applicationCompleteState(APPLICATION_COMPLETE_APPROVED_STAGE, state, APPLICATION_PARENT_APPROVER_GROUP);
 
         if (retireAppointee) {
-            stateAction.getTransitions().forEach(transition -> transition.withRoleTransitions(APPLICATION_RETIRE_APPOINTEE_GROUP));
+            stateAction.getStateTransitions().forEach(
+                    transition -> transition.withRoleTransitions(APPLICATION_RETIRE_HIRING_MANAGER_GROUP, APPLICATION_RETIRE_APPOINTEE_GROUP));
         }
 
         return stateAction;

@@ -8,15 +8,8 @@
 </b></p>
 
 <p>
-   	${APPLICATION_CREATOR_FULL_NAME} has accepted the terms of offer:
+   	${APPLICATION_CREATOR_FULL_NAME} has accepted your offer.
 </p>
-
-<ul>
-	<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
-	<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
-	<li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
-	<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
-</ul>
 
 <p>Login to view the history of the application.</p>
 

@@ -11,16 +11,16 @@ import javax.persistence.UniqueConstraint;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 
 @Entity
-@Table(name = "state_transition_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_transition_id", "role_id" }) })
-public class StateTransitionNotification implements UniqueEntity {
+@Table(name = "state_action_notification", uniqueConstraints = { @UniqueConstraint(columnNames = { "state_action_id", "role_id" }) })
+public class StateActionNotification implements UniqueEntity {
 
     @Id
     @GeneratedValue
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "state_transition_id", nullable = false)
-    private StateTransition stateTransition;
+    @JoinColumn(name = "state_action_id", nullable = false)
+    private StateAction stateAction;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
@@ -38,12 +38,12 @@ public class StateTransitionNotification implements UniqueEntity {
         this.id = id;
     }
 
-    public StateTransition getStateTransition() {
-        return stateTransition;
+    public StateAction getStateAction() {
+        return stateAction;
     }
 
-    public void setStateTransition(StateTransition stateTransition) {
-        this.stateTransition = stateTransition;
+    public void setStateAction(StateAction stateAction) {
+        this.stateAction = stateAction;
     }
 
     public Role getRole() {
@@ -62,24 +62,24 @@ public class StateTransitionNotification implements UniqueEntity {
         this.notificationDefinition = notificationDefinition;
     }
 
-    public StateTransitionNotification withStateAction(StateTransition stateTransition) {
-        this.stateTransition = stateTransition;
+    public StateActionNotification withStateAction(StateAction stateAction) {
+        this.stateAction = stateAction;
         return this;
     }
 
-    public StateTransitionNotification withRole(Role role) {
+    public StateActionNotification withRole(Role role) {
         this.role = role;
         return this;
     }
 
-    public StateTransitionNotification withNotificationDefinition(NotificationDefinition notificationTemplate) {
+    public StateActionNotification withNotificationDefinition(NotificationDefinition notificationTemplate) {
         this.notificationDefinition = notificationTemplate;
         return this;
     }
 
     @Override
     public EntitySignature getEntitySignature() {
-        return new EntitySignature().addProperty("stateTransition", stateTransition).addProperty("role", role);
+        return new EntitySignature().addProperty("stateAction", stateAction).addProperty("role", role);
     }
 
 }

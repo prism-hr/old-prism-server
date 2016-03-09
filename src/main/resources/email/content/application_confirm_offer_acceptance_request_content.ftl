@@ -21,10 +21,9 @@
 </p>
 
 <ul>
-	<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
-	<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
+	<li><b>Position:</b> ${APPLICATION_POSITION_NAME}</li>
 	<li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
-	<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
+	<li><b>Salary and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
 </ul>
 
 ${ACTION_COMPLETE}

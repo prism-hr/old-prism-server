@@ -1,11 +1,19 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CORRECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.DEPARTMENT_CORRECT_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_REVIVE_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentApproval.departmentCompleteApproval;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEscalateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentSendMessageUnnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentWithdraw;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
@@ -17,22 +25,22 @@ public class PrismDepartmentApprovalPendingCorrection extends PrismWorkflowState
         stateActions.add(departmentCompleteApproval());
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_CORRECT) //
+                .withAction(DEPARTMENT_CORRECT) //
                 .withRaisesUrgentFlag() //
                 .withNotification(DEPARTMENT_CORRECT_REQUEST) //
-                .withStateActionAssignments(PrismRole.DEPARTMENT_ADMINISTRATOR) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(PrismState.DEPARTMENT_APPROVAL) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST) //
-                        .withRoleTransitions(PrismRoleTransitionGroup.DEPARTMENT_REVIVE_ADMINISTRATOR_GROUP))); //
+                        .withTransitionState(DEPARTMENT_APPROVAL) //
+                        .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST) //
+                        .withRoleTransitions(DEPARTMENT_REVIVE_ADMINISTRATOR_GROUP))); //
 
-        stateActions.add(PrismDepartmentWorkflow.departmentCreateProgram()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentCreateProject()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentEmailCreatorUnnapproved()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentEscalateUnapproved()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentTerminateUnapproved()); //
-        stateActions.add(PrismDepartmentWorkflow.departmentViewEditApproval(state)); //
-        stateActions.add(PrismDepartmentWorkflow.departmentWithdraw());
+        stateActions.add(departmentCreateProgram()); //
+        stateActions.add(departmentCreateProject()); //
+        stateActions.add(departmentSendMessageUnnapproved()); //
+        stateActions.add(departmentEscalateUnapproved()); //
+        stateActions.add(departmentTerminateUnapproved()); //
+        stateActions.add(departmentViewEditApproval(state)); //
+        stateActions.add(departmentWithdraw());
     }
 
 }

@@ -26,6 +26,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
 import uk.co.alumeni.prism.domain.comment.CommentCompetence;
+import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -79,6 +80,10 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
 
         if (comment.isInterviewScheduledExpeditedComment()) {
             appendInterviewScheduledExpeditedComments(comment);
+        }
+
+        if (comment.isApplicationConfirmOfferRecommendationComment()) {
+            synchronizeOfferRecommendation(resource, comment);
         }
 
         if (comment.isApplicationProcessingCompletedComment()) {
@@ -152,6 +157,13 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
             Comment preferenceComment = commentService.createInterviewPreferenceComment(application, action, invoker, user, interviewDateTime, baseline);
             commentService.persistComment(application, preferenceComment);
             application.addComment(preferenceComment);
+        }
+    }
+
+    private void synchronizeOfferRecommendation(Application application, Comment comment) {
+        CommentOfferDetail offerDetail = comment.getOfferDetail();
+        if (offerDetail != null) {
+            application.setConfirmedStartDate(offerDetail.getPositionProvisionalStartDate());
         }
     }
 

@@ -8,13 +8,14 @@
 </b></p>
 
 <p>
-	We intend to make ${TEMPLATE_INITIATOR_FULL_NAME} an offer for the aforementioned position. Before we 
-	can more forward with this, we require your feedback on the proposed terms of offer.
+    ${TEMPLATE_INITIATOR_FULL_NAME} has stipulated that s/he would like this position to be considered as
+    an on course placement. Before they can accept an offer from the provider, they need their department
+    to confirm that this is acceptable from an academic standpoint.
 </p>
 
 <p>
-	Follow the proceed link below to provide your feedback. Be aware that we would appreciate a speedy 
-	response in order to propose terms to the applicant as quickly as possible.
+    Follow the link below to either accept or reject this request. Be aware that both the applicant and
+    the provider would appreciate a speedy response.
 </p>
 
 ${ACTION_COMPLETE}

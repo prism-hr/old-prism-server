@@ -31,7 +31,6 @@ import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
-import uk.co.alumeni.prism.domain.application.ApplicationHiringManager;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -140,9 +139,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<CommentAssignedUser> commentAssignedUsers = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
-    private Set<ApplicationHiringManager> applicationHiringManagers = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
     private Set<Document> documents = Sets.newHashSet();
@@ -350,10 +346,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     public Set<CommentAssignedUser> getCommentAssignedUsers() {
         return commentAssignedUsers;
-    }
-
-    public Set<ApplicationHiringManager> getApplicationHiringManagers() {
-        return applicationHiringManagers;
     }
 
     public Set<Document> getDocuments() {

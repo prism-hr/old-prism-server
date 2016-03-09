@@ -56,8 +56,8 @@ public class PrismApplicationApproval extends PrismWorkflowState {
 
     public static PrismStateAction applicationSendMessageApproval() {
         return applicationSendMessageViewerRecruiter() //
-                .withAssignment(APPLICATION_HIRING_MANAGER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_HIRING_MANAGER);
+                .withStateActionAssignment(APPLICATION_HIRING_MANAGER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_HIRING_MANAGER);
     }
 
     public static PrismStateAction applicationViewEditApproval(PrismState state) {

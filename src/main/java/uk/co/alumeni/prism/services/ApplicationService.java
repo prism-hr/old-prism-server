@@ -432,8 +432,8 @@ public class ApplicationService {
         return applicationDAO.getApplicationsWithReferencesProvided(parentResource);
     }
 
-    public ResourceRatingSummaryDTO getApplicationRatingSummary(User user) {
-        return applicationDAO.getApplicationRatingSummary(user);
+    public void deleteApplicationHiringManagers(Application application) {
+        applicationDAO.deleteApplicationHiringManagers(application);
     }
 
     private void setApplicationOpportunityType(Application application, ApplicationProgramDetail programDetail, OpportunityType opportunityType) {

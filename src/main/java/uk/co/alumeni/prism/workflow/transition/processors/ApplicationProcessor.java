@@ -71,13 +71,13 @@ public class ApplicationProcessor implements ResourceProcessor<Application> {
             application.setOfferedAppointmentConditions(offerDetail.getAppointmentConditions());
         }
 
-        application.getHiringManagers().clear();
+        applicationService.deleteApplicationHiringManagers(application);
         comment.getAssignedUsers().stream().forEach(assignedUser -> { //
-                    if (assignedUser.getRole().getId().equals(APPLICATION_HIRING_MANAGER) && assignedUser.getRoleTransitionType().equals(CREATE)) {
-                        ApplicationHiringManager hiringManager = entityService.getOrCreate(new ApplicationHiringManager().withApplication(application)
-                                .withUser(assignedUser.getUser()));
-                        application.addHiringManager(hiringManager);
-                    }
-                });
+            if (assignedUser.getRole().getId().equals(APPLICATION_HIRING_MANAGER) && assignedUser.getRoleTransitionType().equals(CREATE)) {
+                ApplicationHiringManager hiringManager = entityService.getOrCreate(new ApplicationHiringManager().withApplication(application)
+                        .withUser(assignedUser.getUser()));
+                application.addHiringManager(hiringManager);
+            }
+        });
     }
 }

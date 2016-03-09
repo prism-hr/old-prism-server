@@ -406,6 +406,14 @@ public class ApplicationDAO {
                 .uniqueResult();
     }
 
+    public void deleteApplicationHiringManagers(Application application) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ApplicationHiringManager " //
+                        + "where application = :application") //
+                .setParameter("application", application) //
+                .executeUpdate();
+    }
+
     private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaryIds, List<Integer> secondaryIds) {
         Junction constraint = Restrictions.conjunction() //
                 .add(Restrictions.in(tagAlias + ".tag.id", primaryIds)) //

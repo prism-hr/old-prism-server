@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.representation.comment;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 
 public class CommentRepresentationRatingSummary extends ActionRepresentation {
@@ -22,6 +23,11 @@ public class CommentRepresentationRatingSummary extends ActionRepresentation {
 
     public void setDeclinedCount(Integer declinedCount) {
         this.declinedCount = declinedCount;
+    }
+
+    public CommentRepresentationRatingSummary withId(PrismAction id) {
+        setId(id);
+        return this;
     }
 
 }

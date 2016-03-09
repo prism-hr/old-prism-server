@@ -312,7 +312,7 @@ public enum PrismStateTransitionGroup {
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME) //
                     .withStateTransitionNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                     .withStateTransitionNotifications(APPLICATION_HIRING_MANAGER, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
-                    .withRoleTransitions(APPLICATION_RETIRE_APPOINTEE_GROUP), //
+                    .withRoleTransitions(APPLICATION_RETIRE_HIRING_MANAGER_GROUP, APPLICATION_RETIRE_APPOINTEE_GROUP), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_REVISION) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //

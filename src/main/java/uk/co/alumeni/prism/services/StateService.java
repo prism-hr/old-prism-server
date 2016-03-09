@@ -155,12 +155,12 @@ public class StateService {
     }
 
     public void deleteStateActions() {
-        entityService.deleteAll(RoleTransition.class);
         entityService.deleteAll(StateTermination.class);
+        entityService.deleteAll(RoleTransition.class);
+        entityService.deleteAll(StateTransitionNotification.class);
         entityService.deleteAll(StateTransition.class);
         entityService.deleteAll(StateTransitionEvaluation.class);
         entityService.deleteAll(StateActionAssignment.class);
-        entityService.deleteAll(StateTransitionNotification.class);
         entityService.deleteAll(StateAction.class);
     }
 

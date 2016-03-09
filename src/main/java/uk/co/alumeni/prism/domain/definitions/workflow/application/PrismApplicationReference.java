@@ -83,8 +83,8 @@ public class PrismApplicationReference extends PrismWorkflowState {
 
     public static PrismStateAction applicationSendMessageReference() {
         return applicationSendMessageViewerRecruiter() //
-                .withAssignment(APPLICATION_REFEREE, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REFEREE); //
+                .withStateActionAssignment(APPLICATION_REFEREE, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REFEREE); //
     }
 
     public static PrismStateAction applicationViewEditReference(PrismState state) {

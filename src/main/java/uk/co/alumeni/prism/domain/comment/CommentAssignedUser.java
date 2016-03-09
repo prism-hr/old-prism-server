@@ -16,13 +16,13 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.workflow.Role;
-import uk.co.alumeni.prism.workflow.user.CommentAssignedUserReassignmentProcessor;
+import uk.co.alumeni.prism.workflow.user.CommentAssignmentUserReassignmentProcessor;
 
 import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id", "role_transition_type" }) })
-public class CommentAssignedUser implements UniqueEntity, UserAssignment<CommentAssignedUserReassignmentProcessor> {
+public class CommentAssignedUser implements UniqueEntity, UserAssignment<CommentAssignmentUserReassignmentProcessor> {
 
     @Id
     @GeneratedValue
@@ -118,8 +118,8 @@ public class CommentAssignedUser implements UniqueEntity, UserAssignment<Comment
     }
 
     @Override
-    public Class<CommentAssignedUserReassignmentProcessor> getUserReassignmentProcessor() {
-        return CommentAssignedUserReassignmentProcessor.class;
+    public Class<CommentAssignmentUserReassignmentProcessor> getUserReassignmentProcessor() {
+        return CommentAssignmentUserReassignmentProcessor.class;
     }
 
     @Override

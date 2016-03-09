@@ -59,9 +59,6 @@ public class StateTransition implements UniqueEntity {
     private StateTransitionEvaluation stateTransitionEvaluation;
 
     @OneToMany(mappedBy = "stateTransition")
-    private Set<StateTransitionNotification> stateTransitionNotifications = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "stateTransition")
     private Set<RoleTransition> roleTransitions = Sets.newHashSet();
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -150,10 +147,6 @@ public class StateTransition implements UniqueEntity {
 
     public final void setStateTransitionEvaluation(StateTransitionEvaluation stateTransitionEvaluation) {
         this.stateTransitionEvaluation = stateTransitionEvaluation;
-    }
-
-    public Set<StateTransitionNotification> getStateTransitionNotifications() {
-        return stateTransitionNotifications;
     }
 
     public Set<RoleTransition> getRoleTransitions() {

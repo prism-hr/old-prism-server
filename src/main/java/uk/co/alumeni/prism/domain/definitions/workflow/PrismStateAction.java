@@ -1,7 +1,12 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang.WordUtils.capitalize;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -19,9 +24,11 @@ public class PrismStateAction {
 
     private PrismNotificationDefinition notification;
 
-    private List<PrismStateActionAssignment> stateActionAssignments = Lists.newLinkedList();
+    private Set<PrismStateActionAssignment> stateActionAssignments = newHashSet();
 
-    private List<PrismStateTransition> stateTransitions = Lists.newLinkedList();
+    private Set<PrismStateActionNotification> notifications = newHashSet();
+
+    private Set<PrismStateTransition> stateTransitions = newHashSet();
 
     public PrismAction getAction() {
         return action;
@@ -47,11 +54,15 @@ public class PrismStateAction {
         return notification;
     }
 
-    public List<PrismStateActionAssignment> getStateActionAssignments() {
+    public Set<PrismStateActionAssignment> getStateActionAssignments() {
         return stateActionAssignments;
     }
 
-    public List<PrismStateTransition> getStateTransitions() {
+    public Set<PrismStateActionNotification> getNotifications() {
+        return notifications;
+    }
+
+    public Set<PrismStateTransition> getStateTransitions() {
         return stateTransitions;
     }
 
@@ -85,6 +96,18 @@ public class PrismStateAction {
         return this;
     }
 
+    public PrismStateAction withStateActionAssignment(PrismRole role, PrismRole recipient) {
+        PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role);
+        return addRecipientAssignment(newAssignment, recipient, "recipient");
+    }
+
+    public PrismStateAction withStateActionAssignment(PrismRole role, PrismRoleGroup recipients) {
+        for (PrismRole recipient : recipients.getRoles()) {
+            withStateActionAssignment(role, recipient);
+        }
+        return this;
+    }
+
     public PrismStateAction withStateActionAssignments(PrismRole role, PrismActionEnhancement actionEnhancement) {
         this.stateActionAssignments.add(new PrismStateActionAssignment().withRole(role).withActionEnhancement(actionEnhancement));
         return this;
@@ -109,6 +132,32 @@ public class PrismStateAction {
         return this;
     }
 
+    public PrismStateAction withStateActionAssignments(PrismRoleGroup roles, PrismRole recipient) {
+        for (PrismRole role : roles.getRoles()) {
+            withStateActionAssignment(role, recipient);
+        }
+        return this;
+    }
+
+    public PrismStateAction withStateActionAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
+        for (PrismRole role : roles.getRoles()) {
+            withStateActionAssignment(role, recipients);
+        }
+        return this;
+    }
+
+    public PrismStateAction withPartnerStateActionAssignment(PrismRole role, PrismRole recipient) {
+        PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role).withExternalMode();
+        return addRecipientAssignment(newAssignment, recipient, "recipient");
+    }
+
+    public PrismStateAction withPartnerStateActionAssignment(PrismRole role, PrismRoleGroup recipients) {
+        for (PrismRole recipient : recipients.getRoles()) {
+            withPartnerStateActionAssignment(role, recipient);
+        }
+        return this;
+    }
+    
     public PrismStateAction withPartnerStateActionAssignments(PrismRole... roles) {
         for (PrismRole role : roles) {
             this.stateActionAssignments.add(new PrismStateActionAssignment().withRole(role).withExternalMode());
@@ -118,6 +167,20 @@ public class PrismStateAction {
 
     public PrismStateAction withPartnerStateActionAssignments(PrismRoleGroup roles) {
         withPartnerStateActionAssignments(roles.getRoles());
+        return this;
+    }
+
+    public PrismStateAction withPartnerStateActionAssignments(PrismRoleGroup roles, PrismRole recipient) {
+        for (PrismRole role : roles.getRoles()) {
+            withPartnerStateActionAssignment(role, recipient);
+        }
+        return this;
+    }
+
+    public PrismStateAction withPartnerStateActionAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
+        for (PrismRole role : roles.getRoles()) {
+            withPartnerStateActionAssignment(role, recipients);
+        }
         return this;
     }
 
@@ -133,8 +196,30 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withStateTransitions(PrismStateTransition... transitions) {
-        this.stateTransitions.addAll(Arrays.asList(transitions));
+    public PrismStateAction withPartnerStateActionRecipientAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
+        for (PrismRole role : roles.getRoles()) {
+            PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role);
+            for (PrismRole recipient : recipients.getRoles()) {
+                addRecipientAssignment(newAssignment, recipient, "partnerRecipient");
+            }
+        }
+        return this;
+    }
+
+    public PrismStateAction withNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition notification) {
+        for (PrismRole role : roleGroup.getRoles()) {
+            withNotifications(role, notification);
+        }
+        return this;
+    }
+
+    public PrismStateAction withNotifications(PrismRole role, PrismNotificationDefinition notification) {
+        notifications.add(new PrismStateActionNotification().withRole(role).withDefinition(notification));
+        return this;
+    }
+
+    public PrismStateAction withStateTransitions(PrismStateTransition... stateTransitions) {
+        this.stateTransitions.addAll(Arrays.asList(stateTransitions));
         return this;
     }
 
@@ -147,4 +232,19 @@ public class PrismStateAction {
         return this;
     }
 
+    private PrismStateAction addRecipientAssignment(PrismStateActionAssignment newAssignment, PrismRole recipient, String recipientProperty) {
+        for (PrismStateActionAssignment assignment : this.stateActionAssignments) {
+            if (assignment.equals(newAssignment)) {
+                addRecipient(assignment, recipient, recipientProperty);
+                return this;
+            }
+        }
+        this.stateActionAssignments.add(addRecipient(newAssignment, recipient, recipientProperty));
+        return this;
+    }
+
+    private PrismStateActionAssignment addRecipient(PrismStateActionAssignment assignment, PrismRole recipient, String recipientProperty) {
+        return (PrismStateActionAssignment) invokeMethod(assignment, "add" + capitalize(recipientProperty), recipient);
+    }
+ 
 }

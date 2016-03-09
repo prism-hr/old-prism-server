@@ -56,8 +56,8 @@ public class PrismApplicationReview extends PrismWorkflowState {
 
     public static PrismStateAction applicationSendMessageReview() {
         return applicationSendMessageViewerRecruiter() //
-                .withAssignment(APPLICATION_REVIEWER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REVIEWER);
+                .withStateActionAssignment(APPLICATION_REVIEWER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REVIEWER);
     }
 
     public static PrismStateAction applicationViewEditReview(PrismState state) {

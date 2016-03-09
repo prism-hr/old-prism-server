@@ -1,119 +1,136 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_ESCALATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_SEND_MESSAGE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_VIEW_EDIT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_WITHDRAW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VIEWER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_MANAGE_USERS_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_REJECTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_WITHDRAWN;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_VIEW_EDIT_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 
 public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentCreateProgram() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_CREATE_PROGRAM) //
-                .withActionCondition(PrismActionCondition.ACCEPT_PROGRAM) //
-                .withStateTransitions(PrismStateTransitionGroup.PROGRAM_CREATE_TRANSITION //
+                .withAction(DEPARTMENT_CREATE_PROGRAM) //
+                .withActionCondition(ACCEPT_PROGRAM) //
+                .withStateTransitions(PROGRAM_CREATE_TRANSITION //
                         .withRoleTransitions(PROGRAM_CREATE_ADMINISTRATOR_GROUP));
     }
 
     public static PrismStateAction departmentCreateProject() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_CREATE_PROJECT) //
-                .withActionCondition(PrismActionCondition.ACCEPT_PROJECT) //
-                .withStateTransitions(PrismStateTransitionGroup.PROJECT_CREATE_TRANSITION //
+                .withAction(DEPARTMENT_CREATE_PROJECT) //
+                .withActionCondition(ACCEPT_PROJECT) //
+                .withStateTransitions(PROJECT_CREATE_TRANSITION //
                         .withRoleTransitions(PROJECT_CREATE_ADMINISTRATOR_GROUP));
     }
 
-    public static PrismStateAction departmentEmailCreatorUnnapproved() {
-        return departmentEmailCreatorAbstract();
+    public static PrismStateAction departmentSendMessageUnnapproved() {
+        return departmentSendMessageAbstract();
     }
 
-    public static PrismStateAction departmentEmailCreatorApproved() {
-        return departmentEmailCreatorAbstract() //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
+    public static PrismStateAction departmentSendMessageApproved() {
+        return departmentSendMessageAbstract() //
+                .withStateActionAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_STAFF_GROUP) //
+                .withStateActionAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, DEPARTMENT_ADMINISTRATOR) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withPartnerStateActionRecipientAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentEscalateUnapproved() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_ESCALATE) //
+                .withAction(DEPARTMENT_ESCALATE) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_REJECTED) //
-                        .withTransitionAction(PrismAction.DEPARTMENT_ESCALATE));
+                        .withTransitionAction(DEPARTMENT_ESCALATE));
     }
 
     public static PrismStateAction departmentTerminateUnapproved() {
         return departmentTerminateAbstract()
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_REJECTED) //
-                        .withTransitionAction(PrismAction.DEPARTMENT_TERMINATE));
+                        .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
     public static PrismStateAction departmentTerminateApproved() {
         return departmentTerminateAbstract()
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_DISABLED_COMPLETED) //
-                        .withTransitionAction(PrismAction.DEPARTMENT_TERMINATE));
+                        .withTransitionAction(DEPARTMENT_TERMINATE));
     }
 
     public static PrismStateAction departmentViewEditApproval(PrismState state) {
         return departmentViewEditAbstract()
-                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
-                        .withTransitionAction(PrismAction.DEPARTMENT_VIEW_EDIT)
+                        .withTransitionAction(DEPARTMENT_VIEW_EDIT)
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
 
     public static PrismStateAction departmentViewEditApproved() {
         return departmentViewEditAbstract() //
-                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withStateActionAssignments(DEPARTMENT_VIEWER_GROUP, PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
-                .withStateTransitions(PrismStateTransitionGroup.DEPARTMENT_VIEW_EDIT_TRANSITION //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withStateTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
 
     public static PrismStateAction departmentViewEditInactive() {
         return departmentViewEditAbstract() //
-                .withActionEnhancement(PrismActionEnhancement.DEPARTMENT_VIEW_AS_USER) //
+                .withActionEnhancement(DEPARTMENT_VIEW_AS_USER) //
                 .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentWithdraw() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_WITHDRAW) //
-                .withStateActionAssignments(PrismRole.DEPARTMENT_ADMINISTRATOR) //
+                .withAction(DEPARTMENT_WITHDRAW) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_WITHDRAWN) //
-                        .withTransitionAction(PrismAction.SYSTEM_VIEW_DEPARTMENT_LIST));
+                        .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST));
     }
 
     public static PrismStateAction departmentViewEditAbstract() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_VIEW_EDIT);
+                .withAction(DEPARTMENT_VIEW_EDIT);
     }
 
-    private static PrismStateAction departmentEmailCreatorAbstract() {
+    private static PrismStateAction departmentSendMessageAbstract() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_EMAIL_CREATOR) //
-                .withStateActionAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP);
+                .withAction(DEPARTMENT_SEND_MESSAGE) //
+                .withStateActionAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR);
     }
 
     private static PrismStateAction departmentTerminateAbstract() {
         return new PrismStateAction() //
-                .withAction(PrismAction.DEPARTMENT_TERMINATE);
+                .withAction(DEPARTMENT_TERMINATE);
     }
 
 }

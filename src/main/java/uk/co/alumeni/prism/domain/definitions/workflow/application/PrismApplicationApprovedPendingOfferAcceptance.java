@@ -4,6 +4,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedWithAppointeeHiringManager;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
@@ -24,6 +25,7 @@ public class PrismApplicationApprovedPendingOfferAcceptance extends PrismWorkflo
                         .withRoleTransitions(APPLICATION_RETIRE_APPOINTEE_GROUP)));
 
         stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCompleteApprovedWithAppointeeHiringManager(state)); //
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(applicationViewEdit()); //
     }

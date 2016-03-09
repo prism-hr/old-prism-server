@@ -68,11 +68,11 @@ public class PrismInstitutionWorkflow {
 
     public static PrismStateAction institutionSendMessageApproved() {
         return institutionSendMessageAbstract() //
-                .withAssignment(INSTITUTION_ADMINISTRATOR, INSTITUTION_STAFF_GROUP) //
-                .withAssignment(INSTITUTION_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR_GROUP) //
-                .withAssignments(INSTITUTION_STAFF_GROUP, INSTITUTION_ADMINISTRATOR) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, INSTITUTION_ADMINISTRATOR_GROUP) //
-                .withPartnerRecipientAssignments(INSTITUTION_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
+                .withStateActionAssignment(INSTITUTION_ADMINISTRATOR, INSTITUTION_STAFF_GROUP) //
+                .withStateActionAssignment(INSTITUTION_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(INSTITUTION_STAFF_GROUP, INSTITUTION_ADMINISTRATOR) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withPartnerStateActionRecipientAssignments(INSTITUTION_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction institutionEscalateUnapproved() {
@@ -99,8 +99,8 @@ public class PrismInstitutionWorkflow {
 
     public static PrismStateAction institutionViewEditApproval(PrismState state) {
         return institutionViewEditAbstract()
-                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(INSTITUTION_VIEW_EDIT)
@@ -109,8 +109,8 @@ public class PrismInstitutionWorkflow {
 
     public static PrismStateAction institutionViewEditApproved() {
         return institutionViewEditAbstract()
-                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
-                .withAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withStateTransitions(INSTITUTION_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(INSTITUTION_MANAGE_USERS_GROUP));
     }
@@ -118,13 +118,13 @@ public class PrismInstitutionWorkflow {
     public static PrismStateAction institutionViewEditInactive() {
         return institutionViewEditAbstract() //
                 .withActionEnhancement(INSTITUTION_VIEW_AS_USER)
-                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction institutionWithdraw() {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_WITHDRAW) //
-                .withAssignments(INSTITUTION_ADMINISTRATOR) //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_INSTITUTION_LIST));
@@ -138,7 +138,7 @@ public class PrismInstitutionWorkflow {
     private static PrismStateAction institutionSendMessageAbstract() {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_SEND_MESSAGE) //
-                .withAssignment(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR);
+                .withStateActionAssignment(SYSTEM_ADMINISTRATOR, INSTITUTION_ADMINISTRATOR);
     }
 
     private static PrismStateAction institutionTerminateAbstract() {

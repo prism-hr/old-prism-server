@@ -39,7 +39,7 @@ public class PrismProgramApproval extends PrismWorkflowState {
     public static PrismStateAction programCompleteApproval() {
         return new PrismStateAction() //
                 .withAction(PrismAction.PROGRAM_COMPLETE_APPROVAL_STAGE) //
-                .withAssignments(PrismRoleGroup.PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(PrismRoleGroup.PROGRAM_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PrismRole.PROGRAM_ADMINISTRATOR, PROGRAM_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                 .withStateTransitions(PrismStateTransitionGroup.PROGRAM_APPROVE_TRANSITION);
     }

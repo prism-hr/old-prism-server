@@ -554,7 +554,7 @@ public class SystemService {
     }
 
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
-        for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getAssignments()) {
+        for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getStateActionAssignments()) {
             Role role = roleService.getById(prismStateActionAssignment.getRole());
             StateActionAssignment stateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
                     .withExternalMode(prismStateActionAssignment.getExternalMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
@@ -586,7 +586,7 @@ public class SystemService {
     }
 
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
-        Set<PrismStateTransition> stateTransitions = prismStateAction.getTransitions();
+        Set<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
         if (stateTransitions.isEmpty()) {
             stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
                     .withTransitionAction(stateAction.getAction().getId()));

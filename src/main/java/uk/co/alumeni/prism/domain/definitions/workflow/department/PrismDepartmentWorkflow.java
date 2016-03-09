@@ -55,11 +55,11 @@ public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentSendMessageApproved() {
         return departmentSendMessageAbstract() //
-                .withAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_STAFF_GROUP) //
-                .withAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(DEPARTMENT_STAFF_GROUP, DEPARTMENT_ADMINISTRATOR) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR_GROUP) //
-                .withPartnerRecipientAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
+                .withStateActionAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_STAFF_GROUP) //
+                .withStateActionAssignment(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, DEPARTMENT_ADMINISTRATOR) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withPartnerStateActionRecipientAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentEscalateUnapproved() {
@@ -86,8 +86,8 @@ public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentViewEditApproval(PrismState state) {
         return departmentViewEditAbstract()
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withPartnerAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(DEPARTMENT_VIEW_EDIT)
@@ -96,8 +96,8 @@ public class PrismDepartmentWorkflow {
 
     public static PrismStateAction departmentViewEditApproved() {
         return departmentViewEditAbstract() //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }
@@ -105,13 +105,13 @@ public class PrismDepartmentWorkflow {
     public static PrismStateAction departmentViewEditInactive() {
         return departmentViewEditAbstract() //
                 .withActionEnhancement(DEPARTMENT_VIEW_AS_USER) //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP);
     }
 
     public static PrismStateAction departmentWithdraw() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_WITHDRAW) //
-                .withAssignments(DEPARTMENT_ADMINISTRATOR) //
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(DEPARTMENT_WITHDRAWN) //
                         .withTransitionAction(SYSTEM_VIEW_DEPARTMENT_LIST));
@@ -125,7 +125,7 @@ public class PrismDepartmentWorkflow {
     private static PrismStateAction departmentSendMessageAbstract() {
         return new PrismStateAction() //
                 .withAction(DEPARTMENT_SEND_MESSAGE) //
-                .withAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR);
+                .withStateActionAssignments(DEPARTMENT_PARENT_ADMINISTRATOR_GROUP, DEPARTMENT_ADMINISTRATOR);
     }
 
     private static PrismStateAction departmentTerminateAbstract() {

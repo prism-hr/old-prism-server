@@ -21,7 +21,7 @@ public class PrismApplicationApprovedPendingOfferRevisionAcceptance extends Pris
                 .withAction(APPLICATION_CONFIRM_OFFER_ACCEPTANCE) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_CONFIRM_REVISED_OFFER_ACCEPTANCE_REQUEST)
-                .withAssignments(APPLICATION_APPOINTEE) //
+                .withStateActionAssignments(APPLICATION_APPOINTEE) //
                 .withNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                 .withStateTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION));
 

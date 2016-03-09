@@ -287,12 +287,12 @@ public class SystemInitialisationHelper {
 
     private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {
         Set<StateActionAssignment> stateActionAssignments = stateAction.getStateActionAssignments();
-        assertTrue(prismStateAction.getAssignments().size() == stateActionAssignments.size());
+        assertTrue(prismStateAction.getStateActionAssignments().size() == stateActionAssignments.size());
 
         for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
                     .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
-            assertTrue(prismStateAction.getAssignments().contains(prismStateActionAssignment));
+            assertTrue(prismStateAction.getStateActionAssignments().contains(prismStateActionAssignment));
         }
     }
 
@@ -309,7 +309,7 @@ public class SystemInitialisationHelper {
 
     private void verifyStateTransitionCreation(StateAction stateAction, PrismStateAction prismStateAction) {
         Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
-        assertTrue(prismStateAction.getTransitions().size() == stateTransitions.size());
+        assertTrue(prismStateAction.getStateTransitions().size() == stateTransitions.size());
 
         for (StateTransition stateTransition : stateTransitions) {
             StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
@@ -338,7 +338,7 @@ public class SystemInitialisationHelper {
                                 stateTermination.getStateTerminationEvaluation()));
             }
 
-            assertTrue(prismStateAction.getTransitions().contains(prismStateTransition));
+            assertTrue(prismStateAction.getStateTransitions().contains(prismStateTransition));
         }
     }
 

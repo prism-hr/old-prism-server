@@ -34,7 +34,7 @@ public class PrismDepartmentApproval extends PrismWorkflowState {
     public static PrismStateAction departmentCompleteApproval() {
         return new PrismStateAction() //
                 .withAction(PrismAction.DEPARTMENT_COMPLETE_APPROVAL_STAGE) //
-                .withAssignments(PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PrismRole.DEPARTMENT_ADMINISTRATOR, PrismNotificationDefinition.DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                 .withStateTransitions(PrismStateTransitionGroup.DEPARTMENT_APPROVE_TRANSITION);
     }

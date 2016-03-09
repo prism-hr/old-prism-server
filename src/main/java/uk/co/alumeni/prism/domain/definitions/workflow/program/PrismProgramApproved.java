@@ -22,12 +22,12 @@ public class PrismProgramApproved extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_UNENDORSE) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(PROGRAM_ENDORSE_TRANSITION));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_REENDORSE) //
-                .withPartnerAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(PROGRAM_ENDORSE_TRANSITION));
 
         stateActions.add(programTerminateApproved()); //

@@ -53,7 +53,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_ASSIGN_INTERVIEWERS) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(APPLICATION_ASSIGN_INTERVIEWERS_TRANSITION)); //
 
         stateActions.add(applicationCommentViewerRecruiter()); //
@@ -80,7 +80,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
     public static PrismStateAction applicationConfirmInterviewArrangements() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_INTERVIEW) //
                         .withTransitionAction(APPLICATION_ASSIGN_INTERVIEWERS) //
@@ -104,7 +104,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
                 .withRaisesUrgentFlag()
                 .withNotification(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
-                .withAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP) //
+                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP) //
                 .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
     }
 
@@ -113,36 +113,36 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
                 .withRaisesUrgentFlag() //
                 .withNotification(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST) //
-                .withAssignments(APPLICATION_INTERVIEWER);
+                .withStateActionAssignments(APPLICATION_INTERVIEWER);
     }
 
     public static PrismStateAction applicationUpdateInterviewAvailability(PrismRoleGroup assignments) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_UPDATE_INTERVIEW_AVAILABILITY) //
-                .withAssignments(assignments) //
+                .withStateActionAssignments(assignments) //
                 .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
     }
 
     public static PrismStateAction applicationSendMessageInterviewScheduling() {
         return applicationSendMessageViewerRecruiter() //
-                .withAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP); //
+                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP); //
     }
 
     public static PrismStateAction applicationSendMessageInterviewFeedback() {
         return applicationSendMessageViewerRecruiter() //
-                .withAssignment(APPLICATION_INTERVIEWER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_INTERVIEWER); //
+                .withStateActionAssignment(APPLICATION_INTERVIEWER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_INTERVIEWER); //
     }
 
     public static PrismStateAction applicationViewEditInterviewScheduling(PrismState state) {
         return applicationViewEditInterviewScheduled(state) //
-                .withAssignments(APPLICATION_POTENTIAL_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
+                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationViewEditInterviewScheduled(PrismState state) {
         return applicationViewEditWithViewerRecruiter(state) //
-                .withAssignments(APPLICATION_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
+                .withStateActionAssignments(APPLICATION_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationWithdrawInterviewScheduling() {

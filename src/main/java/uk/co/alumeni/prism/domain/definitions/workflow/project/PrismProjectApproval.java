@@ -38,7 +38,7 @@ public class PrismProjectApproval extends PrismWorkflowState {
     public static PrismStateAction projectCompleteApproval() {
         return new PrismStateAction() //
                 .withAction(PROJECT_COMPLETE_APPROVAL_STAGE) //
-                .withAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(PROJECT_PARENT_ADMINISTRATOR_GROUP) //
                 .withNotifications(PROJECT_ADMINISTRATOR, PROJECT_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                 .withStateTransitions(PROJECT_APPROVE_TRANSITION);
     }

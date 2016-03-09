@@ -21,15 +21,15 @@ public class PrismInstitutionDisabledCompleted extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_RESTORE) //
-                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_APPROVED) //
                         .withTransitionAction(INSTITUTION_VIEW_EDIT)));
 
         stateActions.add(institutionViewEditAbstract() //
-                .withAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
-                .withAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
-                .withPartnerAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER)); //
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER)); //
     }
 
 }

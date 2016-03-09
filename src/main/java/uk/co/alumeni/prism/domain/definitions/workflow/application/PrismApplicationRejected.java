@@ -32,7 +32,7 @@ public class PrismApplicationRejected extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_CONFIRM_REJECTION) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
                 .withStateTransitions(APPLICATION_CONFIRM_REJECTION_TRANSITION));
 
@@ -48,7 +48,7 @@ public class PrismApplicationRejected extends PrismWorkflowState {
     public static PrismStateAction applicationReverseRejection() {
         return new PrismStateAction() //
                 .withAction(APPLICATION_REVERSE_REJECTION) //
-                .withAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REJECTED) //

@@ -26,7 +26,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_UPLOAD_REFERENCE) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_UPLOAD_REFERENCE)));

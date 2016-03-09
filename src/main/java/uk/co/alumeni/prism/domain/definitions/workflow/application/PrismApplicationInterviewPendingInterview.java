@@ -47,7 +47,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                 .withAction(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY) //
                 .withRaisesUrgentFlag()
                 .withNotification(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST) //
-                .withAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
+                .withStateActionAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
                 .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_NOTIFICATION) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
@@ -55,10 +55,10 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                         .withRoleTransitions(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_GROUP)));
 
         stateActions.add(applicationSendMessageViewerRecruiter() //
-                .withAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
-                .withAssignments(APPLICATION_CONFIRMED_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
-                .withAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CONFIRMED_INTERVIEW_GROUP)); //
+                .withStateActionAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
+                .withStateActionAssignments(APPLICATION_CONFIRMED_INTERVIEW_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CONFIRMED_INTERVIEW_GROUP)); //
 
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_FEEDBACK, APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP,
                 APPLICATION_UPDATE_SCHEDULED_INTERVIEWER_GROUP_CONFIRMED)); //

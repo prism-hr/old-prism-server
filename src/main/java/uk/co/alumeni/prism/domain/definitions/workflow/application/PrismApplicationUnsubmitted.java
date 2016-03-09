@@ -20,7 +20,7 @@ public class PrismApplicationUnsubmitted extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_COMPLETE) //
                 .withRaisesUrgentFlag() //
-                .withAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
+                .withStateActionAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_EDIT_AS_CREATOR) //
                 .withNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION) //
                 .withStateTransitions(APPLICATION_COMPLETE_TRANSITION));
 

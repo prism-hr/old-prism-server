@@ -44,7 +44,7 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
     public static PrismStateAction institutionCompleteApproval() {
         return new PrismStateAction() //
                 .withAction(INSTITUTION_COMPLETE_APPROVAL_STAGE) //
-                .withAssignments(SYSTEM_ADMINISTRATOR) //
+                .withStateActionAssignments(SYSTEM_ADMINISTRATOR) //
                 .withNotifications(INSTITUTION_ADMINISTRATOR, INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION) //
                 .withStateTransitions(INSTITUTION_APPROVE_TRANSITION);
     }

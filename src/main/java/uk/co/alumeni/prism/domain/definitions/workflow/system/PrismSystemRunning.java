@@ -30,7 +30,7 @@ public class PrismSystemRunning extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(SYSTEM_VIEW_EDIT) //
                 .withActionEnhancement(SYSTEM_VIEW_EDIT_AS_USER)
-                .withAssignments(SYSTEM_ADMINISTRATOR)
+                .withStateActionAssignments(SYSTEM_ADMINISTRATOR)
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(SYSTEM_RUNNING) //
                         .withTransitionAction(SYSTEM_VIEW_EDIT)

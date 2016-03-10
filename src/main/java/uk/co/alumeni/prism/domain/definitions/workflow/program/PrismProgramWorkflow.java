@@ -12,7 +12,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhance
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
@@ -84,7 +83,7 @@ public class PrismProgramWorkflow {
     public static PrismStateAction programViewEditApproval(PrismState state) {
         return programViewEditAbstract()
                 .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(PROGRAM_VIEW_EDIT)
@@ -96,8 +95,8 @@ public class PrismProgramWorkflow {
                 .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP, PROGRAM_VIEW_EDIT_AS_USER) //
                 .withStateActionAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
                 .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withStateActionAssignments(PROGRAM_VIEWER_GROUP, PROGRAM_VIEW_AS_USER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withStateTransitions(PROGRAM_VIEW_EDIT_TRANSITION //

@@ -101,7 +101,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
                 .withRaisesUrgentFlag()
-                .withNotification(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
                 .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP); //
     }
 
@@ -109,7 +109,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST) //
                 .withStateActionAssignments(APPLICATION_INTERVIEWER);
     }
 

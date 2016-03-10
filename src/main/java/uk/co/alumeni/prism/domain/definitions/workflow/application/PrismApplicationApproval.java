@@ -50,7 +50,7 @@ public class PrismApplicationApproval extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_REQUEST) //
                 .withStateActionAssignments(APPLICATION_HIRING_MANAGER);
     }
 

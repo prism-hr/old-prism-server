@@ -8,10 +8,9 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.DEPARTMENT_APPROVE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEmailCreatorUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentEscalateUnapproved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateUnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentSendMessageUnnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentTerminateUnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentWithdraw;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;

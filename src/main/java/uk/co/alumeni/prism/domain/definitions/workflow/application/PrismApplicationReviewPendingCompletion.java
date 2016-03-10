@@ -25,7 +25,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 
         stateActions.add(applicationCompleteReview(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST)); //
+                .withNotificationDefinition(APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST)); //
 
         stateActions.add(applicationSendMessageReview()); //
 
@@ -38,9 +38,9 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
                         .withTransitionAction(APPLICATION_COMPLETE_REVIEW_STAGE) //
                         .withRoleTransitions(APPLICATION_PROVIDE_REVIEW_GROUP))); //
 
-        stateActions.add(PrismApplicationWorkflow.applicationUploadReference(state));
-        stateActions.add(PrismApplicationReview.applicationViewEditReview(state)); //
-        stateActions.add(PrismApplicationReview.applicationWithdrawReview());
+        stateActions.add(applicationUploadReference(state));
+        stateActions.add(applicationViewEditReview(state)); //
+        stateActions.add(applicationWithdrawReview());
     }
 
 }

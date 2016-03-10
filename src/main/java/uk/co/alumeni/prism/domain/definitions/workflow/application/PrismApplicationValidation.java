@@ -20,7 +20,7 @@ public class PrismApplicationValidation extends PrismWorkflowState {
 
         stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_VALIDATION_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP)
                 .withRaisesUrgentFlag()
-                .withNotification(APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST));
+                .withNotificationDefinition(APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST));
 
         stateActions.add(applicationEscalate());
 

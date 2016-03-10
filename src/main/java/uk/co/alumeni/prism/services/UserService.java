@@ -67,8 +67,6 @@ import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;

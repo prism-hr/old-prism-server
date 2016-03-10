@@ -21,7 +21,7 @@ public class PrismApplicationReservedPendingCompletion extends PrismWorkflowStat
 
         stateActions.add(applicationCompleteReserved(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_RESERVED_STAGE_REQUEST));
+                .withNotificationDefinition(APPLICATION_COMPLETE_RESERVED_STAGE_REQUEST));
 
         stateActions.add(applicationSendMessageViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //

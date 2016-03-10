@@ -541,7 +541,7 @@ public class SystemService {
         StateAction stateAction = new StateAction().withState(state).withAction(action).withRaisesUrgentFlag(prismStateAction.getRaisesUrgentFlag())
                 .withReplicableSequenceStart(prismStateAction.getReplicableSequenceStart()).withActionEnhancement(prismStateAction.getActionEnhancement());
 
-        PrismNotificationDefinition prismNotificationDefiniton = prismStateAction.getNotification();
+        PrismNotificationDefinition prismNotificationDefiniton = prismStateAction.getNotificationDefinition();
         if (prismNotificationDefiniton != null) {
             stateAction.setNotificationDefinition(notificationService.getById(prismNotificationDefiniton));
         }

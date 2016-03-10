@@ -34,7 +34,7 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST) //
                 .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR, INSTITUTION_APPROVER, DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_APPROVED)

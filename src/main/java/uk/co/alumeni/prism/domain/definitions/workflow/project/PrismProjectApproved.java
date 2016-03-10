@@ -29,7 +29,6 @@ public class PrismProjectApproved extends PrismWorkflowState {
         stateActions.add(projectEscalateApproved());
 
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.PROJECT_UNENDORSE) //
                 .withAction(PROJECT_UNENDORSE) //
                 .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(PROJECT_ENDORSE_TRANSITION));

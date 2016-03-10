@@ -2,12 +2,11 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.stream.Collectors.toList;
-import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
@@ -34,24 +34,29 @@ import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
-import uk.co.alumeni.prism.rest.representation.user.*;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUserUnverifiedRepresentation;
-import uk.co.alumeni.prism.services.*;
+import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationUnverified;
+import uk.co.alumeni.prism.rest.representation.user.UserRolesRepresentation;
+import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.RoleService;
+import uk.co.alumeni.prism.services.SystemService;
+import uk.co.alumeni.prism.services.UserFeedbackService;
+import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
-import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
-import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
-import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.TreeMultimap;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 
 @Service
 @Transactional

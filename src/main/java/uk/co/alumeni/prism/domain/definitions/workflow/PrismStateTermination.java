@@ -41,8 +41,8 @@ public class PrismStateTermination {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTermination other = (PrismStateTermination) object;
-        return Objects.equal(terminationState, other.getTerminationState()) && Objects.equal(stateTerminationEvaluation, other.getStateTerminationEvaluation());
+        PrismStateTermination other = (PrismStateTermination) object;
+        return equal(terminationState, other.getTerminationState()) && equal(stateTerminationEvaluation, other.getStateTerminationEvaluation());
     }
 
 }

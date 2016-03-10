@@ -202,7 +202,6 @@ public class PrismStateTransition {
         }
         PrismStateTransition other = (PrismStateTransition) object;
         return equal(transitionState, other.getTransitionState()) && equal(transitionAction, other.getTransitionAction())
-                && equal(transitionEvaluation, other.getTransitionEvaluation());
                 && equal(replicableSequenceClose, other.getReplicableSequenceClose())
                 && equal(replicableSequenceFilterTheme, other.getReplicableSequenceFilterTheme())
                 && equal(replicableSequenceFilterSecondaryTheme, other.getReplicableSequenceFilterSecondaryTheme())

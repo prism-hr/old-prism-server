@@ -24,7 +24,7 @@ public class PrismApplicationReferencePendingCompletion extends PrismWorkflowSta
 
         stateActions.add(applicationCompleteReference(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST));
+                .withNotificationDefinition(APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST));
 
         stateActions.add(applicationSendMessageReference()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP));

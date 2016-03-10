@@ -29,7 +29,7 @@ public class PrismProjectDisabledCompleted extends PrismWorkflowState {
 
         stateActions.add(projectViewEditAbstract()
                 .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
-                .withStateActionAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROJECT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER));
     }
 

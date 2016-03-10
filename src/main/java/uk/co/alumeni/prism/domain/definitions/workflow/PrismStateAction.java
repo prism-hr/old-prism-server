@@ -1,10 +1,9 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static org.apache.commons.lang.WordUtils.capitalize;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.apache.commons.lang.WordUtils.capitalize;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +24,7 @@ public class PrismStateAction {
 
     private PrismActionEnhancement actionEnhancement;
 
-    private PrismNotificationDefinition notification;
+    private PrismNotificationDefinition notificationDefinition;
 
     private Set<PrismStateActionAssignment> stateActionAssignments = newLinkedHashSet();
 
@@ -51,15 +50,14 @@ public class PrismStateAction {
         return actionEnhancement;
     }
 
-    public PrismNotificationDefinition getNotification() {
-        return notification;
+    public PrismNotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
     public Set<PrismStateActionAssignment> getStateActionAssignments() {
         return stateActionAssignments;
     }
 
-    public Set<PrismStateActionNotification> getNotifications() {
     public Set<PrismStateTransition> getStateTransitions() {
         return stateTransitions;
     }
@@ -89,8 +87,8 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withNotification(PrismNotificationDefinition notification) {
-        this.notification = notification;
+    public PrismStateAction withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
         return this;
     }
 
@@ -155,7 +153,7 @@ public class PrismStateAction {
         }
         return this;
     }
-    
+
     public PrismStateAction withPartnerStateActionAssignments(PrismRole... roles) {
         for (PrismRole role : roles) {
             this.stateActionAssignments.add(new PrismStateActionAssignment().withRole(role).withExternalMode());
@@ -232,5 +230,25 @@ public class PrismStateAction {
     private PrismStateActionAssignment addRecipient(PrismStateActionAssignment assignment, PrismRole recipient, String recipientProperty) {
         return (PrismStateActionAssignment) invokeMethod(assignment, "add" + capitalize(recipientProperty), recipient);
     }
- 
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(action);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        PrismStateAction other = (PrismStateAction) object;
+        return equal(action, other.getAction()) && equal(raisesUrgentFlag, other.getRaisesUrgentFlag())
+                && equal(replicableSequenceStart, other.getReplicableSequenceStart()) && equal(actionCondition, other.getActionCondition())
+                && equal(actionEnhancement, other.getActionEnhancement()) && equal(notificationDefinition, other.getNotificationDefinition())
+                && equal(stateActionAssignments, other.getStateActionAssignments()) && equal(stateTransitions, other.getStateTransitions());
+    }
+
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import jersey.repackaged.com.google.common.collect.Maps;
+import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +42,6 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.*;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PREFERRED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.*;
@@ -112,7 +112,7 @@ public class ApplicationMapper {
         Advert advert = application.getAdvert();
         AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert);
         representation.setPossibleThemes(advertCategories.getThemes());
-        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> isTrue(location.getSelected())).collect(toList()));
+        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> BooleanUtils.isTrue(location.getSelected())).collect(toList()));
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
@@ -402,7 +402,7 @@ public class ApplicationMapper {
 
                 for (ApplicationReferee applicationReferee : application.getReferees()) {
                     Comment referenceComment = applicationReferee.getComment();
-                    if (referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) {
+                    if (referenceComment == null || BooleanUtils.isFalse(referenceComment.getDeclinedResponse())) {
                         assignedSupervisors.add(new ApplicationAssignedHiringManagerRepresentation().withUser(userMapper.getUserRepresentationSimple(
                                 applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
                     }
@@ -411,8 +411,6 @@ public class ApplicationMapper {
                 return assignedSupervisors;
             }
         }
-
-        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

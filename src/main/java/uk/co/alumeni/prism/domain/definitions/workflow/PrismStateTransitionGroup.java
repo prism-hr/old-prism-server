@@ -141,6 +141,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -616,9 +617,10 @@ public enum PrismStateTransitionGroup {
         for (PrismStateTransition stateTransition : getStateTransitions()) {
             PrismState transitionState = stateTransition.getTransitionState();
             if (!exclusionsList.contains(transitionState)) {
-                List<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
-                List<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
-                List<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
+                Set<PrismStateTransitionNotification> definedStateTransitionNotifications = stateTransition.getStateTransitionNotifications();
+                Set<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
+                Set<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
+                Set<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
                 stateTransitions.add(new PrismStateTransition() //
                         .withTransitionState(stateTransition.getTransitionState()) //
                         .withTransitionAction(stateTransition.getTransitionAction()) //
@@ -628,6 +630,8 @@ public enum PrismStateTransitionGroup {
                         .withReplicableSequenceFilterLocation(stateTransition.getReplicableSequenceFilterLocation()) //
                         .withReplicableSequenceFilterSecondaryLocation(stateTransition.getReplicableSequenceFilterSecondaryLocation()) //
                         .withStateTransitionEvaluation(stateTransition.getStateTransitionEvaluation()) //
+                        .withStateTransitionNotifications(
+                                definedStateTransitionNotifications.toArray(new PrismStateTransitionNotification[definedStateTransitionNotifications.size()])) //
                         .withRoleTransitions(definedRoleTransitions.toArray(new PrismRoleTransition[definedRoleTransitions.size()])) //
                         .withRoleTransitions(roleTransitions.toArray(new PrismRoleTransition[roleTransitions.size()])) //
                         .withStateTerminations(definedStateTerminations.toArray(new PrismStateTermination[definedStateTerminations.size()])) //

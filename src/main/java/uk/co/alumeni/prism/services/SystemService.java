@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
@@ -561,8 +562,8 @@ public class SystemService {
     }
 
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
-        List<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
-        if (stateTransitions.isEmpty()) {
+        Set<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
+        if (isEmpty(stateTransitions)) {
             stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
                     .withTransitionAction(stateAction.getAction().getId()));
         }
@@ -604,7 +605,7 @@ public class SystemService {
     private void initializeStateTransitionNotifications(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
         for (PrismStateTransitionNotification prismStateActionNotification : prismStateTransition.getStateTransitionNotifications()) {
             Role role = roleService.getById(prismStateActionNotification.getRole());
-            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotification());
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotificationdDefinition());
             StateTransitionNotification stateTransitionNotification = new StateTransitionNotification().withStateAction(stateTransition).withRole(role)
                     .withNotificationDefinition(notificationDefinition);
             entityService.save(stateTransitionNotification);

@@ -1,12 +1,13 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
 
-import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 public class PrismStateTransition {
 
@@ -26,13 +27,13 @@ public class PrismStateTransition {
 
     private PrismStateTransitionEvaluation stateTransitionEvaluation;
 
-    private List<PrismStateTransitionNotification> stateTransitionNotifications = Lists.newLinkedList();
+    private Set<PrismStateTransitionNotification> stateTransitionNotifications = newLinkedHashSet();
 
-    private List<PrismRoleTransition> roleTransitions = Lists.newLinkedList();
+    private Set<PrismRoleTransition> roleTransitions = newLinkedHashSet();
 
-    private List<PrismAction> propagatedActions = Lists.newLinkedList();
+    private Set<PrismAction> propagatedActions = newLinkedHashSet();
 
-    private List<PrismStateTermination> stateTerminations = Lists.newLinkedList();
+    private Set<PrismStateTermination> stateTerminations = newLinkedHashSet();
 
     public PrismState getTransitionState() {
         return transitionState;
@@ -66,19 +67,19 @@ public class PrismStateTransition {
         return stateTransitionEvaluation;
     }
 
-    public List<PrismStateTransitionNotification> getStateTransitionNotifications() {
+    public Set<PrismStateTransitionNotification> getStateTransitionNotifications() {
         return stateTransitionNotifications;
     }
 
-    public List<PrismRoleTransition> getRoleTransitions() {
+    public Set<PrismRoleTransition> getRoleTransitions() {
         return roleTransitions;
     }
 
-    public List<PrismAction> getPropagatedActions() {
+    public Set<PrismAction> getPropagatedActions() {
         return propagatedActions;
     }
 
-    public List<PrismStateTermination> getStateTerminations() {
+    public Set<PrismStateTermination> getStateTerminations() {
         return stateTerminations;
     }
 
@@ -147,6 +148,11 @@ public class PrismStateTransition {
         return this;
     }
 
+    public PrismStateTransition withStateTransitionNotifications(PrismStateTransitionNotification... stateTransitionNotifications) {
+        this.stateTransitionNotifications.addAll(asList(stateTransitionNotifications));
+        return this;
+    }
+
     public PrismStateTransition withStateTransitionNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition stateTransitionNotification) {
         for (PrismRole role : roleGroup.getRoles()) {
             withStateTransitionNotifications(role, stateTransitionNotification);
@@ -155,7 +161,7 @@ public class PrismStateTransition {
     }
 
     public PrismStateTransition withStateTransitionNotifications(PrismRole role, PrismNotificationDefinition stateTransitionNotification) {
-        stateTransitionNotifications.add(new PrismStateTransitionNotification().withRole(role).withDefinition(stateTransitionNotification));
+        this.stateTransitionNotifications.add(new PrismStateTransitionNotification().withRole(role).withNotificationDefinition(stateTransitionNotification));
         return this;
     }
 
@@ -183,7 +189,7 @@ public class PrismStateTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, stateTransitionEvaluation, roleTransitions, propagatedActions, stateTerminations);
+        return Objects.hashCode(transitionState);
     }
 
     @Override
@@ -195,14 +201,16 @@ public class PrismStateTransition {
             return false;
         }
         PrismStateTransition other = (PrismStateTransition) object;
-        List<PrismRoleTransition> otherRoleTransitions = other.getRoleTransitions();
-        List<PrismAction> otherPropagatedActions = other.getPropagatedActions();
-        List<PrismStateTermination> otherStateTerminations = other.getStateTerminations();
-        return Objects.equal(transitionState, other.getTransitionState()) && Objects.equal(transitionAction, other.getTransitionAction())
-                && Objects.equal(stateTransitionEvaluation, other.getStateTransitionEvaluation()) && roleTransitions.size() == otherRoleTransitions.size()
-                && roleTransitions.containsAll(otherRoleTransitions) && propagatedActions.size() == otherPropagatedActions.size()
-                && propagatedActions.containsAll(otherPropagatedActions) && stateTerminations.size() == otherStateTerminations.size()
-                && stateTerminations.containsAll(otherStateTerminations);
+        return equal(transitionState, other.getTransitionState()) && equal(transitionAction, other.getTransitionAction())
+                && equal(replicableSequenceClose, other.getReplicableSequenceClose())
+                && equal(replicableSequenceFilterTheme, other.getReplicableSequenceFilterTheme())
+                && equal(replicableSequenceFilterSecondaryTheme, other.getReplicableSequenceFilterSecondaryTheme())
+                && equal(replicableSequenceFilterLocation, other.getReplicableSequenceFilterLocation())
+                && equal(replicableSequenceFilterSecondaryLocation, other.getReplicableSequenceFilterSecondaryLocation())
+                && equal(stateTransitionEvaluation, other.getStateTransitionEvaluation())
+                && equal(stateTransitionNotifications, other.getStateTransitionNotifications())
+                && equal(roleTransitions, other.getRoleTransitions()) && Objects.equal(propagatedActions, other.getPropagatedActions())
+                && equal(stateTerminations, other.getStateTerminations());
     }
 
 }

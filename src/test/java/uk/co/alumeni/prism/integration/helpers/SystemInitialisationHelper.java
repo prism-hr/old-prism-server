@@ -338,7 +338,7 @@ public class SystemInitialisationHelper {
 
         for (StateTransitionNotification stateActionNotification : stateTransitionNotifications) {
             PrismStateTransitionNotification prismStateActionNotification = new PrismStateTransitionNotification().withRole(
-                    stateActionNotification.getRole().getId()).withDefinition(stateActionNotification.getNotificationDefinition().getId());
+                    stateActionNotification.getRole().getId()).withNotificationDefinition(stateActionNotification.getNotificationDefinition().getId());
             assertTrue(prismStateTransition.getStateTransitionNotifications().contains(prismStateActionNotification));
         }
     }

@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.apache.commons.lang.WordUtils.capitalize;
@@ -174,16 +173,6 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withPartnerAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
-        for (PrismRole role : roles.getRoles()) {
-            withPartnerAssignment(role, recipients);
-        }
-        return this;
-    }
-
-        return this;
-    }
-
     public PrismStateAction withPartnerStateActionAssignments(PrismRoleGroup roles, PrismRoleGroup recipients) {
         for (PrismRole role : roles.getRoles()) {
             withPartnerStateActionAssignment(role, recipients);
@@ -199,15 +188,6 @@ public class PrismStateAction {
     public PrismStateAction withPartnerStateActionAssignments(PrismRoleGroup roles, PrismActionEnhancement actionEnhancement) {
         for (PrismRole role : roles.getRoles()) {
             this.stateActionAssignments.add(new PrismStateActionAssignment().withRole(role).withExternalMode().withActionEnhancement(actionEnhancement));
-        for (PrismRole role : roles.getRoles()) {
-            PrismStateActionAssignment newAssignment = new PrismStateActionAssignment().withRole(role);
-            for (PrismRole recipient : recipients.getRoles()) {
-                addRecipientAssignment(newAssignment, recipient, "partnerRecipient");
-            }
-        }
-        return this;
-    }
-
         }
         return this;
     }
@@ -237,20 +217,6 @@ public class PrismStateAction {
     }
 
     private PrismStateAction addRecipientAssignment(PrismStateActionAssignment newAssignment, PrismRole recipient, String recipientProperty) {
-        for (PrismStateActionAssignment assignment : this.assignments) {
-            if (assignment.equals(newAssignment)) {
-                addRecipient(assignment, recipient, recipientProperty);
-                return this;
-            }
-        }
-        this.assignments.add(addRecipient(newAssignment, recipient, recipientProperty));
-        return this;
-    }
-
-    private PrismStateActionAssignment addRecipient(PrismStateActionAssignment assignment, PrismRole recipient, String recipientProperty) {
-        return (PrismStateActionAssignment) invokeMethod(assignment, "add" + capitalize(recipientProperty), recipient);
-    }
- 
         for (PrismStateActionAssignment assignment : this.stateActionAssignments) {
             if (assignment.equals(newAssignment)) {
                 addRecipient(assignment, recipient, recipientProperty);

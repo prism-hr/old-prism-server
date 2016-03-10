@@ -1,30 +1,5 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import org.joda.time.LocalDateTime;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.domain.Competence;
-import uk.co.alumeni.prism.domain.comment.*;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
-import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.State;
-import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.comment.*;
-import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.*;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static jersey.repackaged.com.google.common.collect.Sets.newTreeSet;
@@ -33,6 +8,61 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhance
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.joda.time.LocalDateTime;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.domain.Competence;
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.comment.CommentAppointmentPreference;
+import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
+import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
+import uk.co.alumeni.prism.domain.comment.CommentCompetence;
+import uk.co.alumeni.prism.domain.comment.CommentInterviewAppointment;
+import uk.co.alumeni.prism.domain.comment.CommentInterviewInstruction;
+import uk.co.alumeni.prism.domain.comment.CommentOfferDetail;
+import uk.co.alumeni.prism.domain.comment.CommentPositionDetail;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.State;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentTimeslotRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentAssignedUserRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceGroupRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentCompetenceRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentOfferDetailRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentPositionDetailRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentationRatingSummary;
+import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.CommentService;
+import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.RoleService;
+import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 
 @Service
 @Transactional

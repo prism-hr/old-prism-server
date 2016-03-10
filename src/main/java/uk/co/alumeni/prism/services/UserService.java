@@ -66,8 +66,6 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -96,7 +94,6 @@ import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -334,15 +331,6 @@ public class UserService {
             }
         }
 
-        DateTime baseline = now();
-        for (ApplicationReferee applicationReferee : application.getReferees()) {
-            User referee = applicationReferee.getUser();
-            Comment referenceComment = applicationReferee.getComment();
-            if ((referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) && !userNotInterestedIndex.contains(referee)) {
-                orderedUsers.put(referee.getFullName(), new UserSelectionDTO().withUser(referee).withEventTimestamp(baseline));
-            }
-        }
-
         return newLinkedList(orderedUsers.values());
     }
 
@@ -398,7 +386,7 @@ public class UserService {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
-        return Lists.<User>newArrayList();
+        return Lists.<User> newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserDTO userDTO) {
@@ -487,7 +475,7 @@ public class UserService {
         HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
         Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
         if (!resources.isEmpty()) {
-            for (PrismScope scope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
+            for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
                 Set<Integer> scopedResources = resources.get(scope);
                 if (isNotEmpty(scopedResources)) {
                     userRoles.addAll(userDAO.getUsersToVerify(scope, resources.get(scope)));
@@ -518,7 +506,6 @@ public class UserService {
         });
         return users;
     }
-
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user) {
         HashMultimap<PrismScope, Integer> resources = create();

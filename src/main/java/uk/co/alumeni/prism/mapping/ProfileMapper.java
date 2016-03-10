@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.Lists;
 import static java.math.RoundingMode.HALF_UP;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
@@ -10,18 +9,36 @@ import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.application.*;
+import uk.co.alumeni.prism.domain.application.ApplicationAdditionalInformation;
+import uk.co.alumeni.prism.domain.application.ApplicationAddress;
+import uk.co.alumeni.prism.domain.application.ApplicationDocument;
+import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
+import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
+import uk.co.alumeni.prism.domain.application.ApplicationQualification;
+import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
 import uk.co.alumeni.prism.domain.profile.ProfileAdvertRelationSection;
+import uk.co.alumeni.prism.domain.profile.ProfileAward;
+import uk.co.alumeni.prism.domain.profile.ProfileDocument;
+import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
+import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
+import uk.co.alumeni.prism.domain.profile.ProfileQualification;
+import uk.co.alumeni.prism.domain.profile.ProfileReferee;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserDocument;

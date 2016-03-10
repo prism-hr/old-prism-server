@@ -288,14 +288,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         this.parentUser = parentUser;
     }
 
-    public User getCreatorUser() {
-        return creatorUser;
-    }
-
-    public void setCreatorUser(User creatorUser) {
-        this.creatorUser = creatorUser;
-    }
-
     public DateTime getLastLoggedInTimestamp() {
         return lastLoggedInTimestamp;
     }

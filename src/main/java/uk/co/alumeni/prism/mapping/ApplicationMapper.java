@@ -3,13 +3,16 @@ package uk.co.alumeni.prism.mapping;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import jersey.repackaged.com.google.common.collect.Maps;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.*;
 import uk.co.alumeni.prism.domain.comment.*;
@@ -34,11 +37,13 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -324,7 +329,7 @@ public class ApplicationMapper {
         if (sourceComment != null) {
             ApplicationOfferRepresentation offerRepresentation = getApplicationOfferRecommendationRepresentation(sourceComment);
 
-            User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
+            User manager = getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
                 sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager,
                         sourceComment.getCreatedTimestamp());

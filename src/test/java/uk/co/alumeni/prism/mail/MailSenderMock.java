@@ -2,8 +2,9 @@ package uk.co.alumeni.prism.mail;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
+
+import com.google.common.collect.Lists;
 
 public class MailSenderMock extends MailSender {
 

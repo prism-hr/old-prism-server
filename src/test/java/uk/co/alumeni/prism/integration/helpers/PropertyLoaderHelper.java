@@ -1,8 +1,8 @@
 package uk.co.alumeni.prism.integration.helpers;
 
+import static org.junit.Assert.assertEquals;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_YES;
-import static org.junit.Assert.assertEquals;
 
 import javax.inject.Inject;
 

@@ -44,10 +44,10 @@ import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
 import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.SystemService;
@@ -106,7 +106,6 @@ public class WorkflowConfigurationHelper {
 
         verifyStateActions(state);
         verifyStateActionAssignments(state);
-        verifyStateActionNotifications(state);
         verifyRoleTransitionExclusions(state);
 
         for (State transitionState : stateService.getOrderedTransitionStates(state, statesVisited.toArray(new State[statesVisited.size()]))) {
@@ -226,12 +225,26 @@ public class WorkflowConfigurationHelper {
                         || action.getId().name().contains("_IMPORT_"));
 
                 lastTransitionEvaluation = thisTransitionEvaluationId;
+
+                verifyStateTransitionNotifications(stateTransition);
                 verifyRoleTransitions(stateTransition);
 
                 if (!stateTransition.getPropagatedActions().isEmpty()) {
                     propagatingStateTransitions.add(stateTransition);
                 }
             }
+        }
+    }
+
+    private void verifyStateTransitionNotifications(StateTransition stateTransition) {
+        for (StateTransitionNotification notification : stateTransition.getStateTransitionNotifications()) {
+            NotificationDefinition template = notification.getNotificationDefinition();
+            uk.co.alumeni.prism.domain.workflow.Scope templateScope = template.getScope();
+            logger.info("Verifying notification: " + template.getId().toString());
+
+            StateAction stateAction = stateTransition.getStateAction();
+            assertTrue(stateAction.getState().getScope() == templateScope || templateScope.getId() == SYSTEM
+                    || stateAction.getAction().getCreationScope() == templateScope);
         }
     }
 
@@ -285,19 +298,6 @@ public class WorkflowConfigurationHelper {
                 if (BooleanUtils.isFalse(assignment.getExternalMode())) {
                     assertTrue(assignedRole.getScope().getOrdinal() <= state.getScope().getOrdinal());
                 }
-            }
-        }
-    }
-
-    private void verifyStateActionNotifications(State state) {
-        for (StateAction stateAction : state.getStateActions()) {
-            for (StateActionNotification notification : stateAction.getStateActionNotifications()) {
-                NotificationDefinition template = notification.getNotificationDefinition();
-                uk.co.alumeni.prism.domain.workflow.Scope templateScope = template.getScope();
-                logger.info("Verifying notification: " + template.getId().toString());
-
-                assertTrue(state.getScope() == templateScope || templateScope.getId() == SYSTEM
-                        || stateAction.getAction().getCreationScope() == templateScope);
             }
         }
     }

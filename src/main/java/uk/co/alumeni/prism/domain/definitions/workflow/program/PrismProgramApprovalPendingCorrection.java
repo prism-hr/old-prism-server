@@ -26,7 +26,7 @@ public class PrismProgramApprovalPendingCorrection extends PrismWorkflowState {
         stateActions.add(new PrismStateAction() //
                 .withAction(PROGRAM_CORRECT) //
                 .withRaisesUrgentFlag() //
-                .withNotification(PROGRAM_CORRECT_REQUEST) //
+                .withNotificationDefinition(PROGRAM_CORRECT_REQUEST) //
                 .withStateActionAssignments(PROGRAM_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PROGRAM_APPROVAL) //

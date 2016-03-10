@@ -28,7 +28,7 @@ public class PrismInstitutionApprovalPendingCorrection extends PrismWorkflowStat
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_CORRECT) //
                 .withRaisesUrgentFlag() //
-                .withNotification(INSTITUTION_CORRECT_REQUEST) //
+                .withNotificationDefinition(INSTITUTION_CORRECT_REQUEST) //
                 .withStateActionAssignments(INSTITUTION_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(INSTITUTION_APPROVAL) //

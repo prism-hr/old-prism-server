@@ -30,7 +30,7 @@ public class PrismStateTermination {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(terminationState, stateTerminationEvaluation);
+        return Objects.hashCode(terminationState);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PrismStateTermination {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTermination other = (PrismStateTermination) object;
+        PrismStateTermination other = (PrismStateTermination) object;
         return equal(terminationState, other.getTerminationState()) && equal(stateTerminationEvaluation, other.getStateTerminationEvaluation());
     }
 

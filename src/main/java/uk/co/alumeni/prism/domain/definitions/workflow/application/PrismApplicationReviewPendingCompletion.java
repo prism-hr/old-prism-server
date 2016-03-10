@@ -25,7 +25,7 @@ public class PrismApplicationReviewPendingCompletion extends PrismWorkflowState 
 
         stateActions.add(applicationCompleteReview(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST)); //
+                .withNotificationDefinition(APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST)); //
 
         stateActions.add(applicationSendMessageReview()); //
 

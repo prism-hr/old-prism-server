@@ -2,7 +2,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
 
 import java.util.Set;
@@ -25,13 +25,15 @@ public class PrismStateTransition {
 
     private Boolean replicableSequenceFilterSecondaryLocation = false;
 
-    private PrismStateTransitionEvaluation transitionEvaluation;
+    private PrismStateTransitionEvaluation stateTransitionEvaluation;
 
-    private Set<PrismRoleTransition> roleTransitions = newHashSet();
+    private Set<PrismStateTransitionNotification> stateTransitionNotifications = newLinkedHashSet();
 
-    private Set<PrismAction> propagatedActions = newHashSet();
+    private Set<PrismRoleTransition> roleTransitions = newLinkedHashSet();
 
-    private Set<PrismStateTermination> stateTerminations = newHashSet();
+    private Set<PrismAction> propagatedActions = newLinkedHashSet();
+
+    private Set<PrismStateTermination> stateTerminations = newLinkedHashSet();
 
     public PrismState getTransitionState() {
         return transitionState;
@@ -61,8 +63,12 @@ public class PrismStateTransition {
         return replicableSequenceFilterSecondaryLocation;
     }
 
-    public PrismStateTransitionEvaluation getTransitionEvaluation() {
-        return transitionEvaluation;
+    public PrismStateTransitionEvaluation getStateTransitionEvaluation() {
+        return stateTransitionEvaluation;
+    }
+
+    public Set<PrismStateTransitionNotification> getStateTransitionNotifications() {
+        return stateTransitionNotifications;
     }
 
     public Set<PrismRoleTransition> getRoleTransitions() {
@@ -138,7 +144,24 @@ public class PrismStateTransition {
     }
 
     public PrismStateTransition withStateTransitionEvaluation(PrismStateTransitionEvaluation transitionEvaluation) {
-        this.transitionEvaluation = transitionEvaluation;
+        this.stateTransitionEvaluation = transitionEvaluation;
+        return this;
+    }
+
+    public PrismStateTransition withStateTransitionNotifications(PrismStateTransitionNotification... stateTransitionNotifications) {
+        this.stateTransitionNotifications.addAll(asList(stateTransitionNotifications));
+        return this;
+    }
+
+    public PrismStateTransition withStateTransitionNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition stateTransitionNotification) {
+        for (PrismRole role : roleGroup.getRoles()) {
+            withStateTransitionNotifications(role, stateTransitionNotification);
+        }
+        return this;
+    }
+
+    public PrismStateTransition withStateTransitionNotifications(PrismRole role, PrismNotificationDefinition stateTransitionNotification) {
+        this.stateTransitionNotifications.add(new PrismStateTransitionNotification().withRole(role).withNotificationDefinition(stateTransitionNotification));
         return this;
     }
 
@@ -166,7 +189,7 @@ public class PrismStateTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(transitionState, transitionAction, transitionEvaluation);
+        return Objects.hashCode(transitionState);
     }
 
     @Override
@@ -177,9 +200,17 @@ public class PrismStateTransition {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTransition other = (PrismStateTransition) object;
+        PrismStateTransition other = (PrismStateTransition) object;
         return equal(transitionState, other.getTransitionState()) && equal(transitionAction, other.getTransitionAction())
-                && equal(transitionEvaluation, other.getTransitionEvaluation());
+                && equal(replicableSequenceClose, other.getReplicableSequenceClose())
+                && equal(replicableSequenceFilterTheme, other.getReplicableSequenceFilterTheme())
+                && equal(replicableSequenceFilterSecondaryTheme, other.getReplicableSequenceFilterSecondaryTheme())
+                && equal(replicableSequenceFilterLocation, other.getReplicableSequenceFilterLocation())
+                && equal(replicableSequenceFilterSecondaryLocation, other.getReplicableSequenceFilterSecondaryLocation())
+                && equal(stateTransitionEvaluation, other.getStateTransitionEvaluation())
+                && equal(stateTransitionNotifications, other.getStateTransitionNotifications())
+                && equal(roleTransitions, other.getRoleTransitions()) && Objects.equal(propagatedActions, other.getPropagatedActions())
+                && equal(stateTerminations, other.getStateTerminations());
     }
 
 }

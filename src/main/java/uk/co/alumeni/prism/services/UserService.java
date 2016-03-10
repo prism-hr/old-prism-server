@@ -4,6 +4,8 @@ import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.HashMultimap.create;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -63,6 +65,8 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.application.ApplicationReferee;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -313,10 +317,12 @@ public class UserService {
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         TreeMap<String, UserSelectionDTO> orderedUsers = Maps.newTreeMap();
 
-        Map<UserSelectionDTO, DateTime> userNotInterestedEvents = Maps.newHashMap();
+        Set<User> userNotInterestedIndex = newHashSet();
+        Map<UserSelectionDTO, DateTime> userNotInterestedEvents = newHashMap();
         List<UserSelectionDTO> usersNotInterested = userDAO.getUsersNotInterestedInApplication(application);
         for (UserSelectionDTO userNotInterested : usersNotInterested) {
             userNotInterestedEvents.put(userNotInterested, userNotInterested.getEventTimestamp());
+            userNotInterestedIndex.add(userNotInterested.getUser());
         }
 
         List<UserSelectionDTO> usersInterested = userDAO.getUsersInterestedInApplication(application);
@@ -324,6 +330,15 @@ public class UserService {
             DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
             if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
                 orderedUsers.put(userInterested.getIndexName(), userInterested);
+            }
+        }
+
+        DateTime baseline = now();
+        for (ApplicationReferee applicationReferee : application.getReferees()) {
+            User referee = applicationReferee.getUser();
+            Comment referenceComment = applicationReferee.getComment();
+            if ((referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) && !userNotInterestedIndex.contains(referee)) {
+                orderedUsers.put(referee.getFullName(), new UserSelectionDTO().withUser(referee).withEventTimestamp(baseline));
             }
         }
 
@@ -337,7 +352,7 @@ public class UserService {
         List<Integer> projects = resourceService.getResourceIds(parent, PROJECT);
         List<Integer> applications = resourceService.getResourceIds(parent, APPLICATION);
 
-        List<UserSelectionDTO> usersToInclude = Lists.newLinkedList();
+        List<UserSelectionDTO> usersToInclude = newLinkedList();
         List<UserSelectionDTO> users = userDAO.getUsersPotentiallyInterestedInApplication(programs, projects, applications);
         for (UserSelectionDTO userPotentiallyInterested : users) {
             if (!usersToExclude.contains(userPotentiallyInterested)) {
@@ -502,6 +517,7 @@ public class UserService {
         });
         return users;
     }
+
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user) {
         HashMultimap<PrismScope, Integer> resources = create();

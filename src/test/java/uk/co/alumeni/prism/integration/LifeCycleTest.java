@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.integration;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 import static org.junit.Assert.assertEquals;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_COMPLETE_REGISTRATION_REQUEST;
 
 import java.util.List;
 

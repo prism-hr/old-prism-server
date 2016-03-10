@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Iterables.getFirst;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
@@ -82,7 +82,6 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -357,7 +356,7 @@ public class ApplicationMapper {
         if (sourceComment != null) {
             ApplicationOfferRepresentation offerRepresentation = getApplicationOfferRecommendationRepresentation(sourceComment);
 
-            User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
+            User manager = getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
                 sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager,
                         sourceComment.getSubmittedTimestamp());
@@ -430,21 +429,9 @@ public class ApplicationMapper {
                 }
 
                 return newArrayList(assignedSupervisors);
-            } else {
-                List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors = newArrayList();
-
-                for (ApplicationReferee applicationReferee : application.getReferees()) {
-                    Comment referenceComment = applicationReferee.getComment();
-                    if (referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) {
-                        assignedSupervisors.add(new ApplicationAssignedHiringManagerRepresentation().withUser(userMapper.getUserRepresentationSimple(
-                                applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
-                    }
-                }
-
-                return assignedSupervisors;
             }
         }
-        
+
         return newArrayList();
     }
 

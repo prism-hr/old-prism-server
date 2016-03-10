@@ -80,7 +80,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @Service
 @Transactional

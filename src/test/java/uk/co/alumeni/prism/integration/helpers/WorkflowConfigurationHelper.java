@@ -1,9 +1,7 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;

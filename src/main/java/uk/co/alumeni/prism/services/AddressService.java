@@ -26,6 +26,7 @@ import uk.co.alumeni.prism.domain.address.Address;
 import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.address.AddressLocation;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.dto.json.EstablishmentSearchResponseDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO;

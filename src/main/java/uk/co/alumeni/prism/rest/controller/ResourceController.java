@@ -1,10 +1,5 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,9 +60,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitation
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.MessageService;
-import uk.co.alumeni.prism.services.ResourceService;
-import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.UserService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.visualization.datasource.DataSourceHelper;

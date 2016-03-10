@@ -24,8 +24,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.LocalDate;
@@ -118,7 +116,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private String telephone;
 
     @OneToOne
-    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "address_id")
     private Address address;
 

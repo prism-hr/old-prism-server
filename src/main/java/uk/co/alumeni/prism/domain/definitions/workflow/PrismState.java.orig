@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_MESSAGE_DURATION;
@@ -17,9 +18,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDuration
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_CLOSING_DATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROJECT_CLOSING_DATE;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 
@@ -105,7 +105,7 @@ public enum PrismState {
             PrismApplicationMessagingPendingCompletion.class),
 =======
             PrismApplicationValidation.class),
->>>>>>> graft
+>>>>>>> other
     APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationReview.class),
     APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null,
@@ -140,15 +140,6 @@ public enum PrismState {
     APPLICATION_APPROVED(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationApproved.class),
     APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL(PrismStateGroup.APPLICATION_APPROVED, APPLICATION_ESCALATE_DURATION, null,
-<<<<<<< local
-            PrismApplicationApprovedPendingPartnerAcceptance.class),
-    APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferAcceptance.class),
-    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedCompleted.class),
-    APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null,
-            PrismApplicationRejected.class),
-    APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompleted.class),
-    APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedUnsubmitted.class),
-=======
             PrismApplicationApprovedPendingPartnerAcceptance.class),
     APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferAcceptance.class),
     APPLICATION_APPROVED_PENDING_OFFER_REVISION(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferRevision.class),
@@ -159,7 +150,6 @@ public enum PrismState {
             PrismApplicationRejected.class),
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompleted.class),
     APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompletedUnsubmitted.class),
->>>>>>> graft
     APPLICATION_WITHDRAWN_COMPLETED(PrismStateGroup.APPLICATION_WITHDRAWN, null, null, PrismApplicationWithdrawnCompleted.class),
 
     PROJECT_UNSUBMITTED(PrismStateGroup.PROJECT_UNSUBMITTED, null, null, PrismProjectUnsubmitted.class),
@@ -254,8 +244,8 @@ public enum PrismState {
         this.replicableActionExclusionSelector = replicableActionExclusionSelector;
     }
 
-    public static List<PrismStateAction> getStateActions(PrismState state) {
-        return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : new ArrayList<PrismStateAction>();
+    public static Set<PrismStateAction> getStateActions(PrismState state) {
+        return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : newLinkedHashSet();
     }
 
     public static PrismStateAction getStateAction(PrismState state, PrismAction action) {

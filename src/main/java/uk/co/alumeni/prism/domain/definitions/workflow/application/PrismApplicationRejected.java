@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.domain.definitions.workflow.application;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REJECTED_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_REJECTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVERSE_REJECTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_REJECTION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_REVERSE_REJECTION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
@@ -33,7 +32,6 @@ public class PrismApplicationRejected extends PrismWorkflowState {
                 .withAction(APPLICATION_CONFIRM_REJECTION) //
                 .withRaisesUrgentFlag() //
                 .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
-                .withNotifications(APPLICATION_CREATOR, APPLICATION_CONFIRM_REJECTION_NOTIFICATION) //
                 .withStateTransitions(APPLICATION_CONFIRM_REJECTION_TRANSITION));
 
         stateActions.add(applicationSendMessageViewerRecruiter());
@@ -49,10 +47,10 @@ public class PrismApplicationRejected extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_REVERSE_REJECTION) //
                 .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
-                .withNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(APPLICATION_REJECTED) //
                         .withTransitionAction(APPLICATION_COMPLETE_REJECTED_STAGE) //
+                        .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_REVERSE_REJECTION_NOTIFICATION) //
                         .withRoleTransitions(APPLICATION_EXHUME_REFEREE_GROUP));
     }
 

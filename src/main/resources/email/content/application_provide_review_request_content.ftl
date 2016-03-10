@@ -8,8 +8,8 @@
 </b></p>
 
 <p>
-    ${TEMPLATE_INITIATOR_FULL_NAME} has nominated you to review the suitability of the applicant and we would
-    very much appreciate your feedback.
+    ${TEMPLATE_INITIATOR_FULL_NAME} has nominated you to review the suitability of the applicant and we 
+    would very much appreciate your feedback.
 </p>
 
 <p>

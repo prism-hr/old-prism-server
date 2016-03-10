@@ -8,10 +8,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_RECRUITER;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
@@ -104,8 +102,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
                 .withRaisesUrgentFlag()
                 .withNotification(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
-                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP) //
-                .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
+                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP); //
     }
 
     public static PrismStateAction applicationProvideInterviewFeedback() {
@@ -119,8 +116,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
     public static PrismStateAction applicationUpdateInterviewAvailability(PrismRoleGroup assignments) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_UPDATE_INTERVIEW_AVAILABILITY) //
-                .withStateActionAssignments(assignments) //
-                .withNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION); //
+                .withStateActionAssignments(assignments); //
     }
 
     public static PrismStateAction applicationSendMessageInterviewScheduling() {

@@ -1,11 +1,21 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.TreeMultimap;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.stream.Collectors.toList;
+import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
+import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
+import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;

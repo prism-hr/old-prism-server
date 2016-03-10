@@ -85,8 +85,8 @@ public class PrismProjectWorkflow {
                 .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP, PROJECT_VIEW_EDIT_AS_USER) //
                 .withStateActionAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
                 .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withStateActionAssignments(PROGRAM_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
-                .withStateActionAssignments(PROJECT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
+                .withStateActionAssignments(PROJECT_VIEWER_GROUP, PROJECT_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, PROJECT_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //

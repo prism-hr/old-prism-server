@@ -76,12 +76,15 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
             newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST(INDIVIDUAL, REQUEST, APPLICATION, //
             newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_PARTNER_APPROVAL_REQUEST(INDIVIDUAL, REQUEST_EAGER, APPLICATION, //
     APPLICATION_PROVIDE_REVIEW_REQUEST(INDIVIDUAL, REQUEST, APPLICATION, //
             newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     APPLICATION_PROVIDE_REFERENCE_REQUEST(INDIVIDUAL, REQUEST_EAGER, APPLICATION, //
             newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
+    APPLICATION_PROVIDE_REVIEW_REQUEST(INDIVIDUAL, REQUEST, APPLICATION, //
+            newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     APPLICATION_REVERSE_REJECTION_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, //
-            newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, APPLICATION_REJECTED, COMMENT_GLOBAL, TEMPLATE_GLOBAL)), //
+            newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     APPLICATION_TERMINATE_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, //
             newArrayList(INSTITUTION_GLOBAL, APPLICATION_GLOBAL, APPLICATION_REJECTED, COMMENT_GLOBAL, ACTION_GLOBAL, TEMPLATE_GLOBAL)), //
     APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(INDIVIDUAL, UPDATE, APPLICATION, //
@@ -141,14 +144,15 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
             newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_REMINDER, SYSTEM_USER_ACTIVATION)), //
     SYSTEM_MESSAGE_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
             newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, MESSAGE_GLOBAL));
+            newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_REMINDER, SYSTEM_USER_ACTIVATION));
 
-    private final PrismNotificationType notificationType;
+    private PrismNotificationType notificationType;
 
-    private final PrismNotificationPurpose notificationPurpose;
+    private PrismNotificationPurpose notificationPurpose;
 
-    private final PrismScope scope;
+    private PrismScope scope;
 
-    private final List<PrismNotificationDefinitionPropertyCategory> propertyCategories;
+    private List<PrismNotificationDefinitionPropertyCategory> propertyCategories;
 
     private PrismNotificationDefinition(PrismNotificationType notificationType, PrismNotificationPurpose notificationPurpose, PrismScope scope,
             List<PrismNotificationDefinitionPropertyCategory> propertyCategories) {

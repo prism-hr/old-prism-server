@@ -29,9 +29,9 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionAssignment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionNotification;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionNotification;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyConfiguration;
 import uk.co.alumeni.prism.domain.display.DisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.resource.System;
@@ -48,12 +48,12 @@ import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
 import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.StateTermination;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.CustomizationService;
 import uk.co.alumeni.prism.services.NotificationService;
@@ -277,7 +277,6 @@ public class SystemInitialisationHelper {
             }
 
             verifyStateActionAssignmentCreation(stateAction, prismStateAction);
-            verifyStateActionNotificationCreation(stateAction, prismStateAction);
             verifyStateTransitionCreation(stateAction, prismStateAction);
         }
 
@@ -296,17 +295,6 @@ public class SystemInitialisationHelper {
         }
     }
 
-    private void verifyStateActionNotificationCreation(StateAction stateAction, PrismStateAction prismStateAction) {
-        Set<StateActionNotification> stateActionNotifications = stateAction.getStateActionNotifications();
-        assertTrue(prismStateAction.getNotifications().size() == stateActionNotifications.size());
-
-        for (StateActionNotification stateActionNotification : stateActionNotifications) {
-            PrismStateActionNotification prismStateActionNotification = new PrismStateActionNotification().withRole(stateActionNotification.getRole().getId())
-                    .withDefinition(stateActionNotification.getNotificationDefinition().getId());
-            assertTrue(prismStateAction.getNotifications().contains(prismStateActionNotification));
-        }
-    }
-
     private void verifyStateTransitionCreation(StateAction stateAction, PrismStateAction prismStateAction) {
         Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
         assertTrue(prismStateAction.getStateTransitions().size() == stateTransitions.size());
@@ -319,6 +307,8 @@ public class SystemInitialisationHelper {
                     .withTransitionState(transitionState == null ? null : transitionState.getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
                     .withStateTransitionEvaluation(evaluation == null ? null : evaluation.getId());
+
+            verifyStateTransitionNotificationCreation(stateTransition, prismStateTransition);
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 PrismRoleTransition prismRoleTransition = new PrismRoleTransition().withRole(roleTransition.getRole().getId())
@@ -339,6 +329,17 @@ public class SystemInitialisationHelper {
             }
 
             assertTrue(prismStateAction.getStateTransitions().contains(prismStateTransition));
+        }
+    }
+
+    private void verifyStateTransitionNotificationCreation(StateTransition stateTransition, PrismStateTransition prismStateTransition) {
+        Set<StateTransitionNotification> stateTransitionNotifications = stateTransition.getStateTransitionNotifications();
+        assertTrue(prismStateTransition.getStateTransitionNotifications().size() == stateTransitionNotifications.size());
+
+        for (StateTransitionNotification stateActionNotification : stateTransitionNotifications) {
+            PrismStateTransitionNotification prismStateActionNotification = new PrismStateTransitionNotification().withRole(
+                    stateActionNotification.getRole().getId()).withNotificationDefinition(stateActionNotification.getNotificationDefinition().getId());
+            assertTrue(prismStateTransition.getStateTransitionNotifications().contains(prismStateActionNotification));
         }
     }
 

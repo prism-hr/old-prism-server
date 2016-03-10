@@ -38,7 +38,6 @@ import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
-import uk.co.alumeni.prism.domain.workflow.StateActionNotification;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
 import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
@@ -47,11 +46,13 @@ import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.StateTermination;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionEvaluation;
+import uk.co.alumeni.prism.domain.workflow.StateTransitionNotification;
 import uk.co.alumeni.prism.domain.workflow.StateTransitionPending;
 import uk.co.alumeni.prism.dto.StateActionRecipientDTO;
 import uk.co.alumeni.prism.dto.StateSelectableDTO;
 import uk.co.alumeni.prism.dto.StateTransitionDTO;
 import uk.co.alumeni.prism.dto.StateTransitionPendingDTO;
+import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
@@ -163,13 +164,13 @@ public class StateService {
     }
 
     public void deleteStateActions() {
-        entityService.deleteAll(RoleTransition.class);
         entityService.deleteAll(StateTermination.class);
+        entityService.deleteAll(RoleTransition.class);
+        entityService.deleteAll(StateTransitionNotification.class);
         entityService.deleteAll(StateTransition.class);
         entityService.deleteAll(StateTransitionEvaluation.class);
         entityService.deleteAll(StateActionRecipient.class);
         entityService.deleteAll(StateActionAssignment.class);
-        entityService.deleteAll(StateActionNotification.class);
         entityService.deleteAll(StateAction.class);
     }
 
@@ -199,12 +200,14 @@ public class StateService {
         commentService.persistComment(resource, comment);
 
         resourceService.preProcessResource(resource, comment);
-        State state = resource.getState();
         StateTransition stateTransition = getStateTransition(resource, action, comment);
 
+        State state = resource.getState();
         State transitionState = stateTransition.getTransitionState();
         transitionState = transitionState == null ? state : transitionState;
         state = state == null ? transitionState : state;
+
+        Set<UserNotificationDefinitionDTO> updates = notificationService.getIndividualUpdateDefinitions(resource, stateTransition);
 
         Set<State> stateTerminations = getStateTerminations(resource, action, stateTransition);
         commentService.recordStateTransition(comment, state, transitionState, stateTerminations);
@@ -224,7 +227,7 @@ public class StateService {
         }
 
         if (notify) {
-            notificationService.sendIndividualWorkflowNotifications(resource, comment);
+            notificationService.sendIndividualWorkflowNotifications(resource, comment, updates);
         }
 
         resourceService.postProcessResource(resource, comment);

@@ -84,19 +84,21 @@ public class PrismRoleTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, transitionType);
+        return Objects.hashCode(role, transitionType, transitionRole);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismRoleTransition other = (PrismRoleTransition) obj;
-        return equal(role, other.getRole()) && equal(transitionType, other.getTransitionType());
+        PrismRoleTransition other = (PrismRoleTransition) object;
+        return equal(role, other.getRole()) && equal(transitionType, other.getTransitionType()) && equal(transitionRole, other.getTransitionRole())
+                && equal(restrictToActionOwner, other.getRestrictToActionOwner()) && equal(minimumPermitted, other.getMinimumPermitted())
+                && equal(maximumPermitted, other.getMaximumPermitted());
     }
 
 }

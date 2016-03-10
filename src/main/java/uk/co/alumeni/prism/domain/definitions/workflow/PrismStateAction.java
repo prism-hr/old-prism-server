@@ -3,11 +3,14 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class PrismStateAction {
@@ -24,11 +27,9 @@ public class PrismStateAction {
 
     private PrismNotificationDefinition notification;
 
-    private Set<PrismStateActionAssignment> stateActionAssignments = newHashSet();
+    private Set<PrismStateActionAssignment> stateActionAssignments = newLinkedHashSet();
 
-    private Set<PrismStateActionNotification> notifications = newHashSet();
-
-    private Set<PrismStateTransition> stateTransitions = newHashSet();
+    private Set<PrismStateTransition> stateTransitions = newLinkedHashSet();
 
     public PrismAction getAction() {
         return action;
@@ -59,9 +60,6 @@ public class PrismStateAction {
     }
 
     public Set<PrismStateActionNotification> getNotifications() {
-        return notifications;
-    }
-
     public Set<PrismStateTransition> getStateTransitions() {
         return stateTransitions;
     }
@@ -203,18 +201,6 @@ public class PrismStateAction {
                 addRecipientAssignment(newAssignment, recipient, "partnerRecipient");
             }
         }
-        return this;
-    }
-
-    public PrismStateAction withNotifications(PrismRoleGroup roleGroup, PrismNotificationDefinition notification) {
-        for (PrismRole role : roleGroup.getRoles()) {
-            withNotifications(role, notification);
-        }
-        return this;
-    }
-
-    public PrismStateAction withNotifications(PrismRole role, PrismNotificationDefinition notification) {
-        notifications.add(new PrismStateActionNotification().withRole(role).withDefinition(notification));
         return this;
     }
 

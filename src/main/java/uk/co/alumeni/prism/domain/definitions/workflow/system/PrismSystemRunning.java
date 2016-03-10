@@ -28,9 +28,9 @@ public class PrismSystemRunning extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(SYSTEM_VIEW_EDIT) //
-                .withActionEnhancement(SYSTEM_VIEW_EDIT_AS_USER)
-                .withStateActionAssignments(SYSTEM_ADMINISTRATOR)
+                .withAction(PrismAction.SYSTEM_VIEW_EDIT) //
+                .withActionEnhancement(PrismActionEnhancement.SYSTEM_VIEW_EDIT_AS_USER)
+                .withStateActionAssignments(PrismRole.SYSTEM_ADMINISTRATOR)
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(SYSTEM_RUNNING) //
                         .withTransitionAction(SYSTEM_VIEW_EDIT)

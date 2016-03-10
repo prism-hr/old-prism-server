@@ -63,6 +63,7 @@ import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.Role;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
@@ -145,9 +146,9 @@ public class NotificationService {
         notificationDAO.deleteObsoleteNotificationConfigurations(getWorkflowDefinitions());
     }
 
-    public void sendIndividualWorkflowNotifications(Resource resource, Comment comment) {
+    public void sendIndividualWorkflowNotifications(Resource resource, Comment comment, Set<UserNotificationDefinitionDTO> updates) {
         Set<User> exclusions = sendIndividualRequestNotifications(resource, comment);
-        sendIndividualUpdateNotifications(resource, comment, exclusions);
+        sendIndividualUpdateNotifications(resource, comment, updates, exclusions);
         entityService.flush();
     }
 
@@ -381,33 +382,37 @@ public class NotificationService {
         return notificationConfiguration;
     }
 
-    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<User> exclusions) {
-        PrismScope scope = resource.getResourceScope();
-        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-
-        Set<UserNotificationDefinitionDTO> updates = Sets.newHashSet();
-        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, comment, exclusions));
-
-        if (!scope.equals(SYSTEM)) {
-            for (PrismScope parentScope : parentScopes) {
-                updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, parentScope, comment, exclusions));
-            }
-        }
-
+    private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<UserNotificationDefinitionDTO> updates, Set<User> exclusions) {
         if (updates.size() > 0) {
             Action viewEditAction = actionService.getViewEditAction(resource);
             if (viewEditAction != null) {
                 User initiator = comment.getUser();
                 for (UserNotificationDefinitionDTO update : updates) {
                     User recipient = userService.getById(update.getUserId());
-                    NotificationDefinition definition = getById(update.getNotificationDefinitionId());
-                    NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
-                            .withResource(resource)
-                            .withComment(comment).withTransitionAction(viewEditAction.getId());
-                    sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+                    if (!exclusions.contains(recipient)) {
+                        NotificationDefinition definition = getById(update.getNotificationDefinitionId());
+                        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
+                                .withResource(resource).withComment(comment).withTransitionAction(viewEditAction.getId());
+                        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+                    }
                 }
             }
         }
+    }
+
+    public Set<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(Resource resource, StateTransition stateTransition) {
+        PrismScope scope = resource.getResourceScope();
+        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+
+        Set<UserNotificationDefinitionDTO> updates = newHashSet();
+        updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, resource, stateTransition));
+
+        if (!scope.equals(SYSTEM)) {
+            for (PrismScope parentScope : parentScopes) {
+                updates.addAll(notificationDAO.getIndividualUpdateDefinitions(scope, parentScope, resource, stateTransition));
+            }
+        }
+        return updates;
     }
 
     private UserConnectionDTO sendConnectionRequest(Invitation invitation, User recipient, AdvertTarget advertTarget, Set<UserConnectionDTO> sent) {
@@ -443,10 +448,9 @@ public class NotificationService {
     }
 
     private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition,
-            NotificationDefinitionDTO definitionDTO,
-            Long recentRequestCount) {
+            NotificationDefinitionDTO definitionDTO, Long recentRequestCount) {
         recentRequestCount = recentRequestCount == null ? 0 : recentRequestCount;
-        if ((definition.getNotificationPurpose().equals(REQUEST_EAGER) || recentRequestCount < REQUEST_BUFFER)) {
+        if (definition.getNotificationPurpose().equals(REQUEST_EAGER) || recentRequestCount < REQUEST_BUFFER) {
             sendNotification(definition, definitionDTO.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));
             createUserNotification(resource, recipient, definition);
             return recipient;

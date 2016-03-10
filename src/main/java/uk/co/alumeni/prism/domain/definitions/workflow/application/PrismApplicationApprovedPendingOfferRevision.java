@@ -4,7 +4,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_REVISE_OFFER_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_REVISE_OFFER_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedWithAppointee;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedAppointeeHiringManager;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationSendMessageApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
@@ -16,14 +16,14 @@ public class PrismApplicationApprovedPendingOfferRevision extends PrismWorkflowS
     @Override
     protected void setStateActions() {
         stateActions.add(applicationCommentViewerRecruiter()); //
-        stateActions.add(applicationCompleteApprovedWithAppointee(state));
+        stateActions.add(applicationCompleteApprovedAppointeeHiringManager(state));
 
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_REVISE_OFFER) //
                 .withRaisesUrgentFlag() //
                 .withStateActionAssignments(APPLICATION_PARENT_APPROVER_GROUP) //
                 .withStateTransitions(APPLICATION_REVISE_OFFER_TRANSITION) //
-                .withNotification(APPLICATION_REVISE_OFFER_REQUEST));
+                .withNotificationDefinition(APPLICATION_REVISE_OFFER_REQUEST));
 
         stateActions.add(applicationSendMessageApproved()); //
         stateActions.add(applicationViewEdit()); //

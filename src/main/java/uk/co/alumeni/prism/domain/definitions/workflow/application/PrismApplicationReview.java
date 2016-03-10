@@ -50,7 +50,7 @@ public class PrismApplicationReview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_REVIEW) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_REVIEW_REQUEST)
+                .withNotificationDefinition(APPLICATION_PROVIDE_REVIEW_REQUEST)
                 .withStateActionAssignments(APPLICATION_REVIEWER);
     }
 

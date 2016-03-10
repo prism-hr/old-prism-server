@@ -25,7 +25,7 @@ public class PrismApplicationInterviewPendingCompletion extends PrismWorkflowSta
 
         stateActions.add(applicationCompleteInterviewScheduled(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST)); //
+                .withNotificationDefinition(APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST)); //
 
         stateActions.add(applicationSendMessageInterviewFeedback()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,

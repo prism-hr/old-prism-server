@@ -404,6 +404,14 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("user", user)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
+	}
+
+    public void deleteApplicationHiringManagers(Application application) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "delete ApplicationHiringManager " //
+                        + "where application = :application") //
+                .setParameter("application", application) //
+                .executeUpdate();
     }
 
     private Junction getApplicationTagCriterion(String tagAlias, List<Integer> primaryIds, List<Integer> secondaryIds) {

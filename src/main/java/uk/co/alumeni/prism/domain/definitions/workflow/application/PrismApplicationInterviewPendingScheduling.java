@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_SCHEDULED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_INTERVIEWEE_GROUP;
@@ -31,14 +33,14 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
 
         stateActions.add(applicationSendMessageInterviewScheduling()); //
 
-        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP,
-                APPLICATION_RETIRE_INTERVIEWEE_GROUP, //
+        stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, APPLICATION_RETIRE_INTERVIEWEE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWER_GROUP));
 
         stateActions.add(applicationProvideInterviewAvailability() //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS) //
+                        .withStateTransitionNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION) //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_GROUP)));
 
         stateActions.add(applicationUpdateInterviewAvailability(APPLICATION_SCHEDULED_INTERVIEW_GROUP) //

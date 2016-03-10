@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_MESSAGE_DURATION;
@@ -17,9 +18,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDuration
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROGRAM_CLOSING_DATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation.PROJECT_CLOSING_DATE;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 
@@ -240,8 +240,8 @@ public enum PrismState {
         this.replicableActionExclusionSelector = replicableActionExclusionSelector;
     }
 
-    public static List<PrismStateAction> getStateActions(PrismState state) {
-        return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : new ArrayList<PrismStateAction>();
+    public static Set<PrismStateAction> getStateActions(PrismState state) {
+        return workflowStateDefinitions.containsKey(state) ? workflowStateDefinitions.get(state).getStateActions() : newLinkedHashSet();
     }
 
     public static PrismStateAction getStateAction(PrismState state, PrismAction action) {

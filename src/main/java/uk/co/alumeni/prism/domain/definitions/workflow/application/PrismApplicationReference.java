@@ -77,7 +77,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_REFERENCE) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_REFERENCE_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_REFERENCE_REQUEST) //
                 .withStateActionAssignments(APPLICATION_REFEREE);
     }
 

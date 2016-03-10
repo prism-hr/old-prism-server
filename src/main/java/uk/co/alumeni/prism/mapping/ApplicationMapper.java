@@ -360,7 +360,7 @@ public class ApplicationMapper {
             User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
                 sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager,
-                        sourceComment.getCreatedTimestamp());
+                        sourceComment.getSubmittedTimestamp());
             }
 
             if (sourceComment != null) {
@@ -444,6 +444,8 @@ public class ApplicationMapper {
                 return assignedSupervisors;
             }
         }
+        
+        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

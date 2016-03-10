@@ -42,8 +42,7 @@ public class ApplicationExecutor implements ActionExecutor {
         User user = userService.getById(commentDTO.getUser());
         Application application = applicationService.getById(commentDTO.getResource().getId());
 
-        boolean isCompleteAction = actionId.equals(APPLICATION_COMPLETE);
-        if (isCompleteAction) {
+        if (actionId.equals(APPLICATION_COMPLETE)) {
             BeanPropertyBindingResult errors = applicationService.validateApplication(application);
             if (errors.hasErrors()) {
                 throw new PrismValidationException("Application not completed", errors);

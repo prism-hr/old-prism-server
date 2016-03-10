@@ -20,6 +20,8 @@ import uk.co.alumeni.prism.workflow.user.CommentAssignedUserReassignmentProcesso
 
 import com.google.common.base.Objects;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "comment_assigned_user", uniqueConstraints = { @UniqueConstraint(columnNames = { "comment_id", "user_id", "role_id", "role_transition_type" }) })
 public class CommentAssignedUser implements UniqueEntity, UserAssignment<CommentAssignedUserReassignmentProcessor> {

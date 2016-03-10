@@ -181,10 +181,6 @@ public class Application extends Resource
     @Column(name = "on_course", nullable = false)
     private Boolean onCourse;
 
-    @Column(name = "submitted_timestamp")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    private DateTime submittedTimestamp;
-
     @Column(name = "application_year")
     private String applicationYear;
 
@@ -217,6 +213,10 @@ public class Application extends Resource
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
+    
+    @Column(name = "submitted_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime submittedTimestamp;
 
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")

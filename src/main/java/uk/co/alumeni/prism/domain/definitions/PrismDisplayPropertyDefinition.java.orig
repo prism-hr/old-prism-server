@@ -1051,12 +1051,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REFERENCE_HAVE_RESPONDED(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "All the referees have responded"),
     SYSTEM_NOTIFICATION_APPLICATION_PROVIDE_REVIEW_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Provide Review Request"),
     SYSTEM_NOTIFICATION_APPLICATION_REVERSE_REJECTION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Rejection Reversed Notification"),
-<<<<<<< local
     SYSTEM_NOTIFICATION_APPLICATION_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"), 
     SYSTEM_NOTIFICATION_APPLICATION_REVISE_OFFER_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Revise Offer Request"),
-=======
-    SYSTEM_NOTIFICATION_APPLICATION_REVISE_OFFER_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Revise Offer Request"),
->>>>>>> other
     SYSTEM_NOTIFICATION_APPLICATION_TERMINATE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Terminate Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_UPDATE_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Update Interview Availability Notification"),
     SYSTEM_NOTIFICATION_INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
@@ -1235,11 +1231,19 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Interview Feedback Duration"),
     SYSTEM_APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take to collect feedback on an interview"),
     SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Appointment Confirmation Duration"),
+<<<<<<< local
+    SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for a hiring manager to provide confirmation of appointment"),
+    SYSTEM_APPLICATION_RESERVE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reserve Duration"),
+    SYSTEM_APPLICATION_RESERVE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect an application to held in reserve for"),
+    SYSTEM_APPLICATION_RESERVE_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reserve Escalation Duration"),
+    SYSTEM_APPLICATION_RESERVE_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for an application to be moved out of the held in reserve state ino the rejected state, after an initial warning has been issued"),
+=======
     SYSTEM_APPLICATION_CONFIRM_APPOINTMENT_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for a supervisor to provide confirmation of appointment"),
     SYSTEM_APPLICATION_RESERVE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reserve Duration"),
     SYSTEM_APPLICATION_RESERVE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect an application to held in reserve for"),
     SYSTEM_APPLICATION_RESERVE_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reserve Escalation Duration"),
     SYSTEM_APPLICATION_RESERVE_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you expect it to take for an application to be moved out of the held in reserve state ino the rejected state, after an initial warning has been issued"),
+>>>>>>> other
     SYSTEM_APPLICATION_ESCALATE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Escalation Duration"),
     SYSTEM_APPLICATION_ESCALATE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "The length of time you wish to allow an application that is being processed to remain dormant, before it is automatically rejected or withdrawn"),
     SYSTEM_APPLICATION_PURGE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Expiry Duration"),

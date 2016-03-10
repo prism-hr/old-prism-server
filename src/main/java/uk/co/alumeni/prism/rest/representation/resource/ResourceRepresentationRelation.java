@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import static com.google.common.base.Strings.emptyToNull;
-import static java.util.stream.Collectors.toList;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -155,6 +153,7 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
             compare = compare == 0 ? ObjectUtils.compare(department, otherActivity.getDepartment(), true) : compare;
             compare = compare == 0 ? ObjectUtils.compare(program, otherActivity.getProgram(), true) : compare;
             compare = compare == 0 ? ObjectUtils.compare(project, otherActivity.getProject(), true) : compare;
+            return compare == 0 ? ObjectUtils.compare(this, other) : compare;
             return compare = compare == 0 ? ObjectUtils.compare(this, otherActivity, true) : compare;
         }
         return super.compareTo(other);

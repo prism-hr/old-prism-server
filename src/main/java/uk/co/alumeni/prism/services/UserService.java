@@ -5,6 +5,7 @@ import static com.google.common.collect.HashMultimap.create;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.stream;
@@ -212,7 +213,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message,
-                                         Collection<PrismRole> roles) {
+            Collection<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
@@ -315,7 +316,7 @@ public class UserService {
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
-        TreeMap<String, UserSelectionDTO> orderedUsers = Maps.newTreeMap();
+        TreeMap<String, UserSelectionDTO> orderedUsers = newTreeMap();
 
         Set<User> userNotInterestedIndex = newHashSet();
         Map<UserSelectionDTO, DateTime> userNotInterestedEvents = newHashMap();

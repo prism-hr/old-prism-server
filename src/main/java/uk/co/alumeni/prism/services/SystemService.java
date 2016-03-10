@@ -277,7 +277,7 @@ public class SystemService {
     public void initializeAddressCompleteness() throws Exception {
         logger.info("Initializing address location completeness");
         for (Integer addressId : addressService.getAddressesWithNoLocationParts()) {
-            addressService.geocodeAddressAsEstablishment(addressId);
+            addressService.geocodeAddress(addressId);
         }
     }
 
@@ -571,6 +571,9 @@ public class SystemService {
                     .withRole(recipientRole).withExternalMode(prismStateActionRecipient.getExternalMode());
             entityService.save(stateActionRecipient);
             stateActionAssignment.addStateActionRecipient(stateActionRecipient);
+        }
+    }
+
         }
     }
 

@@ -272,6 +272,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         this.userAccount = userAccount;
     }
 
+    public User getCreatorUser() {
+        return creatorUser;
+    }
+
+    public void setCreatorUser(User creatorUser) {
+        this.creatorUser = creatorUser;
+    }
+
     public User getParentUser() {
         return parentUser;
     }

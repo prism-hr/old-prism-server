@@ -176,9 +176,8 @@ public class CommentMapper {
         return null;
     }
 
-    public CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> overridingRoles) {
+    public CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles, List<PrismRole> overridingRoles) {
         Resource resource = comment.getResource();
-        List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
         List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(user, resource);
         Set<PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles).get(comment.getAction().getId());
         return getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, redactions);

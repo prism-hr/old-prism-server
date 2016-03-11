@@ -14,6 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
@@ -78,6 +79,7 @@ import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
 import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
@@ -116,6 +118,9 @@ public class ApplicationMapper {
     @Inject
     private ResourceService resourceService;
 
+    @Inject
+    private RoleService roleService;
+    
     @Inject
     private SystemService systemService;
 
@@ -321,9 +326,11 @@ public class ApplicationMapper {
             index.put(r.getId(), r);
         });
 
+
+        List<PrismRole> creatableRoles = roleService.getCreatableRoles(APPLICATION);
         List<ProfileRefereeRepresentation> representations = profileMapper.getRefereeRepresentations(referees, currentUser);
         representations.forEach(r -> {
-            r.setComment(getApplicationReferenceRepresentation(index.get(r.getId()).getComment(), overridingRoles));
+            r.setComment(getApplicationReferenceRepresentation(index.get(r.getId()).getComment(), creatableRoles, overridingRoles));
         });
 
         return representations;
@@ -462,8 +469,10 @@ public class ApplicationMapper {
         return supervisors;
     }
 
-    private CommentRepresentation getApplicationReferenceRepresentation(Comment referenceComment, List<PrismRole> overridingRoles) {
-        return referenceComment == null ? null : commentMapper.getCommentRepresentation(userService.getCurrentUser(), referenceComment, overridingRoles);
+    private CommentRepresentation getApplicationReferenceRepresentation(Comment referenceComment, List<PrismRole> creatableRoles,
+            List<PrismRole> overridingRoles) {
+        return referenceComment == null ? null : commentMapper.getCommentRepresentation(userService.getCurrentUser(), referenceComment, creatableRoles,
+                overridingRoles);
     }
 
 }

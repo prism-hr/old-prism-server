@@ -209,7 +209,7 @@ public class PrismStateTransition {
                 && equal(replicableSequenceFilterSecondaryLocation, other.getReplicableSequenceFilterSecondaryLocation())
                 && equal(stateTransitionEvaluation, other.getStateTransitionEvaluation())
                 && equal(stateTransitionNotifications, other.getStateTransitionNotifications())
-                && equal(roleTransitions, other.getRoleTransitions()) && Objects.equal(propagatedActions, other.getPropagatedActions())
+                && equal(roleTransitions, other.getRoleTransitions()) && equal(propagatedActions, other.getPropagatedActions())
                 && equal(stateTerminations, other.getStateTerminations());
     }
 

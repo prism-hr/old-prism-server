@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
@@ -89,8 +90,6 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.Applica
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTransitionSelectionResolver;
 import uk.co.alumeni.prism.workflow.selectors.action.ApplicationByReferencesProvidedSelector;
 import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
-
-import com.google.common.collect.Maps;
 
 public enum PrismState {
 
@@ -195,7 +194,7 @@ public enum PrismState {
 
     SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, PrismSystemRunning.class);
 
-    private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = Maps.newHashMap();
+    private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = newHashMap();
 
     static {
         for (PrismState state : PrismState.values()) {

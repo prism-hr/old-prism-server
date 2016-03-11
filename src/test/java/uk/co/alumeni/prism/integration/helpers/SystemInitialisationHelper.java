@@ -282,24 +282,24 @@ public class SystemInitialisationHelper {
     }
 
     private void verifyStateActionAssignmentCreation(StateAction stateAction, PrismStateAction prismStateAction) {
-        Set<StateActionAssignment> stateActionAssignments = stateAction.getStateActionAssignments();
-        assertTrue(prismStateAction.getStateActionAssignments().size() == stateActionAssignments.size());
+        Set<PrismStateActionAssignment> prismStateActionAssignments = newLinkedHashSet();
 
-        for (StateActionAssignment stateActionAssignment : stateActionAssignments) {
+        for (StateActionAssignment stateActionAssignment : stateAction.getStateActionAssignments()) {
             PrismStateActionAssignment prismStateActionAssignment = new PrismStateActionAssignment().withRole(stateActionAssignment.getRole().getId())
                     .withExternalMode(stateActionAssignment.getExternalMode()).withActionEnhancement(stateActionAssignment.getActionEnhancement());
-            assertTrue(prismStateAction.getStateActionAssignments().contains(prismStateActionAssignment));
+            prismStateActionAssignments.add(prismStateActionAssignment);
         }
+
+        assertEquals(prismStateActionAssignments, prismStateAction.getStateActionAssignments());
     }
 
     private void verifyStateTransitionCreation(StateAction stateAction, PrismStateAction prismStateAction) {
-        Set<StateTransition> stateTransitions = stateAction.getStateTransitions();
-        assertTrue(prismStateAction.getStateTransitions().size() == stateTransitions.size());
+        Set<PrismStateTransition> prismStateTransitions = newLinkedHashSet();
 
-        for (StateTransition stateTransition : stateTransitions) {
+        for (StateTransition stateTransition : stateAction.getStateTransitions()) {
             State transitionState = stateTransition.getTransitionState();
             StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
-            
+
             PrismStateTransition prismStateTransition = new PrismStateTransition()
                     .withTransitionState(transitionState == null ? null : transitionState.getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
@@ -335,8 +335,10 @@ public class SystemInitialisationHelper {
                                 stateTermination.getStateTerminationEvaluation()));
             }
 
-            assertTrue(prismStateAction.getStateTransitions().contains(prismStateTransition));
+            prismStateTransitions.add(prismStateTransition);
         }
+
+        assertEquals(prismStateTransitions, prismStateAction.getStateTransitions());
     }
 
 }

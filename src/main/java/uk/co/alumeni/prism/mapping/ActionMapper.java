@@ -128,7 +128,6 @@ public class ActionMapper {
                 }
             });
         }
-
         actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(ActionDTO::getActionId).collect(toList()))
                 .forEach(actionEnancement -> representations.get(actionEnancement.getAction()).addActionEnhancement(actionEnancement.getActionEnhancement()));
 
@@ -148,6 +147,15 @@ public class ActionMapper {
 
                 representations.put(publicAction.getActionId(), actionRepresentation);
             }
+        }
+
+        if (representations.size() > 0) {
+            Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
+            representations.keySet().stream().forEach(prismAction -> {
+                if (unsubmittedComments.containsKey(prismAction)) {
+                    representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction)));
+                }
+            });
         }
 
         return Lists.newLinkedList(representations.values());

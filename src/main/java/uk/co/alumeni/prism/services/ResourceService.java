@@ -394,7 +394,7 @@ public class ResourceService {
 
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
             if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-                advertService.updateAdvertVisibility(actionOutcome.getOperativeResource().getAdvert(), (ResourceParentDTO) resourceDTO);
+                advertService.updateAdvertVisibility(actionOutcome.getResource().getAdvert(), (ResourceParentDTO) resourceDTO);
             }
         }
 
@@ -747,7 +747,8 @@ public class ResourceService {
                             .withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
                             .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
                     Projections.projectionList() //
-                            .add(Projections.groupProperty("resource.id").as("id")),
+                            .add(Projections.groupProperty("resource.id").as("id"))
+                            .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")),
                     ResourceOpportunityCategoryDTO.class).forEach(resource -> {
                 resources.put(scope, resource.getId());
             });

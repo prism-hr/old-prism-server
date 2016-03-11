@@ -149,18 +149,16 @@ public class ActionMapper {
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
-        Resource transitionResource = actionOutcomeDTO.getTransitionResource();
         ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
-                .withTransitionResource(resourceMapper.getResourceRepresentationSimple(transitionResource))
+                .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
 
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (isNotEmpty(replicableSequenceComments)) {
-            List<PrismRole> creatableRoles = roleService.getCreatableRoles(transitionResource.getResourceScope());
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(actionOutcomeDTO.getOperativeResource().getResourceScope());
             representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
-                    resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
-                            actionOutcomeDTO.getStateTransition(),
+                    resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(), actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
                     .withSequenceComments(
                             replicableSequenceComments.stream().map(comment -> commentMapper.getCommentRepresentationExtended(comment, creatableRoles))

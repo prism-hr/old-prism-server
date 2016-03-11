@@ -87,13 +87,6 @@ public class ActionMapper {
             representations.put(action.getActionId(), getActionRepresentationExtended(resource, action, user));
         }
 
-        Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
-        representations.keySet().stream().forEach(prismAction -> {
-            if (unsubmittedComments.containsKey(prismAction)) {
-                representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction)));
-            }
-        });
-
         actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(a -> a.getActionId()).collect(toList()))
                 .forEach(ae -> representations.get(ae.getAction()).addActionEnhancement(ae.getActionEnhancement()));
 
@@ -113,6 +106,15 @@ public class ActionMapper {
 
                 representations.put(publicAction.getActionId(), actionRepresentation);
             }
+        }
+
+        if (representations.size() > 0) {
+            Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
+            representations.keySet().stream().forEach(prismAction -> {
+                if (unsubmittedComments.containsKey(prismAction)) {
+                    representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction)));
+                }
+            });
         }
 
         return Lists.newLinkedList(representations.values());

@@ -472,6 +472,11 @@ public class AdvertService {
             if (opportunityDTO.getAdvertVisibility() != null) {
                 updateAdvertVisibility(advert, opportunityDTO.getAdvertVisibility());
             }
+        } else {
+            ResourceRelationCreationDTO target = resourceDTO.getTarget();
+            if (target != null) {
+                createAdvertTarget((ResourceParent) advert.getResource(), target);
+            }
         }
     }
 

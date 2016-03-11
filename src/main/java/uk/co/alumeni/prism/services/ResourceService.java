@@ -240,15 +240,6 @@ public class ResourceService {
             outcome = actionService.executeUserAction(resource, action, comment);
         }
 
-        if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            ResourceParentDTO resourceParentDTO = (ResourceParentDTO) resourceDTO;
-            ResourceRelationCreationDTO target = resourceParentDTO.getTarget();
-            if (target != null) {
-                advertService.createAdvertTarget((ResourceParent) resource, target);
-            }
-            advertService.updateAdvertVisibility(resource.getAdvert(), resourceParentDTO);
-        }
-
         return outcome;
     }
 
@@ -880,7 +871,6 @@ public class ResourceService {
 
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(advert, resourceDTO);
-
         advertService.updateAdvertVisibility(advert, resourceDTO);
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();

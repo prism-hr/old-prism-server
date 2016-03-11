@@ -70,6 +70,10 @@ public class ActionOutcomeDTO {
         this.replicableSequenceComments = replicableSequenceComments;
     }
 
+    public Resource getOperativeResource() {
+        return resource.getResourceScope().equals(transitionResource.getResourceScope()) ? resource : transitionResource;
+    }
+
     public ActionOutcomeDTO withUser(User user) {
         this.user = user;
         return this;

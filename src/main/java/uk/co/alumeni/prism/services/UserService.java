@@ -7,6 +7,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
@@ -473,7 +474,7 @@ public class UserService {
 
     public List<UnverifiedUserDTO> getUsersToVerify(User user) {
         HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
-        Set<UnverifiedUserDTO> userRoles = Sets.newTreeSet();
+        Set<UnverifiedUserDTO> userRoles = newTreeSet();
         if (!resources.isEmpty()) {
             for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
                 Set<Integer> scopedResources = resources.get(scope);

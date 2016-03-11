@@ -165,30 +165,30 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class),
     SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class);
 
-    private PrismNotificationDefinitionPropertyCategory category;
+    private PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory;
 
     private boolean escapeHtml;
 
     private Class<? extends NotificationPropertyBuilder> builder;
 
-    private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> categoryProperties = LinkedListMultimap
+    private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> propertiesByCategory = LinkedListMultimap
             .create();
 
     static {
         for (PrismNotificationDefinitionProperty property : PrismNotificationDefinitionProperty.values()) {
-            categoryProperties.put(property.getCategory(), property);
+            propertiesByCategory.put(property.getNotificationDefinitionCategory(), property);
         }
     }
 
-    private PrismNotificationDefinitionProperty(PrismNotificationDefinitionPropertyCategory category, boolean escapeHtml,
+    private PrismNotificationDefinitionProperty(PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory, boolean escapeHtml,
             Class<? extends NotificationPropertyBuilder> builder) {
-        this.category = category;
+        this.notificationDefinitionCategory = notificationDefinitionCategory;
         this.escapeHtml = escapeHtml;
         this.builder = builder;
     }
 
-    public PrismNotificationDefinitionPropertyCategory getCategory() {
-        return category;
+    public PrismNotificationDefinitionPropertyCategory getNotificationDefinitionCategory() {
+        return notificationDefinitionCategory;
     }
 
     public boolean isEscapeHtml() {
@@ -199,8 +199,8 @@ public enum PrismNotificationDefinitionProperty {
         return builder;
     }
 
-    public static List<PrismNotificationDefinitionProperty> getProperties(PrismNotificationDefinitionPropertyCategory category) {
-        return categoryProperties.get(category);
+    public static List<PrismNotificationDefinitionProperty> getProperties(PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory) {
+        return propertiesByCategory.get(notificationDefinitionCategory);
     }
 
 }

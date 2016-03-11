@@ -244,6 +244,10 @@ public class ResourceService {
             outcome = actionService.executeUserAction(resource, action, comment);
         }
 
+        if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+            advertService.updateAdvertVisibility(resource.getAdvert(), (ResourceParentDTO) resourceDTO);
+        }
+
         return outcome;
     }
 
@@ -868,6 +872,7 @@ public class ResourceService {
 
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(advert, resourceDTO);
+        advertService.updateAdvertVisibility(advert, resourceDTO);
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);

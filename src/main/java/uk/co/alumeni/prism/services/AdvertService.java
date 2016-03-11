@@ -381,7 +381,6 @@ public class AdvertService {
         advert.setDescription(resourceDTO.getDescription());
         advert.setTelephone(resourceDTO.getTelephone());
         advert.setHomepage(resourceDTO.getHomepage());
-        updateAdvertVisibility(advert, resourceDTO);
     }
 
     public void updateFinancialDetail(Advert advert, AdvertFinancialDetailDTO payDTO, Institution institution) {
@@ -425,6 +424,7 @@ public class AdvertService {
         if (advertSettingsDTO.getVisibility() != null) {
             updateAdvertVisibility(advert, advertSettingsDTO.getVisibility());
         }
+
         executeUpdate(resource, "COMMENT_UPDATED_SETTINGS");
     }
 

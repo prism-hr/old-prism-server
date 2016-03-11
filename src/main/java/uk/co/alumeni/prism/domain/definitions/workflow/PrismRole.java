@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
@@ -19,7 +20,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
@@ -71,7 +71,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     private PrismScope scope;
 
-    private static Set<PrismRole> verifiedRoles = Sets.newHashSet();
+    private static Set<PrismRole> verifiedRoles = newLinkedHashSet();
 
     private static HashMultimap<PrismRole, PrismScope> visibleScopes = HashMultimap.create();
 

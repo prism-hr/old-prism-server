@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.mail;
 
 import static com.amazonaws.regions.Regions.EU_WEST_1;
+import static com.google.common.collect.Maps.newHashMap;
 import static javax.mail.Session.getInstance;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
@@ -9,9 +10,9 @@ import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessageData;
 import static uk.co.alumeni.prism.utils.PrismEmailUtils.getMessagePart;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.mail.Message;
@@ -52,7 +53,6 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
 import com.amazonaws.services.simpleemail.model.RawMessage;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
-import com.google.common.collect.Maps;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -168,8 +168,8 @@ public class MailSender {
     }
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO) {
-        Map<String, Object> model = Maps.newHashMap();
-        List<PrismNotificationDefinitionPropertyCategory> categories = notificationDefinition.getId().getPropertyCategories();
+        Map<String, Object> model = newHashMap();
+        Set<PrismNotificationDefinitionPropertyCategory> categories = notificationDefinition.getId().getPropertyCategories();
         NotificationPropertyLoader loader = applicationContext.getBean(NotificationPropertyLoader.class).localize(notificationDefinitionDTO, propertyLoader);
         for (PrismNotificationDefinitionPropertyCategory propertyCategory : categories) {
             for (PrismNotificationDefinitionProperty property : propertyCategory.getProperties()) {

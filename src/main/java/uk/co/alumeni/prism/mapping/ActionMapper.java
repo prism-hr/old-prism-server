@@ -114,20 +114,6 @@ public class ActionMapper {
             representations.put(action.getActionId(), getActionRepresentationExtended(resource, user, action));
         }
 
-        List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-
-        if (isNotEmpty(actions)) {
-            Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
-            representations.keySet().stream().forEach(prismAction -> {
-                if (unsubmittedComments.containsKey(prismAction)) {
-                    Comment comment = unsubmittedComments.get(prismAction);
-                    CommentRepresentation commentRepresentation = commentMapper.getCommentRepresentationExtended(comment);
-                    commentRepresentation.setAssignedUsers(commentMapper.getCommentAssignedUserRepresentations(comment, creatableRoles));
-                    representations.get(prismAction).setComment(commentRepresentation);
-                }
-            });
-        }
-
         actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(ActionDTO::getActionId).collect(toList()))
                 .forEach(actionEnancement -> representations.get(actionEnancement.getAction()).addActionEnhancement(actionEnancement.getActionEnhancement()));
 
@@ -149,17 +135,29 @@ public class ActionMapper {
             }
         }
 
+        if (representations.size() > 0) {
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
+            Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
+            representations.keySet().stream().forEach(prismAction -> {
+                if (unsubmittedComments.containsKey(prismAction)) {
+                    representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction), creatableRoles));
+                }
+            });
+        }
+
         return newLinkedList(representations.values());
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
+        Resource transitionResource = actionOutcomeDTO.getTransitionResource();
         ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
-                .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
+                .withTransitionResource(resourceMapper.getResourceRepresentationSimple(transitionResource))
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
 
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (isNotEmpty(replicableSequenceComments)) {
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(transitionResource.getResourceScope());
             representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
                     resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
                             actionOutcomeDTO.getStateTransition(),

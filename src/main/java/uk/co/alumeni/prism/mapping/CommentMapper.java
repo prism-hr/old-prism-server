@@ -187,11 +187,12 @@ public class CommentMapper {
     public CommentRepresentation getCommentRepresentationExtended(Comment comment) {
         State state = comment.getState();
         State transitionState = comment.getTransitionState();
-        return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(state == null ? null : state.getId())
-                .withTransitionState(transitionState == null ? null : transitionState.getId()).withEligible(comment.getEligible())
-                .withApplicantKnown(comment.getApplicantKnown()).withApplicantKnownDuration(comment.getApplicantKnownDuration())
-                .withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating()).withInterested(comment.getInterested())
-                .withInterviewState(comment.getInterviewState()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+        CommentRepresentation representation = getCommentRepresentationSimple(comment).withContent(comment.getContent())
+                .withState(state == null ? null : state.getId()).withTransitionState(transitionState == null ? null : transitionState.getId())
+                .withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
+                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity())
+                .withRating(comment.getRating()).withInterested(comment.getInterested()).withInterviewState(comment.getInterviewState())
+                .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())

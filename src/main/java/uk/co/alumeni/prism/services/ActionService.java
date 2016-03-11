@@ -340,8 +340,9 @@ public class ActionService {
 
                 if (duplicate != null) {
                     if (createAction) {
+                        Action viewEditAction = getViewEditAction(resource);
                         return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
-                                .withTransitionAction(getViewEditAction(duplicate));
+                                .withAction(viewEditAction).withTransitionAction(viewEditAction);
                     } else if (!equal(resource.getId(), duplicate.getId())) {
                         throw new WorkflowPermissionException(resource, action);
                     }
@@ -353,7 +354,7 @@ public class ActionService {
             Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
             ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                    .withTransitionAction(transitionAction).withStateTransition(stateTransition);
+                    .withAction(action).withTransitionAction(transitionAction).withStateTransition(stateTransition);
 
             LinkedList<Comment> replicableSequenceComments = null;
             if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {

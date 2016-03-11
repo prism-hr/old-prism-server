@@ -1,7 +1,8 @@
 package uk.co.alumeni.prism.dto;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.ObjectUtils;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 
@@ -84,7 +85,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
 
     @Override
     public int compareTo(T other) {
-        return ObjectUtils.compare(other.toString(), toString());
+        return compare(other.toString(), toString());
     }
 
 }

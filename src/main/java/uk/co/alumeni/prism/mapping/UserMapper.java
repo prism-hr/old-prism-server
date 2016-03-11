@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
@@ -61,7 +62,6 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.TreeMultimap;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
@@ -278,7 +278,7 @@ public class UserMapper {
     }
 
     private List<ResourceUnverifiedUserRepresentation> getUnverifiedUserRepresentations(User user) {
-        Map<String, ResourceUnverifiedUserRepresentation> representations = Maps.newLinkedHashMap();
+        Map<String, ResourceUnverifiedUserRepresentation> representations = newLinkedHashMap();
         TreeMultimap<UserRepresentationUnverified, PrismRoleContext> userRepresentationIndex = TreeMultimap.create();
         for (UnverifiedUserDTO unverifiedUser : userService.getUsersToVerify(user)) {
             Integer departmentId = unverifiedUser.getDepartmentId();

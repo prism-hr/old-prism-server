@@ -48,9 +48,7 @@ public class InstitutionCreator implements ResourceCreator<InstitutionDTO> {
     @Override
     public Resource create(User user, InstitutionDTO newResource) {
         System system = systemService.getSystem();
-
         Advert advert = advertService.createResourceAdvert(newResource, system, user);
-
 
         String currency = newResource.getCurrency();
         if (currency == null) {

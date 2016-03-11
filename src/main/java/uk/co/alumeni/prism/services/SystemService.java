@@ -369,7 +369,7 @@ public class SystemService {
             Action action = entityService.createOrUpdate(transientAction);
             action.getRedactions().clear();
 
-            for (PrismActionRedaction prismActionRedaction : prismAction.getRedactions()) {
+            for (PrismActionRedaction prismActionRedaction : prismAction.getActionRedactions()) {
                 Role role = roleService.getById(prismActionRedaction.getRole());
                 ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
                         .withRedactionType(prismActionRedaction.getRedactionType());

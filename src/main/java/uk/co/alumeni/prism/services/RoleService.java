@@ -256,8 +256,8 @@ public class RoleService {
         return roleDAO.getUserRoles(resources, roles);
     }
 
-    public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
-        return roleDAO.getCreatableRoles(scopeId);
+    public List<PrismRole> getCreatableRoles(PrismScope prismScope) {
+        return roleDAO.getCreatableRoles(prismScope);
     }
 
     public void deleteObsoleteUserRoles() {

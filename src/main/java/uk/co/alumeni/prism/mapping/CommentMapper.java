@@ -188,7 +188,7 @@ public class CommentMapper {
                 .withState(state == null ? null : state.getId()).withTransitionState(transitionState == null ? null : transitionState.getId())
                 .withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
                 .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity())
-                .withRating(comment.getRating()).withInterested(comment.getInterested()).withInterviewState(comment.getInterviewState())
+                .withRating(comment.getRating()).withInterested(comment.getInterested())
                 .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
@@ -199,9 +199,13 @@ public class CommentMapper {
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
 
         representation.setAssignedUsers(comment.getAssignedUsers().stream()
+                .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
+                .map(this::getCommentAssignedUserRepresentation)
                 .collect(Collectors.toList()));
 
         return representation;
+    }
+
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles,
             List<PrismActionEnhancement> actionEnhancements, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
@@ -238,13 +242,6 @@ public class CommentMapper {
         return new CommentAssignedUserRepresentation()
                 .withUser(userMapper.getUserRepresentationSimple(commentAssignedUser.getUser(), userService.getCurrentUser()))
                 .withRole(commentAssignedUser.getRole().getId()).withRoleTransitionType(commentAssignedUser.getRoleTransitionType());
-    }
-
-    private List<CommentAssignedUserRepresentation> getCommentAssignedUserRepresentations(Comment comment, List<PrismRole> creatableRoles) {
-        return comment.getAssignedUsers().stream()
-                .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
-                .map(this::getCommentAssignedUserRepresentation)
-                .collect(Collectors.toList());
     }
 
     private UserRepresentationSimple getCommentDelegateUserRepresentation(Comment comment) {

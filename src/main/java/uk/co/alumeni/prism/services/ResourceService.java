@@ -868,7 +868,6 @@ public class ResourceService {
 
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(advert, resourceDTO);
-        advertService.updateAdvertVisibility(advert, resourceDTO);
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);

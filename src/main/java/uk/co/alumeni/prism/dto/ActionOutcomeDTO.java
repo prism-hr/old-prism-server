@@ -16,6 +16,8 @@ public class ActionOutcomeDTO {
 
     private Resource transitionResource;
 
+    private Action action;
+
     private Action transitionAction;
 
     private StateTransition stateTransition;
@@ -46,6 +48,10 @@ public class ActionOutcomeDTO {
         this.transitionResource = transitionResource;
     }
 
+    public Action getAction() {
+        return action;
+    }
+
     public Action getTransitionAction() {
         return transitionAction;
     }
@@ -70,10 +76,6 @@ public class ActionOutcomeDTO {
         this.replicableSequenceComments = replicableSequenceComments;
     }
 
-    public Resource getOperativeResource() {
-        return resource.getResourceScope().equals(transitionResource.getResourceScope()) ? resource : transitionResource;
-    }
-
     public ActionOutcomeDTO withUser(User user) {
         this.user = user;
         return this;
@@ -86,6 +88,11 @@ public class ActionOutcomeDTO {
 
     public ActionOutcomeDTO withTransitionResource(Resource transitionResource) {
         this.transitionResource = transitionResource;
+        return this;
+    }
+
+    public ActionOutcomeDTO withAction(Action action) {
+        this.action = action;
         return this;
     }
 

@@ -391,7 +391,7 @@ public class ResourceService {
 
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
             if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-                advertService.updateAdvertVisibility(actionOutcome.getOperativeResource().getAdvert(), (ResourceParentDTO) resourceDTO);
+                advertService.updateAdvertVisibility(actionOutcome.getResource().getAdvert(), (ResourceParentDTO) resourceDTO);
             }
         }
 
@@ -750,7 +750,8 @@ public class ResourceService {
                             .withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
                             .withActionEnhancements(actionService.getAdministratorActionEnhancements(scope)), //
                     Projections.projectionList() //
-                            .add(Projections.groupProperty("resource.id").as("id")),
+                            .add(Projections.groupProperty("resource.id").as("id"))
+                            .add(Projections.property("resource.sequenceIdentifier").as("sequenceIdentifier")),
                     ResourceOpportunityCategoryDTO.class).forEach(resource -> {
                 resources.put(scope, resource.getId());
             });
@@ -1004,14 +1005,12 @@ public class ResourceService {
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-            List<Integer> targeterEntities,
-            ProjectionList columns, Class<T> responseClass) {
+            List<Integer> targeterEntities, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-            List<Integer> targeterEntities,
-            ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
+            List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
@@ -1166,8 +1165,7 @@ public class ResourceService {
                     for (PrismScope targeterScope : organizationScopes) {
                         for (PrismScope targetScope : organizationScopes) {
                             addResources(resourceDAO.getResources(user, scope, targeterScope, targetScope, targeterEntities, filter, columns, conditions,
-                                    responseClass, baseline),
-                                    resources, asPartner == null ? null : true);
+                                    responseClass, baseline), resources, asPartner == null ? null : true);
                         }
                     }
                 }

@@ -308,7 +308,12 @@ public class SystemInitialisationHelper {
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
                     .withStateTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
-            verifyStateTransitionNotificationCreation(stateTransition, prismStateTransition);
+            for (StateTransitionNotification stateTransitionNotification : stateTransition.getStateTransitionNotifications()) {
+                PrismStateTransitionNotification prismStateTransitionNotification = new PrismStateTransitionNotification().withRole(
+                        stateTransitionNotification.getRole().getId()).withNotificationDefinition(
+                        stateTransitionNotification.getNotificationDefinition().getId());
+                prismStateTransition.getStateTransitionNotifications().add(prismStateTransitionNotification);
+            }
 
             for (RoleTransition roleTransition : stateTransition.getRoleTransitions()) {
                 PrismRoleTransition prismRoleTransition = new PrismRoleTransition().withRole(roleTransition.getRole().getId())
@@ -329,17 +334,6 @@ public class SystemInitialisationHelper {
             }
 
             assertTrue(prismStateAction.getStateTransitions().contains(prismStateTransition));
-        }
-    }
-
-    private void verifyStateTransitionNotificationCreation(StateTransition stateTransition, PrismStateTransition prismStateTransition) {
-        Set<StateTransitionNotification> stateTransitionNotifications = stateTransition.getStateTransitionNotifications();
-        assertTrue(prismStateTransition.getStateTransitionNotifications().size() == stateTransitionNotifications.size());
-
-        for (StateTransitionNotification stateActionNotification : stateTransitionNotifications) {
-            PrismStateTransitionNotification prismStateActionNotification = new PrismStateTransitionNotification().withRole(
-                    stateActionNotification.getRole().getId()).withNotificationDefinition(stateActionNotification.getNotificationDefinition().getId());
-            assertTrue(prismStateTransition.getStateTransitionNotifications().contains(prismStateActionNotification));
         }
     }
 

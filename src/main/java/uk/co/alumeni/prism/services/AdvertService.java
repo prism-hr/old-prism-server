@@ -373,7 +373,6 @@ public class AdvertService {
         ResourceParent resource = (ResourceParent) resourceService.getById(resourceScope, resourceId);
         Advert advert = resource.getAdvert();
         updateAdvert(advert, resourceDTO);
-        updateAdvertVisibility(advert, resourceDTO);
         executeUpdate(resource, "COMMENT_UPDATED_ADVERT");
     }
 
@@ -383,6 +382,7 @@ public class AdvertService {
         advert.setDescription(resourceDTO.getDescription());
         advert.setTelephone(resourceDTO.getTelephone());
         advert.setHomepage(resourceDTO.getHomepage());
+        updateAdvertVisibility(advert, resourceDTO);
     }
 
     public void updateFinancialDetail(Advert advert, AdvertFinancialDetailDTO payDTO, Institution institution) {

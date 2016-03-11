@@ -184,14 +184,15 @@ public class CommentMapper {
         return getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles, redactions);
     }
 
-    public CommentRepresentation getCommentRepresentationExtended(Comment comment) {
+    public CommentRepresentation getCommentRepresentationExtended(Comment comment, List<PrismRole> creatableRoles) {
         State state = comment.getState();
         State transitionState = comment.getTransitionState();
-        return getCommentRepresentationSimple(comment).withContent(comment.getContent()).withState(state == null ? null : state.getId())
-                .withTransitionState(transitionState == null ? null : transitionState.getId()).withEligible(comment.getEligible())
-                .withApplicantKnown(comment.getApplicantKnown()).withApplicantKnownDuration(comment.getApplicantKnownDuration())
-                .withApplicantKnownCapacity(comment.getApplicantKnownCapacity()).withRating(comment.getRating()).withInterested(comment.getInterested())
-                .withInterviewState(comment.getInterviewState()).withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
+        CommentRepresentation representation = getCommentRepresentationSimple(comment).withContent(comment.getContent())
+                .withState(state == null ? null : state.getId()).withTransitionState(transitionState == null ? null : transitionState.getId())
+                .withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
+                .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity())
+                .withRating(comment.getRating()).withInterested(comment.getInterested()).withInterviewState(comment.getInterviewState())
+                .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
                 .withRecruiterAcceptAppointment(comment.getRecruiterAcceptAppointment()).withPartnerAcceptAppointment(comment.getPartnerAcceptAppointment())
@@ -199,13 +200,13 @@ public class CommentMapper {
                 .withCompetenceGroups(getCommentCompetenceRepresentations(comment.getCompetences()))
                 .withAppointmentTimeslots(getCommentAppointmentTimeslotRepresentations(comment.getAppointmentTimeslots()))
                 .withAppointmentPreferences(getCommentAppointmentPreferenceRepresentations(comment)).withDocuments(getCommentDocumentRepresentations(comment));
-    }
 
-    public List<CommentAssignedUserRepresentation> getCommentAssignedUserRepresentations(Comment comment, List<PrismRole> creatableRoles) {
-        return comment.getAssignedUsers().stream()
+        representation.setAssignedUsers(comment.getAssignedUsers().stream()
                 .filter(commentAssignedUser -> creatableRoles.contains(commentAssignedUser.getRole().getId()))
                 .map(this::getCommentAssignedUserRepresentation)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+
+        return representation;
     }
 
     public List<CommentRepresentationRatingSummary> getRatingCommentSummaryRepresentations(List<Comment> ratingComments) {
@@ -232,14 +233,11 @@ public class CommentMapper {
         setProperty(commentRepresentation, countProperty, count == null ? 1 : (count + 1));
     }
 
-    private CommentRepresentation getCommentRepresentation(
-            User user, Comment comment, List<PrismRole> creatableRoles,
+    private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles,
             List<PrismActionEnhancement> actionEnhancements, List<PrismRole> overridingRoles, Set<PrismActionRedactionType> redactions) {
         boolean onlyAsPartner = actionEnhancements.size() == 1 && actionEnhancements.contains(APPLICATION_VIEW_AS_PARTNER);
         if (!onlyAsPartner && (!overridingRoles.isEmpty() || redactions.isEmpty() || commentService.isCommentOwner(comment, user))) {
-            CommentRepresentation representation = getCommentRepresentationExtended(comment);
-            representation.setAssignedUsers(getCommentAssignedUserRepresentations(comment, creatableRoles));
-            return representation;
+            return getCommentRepresentationExtended(comment, creatableRoles);
         } else {
             CommentRepresentation representation = getCommentRepresentationSimple(comment);
 

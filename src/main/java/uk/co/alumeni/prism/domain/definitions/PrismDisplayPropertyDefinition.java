@@ -1575,8 +1575,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "If you have already registered your department, you don't need to do this again. Just login with the account that you provided, and nagivate to your departments in the menu."),
     SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
     SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
-    SYSTEM    SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
-    SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
     SYSTEM_ADVERTISE_MEMBER_OF(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Are you a member of"), 
     SYSTEM_ADVERTISE_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is me"), 
     SYSTEM_ADVERTISE_NOT_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is not me"),

@@ -268,8 +268,8 @@ public class RoleService {
         return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
     }
 
-    public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
-        return roleDAO.getCreatableRoles(scopeId);
+    public List<PrismRole> getCreatableRoles(PrismScope prismScope) {
+        return roleDAO.getCreatableRoles(prismScope);
     }
 
     public void deleteObsoleteUserRoles() {

@@ -394,7 +394,7 @@ public class ResourceService {
 
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
             if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-                advertService.updateAdvertVisibility(actionOutcome.getTransitionResource().getAdvert(), (ResourceParentDTO) resourceDTO);
+                advertService.updateAdvertVisibility(actionOutcome.getOperativeResource().getAdvert(), (ResourceParentDTO) resourceDTO);
             }
         }
 

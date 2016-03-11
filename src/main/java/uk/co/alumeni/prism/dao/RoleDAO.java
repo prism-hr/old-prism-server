@@ -196,12 +196,12 @@ public class RoleDAO {
                 .executeUpdate();
     }
 
-    public List<PrismRole> getCreatableRoles(PrismScope scopeId) {
+    public List<PrismRole> getCreatableRoles(PrismScope prismScope) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(RoleTransition.class) //
                 .setProjection(Projections.groupProperty("transitionRole.id")) //
                 .createAlias("transitionRole", "transitionRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //
-                .add(Restrictions.eq("transitionRole.scope.id", scopeId)) //
+                .add(Restrictions.eq("transitionRole.scope.id", prismScope)) //
                 .list();
     }
 

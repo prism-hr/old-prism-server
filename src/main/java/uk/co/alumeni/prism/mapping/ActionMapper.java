@@ -115,19 +115,6 @@ public class ActionMapper {
             representations.put(action.getActionId(), getActionRepresentationExtended(resource, user, action));
         }
 
-        List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-
-        if (isNotEmpty(actions)) {
-            Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
-            representations.keySet().stream().forEach(prismAction -> {
-                if (unsubmittedComments.containsKey(prismAction)) {
-                    Comment comment = unsubmittedComments.get(prismAction);
-                    CommentRepresentation commentRepresentation = commentMapper.getCommentRepresentationExtended(comment);
-                    commentRepresentation.setAssignedUsers(commentMapper.getCommentAssignedUserRepresentations(comment, creatableRoles));
-                    representations.get(prismAction).setComment(commentRepresentation);
-                }
-            });
-        }
         actionService.getPermittedActionEnhancements(user, resource, actions.stream().map(ActionDTO::getActionId).collect(toList()))
                 .forEach(actionEnancement -> representations.get(actionEnancement.getAction()).addActionEnhancement(actionEnancement.getActionEnhancement()));
 
@@ -149,31 +136,38 @@ public class ActionMapper {
             }
         }
 
-        if (representations.size() > 0) {
+        if (isNotEmpty(actions)) {
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
             Map<PrismAction, Comment> unsubmittedComments = commentService.getUnsubmittedComments(resource, representations.keySet(), user);
             representations.keySet().stream().forEach(prismAction -> {
                 if (unsubmittedComments.containsKey(prismAction)) {
-                    representations.get(prismAction).setComment(commentMapper.getCommentRepresentationExtended(unsubmittedComments.get(prismAction)));
+                    Comment comment = unsubmittedComments.get(prismAction);
+                    CommentRepresentation commentRepresentation = commentMapper.getCommentRepresentationExtended(comment, creatableRoles);
+                    representations.get(prismAction).setComment(commentRepresentation);
                 }
             });
         }
 
-        return Lists.newLinkedList(representations.values());
+        return newLinkedList(representations.values());
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
+        Resource transitionResource = actionOutcomeDTO.getTransitionResource();
         ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
-                .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
+                .withTransitionResource(resourceMapper.getResourceRepresentationSimple(transitionResource))
                 .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
 
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (isNotEmpty(replicableSequenceComments)) {
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(transitionResource.getResourceScope());
             representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
                     resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
                             actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
-                    .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(toList())));
+                    .withSequenceComments(
+                            replicableSequenceComments.stream().map(comment -> commentMapper.getCommentRepresentationExtended(comment, creatableRoles))
+                                    .collect(toList())));
         }
 
         return representation;
@@ -187,7 +181,7 @@ public class ActionMapper {
         if (actionDTO.getActionId().getActionCategory().equals(MESSAGE_RESOURCE)) {
             List<PrismRole> recipientRoles = newLinkedList();
             List<PrismRole> partnerRecipientRoles = newLinkedList();
-            
+
             Action action = actionService.getById(actionDTO.getActionId());
             List<Integer> stateActionAssignments = stateService.getStateActionAssignments(user, resource, action);
             if (!stateActionAssignments.isEmpty()) {
@@ -212,12 +206,21 @@ public class ActionMapper {
                     });
 
                     Map<ResourceDTO, Resource> targetingResources = newHashMap();
-                    advertService.getTargeterAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
-                        targetingAdvert.getEnclosingResources().stream().forEach(targetingResource -> {
-                            ResourceDTO targetingResourceDTO = new ResourceDTO().withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
-                            targetingResources.put(targetingResourceDTO, targetingResource);
-                        });
-                    });
+                    advertService
+                            .getTargeterAdverts(resourceAdverts.values())
+                            .stream()
+                            .forEach(
+                                    targetingAdvert -> {
+                                        targetingAdvert
+                                                .getEnclosingResources()
+                                                .stream()
+                                                .forEach(
+                                                        targetingResource -> {
+                                                            ResourceDTO targetingResourceDTO = new ResourceDTO()
+                                                                    .withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
+                                                            targetingResources.put(targetingResourceDTO, targetingResource);
+                                                        });
+                                    });
 
                     if (!targetingResources.isEmpty()) {
                         List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
@@ -244,7 +247,7 @@ public class ActionMapper {
             });
             recipients.add(new ActionRecipientRepresentation().withRole(key).withUsers(userRepresentations));
         });
-        
+
         return recipients;
     }
 

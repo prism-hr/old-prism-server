@@ -39,7 +39,6 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRecipientRepresentat
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.AdvertService;
@@ -150,7 +149,7 @@ public class ActionMapper {
             }
         }
 
-        return Lists.newLinkedList(representations.values());
+        return newLinkedList(representations.values());
     }
 
     public ActionOutcomeRepresentation getActionOutcomeRepresentation(ActionOutcomeDTO actionOutcomeDTO) {
@@ -165,7 +164,9 @@ public class ActionMapper {
                     resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(),
                             actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
-                    .withSequenceComments(replicableSequenceComments.stream().map(commentMapper::getCommentRepresentationExtended).collect(toList())));
+                    .withSequenceComments(
+                            replicableSequenceComments.stream().map(comment -> commentMapper.getCommentRepresentationExtended(comment, creatableRoles))
+                                    .collect(toList())));
         }
 
         return representation;
@@ -179,7 +180,7 @@ public class ActionMapper {
         if (actionDTO.getActionId().getActionCategory().equals(MESSAGE_RESOURCE)) {
             List<PrismRole> recipientRoles = newLinkedList();
             List<PrismRole> partnerRecipientRoles = newLinkedList();
-            
+
             Action action = actionService.getById(actionDTO.getActionId());
             List<Integer> stateActionAssignments = stateService.getStateActionAssignments(user, resource, action);
             if (!stateActionAssignments.isEmpty()) {
@@ -204,12 +205,15 @@ public class ActionMapper {
                     });
 
                     Map<ResourceDTO, Resource> targetingResources = newHashMap();
-                    advertService.getTargeterAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
-                        targetingAdvert.getEnclosingResources().stream().forEach(targetingResource -> {
-                            ResourceDTO targetingResourceDTO = new ResourceDTO().withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
-                            targetingResources.put(targetingResourceDTO, targetingResource);
-                        });
-                    });
+                    advertService.getTargeterAdverts(resourceAdverts.values()).stream().forEach( //
+                            targetingAdvert -> { //
+                                targetingAdvert.getEnclosingResources().stream().forEach( //
+                                        targetingResource -> {
+                                            ResourceDTO targetingResourceDTO = new ResourceDTO()
+                                                    .withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
+                                            targetingResources.put(targetingResourceDTO, targetingResource);
+                                        });
+                            });
 
                     if (!targetingResources.isEmpty()) {
                         List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
@@ -236,7 +240,7 @@ public class ActionMapper {
             });
             recipients.add(new ActionRecipientRepresentation().withRole(key).withUsers(userRepresentations));
         });
-        
+
         return recipients;
     }
 

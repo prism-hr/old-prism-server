@@ -220,33 +220,6 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T resourceDTO, boolean systemInvocation) {
-        Scope scope = action.getCreationScope();
-
-        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(scope.getId().getResourceCreator());
-        Resource resource = resourceCreator.create(user, resourceDTO);
-        resource.setShared(scope.getDefaultShared());
-
-        PrismState initialState = resourceDTO.getInitialState();
-        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
-                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
-                .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
-
-        ActionOutcomeDTO outcome;
-        if (systemInvocation) {
-            outcome = actionService.executeAction(resource, action, comment);
-        } else {
-            outcome = actionService.executeUserAction(resource, action, comment);
-        }
-
-        if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-            advertService.updateAdvertVisibility(resource.getAdvert(), (ResourceParentDTO) resourceDTO);
-        }
-
-        return outcome;
-    }
-
     public ResourceParent inviteResourceRelation(Resource resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
         return inviteResourceRelation(resource, user, resourceInvitationDTO, resourceInvitationDTO.getMessage());
     }
@@ -399,21 +372,29 @@ public class ResourceService {
         ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.isBypassComment()) {
             executeActionBypass(user, commentDTO);
-        } else if (commentDTO.isCreateComment()) {
-            ResourceCreationDTO resourceDTO = commentDTO.getResource();
-            Action action = actionService.getById(commentDTO.getAction());
-            resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
-            actionOutcome = createResource(user, action, resourceDTO, false);
         } else {
-            if (commentDTO.isClaimComment()) {
-                commentService.preprocessClaimComment(user, commentDTO);
+            if (commentDTO.isCreateComment()) {
+                ResourceCreationDTO resourceDTO = commentDTO.getResource();
+                Action action = actionService.getById(commentDTO.getAction());
+                resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
+                actionOutcome = createResource(user, action, resourceDTO, false);
+            } else {
+                if (commentDTO.isClaimComment()) {
+                    commentService.preprocessClaimComment(user, commentDTO);
+                }
+
+                Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
+                if (actionExecutor != null) {
+                    actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
+                }
             }
 
-            Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
-            if (actionExecutor != null) {
-                actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
+            ResourceCreationDTO resourceDTO = commentDTO.getResource();
+            if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
+                advertService.updateAdvertVisibility(actionOutcome.getTransitionResource().getAdvert(), (ResourceParentDTO) resourceDTO);
             }
         }
+
         return actionOutcome;
     }
 
@@ -875,7 +856,6 @@ public class ResourceService {
 
         Advert advert = resource.getAdvert();
         advertService.updateAdvert(advert, resourceDTO);
-        advertService.updateAdvertVisibility(advert, resourceDTO);
 
         List<ResourceConditionDTO> resourceConditions = resourceDTO.getConditions();
         setResourceConditions(resource, resourceConditions == null ? Lists.newArrayList() : resourceConditions);
@@ -1388,6 +1368,29 @@ public class ResourceService {
             }
         }
         return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends ResourceCreationDTO> ActionOutcomeDTO createResource(User user, Action action, T resourceDTO, boolean systemInvocation) {
+        Scope scope = action.getCreationScope();
+
+        ResourceCreator<T> resourceCreator = (ResourceCreator<T>) applicationContext.getBean(scope.getId().getResourceCreator());
+        Resource resource = resourceCreator.create(user, resourceDTO);
+        resource.setShared(scope.getDefaultShared());
+
+        PrismState initialState = resourceDTO.getInitialState();
+        Comment comment = new Comment().withResource(resource).withUser(user).withAction(action).withDeclinedResponse(false)
+                .withTransitionState(initialState == null ? null : stateService.getById(initialState)).withCreatedTimestamp(new DateTime())
+                .addAssignedUser(user, roleService.getCreatorRole(resource), CREATE);
+
+        ActionOutcomeDTO outcome;
+        if (systemInvocation) {
+            outcome = actionService.executeAction(resource, action, comment);
+        } else {
+            outcome = actionService.executeUserAction(resource, action, comment);
+        }
+
+        return outcome;
     }
 
 }

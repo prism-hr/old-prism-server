@@ -152,13 +152,14 @@ public class ActionMapper {
         ActionOutcomeRepresentation representation = new ActionOutcomeRepresentation()
                 .withResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getResource()))
                 .withTransitionResource(resourceMapper.getResourceRepresentationSimple(actionOutcomeDTO.getTransitionResource()))
-                .withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
+                .withAction(actionOutcomeDTO.getAction().getId()).withTransitionAction(actionOutcomeDTO.getTransitionAction().getId());
 
         List<Comment> replicableSequenceComments = actionOutcomeDTO.getReplicableSequenceComments();
         if (isNotEmpty(replicableSequenceComments)) {
-            List<PrismRole> creatableRoles = roleService.getCreatableRoles(actionOutcomeDTO.getOperativeResource().getResourceScope());
+            Resource resource = replicableSequenceComments.get(0).getResource();
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
             representation.setReplicable(new ActionOutcomeReplicableRepresentation().withFilter( //
-                    resourceListFilterService.getReplicableActionFilter(actionOutcomeDTO.getTransitionResource(), actionOutcomeDTO.getStateTransition(),
+                    resourceListFilterService.getReplicableActionFilter(resource, actionOutcomeDTO.getStateTransition(),
                             replicableSequenceComments.stream().map(comment -> comment.getAction().getId()).collect(toList()), true))
                     .withSequenceComments(
                             replicableSequenceComments.stream().map(comment -> commentMapper.getCommentRepresentationExtended(comment, creatableRoles))

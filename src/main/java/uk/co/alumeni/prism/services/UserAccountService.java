@@ -130,8 +130,10 @@ public class UserAccountService {
         CommentDTO commentDTO = userRegistrationDTO.getComment();
         if (commentDTO != null) {
             System system = systemService.getSystem();
+            Action action = actionService.getById(commentDTO.getAction());
             Action transitionAction = actionService.getById(SYSTEM_MANAGE_ACCOUNT);
-            ActionOutcomeDTO outcome = new ActionOutcomeDTO().withResource(system).withTransitionResource(system).withTransitionAction(transitionAction);
+            ActionOutcomeDTO outcome = new ActionOutcomeDTO().withResource(system).withTransitionResource(system).withAction(action)
+                    .withTransitionAction(transitionAction);
             if (commentDTO.isBypassComment()) {
                 resourceService.executeActionBypass(user, commentDTO);
             } else {
@@ -166,7 +168,8 @@ public class UserAccountService {
 
     private void createUserAccountUpdate(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
         UserAccountUpdate update = new UserAccountUpdate().withUserAccount(userAccount)
-                .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(message)).withCreatedTimestamp(now());
+                .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(message))
+                .withCreatedTimestamp(now());
         entityService.save(update);
         userAccount.getUpdates().add(update);
         update.setSequenceIdentifier(Long.toString(update.getCreatedTimestamp().getMillis()) + String.format("%010d", update.getId()));

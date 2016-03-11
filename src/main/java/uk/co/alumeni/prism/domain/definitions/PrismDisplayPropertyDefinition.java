@@ -1472,7 +1472,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup Organization"),
-    SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Find your organization within the list"),
+    SYSTEM_ADVERTISE_LOOKUP_ORGANIZATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Start typing the name of your organization"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup Organization"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_HINT(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Start typing the name of your organization"),
     SYSTEM_ADVERTISE_LOOKUP_GOOGLE_ORGANIZATION_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "e.g. Google Inc"),
@@ -1496,6 +1496,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ADVERTISE_UNIVERSITY_FREE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "PRiSM is free for universities"),
     SYSTEM_ADVERTISE_UNIVERSITY_VALUE(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "You can connect with as many employers as you like, you only pay if you want to make it free for employers to process applications from your students and graduates."),
     SYSTEM_ADVERTISE_UNIVERSITY_ORGANIZATION_ALREADY_REGISTERED(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "If you have already registered your department, you don't need to do this again. Just login with the account that you provided, and nagivate to your departments in the menu."),
+    SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
+    SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
+    SYSTEM_ADVERTISE_MEMBER_OF(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Are you a member of"), 
+    SYSTEM_ADVERTISE_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is me"), 
+    SYSTEM_ADVERTISE_NOT_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is not me"),
+    SYSTEM_ADVERTISE_CLAIM(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Claim"),
+    SYSTEM_ADVERTISE_YOUR_COMPANY(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "as your company"), 
 
     /*
      * *************** SYSTEM INVITE SECTION *********************
@@ -1836,8 +1843,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_PROGRAM_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "e.g. MSci Chemistry"),
     SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Qualification Type"),
     SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Select the type of your qualification"),
-    SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
-    SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
+
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************

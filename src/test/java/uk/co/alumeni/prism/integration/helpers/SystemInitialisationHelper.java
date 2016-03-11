@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.integration.helpers;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -10,12 +11,13 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismConfiguration.STATE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.getStateActions;
+import static uk.co.alumeni.prism.utils.PrismFileUtils.getContent;
 
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,7 +64,6 @@ import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.ScopeService;
 import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.SystemService;
-import uk.co.alumeni.prism.utils.PrismFileUtils;
 
 @Service
 @Transactional
@@ -146,16 +147,14 @@ public class SystemInitialisationHelper {
                 assertEquals(action.getTransitionAction(), true);
             }
 
-            Set<ActionRedaction> redactions = action.getRedactions();
-            List<PrismActionRedaction> prismActionRedactions = action.getId().getRedactions();
-
-            assertEquals(prismActionRedactions.size(), redactions.size());
-
-            for (ActionRedaction redaction : redactions) {
+            Set<PrismActionRedaction> prismActionRedactions = newLinkedHashSet();
+            for (ActionRedaction redaction : action.getRedactions()) {
                 PrismActionRedaction prismActionRedaction = new PrismActionRedaction().withRole(redaction.getRole().getId()).withRedactionType(
                         redaction.getRedactionType());
-                assertTrue(prismActionRedactions.contains(prismActionRedaction));
+                prismActionRedactions.add(prismActionRedaction);
             }
+
+            assertEquals(prismActionRedactions, action.getId().getActionRedactions());
         }
     }
 
@@ -234,10 +233,8 @@ public class SystemInitialisationHelper {
             assertEquals(configuration.getDefinition(), definition);
             assertTrue(configuration.getSystemDefault());
 
-            Assert.assertEquals(PrismFileUtils.getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject()),
-                    configuration.getSubject());
-            assertEquals(PrismFileUtils.getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent()),
-                    configuration.getContent());
+            assertEquals(getContent(defaultEmailSubjectDirectory + prismNotificationDefinition.getInitialTemplateSubject()), configuration.getSubject());
+            assertEquals(getContent(defaultEmailContentDirectory + prismNotificationDefinition.getInitialTemplateContent()), configuration.getContent());
         }
     }
 
@@ -258,7 +255,7 @@ public class SystemInitialisationHelper {
     public void verifyStateActionCreation() {
         Integer stateActionsExpected = 0;
         for (PrismState prismState : PrismState.values()) {
-            stateActionsExpected = stateActionsExpected + PrismState.getStateActions(prismState).size();
+            stateActionsExpected = stateActionsExpected + getStateActions(prismState).size();
         }
 
         List<StateAction> stateActions = stateService.getStateActions();
@@ -300,12 +297,17 @@ public class SystemInitialisationHelper {
         assertTrue(prismStateAction.getStateTransitions().size() == stateTransitions.size());
 
         for (StateTransition stateTransition : stateTransitions) {
-            StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
-
             State transitionState = stateTransition.getTransitionState();
+            StateTransitionEvaluation evaluation = stateTransition.getStateTransitionEvaluation();
+            
             PrismStateTransition prismStateTransition = new PrismStateTransition()
                     .withTransitionState(transitionState == null ? null : transitionState.getId())
                     .withTransitionAction(stateTransition.getTransitionAction().getId())
+                    .withReplicableSequenceClose(stateTransition.getReplicableSequenceClose())
+                    .withReplicableSequenceFilterTheme(stateTransition.getReplicableSequenceFilterTheme())
+                    .withReplicableSequenceFilterSecondaryTheme(stateTransition.getReplicableSequenceFilterSecondaryTheme())
+                    .withReplicableSequenceFilterLocation(stateTransition.getReplicableSequenceFilterLocation())
+                    .withReplicableSequenceFilterSecondaryLocation(stateTransition.getReplicableSequenceFilterSecondaryLocation())
                     .withStateTransitionEvaluation(evaluation == null ? null : evaluation.getId());
 
             for (StateTransitionNotification stateTransitionNotification : stateTransition.getStateTransitionNotifications()) {

@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.leftPad;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
@@ -28,13 +30,12 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 public enum PrismAction implements PrismLocalizableDefinition {
 
@@ -189,8 +190,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return actionDefinition.getScope();
     }
 
-    public List<PrismActionRedaction> getRedactions() {
-        return actionDefinition.getRedactions();
+    public Set<PrismActionRedaction> getActionRedactions() {
+        return actionDefinition.getActionRedactions();
     }
 
     public String getZeroPaddedOrdinal() {
@@ -219,7 +220,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         private PrismScope scope;
 
-        private List<PrismActionRedaction> redactions = Lists.newArrayList();
+        private Set<PrismActionRedaction> actionRedactions = newLinkedHashSet();
 
         public boolean isSystemInvocationOnly() {
             return systemInvocationOnly;
@@ -261,8 +262,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
             return scope;
         }
 
-        public List<PrismActionRedaction> getRedactions() {
-            return redactions;
+        public Set<PrismActionRedaction> getActionRedactions() {
+            return actionRedactions;
         }
 
         public PrismActionDefinition withSystemInvocationOnly() {
@@ -310,8 +311,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
             return this;
         }
 
-        public PrismActionDefinition withRedactions(List<PrismActionRedaction> redactions) {
-            this.redactions = redactions;
+        public PrismActionDefinition withActionRedactions(Set<PrismActionRedaction> actionRedactions) {
+            this.actionRedactions = actionRedactions;
             return this;
         }
 
@@ -320,7 +321,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     private static PrismActionDefinition getDefaultViewEditApplicationActionDefinition() {
         return getDefaultViewEditResourceActionDefinition(APPLICATION) //
                 .withVisibleAction() //
-                .withRedactions(getDefaultApplicationActionRedactions());
+                .withActionRedactions(getDefaultApplicationActionRedactions());
     }
 
     private static PrismActionDefinition getDefaultCreateResourceActionDefinitionVisible(PrismScope scope) {
@@ -363,13 +364,13 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments() {
         return getDefaultProcessApplicationActionDefinition() //
-                .withRedactions(getDefaultApplicationActionRedactions()) //
+                .withActionRedactions(getDefaultApplicationActionRedactions()) //
                 .withReplicableUserAssignmentAction();
     }
 
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactions() {
         return getDefaultProcessApplicationActionDefinition() //
-                .withRedactions(getDefaultApplicationActionRedactions());
+                .withActionRedactions(getDefaultApplicationActionRedactions());
     }
 
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinition() {
@@ -378,7 +379,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     private static PrismActionDefinition getDefaultMessageApplicationActionDefinition() {
         return getDefaultApplicationActionDefinition(MESSAGE_RESOURCE) //
-                .withRedactions(getDefaultApplicationActionRedactions());
+                .withActionRedactions(getDefaultApplicationActionRedactions());
     }
 
     private static PrismActionDefinition getDefaultApplicationActionDefinition(PrismActionCategory actionCategory) {
@@ -424,12 +425,12 @@ public enum PrismAction implements PrismLocalizableDefinition {
                 .withScope(scope);
     }
 
-    private static List<PrismActionRedaction> getDefaultApplicationActionRedactions() {
-        return Arrays.asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT), //
+    private static Set<PrismActionRedaction> getDefaultApplicationActionRedactions() {
+        return Sets.newLinkedHashSet(asList(new PrismActionRedaction().withRole(APPLICATION_CREATOR).withRedactionType(ALL_ASSESSMENT_CONTENT), //
                 new PrismActionRedaction().withRole(APPLICATION_INTERVIEWEE).withRedactionType(ALL_ASSESSMENT_CONTENT), //
                 new PrismActionRedaction().withRole(APPLICATION_POTENTIAL_INTERVIEWEE).withRedactionType(ALL_ASSESSMENT_CONTENT), //
                 new PrismActionRedaction().withRole(APPLICATION_REFEREE).withRedactionType(ALL_CONTENT), //
-                new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT));
+                new PrismActionRedaction().withRole(APPLICATION_VIEWER_REFEREE).withRedactionType(ALL_CONTENT)));
     }
 
     @Override

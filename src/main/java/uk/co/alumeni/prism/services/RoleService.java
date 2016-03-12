@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.joda.time.DateTime.now;
@@ -211,6 +212,16 @@ public class RoleService {
 
     public boolean hasUserRole(Resource resource, User user, PrismRole... roles) {
         return isNotEmpty(roles) ? isNotEmpty(roleDAO.getUserRoles(resource, user, asList(roles))) : false;
+    }
+
+    public boolean createsUserRole(Comment comment, User user, PrismRole... prismRoles) {
+        for (CommentAssignedUser commentAssignedUser : comment.getAssignedUsers()) {
+            if (commentAssignedUser.getRoleTransitionType().equals(CREATE) && user.equals(commentAssignedUser.getUser())
+                    && contains(prismRoles, commentAssignedUser.getRole().getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<PrismRole> getRolesOverridingRedactions(Resource resource) {

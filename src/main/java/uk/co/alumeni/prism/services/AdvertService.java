@@ -465,7 +465,7 @@ public class AdvertService {
         executeUpdate(resource, "COMMENT_UPDATED_LOCATION");
     }
 
-    public void updateAdvertVisibility(Advert advert, ResourceParentDTO resourceDTO) {
+    public void updateAdvertVisibility(User user, Advert advert, ResourceParentDTO resourceDTO) {
         if (ResourceOpportunityDTO.class.isAssignableFrom(resourceDTO.getClass())) {
             ResourceOpportunityDTO opportunityDTO = (ResourceOpportunityDTO) resourceDTO;
             if (opportunityDTO.getAdvertVisibility() != null) {
@@ -474,7 +474,7 @@ public class AdvertService {
         } else {
             ResourceRelationCreationDTO target = resourceDTO.getTarget();
             if (target != null) {
-                createAdvertTarget((ResourceParent) advert.getResource(), target);
+                createAdvertTarget(user, (ResourceParent) advert.getResource(), target);
             }
 
             Integer targetInvitation = resourceDTO.getTargetInvitation();
@@ -570,19 +570,27 @@ public class AdvertService {
         return createAdvertTarget(user, resource, targetDTO);
     }
 
-    public AdvertTarget createAdvertTarget(ResourceParent resource, ResourceRelationCreationDTO targetDTO) {
-        return createAdvertTarget(resource.getUser(), resource, targetDTO);
+    public AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, User userTarget, PrismResourceContext context) {
+        if (resourceService.getResourceForWhichUserCanConnect(user, resource) != null) {
+            return createAdvertTarget(resource, user, resourceTarget, userTarget, context, null, false);
+        }
+        return null;
+    }
+
+    public AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO,
+            PrismResourceContext context, String message) {
+        return createAdvertTarget(resource, user, resourceTarget, userTargetDTO, context, message, true);
     }
 
     public AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, User userTarget, PrismResourceContext context,
-            String message) {
+            String message, boolean sendInvitation) {
         Advert advert = resource.getAdvert();
         Advert advertTarget = resourceTarget.getAdvert();
 
         if (context.equals(EMPLOYER)) {
-            return createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message);
+            return createAdvertTarget(advertTarget, userTarget, advert, user, advertTarget, userTarget, message, sendInvitation);
         } else {
-            return createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message);
+            return createAdvertTarget(advert, user, advertTarget, userTarget, advertTarget, userTarget, message, sendInvitation);
         }
     }
 
@@ -1118,20 +1126,13 @@ public class AdvertService {
         return createAdvertTarget(resource, user, resourceTarget, targetDTO.getUser(), targetDTO.getContext().getContext(), targetDTO.getMessage(), true);
     }
 
-    private AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO,
-            PrismResourceContext context, String message, boolean validate) {
-        if (!(validate && resourceService.getResourceForWhichUserCanConnect(user, resource) == null)) {
-            User userTarget = null;
-            if (userTargetDTO != null) {
-                userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
-            }
-            return createAdvertTarget(resource, user, resourceTarget, userTarget, context, message);
-        }
-
-        return null;
+    private AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, User userTarget, PrismResourceContext context,
+            String message) {
+        return createAdvertTarget(resource, user, resourceTarget, userTarget, context, message, true);
     }
 
-    private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept, String message) {
+    private AdvertTarget createAdvertTarget(Advert advert, User user, Advert advertTarget, User userTarget, Advert advertAccept, User userAccept,
+            String message, boolean sendInvitation) {
         AdvertTarget targetAdmin = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, null, ENDORSEMENT_PENDING);
 
         AdvertTarget targetUserAccept = null;
@@ -1139,14 +1140,16 @@ public class AdvertService {
             targetUserAccept = createAdvertTarget(advert, user, advertTarget, userTarget, advertAccept, userAccept, ENDORSEMENT_PENDING);
         }
 
-        Invitation invitation = invitationService.createInvitation(targetAdmin.getOtherUser(), message);
+        if (sendInvitation) {
+            Invitation invitation = invitationService.createInvitation(targetAdmin.getOtherUser(), message);
 
-        if (!acceptAdvertTarget(targetAdmin, true, false)) {
-            targetAdmin.setInvitation(invitation);
-        }
+            if (!acceptAdvertTarget(targetAdmin, true, false)) {
+                targetAdmin.setInvitation(invitation);
+            }
 
-        if (!(targetUserAccept == null || acceptAdvertTarget(targetUserAccept, true, false))) {
-            targetUserAccept.setInvitation(invitation);
+            if (!(targetUserAccept == null || acceptAdvertTarget(targetUserAccept, true, false))) {
+                targetUserAccept.setInvitation(invitation);
+            }
         }
 
         return targetUserAccept == null ? targetAdmin : targetUserAccept;
@@ -1170,6 +1173,19 @@ public class AdvertService {
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withPartnershipState(partnershipState));
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
+    }
+    
+    private AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO,
+            PrismResourceContext context, String message, boolean validate) {
+        if (!(validate && resourceService.getResourceForWhichUserCanConnect(user, resource) == null)) {
+            User userTarget = null;
+            if (userTargetDTO != null) {
+                userTarget = resourceService.joinResource(resourceTarget, userTargetDTO, VIEWER);
+            }
+            return createAdvertTarget(resource, user, resourceTarget, userTarget, context, message);
+        }
+
+        return null;
     }
 
     private boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {

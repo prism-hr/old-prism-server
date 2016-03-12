@@ -243,7 +243,7 @@ public class RoleService {
 
         return newArrayList(roles);
     }
-
+    
     public List<PrismRole> getUserRoles(Resource resource, User user) {
         return roleDAO.getUserRoles(resource, user).stream().map(userRole -> userRole.getRole()).collect(toList());
     }

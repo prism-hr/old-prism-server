@@ -471,19 +471,6 @@ public class ResourceDAO {
                 .list();
     }
 
-    public ResourceParent getActiveResourceByName(Resource parentResource, PrismScope resourceScope, String name) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (ResourceParent) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property(resourceReference)) //
-                .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource." + parentResource.getResourceScope().getLowerCamelName(), parentResource))
-                .add(Restrictions.eq("resource.name", name)) //
-                .add(getResourceParentManageableStateConstraint(resourceScope)) //
-                .addOrder(Order.asc("id")) //
-                .setMaxResults(1) //
-                .uniqueResult();
-    }
-
     public ResourceRatingSummaryDTO getResourceRatingSummary(ResourceParent resource) {
         String resourceReference = resource.getResourceScope().getLowerCamelName();
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Comment.class) //

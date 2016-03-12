@@ -295,14 +295,8 @@ public class ResourceService {
             Integer lastId = resource.getId();
             PrismScope lastScope = resource.getResourceScope();
 
-            ResourceParent duplicateResource = null;
-            owner = finalScope.equals(thisScope) ? childOwner : owner;
-            if (thisId == null && !thisScope.equals(PROJECT)) {
-                duplicateResource = getActiveResourceByName(resource, thisScope, ((ResourceParentDTO) resourceDTO).getName());
-            }
-
             resourceDTO.setContext(context);
-            if (thisId == null && duplicateResource == null) {
+            if (thisId == null) {
                 resourceDTO.setInitialState(PrismState.valueOf(thisScope.name() + "_UNSUBMITTED"));
                 if (resource != null) {
                     resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastId));
@@ -311,11 +305,7 @@ public class ResourceService {
                         new CommentDTO().withAction(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name())).withResource(resourceDTO), true)
                         .getResource();
             } else {
-                if (thisId != null) {
-                    resource = getById(thisScope, thisId);
-                } else if (duplicateResource != null) {
-                    resource = duplicateResource;
-                }
+                resource = getById(thisScope, thisId);
 
                 if (resource.getResourceScope().equals(finalScope)) {
                     Role role = roleService.getById(PrismRole.valueOf(finalScope.name() + "_ADMINISTRATOR"));
@@ -976,14 +966,6 @@ public class ResourceService {
         } else {
             throw new WorkflowEngineException("Cannot terminate system resource");
         }
-    }
-
-    public ResourceParent getActiveResourceByName(Resource parentResource, PrismScope resourceScope, String name) {
-        Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
-        if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            return resourceDAO.getActiveResourceByName(parentResource, resourceScope, name);
-        }
-        return null;
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, ResourceListFilterDTO filter) {

@@ -220,22 +220,29 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    public ResourceParent inviteResourceRelation(Resource resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
+    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
         return inviteResourceRelation(resource, user, resourceInvitationDTO, resourceInvitationDTO.getMessage());
     }
 
-    public ResourceParent inviteResourceRelation(Resource resource, User user, ResourceRelationCreationDTO resourceInvitationDTO, String message) {
+    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO, String message) {
         if (validateResourceRelationCreation(resourceInvitationDTO)) {
             User childOwner = userService.getOrCreateUser(resourceInvitationDTO.getUser());
 
             AdvertTarget target = null;
             PrismResourceContext context = resourceInvitationDTO.getContext().getContext();
             ResourceParent resourceTarget = createResourceRelation(resourceInvitationDTO.getResource(), context, childOwner);
+
             if (resource != null) {
-                target = advertService.createAdvertTarget((ResourceParent) resource, user, resourceTarget, resourceTarget.getUser(), context, message);
+                if (resourceTarget.getState().getId().name().endsWith("_UNSUBMITTED")) {
+                    target = advertService.createAdvertTarget((ResourceParent) resource, user, resourceTarget, childOwner, context);
+                    notificationService.sendOrganizationInvitationNotification(user, childOwner, resourceTarget, target, message);
+                } else {
+                    advertService.createAdvertTarget(resource, user, resourceTarget, //
+                            new UserDTO().withId(childOwner.getId()).withFirstName(childOwner.getFirstName()).withLastName(childOwner.getLastName())
+                                    .withEmail(childOwner.getEmail()), context, message);
+                }
             }
 
-            notificationService.sendOrganizationInvitationNotification(user, resourceTarget.getUser(), resourceTarget, target, message);
             return resourceTarget;
         }
 
@@ -386,7 +393,7 @@ public class ResourceService {
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
             if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
                 ResourceParent resource = (ResourceParent) actionOutcome.getResource();
-                advertService.updateAdvertVisibility(resource.getAdvert(), (ResourceParentDTO) resourceDTO);
+                advertService.updateAdvertVisibility(user, resource.getAdvert(), (ResourceParentDTO) resourceDTO);
                 setResourceAdvertIncompleteSection(resource);
             }
         }
@@ -400,10 +407,10 @@ public class ResourceService {
         if (roleContext != null) {
             joinResource(commentDTO.getResource(), user, roleContext);
         } else if (resourceInvitation != null) {
-            Resource resourceInviting = null;
+            ResourceParent resourceInviting = null;
             ResourceCreationDTO resourceInvitingDTO = commentDTO.getResourceInviting();
             if (resourceInvitingDTO != null) {
-                resourceInviting = getById(resourceInvitingDTO.getScope(), resourceInvitingDTO.getId());
+                resourceInviting = (ResourceParent) getById(resourceInvitingDTO.getScope(), resourceInvitingDTO.getId());
             }
             inviteResourceRelation(resourceInviting, user, resourceInvitation);
         }

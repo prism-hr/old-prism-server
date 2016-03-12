@@ -26,7 +26,7 @@
 	Follow the link below to register and join our network.
 </p>
 
-${ACTION_COMPLETE}
+${INVITATION_ACCEPT}
 
 <p>
 	Welcome to ${TEMPLATE_SYSTEM_NAME}.

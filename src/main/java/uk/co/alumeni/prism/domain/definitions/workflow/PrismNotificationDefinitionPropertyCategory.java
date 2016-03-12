@@ -6,6 +6,7 @@ public enum PrismNotificationDefinitionPropertyCategory {
 
     TEMPLATE_GLOBAL, //
     ACTION_GLOBAL, //
+    INVITATION_GLOBAL, //
     COMMENT_GLOBAL, //
     COMMENT_TRANSITION, //
     TARGET_GLOBAL, //

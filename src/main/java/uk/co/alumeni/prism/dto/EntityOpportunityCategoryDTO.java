@@ -8,7 +8,6 @@ import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.ZERO;
 
 import java.math.BigDecimal;
-import org.apache.commons.lang3.BooleanUtils;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 

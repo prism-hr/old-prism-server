@@ -340,7 +340,7 @@ public class ActionService {
 
                 if (duplicate != null) {
                     if (createAction) {
-                        Action viewEditAction = getViewEditAction(resource);
+                        Action viewEditAction = getViewEditAction(duplicate);
                         return new ActionOutcomeDTO().withUser(user).withResource(duplicate).withTransitionResource(duplicate)
                                 .withAction(viewEditAction).withTransitionAction(viewEditAction);
                     } else if (!equal(resource.getId(), duplicate.getId())) {

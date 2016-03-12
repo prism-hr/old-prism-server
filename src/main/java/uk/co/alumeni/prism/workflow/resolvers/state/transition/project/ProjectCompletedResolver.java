@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Project;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.services.ResourceService;
@@ -36,7 +37,8 @@ public class ProjectCompletedResolver implements StateTransitionResolver<Project
         if (resourceService.isUnderApproval(resource)) {
             return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
         } else if (transitionState == null) {
-            if (roleService.hasUserRole(resource, comment.getUser(), PROJECT_ADMINISTRATOR)) {
+            User user = comment.getUser();
+            if (roleService.hasUserRole(resource, user, PROJECT_ADMINISTRATOR) || roleService.createsUserRole(comment, user, PROJECT_ADMINISTRATOR)) {
                 return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVED);
             }
             return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL);

@@ -48,7 +48,7 @@ public abstract class ResourceConnectionAbstractDTO implements Comparable<Resour
         int compare = ObjectUtils.compare(getInstitutionName(), other.getInstitutionName());
         compare = compare == 0 ? ObjectUtils.compare(getDepartmentName(), other.getDepartmentName()) : compare;
 
-        if (this.getClass().equals(UnverifiedUserDTO.class) && other.getClass().equals(UnverifiedUserDTO.class)) {
+        if (compare == 0 && this.getClass().equals(UnverifiedUserDTO.class) && other.getClass().equals(UnverifiedUserDTO.class)) {
             UnverifiedUserDTO thisUpcast = (UnverifiedUserDTO) this;
             UnverifiedUserDTO otherUpcast = (UnverifiedUserDTO) other;
 

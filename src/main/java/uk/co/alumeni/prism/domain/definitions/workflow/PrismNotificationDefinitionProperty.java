@@ -9,8 +9,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.MESSAGE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INVITATION_GLOBAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.MESSAGE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
@@ -54,9 +54,9 @@ import uk.co.alumeni.prism.workflow.notification.property.DepartmentUserContactB
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionCodeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionUserContactBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.InvitationAcceptBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.MessageInitiatorFullNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.MessageSubjectBuilder;
-import uk.co.alumeni.prism.workflow.notification.property.InvitationAcceptBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.NotificationPropertyBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramCodeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramNameBuilder;

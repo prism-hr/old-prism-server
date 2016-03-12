@@ -307,9 +307,9 @@ public class ResourceService {
                 if (resource != null) {
                     resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastId));
                 }
-
-                Action action = actionService.getById(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name()));
-                resource = createResource(owner, action, resourceDTO, true).getResource();
+                resource = executeAction(owner,
+                        new CommentDTO().withAction(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name())).withResource(resourceDTO))
+                        .getResource();
             } else {
                 if (thisId != null) {
                     resource = getById(thisScope, thisId);
@@ -376,7 +376,7 @@ public class ResourceService {
             if (commentDTO.isCreateComment()) {
                 ResourceCreationDTO resourceDTO = commentDTO.getResource();
                 Action action = actionService.getById(commentDTO.getAction());
-                resourceDTO.setParentResource(commentDTO.getResource().getParentResource());
+                resourceDTO.setParentResource(resourceDTO.getParentResource());
                 actionOutcome = createResource(user, action, resourceDTO, false);
             } else {
                 if (commentDTO.isClaimComment()) {
@@ -391,7 +391,9 @@ public class ResourceService {
 
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
             if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-                advertService.updateAdvertVisibility(actionOutcome.getResource().getAdvert(), (ResourceParentDTO) resourceDTO);
+                ResourceParent resource = (ResourceParent) actionOutcome.getResource();
+                advertService.updateAdvertVisibility(resource.getAdvert(), (ResourceParentDTO) resourceDTO);
+                setResourceAdvertIncompleteSection(resource);
             }
         }
 
@@ -530,10 +532,6 @@ public class ResourceService {
 
         if (comment.isStateGroupTransitionComment() && comment.getAction().getCreationScope() == null) {
             createOrUpdateStateTransitionSummary(resource, new DateTime());
-        }
-
-        if (asList(ORGANIZATION, OPPORTUNITY).contains(resource.getResourceScope().getScopeCategory())) {
-            setResourceAdvertIncompleteSection((ResourceParent) resource);
         }
 
         entityService.flush();
@@ -1123,7 +1121,7 @@ public class ResourceService {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
+    public <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
         List<PrismScopeSectionDefinition> incompleteSections = Lists.newLinkedList();
         for (PrismScopeSectionDefinition section : getRequiredSections(resource.getResourceScope())) {
             ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(section

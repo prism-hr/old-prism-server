@@ -23,7 +23,7 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
         if (comment.isRestoreComment()) {
             advertService.retireAdvertClosingDate(resource.getAdvert());
         }
-        
+
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
 

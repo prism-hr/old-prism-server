@@ -1081,8 +1081,7 @@ public class AdvertService {
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds,
-            boolean strict,
-            Class<T> responseClass) {
+            boolean strict, Class<T> responseClass) {
         List<T> adverts = Lists.newArrayList();
         if (user != null) {
             for (PrismScope scope : advertScopes) {

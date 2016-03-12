@@ -484,8 +484,8 @@ public class UserService {
     }
 
     public List<UnverifiedUserDTO> getUsersToVerify(User user) {
-        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
         Set<UnverifiedUserDTO> userRoles = newTreeSet();
+        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
         if (!resources.isEmpty()) {
             for (PrismScope scope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
                 Set<Integer> scopedResources = resources.get(scope);

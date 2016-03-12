@@ -311,7 +311,7 @@ public class ResourceService {
                     resourceDTO.setParentResource(new ResourceDTO().withScope(lastScope).withId(lastId));
                 }
                 resource = executeAction(owner,
-                        new CommentDTO().withAction(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name())).withResource(resourceDTO))
+                        new CommentDTO().withAction(PrismAction.valueOf(lastScope.name() + "_CREATE_" + thisScope.name())).withResource(resourceDTO), true)
                         .getResource();
             } else {
                 if (thisId != null) {
@@ -372,6 +372,10 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
+        return executeAction(user, commentDTO, false);
+    }
+
+    public ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO, boolean systemInvocation) {
         ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.isBypassComment()) {
             executeActionBypass(user, commentDTO);
@@ -380,7 +384,7 @@ public class ResourceService {
                 ResourceCreationDTO resourceDTO = commentDTO.getResource();
                 Action action = actionService.getById(commentDTO.getAction());
                 resourceDTO.setParentResource(resourceDTO.getParentResource());
-                actionOutcome = createResource(user, action, resourceDTO, false);
+                actionOutcome = createResource(user, action, resourceDTO, systemInvocation);
             } else {
                 if (commentDTO.isClaimComment()) {
                     commentService.preprocessClaimComment(user, commentDTO);

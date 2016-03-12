@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.services.RoleService;
@@ -29,7 +30,8 @@ public class InstitutionCompletedResolver implements StateTransitionResolver<Ins
     public StateTransition resolve(Institution resource, Comment comment) {
         State transitionState = comment.getTransitionState();
         if (transitionState == null) {
-            if (roleService.hasUserRole(resource, comment.getUser(), INSTITUTION_ADMINISTRATOR)) {
+            User user = comment.getUser();
+            if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR) || roleService.createsUserRole(comment, user, INSTITUTION_ADMINISTRATOR)) {
                 return stateService.getStateTransition(resource, comment.getAction(), INSTITUTION_APPROVED);
             }
             return stateService.getStateTransition(resource, comment.getAction(), INSTITUTION_APPROVAL);

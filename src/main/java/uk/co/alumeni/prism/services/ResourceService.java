@@ -532,7 +532,7 @@ public class ResourceService {
             createOrUpdateStateTransitionSummary(resource, new DateTime());
         }
 
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+        if (asList(ORGANIZATION, OPPORTUNITY).contains(resource.getResourceScope().getScopeCategory())) {
             setResourceAdvertIncompleteSection((ResourceParent) resource);
         }
 

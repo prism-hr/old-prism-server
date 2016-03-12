@@ -261,10 +261,8 @@ public class UserMapper {
 
     public List<UserRolesRepresentation> getUserRoleRepresentations(User user) {
         HashMultimap<ResourceRepresentationIdentity, PrismRole> index = HashMultimap.create();
-        roleService
-                .getUserRoles(user)
-                .forEach(
-                        userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
+        roleService.getUserRoles(user).forEach( //
+                userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
 
         return index.keySet().stream()
                 .map(resource -> new UserRolesRepresentation(resource, newArrayList(index.get(resource))))

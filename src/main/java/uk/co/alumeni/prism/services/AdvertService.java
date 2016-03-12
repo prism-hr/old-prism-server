@@ -476,6 +476,11 @@ public class AdvertService {
             if (target != null) {
                 createAdvertTarget((ResourceParent) advert.getResource(), target);
             }
+
+            Integer targetInvitation = resourceDTO.getTargetInvitation();
+            if (targetInvitation != null) {
+                acceptAdvertTarget(targetInvitation, true);
+            }
         }
     }
 

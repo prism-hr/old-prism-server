@@ -1,5 +1,9 @@
 package uk.co.alumeni.prism.services.helpers;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -19,7 +23,6 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.SystemService;
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 import com.google.common.collect.ImmutableMap;
@@ -108,12 +111,18 @@ public class NotificationPropertyLoader {
         return getRedirectionControl(url, linkLabel, declineLinkLabel);
     }
 
+    public String getInvitationAcceptControl() {
+        return getRedirectionControl(applicationApiUrl + "/mail/activate?resourceId=" + notificationDefinitionDTO.getResource().getId() + "&actionId="
+                + notificationDefinitionDTO.getTransitionAction().name() + "&targetInvitation=" + notificationDefinitionDTO.getAdvertTarget().getId()
+                + "&activationCode=" + notificationDefinitionDTO.getRecipient().getActivationCode(), SYSTEM_PROCEED);
+    }
+
     public String getRedirectionUrl(Integer resourceId, PrismAction actionId, User user) {
         return applicationApiUrl + "/mail/activate?resourceId=" + resourceId + "&actionId=" + actionId.name() + "&activationCode=" + user.getActivationCode();
     }
 
     private String getRedirectionUrl(Resource resource, PrismAction actionId, User user) {
-        Resource operative = (Resource) PrismReflectionUtils.getProperty(resource, actionId.getScope().getLowerCamelName());
+        Resource operative = (Resource) getProperty(resource, actionId.getScope().getLowerCamelName());
         return applicationApiUrl + "/mail/activate?resourceId=" + operative.getId() + "&actionId=" + actionId.name() + "&activationCode="
                 + user.getActivationCode();
     }

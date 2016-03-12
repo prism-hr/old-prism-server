@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.services.helpers;
 
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 import java.util.Map;

@@ -300,7 +300,7 @@ public class ResourceService {
 
             ResourceParent duplicateResource = null;
             owner = finalScope.equals(thisScope) ? childOwner : owner;
-            if (thisId == null && thisScope.equals(PROJECT)) {
+            if (thisId == null && !thisScope.equals(PROJECT)) {
                 duplicateResource = getActiveResourceByName(resource, thisScope, ((ResourceParentDTO) resourceDTO).getName());
             }
 

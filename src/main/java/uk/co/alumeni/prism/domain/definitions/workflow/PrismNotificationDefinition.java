@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INVITATION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
@@ -111,7 +112,7 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     SYSTEM_USER_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
             Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
-            Lists.newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, TARGET_GLOBAL)), //
+            Lists.newArrayList(TEMPLATE_GLOBAL, INVITATION_GLOBAL, TARGET_GLOBAL)), //
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, UPDATE, SYSTEM, //
             Lists.newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
     SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(INDIVIDUAL, UPDATE, SYSTEM, //

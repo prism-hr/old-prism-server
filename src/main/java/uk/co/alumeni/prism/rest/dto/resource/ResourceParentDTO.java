@@ -44,6 +44,8 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     @Valid
     private ResourceRelationCreationDTO target;
 
+    private Integer targetInvitation;
+
     @Override
     public ResourceDTO getParentResource() {
         return parentResource;
@@ -126,6 +128,14 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
 
     public void setTarget(ResourceRelationCreationDTO target) {
         this.target = target;
+    }
+
+    public Integer getTargetInvitation() {
+        return targetInvitation;
+    }
+
+    public void setTargetInvitation(Integer targetInvitation) {
+        this.targetInvitation = targetInvitation;
     }
 
 }

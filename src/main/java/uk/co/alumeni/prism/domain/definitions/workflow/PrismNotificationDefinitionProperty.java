@@ -10,6 +10,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.MESSAGE_GLOBAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INVITATION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
@@ -55,6 +56,7 @@ import uk.co.alumeni.prism.workflow.notification.property.InstitutionNameBuilder
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionUserContactBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.MessageInitiatorFullNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.MessageSubjectBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.InvitationAcceptBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.NotificationPropertyBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramCodeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramNameBuilder;
@@ -118,6 +120,7 @@ public enum PrismNotificationDefinitionProperty {
     TEMPLATE_BUFFERED(TEMPLATE_GLOBAL, true, TemplateBufferedBuilder.class), //
     ACTION_COMPLETE(ACTION_GLOBAL, false, ActionCompleteBuilder.class), //
     ACTION_VIEW_EDIT(ACTION_GLOBAL, false, ActionViewEditBuilder.class), //
+    INVITATION_ACCEPT(INVITATION_GLOBAL, false, InvitationAcceptBuilder.class), //
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //

@@ -1143,11 +1143,11 @@ public class AdvertService {
         if (sendInvitation) {
             Invitation invitation = invitationService.createInvitation(targetAdmin.getOtherUser(), message);
 
-            if (!acceptAdvertTarget(targetAdmin, true, false)) {
+            if (inviteAdvertTarget(targetAdmin)) {
                 targetAdmin.setInvitation(invitation);
             }
 
-            if (!(targetUserAccept == null || acceptAdvertTarget(targetUserAccept, true, false))) {
+            if (inviteAdvertTarget(targetUserAccept)) {
                 targetUserAccept.setInvitation(invitation);
             }
         }
@@ -1156,8 +1156,7 @@ public class AdvertService {
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User advertUser, Advert targetAdvert, User targetAdvertUser, Advert acceptAdvert,
-            User acceptAdvertUser,
-            PrismPartnershipState partnershipState) {
+            User acceptAdvertUser, PrismPartnershipState partnershipState) {
         return entityService.getOrCreate(new AdvertTarget().withAdvert(advert).withAdvertUser(advertUser).withAdvertSevered(false)
                 .withTargetAdvert(targetAdvert)
                 .withTargetAdvertUser(targetAdvertUser).withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withAcceptAdvertUser(acceptAdvertUser)
@@ -1174,7 +1173,7 @@ public class AdvertService {
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
         return advertTarget;
     }
-    
+
     private AdvertTarget createAdvertTarget(ResourceParent resource, User user, ResourceParent resourceTarget, UserDTO userTargetDTO,
             PrismResourceContext context, String message, boolean validate) {
         if (!(validate && resourceService.getResourceForWhichUserCanConnect(user, resource) == null)) {
@@ -1186,6 +1185,10 @@ public class AdvertService {
         }
 
         return null;
+    }
+
+    private boolean inviteAdvertTarget(AdvertTarget target) {
+        return target.getPartnershipState().equals(ENDORSEMENT_PENDING) && !acceptAdvertTarget(target, true, false);
     }
 
     private boolean acceptAdvertTarget(AdvertTarget advertTarget, boolean accept, boolean notify) {

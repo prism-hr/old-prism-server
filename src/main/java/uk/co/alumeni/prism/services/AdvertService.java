@@ -620,7 +620,13 @@ public class AdvertService {
     }
 
     public boolean acceptAdvertTarget(Integer advertTargetId, boolean accept) {
-        return acceptAdvertTarget(getAdvertTargetById(advertTargetId), accept, true);
+        AdvertTarget advertTarget = getAdvertTargetById(advertTargetId);
+        accept = acceptAdvertTarget(advertTarget, accept, true);
+        if (accept) {
+            resourceService.setResourceAdvertIncompleteSection(advertTarget.getAdvert().getResource());
+            resourceService.setResourceAdvertIncompleteSection(advertTarget.getTargetAdvert().getResource());
+        }
+        return accept;
     }
 
     public void updateAdvertTarget(Integer advertTargetId, boolean severed) {

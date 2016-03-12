@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
@@ -177,7 +178,8 @@ public class RoleService {
                     }
                 } else {
                     getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
-                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED")))).withAssignedTimestamp(now()));
+                            .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED"))))
+                            .withAssignedTimestamp(now()));
                 }
                 entityService.delete(userRole);
             }
@@ -220,6 +222,16 @@ public class RoleService {
                 if (roleDAO.getUserRole(resource.getEnclosingResource(roleScope), user, prismRole) != null) {
                     return true;
                 }
+            }
+        }
+        return false;
+    }
+
+    public boolean createsUserRole(Comment comment, User user, PrismRole... prismRoles) {
+        for (CommentAssignedUser commentAssignedUser : comment.getAssignedUsers()) {
+            if (commentAssignedUser.getRoleTransitionType().equals(CREATE) && user.equals(commentAssignedUser.getUser())
+                    && contains(prismRoles, commentAssignedUser.getRole().getId())) {
+                return true;
             }
         }
         return false;
@@ -399,11 +411,13 @@ public class RoleService {
         }
     }
 
-    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, User user, PrismRoleTransitionType transitionType, String message, boolean notify,
+            PrismRole... roles) {
         updateUserRoles(invoker, resource, newHashSet(user), transitionType, message, notify, roles);
     }
 
-    private void updateUserRoles(User invoker, Resource resource, Set<User> users, PrismRoleTransitionType transitionType, String message, boolean notify, PrismRole... roles) {
+    private void updateUserRoles(User invoker, Resource resource, Set<User> users, PrismRoleTransitionType transitionType, String message, boolean notify,
+            PrismRole... roles) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
             PropertyLoader loader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 
 import java.util.Arrays;
@@ -118,7 +119,7 @@ public class CommentDAO {
     public List<CommentAssignedUser> getAssignedHiringManagers(Comment comment) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("comment", "comment")
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(APPLICATION_HIRING_MANAGER))) //
                 .add(Restrictions.isNotNull("comment.submittedTimestamp")) //
@@ -132,7 +133,7 @@ public class CommentDAO {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.property("user.email")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS)) //
+                .add(Restrictions.eq("action.id", APPLICATION_ASSIGN_HIRING_MANAGERS)) //
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
                 .add(Restrictions.isNotNull("submittedTimestamp")) //
                 .add(Restrictions.ge("submittedTimestamp", comment.getSubmittedTimestamp())) //
@@ -167,7 +168,7 @@ public class CommentDAO {
     public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
-                .createAlias("comment", "comment")
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", roles)) //
                 .add(Restrictions.isNotNull("comment.submittedTimestamp")) //

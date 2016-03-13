@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 
 import java.util.Arrays;
@@ -90,6 +91,7 @@ public class CommentDAO {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.groupProperty("user")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(PrismRole.APPLICATION_POTENTIAL_INTERVIEWEE, //
                         PrismRole.APPLICATION_POTENTIAL_INTERVIEWER, PrismRole.APPLICATION_INTERVIEWEE, PrismRole.APPLICATION_INTERVIEWER))) //
@@ -103,6 +105,7 @@ public class CommentDAO {
     public List<LocalDateTime> getAppointmentPreferences(Comment comment) {
         return (List<LocalDateTime>) sessionFactory.getCurrentSession().createCriteria(CommentAppointmentPreference.class) //
                 .setProjection(Projections.property("dateTime")) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .addOrder(Order.asc("dateTime")) //
                 .list();
@@ -111,6 +114,7 @@ public class CommentDAO {
     public List<CommentAssignedUser> getAssignedHiringManagers(Comment comment) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", Lists.newArrayList(APPLICATION_HIRING_MANAGER))) //
                 .addOrder(Order.asc("role.id")) //
@@ -124,7 +128,7 @@ public class CommentDAO {
                 .setProjection(Projections.property("user.email")) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .add(Restrictions.ge("createdTimestamp", comment.getCreatedTimestamp())) //
-                .add(Restrictions.eq("action.id", PrismAction.APPLICATION_ASSIGN_HIRING_MANAGERS)) //
+                .add(Restrictions.eq("action.id", APPLICATION_ASSIGN_HIRING_MANAGERS)) //
                 .add(Restrictions.eq("recruiterAcceptAppointment", false)) //
                 .list();
     }
@@ -151,6 +155,7 @@ public class CommentDAO {
     public List<User> getAssignedUsers(Comment comment, PrismRole... roles) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
                 .setProjection(Projections.property("user")) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("comment", comment)) //
                 .add(Restrictions.in("role.id", roles)) //
                 .list();
@@ -158,6 +163,7 @@ public class CommentDAO {
 
     public List<CommentAssignedUser> getAssignedUsers(List<Integer> commentIds, List<PrismRole> roleIds) {
         return (List<CommentAssignedUser>) sessionFactory.getCurrentSession().createCriteria(CommentAssignedUser.class) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("comment.id", commentIds)) //
                 .add(Restrictions.in("role.id", roleIds)) //
                 .add(Restrictions.eq("roleTransitionType", PrismRoleTransitionType.CREATE)) //

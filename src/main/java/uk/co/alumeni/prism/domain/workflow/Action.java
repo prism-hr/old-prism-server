@@ -50,6 +50,9 @@ public class Action extends WorkflowDefinition {
     @Column(name = "visible_action", nullable = false)
     private Boolean visibleAction;
 
+    @Column(name = "document_circulation_action", nullable = false)
+    private Boolean documentCirculationAction;
+
     @Column(name = "replicable_user_assignment_action", nullable = false)
     private Boolean replicableUserAssignmentAction;
 
@@ -142,6 +145,14 @@ public class Action extends WorkflowDefinition {
 
     public void setVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+    }
+
+    public Boolean getDocumentCirculationAction() {
+        return documentCirculationAction;
+    }
+
+    public void setDocumentCirculationAction(Boolean documentCirculationAction) {
+        this.documentCirculationAction = documentCirculationAction;
     }
 
     public Boolean getReplicableUserAssignmentAction() {
@@ -247,6 +258,11 @@ public class Action extends WorkflowDefinition {
 
     public Action withVisibleAction(Boolean visibleAction) {
         this.visibleAction = visibleAction;
+        return this;
+    }
+
+    public Action withDocumentCirculationAction(Boolean documentCirculationAction) {
+        this.documentCirculationAction = documentCirculationAction;
         return this;
     }
 

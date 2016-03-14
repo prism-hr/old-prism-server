@@ -22,7 +22,7 @@ public class PrismStateAction {
 
     private PrismActionEnhancement actionEnhancement;
 
-    private PrismNotificationDefinition notification;
+    private PrismNotificationDefinition notificationDefinition;
 
     private Set<PrismStateActionAssignment> stateActionAssignments = newLinkedHashSet();
 
@@ -48,8 +48,8 @@ public class PrismStateAction {
         return actionEnhancement;
     }
 
-    public PrismNotificationDefinition getNotification() {
-        return notification;
+    public PrismNotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
     public Set<PrismStateActionAssignment> getStateActionAssignments() {
@@ -85,8 +85,8 @@ public class PrismStateAction {
         return this;
     }
 
-    public PrismStateAction withNotification(PrismNotificationDefinition notification) {
-        this.notification = notification;
+    public PrismStateAction withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
         return this;
     }
 
@@ -168,7 +168,7 @@ public class PrismStateAction {
         PrismStateAction other = (PrismStateAction) object;
         return equal(action, other.getAction()) && equal(raisesUrgentFlag, other.getRaisesUrgentFlag())
                 && equal(replicableSequenceStart, other.getReplicableSequenceStart()) && equal(actionCondition, other.getActionCondition())
-                && equal(actionEnhancement, other.getActionEnhancement()) && equal(notification, other.getNotification())
+                && equal(actionEnhancement, other.getActionEnhancement()) && equal(notificationDefinition, other.getNotificationDefinition())
                 && equal(stateActionAssignments, other.getStateActionAssignments()) && equal(stateTransitions, other.getStateTransitions());
     }
 

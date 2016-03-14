@@ -64,7 +64,7 @@ public class PrismApplicationWorkflow {
                 .withPartnerStateActionAssignments(DEPARTMENT_APPROVER); //
     }
 
-    public static PrismStateAction applicationCommentWithViewerRecruiter() {
+    public static PrismStateAction applicationCommentViewerRecruiter() {
         return applicationComment() //
                 .withStateActionAssignments(PrismRole.APPLICATION_VIEWER_RECRUITER);
     }
@@ -93,7 +93,7 @@ public class PrismApplicationWorkflow {
                 .withPartnerStateActionAssignments(DEPARTMENT_APPROVER);
     }
 
-    public static PrismStateAction applicationEmailCreatorWithViewerRecruiter() {
+    public static PrismStateAction applicationEmailCreatorViewerRecruiter() {
         return applicationEmailCreator() //
                 .withStateActionAssignments(APPLICATION_VIEWER_RECRUITER);
     }

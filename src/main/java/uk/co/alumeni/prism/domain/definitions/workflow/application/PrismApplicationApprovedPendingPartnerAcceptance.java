@@ -47,7 +47,6 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
                                 .withStateTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_HIRING_MANAGER_GROUP, APPLICATION_CREATE_APPOINTEE_GROUP)));
 
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_APPROVED_COMPLETED)); //
         stateActions.add(applicationViewEdit()); //
     }

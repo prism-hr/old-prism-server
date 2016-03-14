@@ -1041,13 +1041,13 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Screening Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_MESSAGING_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Messaging Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Review Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Interview Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Reference Stage Notification"),
-    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_RESERVED_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Reserved Stage Notification"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_VALIDATION_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Screening Stage Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_MESSAGING_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Messaging Stage Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Review Stage Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_INTERVIEW_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Interview Stage Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Approval Stage Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_REFERENCE_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Reference Stage Request"),
+    SYSTEM_NOTIFICATION_APPLICATION_COMPLETE_RESERVED_STAGE_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Complete Reserved Stage Request"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
             "Confirm Interview Availability Notification"),
     SYSTEM_NOTIFICATION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION,
@@ -1251,6 +1251,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_APPLICATION_MESSAGE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Message Escalation Duration"),
     SYSTEM_APPLICATION_MESSAGE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
             "The length of time you expect it to take to process an application via messaging"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Eligibility Confirmation Duration"),
+    SYSTEM_APPLICATION_CONFIRM_ELIGIBILITY_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
+            "The length of time you expect it to take to confirm the eligibility of an applicant"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION, "Reference Duration"),
     SYSTEM_APPLICATION_PROVIDE_REFERENCE_DURATION_HINT(PrismDisplayPropertyCategory.SYSTEM_STATE_DURATION,
             "The length of time you expect it to take to collect applicant references"),
@@ -1575,11 +1578,11 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
             "If you have already registered your department, you don't need to do this again. Just login with the account that you provided, and nagivate to your departments in the menu."),
     SYSTEM_HTML_RESOURCE_FAMILY_LOOKUP_INSTITUTION_LABEL(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Lookup"),
     SYSTEM_HTML_RESOURCE_FAMILY_CANNOT_FIND_THE_INSTITUTION(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "I cannot find the"),
-    SYSTEM_ADVERTISE_MEMBER_OF(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Are you a member of"), 
-    SYSTEM_ADVERTISE_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is me"), 
+    SYSTEM_ADVERTISE_MEMBER_OF(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Are you a member of"),
+    SYSTEM_ADVERTISE_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is me"),
     SYSTEM_ADVERTISE_NOT_ME(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "This is not me"),
     SYSTEM_ADVERTISE_CLAIM(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "Claim"),
-    SYSTEM_ADVERTISE_YOUR_COMPANY(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "as your company"), 
+    SYSTEM_ADVERTISE_YOUR_COMPANY(PrismDisplayPropertyCategory.SYSTEM_ADVERTISE, "as your company"),
 
     /*
      * *************** SYSTEM INVITE SECTION *********************
@@ -1982,7 +1985,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_OPPORTUNITY_TYPE_LABEL(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY, "Qualification Type"),
     SYSTEM_HTML_RESOURCE_FAMILY_APPLICATION_LOCATION_OPPORTUNITY_TYPE_HINT(PrismDisplayPropertyCategory.SYSTEM_CREATE_RESOURCE_FAMILY,
             "Select the type of your qualification"),
-
 
     /*
      * *************** SYSTEM HTML RESOURCE CONFIGURATION *********************
@@ -2499,9 +2501,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_COMMENT_CONTENT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Comments"),
     APPLICATION_ACTION_COMMENT_CONTENT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
             "Enter your comments here. The comments cannot be seen by the applicant"),
-    APPLICATION_ACTION_DOCUMENTS_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Attach Document (PDF)"),
+    APPLICATION_ACTION_DOCUMENTS_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Attach Documents (PDF)"),
     APPLICATION_ACTION_DOCUMENTS_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
             "If you wish, you may attach documents (PDF) to your comments. The file size limit is 2Mb."),
+    APPLICATION_ACTION_OFFER_DOCUMENTS_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Attach Offer Documents (PDF)"),
+    APPLICATION_ACTION_OFFER_DOCUMENTS_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
+            "Attach any documents to be included in the offer correspondence. The file size limit is 2Mb."),
     APPLICATION_ACTION_INTERESTED_IN_APPLICANT_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Interested in this applicant?"),
     APPLICATION_ACTION_INTERESTED_IN_APPLICANT_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
             "Tell us whether you would like to consider the applicant as a potential student."),
@@ -2582,9 +2587,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_POSITION_PROVISIONAL_START_DATE_HINT(
             PrismDisplayPropertyCategory.APPLICATION_ACTION,
             "The applicant's provisional start date. Prism generates a default value for provisional start date based upon the applicant's application. If you wish to amend the value you may do so."),
-    APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Salary & Conditions"),
+    APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Stipend & Conditions"),
     APPLICATION_ACTION_POSITION_APPOINTMENT_CONDITIONS_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
-            "Specify the salary and conditions that you will be offering the applicant."),
+            "Specify the stipend and conditions that you will be offering the applicant."),
     APPLICATION_ACTION_REJECTION_REASON_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Reasons for Rejection"),
     APPLICATION_ACTION_REJECTION_REASON_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Specify the pertinent reason for rejection."),
     APPLICATION_ACTION_DELEGATE_ADMINISTRATION_BUTTON(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Delegate Administration"),

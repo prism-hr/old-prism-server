@@ -24,7 +24,7 @@ import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.StateTransitionResolver;
 
 @Component
-public class ApplicationConfirmedOfferOutcomeResolver implements StateTransitionResolver<Application> {
+public class ApplicationConfirmedOfferResolver implements StateTransitionResolver<Application> {
 
     @Inject
     private ApplicationService applicationService;

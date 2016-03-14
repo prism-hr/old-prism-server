@@ -29,9 +29,9 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_INTERVIEW_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ASSIGN_INTERVIEWERS_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
@@ -54,8 +54,8 @@ public class PrismApplicationInterview extends PrismWorkflowState {
                 .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
                 .withStateTransitions(APPLICATION_ASSIGN_INTERVIEWERS_TRANSITION)); //
 
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //
         stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP));
         stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
@@ -99,7 +99,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY) //
                 .withRaisesUrgentFlag()
-                .withNotification(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_REQUEST) //
                 .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEW_GROUP); //
     }
 
@@ -107,7 +107,7 @@ public class PrismApplicationInterview extends PrismWorkflowState {
         return new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST) //
+                .withNotificationDefinition(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST) //
                 .withStateActionAssignments(APPLICATION_INTERVIEWER);
     }
 

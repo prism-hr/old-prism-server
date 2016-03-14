@@ -5,8 +5,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APP
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReserved.applicationCompleteReserved;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
@@ -18,13 +18,13 @@ public class PrismApplicationReservedPendingCompletion extends PrismWorkflowStat
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
 
         stateActions.add(applicationCompleteReserved(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_RESERVED_STAGE_REQUEST));
+                .withNotificationDefinition(APPLICATION_COMPLETE_RESERVED_STAGE_REQUEST));
 
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP)); //
         stateActions.add(applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, APPLICATION_RETIRE_REFEREE_GROUP));
         stateActions.add(applicationUploadReference(state));

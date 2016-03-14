@@ -27,7 +27,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminat
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_UPDATED_INTERVIEW_AVAILABILITY_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
@@ -39,7 +39,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
 
     @Override
     protected void setStateActions() {
-        stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter()); //
+        stateActions.add(PrismApplicationWorkflow.applicationCommentViewerRecruiter()); //
 
         stateActions.add(applicationCompleteState(APPLICATION_COMPLETE_INTERVIEW_STAGE, state, APPLICATION_PARENT_ADMINISTRATOR_GROUP,
                 APPLICATION_RETIRE_SCHEDULED_INTERVIEWEE_GROUP, APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP, APPLICATION_RETIRE_SCHEDULED_INTERVIEWER_GROUP,
@@ -48,7 +48,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY) //
                 .withRaisesUrgentFlag()
-                .withNotification(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST) //
+                .withNotificationDefinition(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_REQUEST) //
                 .withStateActionAssignments(APPLICATION_SCHEDULED_INTERVIEW_GROUP) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state) //
@@ -56,7 +56,7 @@ public class PrismApplicationInterviewPendingInterview extends PrismWorkflowStat
                         .withStateTransitionNotifications(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_NOTIFICATION) //
                         .withRoleTransitions(APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY_GROUP)));
 
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_FEEDBACK, APPLICATION_RETIRE_CONFIRMED_INTERVIEWEE_GROUP,
                 APPLICATION_UPDATE_SCHEDULED_INTERVIEWER_GROUP_CONFIRMED)); //
 

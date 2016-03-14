@@ -19,7 +19,7 @@ public class PrismDepartmentApprovalPendingCorrection extends PrismWorkflowState
         stateActions.add(new PrismStateAction() //
                 .withAction(PrismAction.DEPARTMENT_CORRECT) //
                 .withRaisesUrgentFlag() //
-                .withNotification(DEPARTMENT_CORRECT_REQUEST) //
+                .withNotificationDefinition(DEPARTMENT_CORRECT_REQUEST) //
                 .withStateActionAssignments(PrismRole.DEPARTMENT_ADMINISTRATOR) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(PrismState.DEPARTMENT_APPROVAL) //

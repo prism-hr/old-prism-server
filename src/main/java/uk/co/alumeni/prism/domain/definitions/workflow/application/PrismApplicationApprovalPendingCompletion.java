@@ -9,8 +9,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationProvideHiringManagerApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -20,11 +20,11 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
 
         stateActions.add(applicationCompleteApproval(state) //
                 .withRaisesUrgentFlag() //
-                .withNotification(APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST)); //
+                .withNotificationDefinition(APPLICATION_COMPLETE_APPROVAL_STAGE_REQUEST)); //
 
         stateActions.add(applicationProvideHiringManagerApproval() //
                 .withStateTransitions(new PrismStateTransition() //
@@ -32,7 +32,7 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
                         .withRoleTransitions(APPLICATION_CONFIRM_APPOINTMENT_GROUP))); //
 
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
 
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_HIRING_MANAGER_GROUP));

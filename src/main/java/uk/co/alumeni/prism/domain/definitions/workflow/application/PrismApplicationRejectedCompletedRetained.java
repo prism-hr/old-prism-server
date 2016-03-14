@@ -6,8 +6,8 @@ public class PrismApplicationRejectedCompletedRetained extends PrismWorkflowStat
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(PrismApplicationWorkflow.applicationCommentWithViewerRecruiter()); //
-		stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter()); //
+		stateActions.add(PrismApplicationWorkflow.applicationCommentViewerRecruiter()); //
+		stateActions.add(PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter()); //
 		stateActions.add(PrismApplicationWorkflow.applicationViewEdit()); //
 	}
 

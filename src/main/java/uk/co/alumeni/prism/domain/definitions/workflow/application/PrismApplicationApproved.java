@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow.application;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVED_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
@@ -10,10 +11,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
@@ -41,7 +42,7 @@ public class PrismApplicationApproved extends PrismWorkflowState {
         return applicationCompleteApproved(state, false);
     }
 
-    public static PrismStateAction applicationCompleteApprovedWithAppointeeHiringManager(PrismState state) {
+    public static PrismStateAction applicationCompleteApprovedAppointeeHiringManager(PrismState state) {
         return applicationCompleteApproved(state, true);
     }
 

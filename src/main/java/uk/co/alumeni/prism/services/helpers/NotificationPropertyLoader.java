@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.services.helpers;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -105,6 +108,12 @@ public class NotificationPropertyLoader {
         Resource resource = notificationDefinitionDTO.getResource();
         String url = getRedirectionUrl(resource, notificationDefinitionDTO.getTransitionAction(), notificationDefinitionDTO.getRecipient());
         return getRedirectionControl(url, linkLabel, declineLinkLabel);
+    }
+
+    public String getInvitationAcceptControl() {
+        return getRedirectionControl(applicationApiUrl + "/mail/activate?resourceId=" + notificationDefinitionDTO.getResource().getId() + "&actionId="
+                + notificationDefinitionDTO.getTransitionAction().name() + "&targetInvitation=" + notificationDefinitionDTO.getAdvertTarget().getId()
+                + "&activationCode=" + notificationDefinitionDTO.getRecipient().getActivationCode(), SYSTEM_PROCEED);
     }
 
     public String getRedirectionUrl(Integer resourceId, PrismAction actionId, User user) {

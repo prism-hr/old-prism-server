@@ -61,6 +61,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_REVIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SCHEDULED_INTERVIEWEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_SCHEDULED_INTERVIEWER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
@@ -69,6 +70,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_AVAILABILITY;
@@ -112,6 +114,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationGroup.APPLICATION_TERMINATE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_ASSIGNED_INTERVIEWER_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_COMPLETED_STATE_OUTCOME;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_CONFIRMED_OFFER_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_INTERVIEW_AVAILABILITY_OUTCOME;
@@ -137,6 +140,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -314,7 +318,7 @@ public enum PrismStateTransitionGroup {
                     .withStateTransitionNotifications(APPLICATION_HIRING_MANAGER, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                     .withRoleTransitions(APPLICATION_RETIRE_HIRING_MANAGER_GROUP, APPLICATION_RETIRE_APPOINTEE_GROUP), //
             new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_REVISION) //
+                    .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME)), //
 
@@ -613,9 +617,9 @@ public enum PrismStateTransitionGroup {
         for (PrismStateTransition stateTransition : getStateTransitions()) {
             PrismState transitionState = stateTransition.getTransitionState();
             if (!exclusionsList.contains(transitionState)) {
-                List<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
-                List<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
-                List<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
+                Set<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
+                Set<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
+                Set<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
                 stateTransitions.add(new PrismStateTransition() //
                         .withTransitionState(stateTransition.getTransitionState()) //
                         .withTransitionAction(stateTransition.getTransitionAction()) //

@@ -1,8 +1,13 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class PrismStateAction {
@@ -19,9 +24,9 @@ public class PrismStateAction {
 
     private PrismNotificationDefinition notification;
 
-    private List<PrismStateActionAssignment> stateActionAssignments = Lists.newLinkedList();
+    private Set<PrismStateActionAssignment> stateActionAssignments = newLinkedHashSet();
 
-    private List<PrismStateTransition> stateTransitions = Lists.newLinkedList();
+    private Set<PrismStateTransition> stateTransitions = newLinkedHashSet();
 
     public PrismAction getAction() {
         return action;
@@ -47,11 +52,11 @@ public class PrismStateAction {
         return notification;
     }
 
-    public List<PrismStateActionAssignment> getStateActionAssignments() {
+    public Set<PrismStateActionAssignment> getStateActionAssignments() {
         return stateActionAssignments;
     }
 
-    public List<PrismStateTransition> getStateTransitions() {
+    public Set<PrismStateTransition> getStateTransitions() {
         return stateTransitions;
     }
 
@@ -145,6 +150,26 @@ public class PrismStateAction {
         }
         this.stateTransitions.addAll(transitions);
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(action);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        PrismStateAction other = (PrismStateAction) object;
+        return equal(action, other.getAction()) && equal(raisesUrgentFlag, other.getRaisesUrgentFlag())
+                && equal(replicableSequenceStart, other.getReplicableSequenceStart()) && equal(actionCondition, other.getActionCondition())
+                && equal(actionEnhancement, other.getActionEnhancement()) && equal(notification, other.getNotification())
+                && equal(stateActionAssignments, other.getStateActionAssignments()) && equal(stateTransitions, other.getStateTransitions());
     }
 
 }

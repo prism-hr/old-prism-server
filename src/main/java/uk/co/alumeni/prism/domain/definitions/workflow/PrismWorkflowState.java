@@ -1,16 +1,16 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public abstract class PrismWorkflowState {
 
     protected PrismState state;
 
-    protected List<PrismStateAction> stateActions = Lists.newArrayList();
+    protected Set<PrismStateAction> stateActions = Sets.newHashSet();
 
     protected HashMap<PrismAction, PrismStateAction> stateActionsByAction = Maps.newHashMap();
 
@@ -21,7 +21,7 @@ public abstract class PrismWorkflowState {
         return this;
     }
 
-    public List<PrismStateAction> getStateActions() {
+    public Set<PrismStateAction> getStateActions() {
         return stateActions;
     }
 

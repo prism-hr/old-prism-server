@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_AS_USER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_VIEWER_GROUP;

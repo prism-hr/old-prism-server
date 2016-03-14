@@ -13,8 +13,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationUpdateInterviewAvailability;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduling;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -24,10 +24,10 @@ public class PrismApplicationInterviewPendingAvailability extends PrismWorkflowS
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
         stateActions.add(applicationCompleteInterviewScheduling(state));
         stateActions.add(applicationConfirmInterviewArrangements()); //
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_SCHEDULING)); //
 
         stateActions.add(applicationProvideInterviewAvailability() //

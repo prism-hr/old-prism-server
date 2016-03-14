@@ -272,7 +272,7 @@ public class SystemInitialisationHelper {
             assertEquals(prismStateAction.getActionEnhancement(), stateAction.getActionEnhancement());
 
             NotificationDefinition template = stateAction.getNotificationDefinition();
-            PrismNotificationDefinition prismTemplate = prismStateAction.getNotification();
+            PrismNotificationDefinition prismTemplate = prismStateAction.getNotificationDefinition();
             if (prismTemplate == null) {
                 assertNull(template);
             }

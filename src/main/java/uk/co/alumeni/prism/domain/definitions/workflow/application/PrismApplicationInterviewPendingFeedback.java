@@ -8,8 +8,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
@@ -18,9 +18,9 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
 
     @Override
     protected void setStateActions() {
-        stateActions.add(applicationCommentWithViewerRecruiter()); //
+        stateActions.add(applicationCommentViewerRecruiter()); //
         stateActions.add(applicationCompleteInterviewScheduled(state)); //
-        stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
+        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
 
         stateActions.add(applicationProvideInterviewFeedback() //

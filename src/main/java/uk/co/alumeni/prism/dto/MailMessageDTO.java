@@ -1,5 +1,12 @@
 package uk.co.alumeni.prism.dto;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+
+import java.util.List;
+
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 
 import com.google.common.base.MoreObjects;
@@ -24,6 +31,18 @@ public final class MailMessageDTO {
 
     public void setNotificationConfiguration(NotificationConfiguration notificationConfiguration) {
         this.notificationConfiguration = notificationConfiguration;
+    }
+
+    public List<Document> getDocumentAttachments() {
+        List<Document> documentAttachments = newLinkedList();
+
+        Comment comment = notificationDefinitionDTO.getComment();
+        if (comment != null && isTrue(comment.getAction().getDocumentCirculationAction())) {
+            comment.getDocuments().forEach(document -> documentAttachments.add(document));
+        }
+
+        notificationConfiguration.getDocuments().forEach(document -> documentAttachments.add(document.getDocument()));
+        return documentAttachments;
     }
 
     @Override

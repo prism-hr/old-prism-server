@@ -2577,7 +2577,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     APPLICATION_ACTION_DECLINE_SUPERVISION_REASON_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Reason"),
     APPLICATION_ACTION_DECLINE_SUPERVISION_REASON_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION,
             "Explain why you wish to decline to decline to endorse the candidate."),
-            "Explain why you wish to decline to provide primary supervision."),
     APPLICATION_ACTION_POSITION_TITLE_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Title"),
     APPLICATION_ACTION_POSITION_TITLE_HINT(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Enter the position title."),
     APPLICATION_ACTION_POSITION_DESCRIPTION_LABEL(PrismDisplayPropertyCategory.APPLICATION_ACTION, "Position Overview"),

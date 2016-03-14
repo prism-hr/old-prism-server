@@ -617,6 +617,7 @@ public enum PrismStateTransitionGroup {
         for (PrismStateTransition stateTransition : getStateTransitions()) {
             PrismState transitionState = stateTransition.getTransitionState();
             if (!exclusionsList.contains(transitionState)) {
+                Set<PrismStateTransitionNotification> definedStateTransitionNotifications = stateTransition.getStateTransitionNotifications();
                 Set<PrismRoleTransition> definedRoleTransitions = stateTransition.getRoleTransitions();
                 Set<PrismStateTermination> definedStateTerminations = stateTransition.getStateTerminations();
                 Set<PrismAction> definedPropagatedActions = stateTransition.getPropagatedActions();
@@ -629,6 +630,8 @@ public enum PrismStateTransitionGroup {
                         .withReplicableSequenceFilterLocation(stateTransition.getReplicableSequenceFilterLocation()) //
                         .withReplicableSequenceFilterSecondaryLocation(stateTransition.getReplicableSequenceFilterSecondaryLocation()) //
                         .withStateTransitionEvaluation(stateTransition.getStateTransitionEvaluation()) //
+                        .withStateTransitionNotifications(
+                                definedStateTransitionNotifications.toArray(new PrismStateTransitionNotification[definedStateTransitionNotifications.size()]))
                         .withRoleTransitions(definedRoleTransitions.toArray(new PrismRoleTransition[definedRoleTransitions.size()])) //
                         .withRoleTransitions(roleTransitions.toArray(new PrismRoleTransition[roleTransitions.size()])) //
                         .withStateTerminations(definedStateTerminations.toArray(new PrismStateTermination[definedStateTerminations.size()])) //

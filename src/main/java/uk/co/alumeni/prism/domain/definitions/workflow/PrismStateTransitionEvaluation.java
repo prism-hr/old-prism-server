@@ -12,7 +12,7 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.Appli
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedInterviewResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedManagementResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferAcceptanceResolver;
-import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferOutcomeResolver;
+import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationConfirmedOfferResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewAvailabilityResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedInterviewFeedbackResolver;
 import uk.co.alumeni.prism.workflow.resolvers.state.transition.application.ApplicationProvidedPartnerApprovalResolver;
@@ -38,7 +38,7 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.project.ProjectUp
 
 public enum PrismStateTransitionEvaluation {
 
-    APPLICATION_CONFIRMED_OFFER_OUTCOME(false, APPLICATION, ApplicationConfirmedOfferOutcomeResolver.class), //
+    APPLICATION_CONFIRMED_OFFER_OUTCOME(false, APPLICATION, ApplicationConfirmedOfferResolver.class), //
     APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME(false, APPLICATION, ApplicationConfirmedOfferAcceptanceResolver.class), //
     APPLICATION_COMPLETED_STATE_OUTCOME(true, APPLICATION, ApplicationCompletedStateResolver.class), //
     APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME(false, APPLICATION, ApplicationConfirmedManagementResolver.class), //

@@ -37,7 +37,6 @@ import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
-import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
@@ -128,8 +127,7 @@ public class MailSender {
                 MimeMultipart messageParts = new MimeMultipart("related");
                 messageParts.addBodyPart(messageBodyPart);
 
-                for (NotificationConfigurationDocument notificationConfigurationDocument : notificationConfiguration.getDocuments()) {
-                    Document document = notificationConfigurationDocument.getDocument();
+                for (Document document : messageDTO.getDocumentAttachments()) {
                     messageParts.addBodyPart(getMessagePart(documentService.getDocumentContent(document), document.getContentType(), document.getFileName()));
                 }
 
@@ -137,6 +135,9 @@ public class MailSender {
                 amazonClient.sendRawEmail(new SendRawEmailRequest(new RawMessage(getMessageData(message))));
             } else if (emailStrategy.equals("log")) {
                 logger.info("Sending Development Email: " + messageDTO.toString() + "\n" + subject + "\nContent:\n" + htmlContent);
+                messageDTO.getDocumentAttachments().forEach(document -> {
+                    logger.info("Sending Development Attachment: " + document.getFileName());
+                });
             } else {
                 logger.info("Sending Development Email: " + messageDTO.toString());
             }

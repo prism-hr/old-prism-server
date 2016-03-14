@@ -54,9 +54,9 @@ public enum PrismAction implements PrismLocalizableDefinition {
     APPLICATION_COMPLETE_REJECTED_STAGE(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
-    APPLICATION_CONFIRM_OFFER(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_CONFIRM_OFFER(getDefaultOfferApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE(getDefaultProcessApplicationActionDefinition()), //
-    APPLICATION_REVISE_OFFER(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
+    APPLICATION_REVISE_OFFER(getDefaultOfferApplicationActionDefinitionWithRedactions()), //
     APPLICATION_CONFIRM_REJECTION(getDefaultProcessApplicationActionDefinitionWithRedactions()), //
     APPLICATION_EMAIL_CREATOR(getDefaultEmailResourceCreatorActionDefinition(APPLICATION)), //
     APPLICATION_ESCALATE(getDefaultEscalateResourceActionDefinition(APPLICATION)), //
@@ -173,6 +173,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return actionDefinition.isVisibleAction();
     }
 
+    public boolean isDocumentCirculationAction() {
+        return actionDefinition.isDocumentCirculationAction();
+    }
+
     public boolean isReplicableUserAssignmentAction() {
         return actionDefinition.isReplicableUserAssignmentAction();
     }
@@ -211,6 +215,8 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         private boolean visibleAction = false;
 
+        private boolean documentCirculationAction = false;
+
         private boolean replicableUserAssignmentAction = false;
 
         private PrismPartnershipState partnershipState;
@@ -243,6 +249,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public boolean isVisibleAction() {
             return visibleAction;
+        }
+
+        public boolean isDocumentCirculationAction() {
+            return documentCirculationAction;
         }
 
         public boolean isReplicableUserAssignmentAction() {
@@ -287,6 +297,11 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public PrismActionDefinition withVisibleAction() {
             this.visibleAction = true;
+            return this;
+        }
+
+        public PrismActionDefinition withDocumentCirculationAction() {
+            this.documentCirculationAction = true;
             return this;
         }
 
@@ -369,6 +384,11 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return getDefaultProcessApplicationActionDefinition() //
                 .withRedactions(getDefaultApplicationActionRedactions()) //
                 .withReplicableUserAssignmentAction();
+    }
+
+    private static PrismActionDefinition getDefaultOfferApplicationActionDefinitionWithRedactions() {
+        return getDefaultProcessApplicationActionDefinitionWithRedactions() //
+                .withDocumentCirculationAction();
     }
 
     private static PrismActionDefinition getDefaultProcessApplicationActionDefinitionWithRedactions() {

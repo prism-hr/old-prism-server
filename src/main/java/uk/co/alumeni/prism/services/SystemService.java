@@ -562,7 +562,7 @@ public class SystemService {
     }
 
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
-        List<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
+        Set<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
         if (stateTransitions.isEmpty()) {
             stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
                     .withTransitionAction(stateAction.getAction().getId()));
@@ -605,7 +605,7 @@ public class SystemService {
     private void initializeStateTransitionNotifications(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
         for (PrismStateTransitionNotification prismStateActionNotification : prismStateTransition.getStateTransitionNotifications()) {
             Role role = roleService.getById(prismStateActionNotification.getRole());
-            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotification());
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotificationDefinition());
             StateTransitionNotification stateTransitionNotification = new StateTransitionNotification().withStateAction(stateTransition).withRole(role)
                     .withNotificationDefinition(notificationDefinition);
             entityService.save(stateTransitionNotification);

@@ -6,14 +6,14 @@ public class PrismStateTransitionNotification {
 
     private PrismRole role;
 
-    private PrismNotificationDefinition notification;
+    private PrismNotificationDefinition notificationDefinition;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public PrismNotificationDefinition getNotification() {
-        return notification;
+    public PrismNotificationDefinition getNotificationDefinition() {
+        return notificationDefinition;
     }
 
     public PrismStateTransitionNotification withRole(PrismRole role) {
@@ -21,14 +21,14 @@ public class PrismStateTransitionNotification {
         return this;
     }
 
-    public PrismStateTransitionNotification withDefinition(PrismNotificationDefinition notification) {
-        this.notification = notification;
+    public PrismStateTransitionNotification withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {
+        this.notificationDefinition = notificationDefinition;
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, notification);
+        return Objects.hashCode(role, notificationDefinition);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class PrismStateTransitionNotification {
             return false;
         }
         final PrismStateTransitionNotification other = (PrismStateTransitionNotification) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(notification, other.getNotification());
+        return Objects.equal(role, other.getRole()) && Objects.equal(notificationDefinition, other.getNotificationDefinition());
     }
 
 }

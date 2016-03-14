@@ -1,8 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationType.INDIVIDUAL;
 
 import java.util.Collection;

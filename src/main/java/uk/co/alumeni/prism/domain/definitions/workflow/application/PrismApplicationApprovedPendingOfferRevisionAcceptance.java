@@ -4,7 +4,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_REVISED_OFFER_ACCEPTANCE_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_APPOINTEE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedWithAppointeeHiringManager;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApprovedAppointeeHiringManager;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
@@ -23,7 +23,7 @@ public class PrismApplicationApprovedPendingOfferRevisionAcceptance extends Pris
                 .withStateTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION));
 
         stateActions.add(applicationCommentWithViewerRecruiter()); //
-        stateActions.add(applicationCompleteApprovedWithAppointeeHiringManager(state)); //
+        stateActions.add(applicationCompleteApprovedAppointeeHiringManager(state)); //
         stateActions.add(applicationEmailCreatorWithViewerRecruiter()); //
         stateActions.add(applicationViewEdit()); //
     }

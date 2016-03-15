@@ -109,7 +109,7 @@ public class LifeCycleService {
 
     @PreDestroy
     public void shutdown() throws Exception {
-        if (BooleanUtils.isTrue(maintain)) {
+        if (isTrue(maintain)) {
             for (PrismMaintenanceTask execution : executions) {
                 applicationContext.getBean(execution.getExecutor()).shutdown();
             }

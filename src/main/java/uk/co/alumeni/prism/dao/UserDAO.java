@@ -610,9 +610,9 @@ public class UserDAO {
                 .add(Restrictions.isNotNull("user.userAccount")) //
                 .add(Restrictions.in("id", resources)) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("activitySummaryCached")) //
-                        .add(Restrictions.isNull("userAccount.activitySummaryCached")) //
-                        .add(Restrictions.ltProperty("userAccount.activitySummaryCached", "activitySummaryCached")));
+                        .add(Restrictions.isNull("activityCachedTimestamp")) //
+                        .add(Restrictions.isNull("userAccount.activityCachedTimestamp")) //
+                        .add(Restrictions.ltProperty("userAccount.activityCachedTimestamp", "activityCachedTimestamp")));
     }
 
 }

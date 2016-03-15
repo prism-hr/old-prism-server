@@ -218,7 +218,7 @@ public class UserService {
     }
 
     public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message,
-                                         Collection<PrismRole> roles) {
+            Collection<PrismRole> roles) {
         User user = getOrCreateUser(firstName, lastName, email);
         roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
@@ -403,7 +403,7 @@ public class UserService {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
-        return Lists.<User>newArrayList();
+        return Lists.<User> newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserDTO userDTO) {
@@ -492,7 +492,7 @@ public class UserService {
         Set<UnverifiedUserDTO> userRoles = newTreeSet();
         HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
         if (!resources.isEmpty()) {
-            for (PrismScope scope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
+            for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
                 Set<Integer> scopedResources = resources.get(scope);
                 if (isNotEmpty(scopedResources)) {
                     userRoles.addAll(userDAO.getUsersToVerify(scope, resources.get(scope)));
@@ -523,7 +523,6 @@ public class UserService {
         });
         return users;
     }
-
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user) {
         HashMultimap<PrismScope, Integer> resources = create();
@@ -584,7 +583,7 @@ public class UserService {
 
         return users;
     }
-    
+
     public void setUserActivityCache(Integer user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
         UserAccount userAccount = getById(user).getUserAccount();
         userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));

@@ -553,7 +553,7 @@ public class UserDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("user.id"));
 
-        if (!scope.equals(roleScope)) {
+        if (scope.equals(roleScope)) {
             criteria.createAlias("userRoles", "userRole", JoinType.INNER_JOIN);
         } else {
             criteria.createAlias(roleScope.getLowerCamelName(), "roleResource", JoinType.INNER_JOIN) //

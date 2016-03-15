@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.dao;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
@@ -33,7 +34,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
@@ -195,7 +195,7 @@ public class ResourceDAO {
                             Restrictions.isNotNull("stateActionPending.templateComment")) //
                     .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN)
                     .add(Restrictions.in("id", resourceIds)) //
-                    .setResultTransformer(Transformers.aliasToBean(ResourceListRowDTO.class)) //
+                    .setResultTransformer(aliasToBean(ResourceListRowDTO.class)) //
                     .list();
         }
 
@@ -208,7 +208,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
+                .setResultTransformer(aliasToBean(responseClass)) //
                 .list();
     }
 
@@ -218,7 +218,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
+                .setResultTransformer(aliasToBean(responseClass)) //
                 .list();
     }
 
@@ -228,7 +228,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("userRole.user", user));
         appendResourceListFilterCriteria(criteria, conditions, filter, updateBaseline);
         return (List<T>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
+                .setResultTransformer(aliasToBean(responseClass)) //
                 .list();
     }
 
@@ -331,7 +331,7 @@ public class ResourceDAO {
                 .add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(50000) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationSitemap.class)) //
+                .setResultTransformer(aliasToBean(ResourceRepresentationSitemap.class)) //
                 .list();
     }
 
@@ -352,7 +352,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq("id", resource.getId()))
                 .add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion))
                 .addOrder(Order.desc("updatedTimestampSitemap"))
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationRobotMetadata.class))
+                .setResultTransformer(aliasToBean(ResourceRepresentationRobotMetadata.class))
                 .uniqueResult();
     }
 
@@ -370,7 +370,7 @@ public class ResourceDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource))
                 .add(getResourceActiveScopeExclusion(relatedScopeStates, enclosedScopeExclusion)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRepresentationIdentity.class)).list();
+                .setResultTransformer(aliasToBean(ResourceRepresentationIdentity.class)).list();
     }
 
     public <T extends ResourceParent> Long getActiveChildResourceCount(T resource, PrismScope childResourceScope) {
@@ -415,7 +415,7 @@ public class ResourceDAO {
         });
 
         return (ResourceFlatToNestedDTO) criteria.add(Restrictions.eq("id", resource.getId()))
-                .setResultTransformer(Transformers.aliasToBean(ResourceFlatToNestedDTO.class))
+                .setResultTransformer(aliasToBean(ResourceFlatToNestedDTO.class))
                 .uniqueResult();
     }
 
@@ -464,7 +464,7 @@ public class ResourceDAO {
         }
 
         return (List<ResourceConnectionDTO>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(ResourceConnectionDTO.class)) //
+                .setResultTransformer(aliasToBean(ResourceConnectionDTO.class)) //
                 .list();
     }
 
@@ -495,7 +495,7 @@ public class ResourceDAO {
                         .add(Projections.avg("rating"), "ratingAverage")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.isNotNull("rating")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
+                .setResultTransformer(aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
 
@@ -508,7 +508,7 @@ public class ResourceDAO {
                         .add(Projections.avg("opportunityRatingAverage"), "ratingAverage")) //
                 .add(Restrictions.eq(parentReference, parent)) //
                 .add(Restrictions.isNotNull("opportunityRatingCount")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
+                .setResultTransformer(aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
     }
 
@@ -558,7 +558,7 @@ public class ResourceDAO {
         return (List<ResourceSimpleDTO>) criteria.add(Restrictions.ne("state.id", valueOf(resourceScope.name() + "_DISABLED_COMPLETED")))
                 .addOrder(Order.asc("resource.name")) //
                 .addOrder(Order.asc("resource.id")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceSimpleDTO.class)) //
+                .setResultTransformer(aliasToBean(ResourceSimpleDTO.class)) //
                 .list();
     }
 
@@ -646,8 +646,27 @@ public class ResourceDAO {
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.isNotNull(resourceReference)) //
                 .add(Restrictions.eq("user", user)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
+                .setResultTransformer(aliasToBean(ResourceRoleDTO.class)) //
                 .list();
+    }
+
+    public List<Integer> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("comments", "comment", JoinType.INNER_JOIN) //
+                .add(Restrictions.le("comment.submittedTimestamp", baseline)) //
+                .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp")) //
+                .list();
+    }
+    
+    public void setResourceActivityCachedTimestamp(PrismScope scope, List<Integer> resources, DateTime baseline) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update " + scope.getLowerCamelName() + " " //
+                        + "set activityCachedTimestamp = :baseline " //
+                        + "where id in (:resources)") //
+                .setParameter("baseline", baseline) //
+                .setParameterList("resources", resources) //
+                .executeUpdate();
     }
 
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
@@ -742,7 +761,7 @@ public class ResourceDAO {
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.eq("recipient.user", user)) //
                 .add(read ? Restrictions.isNotNull("recipient.viewTimestamp") : Restrictions.isNull("recipient.viewTimestamp")) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceMessageCountDTO.class)) //
+                .setResultTransformer(aliasToBean(ResourceMessageCountDTO.class)) //
                 .list();
     }
 

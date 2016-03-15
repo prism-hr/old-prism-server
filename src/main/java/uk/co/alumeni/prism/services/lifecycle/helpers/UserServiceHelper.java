@@ -1,21 +1,20 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
+import static org.joda.time.DateTime.now;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
 
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.UserService;
 
 @Component
-public class NotificationServiceHelperReminder extends PrismServiceHelperAbstract {
-
-    @Inject
-    private NotificationService notificationService;
+public class UserServiceHelper extends PrismServiceHelperAbstract {
 
     @Inject
     private UserService userService;
@@ -27,7 +26,8 @@ public class NotificationServiceHelperReminder extends PrismServiceHelperAbstrac
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersForReminderNotification().forEach(this::sendUserReminderNotification);
+        DateTime baseline = now();
+        userService.getUsersWithActivitiesToCache(baseline).forEach(user -> setUserActivityCache(user, baseline));
     }
 
     @Override
@@ -35,11 +35,11 @@ public class NotificationServiceHelperReminder extends PrismServiceHelperAbstrac
         return shuttingDown;
     }
 
-    private void sendUserReminderNotification(Integer user) {
+    private void setUserActivityCache(Integer user, DateTime baseline) {
         if (!isShuttingDown()) {
-            UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentation(user);
+            UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
             if (userActivityRepresentation != null) {
-                notificationService.sendUserReminderNotification(user, userActivityRepresentation);
+                userService.setUserActivityCache(user, userActivityRepresentation, baseline);
             }
         }
     }

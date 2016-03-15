@@ -13,9 +13,9 @@ import javax.persistence.UniqueConstraint;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
+import uk.co.alumeni.prism.domain.activity.Activity;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;

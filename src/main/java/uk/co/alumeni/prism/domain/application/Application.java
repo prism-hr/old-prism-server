@@ -213,7 +213,7 @@ public class Application extends Resource
     @Column(name = "created_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdTimestamp;
-    
+
     @Column(name = "submitted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime submittedTimestamp;
@@ -221,6 +221,10 @@ public class Application extends Resource
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+
+    @Column(name = "activity_cached_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
@@ -436,6 +440,16 @@ public class Application extends Resource
     @Override
     public void setCreatedTimestamp(DateTime createdTimestamp) {
         this.createdTimestamp = createdTimestamp;
+    }
+
+    @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
     }
 
     @Override

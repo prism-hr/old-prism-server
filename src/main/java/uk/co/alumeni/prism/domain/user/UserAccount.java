@@ -114,7 +114,7 @@ public class UserAccount
     @Column(name = "activity_cache")
     private String activityCache;
 
-    @Column(name = "activity_cache_timestamp")
+    @Column(name = "activity_cached_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
 

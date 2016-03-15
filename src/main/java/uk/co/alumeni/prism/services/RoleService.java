@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -53,7 +54,6 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -182,7 +182,7 @@ public class RoleService {
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {
-        Map<PrismScope, PrismRoleCategory> defaults = Maps.newTreeMap();
+        Map<PrismScope, PrismRoleCategory> defaults = newTreeMap();
         for (PrismScope scope : PrismScope.values()) {
             PrismRole defaultRole = roleDAO.getDefaultRoleCategories(scope, user);
             if (defaultRole != null) {

@@ -222,7 +222,7 @@ public class Application extends Resource
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
 
-    @Column(name = "activity_cached_timestamp", nullable = false)
+    @Column(name = "activity_cached_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
 

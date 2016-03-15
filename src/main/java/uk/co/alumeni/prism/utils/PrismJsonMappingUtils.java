@@ -27,6 +27,15 @@ public class PrismJsonMappingUtils {
         }
     }
 
+    public <T> T readValue(String value, Class<T> valueClass) {
+        try {
+            return objectMapper.readValue(value, valueClass);
+        } catch (Exception e) {
+            logger.error("Unable to read json", e);
+            return null;
+        }
+    }
+
     public String writeValue(Object value) {
         if (value != null) {
             try {

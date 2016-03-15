@@ -13,8 +13,8 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -26,7 +26,7 @@ import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 
 import com.google.common.base.Joiner;
 
-public abstract class Resource implements Activity, UniqueEntity {
+public abstract class Resource implements ActivityEditable, UniqueEntity {
 
     @Override
     public abstract Integer getId();
@@ -92,9 +92,17 @@ public abstract class Resource implements Activity, UniqueEntity {
 
     public abstract void setCreatedTimestamp(DateTime createdTimestamp);
 
+    @Override
     public abstract DateTime getUpdatedTimestamp();
 
+    @Override
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+
+    @Override
+    public abstract DateTime getActivityCachedTimestamp();
+
+    @Override
+    public abstract void setActivityCachedTimestamp(DateTime activityCachedTimestamp);
 
     @Override
     public abstract String getSequenceIdentifier();

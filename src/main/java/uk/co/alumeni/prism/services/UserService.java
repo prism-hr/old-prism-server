@@ -572,7 +572,7 @@ public class UserService {
 
         return users;
     }
-    
+
     public void setUserActivityCache(Integer user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
         UserAccount userAccount = getById(user).getUserAccount();
         userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));

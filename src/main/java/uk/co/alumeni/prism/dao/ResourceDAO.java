@@ -653,12 +653,18 @@ public class ResourceDAO {
     public List<Integer> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.groupProperty("id")) //
-                .createAlias("comments", "comment", JoinType.INNER_JOIN) //
+                .createAlias("comments", "comment", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("comment.thread", "thread", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("thread.messages", "message", JoinType.LEFT_OUTER_JOIN) //
+                .add(Restrictions.isNotNull("comment.id")) //
                 .add(Restrictions.le("comment.submittedTimestamp", baseline)) //
-                .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("activityCachedTimestamp")) //
+                        .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp")) //
+                        .add(Restrictions.gtProperty("message.createdTimestamp", "activityCachedTimestamp"))) //
                 .list();
     }
-    
+
     public void setResourceActivityCachedTimestamp(PrismScope scope, List<Integer> resources, DateTime baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + scope.getLowerCamelName() + " " //

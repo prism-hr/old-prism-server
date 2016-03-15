@@ -88,9 +88,11 @@ import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
+import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
@@ -135,6 +137,9 @@ public class UserService {
 
     @Inject
     private UserAccountService userAccountService;
+
+    @Inject
+    private PrismJsonMappingUtils prismJsonMappingUtils;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -490,7 +495,7 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public Set<Integer> getUsersForActivityRepresentation() {
+    public Set<Integer> getUsersForActivityNotification() {
         Set<Integer> users = Sets.newHashSet();
         DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
         stream(values()).forEach(scope -> {
@@ -499,7 +504,7 @@ public class UserService {
         return users;
     }
 
-    public Set<Integer> getUsersForReminderRepresentation() {
+    public Set<Integer> getUsersForReminderNotification() {
         Set<Integer> users = Sets.newHashSet();
         DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
         stream(values()).forEach(scope -> {
@@ -545,6 +550,33 @@ public class UserService {
 
     public DateTime getUserCreatedTimestamp(User user) {
         return userDAO.getUserCreatedTimestamp(user);
+    }
+
+    public Set<Integer> getUsersWithActivitiesToCache(DateTime baseline) {
+        Set<Integer> users = Sets.newHashSet();
+
+        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesWithActivitiesToCache(baseline);
+        resourceIndex.keySet().forEach(scope -> {
+            Set<Integer> resources = resourceIndex.get(scope);
+            scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
+                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, roleScope, resources)));
+
+            if (!scope.equals(SYSTEM)) {
+                stream(organizationScopes).forEach(targeterScope -> {
+                    stream(organizationScopes).forEach(targetScope -> {
+                        users.addAll(userDAO.getUsersWithActivitiesToCache(scope, targeterScope, targetScope, resources));
+                    });
+                });
+            }
+        });
+
+        return users;
+    }
+    
+    public void setUserActivityCache(Integer user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
+        UserAccount userAccount = getById(user).getUserAccount();
+        userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
+        userAccount.setActivityCachedTimestamp(baseline);
     }
 
     @SuppressWarnings("unchecked")

@@ -108,6 +108,10 @@ public class Department extends ResourceParent {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
 
+    @Column(name = "activity_cached_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
+    
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
@@ -329,6 +333,16 @@ public class Department extends ResourceParent {
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
+    }
+    
     @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;

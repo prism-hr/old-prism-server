@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.Activity;
+import uk.co.alumeni.prism.domain.activity.Activity;
 
 @Entity
 @Table(name = "user_account_update")

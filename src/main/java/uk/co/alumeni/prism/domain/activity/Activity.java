@@ -1,4 +1,4 @@
-package uk.co.alumeni.prism.domain;
+package uk.co.alumeni.prism.domain.activity;
 
 public interface Activity {
 

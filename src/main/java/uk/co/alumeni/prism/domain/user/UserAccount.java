@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.Activity;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
@@ -29,7 +30,10 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user_account")
-public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserAward, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
+public class UserAccount
+        implements
+        ActivityEditable,
+        ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserAward, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -105,6 +109,14 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
+
+    @Lob
+    @Column(name = "activity_cache")
+    private String activityCache;
+
+    @Column(name = "activity_cached_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
 
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -280,10 +292,30 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
         this.shared = shared;
     }
 
+    public String getActivityCache() {
+        return activityCache;
+    }
+
+    public void setActivityCache(String activityCache) {
+        this.activityCache = activityCache;
+    }
+
+    @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
+    }
+
+    @Override
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
 
+    @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }

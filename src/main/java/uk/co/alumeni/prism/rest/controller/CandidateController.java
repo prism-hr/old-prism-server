@@ -16,9 +16,11 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
+import uk.co.alumeni.prism.rest.representation.CandidateRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.UserService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,9 +56,13 @@ public class CandidateController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "{userId}", method = RequestMethod.GET)
-    public UserProfileRepresentation getUserProfile(@PathVariable Integer userId) {
+    public CandidateRepresentation getUserProfile(@PathVariable Integer userId) {
+        User currentUser = userService.getCurrentUser();
         User user = userService.getById(userId);
         // TODO implement security check
-        return userMapper.getUserProfileRepresentation(user);
+        UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
+        UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user);
+        CandidateRepresentation candidate = new CandidateRepresentation().withUser(userRepresentation).withProfile(profileRepresentation);
+        return candidate;
     }
 }

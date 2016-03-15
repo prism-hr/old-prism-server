@@ -72,31 +72,6 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("application", resource.getApplication())) //
-                        .add(Restrictions.eq("project", resource.getProject())) //
-                        .add(Restrictions.eq("program", resource.getProgram())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("system", resource.getSystem()))) //
-                .add(Restrictions.in("role.id", roleIds)) //
-                .list();
-    }
-
-    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(roleIds[0].getScope().getLowerCamelName(), resources)) //
-                .add(Restrictions.in("role.id", roleIds)) //
-                .list();
-    }
-
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
@@ -291,8 +266,7 @@ public class UserDAO {
     }
 
     public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
-                                          Resource resource,
-                                          PrismAction... actions) {
+            Resource resource, PrismAction... actions) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
                 .add(getUsersWithActionsConstraint(resource, actions)) //
                 .add(WorkflowDAO.getTargetActionConstraint()) //
@@ -575,6 +549,39 @@ public class UserDAO {
                 .uniqueResult();
     }
 
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope roleScope, Set<Integer> resources) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("user.id"));
+
+        if (!scope.equals(roleScope)) {
+            criteria.createAlias("userRoles", "userRole", JoinType.INNER_JOIN);
+        } else {
+            criteria.createAlias(roleScope.getLowerCamelName(), "roleResource", JoinType.INNER_JOIN) //
+                    .createAlias("roleResource.userRoles", "userRole", JoinType.INNER_JOIN);
+        }
+
+        return criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(getUsersWithActivitiesToCacheConstraint(resources)) //
+                .list();
+    }
+
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Set<Integer> resources) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
+                .createAlias("targetResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
+                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(getUsersWithActivitiesToCacheConstraint(resources)) //
+                .list();
+    }
+
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
         enclosedResources.keySet().forEach( //
@@ -596,6 +603,16 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true)));
+    }
+
+    private Junction getUsersWithActivitiesToCacheConstraint(Set<Integer> resources) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.isNotNull("user.userAccount")) //
+                .add(Restrictions.in("id", resources)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("activitySummaryCached")) //
+                        .add(Restrictions.isNull("userAccount.activitySummaryCached")) //
+                        .add(Restrictions.ltProperty("userAccount.activitySummaryCached", "activitySummaryCached")));
     }
 
 }

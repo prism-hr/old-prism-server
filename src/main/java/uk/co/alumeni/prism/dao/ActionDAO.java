@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
@@ -140,7 +141,7 @@ public class ActionDAO {
             Collection<Integer> resources, Collection<PrismAction> actions, ProjectionList columns, Criterion restriction, Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(getActionConstraint(user, resources, actions, restriction))
-                .add(WorkflowDAO.getTargetActionConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }

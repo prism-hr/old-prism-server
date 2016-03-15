@@ -8,6 +8,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.getDurationUnitAsHours;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
@@ -467,7 +468,7 @@ public class AdvertDAO {
                         .add(Restrictions.eq("userRole.user", user))) //
                 .add(Restrictions.in("stateAction.action.id",
                         asList("UNENDORSE", "REENDORSE").stream().map(a -> PrismAction.valueOf(scope.name() + "_" + a)).collect(toList())))
-                .add(WorkflowDAO.getTargetActionConstraint())
+                .add(getTargetActionConstraint())
                 .list();
     }
 

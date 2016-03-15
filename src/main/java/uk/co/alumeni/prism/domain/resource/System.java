@@ -71,6 +71,10 @@ public class System extends Resource {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+    
+    @Column(name = "activity_cached_timestamp", nullable = false)
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
 
     @Column(name = "cipher_salt", nullable = false)
     private String cipherSalt;
@@ -278,6 +282,16 @@ public class System extends Resource {
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
+    }
+    
+    @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
     }
 
     public final String getCipherSalt() {

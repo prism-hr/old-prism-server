@@ -667,7 +667,7 @@ public class ResourceDAO {
 
     public void setResourceActivityCachedTimestamp(PrismScope scope, List<Integer> resources, DateTime baseline) {
         sessionFactory.getCurrentSession().createQuery( //
-                "update " + scope.getLowerCamelName() + " " //
+                "update " + scope.getUpperCamelName() + " " //
                         + "set activityCachedTimestamp = :baseline " //
                         + "where id in (:resources)") //
                 .setParameter("baseline", baseline) //

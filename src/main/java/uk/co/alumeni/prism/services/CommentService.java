@@ -243,8 +243,8 @@ public class CommentService {
 
     public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
             DateTime baseline) {
-        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
-                .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
+        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker)
+                .withDelegateUser(invoker.equals(user) ? null : user).withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
         preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
         return preferenceComment;
     }

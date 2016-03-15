@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -1153,6 +1154,18 @@ public class ResourceService {
         }
 
         resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
+    }
+
+    public HashMultimap<PrismScope, Integer> getResourcesWithActivitiesToCache(DateTime baseline) {
+        HashMultimap<PrismScope, Integer> resourceIndex = HashMultimap.create();
+        stream(PrismScope.values()).forEach(scope -> {
+            List<Integer> resources = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline);
+            if (resources.size() > 0) {
+                resourceIndex.putAll(scope, resources);
+                resourceDAO.setResourceActivityCachedTimestamp(scope, resources, baseline);
+            }
+        });
+        return resourceIndex;
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

@@ -50,6 +50,7 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserFeedbackService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -97,6 +98,9 @@ public class UserMapper {
 
     @Inject
     private DocumentMapper documentMapper;
+
+    @Inject
+    private PrismJsonMappingUtils prismJsonMappingUtils;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -185,6 +189,22 @@ public class UserMapper {
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(User user) {
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount != null) {
+            String userActivityCache = userAccount.getActivityCache();
+            if (userActivityCache == null) {
+                return getUserActivityRepresentationFresh(user);
+            }
+            return prismJsonMappingUtils.readValue(userActivityCache, UserActivityRepresentation.class);
+        }
+        return null;
+    }
+
+    public UserActivityRepresentation getUserActivityRepresentationFresh(Integer user) {
+        return getUserActivityRepresentationFresh(userService.getById(user));
+    }
+
+    public UserActivityRepresentation getUserActivityRepresentationFresh(User user) {
         Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
         return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))

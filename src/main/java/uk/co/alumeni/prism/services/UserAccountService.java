@@ -251,7 +251,7 @@ public class UserAccountService {
     }
 
     private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
-        DateTime baseline = DateTime.now();
+        DateTime baseline = now();
         String encryptedPassword = password != null ? PrismEncryptionUtils.getMD5(password) : null;
         UserAccount userAccount = new UserAccount().withSendActivityNotification(true).withPassword(encryptedPassword).withUpdatedTimestamp(baseline)
                 .withEnabled(enableAccount).withShared(true);

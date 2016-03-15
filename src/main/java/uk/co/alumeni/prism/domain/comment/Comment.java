@@ -55,8 +55,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.Competence;
+import uk.co.alumeni.prism.domain.activity.Activity;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;

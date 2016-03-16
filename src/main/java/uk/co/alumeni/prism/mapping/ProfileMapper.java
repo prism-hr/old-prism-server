@@ -45,7 +45,9 @@ import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
 import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
+import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
+import uk.co.alumeni.prism.rest.representation.ProfileRepresentationCandidate;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
@@ -58,6 +60,8 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepre
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
@@ -96,11 +100,11 @@ public class ProfileMapper {
     @Inject
     private UserService userService;
 
-    public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
+    public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter, String lastSequenceIdentifier) {
         User currentUser = userService.getCurrentUser();
         DateTime updatedBaseline = now().minusDays(1);
         List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
-        userService.getUserProfiles(filter, currentUser).forEach(user -> { //
+        userService.getUserProfiles(filter, currentUser, lastSequenceIdentifier).forEach(user -> { //
                     Long applicationCount = user.getApplicationCount();
                     Long applicationRatingCount = user.getApplicationRatingCount();
                     BigDecimal applicationRatingAverage = user.getApplicationRatingAverage();
@@ -237,7 +241,7 @@ public class ProfileMapper {
     public ProfileRepresentationSummary getProfileRepresentationSummary(Integer userId) {
         User user = userService.getById(userId);
         User currentUser = userService.getCurrentUser();
-        if (user.equals(currentUser) || userService.getUserProfiles(new ProfileListFilterDTO().withUserId(userId), currentUser) != null) {
+        if (checkUserCanViewProfile(userId, user, currentUser)) {
             ProfileRepresentationSummary representation = new ProfileRepresentationSummary();
             representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
             representation.setCreatedTimestamp(userService.getUserCreatedTimestamp(user));
@@ -264,7 +268,19 @@ public class ProfileMapper {
             return representation;
         }
 
-        return null;
+        throw new PrismForbiddenException("user does not have permission to access candidate data");
+    }
+
+    public ProfileRepresentationCandidate getProfileRepresentationCandidate(Integer userId) {
+        User user = userService.getById(userId);
+        User currentUser = userService.getCurrentUser();
+        if (checkUserCanViewProfile(userId, user, currentUser)) {
+            UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user);
+            UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
+            return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation);
+        }
+
+        throw new PrismForbiddenException("user does not have permission to access candidate data");
     }
 
     private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification, User currentUser) {
@@ -341,6 +357,10 @@ public class ProfileMapper {
         if (user != null) {
             representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
         }
+    }
+
+    private boolean checkUserCanViewProfile(Integer userId, User user, User currentUser) {
+        return user.equals(currentUser) || userService.getUserProfiles(new ProfileListFilterDTO().withUserId(userId), currentUser) != null;
     }
 
 }

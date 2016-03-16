@@ -3,7 +3,7 @@ package uk.co.alumeni.prism.rest.representation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
-public class CandidateRepresentation {
+public class ProfileRepresentationCandidate {
 
     private UserRepresentationSimple user;
 
@@ -25,12 +25,12 @@ public class CandidateRepresentation {
         this.profile = profile;
     }
 
-    public CandidateRepresentation withUser(UserRepresentationSimple user) {
+    public ProfileRepresentationCandidate withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }
 
-    public CandidateRepresentation withProfile(UserProfileRepresentation profile) {
+    public ProfileRepresentationCandidate withProfile(UserProfileRepresentation profile) {
         this.profile = profile;
         return this;
     }

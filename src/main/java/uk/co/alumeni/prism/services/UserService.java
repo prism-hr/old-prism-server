@@ -7,6 +7,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.stream;
@@ -25,6 +26,8 @@ import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -85,6 +88,7 @@ import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
@@ -514,15 +518,30 @@ public class UserService {
     }
 
     public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user) {
-        HashMultimap<PrismScope, Integer> resources = create();
-        stream(organizationScopes).forEach(
-                organizationScope -> resources.putAll(
-                        organizationScope,
-                        resourceService.getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM)).stream()
-                                .map(d -> d.getId()).collect(toList())));
+        return getUserProfiles(filter, user, null);
+    }
 
-        Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
-        resources.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resources.get(scope), filter)));
+    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user, String lastSequenceIdentifier) {
+        HashMultimap<PrismScope, Integer> resourceIndex = create();
+        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER);
+        stream(organizationScopes).forEach(organizationScope -> {
+            List<Integer> resources = resourceService
+                    .getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM), filterDTO).stream()
+                    .map(resource -> resource.getId()).collect(toList());
+            resourceIndex.putAll(organizationScope, resources);
+        });
+
+        stream(organizationScopes).forEach(targeterScope -> {
+            stream(organizationScopes).forEach(targetScope -> {
+                Set<Integer> resources = resourceIndex.get(targeterScope);
+                if (isNotEmpty(resources)) {
+                    resourceIndex.putAll(targetScope, resourceService.getResourceTargets(targeterScope, resources, targetScope));
+                }
+            });
+        });
+
+        Set<ProfileListRowDTO> profiles = newLinkedHashSet();
+        resourceIndex.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, lastSequenceIdentifier)));
 
         return newLinkedList(profiles);
     }

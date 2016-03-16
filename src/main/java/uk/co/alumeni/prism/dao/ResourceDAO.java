@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -675,6 +676,17 @@ public class ResourceDAO {
                 .executeUpdate();
     }
 
+    public List<Integer> getResourceTargets(PrismScope targeterScope, Collection<Integer> targeterResources, PrismScope targetScope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(targeterScope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("targetAdvert." + targetScope.getLowerCamelName() + ".id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", targeterResources)) //
+                .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED)) //
+                .list();
+    }
+
     private static void appendResourceListFilterCriteria(Criteria criteria, Junction constraints, ResourceListFilterDTO filter, DateTime updateBaseline) {
         List<Integer> resourceIds = filter.getResourceIds();
         if (isNotEmpty(resourceIds)) {
@@ -686,9 +698,9 @@ public class ResourceDAO {
             criteria.add(Restrictions.eq("resource." + parentResource.getScope().getLowerCamelName() + ".id", parentResource.getId()));
         }
 
-        PrismRoleCategory roleCategory = filter.getRoleCategory();
-        if (roleCategory != null) {
-            criteria.add(Restrictions.eq("role.roleCategory", roleCategory));
+        PrismRoleCategory[] roleCategories = filter.getRoleCategories();
+        if (roleCategories != null) {
+            criteria.add(Restrictions.in("role.roleCategory", roleCategories));
         }
 
         List<PrismAction> actionIds = filter.getActionIds();

@@ -199,7 +199,6 @@ public class ResourceMapper {
     public ResourceListRepresentation getResourceListRepresentation(PrismScope scope, ResourceListFilterDTO filter, String lastSequenceIdentifier)
             throws Exception {
         DateTime baseline = new DateTime();
-
         User user = userService.getCurrentUser();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 

@@ -402,7 +402,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter) {
+    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter, String lastSequenceIdentifier) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //
@@ -435,26 +435,22 @@ public class UserDAO {
             criteria.add(Restrictions.eq("user.id", userId));
         }
 
-        String keyword = filter.getKeyword();
-        if (keyword != null) {
+        String valueString = filter.getValueString();
+        if (valueString != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.like("user.fullName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("user.email", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("userDocument.personalSummary", keyword, MatchMode.ANYWHERE)));
+                    .add(Restrictions.like("user.fullName", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("user.email", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("qualificationAdvert.name", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("qualificationAdvert.summary", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("qualificationAdvert.description", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("employmentPositionAdvert.name", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("employmentPositionAdvert.summary", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("employmentPositionAdvert.description", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("userDocument.personalSummary", valueString, MatchMode.ANYWHERE)));
         }
 
-        String sequenceIdentifier = filter.getSequenceIdentifier();
-        if (sequenceIdentifier != null) {
-            criteria.add(Restrictions.lt("sequenceIdentifier", sequenceIdentifier));
+        if (lastSequenceIdentifier != null) {
+            criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
         }
 
         return (List<ProfileListRowDTO>) criteria.addOrder(Order.desc("sequenceIdentifier"))

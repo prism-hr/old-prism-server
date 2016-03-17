@@ -3,24 +3,22 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newLinkedList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
-import uk.co.alumeni.prism.domain.message.MessageRecipient;
 import uk.co.alumeni.prism.domain.message.MessageThread;
+import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.message.MessageRecipientRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.services.MessageService;
 
@@ -45,37 +43,41 @@ public class MessageMapper {
 
         List<MessageThread> threads = messageService.getMessageThreads(resource, user, searchTerm);
         if (isNotEmpty(threads)) {
+            LinkedHashMultimap<MessageThread, MessageThreadParticipant> participants = messageService.getMessageThreadParticipants(threads);
             LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, user, searchTerm);
+            LinkedHashMultimap<Message, Document> documents = messageService.getMessageDocuments(messages.values());
 
-            Collection<Message> unindexedMessages = messages.values();
-            LinkedHashMultimap<Message, Document> documents = messageService.getMessageDocuments(unindexedMessages);
-            LinkedHashMultimap<Message, MessageRecipient> users = messageService.getMessageRecipients(unindexedMessages);
-
-            threads.stream().forEach(t -> {
-                List<MessageRepresentation> messageRepresentations = newLinkedList();
+            threads.stream().forEach(thread -> {
                 MessageThreadRepresentation threadRepresentation = new MessageThreadRepresentation()
-                        .withId(t.getId()).withSubject(t.getSubject());
+                        .withId(thread.getId()).withSubject(thread.getSubject());
 
-                messages.get(t).stream().forEach(message -> {
-                    List<DocumentRepresentation> documentRepresentations = newLinkedList();
-                    List<MessageRecipientRepresentation> messageRecipientRepresentations = newLinkedList();
+                List<MessageThreadParticipantRepresentation> participantRepresentations = newLinkedList();
+                participants.get(thread).stream().forEach(participant -> {
+                    User recipientUser = participant.getUser();
+
+                    Message lastViewedMessage = participant.getLastViewedMessage();
+                    MessageRepresentation lastViewedMessageRepresentation = new MessageRepresentation()
+                            .withId(lastViewedMessage == null ? null : lastViewedMessage.getId());
+                    participantRepresentations.add(new MessageThreadParticipantRepresentation()
+                            .withUser(userMapper.getUserRepresentationSimple(recipientUser, user))
+                            .withLastViewedMessage(lastViewedMessageRepresentation));
+
+                    if (recipientUser.equals(user)) {
+                        threadRepresentation.setLastViewedTimestamp(lastViewedMessageRepresentation);
+                    }
+                });
+
+                threadRepresentation.setParticipants(participantRepresentations);
+
+                List<MessageRepresentation> messageRepresentations = newLinkedList();
+                messages.get(thread).stream().forEach(message -> {
                     MessageRepresentation messageRepresentation = new MessageRepresentation()
+                            .withId(message.getId())
                             .withUser(userMapper.getUserRepresentationSimple(message.getUser(), user))
-                            .withContent(message.getContent()).withCreatedTimestamp(message.getCreatedTimestamp());
+                            .withContent(message.getContent())
+                            .withCreatedTimestamp(message.getCreatedTimestamp());
 
-                    users.get(message).stream().forEach(recipient -> {
-                        User recipientUser = recipient.getUser();
-                        DateTime viewTimestamp = recipient.getViewTimestamp();
-                        messageRecipientRepresentations.add(new MessageRecipientRepresentation().withId(recipient.getId())
-                                .withUser(userMapper.getUserRepresentationSimple(recipientUser, user)).withViewTimestamp(viewTimestamp));
-
-                        if (recipientUser.equals(user)) {
-                            messageRepresentation.setViewTimestamp(viewTimestamp);
-                        }
-                    });
-
-                    messageRepresentation.setRecipients(messageRecipientRepresentations);
-
+                    List<DocumentRepresentation> documentRepresentations = newLinkedList();
                     documents.get(message).forEach(document -> documentRepresentations.add(documentMapper.getDocumentRepresentation(document)));
                     messageRepresentation.setDocuments(documentRepresentations);
 

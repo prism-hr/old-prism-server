@@ -10,6 +10,10 @@ public class MessageThreadRepresentation {
 
     private List<MessageRepresentation> messages;
 
+    private List<MessageThreadParticipantRepresentation> participants;
+
+    private MessageRepresentation lastViewedMessage;
+
     public Integer getId() {
         return id;
     }
@@ -32,6 +36,22 @@ public class MessageThreadRepresentation {
 
     public void setMessages(List<MessageRepresentation> messages) {
         this.messages = messages;
+    }
+
+    public List<MessageThreadParticipantRepresentation> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(List<MessageThreadParticipantRepresentation> participants) {
+        this.participants = participants;
+    }
+
+    public MessageRepresentation getLastViewedMessage() {
+        return lastViewedMessage;
+    }
+
+    public void setLastViewedTimestamp(MessageRepresentation lastViewedMessage) {
+        this.lastViewedMessage = lastViewedMessage;
     }
 
     public MessageThreadRepresentation withId(Integer id) {

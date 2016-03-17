@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
+import static org.joda.time.DateTime.now;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
@@ -9,7 +11,7 @@ import org.springframework.stereotype.Service;
 import uk.co.alumeni.prism.services.MessageService;
 
 @Service
-public class MessageServiceHelperAllocation extends PrismServiceHelperAbstract {
+public class MessageServiceHelper extends PrismServiceHelperAbstract {
 
     @Inject
     private MessageService messageService;
@@ -18,7 +20,7 @@ public class MessageServiceHelperAllocation extends PrismServiceHelperAbstract {
 
     @Override
     public void execute() {
-        messageService.getMessageRecipientsPendingAllocation().forEach(messageRecipient -> allocateMessageRecipients(messageRecipient));
+        messageService.getMessagesNotificationsPending().forEach(messageNotification -> sendMessageNotification(messageNotification));
     }
 
     @Override
@@ -26,9 +28,9 @@ public class MessageServiceHelperAllocation extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void allocateMessageRecipients(Integer messageRecipient) {
+    private void sendMessageNotification(Integer messageRecipient) {
         if (!isShuttingDown()) {
-            messageService.allocateMessageRecipients(messageRecipient);
+            messageService.sendMessageNotification(messageRecipient, now());
         }
     }
 

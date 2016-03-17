@@ -129,7 +129,7 @@ public class RoleService {
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {
-        if (roleDAO.getRolesForResource(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
+        if (roleDAO.getRolesForResource(resource, user).size() < 2 && resource.getUser().equals(user)) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
 

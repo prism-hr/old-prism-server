@@ -102,7 +102,9 @@ public class LifeCycleService {
             staticDataMapper.getData();
         }
 
-        if (BooleanUtils.isTrue(maintain)) {
+        systemService.initializePropertyLoader();
+
+        if (isTrue(maintain)) {
             executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));
         }
     }

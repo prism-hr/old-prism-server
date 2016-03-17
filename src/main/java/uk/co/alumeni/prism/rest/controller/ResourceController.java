@@ -335,8 +335,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<MessageThreadRepresentation> getThreads(
-            @PathVariable Integer resourceId, @RequestParam(required = false) String q,
+    public List<MessageThreadRepresentation> getThreads(@PathVariable Integer resourceId, @RequestParam(required = false) String q,
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return messageMapper.getMessageThreadRepresentations(resource, q);
@@ -344,24 +343,24 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void createThread(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+    public void createMessageThread(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody MessageDTO messageDTO) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        messageService.postMessage(resource, null, messageDTO);
+        messageService.createMessage(resource, null, messageDTO);
     }
 
     @RequestMapping(value = "{resourceId}/threads/{threadId}/messages", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void postMessage(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @PathVariable Integer threadId, @Valid @RequestBody MessageDTO messageDTO) {
+    public void createMessage(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer threadId,
+            @Valid @RequestBody MessageDTO messageDTO) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        messageService.postMessage(resource, threadId, messageDTO);
+        messageService.createMessage(resource, threadId, messageDTO);
     }
 
     @RequestMapping(value = "{resourceId}/threads/{threadId}/view", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void viewMessage(@RequestBody Map<String, Integer> body) {
-        messageService.viewMessage(body.get("recipientId"));
+    public void viewMessageThread(@RequestBody Map<String, Integer> body) {
+        messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
 
     @ModelAttribute

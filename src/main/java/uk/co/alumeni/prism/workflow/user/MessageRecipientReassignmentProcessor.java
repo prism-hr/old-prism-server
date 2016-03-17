@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 
-import uk.co.alumeni.prism.domain.message.MessageRecipient;
+import uk.co.alumeni.prism.domain.message.MessageNotification;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.UserService;
 
@@ -16,7 +16,7 @@ public class MessageRecipientReassignmentProcessor implements PrismUserReassignm
 
     @Override
     public void reassign(User oldUser, User newUser, String userProperty) {
-        for (MessageRecipient oldMessageRecipient : oldUser.getMessageRecipients()) {
+        for (MessageNotification oldMessageRecipient : oldUser.getMessageRecipients()) {
             userService.mergeUserAssignmentStrict(oldMessageRecipient, newUser, userProperty);
         }
     }

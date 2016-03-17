@@ -17,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
+import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -566,8 +567,7 @@ public class ResourceDAO {
     public List<Integer> getResourcesWithUsersToVerify(PrismScope resourceScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty(resourceScope.getLowerCamelName() + ".id")) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("role.verified", false)) //
+                .add(Restrictions.in("role.id", values(PrismRole.class, resourceScope, "STUDENT_UNVERIFIED", "VIEWER_UNVERIFIED"))) //
                 .list();
     }
 
@@ -769,16 +769,28 @@ public class ResourceDAO {
 
     private List<ResourceMessageCountDTO> getResourceMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user, boolean read) {
         String resourceIdReference = scope.getLowerCamelName() + ".id";
+
+        Junction constraint;
+        if (read) {
+            constraint = Restrictions.conjunction() //
+                    .add(Restrictions.isNotNull("participant.lastViewedMessage")) //
+                    .add(Restrictions.geProperty("participant.lastViewedMessage.id", "message.id"));
+        } else {
+            constraint = Restrictions.disjunction() //
+                    .add(Restrictions.isNull("participant.lastViewedMessage")) //
+                    .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
+        }
+
         return (List<ResourceMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceIdReference).as("id")) //
                         .add(Projections.countDistinct("message.id").as("messageCount"))) //
                 .createAlias("thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
                 .createAlias("thread.messages", "message") //
-                .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
-                .add(Restrictions.eq("recipient.user", user)) //
-                .add(read ? Restrictions.isNotNull("recipient.viewTimestamp") : Restrictions.isNull("recipient.viewTimestamp")) //
+                .add(Restrictions.eq("participant.user", user)) //
+                .add(constraint) //
                 .setResultTransformer(aliasToBean(ResourceMessageCountDTO.class)) //
                 .list();
     }

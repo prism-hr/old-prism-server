@@ -51,7 +51,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
-import uk.co.alumeni.prism.domain.message.MessageRecipient;
+import uk.co.alumeni.prism.domain.message.MessageNotification;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.System;
@@ -279,7 +279,7 @@ public class NotificationService {
         sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
     }
 
-    public void sendMessageNotification(MessageRecipient messageRecipient) {
+    public void sendMessageNotification(MessageNotification messageRecipient) {
         User initiator = systemService.getSystem().getUser();
         Message message = messageRecipient.getMessage();
         Resource resource = message.getThread().getComment().getResource();

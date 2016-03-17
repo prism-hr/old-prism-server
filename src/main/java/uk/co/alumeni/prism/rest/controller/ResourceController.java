@@ -203,7 +203,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResourceListRepresentation getResources(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter,
-                                                   @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
+            @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
         ResourceListRepresentation representation = resourceMapper.getResourceListRepresentation(resourceScope, filterDTO, lastSequenceIdentifier);
@@ -213,7 +213,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, params = "type=report")
     @PreAuthorize("isAuthenticated()")
     public void getReport(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter, HttpServletRequest request,
-                          HttpServletResponse response) throws Exception {
+            HttpServletResponse response) throws Exception {
         if (resourceDescriptor.getResourceScope() != PrismScope.APPLICATION) {
             throw new UnsupportedOperationException("Report can only be generated for applications");
         }
@@ -228,7 +228,7 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, value = "{resourceId}/plot")
     @PreAuthorize("isAuthenticated()")
     public ResourceSummaryPlotRepresentation getPlot(@ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer resourceId,
-                                                     @RequestParam(required = false) String filter) throws Exception {
+            @RequestParam(required = false) String filter) throws Exception {
         Resource resource = resourceService.getById(resourceDescriptor.getResourceScope(), resourceId);
         if (!(resource instanceof ResourceParent)) {
             throw new IllegalArgumentException("Unexpected resource scope: " + resourceDescriptor.getResourceScope());
@@ -240,7 +240,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @RequestBody ResourceUserRolesRepresentation body) {
+            @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         Set<PrismRole> roles = body.getRoles();
@@ -250,7 +250,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/roles/{role}", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
     public void deleteUserRole(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable PrismRole role,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         User user = userService.getById(userId);
         roleService.deleteUserRoles(userService.getCurrentUser(), resource, user, role);
@@ -259,7 +259,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public UserRepresentationSimple addUser(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                                            @RequestBody ResourceUserRolesRepresentation body) {
+            @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = body.getUser();
         User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
@@ -270,7 +270,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/batch", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void addUsers(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                         @RequestBody StateActionPendingDTO body) {
+            @RequestBody StateActionPendingDTO body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         userService.getOrCreateUsersWithRoles(resource, body);
     }
@@ -286,7 +286,7 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/setAsOwner", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void setUserAsOwner(@PathVariable Integer resourceId, @PathVariable Integer userId, @RequestBody Map<?, ?> undertow,
-                               @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
         roleService.setResourceOwner(resource, user);
@@ -295,8 +295,8 @@ public class ResourceController {
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void verifyUser(@PathVariable Integer resourceId, @PathVariable Integer userId, @PathVariable String decision,
-                           @ModelAttribute ResourceDescriptor resourceDescriptor,
-                           @RequestBody Map<?, ?> undertow) {
+            @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @RequestBody Map<?, ?> undertow) {
         boolean accept = decision.equals("accept");
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
@@ -335,8 +335,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<MessageThreadRepresentation> getThreads(
-            @PathVariable Integer resourceId, @RequestParam(required = false) String q,
+    public List<MessageThreadRepresentation> getThreads(@PathVariable Integer resourceId, @RequestParam(required = false) String q,
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return messageMapper.getMessageThreadRepresentations(resource, q);
@@ -344,24 +343,24 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void createThread(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                             @Valid @RequestBody MessageDTO messageDTO) {
+    public void createMessageThread(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @Valid @RequestBody MessageDTO messageDTO) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        messageService.postMessage(resource, null, messageDTO);
+        messageService.createMessage(resource, null, messageDTO);
     }
 
     @RequestMapping(value = "{resourceId}/threads/{threadId}/messages", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void postMessage(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-                            @PathVariable Integer threadId, @Valid @RequestBody MessageDTO messageDTO) {
+    public void createMessage(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer threadId,
+            @Valid @RequestBody MessageDTO messageDTO) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        messageService.postMessage(resource, threadId, messageDTO);
+        messageService.createMessage(resource, threadId, messageDTO);
     }
 
     @RequestMapping(value = "{resourceId}/threads/{threadId}/view", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public void viewMessage(@RequestBody Map<String, Integer> body) {
-        messageService.viewMessage(body.get("recipientId"));
+    public void viewMessageThread(@RequestBody Map<String, Integer> body) {
+        messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
 
     @ModelAttribute

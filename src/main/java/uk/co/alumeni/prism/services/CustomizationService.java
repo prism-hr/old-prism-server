@@ -116,8 +116,7 @@ public class CustomizationService {
     }
 
     public List<WorkflowConfigurationRepresentation> getConfigurationRepresentationsConfigurationMode(PrismConfiguration configurationType, Resource resource,
-            PrismScope scope,
-            PrismOpportunityType opportunityType, Enum<?> category) {
+            PrismScope scope, PrismOpportunityType opportunityType, Enum<?> category) {
         return getConfigurationRepresentations(configurationType, resource, scope, opportunityType, category, true);
     }
 

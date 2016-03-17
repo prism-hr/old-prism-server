@@ -4,9 +4,11 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
@@ -17,6 +19,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
@@ -323,17 +326,16 @@ public class UserDAO {
         }
 
         criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
 
-        criteria.add(WorkflowDAO.getResourceParentManageableStateConstraint(resourceScope));
+        criteria.add(getResourceParentManageableStateConstraint(resourceScope));
         if (isNotEmpty(resources)) {
             criteria.add(Restrictions.in(resourceReference + ".id", resources));
         }
 
         return (List<UnverifiedUserDTO>) criteria //
-                .add(Restrictions.eq("role.verified", false)) //
-                .setResultTransformer(Transformers.aliasToBean(UnverifiedUserDTO.class)) //
+                .add(Restrictions.in("userRole.role.id", values(PrismRole.class, resourceScope, "STUDENT_UNVERIFIED", "VIEWER_UNVERIFIED"))) //
+                .setResultTransformer(aliasToBean(UnverifiedUserDTO.class)) //
                 .list();
     }
 

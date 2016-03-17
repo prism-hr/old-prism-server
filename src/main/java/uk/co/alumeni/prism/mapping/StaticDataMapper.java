@@ -1,7 +1,10 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.WordUtils.uncapitalize;
 import static uk.co.alumeni.prism.utils.PrismWordUtils.pluralize;
 
 import java.util.Collections;
@@ -12,7 +15,6 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.WordUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +49,6 @@ import uk.co.alumeni.prism.services.InstitutionService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.utils.TimeZoneUtils;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -135,7 +136,8 @@ public class StaticDataMapper {
 
     private Map<String, Object> getRoles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("roles", roleService.getRoles().stream().map(r -> new RoleRepresentation(r.getId(), r.getVerified(), r.getDirectlyAssignable())).collect(toList()));
+        staticData.put("roles", roleService.getRoles().stream().map(r -> new RoleRepresentation(r.getId(), r.getVerified(), r.getDirectlyAssignable()))
+                .collect(toList()));
         return staticData;
     }
 
@@ -159,18 +161,20 @@ public class StaticDataMapper {
     }
 
     private Map<String, Object> getReportFilterEntities() {
-        return Collections.singletonMap("reportFilterEntities",
-                Stream.of(PrismFilterEntity.values()).map(e -> new FilterEntityRepresentation().withId(e).withScope(e.getFilterScope())).collect(Collectors.toList()));
+        return Collections.singletonMap(
+                "reportFilterEntities",
+                Stream.of(PrismFilterEntity.values()).map(e -> new FilterEntityRepresentation().withId(e).withScope(e.getFilterScope()))
+                        .collect(Collectors.toList()));
     }
 
     private Map<String, Object> getSimpleProperties() {
         Map<String, Object> staticData = Maps.newHashMap();
 
-        for (Class<?> enumClass : new Class[]{PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
+        for (Class<?> enumClass : new Class[] { PrismStudyOption.class, PrismYesNoUnsureResponse.class, PrismDurationUnit.class,
                 PrismDisplayPropertyCategory.class, PrismFilterEntity.class, PrismStateGroup.class, PrismRejectionReason.class,
-                PrismGender.class}) {
+                PrismGender.class }) {
             String simpleName = enumClass.getSimpleName().replaceFirst("Prism", "");
-            simpleName = WordUtils.uncapitalize(simpleName);
+            simpleName = uncapitalize(simpleName);
             staticData.put(pluralize(simpleName), enumClass.getEnumConstants());
         }
 
@@ -189,7 +193,7 @@ public class StaticDataMapper {
 
         Map<String, Object> configurations = Maps.newHashMap();
         for (PrismConfiguration prismConfiguration : PrismConfiguration.values()) {
-            String name = pluralize(CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, prismConfiguration.name()));
+            String name = pluralize(UPPER_UNDERSCORE.to(LOWER_CAMEL, prismConfiguration.name()));
             Map<PrismScope, List<WorkflowDefinitionRepresentation>> scopeConfigurations = Maps.newHashMap();
             for (PrismScope prismScope : PrismScope.values()) {
                 List<? extends WorkflowDefinition> definitions = customizationService.getDefinitions(prismConfiguration, prismScope);

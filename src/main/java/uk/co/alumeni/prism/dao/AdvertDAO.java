@@ -843,6 +843,7 @@ public class AdvertDAO {
         return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert")) //
                 .add(Restrictions.in("targetAdvert", adverts)) //
+                .add(Restrictions.eq("partnershipState", ENDORSEMENT_PROVIDED)) //
                 .list();
     }
 

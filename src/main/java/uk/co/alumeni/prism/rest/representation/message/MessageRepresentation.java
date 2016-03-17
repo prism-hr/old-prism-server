@@ -9,17 +9,23 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class MessageRepresentation {
 
+    private Integer id;
+    
     private UserRepresentationSimple user;
-
-    private List<MessageRecipientRepresentation> recipients;
 
     private String content;
 
     private List<DocumentRepresentation> documents;
 
     private DateTime createdTimestamp;
+    
+    public Integer getId() {
+        return id;
+    }
 
-    private DateTime viewTimestamp;
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public UserRepresentationSimple getUser() {
         return user;
@@ -27,14 +33,6 @@ public class MessageRepresentation {
 
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
-    }
-
-    public List<MessageRecipientRepresentation> getRecipients() {
-        return recipients;
-    }
-
-    public void setRecipients(List<MessageRecipientRepresentation> recipients) {
-        this.recipients = recipients;
     }
 
     public String getContent() {
@@ -61,14 +59,11 @@ public class MessageRepresentation {
         this.createdTimestamp = createdTimestamp;
     }
 
-    public DateTime getViewTimestamp() {
-        return viewTimestamp;
+    public MessageRepresentation withId(Integer id) {
+        this.id = id;
+        return this;
     }
-
-    public void setViewTimestamp(DateTime viewTimestamp) {
-        this.viewTimestamp = viewTimestamp;
-    }
-
+    
     public MessageRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;

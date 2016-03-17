@@ -77,7 +77,8 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     static {
         for (PrismRole role : values()) {
-            if (!role.name().endsWith("_UNVERIFIED")) {
+            String roleName = role.name();
+            if (!(roleName.endsWith("_UNVERIFIED") || roleName.endsWith("_REJECTED"))) {
                 verifiedRoles.add(role);
 
                 PrismScope roleScope = role.getScope();

@@ -38,7 +38,7 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
-import uk.co.alumeni.prism.domain.message.MessageRecipient;
+import uk.co.alumeni.prism.domain.message.MessageNotification;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -190,7 +190,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<Message> messages = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private Set<MessageRecipient> messageRecipients = Sets.newHashSet();
+    private Set<MessageNotification> messageRecipients = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -412,7 +412,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return messages;
     }
 
-    public Set<MessageRecipient> getMessageRecipients() {
+    public Set<MessageNotification> getMessageRecipients() {
         return messageRecipients;
     }
 

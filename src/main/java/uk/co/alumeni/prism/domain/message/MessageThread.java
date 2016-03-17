@@ -31,6 +31,9 @@ public class MessageThread {
     @OneToMany(mappedBy = "thread")
     private Set<Message> messages = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "thread")
+    private Set<MessageThreadParticipant> participants = Sets.newHashSet();
+
     public Integer getId() {
         return id;
     }
@@ -59,13 +62,22 @@ public class MessageThread {
         return messages;
     }
 
+    public Set<MessageThreadParticipant> getParticipants() {
+        return participants;
+    }
+
     public MessageThread withSubject(String subject) {
         this.subject = subject;
         return this;
     }
 
     public MessageThread addMessage(Message message) {
-        messages.add(message);
+        this.messages.add(message);
+        return this;
+    }
+
+    public MessageThread addParticipant(MessageThreadParticipant participant) {
+        this.participants.add(participant);
         return this;
     }
 

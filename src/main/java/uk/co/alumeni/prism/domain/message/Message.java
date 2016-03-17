@@ -48,7 +48,7 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
     private DateTime createdTimestamp;
 
     @OneToMany(mappedBy = "message")
-    private Set<MessageRecipient> recipients = Sets.newHashSet();
+    private Set<MessageNotification> notifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "document")
     private Set<MessageDocument> documents = Sets.newHashSet();
@@ -93,8 +93,8 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
         this.createdTimestamp = createdTimestamp;
     }
 
-    public Set<MessageRecipient> getRecipients() {
-        return recipients;
+    public Set<MessageNotification> getNotifications() {
+        return notifications;
     }
 
     public Set<MessageDocument> getDocuments() {
@@ -121,13 +121,13 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
         return this;
     }
 
-    public Message addRecipient(MessageRecipient recipient) {
-        recipients.add(recipient);
+    public Message addNotification(MessageNotification notification) {
+        this.notifications.add(notification);
         return this;
     }
 
     public Message addDocument(MessageDocument document) {
-        documents.add(document);
+        this.documents.add(document);
         return this;
     }
 

@@ -131,24 +131,23 @@ public class MessageDAO {
                 .list();
     }
 
-    public MessageThreadParticipant getMessageThreadParticipant(User user, Integer message) {
+    public MessageThreadParticipant getMessageThreadParticipant(MessageThread thread, User user) {
         return (MessageThreadParticipant) sessionFactory.getCurrentSession().createCriteria(MessageThreadParticipant.class) //
-                .createAlias("thread", "thread", INNER_JOIN) //
-                .createAlias("thread.messages", "message", INNER_JOIN) //
+                .add(Restrictions.eq("thread", thread)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNull("closeMessage")) //
-                .add(Restrictions.eq("message.id", message)) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
     }
 
-    public void closeMessageThreadParticipants(MessageThread thread, Message message, List<Integer> userIds) {
+    public void closeMessageThreadParticipants(MessageThread thread, Message message, Collection<Integer> userIds) {
         sessionFactory.getCurrentSession().createQuery(
                 "update MessageThreadParticipant "
                         + "set closeMessage = :message "
                         + "where thread = :thread "
-                        + "and user.id not in (:userIds)")
+                        + "and user.id not in (:userIds) "
+                        + "and closeMessage is null")
                 .setParameter("message", message)
                 .setParameter("thread", thread)
                 .setParameterList("userIds", userIds)

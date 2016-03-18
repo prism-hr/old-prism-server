@@ -12,6 +12,7 @@ import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
@@ -1092,7 +1093,7 @@ public class AdvertService {
     }
 
     public void retireAdvertClosingDate(Advert advert) {
-        if (advert.getClosingDate().compareTo(LocalDate.now()) >= 0) {
+        if (compare(advert.getClosingDate(), LocalDate.now()) >= 0) {
             advert.setClosingDate(null);
         }
     }

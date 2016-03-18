@@ -20,12 +20,14 @@
 	Our terms of offer are as follows:
 </p>
 
-<ul>
-	<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
-	<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
-	<li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
-	<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
-</ul>
+<p>
+	<ul>
+		<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
+		<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>
+		<li><b>Start date:</b> ${APPLICATION_START_DATE}</li>
+		<li><b>Terms and Conditions:</b> ${APPLICATION_OFFER_CONDITION}</li>
+	</ul>
+</p>
 
 ${ACTION_COMPLETE}
 

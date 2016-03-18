@@ -22,6 +22,8 @@ public class ResourceListFilterDTO {
     private PrismActionEnhancement[] actionEnhancements;
 
     private List<Integer> resourceIds;
+    
+    private List<Integer> excludedResourceIds;
 
     private ResourceIdentityDTO parentResource;
 
@@ -87,6 +89,14 @@ public class ResourceListFilterDTO {
 
     public void setResourceIds(List<Integer> resourceIds) {
         this.resourceIds = resourceIds;
+    }
+    
+    public List<Integer> getExcludedResourceIds() {
+        return excludedResourceIds;
+    }
+
+    public void setExcludedResourceIds(List<Integer> excludedResourceIds) {
+        this.excludedResourceIds = excludedResourceIds;
     }
 
     public ResourceIdentityDTO getParentResource() {
@@ -230,6 +240,11 @@ public class ResourceListFilterDTO {
         return this;
     }
 
+    public ResourceListFilterDTO withExcludedResourceIds(List<Integer> excludedResourceIds) {
+        this.excludedResourceIds = excludedResourceIds;
+        return this;
+    }
+    
     public ResourceListFilterDTO withParentResource(ResourceIdentityDTO parentResource) {
         this.parentResource = parentResource;
         return this;

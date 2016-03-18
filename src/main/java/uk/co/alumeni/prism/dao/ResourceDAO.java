@@ -624,6 +624,12 @@ public class ResourceDAO {
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));
         }
+        
+        List<Integer> excludedResourceIds = filter.getExcludedResourceIds();
+        if (isNotEmpty(excludedResourceIds)) {
+            criteria.add(Restrictions.not(
+                    Restrictions.in("resource.id", excludedResourceIds)));
+        }
 
         ResourceIdentityDTO parentResource = filter.getParentResource();
         if (parentResource != null) {

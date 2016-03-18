@@ -137,6 +137,7 @@ public class MessageDAO {
                 .createAlias("thread.messages", "message", INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.isNull("closeMessage")) //
+                .add(Restrictions.eq("message.id", message)) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();

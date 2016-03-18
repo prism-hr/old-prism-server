@@ -100,7 +100,7 @@ public class ApplicationMapper {
     private CommentMapper commentMapper;
 
     @Inject
-    
+
     @Inject
     private DocumentMapper documentMapper;
 
@@ -124,7 +124,7 @@ public class ApplicationMapper {
 
     @Inject
     private RoleService roleService;
-    
+
     @Inject
     private SystemService systemService;
 
@@ -330,7 +330,6 @@ public class ApplicationMapper {
             index.put(r.getId(), r);
         });
 
-
         List<PrismRole> creatableRoles = roleService.getCreatableRoles(APPLICATION);
         List<ProfileRefereeRepresentation> representations = profileMapper.getRefereeRepresentations(referees, currentUser);
         representations.forEach(r -> {
@@ -400,10 +399,6 @@ public class ApplicationMapper {
                 offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate);
                 offerRepresentation.setAppointmentConditions(appointmentConditions);
             }
-            
-            List<DocumentRepresentation> documentRepresentations = newLinkedList();
-            sourceComment.getDocuments().forEach(document -> documentRepresentations.add(documentMapper.getDocumentRepresentation(document)));
-            offerRepresentation.setDocuments(documentRepresentations);
 
             return offerRepresentation;
         }
@@ -421,10 +416,17 @@ public class ApplicationMapper {
         boolean positionDetailNull = positionDetail == null;
         boolean offerDetailNull = offerDetail == null;
 
-        return new ApplicationOfferRepresentation().withPositionName(positionDetailNull ? null : positionDetail.getPositionName())
+        ApplicationOfferRepresentation representation = new ApplicationOfferRepresentation()
+                .withPositionName(positionDetailNull ? null : positionDetail.getPositionName())
                 .withPositionDescription(positionDetailNull ? null : positionDetail.getPositionDescription())
                 .withPositionProvisionalStartDate(offerDetailNull ? null : offerDetail.getPositionProvisionalStartDate())
                 .withAppointmentConditions(offerDetailNull ? null : offerDetail.getAppointmentConditions());
+
+        List<DocumentRepresentation> documentRepresentations = newLinkedList();
+        comment.getDocuments().forEach(document -> documentRepresentations.add(documentMapper.getDocumentRepresentation(document)));
+        representation.setDocuments(documentRepresentations);
+
+        return representation;
     }
 
     private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application, User currentUser) {

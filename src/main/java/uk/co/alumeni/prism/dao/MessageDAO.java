@@ -115,8 +115,10 @@ public class MessageDAO {
         return (List<MessageThreadParticipant>) sessionFactory.getCurrentSession().createCriteria(MessageThreadParticipant.class) //
                 .createAlias("user", "user", INNER_JOIN) //
                 .add(Restrictions.in("thread", threads)) //
+                .add(Restrictions.isNull("closeMessage")) //
                 .addOrder(Order.desc("thread")) //
                 .addOrder(Order.asc("user.fullName")) //
+                .addOrder(Order.desc("id")) //
                 .list();
     }
 
@@ -134,8 +136,9 @@ public class MessageDAO {
                 .createAlias("thread", "thread", INNER_JOIN) //
                 .createAlias("thread.messages", "message", INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("message.id", message)) //
                 .add(Restrictions.isNull("closeMessage")) //
+                .addOrder(Order.desc("id")) //
+                .setMaxResults(1) //
                 .uniqueResult();
     }
 

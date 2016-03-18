@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -9,6 +9,7 @@ import static org.joda.time.DateTime.now;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -138,29 +139,22 @@ public class MessageService {
         entityService.save(message);
         thread.addMessage(message);
 
-        List<Integer> userIds = newArrayList();
-        MessageThreadParticipant sender = entityService.createOrUpdate(new MessageThreadParticipant().withThread(thread).withUser(user)
-                .withStartMessage(message).withLastViewedMessage(message));
-        thread.addParticipant(sender);
-        userIds.add(user.getId());
+        MessageThreadParticipant sender = createMessageThreadParticipant(thread, message, user);
+        sender.setLastViewedMessage(message);
 
+        Set<Integer> userIds = newHashSet(user.getId());
         List<UserDTO> userDTOs = messageDTO.getParticipantUsers();
         for (UserDTO userDTO : userDTOs) {
             User participantUser = userService.getById(userDTO.getId());
             if (!participantUser.equals(user)) {
-                MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(participantUser, message.getId());
-                if (participant == null || participant.getCloseMessage() != null) {
-                    participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
-                            .withUser(participantUser).withStartMessage(message)
-                            .withLastViewedMessage(participant == null ? null : participant.getLastViewedMessage()));
-                    thread.addParticipant(participant);
-                    userIds.add(participantUser.getId());
-                }
+                createMessageThreadParticipant(thread, message, participantUser);
 
                 MessageNotification notification = new MessageNotification().withMessage(message).withUser(participantUser);
                 entityService.getOrCreate(notification);
                 message.addNotification(notification);
             }
+
+            userIds.add(participantUser.getId());
         }
 
         messageDAO.closeMessageThreadParticipants(thread, message, userIds);
@@ -178,9 +172,10 @@ public class MessageService {
     }
 
     public void viewMessageThread(Integer latestUnreadMessageId) {
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(userService.getCurrentUser(), latestUnreadMessageId);
+        Message latestUnreadMessage = getMessageById(latestUnreadMessageId);
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser());
         if (participant != null) {
-            participant.setLastViewedMessage(getMessageById(latestUnreadMessageId));
+            participant.setLastViewedMessage(latestUnreadMessage);
         }
     }
 
@@ -195,6 +190,17 @@ public class MessageService {
             }
         }
         return user;
+    }
+
+    private MessageThreadParticipant createMessageThreadParticipant(MessageThread thread, Message message, User user) {
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user);
+        if (participant == null || participant.getCloseMessage() != null) {
+            participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
+                    .withUser(user).withStartMessage(message)
+                    .withLastViewedMessage(participant == null ? null : participant.getLastViewedMessage()));
+            thread.addParticipant(participant);
+        }
+        return participant;
     }
 
 }

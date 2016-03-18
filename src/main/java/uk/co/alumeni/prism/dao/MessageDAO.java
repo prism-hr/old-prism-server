@@ -89,6 +89,11 @@ public class MessageDAO {
                 .createAlias("thread.participants", "participant", INNER_JOIN) //
                 .add(Restrictions.in("thread", threads)) //
                 .add(Restrictions.eq("participant.user", user)) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.geProperty("id", "participant.startMessage.id")) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.isNull("participant.closeMessage")) //
+                                .add(Restrictions.ltProperty("id", "participant.closeMessage.id")))) //
                 .addOrder(Order.desc("id")) //
                 .list();
     }
@@ -130,7 +135,20 @@ public class MessageDAO {
                 .createAlias("thread.messages", "message", INNER_JOIN) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("message.id", message)) //
+                .add(Restrictions.isNull("closeMessage")) //
                 .uniqueResult();
+    }
+
+    public void closeMessageThreadParticipants(MessageThread thread, Message message, List<Integer> userIds) {
+        sessionFactory.getCurrentSession().createQuery(
+                "update MessageThreadParticipant "
+                        + "set closeMessage = :message "
+                        + "where thread = :thread "
+                        + "and user.id not in (:userIds)")
+                .setParameter("message", message)
+                .setParameter("thread", thread)
+                .setParameterList("userIds", userIds)
+                .executeUpdate();
     }
 
     private Junction getMatchingMessageConstraint(String searchTerm) {

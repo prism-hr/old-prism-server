@@ -100,9 +100,8 @@ public class LifeCycleService {
 
         if (!environment.equals("test")) {
             staticDataMapper.getData();
+            systemService.initializePropertyLoader();
         }
-
-        systemService.initializePropertyLoader();
 
         if (isTrue(maintain)) {
             executorService = newFixedThreadPool((PrismMaintenanceTask.values().length));

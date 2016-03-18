@@ -98,9 +98,7 @@ public class ApplicationMapper {
 
     @Inject
     private CommentMapper commentMapper;
-
-    @Inject
-
+    
     @Inject
     private DocumentMapper documentMapper;
 

@@ -1,9 +1,11 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -51,7 +53,7 @@ public class MessageMapper {
                 MessageThreadRepresentation threadRepresentation = new MessageThreadRepresentation()
                         .withId(thread.getId()).withSubject(thread.getSubject());
 
-                List<MessageThreadParticipantRepresentation> participantRepresentations = newLinkedList();
+                Set<MessageThreadParticipantRepresentation> participantRepresentations = newLinkedHashSet();
                 participants.get(thread).stream().forEach(participant -> {
                     User recipientUser = participant.getUser();
 
@@ -67,7 +69,7 @@ public class MessageMapper {
                     }
                 });
 
-                threadRepresentation.setParticipants(participantRepresentations);
+                threadRepresentation.setParticipants(newLinkedList(participantRepresentations));
 
                 List<MessageRepresentation> messageRepresentations = newLinkedList();
                 messages.get(thread).stream().forEach(message -> {

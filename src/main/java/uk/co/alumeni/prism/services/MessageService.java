@@ -148,10 +148,10 @@ public class MessageService {
         for (UserDTO userDTO : userDTOs) {
             User participantUser = userService.getById(userDTO.getId());
             if (!participantUser.equals(user)) {
-                MessageThreadParticipant activeParcicipant = messageDAO.getMessageThreadParticipant(participantUser, message.getId());
-                if (activeParcicipant == null) {
-                    MessageThreadParticipant participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
-                            .withUser(participantUser).withStartMessage(message));
+                MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(participantUser, message.getId());
+                if (participant.getCloseMessage() != null) {
+                    participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
+                            .withUser(participantUser).withStartMessage(message).withLastViewedMessage(participant.getLastViewedMessage()));
                     thread.addParticipant(participant);
                     userIds.add(participantUser.getId());
                 }
@@ -161,7 +161,7 @@ public class MessageService {
                 message.addNotification(notification);
             }
         }
-        
+
         messageDAO.closeMessageThreadParticipants(thread, message, userIds);
 
         List<DocumentDTO> documents = messageDTO.getDocuments();

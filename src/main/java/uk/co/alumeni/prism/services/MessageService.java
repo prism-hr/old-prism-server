@@ -144,14 +144,15 @@ public class MessageService {
         thread.addParticipant(sender);
         userIds.add(user.getId());
 
-        List<UserDTO> userDTOs = messageDTO.getRecipientUsers();
+        List<UserDTO> userDTOs = messageDTO.getParticipantUsers();
         for (UserDTO userDTO : userDTOs) {
             User participantUser = userService.getById(userDTO.getId());
             if (!participantUser.equals(user)) {
                 MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(participantUser, message.getId());
-                if (participant.getCloseMessage() != null) {
+                if (participant == null || participant.getCloseMessage() != null) {
                     participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
-                            .withUser(participantUser).withStartMessage(message).withLastViewedMessage(participant.getLastViewedMessage()));
+                            .withUser(participantUser).withStartMessage(message)
+                            .withLastViewedMessage(participant == null ? null : participant.getLastViewedMessage()));
                     thread.addParticipant(participant);
                     userIds.add(participantUser.getId());
                 }

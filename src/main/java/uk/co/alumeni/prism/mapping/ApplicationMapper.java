@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
@@ -53,6 +54,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertCategoriesRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
@@ -98,6 +100,9 @@ public class ApplicationMapper {
 
     @Inject
     private CommentService commentService;
+    
+    @Inject
+    private DocumentMapper documentMapper;
 
     @Inject
     private ProfileMapper profileMapper;
@@ -348,6 +353,10 @@ public class ApplicationMapper {
                 offerRepresentation.setPositionProvisionalStartDate(positionProvisionalStartDate);
                 offerRepresentation.setAppointmentConditions(appointmentConditions);
             }
+            
+            List<DocumentRepresentation> documentRepresentations = newLinkedList();
+            sourceComment.getDocuments().forEach(document -> documentRepresentations.add(documentMapper.getDocumentRepresentation(document)));
+            offerRepresentation.setDocuments(documentRepresentations);
 
             return offerRepresentation;
         }

@@ -28,6 +28,8 @@ public class ResourceListFilterDTO extends ListFilterDTO {
     private Boolean withNewMessages;
 
     private List<Integer> resourceIds;
+    
+    private List<Integer> excludedResourceIds;
 
     private ResourceIdentityDTO parentResource;
 
@@ -95,6 +97,14 @@ public class ResourceListFilterDTO extends ListFilterDTO {
 
     public void setResourceIds(List<Integer> resourceIds) {
         this.resourceIds = resourceIds;
+    }
+    
+    public List<Integer> getExcludedResourceIds() {
+        return excludedResourceIds;
+    }
+
+    public void setExcludedResourceIds(List<Integer> excludedResourceIds) {
+        this.excludedResourceIds = excludedResourceIds;
     }
 
     public ResourceIdentityDTO getParentResource() {
@@ -214,6 +224,11 @@ public class ResourceListFilterDTO extends ListFilterDTO {
         return this;
     }
 
+    public ResourceListFilterDTO withExcludedResourceIds(List<Integer> excludedResourceIds) {
+        this.excludedResourceIds = excludedResourceIds;
+        return this;
+    }
+    
     public ResourceListFilterDTO withParentResource(ResourceIdentityDTO parentResource) {
         this.parentResource = parentResource;
         return this;

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -137,24 +138,31 @@ public class MessageService {
         entityService.save(message);
         thread.addMessage(message);
 
+        List<Integer> userIds = newArrayList();
         MessageThreadParticipant sender = entityService.createOrUpdate(new MessageThreadParticipant().withThread(thread).withUser(user)
-                .withLastViewedMessage(message));
+                .withStartMessage(message).withLastViewedMessage(message));
         thread.addParticipant(sender);
+        userIds.add(user.getId());
 
         List<UserDTO> userDTOs = messageDTO.getRecipientUsers();
-        if (isNotEmpty(userDTOs)) {
-            for (UserDTO userDTO : userDTOs) {
-                User recipientUser = userService.getById(userDTO.getId());
-                if (!recipientUser.equals(user)) {
-                    MessageThreadParticipant participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread).withUser(recipientUser));
+        for (UserDTO userDTO : userDTOs) {
+            User participantUser = userService.getById(userDTO.getId());
+            if (!participantUser.equals(user)) {
+                MessageThreadParticipant activeParcicipant = messageDAO.getMessageThreadParticipant(participantUser, message.getId());
+                if (activeParcicipant == null) {
+                    MessageThreadParticipant participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
+                            .withUser(participantUser).withStartMessage(message));
                     thread.addParticipant(participant);
-
-                    MessageNotification notification = new MessageNotification().withMessage(message).withUser(recipientUser);
-                    entityService.getOrCreate(notification);
-                    message.addNotification(notification);
+                    userIds.add(participantUser.getId());
                 }
+
+                MessageNotification notification = new MessageNotification().withMessage(message).withUser(participantUser);
+                entityService.getOrCreate(notification);
+                message.addNotification(notification);
             }
         }
+        
+        messageDAO.closeMessageThreadParticipants(thread, message, userIds);
 
         List<DocumentDTO> documents = messageDTO.getDocuments();
         if (isNotEmpty(documents)) {

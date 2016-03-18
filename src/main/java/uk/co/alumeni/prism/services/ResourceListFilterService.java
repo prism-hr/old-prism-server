@@ -179,10 +179,11 @@ public class ResourceListFilterService {
             }
         }
 
-        return new ResourceListFilterDTO().withParentResource(parentResourceDTO).withActionIds(actions).withThemes(themeDTOs)
-                .withThemesApplied(stateTransition.getReplicableSequenceFilterTheme()).withSecondaryThemes(secondaryThemeDTOs)
+        return new ResourceListFilterDTO().withExcludedResourceIds(newArrayList(resource.getId())).withParentResource(parentResourceDTO).withActionIds(actions)
+                .withThemes(themeDTOs).withThemesApplied(stateTransition.getReplicableSequenceFilterTheme()).withSecondaryThemes(secondaryThemeDTOs)
                 .withSecondaryThemesApplied(stateTransition.getReplicableSequenceFilterSecondaryTheme())
-                .withLocations(locationDTOs).withLocationsApplied(stateTransition.getReplicableSequenceFilterLocation()).withSecondaryLocations(secondaryLocationDTOs)
+                .withLocations(locationDTOs).withLocationsApplied(stateTransition.getReplicableSequenceFilterLocation())
+                .withSecondaryLocations(secondaryLocationDTOs)
                 .withSecondaryLocationsApplied(stateTransition.getReplicableSequenceFilterSecondaryLocation());
     }
 

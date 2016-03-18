@@ -314,7 +314,7 @@ public class UserDAO {
                 .add(Projections.property("userAccount.linkedinProfileUrl").as("userLinkedinProfileUrl"))
                 .add(Projections.property("userAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
                 .add(Projections.property("userAccount.portraitImage.id").as("userPortraitImageId")) //
-                .add(Projections.groupProperty("role.id").as("roleId"));
+                .add(Projections.groupProperty("userRole.role.id").as("roleId"));
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections) //

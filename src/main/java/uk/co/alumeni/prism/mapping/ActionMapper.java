@@ -37,7 +37,7 @@ import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
-import uk.co.alumeni.prism.rest.representation.action.ActionRecipientRepresentation;
+import uk.co.alumeni.prism.rest.representation.action.ActionMessageThreadParticipantRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
@@ -205,7 +205,7 @@ public class ActionMapper {
 
                     if (hasRecipientRoles) {
                         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
-                        representation.addRecipients(getActionRecipientRepresentations(user, recipientUserRoles, propertyLoader));
+                        representation.addMessageThreadParticipants(getActionRecipientRepresentations(user, recipientUserRoles, propertyLoader));
                     }
 
                     if (hasPartnerRecipientRoles) {
@@ -226,7 +226,7 @@ public class ActionMapper {
 
                         if (targetingResources.size() > 0) {
                             List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
-                            representation.addPartnerRecipients(getActionRecipientRepresentations(user, recipientPartnerUserRoles, propertyLoader));
+                            representation.addPartnerMessageThreadParticipants(getActionRecipientRepresentations(user, recipientPartnerUserRoles, propertyLoader));
                         }
                     }
                 }
@@ -236,11 +236,11 @@ public class ActionMapper {
         return representation;
     }
 
-    private List<ActionRecipientRepresentation> getActionRecipientRepresentations(User user, List<UserRoleDTO> recipientUserRoles, PropertyLoader propertyLoader) {
+    private List<ActionMessageThreadParticipantRepresentation> getActionRecipientRepresentations(User user, List<UserRoleDTO> recipientUserRoles, PropertyLoader propertyLoader) {
         TreeMultimap<PrismRole, User> index = TreeMultimap.create();
         recipientUserRoles.stream().forEach(userRole -> index.put(userRole.getRole(), userRole.getUser()));
 
-        Map<String, ActionRecipientRepresentation> recipients = newTreeMap();
+        Map<String, ActionMessageThreadParticipantRepresentation> recipients = newTreeMap();
         index.keySet().stream().forEach(key -> {
             List<UserRepresentationSimple> userRepresentations = newLinkedList();
             index.get(key).stream().forEach(value -> {
@@ -249,7 +249,7 @@ public class ActionMapper {
                 }
             });
             String translatedRoleName = propertyLoader.loadLazy(key.getDisplayProperty());
-            recipients.put(translatedRoleName, new ActionRecipientRepresentation().withRole(key).withUsers(userRepresentations));
+            recipients.put(translatedRoleName, new ActionMessageThreadParticipantRepresentation().withRole(key).withUsers(userRepresentations));
         });
 
         return newLinkedList(recipients.values());

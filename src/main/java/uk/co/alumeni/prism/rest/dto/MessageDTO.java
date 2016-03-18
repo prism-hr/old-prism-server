@@ -16,7 +16,7 @@ public class MessageDTO {
     @NotEmpty
     private String content;
 
-    private List<UserDTO> recipientUsers;
+    private List<UserDTO> participantUsers;
 
     private List<DocumentDTO> documents;
 
@@ -36,12 +36,12 @@ public class MessageDTO {
         this.content = content;
     }
 
-    public List<UserDTO> getRecipientUsers() {
-        return recipientUsers;
+    public List<UserDTO> getParticipantUsers() {
+        return participantUsers;
     }
 
-    public void setRecipientUsers(List<UserDTO> recipientUsers) {
-        this.recipientUsers = recipientUsers;
+    public void setParticipantUsers(List<UserDTO> participantUsers) {
+        this.participantUsers = participantUsers;
     }
 
     public List<DocumentDTO> getDocuments() {

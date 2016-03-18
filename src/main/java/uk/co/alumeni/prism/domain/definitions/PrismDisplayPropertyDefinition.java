@@ -2119,6 +2119,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_COMMENT_VIEW_CONVERSATION(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "view messages"),
 
     /*
+     * *************** SYSTEM COMMENT *********************
+     */
+
+    SYSTEM_MESSAGE_REMOVED(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "You have been removed from this converation"),
+    
+    /*
      * *************** INSTITUTION COMMENT *********************
      */
 

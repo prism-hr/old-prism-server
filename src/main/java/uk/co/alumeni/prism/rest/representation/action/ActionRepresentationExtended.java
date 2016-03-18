@@ -20,9 +20,9 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
 
     private Set<StateRepresentationSimple> recommendedNextStates = newLinkedHashSet();
 
-    private Set<ActionRecipientRepresentation> recipients = newLinkedHashSet();
+    private Set<ActionMessageThreadParticipantRepresentation> messageThreadParticipants = newLinkedHashSet();
 
-    private Set<ActionRecipientRepresentation> partnerRecipients = newLinkedHashSet();
+    private Set<ActionMessageThreadParticipantRepresentation> partnerMessageThreadParticipants = newLinkedHashSet();
 
     public CommentRepresentation getComment() {
         return comment;
@@ -44,12 +44,12 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return recommendedNextStates;
     }
 
-    public Set<ActionRecipientRepresentation> getRecipients() {
-        return recipients;
+    public Set<ActionMessageThreadParticipantRepresentation> getMessageThreadParticipants() {
+        return messageThreadParticipants;
     }
 
-    public Set<ActionRecipientRepresentation> getPartnerRecipients() {
-        return partnerRecipients;
+    public Set<ActionMessageThreadParticipantRepresentation> getPartnerMessageThreadParticipants() {
+        return partnerMessageThreadParticipants;
     }
 
     public ActionRepresentationExtended addActionEnhancement(PrismActionEnhancement actionEnhancement) {
@@ -72,13 +72,13 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return this;
     }
 
-    public ActionRepresentationExtended addRecipients(Collection<ActionRecipientRepresentation> recipients) {
-        this.recipients.addAll(recipients);
+    public ActionRepresentationExtended addMessageThreadParticipants(Collection<ActionMessageThreadParticipantRepresentation> messageThreadParticipants) {
+        this.messageThreadParticipants.addAll(messageThreadParticipants);
         return this;
     }
 
-    public ActionRepresentationExtended addPartnerRecipients(Collection<ActionRecipientRepresentation> partnerRecipients) {
-        this.partnerRecipients.addAll(partnerRecipients);
+    public ActionRepresentationExtended addPartnerMessageThreadParticipants(Collection<ActionMessageThreadParticipantRepresentation> partnerMessageThreadParticipants) {
+        this.partnerMessageThreadParticipants.addAll(partnerMessageThreadParticipants);
         return this;
     }
 

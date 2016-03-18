@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.representation.user;
 
+import static com.google.common.base.Objects.equal;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 
 import com.google.common.base.Objects;
@@ -79,8 +80,8 @@ public class UserRepresentation implements Comparable<UserRepresentation> {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final UserRepresentation other = (UserRepresentation) object;
-        return Objects.equal(email, other.getEmail());
+        UserRepresentation other = (UserRepresentation) object;
+        return equal(email, other.getEmail());
     }
 
     @Override

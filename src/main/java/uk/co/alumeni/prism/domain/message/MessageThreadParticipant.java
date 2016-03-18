@@ -18,7 +18,8 @@ import uk.co.alumeni.prism.workflow.user.MessageRecipientReassignmentProcessor;
 import com.google.common.base.Objects;
 
 @Entity
-@Table(name = "message_thread_participant", uniqueConstraints = { @UniqueConstraint(columnNames = { "message_thread_id", "user_id" }) })
+@Table(name = "message_thread_participant",
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "message_thread_id", "user_id", "start_message_id", "close_message_id" }) })
 public class MessageThreadParticipant implements UserAssignment<MessageRecipientReassignmentProcessor>, UniqueEntity {
 
     @Id
@@ -32,6 +33,14 @@ public class MessageThreadParticipant implements UserAssignment<MessageRecipient
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "start_message_id", nullable = false)
+    private Message startMessage;
+
+    @ManyToOne
+    @JoinColumn(name = "close_message_id")
+    private Message closeMessage;
 
     @ManyToOne
     @JoinColumn(name = "last_viewed_message_id")
@@ -61,6 +70,22 @@ public class MessageThreadParticipant implements UserAssignment<MessageRecipient
         this.user = user;
     }
 
+    public Message getStartMessage() {
+        return startMessage;
+    }
+
+    public void setStartMessage(Message startMessage) {
+        this.startMessage = startMessage;
+    }
+
+    public Message getCloseMessage() {
+        return closeMessage;
+    }
+
+    public void setCloseMessage(Message closeMessage) {
+        this.closeMessage = closeMessage;
+    }
+
     public Message getLastViewedMessage() {
         return lastViewedMessage;
     }
@@ -76,6 +101,11 @@ public class MessageThreadParticipant implements UserAssignment<MessageRecipient
 
     public MessageThreadParticipant withUser(User user) {
         this.user = user;
+        return this;
+    }
+
+    public MessageThreadParticipant withStartMessage(Message startMessage) {
+        this.startMessage = startMessage;
         return this;
     }
 

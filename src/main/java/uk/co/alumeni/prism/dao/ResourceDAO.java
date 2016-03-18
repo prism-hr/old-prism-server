@@ -790,6 +790,11 @@ public class ResourceDAO {
                 .createAlias("thread.messages", "message") //
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.eq("participant.user", user)) //
+                .add(Restrictions.conjunction() //
+                        .add(Restrictions.geProperty("message.id", "participant.startMessage.id")) //
+                        .add(Restrictions.disjunction() //
+                                .add(Restrictions.isNull("participant.closeMessage")) //
+                                .add(Restrictions.ltProperty("message.id", "participant.closeMessage.id"))))
                 .add(constraint) //
                 .setResultTransformer(aliasToBean(ResourceMessageCountDTO.class)) //
                 .list();

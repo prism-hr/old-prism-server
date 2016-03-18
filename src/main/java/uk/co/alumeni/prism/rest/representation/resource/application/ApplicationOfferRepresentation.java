@@ -1,6 +1,10 @@
 package uk.co.alumeni.prism.rest.representation.resource.application;
 
+import java.util.List;
+
 import org.joda.time.LocalDate;
+
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 
 public class ApplicationOfferRepresentation {
 
@@ -11,6 +15,8 @@ public class ApplicationOfferRepresentation {
     private LocalDate positionProvisionalStartDate;
 
     private String appointmentConditions;
+    
+    private List<DocumentRepresentation> documents;
 
     public String getPositionName() {
         return positionName;
@@ -42,6 +48,14 @@ public class ApplicationOfferRepresentation {
 
     public void setAppointmentConditions(String appointmentConditions) {
         this.appointmentConditions = appointmentConditions;
+    }
+    
+    public List<DocumentRepresentation> getDocuments() {
+        return documents;
+    }
+
+    public void setDocuments(List<DocumentRepresentation> documents) {
+        this.documents = documents;
     }
 
     public ApplicationOfferRepresentation withPositionName(String positionName) {

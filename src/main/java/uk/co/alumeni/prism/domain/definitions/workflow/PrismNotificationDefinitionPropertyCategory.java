@@ -24,8 +24,9 @@ public enum PrismNotificationDefinitionPropertyCategory {
     SYSTEM_PROGRAM, //
     SYSTEM_DEPARTMENT, //
     SYSTEM_INSTITUTION, //
-    SYSTEM_USER_PASSWORD, //
     SYSTEM_USER_ACTIVATION, //
+    SYSTEM_USER_ACCOUNT, //
+    SYSTEM_USER_PASSWORD, //
     SYSTEM_ACTIVITY, //
     SYSTEM_REMINDER;
 

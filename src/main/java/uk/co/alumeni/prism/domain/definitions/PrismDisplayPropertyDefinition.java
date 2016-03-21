@@ -2122,8 +2122,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM MESSAGE *********************
      */
 
-    SYSTEM_MESSAGE_REMOVED(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "You have been removed from this converation"),
-    SYSTEM_MESSAGE_SEND(PrismDisplayPropertyCategory.SYSTEM_COMMENT, "Send Message"),
+    SYSTEM_MESSAGE_CONVERSATIONS(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Conversation(s)"),
+    SYSTEM_MESSAGE_CONVERSATIONS_SEARCH(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Search"),
+    SYSTEM_MESSAGE_TO(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "To"),
+    SYSTEM_MESSAGE_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Subject"),
+    SYSTEM_MESSAGE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Message"),
+    SYSTEM_MESSAGE_SEND(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Send Message"),
+    SYSTEM_MESSAGE_CANCEL(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Cancel"),
+    SYSTEM_MESSAGE_RESTORE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Start Again"),
+    SYSTEM_MESSAGE_NO_PERMISSION(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "You no longer have permission to send messages in this conversation"),
     
     /*
      * *************** INSTITUTION COMMENT *********************

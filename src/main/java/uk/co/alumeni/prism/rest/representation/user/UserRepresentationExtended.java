@@ -7,7 +7,7 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCo
 
 public class UserRepresentationExtended extends UserRepresentationSimple {
 
-    private Boolean sendApplicationRecommendationNotification;
+    private Boolean sendActivityNotification;
 
     private List<UserRolesRepresentation> userRoles;
 
@@ -21,12 +21,12 @@ public class UserRepresentationExtended extends UserRepresentationSimple {
 
     private List<ResourceRepresentationConnection> resourcesForWhichUserCanCreateConnections;
 
-    public Boolean getSendApplicationRecommendationNotification() {
-        return sendApplicationRecommendationNotification;
+    public Boolean getSendActivityNotification() {
+        return sendActivityNotification;
     }
 
-    public void setSendApplicationRecommendationNotification(Boolean sendApplicationRecommendationNotification) {
-        this.sendApplicationRecommendationNotification = sendApplicationRecommendationNotification;
+    public void setSendActivityNotification(Boolean sendActivityNotification) {
+        this.sendActivityNotification = sendActivityNotification;
     }
 
     public List<UserRolesRepresentation> getUserRoles() {

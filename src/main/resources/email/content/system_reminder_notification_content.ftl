@@ -20,8 +20,11 @@
 <p>
 	We kindly ask you to register and attend to these tasks at your earliest convenience. We 
 	will continue to send you periodic reminders to this effect. Should you feel that you 
-	should not be receiving these messages, please report the issue via our 
-	${TEMPLATE_SYSTEM_HELPDESK}.
+	should not be receiving these messages, please report the issue via our helpdesk. 
+</p>
+
+<p>
+	${TEMPLATE_SYSTEM_HELPDESK}
 </p>
 
 <p>

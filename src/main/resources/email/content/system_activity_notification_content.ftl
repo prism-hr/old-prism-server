@@ -34,7 +34,11 @@
 
 <p>
 	If you do not wish to receive these messages any more, or wish to take a break,
-	let us know us by logging in and updating your user preferences. ${TEMPLATE_SYSTEM_HOMEPAGE}
+	let us know us by logging in and updating your user preferences.
+</p>
+
+<p>
+	${SYSTEM_USER_ACCOUNT_VIEW}
 </p>
 
 <p>

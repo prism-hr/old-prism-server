@@ -134,7 +134,7 @@ public class UserMapper {
 
     public UserRepresentationExtended getUserRepresentationExtended(User user, User currentUser) {
         UserRepresentationExtended representation = getUserRepresentation(user, currentUser, UserRepresentationExtended.class);
-        representation.setSendApplicationRecommendationNotification(user.getUserAccount().getSendActivityNotification());
+        representation.setSendActivityNotification(user.getUserAccount().getSendActivityNotification());
         representation.setUserRoles(getUserRoleRepresentations(user));
 
         representation.setParentUser(user.getEmail());

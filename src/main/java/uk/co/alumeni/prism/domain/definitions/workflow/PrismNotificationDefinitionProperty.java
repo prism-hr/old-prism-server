@@ -19,6 +19,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_REMINDER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TARGET_GLOBAL;
@@ -71,6 +72,7 @@ import uk.co.alumeni.prism.workflow.notification.property.SystemProgramHomepageB
 import uk.co.alumeni.prism.workflow.notification.property.SystemProjectHomepageBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemReminderSummaryBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemUserAccountActivationBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.SystemUserAccountViewBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.SystemUserNewPasswordBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TargetResourceAcceptNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.TargetResourceOtherNameBuilder;
@@ -159,8 +161,9 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_PROGRAM_HOMEPAGE(SYSTEM_PROGRAM, false, SystemProgramHomepageBuilder.class), //
     SYSTEM_DEPARTMENT_HOMEPAGE(SYSTEM_DEPARTMENT, false, SystemDepartmentHomepageBuilder.class), //
     SYSTEM_INSTITUTION_HOMEPAGE(SYSTEM_INSTITUTION, false, SystemInstitutionHomepageBuilder.class), //
-    SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_USER_ACCOUNT_ACTIVATION(SYSTEM_USER_ACTIVATION, false, SystemUserAccountActivationBuilder.class), //
+    SYSTEM_USER_ACCOUNT_VIEW(SYSTEM_USER_ACCOUNT, false, SystemUserAccountViewBuilder.class), //
+    SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_ACTIVITY_SUMMARY(SYSTEM_ACTIVITY, false, SystemActivitySummaryBuilder.class), //
     SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class),
     SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class);

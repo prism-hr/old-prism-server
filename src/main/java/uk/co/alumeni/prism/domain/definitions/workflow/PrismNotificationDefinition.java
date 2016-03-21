@@ -15,6 +15,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_REMINDER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACCOUNT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_ACTIVATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_USER_PASSWORD;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.TARGET_GLOBAL;
@@ -120,13 +121,13 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM,//
             newArrayList(TEMPLATE_GLOBAL, INVITATION_GLOBAL, TARGET_GLOBAL)), //
     SYSTEM_COMPLETE_REGISTRATION_REQUEST(INDIVIDUAL, UPDATE, SYSTEM, //
-            newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
+            newArrayList(TEMPLATE_GLOBAL, SYSTEM_USER_ACTIVATION)), //
     SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST(INDIVIDUAL, UPDATE, SYSTEM, //
-            newArrayList(SYSTEM_USER_ACTIVATION, TEMPLATE_GLOBAL)), //
+            newArrayList(TEMPLATE_GLOBAL, SYSTEM_USER_ACTIVATION)), //
     SYSTEM_PASSWORD_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
             newArrayList(SYSTEM_USER_PASSWORD, TEMPLATE_GLOBAL, ACTION_GLOBAL)), //
     SYSTEM_ACTIVITY_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
-            newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_ACTIVITY, SYSTEM_USER_ACTIVATION)), //
+            newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_ACTIVITY, SYSTEM_USER_ACCOUNT)), //
     SYSTEM_REMINDER_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
             newArrayList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_REMINDER, SYSTEM_USER_ACTIVATION));
 

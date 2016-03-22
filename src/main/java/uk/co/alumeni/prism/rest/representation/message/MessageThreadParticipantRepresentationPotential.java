@@ -1,4 +1,4 @@
-package uk.co.alumeni.prism.rest.representation.action;
+package uk.co.alumeni.prism.rest.representation.message;
 
 import static com.google.common.collect.Sets.newLinkedHashSet;
 
@@ -8,7 +8,7 @@ import java.util.Set;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
-public class ActionMessageThreadParticipantRepresentation {
+public class MessageThreadParticipantRepresentationPotential {
 
     private PrismRole role;
 
@@ -22,12 +22,12 @@ public class ActionMessageThreadParticipantRepresentation {
         return users;
     }
 
-    public ActionMessageThreadParticipantRepresentation withRole(PrismRole role) {
+    public MessageThreadParticipantRepresentationPotential withRole(PrismRole role) {
         this.role = role;
         return this;
     }
 
-    public ActionMessageThreadParticipantRepresentation withUsers(Collection<UserRepresentationSimple> users) {
+    public MessageThreadParticipantRepresentationPotential withUsers(Collection<UserRepresentationSimple> users) {
         this.users.addAll(users);
         return this;
     }

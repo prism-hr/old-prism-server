@@ -265,7 +265,7 @@ public class CustomizationService {
             OpportunityType stereotypeOpportunityType = stereotype.getOpportunityType();
 
             return configurations.stream()
-                    .filter(c -> c.getResource().sameAs(stereotypeResource) && Objects.equal(c.getOpportunityType(), stereotypeOpportunityType))
+                    .filter(c -> c.getResource().equals(stereotypeResource) && Objects.equal(c.getOpportunityType(), stereotypeOpportunityType))
                     .map(customizationMapper::getWorkflowConfigurationRepresentation)
                     .collect(Collectors.toList());
         }

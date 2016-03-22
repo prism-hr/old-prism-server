@@ -1,26 +1,37 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_CANDIDATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationAdditionalInformation;
 import uk.co.alumeni.prism.domain.application.ApplicationAddress;
 import uk.co.alumeni.prism.domain.application.ApplicationDocument;
@@ -29,6 +40,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
@@ -39,12 +51,14 @@ import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
 import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
+import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.ProfileRepresentationCandidate;
@@ -62,10 +76,13 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSumm
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
+import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
 
@@ -77,28 +94,40 @@ public class ProfileMapper {
     private AddressMapper addressMapper;
 
     @Inject
-    private CommentMapper commentMapper;
-
-    @Inject
-    private DocumentMapper documentMapper;
-
-    @Inject
-    private ResourceMapper resourceMapper;
-
-    @Inject
-    private UserMapper userMapper;
+    private AdvertService advertService;
 
     @Inject
     private ApplicationService applicationService;
 
     @Inject
+    private CommentMapper commentMapper;
+
+    @Inject
     private CommentService commentService;
+
+    @Inject
+    private DocumentMapper documentMapper;
+
+    @Inject
+    private MessageMapper messageMapper;
+
+    @Inject
+    private ResourceMapper resourceMapper;
+
+    @Inject
+    private RoleService roleService;
+
+    @Inject
+    private UserMapper userMapper;
 
     @Inject
     private ProfileService profileService;
 
     @Inject
     private UserService userService;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter, String lastSequenceIdentifier) {
         User currentUser = userService.getCurrentUser();
@@ -277,7 +306,38 @@ public class ProfileMapper {
         if (userService.checkUserCanViewUserProfile(user, currentUser)) {
             UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user);
             UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
-            return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation);
+
+            Set<Resource> resources = newHashSet();
+            roleService.getUserRolesForWhichUserIsCandidate(user).stream().forEach(ur -> resources.add(ur.getResource()));
+
+            List<PrismRole> recipientRoles = newArrayList(PARTNERSHIP_ADMINISTRATOR_GROUP.getRoles());
+            recipientRoles.addAll(asList(INSTITUTION_STAFF_GROUP.getRoles()));
+            recipientRoles.addAll(asList(DEPARTMENT_STAFF_GROUP.getRoles()));
+
+            List<UserRoleDTO> partnerRecipientUserRoles = roleService.getUserRoles(resources, recipientRoles);
+
+            List<Advert> adverts = newArrayList();
+            resources.stream().forEach(r -> adverts.add(r.getAdvert()));
+            List<Advert> targeterAdverts = advertService.getTargeterAdverts(adverts);
+
+            Set<Resource> targeterResources = newHashSet();
+            targeterAdverts.stream().forEach(ta -> {
+                Resource targeterResource = ta.getResource();
+                targeterResources.add(targeterResource);
+                if (targeterResource.getResourceScope().equals(DEPARTMENT)) {
+                    targeterResources.add(targeterResource);
+                }
+            });
+
+            List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(targeterResources, recipientRoles);
+            recipientUserRoles.add(new UserRoleDTO().withUser(user).withRole(SYSTEM_CANDIDATE));
+
+            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeDefault();
+            return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation)
+                    .addMessageThreadParticipants(
+                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, recipientUserRoles, propertyLoader))
+                    .addPartnerMessageThreadParticipants(
+                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, partnerRecipientUserRoles, propertyLoader));
         }
 
         throw new PrismForbiddenException("user does not have permission to access candidate data");

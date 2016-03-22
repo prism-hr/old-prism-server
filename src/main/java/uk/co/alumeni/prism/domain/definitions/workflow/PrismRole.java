@@ -63,7 +63,8 @@ public enum PrismRole implements PrismLocalizableDefinition {
     INSTITUTION_STUDENT_UNVERIFIED(STUDENT, false, INSTITUTION), //
     INSTITUTION_STUDENT_REJECTED(STUDENT, false, INSTITUTION), //
 
-    SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM);
+    SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM), //
+    SYSTEM_CANDIDATE(STUDENT, false, SYSTEM);
 
     private PrismRoleCategory roleCategory;
 

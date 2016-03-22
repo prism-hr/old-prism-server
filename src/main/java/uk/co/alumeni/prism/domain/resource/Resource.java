@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.resource;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
@@ -25,6 +26,7 @@ import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 
 public abstract class Resource implements ActivityEditable, UniqueEntity {
 
@@ -187,17 +189,21 @@ public abstract class Resource implements ActivityEditable, UniqueEntity {
         return enclosingResources;
     }
 
-    public boolean sameAs(Object object) {
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResourceScope(), getId());
+    }
+
+    @Override
+    public boolean equals(Object object) {
         if (object == null) {
             return false;
         }
         if (getClass() != object.getClass()) {
             return false;
         }
-        final Resource other = (Resource) object;
-        Integer id = getId();
-        Integer otherId = other.getId();
-        return id != null && otherId != null && id.equals(otherId);
+        Resource other = (Resource) object;
+        return equal(getId(), other.getId());
     }
 
     public String getDisplayName() {

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
 
@@ -20,9 +21,9 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
 
     private Set<StateRepresentationSimple> recommendedNextStates = newLinkedHashSet();
 
-    private Set<ActionMessageThreadParticipantRepresentation> messageThreadParticipants = newLinkedHashSet();
+    private Set<MessageThreadParticipantRepresentationPotential> messageThreadParticipants = newLinkedHashSet();
 
-    private Set<ActionMessageThreadParticipantRepresentation> partnerMessageThreadParticipants = newLinkedHashSet();
+    private Set<MessageThreadParticipantRepresentationPotential> partnerMessageThreadParticipants = newLinkedHashSet();
 
     public CommentRepresentation getComment() {
         return comment;
@@ -44,11 +45,11 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return recommendedNextStates;
     }
 
-    public Set<ActionMessageThreadParticipantRepresentation> getMessageThreadParticipants() {
+    public Set<MessageThreadParticipantRepresentationPotential> getMessageThreadParticipants() {
         return messageThreadParticipants;
     }
 
-    public Set<ActionMessageThreadParticipantRepresentation> getPartnerMessageThreadParticipants() {
+    public Set<MessageThreadParticipantRepresentationPotential> getPartnerMessageThreadParticipants() {
         return partnerMessageThreadParticipants;
     }
 
@@ -72,12 +73,12 @@ public class ActionRepresentationExtended extends ActionRepresentationSimple {
         return this;
     }
 
-    public ActionRepresentationExtended addMessageThreadParticipants(Collection<ActionMessageThreadParticipantRepresentation> messageThreadParticipants) {
+    public ActionRepresentationExtended addMessageThreadParticipants(Collection<MessageThreadParticipantRepresentationPotential> messageThreadParticipants) {
         this.messageThreadParticipants.addAll(messageThreadParticipants);
         return this;
     }
 
-    public ActionRepresentationExtended addPartnerMessageThreadParticipants(Collection<ActionMessageThreadParticipantRepresentation> partnerMessageThreadParticipants) {
+    public ActionRepresentationExtended addPartnerMessageThreadParticipants(Collection<MessageThreadParticipantRepresentationPotential> partnerMessageThreadParticipants) {
         this.partnerMessageThreadParticipants.addAll(partnerMessageThreadParticipants);
         return this;
     }

@@ -147,10 +147,14 @@ public class WorkflowDAO {
                 .add(getResourceParentManageableStateConstraint(resourceScope))
                 .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR")));
     }
-
+    
     public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
+        return getResourceParentManageableStateConstraint(resourceScope, "state.id");
+    }
+
+    public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope, String stateIdReference) {
         return Restrictions
-                .not(Restrictions.in("state.id",
+                .not(Restrictions.in(stateIdReference,
                         values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
     }
 

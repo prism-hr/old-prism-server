@@ -27,6 +27,16 @@ public class UserRoleDTO implements Comparable<UserRoleDTO> {
         this.role = role;
     }
 
+    public UserRoleDTO withUser(User user) {
+        this.user = user;
+        return this;
+    }
+
+    public UserRoleDTO withRole(PrismRole role) {
+        this.role = role;
+        return this;
+    }
+
     @Override
     public int compareTo(UserRoleDTO other) {
         int compare = compareRoles(role, other.getRole());

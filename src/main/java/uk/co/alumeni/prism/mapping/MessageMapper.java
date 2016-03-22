@@ -1,10 +1,13 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -13,18 +16,24 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.MessageService;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -92,6 +101,26 @@ public class MessageMapper {
         }
 
         return threadRepresentations;
+    }
+
+    public List<MessageThreadParticipantRepresentationPotential> getMessageThreadParticipantRepresentationsPotential(User user,
+            List<UserRoleDTO> recipientUserRoles, PropertyLoader propertyLoader) {
+        TreeMultimap<PrismRole, User> index = TreeMultimap.create();
+        recipientUserRoles.stream().forEach(userRole -> index.put(userRole.getRole(), userRole.getUser()));
+
+        Map<String, MessageThreadParticipantRepresentationPotential> recipients = newTreeMap();
+        index.keySet().stream().forEach(key -> {
+            List<UserRepresentationSimple> userRepresentations = newLinkedList();
+            index.get(key).stream().forEach(value -> {
+                if (!equal(value, user)) {
+                    userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
+                }
+            });
+            String translatedRoleName = propertyLoader.loadLazy(key.getDisplayProperty());
+            recipients.put(translatedRoleName, new MessageThreadParticipantRepresentationPotential().withRole(key).withUsers(userRepresentations));
+        });
+
+        return newLinkedList(recipients.values());
     }
 
 }

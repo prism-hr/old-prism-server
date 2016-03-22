@@ -164,7 +164,7 @@ public class MessageService {
         entityService.save(message);
         thread.addMessage(message);
 
-        MessageThreadParticipant sender = createOrReinstateMessageThreadParticipant(thread, message, user);
+        MessageThreadParticipant sender = getOrCreateMessageThreadParticipant(thread, message, user);
         sender.setLastViewedMessage(message);
 
         Set<Integer> userIds = newHashSet(user.getId());
@@ -172,7 +172,7 @@ public class MessageService {
         for (UserDTO userDTO : userDTOs) {
             User participantUser = userService.getById(userDTO.getId());
             if (!participantUser.equals(user)) {
-                createOrReinstateMessageThreadParticipant(thread, message, participantUser);
+                getOrCreateMessageThreadParticipant(thread, message, participantUser);
 
                 MessageNotification notification = new MessageNotification().withMessage(message).withUser(participantUser);
                 entityService.getOrCreate(notification);
@@ -198,7 +198,7 @@ public class MessageService {
 
     public void viewMessageThread(Integer latestUnreadMessageId) {
         Message latestUnreadMessage = getMessageById(latestUnreadMessageId);
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser(), true);
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser());
         if (participant != null) {
             participant.setLastViewedMessage(latestUnreadMessage);
         }
@@ -228,16 +228,15 @@ public class MessageService {
     }
 
     private boolean checkActiveMessageThreadParticipant(MessageThread thread, User user) {
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user, true);
-        return participant.getCloseMessage() == null;
+        return messageDAO.getMessageThreadParticipant(thread, user) != null;
     }
 
-    private MessageThreadParticipant createOrReinstateMessageThreadParticipant(MessageThread thread, Message message, User user) {
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user, false);
-        if (participant == null || participant.getCloseMessage() != null) {
-            participant = entityService.createOrUpdate(new MessageThreadParticipant().withThread(thread)
-                    .withUser(user).withStartMessage(participant == null ? message : participant.getStartMessage())
-                    .withLastViewedMessage(participant == null ? null : participant.getLastViewedMessage()));
+    private MessageThreadParticipant getOrCreateMessageThreadParticipant(MessageThread thread, Message message, User user) {
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user);
+        if (participant == null) {
+            participant = new MessageThreadParticipant().withThread(thread).withUser(user).withStartMessage(message)
+                    .withLastViewedMessage(messageDAO.getLastViewedMessage(thread, user));
+            entityService.save(participant);
             thread.addParticipant(participant);
         }
         return participant;

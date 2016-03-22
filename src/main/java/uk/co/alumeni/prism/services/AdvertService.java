@@ -1390,7 +1390,7 @@ public class AdvertService {
         Address address = advert.getAddress();
         if (address == null) {
             Resource parentResource = resource.getParentResource();
-            if (parentResource.sameAs(resource)) {
+            if (parentResource.equals(resource)) {
                 return null;
             }
             getResourceAddress(resource.getParentResource());

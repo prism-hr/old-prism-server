@@ -329,6 +329,10 @@ public class RoleService {
     public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
         return roleDAO.getVerifiedRoles(user, resource);
     }
+    
+    public List<UserRole> getUserRolesForWhichUserIsCandidate(User user) {
+        return roleDAO.getUserRolesForWhichUserIsCandidate(user);
+    }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
         for (RoleTransition roleTransition : roleTransitions) {

@@ -352,6 +352,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ROLE_PROJECT_APPROVER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Approver"),
     SYSTEM_ROLE_PROJECT_VIEWER(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Staff"),
     SYSTEM_ROLE_SYSTEM_ADMINISTRATOR(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Administrator"),
+    SYSTEM_ROLE_SYSTEM_CANDIDATE(PrismDisplayPropertyCategory.SYSTEM_ROLE, "Candidate"),
 
     /*
      * *************** SYSTEM SCOPE *********************

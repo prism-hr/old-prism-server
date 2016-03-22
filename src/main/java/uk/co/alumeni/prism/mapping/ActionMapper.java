@@ -1,10 +1,8 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static com.google.common.collect.Maps.newTreeMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
@@ -35,13 +33,11 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
-import uk.co.alumeni.prism.rest.representation.action.ActionMessageThreadParticipantRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.CommentService;
@@ -51,26 +47,10 @@ import uk.co.alumeni.prism.services.StateService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
 public class ActionMapper {
-
-    @Inject
-    private CommentMapper commentMapper;
-
-    @Inject
-    private CommentService commentService;
-
-    @Inject
-    private ResourceMapper resourceMapper;
-
-    @Inject
-    private StateMapper stateMapper;
-
-    @Inject
-    private UserMapper userMapper;
 
     @Inject
     private ActionService actionService;
@@ -79,10 +59,25 @@ public class ActionMapper {
     private AdvertService advertService;
 
     @Inject
+    private CommentMapper commentMapper;
+
+    @Inject
+    private CommentService commentService;
+
+    @Inject
+    private MessageMapper messageMapper;
+
+    @Inject
+    private ResourceMapper resourceMapper;
+
+    @Inject
     private ResourceListFilterService resourceListFilterService;
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private StateMapper stateMapper;
 
     @Inject
     private StateService stateService;
@@ -205,7 +200,8 @@ public class ActionMapper {
 
                     if (hasRecipientRoles) {
                         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
-                        representation.addMessageThreadParticipants(getActionRecipientRepresentations(user, recipientUserRoles, propertyLoader));
+                        representation.addMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user, recipientUserRoles,
+                                propertyLoader));
                     }
 
                     if (hasPartnerRecipientRoles) {
@@ -226,7 +222,8 @@ public class ActionMapper {
 
                         if (targetingResources.size() > 0) {
                             List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
-                            representation.addPartnerMessageThreadParticipants(getActionRecipientRepresentations(user, recipientPartnerUserRoles, propertyLoader));
+                            representation.addPartnerMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user,
+                                    recipientPartnerUserRoles, propertyLoader));
                         }
                     }
                 }
@@ -234,25 +231,6 @@ public class ActionMapper {
         }
 
         return representation;
-    }
-
-    private List<ActionMessageThreadParticipantRepresentation> getActionRecipientRepresentations(User user, List<UserRoleDTO> recipientUserRoles, PropertyLoader propertyLoader) {
-        TreeMultimap<PrismRole, User> index = TreeMultimap.create();
-        recipientUserRoles.stream().forEach(userRole -> index.put(userRole.getRole(), userRole.getUser()));
-
-        Map<String, ActionMessageThreadParticipantRepresentation> recipients = newTreeMap();
-        index.keySet().stream().forEach(key -> {
-            List<UserRepresentationSimple> userRepresentations = newLinkedList();
-            index.get(key).stream().forEach(value -> {
-                if (!equal(value, user)) {
-                    userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
-                }
-            });
-            String translatedRoleName = propertyLoader.loadLazy(key.getDisplayProperty());
-            recipients.put(translatedRoleName, new ActionMessageThreadParticipantRepresentation().withRole(key).withUsers(userRepresentations));
-        });
-
-        return newLinkedList(recipients.values());
     }
 
     private <T extends ActionRepresentationSimple> T getActionRepresentationSimple(ActionDTO action, Class<T> returnType) {

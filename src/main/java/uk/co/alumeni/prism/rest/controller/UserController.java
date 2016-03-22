@@ -33,6 +33,7 @@ import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.domain.user.UserReferee;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
+import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
@@ -48,6 +49,7 @@ import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserActivateDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserLinkingDTO;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
@@ -84,9 +86,6 @@ public class UserController {
     private EntityService entityService;
 
     @Inject
-    private UserMapper userMapper;
-
-    @Inject
     private ProfileService profileService;
 
     @Inject
@@ -99,7 +98,13 @@ public class UserController {
     private UserAccountService userAccountService;
 
     @Inject
+    private MessageMapper messageMapper;
+
+    @Inject
     private ProfileMapper profileMapper;
+
+    @Inject
+    private UserMapper userMapper;
 
     @Inject
     private UserLinkingValidator userLinkingValidator;
@@ -112,6 +117,13 @@ public class UserController {
     public UserRepresentationExtended getUser() {
         User currentUser = userService.getCurrentUser();
         return userMapper.getUserRepresentationExtended(currentUser, currentUser);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/messages", method = RequestMethod.GET)
+    public List<MessageThreadRepresentation> getMessageThreads(@RequestParam(required = false) String q) {
+        User currentUser = userService.getCurrentUser();
+        return messageMapper.getMessageThreadRepresentations(currentUser.getUserAccount(), q);
     }
 
     @PreAuthorize("isAuthenticated()")

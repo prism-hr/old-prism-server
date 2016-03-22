@@ -24,6 +24,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.SystemService;
+import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 import com.google.common.collect.ImmutableMap;
@@ -52,6 +53,9 @@ public class NotificationPropertyLoader {
 
     @Inject
     private SystemService systemService;
+
+    @Inject
+    private UserService userService;
 
     @Inject
     private PrismTemplateUtils prismTemplateUtils;
@@ -105,8 +109,9 @@ public class NotificationPropertyLoader {
     }
 
     public String getCandidateProfileControl() {
-        return getRedirectionControl(applicationApiUrl + "/mail/candidates/" + notificationDefinitionDTO.getCandidate().getId() + "/messages",
-                SYSTEM_CANDIDATE_VIEW_PROFILE);
+        User candidate = notificationDefinitionDTO.getCandidate();
+        String path = candidate.equals(userService.getCurrentUser()) ? "/" : "/mail/candidates/" + candidate.getId();
+        return getRedirectionControl(applicationApiUrl + path + "messages", SYSTEM_CANDIDATE_VIEW_PROFILE);
     }
 
     public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {

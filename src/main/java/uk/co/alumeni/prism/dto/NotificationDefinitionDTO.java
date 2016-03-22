@@ -18,6 +18,8 @@ public class NotificationDefinitionDTO {
     private User recipient;
 
     private User signatory;
+    
+    private User candidate;
 
     private Resource resource;
 
@@ -47,8 +49,16 @@ public class NotificationDefinitionDTO {
         return initiator;
     }
 
+    public void setInitiator(User initiator) {
+        this.initiator = initiator;
+    }
+
     public User getRecipient() {
         return recipient;
+    }
+
+    public void setRecipient(User recipient) {
+        this.recipient = recipient;
     }
 
     public User getSignatory() {
@@ -59,28 +69,60 @@ public class NotificationDefinitionDTO {
         this.signatory = signatory;
     }
 
+    public User getCandidate() {
+        return candidate;
+    }
+
+    public void setCandidate(User candidate) {
+        this.candidate = candidate;
+    }
+
     public Resource getResource() {
         return resource;
+    }
+
+    public void setResource(Resource resource) {
+        this.resource = resource;
     }
 
     public Comment getComment() {
         return comment;
     }
 
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
     public Message getMessage() {
         return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     public AdvertTarget getAdvertTarget() {
         return advertTarget;
     }
 
+    public void setAdvertTarget(AdvertTarget advertTarget) {
+        this.advertTarget = advertTarget;
+    }
+
     public ResourceParent getInvitedResource() {
         return invitedResource;
     }
 
+    public void setInvitedResource(ResourceParent invitedResource) {
+        this.invitedResource = invitedResource;
+    }
+
     public PrismResourceContext getInvitedResourceContext() {
         return invitedResourceContext;
+    }
+
+    public void setInvitedResourceContext(PrismResourceContext invitedResourceContext) {
+        this.invitedResourceContext = invitedResourceContext;
     }
 
     public String getInvitationMessage() {
@@ -103,16 +145,32 @@ public class NotificationDefinitionDTO {
         return newPassword;
     }
 
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
     public UserActivityRepresentation getUserActivityRepresentation() {
         return userActivityRepresentation;
+    }
+
+    public void setUserActivityRepresentation(UserActivityRepresentation userActivityRepresentation) {
+        this.userActivityRepresentation = userActivityRepresentation;
     }
 
     public AdvertListRepresentation getAdvertListRepresentation() {
         return advertListRepresentation;
     }
 
+    public void setAdvertListRepresentation(AdvertListRepresentation advertListRepresentation) {
+        this.advertListRepresentation = advertListRepresentation;
+    }
+
     public Boolean getBuffered() {
         return buffered;
+    }
+
+    public void setBuffered(Boolean buffered) {
+        this.buffered = buffered;
     }
 
     public NotificationDefinitionDTO withInitiator(User initiator) {
@@ -120,11 +178,16 @@ public class NotificationDefinitionDTO {
         return this;
     }
 
-    public NotificationDefinitionDTO withRecipient(User user) {
-        this.recipient = user;
+    public NotificationDefinitionDTO withRecipient(User recipient) {
+        this.recipient = recipient;
         return this;
     }
 
+    public NotificationDefinitionDTO withCandidate(User candidate) {
+        this.candidate = candidate;
+        return this;
+    }
+    
     public NotificationDefinitionDTO withResource(Resource resource) {
         this.resource = resource;
         return this;

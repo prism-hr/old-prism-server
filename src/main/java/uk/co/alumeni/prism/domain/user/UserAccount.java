@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
 import uk.co.alumeni.prism.domain.workflow.Scope;
@@ -131,6 +132,9 @@ public class UserAccount
 
     @OneToMany(mappedBy = "userAccount")
     private Set<UserAccountUpdate> updates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "userAccount")
+    private Set<MessageThread> threads = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -338,6 +342,10 @@ public class UserAccount
         return updates;
     }
 
+    public Set<MessageThread> getThreads() {
+        return threads;
+    }
+
     public UserAccount withPassword(String password) {
         this.password = password;
         return this;
@@ -365,6 +373,16 @@ public class UserAccount
 
     public UserAccount withSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+        return this;
+    }
+
+    public UserAccount addUpdate(UserAccountUpdate update) {
+        this.updates.add(update);
+        return this;
+    }
+
+    public UserAccount addThread(MessageThread thread) {
+        this.threads.add(thread);
         return this;
     }
 

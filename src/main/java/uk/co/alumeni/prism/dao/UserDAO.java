@@ -404,7 +404,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter, String lastSequenceIdentifier) {
+    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter, User user,
+            String lastSequenceIdentifier) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //
@@ -430,7 +431,8 @@ public class UserDAO {
                 .createAlias("document", "userDocument", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
-                .add(Restrictions.eq("shared", true));
+                .add(Restrictions.eq("shared", true)) //
+                .add(Restrictions.ne("user", user));
 
         Integer userId = filter.getUserId();
         if (userId != null) {

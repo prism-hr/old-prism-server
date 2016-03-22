@@ -7,6 +7,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.CANDIDATE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
@@ -145,7 +146,9 @@ public enum PrismNotificationDefinition implements PrismLocalizableDefinition {
     SYSTEM_REMINDER_NOTIFICATION(SYNDICATED, UPDATE, SYSTEM, //
             newLinkedHashSet(asList(TEMPLATE_GLOBAL, ACTION_GLOBAL, SYSTEM_REMINDER, SYSTEM_USER_ACTIVATION))), //
     SYSTEM_MESSAGE_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
-            newLinkedHashSet(asList(TEMPLATE_GLOBAL, ACTION_GLOBAL, MESSAGE_GLOBAL)));
+            newLinkedHashSet(asList(TEMPLATE_GLOBAL, ACTION_GLOBAL, MESSAGE_GLOBAL))), //
+    SYSTEM_MESSAGE_CANDIDATE_NOTIFICATION(INDIVIDUAL, UPDATE, SYSTEM, //
+            newLinkedHashSet(asList(TEMPLATE_GLOBAL, MESSAGE_GLOBAL, CANDIDATE_GLOBAL)));
 
     private PrismNotificationType notificationType;
 

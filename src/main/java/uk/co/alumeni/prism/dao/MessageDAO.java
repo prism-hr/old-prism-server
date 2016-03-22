@@ -20,6 +20,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.message.MessageNotification;
@@ -43,15 +44,23 @@ public class MessageDAO {
                 .list();
     }
 
-    public List<MessageThreadDTO> getMessageThreads(Resource resource, User user) {
-        return (List<MessageThreadDTO>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
+    public List<MessageThreadDTO> getMessageThreads(ActivityEditable activity, User user) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Message.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("thread").as("thread")) //
                         .add(Projections.max("createdTimestamp").as("updatedTimestamp"))) //
                 .createAlias("thread", "thread", INNER_JOIN) //
-                .createAlias("thread.comment", "comment", INNER_JOIN) //
-                .createAlias("thread.participants", "participant", INNER_JOIN) //
-                .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
+                .createAlias("thread.participants", "participant", INNER_JOIN);
+
+        if (Resource.class.isAssignableFrom(activity.getClass())) {
+            Resource resource = (Resource) activity;
+            criteria.createAlias("thread.comment", "comment", INNER_JOIN, //
+                    Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource));
+        } else {
+            criteria.add(Restrictions.eq("thread.userAccount", activity));
+        }
+
+        return (List<MessageThreadDTO>) criteria //
                 .add(Restrictions.eq("participant.user", user)) //
                 .addOrder(Order.desc("updatedTimestamp")) //
                 .addOrder(Order.desc("thread")) //

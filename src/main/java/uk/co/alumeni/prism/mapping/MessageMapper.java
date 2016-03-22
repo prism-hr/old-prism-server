@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
@@ -110,9 +111,14 @@ public class MessageMapper {
         index.keySet().stream().forEach(key -> {
             List<UserRepresentationSimple> userRepresentations = newLinkedList();
             index.get(key).stream().forEach(value -> {
-                userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
+                if (!equal(value, user)) {
+                    userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
+                }
             });
-            recipients.put(key, new MessageThreadParticipantRepresentationPotential().withRole(key).withUsers(userRepresentations));
+            
+            if (userRepresentations.size() > 0) {
+                recipients.put(key, new MessageThreadParticipantRepresentationPotential().withRole(key).withUsers(userRepresentations));
+            }
         });
 
         return newLinkedList(recipients.values());

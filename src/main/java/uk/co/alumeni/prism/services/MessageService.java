@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.MessageDAO;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
@@ -27,6 +28,7 @@ import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
@@ -79,8 +81,8 @@ public class MessageService {
         entityService.delete(messageNotification);
     }
 
-    public List<MessageThread> getMessageThreads(Resource resource, User user, String searchTerm) {
-        List<MessageThread> threads = newLinkedList(messageDAO.getMessageThreads(resource, user).stream().map(t -> t.getThread()).collect(toList()));
+    public List<MessageThread> getMessageThreads(ActivityEditable activity, User user, String searchTerm) {
+        List<MessageThread> threads = newLinkedList(messageDAO.getMessageThreads(activity, user).stream().map(t -> t.getThread()).collect(toList()));
         if (threads.size() > 0 && isNotBlank(searchTerm)) {
             threads = newLinkedList(messageDAO.getMatchingMessageThreads(threads, searchTerm).stream().map(t -> t.getThread()).collect(toList()));
         }
@@ -108,31 +110,54 @@ public class MessageService {
         messageDAO.getMessageDocuments(messages).stream().forEach(md -> documents.put(md.getMessage(), md.getDocument()));
         return documents;
     }
+    
+    public void createMessageThread(ActivityEditable activity, MessageDTO messageDTO) {
+        createMessage(activity, null, messageDTO);
+    }
 
-    public void createMessage(Resource resource, Integer threadId, MessageDTO messageDTO) {
+    public void createMessage(ActivityEditable activity, Integer threadId, MessageDTO messageDTO) {
         DateTime baseline = now();
         User user = userService.getCurrentUser();
-        Action messageAction = actionService.getMessageAction(resource);
-
+        
         MessageThread thread = null;
-        if (threadId == null) {
-            thread = new MessageThread().withSubject(messageDTO.getSubject());
-            entityService.save(thread);
+        if (Resource.class.isAssignableFrom(activity.getClass())) {
+            Resource resource = (Resource) activity;
+            Action messageAction = actionService.getMessageAction(resource);
+            
+            if (threadId == null) {
+                thread = new MessageThread().withSubject(messageDTO.getSubject());
+                entityService.save(thread);
 
-            Comment comment = new Comment().withResource(resource).withUser(user).withAction(messageAction).withThread(thread).withDeclinedResponse(false)
-                    .withCreatedTimestamp(baseline);
-            actionService.executeUserAction(resource, messageAction, comment);
-            thread.setComment(comment);
-        } else if (actionService.checkActionAvailable(resource, messageAction, user)) {
-            thread = getMessageThreadById(threadId);
-        } else {
-            Action viewEditAction = actionService.getViewEditAction(resource);
-            if (actionService.checkActionAvailable(resource, viewEditAction, user)) {
+                Comment comment = new Comment().withResource(resource).withUser(user).withAction(messageAction).withDeclinedResponse(false)
+                        .withCreatedTimestamp(baseline);
+                actionService.executeUserAction(resource, messageAction, comment);
+                thread.setComment(comment);
+                comment.setThread(thread);
+            } else if (actionService.checkActionAvailable(resource, messageAction, user)) {
                 thread = getMessageThreadById(threadId);
-                if (messageDAO.getMessages(thread, user).size() == 0) {
-                    return;
+            } else {
+                Action viewEditAction = actionService.getViewEditAction(resource);
+                if (actionService.checkActionAvailable(resource, viewEditAction, user)) {
+                    thread = getMessageThreadById(threadId);
                 }
             }
+        } else {
+            UserAccount userAccount = (UserAccount) activity;
+             
+            if (userService.checkUserCanViewUserProfile(userAccount.getUser(), userService.getCurrentUser())) {
+                if (threadId == null) {
+                    thread = new MessageThread().withSubject(messageDTO.getSubject());
+                    entityService.save(thread);
+                    thread.setUserAccount(userAccount);
+                    userAccount.addThread(thread);
+                } else {
+                    thread = getMessageThreadById(threadId);
+                }
+            }
+        }
+        
+        if (thread == null || messageDAO.getMessages(thread, user).size() == 0) {
+            return;
         }
 
         Message message = new Message().withUser(user).withThread(thread).withContent(messageDTO.getContent()).withCreatedTimestamp(baseline);
@@ -179,16 +204,23 @@ public class MessageService {
         }
     }
 
-    public User validateViewMessages(Resource resource) {
+    public User validateViewMessages(ActivityEditable activity) {
         User user = userService.getCurrentUser();
-        Action messageAction = actionService.getMessageAction(resource);
-        if (messageAction == null || !actionService.checkActionAvailable(resource, messageAction, user)) {
-            Action viewEditAction = actionService.getViewEditAction(resource);
-            if (viewEditAction == null || !actionService.checkActionAvailable(resource, viewEditAction, user)
-                    || messageDAO.getMessageThreads(resource, user).size() == 0) {
-                throw new PrismForbiddenException("User cannot view or edit messages for the given resource");
+
+        if (Resource.class.isAssignableFrom(activity.getClass())) {
+            Resource resource = (Resource) activity;
+            Action messageAction = actionService.getMessageAction(resource);
+            if (messageAction == null || !actionService.checkActionAvailable(resource, messageAction, user)) {
+                Action viewEditAction = actionService.getViewEditAction(resource);
+                if (viewEditAction == null || !actionService.checkActionAvailable(resource, viewEditAction, user)
+                        || messageDAO.getMessageThreads(resource, user).size() == 0) {
+                    throw new PrismForbiddenException("User cannot view or edit messages for the given resource");
+                }
             }
+        } else {
+
         }
+
         return user;
     }
 

@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
 import static java.util.stream.Collectors.toList;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static org.hibernate.transform.Transformers.aliasToBean;
@@ -88,10 +87,6 @@ public class MessageDAO {
                 .list();
     }
 
-    public List<Message> getMessages(MessageThread thread, User user) {
-        return getMessages(newArrayList(thread), user);
-    }
-
     public List<Message> getMessages(Collection<MessageThread> threads, User user) {
         return (List<Message>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
                 .createAlias("thread", "thread", INNER_JOIN) //
@@ -161,6 +156,16 @@ public class MessageDAO {
                 .setParameter("thread", thread)
                 .setParameterList("userIds", userIds)
                 .executeUpdate();
+    }
+
+    public Message getLastViewedMessage(MessageThread thread, User user) {
+        return (Message) sessionFactory.getCurrentSession().createCriteria(MessageThreadParticipant.class) //
+                .setProjection(Projections.property("lastViewedMessage")) //
+                .add(Restrictions.eq("thread", thread)) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.desc("lastViewedMessage")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
     private Junction getMatchingMessageConstraint(String searchTerm) {

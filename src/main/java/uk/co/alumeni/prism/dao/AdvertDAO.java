@@ -839,6 +839,14 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<Advert> getTargetedAdverts(Collection<Advert> adverts) {
+        return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("targetAdvert")) //
+                .add(Restrictions.in("advert", adverts)) //
+                .add(Restrictions.eq("partnershipState", ENDORSEMENT_PROVIDED)) //
+                .list();
+    }
+    
     public List<Advert> getTargeterAdverts(Collection<Advert> adverts) {
         return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert")) //

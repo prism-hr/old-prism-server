@@ -432,7 +432,7 @@ public class UserDAO {
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
                 .add(Restrictions.eq("shared", true)) //
-                .add(Restrictions.ne("user", user));
+                .add(Restrictions.ne("user.id", user.getId()));
 
         Integer userId = filter.getUserId();
         if (userId != null) {

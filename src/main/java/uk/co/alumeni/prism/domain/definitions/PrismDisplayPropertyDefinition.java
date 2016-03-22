@@ -1100,6 +1100,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_NOTIFICATION_SYSTEM_JOIN_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Join Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_JOIN_REQUEST(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Join Request"),
     SYSTEM_NOTIFICATION_SYSTEM_MESSAGE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Message Notification"),
+    SYSTEM_NOTIFICATION_SYSTEM_MESSAGE_CANDIDATE_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "New Candidate Message Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_USER_INVITATION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "User Invitation Notification"),
     SYSTEM_NOTIFICATION_SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Organization Invitation Notification"),
     SYSTEM_NOTIFICATION_CONFIGURATION_LABEL(PrismDisplayPropertyCategory.SYSTEM_NOTIFICATION, "Email Template"),

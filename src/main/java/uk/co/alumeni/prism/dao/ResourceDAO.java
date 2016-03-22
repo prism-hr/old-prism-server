@@ -263,10 +263,11 @@ public class ResourceDAO {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.groupProperty(resourceIdReference)) //
                 .createAlias("thread", "thread", JoinType.INNER_JOIN) //
-                .createAlias("thread.messages", "message") //
-                .createAlias("message.recipients", "recipient", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("recipient.user", user)) //
-                .add(Restrictions.isNull("recipient.viewTimestamp")) //
+                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("participant.user", user)) //
+                .add(getVisibleMessageConstraint()) //
+                .add(getUnreadMessageConstraint()) //
                 .list();
     }
 
@@ -782,9 +783,7 @@ public class ResourceDAO {
                     .add(Restrictions.isNotNull("participant.lastViewedMessage")) //
                     .add(Restrictions.geProperty("participant.lastViewedMessage.id", "message.id"));
         } else {
-            constraint = Restrictions.disjunction() //
-                    .add(Restrictions.isNull("participant.lastViewedMessage")) //
-                    .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
+            constraint = getUnreadMessageConstraint();
         }
 
         return (List<ResourceMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
@@ -796,14 +795,24 @@ public class ResourceDAO {
                 .createAlias("thread.messages", "message") //
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.eq("participant.user", user)) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.geProperty("message.id", "participant.startMessage.id")) //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.isNull("participant.closeMessage")) //
-                                .add(Restrictions.ltProperty("message.id", "participant.closeMessage.id"))))
+                .add(getVisibleMessageConstraint())
                 .add(constraint) //
                 .setResultTransformer(aliasToBean(ResourceMessageCountDTO.class)) //
                 .list();
+    }
+
+    private Junction getUnreadMessageConstraint() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("participant.lastViewedMessage")) //
+                .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
+    }
+
+    private Junction getVisibleMessageConstraint() {
+        return Restrictions.conjunction() //
+                .add(Restrictions.geProperty("message.id", "participant.startMessage.id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("participant.closeMessage")) //
+                        .add(Restrictions.ltProperty("message.id", "participant.closeMessage.id")));
     }
 
 }

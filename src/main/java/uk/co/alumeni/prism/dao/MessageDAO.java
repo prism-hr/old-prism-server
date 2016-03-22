@@ -135,11 +135,11 @@ public class MessageDAO {
                 .list();
     }
 
-    public MessageThreadParticipant getMessageThreadParticipant(MessageThread thread, User user, boolean active) {
+    public MessageThreadParticipant getMessageThreadParticipant(MessageThread thread, User user) {
         return (MessageThreadParticipant) sessionFactory.getCurrentSession().createCriteria(MessageThreadParticipant.class) //
                 .add(Restrictions.eq("thread", thread)) //
                 .add(Restrictions.eq("user", user)) //
-                .add(active ? Restrictions.isNull("closeMessage") : Restrictions.isNotNull("closeMessage")) //
+                .add(Restrictions.isNull("closeMessage")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -156,6 +156,16 @@ public class MessageDAO {
                 .setParameter("thread", thread)
                 .setParameterList("userIds", userIds)
                 .executeUpdate();
+    }
+
+    public Message getLastViewedMessage(MessageThread thread, User user) {
+        return (Message) sessionFactory.getCurrentSession().createCriteria(MessageThreadParticipant.class) //
+                .setProjection(Projections.property("lastViewedMessage")) //
+                .add(Restrictions.eq("thread", thread)) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.desc("lastViewedMessage")) //
+                .setMaxResults(1) //
+                .uniqueResult();
     }
 
     private Junction getMatchingMessageConstraint(String searchTerm) {

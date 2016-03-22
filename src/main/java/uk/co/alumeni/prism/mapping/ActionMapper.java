@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
@@ -44,7 +43,6 @@ import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.StateService;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
 
@@ -81,9 +79,6 @@ public class ActionMapper {
 
     @Inject
     private StateService stateService;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     public ActionRepresentation getActionRepresentation(PrismAction action) {
         return getActionRepresentation(action, ActionRepresentation.class);
@@ -196,12 +191,10 @@ public class ActionMapper {
                 boolean hasPartnerRecipientRoles = partnerRecipientRoles.size() > 0;
 
                 if (hasRecipientRoles || hasPartnerRecipientRoles) {
-                    PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeDefault();
-
                     if (hasRecipientRoles) {
                         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
-                        representation.addMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user, recipientUserRoles,
-                                propertyLoader));
+                        representation
+                                .addMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user, recipientUserRoles));
                     }
 
                     if (hasPartnerRecipientRoles) {
@@ -211,19 +204,19 @@ public class ActionMapper {
                             resourceAdverts.put(enclosingAdvert.getId(), enclosingAdvert);
                         });
 
-                        Map<ResourceDTO, Resource> targetingResources = newHashMap();
-                        advertService.getTargeterAdverts(resourceAdverts.values()).stream().forEach(targetingAdvert -> {
-                            targetingAdvert.getEnclosingResources().stream().forEach(targetingResource -> {
-                                ResourceDTO targetingResourceDTO = new ResourceDTO()
-                                        .withScope(targetingResource.getResourceScope()).withId(targetingResource.getId());
-                                targetingResources.put(targetingResourceDTO, targetingResource);
+                        Map<ResourceDTO, Resource> partnerResources = newHashMap();
+                        advertService.getTargetedAdverts(resourceAdverts.values()).stream().forEach(partnerAdvert -> {
+                            partnerAdvert.getEnclosingResources().stream().forEach(partnerResource -> {
+                                ResourceDTO partnerResourceDTO = new ResourceDTO()
+                                        .withScope(partnerResource.getResourceScope()).withId(partnerResource.getId());
+                                partnerResources.put(partnerResourceDTO, partnerResource);
                             });
                         });
 
-                        if (targetingResources.size() > 0) {
-                            List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(targetingResources.values(), partnerRecipientRoles);
+                        if (partnerResources.size() > 0) {
+                            List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(partnerResources.values(), partnerRecipientRoles);
                             representation.addPartnerMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user,
-                                    recipientPartnerUserRoles, propertyLoader));
+                                    recipientPartnerUserRoles));
                         }
                     }
                 }

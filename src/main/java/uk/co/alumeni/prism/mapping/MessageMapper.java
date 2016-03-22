@@ -30,7 +30,6 @@ import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantR
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.MessageService;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.TreeMultimap;
@@ -104,11 +103,11 @@ public class MessageMapper {
     }
 
     public List<MessageThreadParticipantRepresentationPotential> getMessageThreadParticipantRepresentationsPotential(User user,
-            List<UserRoleDTO> recipientUserRoles, PropertyLoader propertyLoader) {
+            List<UserRoleDTO> recipientUserRoles) {
         TreeMultimap<PrismRole, User> index = TreeMultimap.create();
         recipientUserRoles.stream().forEach(userRole -> index.put(userRole.getRole(), userRole.getUser()));
 
-        Map<String, MessageThreadParticipantRepresentationPotential> recipients = newTreeMap();
+        Map<PrismRole, MessageThreadParticipantRepresentationPotential> recipients = newTreeMap();
         index.keySet().stream().forEach(key -> {
             List<UserRepresentationSimple> userRepresentations = newLinkedList();
             index.get(key).stream().forEach(value -> {
@@ -116,8 +115,10 @@ public class MessageMapper {
                     userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
                 }
             });
-            String translatedRoleName = propertyLoader.loadLazy(key.getDisplayProperty());
-            recipients.put(translatedRoleName, new MessageThreadParticipantRepresentationPotential().withRole(key).withUsers(userRepresentations));
+            
+            if (userRepresentations.size() > 0) {
+                recipients.put(key, new MessageThreadParticipantRepresentationPotential().withRole(key).withUsers(userRepresentations));
+            }
         });
 
         return newLinkedList(recipients.values());

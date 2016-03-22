@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
 import static java.util.stream.Collectors.toList;
-import static jersey.repackaged.com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static org.hibernate.transform.Transformers.aliasToBean;
@@ -88,10 +87,6 @@ public class MessageDAO {
                 .list();
     }
 
-    public List<Message> getMessages(MessageThread thread, User user) {
-        return getMessages(newArrayList(thread), user);
-    }
-
     public List<Message> getMessages(Collection<MessageThread> threads, User user) {
         return (List<Message>) sessionFactory.getCurrentSession().createCriteria(Message.class) //
                 .createAlias("thread", "thread", INNER_JOIN) //
@@ -140,11 +135,11 @@ public class MessageDAO {
                 .list();
     }
 
-    public MessageThreadParticipant getMessageThreadParticipant(MessageThread thread, User user) {
+    public MessageThreadParticipant getMessageThreadParticipant(MessageThread thread, User user, boolean active) {
         return (MessageThreadParticipant) sessionFactory.getCurrentSession().createCriteria(MessageThreadParticipant.class) //
                 .add(Restrictions.eq("thread", thread)) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.isNull("closeMessage")) //
+                .add(active ? Restrictions.isNull("closeMessage") : Restrictions.isNotNull("closeMessage")) //
                 .addOrder(Order.desc("id")) //
                 .setMaxResults(1) //
                 .uniqueResult();

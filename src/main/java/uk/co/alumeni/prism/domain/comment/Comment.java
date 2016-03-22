@@ -127,9 +127,8 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     @ManyToOne
     @JoinColumn(name = "action_id", nullable = false)
     private Action action;
-    
-    @OneToOne
-    @JoinColumn(name = "message_thread_id")
+
+    @OneToOne(mappedBy = "comment")
     private MessageThread thread;
 
     @Lob
@@ -172,7 +171,7 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     @Column(name = "application_interested")
     private Boolean interested;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "application_interview_state")
     private PrismInterviewState interviewState;
@@ -622,11 +621,6 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public Comment withAction(Action action) {
         this.action = action;
-        return this;
-    }
-    
-    public Comment withThread(MessageThread thread) {
-        this.thread = thread;
         return this;
     }
 

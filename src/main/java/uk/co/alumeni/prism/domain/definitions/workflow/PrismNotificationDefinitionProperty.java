@@ -5,6 +5,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.CANDIDATE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
@@ -46,6 +47,8 @@ import uk.co.alumeni.prism.workflow.notification.property.ApplicationPositionDes
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationPositionNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationRejectionReasonBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationStartDateBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.CandidateFullNameBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.CandidateProfileBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.CommentContentBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.CommentDateTimeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.CommentTransitionOutcomeBuilder;
@@ -169,7 +172,9 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_ACTIVITY_SUMMARY(SYSTEM_ACTIVITY, false, SystemActivitySummaryBuilder.class), //
     SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class),
-    SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class);
+    SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class),
+    CANDIDATE_FULL_NAME(CANDIDATE_GLOBAL, true, CandidateFullNameBuilder.class),
+    CANDIDATE_PROFILE(CANDIDATE_GLOBAL, false, CandidateProfileBuilder.class);
 
     private PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory;
 

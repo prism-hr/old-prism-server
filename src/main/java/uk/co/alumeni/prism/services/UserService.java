@@ -541,7 +541,8 @@ public class UserService {
         });
 
         Set<ProfileListRowDTO> profiles = newLinkedHashSet();
-        resourceIndex.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, lastSequenceIdentifier)));
+        resourceIndex.keySet()
+                .forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, user, lastSequenceIdentifier)));
 
         return newLinkedList(profiles);
     }
@@ -596,6 +597,10 @@ public class UserService {
         UserAccount userAccount = getById(user).getUserAccount();
         userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
         userAccount.setActivityCachedTimestamp(baseline);
+    }
+
+    public boolean checkUserCanViewUserProfile(User user, User currentUser) {
+        return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserId(user.getId()), currentUser));
     }
 
     @SuppressWarnings("unchecked")

@@ -335,7 +335,7 @@ public class ResourceController {
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<MessageThreadRepresentation> getThreads(@PathVariable Integer resourceId, @RequestParam(required = false) String q,
+    public List<MessageThreadRepresentation> getMessageThreads(@PathVariable Integer resourceId, @RequestParam(required = false) String q,
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return messageMapper.getMessageThreadRepresentations(resource, q);
@@ -346,7 +346,7 @@ public class ResourceController {
     public void createMessageThread(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @Valid @RequestBody MessageDTO messageDTO) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        messageService.createMessage(resource, null, messageDTO);
+        messageService.createMessageThread(resource, messageDTO);
     }
 
     @RequestMapping(value = "{resourceId}/threads/{threadId}/messages", method = RequestMethod.POST)

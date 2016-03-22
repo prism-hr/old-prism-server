@@ -2133,6 +2133,12 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MESSAGE_NO_PERMISSION(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "You no longer have permission to send messages in this conversation"),
     
     /*
+     * *************** SYSTEM CANDIDATE *********************
+     */
+
+    SYSTEM_CANDIDATE_VIEW_PROFILE(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "View Profile"),
+    
+    /*
      * *************** INSTITUTION COMMENT *********************
      */
 

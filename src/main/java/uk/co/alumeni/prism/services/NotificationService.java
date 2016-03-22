@@ -17,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_MESSAGE_CANDIDATE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
@@ -40,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.alumeni.prism.dao.NotificationDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -56,6 +58,7 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserNotification;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.Action;
@@ -282,10 +285,23 @@ public class NotificationService {
     public void sendMessageNotification(MessageNotification messageRecipient) {
         User initiator = systemService.getSystem().getUser();
         Message message = messageRecipient.getMessage();
-        Resource resource = message.getThread().getComment().getResource();
-        NotificationDefinition definition = getById(PrismNotificationDefinition.valueOf(resource.getResourceScope().name() + "_MESSAGE_NOTIFICATION"));
+        ActivityEditable activity = message.getThread().getActivity();
+
+        Resource resource;
+        NotificationDefinition definition;
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(messageRecipient.getUser())
-                .withResource(resource).withMessage(message).withTransitionAction(actionService.getMessageAction(resource).getId());
+                .withMessage(message);
+        if (Resource.class.isAssignableFrom(activity.getClass())) {
+            resource = (Resource) activity;
+            definition = getById(PrismNotificationDefinition.valueOf(resource.getResourceScope().name() + "_MESSAGE_NOTIFICATION"));
+            definitionDTO.setResource(resource);
+            definitionDTO.setTransitionAction(actionService.getMessageAction(resource).getId());
+        } else {
+            resource = systemService.getSystem();
+            definition = getById(SYSTEM_MESSAGE_CANDIDATE_NOTIFICATION);
+            definitionDTO.setCandidate(((UserAccount) activity).getUser());
+        }
+
         sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
     }
 

@@ -241,7 +241,7 @@ public class ProfileMapper {
     public ProfileRepresentationSummary getProfileRepresentationSummary(Integer userId) {
         User user = userService.getById(userId);
         User currentUser = userService.getCurrentUser();
-        if (checkUserCanViewProfile(userId, user, currentUser)) {
+        if (userService.checkUserCanViewUserProfile(user, currentUser)) {
             ProfileRepresentationSummary representation = new ProfileRepresentationSummary();
             representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
             representation.setCreatedTimestamp(userService.getUserCreatedTimestamp(user));
@@ -274,7 +274,7 @@ public class ProfileMapper {
     public ProfileRepresentationCandidate getProfileRepresentationCandidate(Integer userId) {
         User user = userService.getById(userId);
         User currentUser = userService.getCurrentUser();
-        if (checkUserCanViewProfile(userId, user, currentUser)) {
+        if (userService.checkUserCanViewUserProfile(user, currentUser)) {
             UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user);
             UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
             return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation);
@@ -357,10 +357,6 @@ public class ProfileMapper {
         if (user != null) {
             representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
         }
-    }
-
-    private boolean checkUserCanViewProfile(Integer userId, User user, User currentUser) {
-        return user.equals(currentUser) || userService.getUserProfiles(new ProfileListFilterDTO().withUserId(userId), currentUser) != null;
     }
 
 }

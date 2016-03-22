@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services.helpers;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CANDIDATE_VIEW_PROFILE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
@@ -101,6 +102,11 @@ public class NotificationPropertyLoader {
         return getRedirectionControl(
                 getRedirectionUrl(notificationDefinitionDTO.getResource().getId(), SYSTEM_MANAGE_ACCOUNT, notificationDefinitionDTO.getRecipient()),
                 SYSTEM_MANAGE_ACCOUNT.getDisplayProperty());
+    }
+
+    public String getCandidateProfileControl() {
+        return getRedirectionControl(applicationApiUrl + "/mail/candidates/" + notificationDefinitionDTO.getCandidate().getId() + "/messages",
+                SYSTEM_CANDIDATE_VIEW_PROFILE);
     }
 
     public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {

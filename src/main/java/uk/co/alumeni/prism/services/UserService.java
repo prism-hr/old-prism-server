@@ -20,6 +20,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
+import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
@@ -619,7 +620,7 @@ public class UserService {
         for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {
             Class<? extends UniqueEntity> userAssignmentClass = userAssignmentEntry.getKey();
             if (UserAssignment.class.isAssignableFrom(userAssignmentClass)) {
-                UserAssignment<?> userAssignment = BeanUtils.instantiate((Class<? extends UserAssignment<?>>) userAssignmentClass);
+                UserAssignment<?> userAssignment = instantiate((Class<? extends UserAssignment<?>>) userAssignmentClass);
                 applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
             } else if (Resource.class.isAssignableFrom(userAssignmentClass)) {
                 Resource resource = BeanUtils.instantiate((Class<? extends Resource>) userAssignmentClass);

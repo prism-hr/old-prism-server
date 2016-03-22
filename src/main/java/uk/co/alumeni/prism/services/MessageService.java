@@ -110,7 +110,7 @@ public class MessageService {
         messageDAO.getMessageDocuments(messages).stream().forEach(md -> documents.put(md.getMessage(), md.getDocument()));
         return documents;
     }
-    
+
     public void createMessageThread(ActivityEditable activity, MessageDTO messageDTO) {
         createMessage(activity, null, messageDTO);
     }
@@ -118,12 +118,12 @@ public class MessageService {
     public void createMessage(ActivityEditable activity, Integer threadId, MessageDTO messageDTO) {
         DateTime baseline = now();
         User user = userService.getCurrentUser();
-        
+
         MessageThread thread = null;
         if (Resource.class.isAssignableFrom(activity.getClass())) {
             Resource resource = (Resource) activity;
             Action messageAction = actionService.getMessageAction(resource);
-            
+
             if (threadId == null) {
                 thread = new MessageThread().withSubject(messageDTO.getSubject());
                 entityService.save(thread);
@@ -143,20 +143,20 @@ public class MessageService {
             }
         } else {
             UserAccount userAccount = (UserAccount) activity;
-             
-            if (userService.checkUserCanViewUserProfile(userAccount.getUser(), userService.getCurrentUser())) {
-                if (threadId == null) {
+
+            if (threadId == null) {
+                if (userService.checkUserCanViewUserProfile(userAccount.getUser(), userService.getCurrentUser())) {
                     thread = new MessageThread().withSubject(messageDTO.getSubject());
                     entityService.save(thread);
                     thread.setUserAccount(userAccount);
                     userAccount.addThread(thread);
-                } else {
-                    thread = getMessageThreadById(threadId);
                 }
+            } else {
+                thread = getMessageThreadById(threadId);
             }
         }
-        
-        if (thread == null || messageDAO.getMessages(thread, user).size() == 0) {
+
+        if (thread == null || (threadId != null && !checkActiveMessageThreadParticipant(thread, user))) {
             return;
         }
 
@@ -164,7 +164,7 @@ public class MessageService {
         entityService.save(message);
         thread.addMessage(message);
 
-        MessageThreadParticipant sender = createMessageThreadParticipant(thread, message, user);
+        MessageThreadParticipant sender = createOrReinstateMessageThreadParticipant(thread, message, user);
         sender.setLastViewedMessage(message);
 
         Set<Integer> userIds = newHashSet(user.getId());
@@ -172,7 +172,7 @@ public class MessageService {
         for (UserDTO userDTO : userDTOs) {
             User participantUser = userService.getById(userDTO.getId());
             if (!participantUser.equals(user)) {
-                createMessageThreadParticipant(thread, message, participantUser);
+                createOrReinstateMessageThreadParticipant(thread, message, participantUser);
 
                 MessageNotification notification = new MessageNotification().withMessage(message).withUser(participantUser);
                 entityService.getOrCreate(notification);
@@ -198,7 +198,7 @@ public class MessageService {
 
     public void viewMessageThread(Integer latestUnreadMessageId) {
         Message latestUnreadMessage = getMessageById(latestUnreadMessageId);
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser());
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser(), true);
         if (participant != null) {
             participant.setLastViewedMessage(latestUnreadMessage);
         }
@@ -218,17 +218,25 @@ public class MessageService {
                 }
             }
         } else {
-
+            if (!userService.checkUserCanViewUserProfile(((UserAccount) activity).getUser(), userService.getCurrentUser())
+                    || messageDAO.getMessageThreads(activity, user).size() == 0) {
+                throw new PrismForbiddenException("User cannot view or edit messages for the given candidate");
+            }
         }
 
         return user;
     }
 
-    private MessageThreadParticipant createMessageThreadParticipant(MessageThread thread, Message message, User user) {
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user);
+    private boolean checkActiveMessageThreadParticipant(MessageThread thread, User user) {
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user, true);
+        return participant.getCloseMessage() == null;
+    }
+
+    private MessageThreadParticipant createOrReinstateMessageThreadParticipant(MessageThread thread, Message message, User user) {
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(thread, user, false);
         if (participant == null || participant.getCloseMessage() != null) {
-            participant = entityService.getOrCreate(new MessageThreadParticipant().withThread(thread)
-                    .withUser(user).withStartMessage(message)
+            participant = entityService.createOrUpdate(new MessageThreadParticipant().withThread(thread)
+                    .withUser(user).withStartMessage(participant == null ? message : participant.getStartMessage())
                     .withLastViewedMessage(participant == null ? null : participant.getLastViewedMessage()));
             thread.addParticipant(participant);
         }

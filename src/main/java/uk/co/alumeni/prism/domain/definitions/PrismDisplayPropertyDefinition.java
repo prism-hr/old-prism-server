@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.Set;
-
+import com.google.common.collect.LinkedHashMultimap;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.collect.LinkedHashMultimap;
+import java.util.Set;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1458,8 +1457,10 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_OPPORTUNITIES_BUTTON_PENDING(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Pending"),
     SYSTEM_OPPORTUNITIES_CONNECTED(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Connect"),
     SYSTEM_OPPORTUNITIES_CONNECT_REQUEST(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Your connection has been requested"),
-    SYSTEM_OPPORTUNITIES_CONNECT_REQUEST_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES,
-            "The organization you are connecting with will be notify about you interest of joining the network"),
+    SYSTEM_OPPORTUNITIES_CONNECT_REQUEST_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "The organization that you requested a connection with will be notified of your interest"),
+    SYSTEM_OPPORTUNITIES_REQUEST_USER_TITLE(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "I work here"),
+    SYSTEM_OPPORTUNITIES_REQUEST_USER_HEADER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Your request has been submitted"),
+    SYSTEM_OPPORTUNITIES_REQUEST_USER_TEXT(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "The organization that you requested membership of will be notified of your interest"),
     SYSTEM_OPPORTUNITIES_CREATE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create Employer"),
     SYSTEM_OPPORTUNITIES_INVITE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Invite Employer"),
     SYSTEM_OPPORTUNITIES_CREATE_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_OPPORTUNITIES, "Create University"),

@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,7 +81,6 @@ import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
 
@@ -125,9 +123,6 @@ public class ProfileMapper {
 
     @Inject
     private UserService userService;
-
-    @Inject
-    private ApplicationContext applicationContext;
 
     public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter, String lastSequenceIdentifier) {
         User currentUser = userService.getCurrentUser();
@@ -332,12 +327,11 @@ public class ProfileMapper {
             List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(targeterResources, recipientRoles);
             recipientUserRoles.add(new UserRoleDTO().withUser(user).withRole(SYSTEM_CANDIDATE));
 
-            PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeDefault();
             return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation)
                     .addMessageThreadParticipants(
-                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, recipientUserRoles, propertyLoader))
+                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, recipientUserRoles))
                     .addPartnerMessageThreadParticipants(
-                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, partnerRecipientUserRoles, propertyLoader));
+                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, partnerRecipientUserRoles));
         }
 
         throw new PrismForbiddenException("user does not have permission to access candidate data");

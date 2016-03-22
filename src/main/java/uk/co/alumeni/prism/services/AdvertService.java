@@ -1096,6 +1096,10 @@ public class AdvertService {
         }
     }
 
+    public List<Advert> getTargetedAdverts(Collection<Advert> adverts) {
+        return advertDAO.getTargetedAdverts(adverts);
+    }
+
     public List<Advert> getTargeterAdverts(Collection<Advert> adverts) {
         return advertDAO.getTargeterAdverts(adverts);
     }

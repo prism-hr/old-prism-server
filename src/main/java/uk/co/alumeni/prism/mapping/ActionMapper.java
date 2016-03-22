@@ -191,7 +191,6 @@ public class ActionMapper {
                 boolean hasPartnerRecipientRoles = partnerRecipientRoles.size() > 0;
 
                 if (hasRecipientRoles || hasPartnerRecipientRoles) {
-
                     if (hasRecipientRoles) {
                         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
                         representation

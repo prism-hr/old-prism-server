@@ -147,7 +147,7 @@ public class Message implements UserAssignment<MessageReassignmentProcessor>, Un
         Message other = (Message) object;
         return Objects.equal(id, other.getId());
     }
-
+    
     @Override
     public Class<MessageReassignmentProcessor> getUserReassignmentProcessor() {
         return MessageReassignmentProcessor.class;

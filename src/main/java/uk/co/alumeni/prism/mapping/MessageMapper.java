@@ -12,11 +12,11 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
-import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
@@ -39,11 +39,11 @@ public class MessageMapper {
     @Inject
     private UserMapper userMapper;
 
-    public List<MessageThreadRepresentation> getMessageThreadRepresentations(Resource resource, String searchTerm) {
-        User user = messageService.validateViewMessages(resource);
+    public List<MessageThreadRepresentation> getMessageThreadRepresentations(ActivityEditable activity, String searchTerm) {
+        User user = messageService.validateViewMessages(activity);
         List<MessageThreadRepresentation> threadRepresentations = newLinkedList();
 
-        List<MessageThread> threads = messageService.getMessageThreads(resource, user, searchTerm);
+        List<MessageThread> threads = messageService.getMessageThreads(activity, user, searchTerm);
         if (isNotEmpty(threads)) {
             LinkedHashMultimap<MessageThread, MessageThreadParticipant> participants = messageService.getMessageThreadParticipants(threads);
             LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, user, searchTerm);

@@ -171,7 +171,7 @@ public class UserAccountService {
                 .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(message))
                 .withCreatedTimestamp(now());
         entityService.save(update);
-        userAccount.getUpdates().add(update);
+        userAccount.addUpdate(update);
         update.setSequenceIdentifier(Long.toString(update.getCreatedTimestamp().getMillis()) + String.format("%010d", update.getId()));
     }
 

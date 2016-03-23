@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 
 import java.util.Collection;
 import java.util.List;
@@ -93,11 +94,7 @@ public class MessageDAO {
                 .createAlias("thread.participants", "participant", INNER_JOIN) //
                 .add(Restrictions.in("thread", threads)) //
                 .add(Restrictions.eq("participant.user", user)) //
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.geProperty("id", "participant.startMessage.id")) //
-                        .add(Restrictions.disjunction() //
-                                .add(Restrictions.isNull("participant.closeMessage")) //
-                                .add(Restrictions.ltProperty("id", "participant.closeMessage.id")))) //
+                .add(getVisibleMessageConstraint()) //
                 .addOrder(Order.desc("id")) //
                 .list();
     }

@@ -1,21 +1,23 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
+import java.util.List;
+
 import uk.co.alumeni.prism.rest.dto.ListFilterDTO;
 
 public class ProfileListFilterDTO extends ListFilterDTO {
 
-    private Integer userId;
+    private List<Integer> userIds;
 
-    public Integer getUserId() {
-        return userId;
+    public List<Integer> getUserIds() {
+        return userIds;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUserIds(List<Integer> userIds) {
+        this.userIds = userIds;
     }
 
-    public ProfileListFilterDTO withUserId(Integer userId) {
-        this.userId = userId;
+    public ProfileListFilterDTO withUserIds(List<Integer> userIds) {
+        this.userIds = userIds;
         return this;
     }
 

@@ -289,7 +289,7 @@ public class ResourceController {
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.setResourceOwner(resource, user);
+        resourceService.setResourceOwner(resource, user);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)

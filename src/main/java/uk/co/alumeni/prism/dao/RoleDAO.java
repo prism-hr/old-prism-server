@@ -4,8 +4,8 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -377,7 +377,7 @@ public class RoleDAO {
         }
 
         if (isNotBlank(searchTerm)) {
-            criteria.add(getSimilarUserConstraint("user", searchTerm));
+            criteria.add(getMatchingUserConstraint("user", searchTerm));
         }
 
         return (List<UserRoleDTO>) criteria //

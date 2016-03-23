@@ -74,7 +74,7 @@ public class RoleService {
 
     @Inject
     private EntityService entityService;
-
+    
     @Inject
     private NotificationService notificationService;
 
@@ -129,7 +129,7 @@ public class RoleService {
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {
-        if (roleDAO.getRolesForResource(resource, user).size() < 2 && resource.getUser().equals(user)) {
+        if (getRolesForResource(resource, user).size() < 2 && resource.getUser().equals(user)) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
 
@@ -155,7 +155,7 @@ public class RoleService {
     }
 
     public void deleteUserRoles(User invoker, Resource resource, User user) {
-        List<PrismRole> roles = roleDAO.getRolesForResource(resource, user);
+        List<PrismRole> roles = getRolesForResource(resource, user);
         deleteUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
     }
 
@@ -190,20 +190,6 @@ public class RoleService {
             }
         }
         return defaults;
-    }
-
-    public void setResourceOwner(Resource resource, User user) {
-        if (roleDAO.getRolesForResource(resource, user).isEmpty()) {
-            throw new PrismForbiddenException("User has no role within given resource");
-        }
-
-        resource.setUser(user);
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            resource.getAdvert().setUser(user);
-        }
-
-        resourceService.executeUpdate(resource, userService.getCurrentUser(),
-                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
     }
 
     public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {
@@ -253,6 +239,10 @@ public class RoleService {
         }
 
         return newArrayList(roles);
+    }
+    
+    public List<PrismRole> getRolesForResource(Resource resource, User user) {
+        return roleDAO.getRolesForResource(resource, user);
     }
     
     public List<PrismRole> getUserRoles(Resource resource, User user) {

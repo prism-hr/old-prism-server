@@ -23,6 +23,7 @@ import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
@@ -53,19 +54,24 @@ public class MessageMapper {
     private UserMapper userMapper;
 
     public List<MessageThreadRepresentation> getMessageThreadRepresentations(ActivityEditable activity, String searchTerm) {
-        User user = messageService.validateViewMessages(activity);
+        User currentUser = messageService.validateViewMessages(activity);
         List<MessageThreadRepresentation> threadRepresentations = newLinkedList();
 
-        List<MessageThread> threads = messageService.getMessageThreads(activity, user, searchTerm);
+        List<MessageThread> threads = messageService.getMessageThreads(activity, currentUser, searchTerm);
         if (isNotEmpty(threads)) {
             LinkedHashMultimap<MessageThread, MessageThreadParticipant> participants = messageService.getMessageThreadParticipants(threads);
-            LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, user, searchTerm);
+            LinkedHashMultimap<MessageThread, Message> messages = messageService.getMessages(threads, currentUser, searchTerm);
             LinkedHashMultimap<Message, Document> documents = messageService.getMessageDocuments(messages.values());
 
             threads.stream().forEach(thread -> {
                 MessageThreadSubjectRepresentation subject = new MessageThreadSubjectRepresentation().withSubject(thread.getSubject());
                 if (Resource.class.isAssignableFrom(activity.getClass())) {
                     subject.setResource(resourceMapper.getResourceRepresentationSimple((Resource) activity));
+                } else {
+                    User user = ((UserAccount) activity).getUser();
+                    if (!equal(user, currentUser)) {
+                        subject.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
+                    }
                 }
 
                 MessageThreadRepresentation threadRepresentation = new MessageThreadRepresentation()
@@ -79,10 +85,10 @@ public class MessageMapper {
                     MessageRepresentation lastViewedMessageRepresentation = new MessageRepresentation()
                             .withId(lastViewedMessage == null ? null : lastViewedMessage.getId());
                     participantRepresentations.add(new MessageThreadParticipantRepresentation()
-                            .withUser(userMapper.getUserRepresentationSimple(recipientUser, user))
+                            .withUser(userMapper.getUserRepresentationSimple(recipientUser, currentUser))
                             .withLastViewedMessage(lastViewedMessageRepresentation));
 
-                    if (recipientUser.equals(user)) {
+                    if (recipientUser.equals(currentUser)) {
                         threadRepresentation.setLastViewedMessage(lastViewedMessageRepresentation);
                     }
                 });
@@ -93,7 +99,7 @@ public class MessageMapper {
                 messages.get(thread).stream().forEach(message -> {
                     MessageRepresentation messageRepresentation = new MessageRepresentation()
                             .withId(message.getId())
-                            .withUser(userMapper.getUserRepresentationSimple(message.getUser(), user))
+                            .withUser(userMapper.getUserRepresentationSimple(message.getUser(), currentUser))
                             .withContent(message.getContent())
                             .withCreatedTimestamp(message.getCreatedTimestamp());
 

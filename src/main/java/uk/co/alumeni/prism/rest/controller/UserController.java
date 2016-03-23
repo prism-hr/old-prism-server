@@ -380,7 +380,7 @@ public class UserController {
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
     public UserProfileRepresentation getUserProfile() {
         User currentUser = userService.getCurrentUser();
-        return userMapper.getUserProfileRepresentation(currentUser);
+        return userMapper.getUserProfileRepresentation(currentUser, currentUser);
     }
 
     @PreAuthorize("isAuthenticated()")

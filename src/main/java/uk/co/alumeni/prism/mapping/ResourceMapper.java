@@ -7,8 +7,10 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.Days.daysBetween;
 import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
 import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
@@ -39,7 +41,6 @@ import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -220,7 +221,7 @@ public class ResourceMapper {
             resources.forEach(resource -> {
                 Integer unreadMessageCount = resource.getUnreadMessageCount();
                 boolean prioritize = (isTrue(resource.getRaisesUrgentFlag()) || (unreadMessageCount == null ? 0 : unreadMessageCount) > 0);
-                Integer daysSinceLastUpdated = Days.daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baselineDate).getDays();
+                Integer daysSinceLastUpdated = daysBetween(resource.getUpdatedTimestamp().toLocalDate(), baselineDate).getDays();
                 resource.setPriority(prioritize ? new BigDecimal(1).setScale(ORDERING_PRECISION) : new BigDecimal(1).divide(
                         new BigDecimal(1).add(new BigDecimal(daysSinceLastUpdated)), HALF_UP).setScale(ORDERING_PRECISION));
                 indexedResources.put(resource.getId(), resource);
@@ -308,8 +309,7 @@ public class ResourceMapper {
                 });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
-        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(resource -> BooleanUtils.isTrue(resource.getRaisesUrgentFlag()))
-                .collect(Collectors.toSet());
+        Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(resource -> isTrue(resource.getRaisesUrgentFlag())).collect(toSet());
         processRowDescriptors(urgentResources, urgentSummaries);
 
         return new ResourceListRepresentation().withRows(newLinkedList(rowIndex.descendingMap().values())).withSummaries(getSummaryRepresentations(summaries))

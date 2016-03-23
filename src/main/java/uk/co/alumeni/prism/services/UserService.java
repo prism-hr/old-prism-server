@@ -610,12 +610,30 @@ public class UserService {
         return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserIds(asList(user.getId())), currentUser));
     }
 
-    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User user) {
-        return userDAO.getUserUnreadMessageCount(userIds, user);
+    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User currentUser) {
+        return userDAO.getUserUnreadMessageCount(userIds, currentUser);
     }
 
-    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User user) {
-        return userDAO.getUserUnreadMessageCounts(userIds, user);
+    public Integer getUserReadMessageCount(User user, User currentUser) {
+        if (user.equals(currentUser)) {
+            return userDAO.getUserReadMessageCounts(currentUser).intValue();
+        }
+        return getFirstUserMessageCount(getUserReadMessageCounts(newArrayList(user.getId()), currentUser));
+    }
+
+    public Integer getUserUnreadMessageCount(User user, User currentUser) {
+        if (user.equals(currentUser)) {
+            return userDAO.getUserUnreadMessageCounts(currentUser).intValue();
+        }
+        return getFirstUserMessageCount(getUserUnreadMessageCounts(newArrayList(user.getId()), currentUser));
+    }
+
+    public List<ActivityMessageCountDTO> getUserReadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return userDAO.getUserReadMessageCounts(userIds, currentUser);
+    }
+
+    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return userDAO.getUserUnreadMessageCounts(userIds, currentUser);
     }
 
     @SuppressWarnings("unchecked")
@@ -652,6 +670,13 @@ public class UserService {
         }
 
         return userAssignments;
+    }
+
+    private Integer getFirstUserMessageCount(List<ActivityMessageCountDTO> counts) {
+        for (ActivityMessageCountDTO count : counts) {
+            return count.getMessageCount().intValue();
+        }
+        return null;
     }
 
 }

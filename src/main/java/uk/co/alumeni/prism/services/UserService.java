@@ -1,7 +1,6 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.HashMultimap.create;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -10,12 +9,13 @@ import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.WordUtils.capitalize;
@@ -27,8 +27,6 @@ import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -81,6 +79,7 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.user.UserCompetence;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
@@ -89,7 +88,6 @@ import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
@@ -522,24 +520,21 @@ public class UserService {
         return getUserProfiles(filter, user, null);
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user, String lastSequenceIdentifier) {
-        HashMultimap<PrismScope, Integer> resourceIndex = create();
-        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER);
-        stream(organizationScopes).forEach(organizationScope -> {
-            List<Integer> resources = resourceService
-                    .getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM), filterDTO).stream()
-                    .map(resource -> resource.getId()).collect(toList());
-            resourceIndex.putAll(organizationScope, resources);
-        });
+    public List<ProfileListRowDTO> getUserProfiles(User user) {
+        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(user);
 
-        stream(organizationScopes).forEach(targeterScope -> {
-            stream(organizationScopes).forEach(targetScope -> {
-                Set<Integer> resources = resourceIndex.get(targeterScope);
-                if (isNotEmpty(resources)) {
-                    resourceIndex.putAll(targetScope, resourceService.getResourceTargets(targeterScope, resources, targetScope));
-                }
-            });
-        });
+        Set<ProfileListRowDTO> profiles = newLinkedHashSet();
+        resourceIndex.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), user)));
+
+        return newLinkedList(profiles);
+    }
+
+    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user, String lastSequenceIdentifier) {
+        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(user);
+
+        if (isTrue(filter.getWithNewMessages())) {
+            filter.setUserIds(userDAO.getUsersWithUnreadMessages(user));
+        }
 
         Set<ProfileListRowDTO> profiles = newLinkedHashSet();
         resourceIndex.keySet()
@@ -601,7 +596,15 @@ public class UserService {
     }
 
     public boolean checkUserCanViewUserProfile(User user, User currentUser) {
-        return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserId(user.getId()), currentUser));
+        return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserIds(asList(user.getId())), currentUser));
+    }
+
+    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User user) {
+        return userDAO.getUserUnreadMessageCount(userIds, user);
+    }
+
+    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User user) {
+        return userDAO.getUserUnreadMessageCounts(userIds, user);
     }
 
     @SuppressWarnings("unchecked")

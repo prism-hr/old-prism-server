@@ -10,6 +10,8 @@ public class ListFilterDTO {
     private PrismFilterSortOrder sortOrder;
     
     private String valueString;
+    
+    private Boolean withNewMessages;
 
     public PrismFilterMatchMode getMatchMode() {
         return matchMode;
@@ -33,6 +35,14 @@ public class ListFilterDTO {
 
     public void setValueString(String valueString) {
         this.valueString = valueString;
+    }
+
+    public Boolean getWithNewMessages() {
+        return withNewMessages;
+    }
+
+    public void setWithNewMessages(Boolean withNewMessages) {
+        this.withNewMessages = withNewMessages;
     }
 
 }

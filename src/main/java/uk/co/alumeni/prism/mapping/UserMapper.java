@@ -208,6 +208,7 @@ public class UserMapper {
         Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
         return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
+                .withProfileActivity(profileMapper.getProfileActivityRepresentation(user))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
                 .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));

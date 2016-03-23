@@ -22,13 +22,11 @@ public class ResourceListFilterDTO extends ListFilterDTO {
     private List<PrismAction> actionIds;
 
     private PrismActionEnhancement[] actionEnhancements;
-    
+
     private PrismRoleCategory[] roleCategories;
 
-    private Boolean withNewMessages;
-
     private List<Integer> resourceIds;
-    
+
     private List<Integer> excludedResourceIds;
 
     private ResourceIdentityDTO parentResource;
@@ -74,21 +72,13 @@ public class ResourceListFilterDTO extends ListFilterDTO {
     public void setActionEnhancements(PrismActionEnhancement[] actionEnhancements) {
         this.actionEnhancements = actionEnhancements;
     }
-    
+
     public PrismRoleCategory[] getRoleCategories() {
         return roleCategories;
     }
 
     public void setRoleCategories(PrismRoleCategory[] roleCategories) {
         this.roleCategories = roleCategories;
-    }
-
-    public Boolean getWithNewMessages() {
-        return withNewMessages;
-    }
-
-    public void setWithNewMessages(Boolean withNewMessages) {
-        this.withNewMessages = withNewMessages;
     }
 
     public List<Integer> getResourceIds() {
@@ -98,7 +88,7 @@ public class ResourceListFilterDTO extends ListFilterDTO {
     public void setResourceIds(List<Integer> resourceIds) {
         this.resourceIds = resourceIds;
     }
-    
+
     public List<Integer> getExcludedResourceIds() {
         return excludedResourceIds;
     }
@@ -228,7 +218,7 @@ public class ResourceListFilterDTO extends ListFilterDTO {
         this.excludedResourceIds = excludedResourceIds;
         return this;
     }
-    
+
     public ResourceListFilterDTO withParentResource(ResourceIdentityDTO parentResource) {
         this.parentResource = parentResource;
         return this;
@@ -243,7 +233,7 @@ public class ResourceListFilterDTO extends ListFilterDTO {
         this.actionEnhancements = actionEnhancements;
         return this;
     }
-    
+
     public ResourceListFilterDTO withRoleCategories(PrismRoleCategory... roleCategories) {
         this.roleCategories = roleCategories;
         return this;

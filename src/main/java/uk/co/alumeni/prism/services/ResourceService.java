@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.HashMultimap.create;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -29,6 +30,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionConditi
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -114,12 +116,12 @@ import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.ResourceMessageCountDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
@@ -1172,6 +1174,26 @@ public class ResourceService {
         return resourceDAO.getResourceTargets(targeterScope, targeterResources, targetScope);
     }
 
+    public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanViewProfiles(User user) {
+        HashMultimap<PrismScope, Integer> resourceIndex = create();
+        ResourceListFilterDTO filterDTO = new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR, RECRUITER);
+        stream(organizationScopes).forEach(organizationScope -> {
+            List<Integer> resources = getResources(user, organizationScope, scopeService.getParentScopesDescending(organizationScope, SYSTEM),
+                    filterDTO).stream().map(resource -> resource.getId()).collect(toList());
+            resourceIndex.putAll(organizationScope, resources);
+        });
+
+        stream(organizationScopes).forEach(targeterScope -> {
+            stream(organizationScopes).forEach(targetScope -> {
+                Set<Integer> resources = resourceIndex.get(targeterScope);
+                if (isNotEmpty(resources)) {
+                    resourceIndex.putAll(targetScope, getResourceTargets(targeterScope, resources, targetScope));
+                }
+            });
+        });
+        return resourceIndex;
+    }
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //
@@ -1408,8 +1430,8 @@ public class ResourceService {
         return false;
     }
 
-    private Integer getFirstResourceMessageCount(List<ResourceMessageCountDTO> counts) {
-        for (ResourceMessageCountDTO count : counts) {
+    private Integer getFirstResourceMessageCount(List<ActivityMessageCountDTO> counts) {
+        for (ActivityMessageCountDTO count : counts) {
             return count.getMessageCount().intValue();
         }
         return null;

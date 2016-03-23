@@ -1,12 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.List;
-
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import java.util.List;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -213,6 +212,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_APPLICATION_CONFIRM_INTERVIEW_AVAILABILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Interview Availability"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_OFFER_ACCEPTANCE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Acceptance"),
+    SYSTEM_ACTION_APPLICATION_REVISE_OFFER(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Revise Offer"),
     SYSTEM_ACTION_APPLICATION_CONFIRM_REJECTION(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Confirm Rejection"),
     SYSTEM_ACTION_APPLICATION_EMAIL_CREATOR(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Email Creator"),
     SYSTEM_ACTION_APPLICATION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),

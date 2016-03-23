@@ -60,6 +60,7 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
 import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
@@ -136,16 +137,18 @@ public class ProfileMapper {
         if (profiles.size() > 0) {
             DateTime baseline = now().minusDays(1);
 
-            Map<Integer, Integer> indexedUsers = newHashMap();
-            userService.getUserUnreadMessageCounts(profiles.stream().map(p -> p.getUserId()).collect(toList()), currentUser).stream()
-                    .forEach(umc -> indexedUsers.put(umc.getId(), umc.getMessageCount().intValue()));
+            List<Integer> userIds = profiles.stream().map(p -> p.getUserId()).collect(toList());
+            Map<Integer, Integer> readMessagesIndex = getMessageCountIndex(userService.getUserReadMessageCounts(userIds, currentUser));
+            Map<Integer, Integer> unreadMessagesIndex = getMessageCountIndex(userService.getUserUnreadMessageCounts(userIds, currentUser));
 
             profiles.forEach(user -> {
+                Integer userId = user.getUserId();
                 Long applicationCount = user.getApplicationCount();
                 Long applicationRatingCount = user.getApplicationRatingCount();
                 BigDecimal applicationRatingAverage = user.getApplicationRatingAverage();
                 representations.add(new ProfileListRowRepresentation()
-                        .withUnreadMessageCount(indexedUsers.get(user.getUserId()))
+                        .withReadMessageCount(readMessagesIndex.get(userId))
+                        .withUnreadMessageCount(unreadMessagesIndex.get(userId))
                         .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(baseline))
                         .withUser(userMapper.getUserRepresentationSimple(user, currentUser))
                         .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
@@ -314,7 +317,7 @@ public class ProfileMapper {
         User user = userService.getById(userId);
         User currentUser = userService.getCurrentUser();
         if (userService.checkUserCanViewUserProfile(user, currentUser)) {
-            UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user);
+            UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user, currentUser);
             UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
 
             Set<Resource> resources = newHashSet();
@@ -343,6 +346,8 @@ public class ProfileMapper {
             recipientUserRoles.add(new UserRoleDTO().withUser(user).withRole(SYSTEM_CANDIDATE));
 
             return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation)
+                    .withReadMessageCount(userService.getUserReadMessageCount(user, currentUser))
+                    .withUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser))
                     .addMessageThreadParticipants(
                             messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, recipientUserRoles))
                     .addPartnerMessageThreadParticipants(
@@ -447,6 +452,12 @@ public class ProfileMapper {
         if (user != null) {
             representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
         }
+    }
+
+    private Map<Integer, Integer> getMessageCountIndex(List<ActivityMessageCountDTO> messageCounts) {
+        Map<Integer, Integer> readMessagesIndex = newHashMap();
+        messageCounts.stream().forEach(umc -> readMessagesIndex.put(umc.getId(), umc.getMessageCount().intValue()));
+        return readMessagesIndex;
     }
 
 }

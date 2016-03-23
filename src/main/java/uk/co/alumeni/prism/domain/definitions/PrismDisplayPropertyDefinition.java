@@ -1,11 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import java.util.Set;
-
+import com.google.common.collect.LinkedHashMultimap;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import com.google.common.collect.LinkedHashMultimap;
+import java.util.Set;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 
@@ -1220,7 +1219,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_VALIDATION_MAX(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at most {1}."),
     SYSTEM_VALIDATION_MINLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be at least {1} character(s)."),
     SYSTEM_VALIDATION_MAXLENGTH(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be less than {1} character(s)."),
-    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least {1} element(s)."),
+    SYSTEM_VALIDATION_MIN_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at least 1 element."), // FIXME soon, hack for ui-select
     SYSTEM_VALIDATION_MAX_ITEMS(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "You have to select at most {1} element(s)."),
     SYSTEM_VALIDATION_PATTERN(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field is invalid."),
     SYSTEM_VALIDATION_URL(PrismDisplayPropertyCategory.SYSTEM_VALIDATION_ERROR, "This field must be a valid URL."),

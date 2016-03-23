@@ -49,6 +49,9 @@ public class LifeCycleService {
     @Value("${startup.display.initialize}")
     private Boolean initializeDisplayProperties;
 
+    @Value("${startup.profile.completeness.initialize}")
+    private Boolean initializeProfileCompleteness;
+    
     @Value("${startup.section.completeness.initialize}")
     private Boolean initializeSectionCompleteness;
 
@@ -90,6 +93,10 @@ public class LifeCycleService {
             systemService.initializeSystemUser();
         }
 
+        if (isTrue(initializeProfileCompleteness)) {
+            systemService.initializeProfileCompleteness();
+        }
+        
         if (isTrue(initializeSectionCompleteness)) {
             systemService.initializeSectionCompleteness();
         }

@@ -23,6 +23,8 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
     private String userAccountImageUrl;
 
     private String linkedInProfileUrl;
+    
+    private Integer completeScore;
 
     private Long applicationCount;
 
@@ -96,6 +98,14 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
 
     public void setLinkedInProfileUrl(String linkedInProfileURL) {
         this.linkedInProfileUrl = linkedInProfileURL;
+    }
+
+    public Integer getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(Integer completeScore) {
+        this.completeScore = completeScore;
     }
 
     public Long getApplicationCount() {

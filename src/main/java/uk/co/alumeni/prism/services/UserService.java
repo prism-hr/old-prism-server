@@ -636,6 +636,14 @@ public class UserService {
         return userDAO.getUserUnreadMessageCounts(userIds, currentUser);
     }
 
+    public Integer getMaximumUserAccountCompleteScore() {
+        return userDAO.getMaximumUserAccountCompleteScore();
+    }
+    
+    public List<Integer> getEnabledUserAccounts() {
+        return userDAO.getEnabledUserAccounts();
+    }
+
     @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {
         for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {

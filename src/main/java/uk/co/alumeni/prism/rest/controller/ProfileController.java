@@ -23,6 +23,7 @@ import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.ProfileRepresentationCandidate;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantsRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
@@ -70,7 +71,7 @@ public class ProfileController {
         return profileMapper.getProfileRepresentationCandidate(userId);
     }
 
-    @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.GET)
+    @RequestMapping(value = "{userId}/threads", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public List<MessageThreadRepresentation> getMessageThreads(@PathVariable Integer userId, @RequestParam(required = false) String q) {
         User user = userService.getById(userId);
@@ -80,7 +81,17 @@ public class ProfileController {
         return emptyList();
     }
 
-    @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.POST)
+    @RequestMapping(value = "{userId}/threads/{id}/participants", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public MessageThreadParticipantsRepresentationPotential getMessageThreadParticipants(@PathVariable Integer userId) {
+        User user = userService.getById(userId);
+        if (user != null) {
+            return messageMapper.getMessageThreadParticipantsRepresentation(user.getUserAccount());
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "{userId}/threads", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public void createMessageThread(@PathVariable Integer userId, @Valid @RequestBody MessageDTO messageDTO) {
         User user = userService.getById(userId);

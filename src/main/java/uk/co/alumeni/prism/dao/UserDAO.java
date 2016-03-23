@@ -439,6 +439,7 @@ public class UserDAO {
                         .add(Projections.property("user.email").as("userEmail")) //
                         .add(Projections.property("linkedinImageUrl").as("userAccountImageUrl")) //
                         .add(Projections.property("linkedinProfileUrl").as("linkedInProfileUrl")) //
+                        .add(Projections.property("completeScore").as("completeScore")) //
                         .add(Projections.countDistinct("application.id").as("applicationCount")) //
                         .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //
                         .add(Projections.avg("application.applicationRatingAverage").as("applicationRatingAverage")) //
@@ -654,7 +655,23 @@ public class UserDAO {
                 .add(getUnreadMessageConstraint()) //
                 .list();
     }
+    
+    public Integer getMaximumUserAccountCompleteScore() {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
+                .setProjection(Projections.property("completeScore")) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.desc("completeScore")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
 
+    public List<Integer> getEnabledUserAccounts() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("enabled", true)) //
+                .list();
+    }
+    
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
         enclosedResources.keySet().forEach( //

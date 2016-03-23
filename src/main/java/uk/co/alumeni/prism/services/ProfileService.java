@@ -285,7 +285,7 @@ public class ProfileService {
     }
 
     public ApplicationEmploymentPosition updateEmploymentPositionApplication(Integer applicationId, Integer employmentPositionId,
-                                                                             ProfileEmploymentPositionDTO employmentPositionDTO) {
+            ProfileEmploymentPositionDTO employmentPositionDTO) {
         Application application = applicationService.getById(applicationId);
         ApplicationEmploymentPosition employmentPosition = updateEmploymentPosition(application, ApplicationEmploymentPosition.class, employmentPositionId,
                 employmentPositionDTO);

@@ -269,7 +269,7 @@ public class SystemService {
 
     public void initializeProfileCompleteness() throws Exception {
         logger.info("Initializing user profile completeness");
-        for (Integer userAccount : userService.getEnabledUserAccounts()) {
+        for (Integer userAccount : userService.getUserAccounts()) {
             userAccountService.setUserAccountCompleteScore(userAccount);
         }
     }

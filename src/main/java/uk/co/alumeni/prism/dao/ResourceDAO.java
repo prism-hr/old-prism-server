@@ -9,6 +9,8 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -59,11 +61,11 @@ import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.ResourceMessageCountDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
@@ -266,16 +268,16 @@ public class ResourceDAO {
                 .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
                 .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("participant.user", user)) //
-                .add(getVisibleMessageConstraint()) //
+                .add(getVisibleMessageConstraint("message")) //
                 .add(getUnreadMessageConstraint()) //
                 .list();
     }
 
-    public List<ResourceMessageCountDTO> getResourceReadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
+    public List<ActivityMessageCountDTO> getResourceReadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
         return getResourceMessageCounts(scope, resourceIds, user, true);
     }
 
-    public List<ResourceMessageCountDTO> getResourceUnreadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
+    public List<ActivityMessageCountDTO> getResourceUnreadMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user) {
         return getResourceMessageCounts(scope, resourceIds, user, false);
     }
 
@@ -774,7 +776,7 @@ public class ResourceDAO {
         }
     }
 
-    private List<ResourceMessageCountDTO> getResourceMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user, boolean read) {
+    private List<ActivityMessageCountDTO> getResourceMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user, boolean read) {
         String resourceIdReference = scope.getLowerCamelName() + ".id";
 
         Junction constraint;
@@ -786,7 +788,7 @@ public class ResourceDAO {
             constraint = getUnreadMessageConstraint();
         }
 
-        return (List<ResourceMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+        return (List<ActivityMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceIdReference).as("id")) //
                         .add(Projections.countDistinct("message.id").as("messageCount"))) //
@@ -795,24 +797,10 @@ public class ResourceDAO {
                 .createAlias("thread.messages", "message") //
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.eq("participant.user", user)) //
-                .add(getVisibleMessageConstraint())
+                .add(getVisibleMessageConstraint("message"))
                 .add(constraint) //
-                .setResultTransformer(aliasToBean(ResourceMessageCountDTO.class)) //
+                .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
                 .list();
-    }
-
-    private Junction getUnreadMessageConstraint() {
-        return Restrictions.disjunction() //
-                .add(Restrictions.isNull("participant.lastViewedMessage")) //
-                .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
-    }
-
-    private Junction getVisibleMessageConstraint() {
-        return Restrictions.conjunction() //
-                .add(Restrictions.geProperty("message.id", "participant.startMessage.id")) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNull("participant.closeMessage")) //
-                        .add(Restrictions.ltProperty("message.id", "participant.closeMessage.id")));
     }
 
 }

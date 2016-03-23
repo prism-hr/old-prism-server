@@ -8,6 +8,8 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileListRowRepresentation {
 
+    private Integer unreadMessageCount;
+    
     private boolean raisesUpdateFlag;
 
     private UserRepresentationSimple user;
@@ -23,6 +25,14 @@ public class ProfileListRowRepresentation {
     private DateTime updatedTimestamp;
 
     private String sequenceIdentifier;
+    
+    public Integer getUnreadMessageCount() {
+        return unreadMessageCount;
+    }
+
+    public void setUnreadMessageCount(Integer unreadMessageCount) {
+        this.unreadMessageCount = unreadMessageCount;
+    }
 
     public boolean isRaisesUpdateFlag() {
         return raisesUpdateFlag;
@@ -88,6 +98,11 @@ public class ProfileListRowRepresentation {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    public ProfileListRowRepresentation withUnreadMessageCount(Integer unreadMessageCount) {
+        this.unreadMessageCount = unreadMessageCount;
+        return this;
+    }
+    
     public ProfileListRowRepresentation withRaisesUpdateFlag(boolean raisesUpdateFlag) {
         this.raisesUpdateFlag = raisesUpdateFlag;
         return this;

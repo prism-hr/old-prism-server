@@ -147,7 +147,7 @@ public class WorkflowDAO {
                 .add(getResourceParentManageableStateConstraint(resourceScope))
                 .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR")));
     }
-    
+
     public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
         return getResourceParentManageableStateConstraint(resourceScope, "state.id");
     }
@@ -195,6 +195,25 @@ public class WorkflowDAO {
             }
         });
         return constraint;
+    }
+
+    public static Junction getUnreadMessageConstraint() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("participant.lastViewedMessage")) //
+                .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
+    }
+
+    public static Junction getVisibleMessageConstraint() {
+        return getVisibleMessageConstraint(null);
+    }
+
+    public static Junction getVisibleMessageConstraint(String messageAlias) {
+        String messageIdReference = Joiner.on(FULL_STOP).skipNulls().join(messageAlias, "id");
+        return Restrictions.conjunction() //
+                .add(Restrictions.geProperty(messageIdReference, "participant.startMessage.id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("participant.closeMessage")) //
+                        .add(Restrictions.ltProperty(messageIdReference, "participant.closeMessage.id")));
     }
 
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {

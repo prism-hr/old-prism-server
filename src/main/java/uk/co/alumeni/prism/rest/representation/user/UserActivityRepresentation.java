@@ -20,6 +20,8 @@ public class UserActivityRepresentation {
 
     private List<ResourceActivityRepresentation> resourceActivities;
 
+    private ActivityRepresentation profileActivity;
+
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
     private List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities;
@@ -40,6 +42,14 @@ public class UserActivityRepresentation {
 
     public void setResourceActivities(List<ResourceActivityRepresentation> resourceActivities) {
         this.resourceActivities = resourceActivities;
+    }
+
+    public ActivityRepresentation getProfileActivity() {
+        return profileActivity;
+    }
+
+    public void setProfileActivity(ActivityRepresentation profileActivity) {
+        this.profileActivity = profileActivity;
     }
 
     public List<AppointmentActivityRepresentation> getAppointmentActivities() {
@@ -73,6 +83,11 @@ public class UserActivityRepresentation {
 
     public UserActivityRepresentation withResourceActivities(List<ResourceActivityRepresentation> resourceActivities) {
         this.resourceActivities = resourceActivities;
+        return this;
+    }
+
+    public UserActivityRepresentation withProfileActivity(ActivityRepresentation profileActivity) {
+        this.profileActivity = profileActivity;
         return this;
     }
 
@@ -131,19 +146,13 @@ public class UserActivityRepresentation {
         return false;
     }
 
-    public static class ResourceActivityRepresentation {
+    public static class ResourceActivityRepresentation extends ActivityRepresentation {
 
         private PrismScope scope;
 
         private PrismRoleCategory defaultRoleCategory;
 
         private Boolean resourceCreator;
-
-        private Integer count;
-
-        private Integer updateCount;
-
-        private Integer messageCount;
 
         private List<ActionActivityRepresentation> actions;
 
@@ -171,30 +180,6 @@ public class UserActivityRepresentation {
             this.resourceCreator = resourceCreator;
         }
 
-        public Integer getCount() {
-            return count;
-        }
-
-        public void setCount(Integer count) {
-            this.count = count;
-        }
-
-        public Integer getUpdateCount() {
-            return updateCount;
-        }
-
-        public void setUpdateCount(Integer updateCount) {
-            this.updateCount = updateCount;
-        }
-
-        public Integer getMessageCount() {
-            return messageCount;
-        }
-
-        public void setMessageCount(Integer messageCount) {
-            this.messageCount = messageCount;
-        }
-
         public List<ActionActivityRepresentation> getActions() {
             return actions;
         }
@@ -219,17 +204,17 @@ public class UserActivityRepresentation {
         }
 
         public ResourceActivityRepresentation withCount(Integer count) {
-            this.count = count;
+            setCount(count);
             return this;
         }
 
         public ResourceActivityRepresentation withUpdateCount(Integer updateCount) {
-            this.updateCount = updateCount;
+            setUpdateCount(updateCount);
             return this;
         }
 
         public ResourceActivityRepresentation withMessageCount(Integer messageCount) {
-            this.messageCount = messageCount;
+            setMessageCount(messageCount);
             return this;
         }
 
@@ -270,6 +255,55 @@ public class UserActivityRepresentation {
                 return this;
             }
 
+        }
+
+    }
+
+    public static class ActivityRepresentation {
+
+        private Integer count;
+
+        private Integer updateCount;
+
+        private Integer messageCount;
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+
+        public Integer getUpdateCount() {
+            return updateCount;
+        }
+
+        public void setUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+        }
+
+        public Integer getMessageCount() {
+            return messageCount;
+        }
+
+        public void setMessageCount(Integer messageCount) {
+            this.messageCount = messageCount;
+        }
+
+        public ActivityRepresentation withCount(Integer count) {
+            this.count = count;
+            return this;
+        }
+
+        public ActivityRepresentation withUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+            return this;
+        }
+
+        public ActivityRepresentation withMessageCount(Integer messageCount) {
+            this.messageCount = messageCount;
+            return this;
         }
 
     }

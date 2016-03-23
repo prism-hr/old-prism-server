@@ -1,9 +1,12 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_CANDIDATE;
@@ -18,6 +21,7 @@ import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,6 +60,7 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
 import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
@@ -73,6 +78,7 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepre
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.AdvertService;
@@ -81,8 +87,6 @@ import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
-
-import com.google.common.collect.Lists;
 
 @Service
 @Transactional
@@ -126,23 +130,34 @@ public class ProfileMapper {
 
     public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter, String lastSequenceIdentifier) {
         User currentUser = userService.getCurrentUser();
-        DateTime updatedBaseline = now().minusDays(1);
-        List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
-        userService.getUserProfiles(filter, currentUser, lastSequenceIdentifier).forEach(user -> { //
-                    Long applicationCount = user.getApplicationCount();
-                    Long applicationRatingCount = user.getApplicationRatingCount();
-                    BigDecimal applicationRatingAverage = user.getApplicationRatingAverage();
-                    representations.add(new ProfileListRowRepresentation()
-                            .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(updatedBaseline))
-                            .withUser(userMapper.getUserRepresentationSimple(user, currentUser))
-                            .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
-                            .withApplicationCount(applicationCount == null ? null : applicationCount.intValue())
-                            .withApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue())
-                            .withApplicationRatingAverage(
-                                    applicationRatingAverage == null ? null : applicationRatingAverage.setScale(RATING_PRECISION, HALF_UP))
-                            .withUpdatedTimestamp(user.getUpdatedTimestamp())
-                            .withSequenceIdentifier(user.getSequenceIdentifier()));
-                });
+        List<ProfileListRowRepresentation> representations = newLinkedList();
+
+        List<ProfileListRowDTO> profiles = userService.getUserProfiles(filter, currentUser, lastSequenceIdentifier);
+        if (profiles.size() > 0) {
+            DateTime baseline = now().minusDays(1);
+
+            Map<Integer, Integer> indexedUsers = newHashMap();
+            userService.getUserUnreadMessageCounts(profiles.stream().map(p -> p.getUserId()).collect(toList()), currentUser).stream()
+                    .forEach(umc -> indexedUsers.put(umc.getId(), umc.getMessageCount().intValue()));
+
+            profiles.forEach(user -> {
+                Long applicationCount = user.getApplicationCount();
+                Long applicationRatingCount = user.getApplicationRatingCount();
+                BigDecimal applicationRatingAverage = user.getApplicationRatingAverage();
+                representations.add(new ProfileListRowRepresentation()
+                        .withUnreadMessageCount(indexedUsers.get(user.getUserId()))
+                        .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(baseline))
+                        .withUser(userMapper.getUserRepresentationSimple(user, currentUser))
+                        .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
+                        .withApplicationCount(applicationCount == null ? null : applicationCount.intValue())
+                        .withApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue())
+                        .withApplicationRatingAverage(
+                                applicationRatingAverage == null ? null : applicationRatingAverage.setScale(RATING_PRECISION, HALF_UP))
+                        .withUpdatedTimestamp(user.getUpdatedTimestamp())
+                        .withSequenceIdentifier(user.getSequenceIdentifier()));
+            });
+        }
+
         return representations;
     }
 
@@ -335,6 +350,27 @@ public class ProfileMapper {
         }
 
         throw new PrismForbiddenException("user does not have permission to access candidate data");
+    }
+
+    public ActivityRepresentation getProfileActivityRepresentation(User user) {
+        List<ProfileListRowDTO> profiles = userService.getUserProfiles(user);
+
+        Integer count = profiles.size();
+        if (count > 0) {
+            Integer updateCount = 0;
+            DateTime baseline = new DateTime().minusDays(1);
+            for (ProfileListRowDTO profile : profiles) {
+                if (profile.getUpdatedTimestamp().isAfter(baseline)) {
+                    updateCount++;
+                }
+            }
+
+            List<Integer> userIds = profiles.stream().map(p -> p.getUserId()).collect(toList());
+            return new ActivityRepresentation().withCount(count).withUpdateCount(updateCount)
+                    .withMessageCount(userService.getUserUnreadMessageCount(userIds, user).intValue());
+        }
+
+        return null;
     }
 
     private <T extends ProfileQualification<?>> ProfileQualificationRepresentation getQualificationRepresentation(T qualification, User currentUser) {

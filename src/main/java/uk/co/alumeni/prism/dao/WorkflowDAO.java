@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
@@ -17,7 +18,6 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -129,12 +129,12 @@ public class WorkflowDAO {
                                 .add(Restrictions.eq("scope.defaultShared", true))));
     }
 
-    public static Junction getSimilarUserConstraint(String searchTerm) {
-        return getSimilarUserConstraint(null, searchTerm);
+    public static Junction getMatchingUserConstraint(String searchTerm) {
+        return getMatchingUserConstraint(null, searchTerm);
     }
 
-    public static Junction getSimilarUserConstraint(String alias, String searchTerm) {
-        alias = StringUtils.isEmpty(alias) ? "" : alias + ".";
+    public static Junction getMatchingUserConstraint(String alias, String searchTerm) {
+        alias = isEmpty(alias) ? "" : alias + ".";
         return Restrictions.disjunction() //
                 .add(Restrictions.like(alias + "firstName", searchTerm, MatchMode.START)) //
                 .add(Restrictions.like(alias + "lastName", searchTerm, MatchMode.START)) //

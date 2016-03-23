@@ -13,14 +13,14 @@ import javax.persistence.UniqueConstraint;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
-import uk.co.alumeni.prism.workflow.user.MessageRecipientReassignmentProcessor;
+import uk.co.alumeni.prism.workflow.user.MessageNotificationReassignmentProcessor;
 
 import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "message_thread_participant",
         uniqueConstraints = { @UniqueConstraint(columnNames = { "message_thread_id", "user_id", "start_message_id", "close_message_id" }) })
-public class MessageThreadParticipant implements UserAssignment<MessageRecipientReassignmentProcessor>, UniqueEntity {
+public class MessageThreadParticipant implements UserAssignment<MessageNotificationReassignmentProcessor>, UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -132,8 +132,8 @@ public class MessageThreadParticipant implements UserAssignment<MessageRecipient
     }
 
     @Override
-    public Class<MessageRecipientReassignmentProcessor> getUserReassignmentProcessor() {
-        return MessageRecipientReassignmentProcessor.class;
+    public Class<MessageNotificationReassignmentProcessor> getUserReassignmentProcessor() {
+        return MessageNotificationReassignmentProcessor.class;
     }
 
     @Override

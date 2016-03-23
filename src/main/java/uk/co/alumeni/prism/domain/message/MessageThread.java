@@ -14,16 +14,21 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.domain.user.UserAssignment;
+import uk.co.alumeni.prism.workflow.user.MessageThreadReassignmentProcessor;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "message_thread")
-public class MessageThread {
+public class MessageThread implements UserAssignment<MessageThreadReassignmentProcessor>, UniqueEntity {
 
     @Id
     @GeneratedValue
@@ -39,6 +44,17 @@ public class MessageThread {
     @ManyToOne
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
+
+    @ManyToOne
+    @JoinColumn(name = "search_user_id", nullable = false)
+    private User searchUser;
+
+    @ManyToOne
+    @JoinColumn(name = "search_advert_id")
+    private Advert searchAdvert;
+
+    @Column(name = "search_resource_code")
+    private String searchResourceCode;
 
     @OneToMany(mappedBy = "thread")
     private Set<Message> messages = Sets.newHashSet();
@@ -78,6 +94,30 @@ public class MessageThread {
         this.userAccount = userAccount;
     }
 
+    public User getSearchUser() {
+        return searchUser;
+    }
+
+    public void setSearchUser(User searchUser) {
+        this.searchUser = searchUser;
+    }
+
+    public Advert getSearchAdvert() {
+        return searchAdvert;
+    }
+
+    public void setSearchAdvert(Advert searchAdvert) {
+        this.searchAdvert = searchAdvert;
+    }
+
+    public String getSearchResourceCode() {
+        return searchResourceCode;
+    }
+
+    public void setSearchResourceCode(String searchResourceCode) {
+        this.searchResourceCode = searchResourceCode;
+    }
+
     public Set<Message> getMessages() {
         return messages;
     }
@@ -88,6 +128,26 @@ public class MessageThread {
 
     public MessageThread withSubject(String subject) {
         this.subject = subject;
+        return this;
+    }
+
+    public MessageThread withComment(Comment comment) {
+        this.comment = comment;
+        return this;
+    }
+
+    public MessageThread withSearchUser(User searchUser) {
+        this.searchUser = searchUser;
+        return this;
+    }
+
+    public MessageThread withSearchAdvert(Advert searchAdvert) {
+        this.searchAdvert = searchAdvert;
+        return this;
+    }
+
+    public MessageThread withSearchResourceCode(String searchResourceCode) {
+        this.searchResourceCode = searchResourceCode;
         return this;
     }
 
@@ -106,6 +166,16 @@ public class MessageThread {
     }
 
     @Override
+    public Class<MessageThreadReassignmentProcessor> getUserReassignmentProcessor() {
+        return MessageThreadReassignmentProcessor.class;
+    }
+
+    @Override
+    public boolean isResourceUserAssignmentProperty() {
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
@@ -120,6 +190,11 @@ public class MessageThread {
         }
         MessageThread other = (MessageThread) object;
         return equal(id, other.getId());
+    }
+    
+    @Override
+    public EntitySignature getEntitySignature() {
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

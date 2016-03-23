@@ -7,6 +7,7 @@ import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getReadOrUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
@@ -778,16 +779,6 @@ public class ResourceDAO {
 
     private List<ActivityMessageCountDTO> getResourceMessageCounts(PrismScope scope, Collection<Integer> resourceIds, User user, boolean read) {
         String resourceIdReference = scope.getLowerCamelName() + ".id";
-
-        Junction constraint;
-        if (read) {
-            constraint = Restrictions.conjunction() //
-                    .add(Restrictions.isNotNull("participant.lastViewedMessage")) //
-                    .add(Restrictions.geProperty("participant.lastViewedMessage.id", "message.id"));
-        } else {
-            constraint = getUnreadMessageConstraint();
-        }
-
         return (List<ActivityMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceIdReference).as("id")) //
@@ -798,7 +789,7 @@ public class ResourceDAO {
                 .add(Restrictions.in(resourceIdReference, resourceIds)) //
                 .add(Restrictions.eq("participant.user", user)) //
                 .add(getVisibleMessageConstraint("message"))
-                .add(constraint) //
+                .add(getReadOrUnreadMessageConstraint(read)) //
                 .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
                 .list();
     }

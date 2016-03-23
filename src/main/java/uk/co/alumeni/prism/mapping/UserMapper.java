@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
@@ -214,9 +215,10 @@ public class UserMapper {
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));
     }
 
-    public UserProfileRepresentation getUserProfileRepresentation(User user) {
+    public UserProfileRepresentation getUserProfileRepresentation(User user, User currentUser) {
         UserAccount userAccount = user.getUserAccount();
-        return new UserProfileRepresentation().withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
+        UserProfileRepresentation representation = new UserProfileRepresentation()
+                .withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
                 .withAddress(profileMapper.getAddressRepresentation(userAccount.getAddress()))
                 .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications(), user))
                 .withAwards(profileMapper.getAwardRepresentations(userAccount.getAwards()))
@@ -225,6 +227,13 @@ public class UserMapper {
                 .withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
                 .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
                 .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
+
+        if (equal(user, currentUser)) {
+            representation.setReadMessageCount(userService.getUserReadMessageCount(user, currentUser));
+            representation.setUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser));
+        }
+
+        return representation;
     }
 
     public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity, User user) {

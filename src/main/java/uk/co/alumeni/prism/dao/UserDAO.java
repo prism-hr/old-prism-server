@@ -630,7 +630,7 @@ public class UserDAO {
                         .add(Projections.groupProperty("id").as("id")) //
                         .add(Projections.countDistinct("message.id").as("messageCount"))) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userAccount.thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.threads", "thread", JoinType.INNER_JOIN) //
                 .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
                 .createAlias("thread.messages", "message") //
                 .add(Restrictions.in("id", userIds)) //

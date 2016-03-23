@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static org.hibernate.transform.Transformers.aliasToBean;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 
 import java.util.Collection;
@@ -15,9 +15,11 @@ import javax.inject.Inject;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
@@ -28,6 +30,7 @@ import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.dto.MessageThreadDTO;
 
 @Repository
@@ -56,7 +59,7 @@ public class MessageDAO {
             Resource resource = (Resource) activity;
             criteria.createAlias("thread.comment", "comment", INNER_JOIN, //
                     Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource));
-        } else {
+        } else if (!((UserAccount) activity).getUser().equals(user)) {
             criteria.add(Restrictions.eq("thread.userAccount", activity));
         }
 
@@ -74,11 +77,20 @@ public class MessageDAO {
                         .add(Projections.groupProperty("thread").as("thread")) //
                         .add(Projections.max("createdTimestamp").as("updatedTimestamp"))) //
                 .createAlias("thread", "thread", INNER_JOIN) //
+                .createAlias("thread.searchUser", "searchUser", JoinType.INNER_JOIN) //
+                .createAlias("thread.searchAdvert", "searchAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("searchAdvert.user", "searchAdvertUser", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.in("thread", threads));
 
         if (isNotBlank(searchTerm)) {
             criteria.add(getMatchingMessageConstraint(searchTerm)
-                    .add(Restrictions.like("thread.subject", searchTerm)));
+                    .add(Restrictions.like("thread.subject", searchTerm, MatchMode.ANYWHERE)) //
+                    .add(getMatchingUserConstraint("searchUser", searchTerm)) //
+                    .add(Restrictions.like("searchAdvert.name", searchTerm, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("searchAdvert.summary", searchTerm, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("searchAdvert.description", searchTerm, MatchMode.ANYWHERE)) //
+                    .add(getMatchingUserConstraint("searchAdvertUser", searchTerm)) //
+                    .add(Restrictions.like("thread.searchResourceCode", searchTerm)));
         }
 
         return (List<MessageThreadDTO>) criteria //
@@ -165,10 +177,23 @@ public class MessageDAO {
                 .uniqueResult();
     }
 
+    public void setMessageThreadSearchUser(Resource resource, User user) {
+        sessionFactory.getCurrentSession().createQuery(
+                "update MessageThread "
+                        + "set searchUser = :user "
+                        + "where id in ("
+                        + "select id "
+                        + "from MessageThread join comment "
+                        + "where comment." + resource.getResourceScope() + " = :resource)")
+                .setParameter("user", user)
+                .setParameter("resource", resource)
+                .executeUpdate();
+    }
+
     private Junction getMatchingMessageConstraint(String searchTerm) {
         return Restrictions.disjunction() //
-                .add(getSimilarUserConstraint("user", searchTerm)) //
-                .add(Restrictions.like("content", searchTerm));
+                .add(getMatchingUserConstraint("user", searchTerm)) //
+                .add(Restrictions.like("content", searchTerm, MatchMode.ANYWHERE));
     }
 
 }

@@ -39,6 +39,7 @@ import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageNotification;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
@@ -186,11 +187,14 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @OneToMany(mappedBy = "user")
     private Set<AdvertTargetPending> advertTargetPendings = Sets.newHashSet();
 
+    @OneToMany(mappedBy = "searchUser")
+    private Set<MessageThread> threads = Sets.newHashSet();
+    
     @OneToMany(mappedBy = "user")
     private Set<Message> messages = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private Set<MessageNotification> messageRecipients = Sets.newHashSet();
+    private Set<MessageNotification> messageNotifications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -407,13 +411,17 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public Set<AdvertTargetPending> getAdvertTargetPendings() {
         return advertTargetPendings;
     }
+    
+    public Set<MessageThread> getThreads() {
+        return threads;
+    }
 
     public Set<Message> getMessages() {
         return messages;
     }
 
-    public Set<MessageNotification> getMessageRecipients() {
-        return messageRecipients;
+    public Set<MessageNotification> getMessageNotifications() {
+        return messageNotifications;
     }
 
     public User withId(Integer id) {

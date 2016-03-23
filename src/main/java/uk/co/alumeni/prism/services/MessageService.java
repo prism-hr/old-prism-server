@@ -117,7 +117,7 @@ public class MessageService {
 
     public void createMessage(ActivityEditable activity, Integer threadId, MessageDTO messageDTO) {
         DateTime baseline = now();
-        User user = userService.getCurrentUser();
+        User currentUser = userService.getCurrentUser();
 
         MessageThread thread = null;
         if (Resource.class.isAssignableFrom(activity.getClass())) {
@@ -125,19 +125,19 @@ public class MessageService {
             Action messageAction = actionService.getMessageAction(resource);
 
             if (threadId == null) {
-                thread = new MessageThread().withSubject(messageDTO.getSubject());
-                entityService.save(thread);
-
-                Comment comment = new Comment().withResource(resource).withUser(user).withAction(messageAction).withDeclinedResponse(false)
+                Comment comment = new Comment().withResource(resource).withUser(currentUser).withAction(messageAction).withDeclinedResponse(false)
                         .withCreatedTimestamp(baseline);
                 actionService.executeUserAction(resource, messageAction, comment);
-                thread.setComment(comment);
+
+                thread = new MessageThread().withSubject(messageDTO.getSubject()).withComment(comment).withSearchUser(resource.getUser())
+                        .withSearchAdvert(resource.getAdvert()).withSearchResourceCode(resource.getCode());
+                entityService.save(thread);
                 comment.setThread(thread);
-            } else if (actionService.checkActionAvailable(resource, messageAction, user)) {
+            } else if (actionService.checkActionAvailable(resource, messageAction, currentUser)) {
                 thread = getMessageThreadById(threadId);
             } else {
                 Action viewEditAction = actionService.getViewEditAction(resource);
-                if (actionService.checkActionAvailable(resource, viewEditAction, user)) {
+                if (actionService.checkActionAvailable(resource, viewEditAction, currentUser)) {
                     thread = getMessageThreadById(threadId);
                 }
             }
@@ -145,8 +145,9 @@ public class MessageService {
             UserAccount userAccount = (UserAccount) activity;
 
             if (threadId == null) {
-                if (userService.checkUserCanViewUserProfile(userAccount.getUser(), userService.getCurrentUser())) {
-                    thread = new MessageThread().withSubject(messageDTO.getSubject());
+                User user = userAccount.getUser();
+                if (userService.checkUserCanViewUserProfile(user, currentUser)) {
+                    thread = new MessageThread().withSubject(messageDTO.getSubject()).withSearchUser(user);
                     entityService.save(thread);
                     thread.setUserAccount(userAccount);
                     userAccount.addThread(thread);
@@ -156,22 +157,22 @@ public class MessageService {
             }
         }
 
-        if (thread == null || (threadId != null && !checkActiveMessageThreadParticipant(thread, user))) {
+        if (thread == null || (threadId != null && !checkActiveMessageThreadParticipant(thread, currentUser))) {
             return;
         }
 
-        Message message = new Message().withUser(user).withThread(thread).withContent(messageDTO.getContent()).withCreatedTimestamp(baseline);
+        Message message = new Message().withUser(currentUser).withThread(thread).withContent(messageDTO.getContent()).withCreatedTimestamp(baseline);
         entityService.save(message);
         thread.addMessage(message);
 
-        MessageThreadParticipant sender = getOrCreateMessageThreadParticipant(thread, message, user);
+        MessageThreadParticipant sender = getOrCreateMessageThreadParticipant(thread, message, currentUser);
         sender.setLastViewedMessage(message);
 
-        Set<Integer> userIds = newHashSet(user.getId());
+        Set<Integer> userIds = newHashSet(currentUser.getId());
         List<UserDTO> userDTOs = messageDTO.getParticipantUsers();
         for (UserDTO userDTO : userDTOs) {
             User participantUser = userService.getById(userDTO.getId());
-            if (!participantUser.equals(user)) {
+            if (!participantUser.equals(currentUser)) {
                 getOrCreateMessageThreadParticipant(thread, message, participantUser);
 
                 MessageNotification notification = new MessageNotification().withMessage(message).withUser(participantUser);
@@ -225,6 +226,10 @@ public class MessageService {
         }
 
         return user;
+    }
+    
+    public void setMessageThreadSearchUser(Resource resource, User user) {
+        messageDAO.setMessageThreadSearchUser(resource, user);
     }
 
     private boolean checkActiveMessageThreadParticipant(MessageThread thread, User user) {

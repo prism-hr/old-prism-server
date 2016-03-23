@@ -2,11 +2,18 @@ package uk.co.alumeni.prism.rest.representation.message;
 
 import java.util.List;
 
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+
 public class MessageThreadRepresentation {
 
     private Integer id;
 
-    private MessageThreadSubjectRepresentation subject;
+    private String subject;
+
+    private ResourceRepresentationSimple resource;
+
+    private UserRepresentationSimple user;
 
     private List<MessageRepresentation> messages;
 
@@ -22,12 +29,28 @@ public class MessageThreadRepresentation {
         this.id = id;
     }
 
-    public MessageThreadSubjectRepresentation getSubject() {
+    public String getSubject() {
         return subject;
     }
 
-    public void setSubject(MessageThreadSubjectRepresentation subject) {
+    public void setSubject(String subject) {
         this.subject = subject;
+    }
+
+    public ResourceRepresentationSimple getResource() {
+        return resource;
+    }
+
+    public void setResource(ResourceRepresentationSimple resource) {
+        this.resource = resource;
+    }
+
+    public UserRepresentationSimple getUser() {
+        return user;
+    }
+
+    public void setUser(UserRepresentationSimple user) {
+        this.user = user;
     }
 
     public List<MessageRepresentation> getMessages() {
@@ -59,7 +82,7 @@ public class MessageThreadRepresentation {
         return this;
     }
 
-    public MessageThreadRepresentation withSubject(MessageThreadSubjectRepresentation subject) {
+    public MessageThreadRepresentation withSubject(String subject) {
         this.subject = subject;
         return this;
     }

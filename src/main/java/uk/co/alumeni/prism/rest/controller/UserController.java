@@ -53,9 +53,9 @@ import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentati
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationUser;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.rest.validation.UserLinkingValidator;
@@ -378,9 +378,9 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public UserProfileRepresentation getUserProfile() {
+    public ProfileRepresentationUser getUserProfile() {
         User currentUser = userService.getCurrentUser();
-        return userMapper.getUserProfileRepresentation(currentUser, currentUser);
+        return profileMapper.getProfileRepresentationUser(currentUser, currentUser);
     }
 
     @PreAuthorize("isAuthenticated()")

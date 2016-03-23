@@ -169,6 +169,9 @@ public class SystemService {
     private StateService stateService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private UserService userService;
 
     @Inject
@@ -262,6 +265,13 @@ public class SystemService {
 
         logger.info("Initializing display property configurations");
         initializeDisplayPropertyConfigurations(getSystem());
+    }
+
+    public void initializeProfileCompleteness() throws Exception {
+        logger.info("Initializing user profile completeness");
+        for (Integer userAccount : userService.getEnabledUserAccounts()) {
+            userAccountService.setUserAccountCompleteScore(userAccount);
+        }
     }
 
     public void initializeSectionCompleteness() throws Exception {

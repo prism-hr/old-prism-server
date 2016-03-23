@@ -1,21 +1,14 @@
-package uk.co.alumeni.prism.rest.representation.user;
+package uk.co.alumeni.prism.rest.representation.profile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileDocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
-
-public class UserProfileRepresentation extends ProfileRepresentationMessage {
-
+public class ProfileRepresentationUser extends ProfileRepresentationMessage {
+    
+    private BigDecimal completeScore;
+    
     private ProfilePersonalDetailRepresentation personalDetail;
 
     private ProfileAddressRepresentation address;
@@ -35,6 +28,14 @@ public class UserProfileRepresentation extends ProfileRepresentationMessage {
     private Boolean shared;
 
     private DateTime updatedTimestamp;
+
+    public BigDecimal getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
+    }
 
     public ProfilePersonalDetailRepresentation getPersonalDetail() {
         return personalDetail;
@@ -116,52 +117,57 @@ public class UserProfileRepresentation extends ProfileRepresentationMessage {
         this.updatedTimestamp = updatedTimestamp;
     }
 
-    public UserProfileRepresentation withPersonalDetail(ProfilePersonalDetailRepresentation personalDetail) {
+    public ProfileRepresentationUser withCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
+        return this;
+    }
+    
+    public ProfileRepresentationUser withPersonalDetail(ProfilePersonalDetailRepresentation personalDetail) {
         this.personalDetail = personalDetail;
         return this;
     }
 
-    public UserProfileRepresentation withAddress(ProfileAddressRepresentation address) {
+    public ProfileRepresentationUser withAddress(ProfileAddressRepresentation address) {
         this.address = address;
         return this;
     }
 
-    public UserProfileRepresentation withQualifications(List<ProfileQualificationRepresentation> qualifications) {
+    public ProfileRepresentationUser withQualifications(List<ProfileQualificationRepresentation> qualifications) {
         this.qualifications = qualifications;
         return this;
     }
 
-    public UserProfileRepresentation withAwards(List<ProfileAwardRepresentation> awards) {
+    public ProfileRepresentationUser withAwards(List<ProfileAwardRepresentation> awards) {
         this.awards = awards;
         return this;
     }
 
-    public UserProfileRepresentation withEmploymentPositions(List<ProfileEmploymentPositionRepresentation> employmentPositions) {
+    public ProfileRepresentationUser withEmploymentPositions(List<ProfileEmploymentPositionRepresentation> employmentPositions) {
         this.employmentPositions = employmentPositions;
         return this;
     }
 
-    public UserProfileRepresentation withReferees(List<ProfileRefereeRepresentation> referees) {
+    public ProfileRepresentationUser withReferees(List<ProfileRefereeRepresentation> referees) {
         this.referees = referees;
         return this;
     }
 
-    public UserProfileRepresentation withDocument(ProfileDocumentRepresentation document) {
+    public ProfileRepresentationUser withDocument(ProfileDocumentRepresentation document) {
         this.document = document;
         return this;
     }
 
-    public UserProfileRepresentation withAdditionalInformation(ProfileAdditionalInformationRepresentation additionalInformation) {
+    public ProfileRepresentationUser withAdditionalInformation(ProfileAdditionalInformationRepresentation additionalInformation) {
         this.additionalInformation = additionalInformation;
         return this;
     }
 
-    public UserProfileRepresentation withShared(final Boolean shared) {
+    public ProfileRepresentationUser withShared(final Boolean shared) {
         this.shared = shared;
         return this;
     }
 
-    public UserProfileRepresentation withUpdatedTimestamp(DateTime updatedTimestamp) {
+    public ProfileRepresentationUser withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
     }

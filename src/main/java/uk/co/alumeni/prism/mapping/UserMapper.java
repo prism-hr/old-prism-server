@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
@@ -38,7 +37,6 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationId
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUserUnverifiedRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
@@ -213,27 +211,6 @@ public class UserMapper {
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
                 .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));
-    }
-
-    public UserProfileRepresentation getUserProfileRepresentation(User user, User currentUser) {
-        UserAccount userAccount = user.getUserAccount();
-        UserProfileRepresentation representation = new UserProfileRepresentation()
-                .withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
-                .withAddress(profileMapper.getAddressRepresentation(userAccount.getAddress()))
-                .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications(), user))
-                .withAwards(profileMapper.getAwardRepresentations(userAccount.getAwards()))
-                .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions(), user))
-                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees(), user))
-                .withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
-                .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
-                .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
-
-        if (equal(user, currentUser)) {
-            representation.setReadMessageCount(userService.getUserReadMessageCount(user, currentUser));
-            representation.setUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser));
-        }
-
-        return representation;
     }
 
     public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity, User user) {

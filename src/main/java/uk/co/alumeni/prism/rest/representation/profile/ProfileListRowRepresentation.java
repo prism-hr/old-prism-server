@@ -11,6 +11,8 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
     private boolean raisesUpdateFlag;
 
     private UserRepresentationSimple user;
+    
+    private BigDecimal completeScore;
 
     private String linkedInProfileUrl;
 
@@ -38,6 +40,14 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
+    }
+
+    public BigDecimal getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
     }
 
     public String getLinkedInProfileUrl() {
@@ -105,6 +115,11 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     public ProfileListRowRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
+        return this;
+    }
+    
+    public ProfileListRowRepresentation withCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
         return this;
     }
 

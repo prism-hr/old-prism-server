@@ -111,6 +111,9 @@ public class UserAccount
     @Column(name = "shared", nullable = false)
     private Boolean shared;
 
+    @Column(name = "complete_score", nullable = false)
+    private Integer completeScore;
+    
     @Lob
     @Column(name = "activity_cache")
     private String activityCache;
@@ -296,6 +299,14 @@ public class UserAccount
         this.shared = shared;
     }
 
+    public Integer getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(Integer completeScore) {
+        this.completeScore = completeScore;
+    }
+
     public String getActivityCache() {
         return activityCache;
     }
@@ -366,6 +377,11 @@ public class UserAccount
         return this;
     }
 
+    public UserAccount withCompleteScore(Integer completeScore) {
+        this.completeScore = completeScore;
+        return this;
+    }
+    
     public UserAccount withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;

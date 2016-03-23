@@ -1,13 +1,10 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,23 +23,18 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceListRowDTO;
-import uk.co.alumeni.prism.dto.UserRoleDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeReplicableRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
 import uk.co.alumeni.prism.services.ActionService;
-import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.RoleService;
-import uk.co.alumeni.prism.services.StateService;
 
 import com.google.common.collect.Lists;
 
@@ -54,16 +46,10 @@ public class ActionMapper {
     private ActionService actionService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private CommentMapper commentMapper;
 
     @Inject
     private CommentService commentService;
-
-    @Inject
-    private MessageMapper messageMapper;
 
     @Inject
     private ResourceMapper resourceMapper;
@@ -76,9 +62,6 @@ public class ActionMapper {
 
     @Inject
     private StateMapper stateMapper;
-
-    @Inject
-    private StateService stateService;
 
     public ActionRepresentation getActionRepresentation(PrismAction action) {
         return getActionRepresentation(action, ActionRepresentation.class);
@@ -168,62 +151,9 @@ public class ActionMapper {
     }
 
     private ActionRepresentationExtended getActionRepresentationExtended(Resource resource, User user, ActionDTO actionDTO) {
-        ActionRepresentationExtended representation = getActionRepresentationSimple(actionDTO, ActionRepresentationExtended.class) //
+        return getActionRepresentationSimple(actionDTO, ActionRepresentationExtended.class) //
                 .addNextStates(stateMapper.getStateRepresentations(resource, actionDTO.getActionId())) //
                 .addRecommendedNextStates(stateMapper.getRecommendedNextStateRepresentations(resource));
-
-        if (actionDTO.getActionId().getActionCategory().equals(MESSAGE_RESOURCE)) {
-            List<PrismRole> recipientRoles = newLinkedList();
-            List<PrismRole> partnerRecipientRoles = newLinkedList();
-
-            Action action = actionService.getById(actionDTO.getActionId());
-            List<Integer> stateActionAssignments = stateService.getStateActionAssignments(user, resource, action);
-            if (stateActionAssignments.size() > 0) {
-                stateService.getStateActionRecipients(stateActionAssignments).stream().forEach(stateActionRecipient -> {
-                    if (isFalse(stateActionRecipient.getExternalMode())) {
-                        recipientRoles.add(stateActionRecipient.getRole());
-                    } else {
-                        partnerRecipientRoles.add(stateActionRecipient.getRole());
-                    }
-                });
-
-                boolean hasRecipientRoles = recipientRoles.size() > 0;
-                boolean hasPartnerRecipientRoles = partnerRecipientRoles.size() > 0;
-
-                if (hasRecipientRoles || hasPartnerRecipientRoles) {
-                    if (hasRecipientRoles) {
-                        List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(resource, recipientRoles);
-                        representation
-                                .addMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user, recipientUserRoles));
-                    }
-
-                    if (hasPartnerRecipientRoles) {
-                        Map<Integer, Advert> resourceAdverts = newHashMap();
-                        resource.getAdvert().getEnclosingResources().stream().forEach(enclosingResource -> {
-                            Advert enclosingAdvert = enclosingResource.getAdvert();
-                            resourceAdverts.put(enclosingAdvert.getId(), enclosingAdvert);
-                        });
-
-                        Map<ResourceDTO, Resource> partnerResources = newHashMap();
-                        advertService.getTargetedAdverts(resourceAdverts.values()).stream().forEach(partnerAdvert -> {
-                            partnerAdvert.getEnclosingResources().stream().forEach(partnerResource -> {
-                                ResourceDTO partnerResourceDTO = new ResourceDTO()
-                                        .withScope(partnerResource.getResourceScope()).withId(partnerResource.getId());
-                                partnerResources.put(partnerResourceDTO, partnerResource);
-                            });
-                        });
-
-                        if (partnerResources.size() > 0) {
-                            List<UserRoleDTO> recipientPartnerUserRoles = roleService.getUserRoles(partnerResources.values(), partnerRecipientRoles);
-                            representation.addPartnerMessageThreadParticipants(messageMapper.getMessageThreadParticipantRepresentationsPotential(user,
-                                    recipientPartnerUserRoles));
-                        }
-                    }
-                }
-            }
-        }
-
-        return representation;
     }
 
     private <T extends ActionRepresentationSimple> T getActionRepresentationSimple(ActionDTO action, Class<T> returnType) {

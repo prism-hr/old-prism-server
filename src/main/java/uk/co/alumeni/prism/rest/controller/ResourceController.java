@@ -50,6 +50,7 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantsRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCreation;
@@ -339,6 +340,14 @@ public class ResourceController {
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return messageMapper.getMessageThreadRepresentations(resource, q);
+    }
+
+    @RequestMapping(value = "{resourceId}/threads/{id}/participants", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public MessageThreadParticipantsRepresentationPotential getMessageThreadParticipants(@PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return messageMapper.getMessageThreadParticipantsRepresentation(resource);
     }
 
     @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.POST)

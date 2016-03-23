@@ -9,15 +9,15 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.services.UserService;
 
 @Component
-public class MessageRecipientReassignmentProcessor implements PrismUserReassignmentProcessor {
+public class MessageNotificationReassignmentProcessor implements PrismUserReassignmentProcessor {
 
     @Inject
     private UserService userService;
 
     @Override
     public void reassign(User oldUser, User newUser, String userProperty) {
-        for (MessageNotification oldMessageRecipient : oldUser.getMessageRecipients()) {
-            userService.mergeUserAssignmentStrict(oldMessageRecipient, newUser, userProperty);
+        for (MessageNotification oldMessageNotification : oldUser.getMessageNotifications()) {
+            userService.mergeUserAssignmentStrict(oldMessageNotification, newUser, userProperty);
         }
     }
 

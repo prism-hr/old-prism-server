@@ -21,6 +21,7 @@ import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
@@ -28,6 +29,7 @@ import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadSubjectRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.MessageService;
 
@@ -39,10 +41,13 @@ import com.google.common.collect.TreeMultimap;
 public class MessageMapper {
 
     @Inject
+    private DocumentMapper documentMapper;
+
+    @Inject
     private MessageService messageService;
 
     @Inject
-    private DocumentMapper documentMapper;
+    private ResourceMapper resourceMapper;
 
     @Inject
     private UserMapper userMapper;
@@ -58,8 +63,13 @@ public class MessageMapper {
             LinkedHashMultimap<Message, Document> documents = messageService.getMessageDocuments(messages.values());
 
             threads.stream().forEach(thread -> {
+                MessageThreadSubjectRepresentation subject = new MessageThreadSubjectRepresentation().withSubject(thread.getSubject());
+                if (Resource.class.isAssignableFrom(activity.getClass())) {
+                    subject.setResource(resourceMapper.getResourceRepresentationSimple((Resource) activity));
+                }
+
                 MessageThreadRepresentation threadRepresentation = new MessageThreadRepresentation()
-                        .withId(thread.getId()).withSubject(thread.getSubject());
+                        .withId(thread.getId()).withSubject(subject);
 
                 Set<MessageThreadParticipantRepresentation> participantRepresentations = newLinkedHashSet();
                 participants.get(thread).stream().forEach(participant -> {
@@ -73,7 +83,7 @@ public class MessageMapper {
                             .withLastViewedMessage(lastViewedMessageRepresentation));
 
                     if (recipientUser.equals(user)) {
-                        threadRepresentation.setLastViewedTimestamp(lastViewedMessageRepresentation);
+                        threadRepresentation.setLastViewedMessage(lastViewedMessageRepresentation);
                     }
                 });
 
@@ -115,7 +125,7 @@ public class MessageMapper {
                     userRepresentations.add(userMapper.getUserRepresentationSimple(value, user));
                 }
             });
-            
+
             if (userRepresentations.size() > 0) {
                 recipients.put(key, new MessageThreadParticipantRepresentationPotential().withRole(key).withUsers(userRepresentations));
             }

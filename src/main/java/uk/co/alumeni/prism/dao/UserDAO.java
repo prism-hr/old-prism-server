@@ -8,8 +8,8 @@ import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getSimilarUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
@@ -185,7 +185,7 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userRole.id")) //
                         .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR))) //
-                .add(getSimilarUserConstraint(searchTerm)) //
+                .add(getMatchingUserConstraint(searchTerm)) //
                 .addOrder(Order.desc("lastName")) //
                 .addOrder(Order.desc("firstName")) //
                 .setMaxResults(10) //
@@ -237,7 +237,7 @@ public class UserDAO {
 
         String searchTerm = userListFilterDTO.getSearchTerm();
         if (searchTerm != null) {
-            criteria.add(WorkflowDAO.getSimilarUserConstraint("user", searchTerm)); //
+            criteria.add(WorkflowDAO.getMatchingUserConstraint("user", searchTerm)); //
         }
 
         Integer lastUserId = userListFilterDTO.getLastUserId();

@@ -6,7 +6,7 @@ public class MessageThreadRepresentation {
 
     private Integer id;
 
-    private String subject;
+    private MessageThreadSubjectRepresentation subject;
 
     private List<MessageRepresentation> messages;
 
@@ -22,11 +22,11 @@ public class MessageThreadRepresentation {
         this.id = id;
     }
 
-    public String getSubject() {
+    public MessageThreadSubjectRepresentation getSubject() {
         return subject;
     }
 
-    public void setSubject(String subject) {
+    public void setSubject(MessageThreadSubjectRepresentation subject) {
         this.subject = subject;
     }
 
@@ -50,7 +50,7 @@ public class MessageThreadRepresentation {
         return lastViewedMessage;
     }
 
-    public void setLastViewedTimestamp(MessageRepresentation lastViewedMessage) {
+    public void setLastViewedMessage(MessageRepresentation lastViewedMessage) {
         this.lastViewedMessage = lastViewedMessage;
     }
 
@@ -59,7 +59,7 @@ public class MessageThreadRepresentation {
         return this;
     }
 
-    public MessageThreadRepresentation withSubject(String subject) {
+    public MessageThreadRepresentation withSubject(MessageThreadSubjectRepresentation subject) {
         this.subject = subject;
         return this;
     }

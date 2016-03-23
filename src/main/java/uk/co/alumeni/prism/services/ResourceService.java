@@ -190,11 +190,14 @@ public class ResourceService {
     private EntityService entityService;
 
     @Inject
-    private PrismService prismService;
-
+    private MessageService messageService;
+    
     @Inject
     private NotificationService notificationService;
 
+    @Inject
+    private PrismService prismService;
+    
     @Inject
     private RoleService roleService;
 
@@ -1192,6 +1195,21 @@ public class ResourceService {
             });
         });
         return resourceIndex;
+    }
+    
+    public void setResourceOwner(Resource resource, User user) {
+        if (roleService.getRolesForResource(resource, user).isEmpty()) {
+            throw new PrismForbiddenException("User has no role within given resource");
+        }
+
+        resource.setUser(user);
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            resource.getAdvert().setUser(user);
+        }
+
+        messageService.setMessageThreadSearchUser(resource, user);
+        executeUpdate(resource, userService.getCurrentUser(),
+                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

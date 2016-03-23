@@ -12,8 +12,9 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPosition
 import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 
-public class UserProfileRepresentation {
+public class UserProfileRepresentation extends ProfileRepresentationMessage {
 
     private ProfilePersonalDetailRepresentation personalDetail;
 

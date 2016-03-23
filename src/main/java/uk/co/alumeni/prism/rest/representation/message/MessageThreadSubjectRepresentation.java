@@ -1,10 +1,13 @@
 package uk.co.alumeni.prism.rest.representation.message;
 
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class MessageThreadSubjectRepresentation {
 
     private ResourceRepresentationSimple resource;
+    
+    private UserRepresentationSimple user;
     
     private String subject;
 
@@ -14,6 +17,14 @@ public class MessageThreadSubjectRepresentation {
 
     public void setResource(ResourceRepresentationSimple resource) {
         this.resource = resource;
+    }
+
+    public UserRepresentationSimple getUser() {
+        return user;
+    }
+
+    public void setUser(UserRepresentationSimple user) {
+        this.user = user;
     }
 
     public String getSubject() {

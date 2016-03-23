@@ -197,10 +197,20 @@ public class WorkflowDAO {
         return constraint;
     }
 
+    public static Junction getReadMessageConstraint() {
+        return Restrictions.conjunction() //
+                .add(Restrictions.isNotNull("participant.lastViewedMessage")) //
+                .add(Restrictions.geProperty("participant.lastViewedMessage.id", "message.id")); //
+    }
+    
     public static Junction getUnreadMessageConstraint() {
         return Restrictions.disjunction() //
                 .add(Restrictions.isNull("participant.lastViewedMessage")) //
                 .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
+    }
+    
+    public static Junction getReadOrUnreadMessageConstraint(boolean read) {
+        return read ? getReadMessageConstraint() : getUnreadMessageConstraint();
     }
 
     public static Junction getVisibleMessageConstraint() {

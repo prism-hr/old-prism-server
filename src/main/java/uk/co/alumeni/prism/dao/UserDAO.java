@@ -9,6 +9,7 @@ import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getReadOrUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
@@ -50,6 +51,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
@@ -609,8 +611,8 @@ public class UserDAO {
                 .add(getUsersWithActivitiesToCacheConstraint(scope, resources)) //
                 .list();
     }
-    
-    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User user) {
+
+    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User currentUser) {
         return (Long) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.countDistinct("message.id")) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
@@ -618,29 +620,28 @@ public class UserDAO {
                 .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
                 .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", userIds))
-                .add(Restrictions.eq("participant.user", user)) //
+                .add(Restrictions.eq("participant.user", currentUser)) //
                 .add(getVisibleMessageConstraint("message")) //
                 .add(getUnreadMessageConstraint()) //
                 .uniqueResult();
     }
 
-    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User user) {
-        return (List<ActivityMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("id").as("id")) //
-                        .add(Projections.countDistinct("message.id").as("messageCount"))) //
-                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("userAccount.threads", "thread", JoinType.INNER_JOIN) //
-                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
-                .createAlias("thread.messages", "message") //
-                .add(Restrictions.in("id", userIds)) //
-                .add(Restrictions.eq("participant.user", user)) //
-                .add(getVisibleMessageConstraint("message"))
-                .add(getUnreadMessageConstraint()) //
-                .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
-                .list();
+    public Long getUserReadMessageCounts(User currentUser) {
+        return getUserMessageCounts(currentUser, true);
     }
-    
+
+    public Long getUserUnreadMessageCounts(User currentUser) {
+        return getUserMessageCounts(currentUser, false);
+    }
+
+    public List<ActivityMessageCountDTO> getUserReadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return getUserMessageCounts(userIds, currentUser, true);
+    }
+
+    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return getUserMessageCounts(userIds, currentUser, false);
+    }
+
     public List<Integer> getUsersWithUnreadMessages(User user) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.groupProperty("id")) //
@@ -690,6 +691,34 @@ public class UserDAO {
                 .add(Restrictions.isNull("resource.activityCachedTimestamp")) //
                 .add(Restrictions.isNull("userAccount.activityCachedTimestamp")) //
                 .add(Restrictions.ltProperty("userAccount.activityCachedTimestamp", "resource.activityCachedTimestamp")));
+    }
+
+    private Long getUserMessageCounts(User currentUser, boolean read) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(MessageThread.class) //
+                .setProjection(Projections.countDistinct("message.id").as("id")) //
+                .createAlias("messages", "message", JoinType.INNER_JOIN) //
+                .createAlias("participants", "participant", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("participant.user", currentUser)) //
+                .add(getVisibleMessageConstraint())
+                .add(getReadOrUnreadMessageConstraint(read)) //
+                .uniqueResult();
+    }
+
+    private List<ActivityMessageCountDTO> getUserMessageCounts(Collection<Integer> userIds, User currentUser, boolean read) {
+        return (List<ActivityMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.countDistinct("message.id").as("messageCount"))) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.threads", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message") //
+                .add(Restrictions.in("id", userIds)) //
+                .add(Restrictions.eq("participant.user", currentUser)) //
+                .add(getVisibleMessageConstraint("message"))
+                .add(getReadOrUnreadMessageConstraint(read)) //
+                .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
+                .list();
     }
 
 }

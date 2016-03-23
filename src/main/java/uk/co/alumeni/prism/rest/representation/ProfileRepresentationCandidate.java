@@ -6,10 +6,11 @@ import java.util.Collection;
 import java.util.Set;
 
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentationPotential;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
-public class ProfileRepresentationCandidate {
+public class ProfileRepresentationCandidate extends ProfileRepresentationMessage {
 
     private UserRepresentationSimple user;
 
@@ -61,6 +62,16 @@ public class ProfileRepresentationCandidate {
         return this;
     }
 
+    public ProfileRepresentationCandidate withReadMessageCount(Integer readMessageCount) {
+        setReadMessageCount(readMessageCount);
+        return this;
+    }
+
+    public ProfileRepresentationCandidate withUnreadMessageCount(Integer unreadMessageCount) {
+        setUnreadMessageCount(unreadMessageCount);
+        return this;
+    }
+    
     public ProfileRepresentationCandidate addMessageThreadParticipants(Collection<MessageThreadParticipantRepresentationPotential> messageThreadParticipants) {
         this.messageThreadParticipants.addAll(messageThreadParticipants);
         return this;

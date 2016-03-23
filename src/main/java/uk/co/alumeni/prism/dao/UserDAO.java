@@ -665,10 +665,9 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getEnabledUserAccounts() {
+    public List<Integer> getUserAccounts() {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.property("id")) //
-                .add(Restrictions.eq("enabled", true)) //
                 .list();
     }
     

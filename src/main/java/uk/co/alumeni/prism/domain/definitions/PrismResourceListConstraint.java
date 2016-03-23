@@ -1,39 +1,16 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.BETWEEN;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.GREATER;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.LESSER;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.DATE;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.DATE_TIME;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.DECIMAL;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.STATE_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.STRING;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import com.google.common.collect.LinkedHashMultimap;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.workflow.selectors.filter.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryLocationSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryThemeSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationBySecondaryLocationSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationBySecondaryThemeSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.PrismResourceListFilterSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByLocationSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByParentResourceSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByThemeSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByUserAndRoleSelector;
-import uk.co.alumeni.prism.workflow.selectors.filter.StateByStateGroupSelector;
-
-import com.google.common.collect.LinkedHashMultimap;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
 
 public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
 
@@ -63,7 +40,7 @@ public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
             Arrays.asList(APPLICATION), true), //
     CLOSING_DATE("resource.closingDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
-    CONFIRMED_START_DATE("resource.confirmedStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
+    CONFIRMED_START_DATE("resource.offeredStartDate", DATE, Arrays.asList(BETWEEN, EQUAL, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION)), //
     RATING("resource.applicationRatingAverage", DECIMAL, Arrays.asList(BETWEEN, GREATER, LESSER, NOT_SPECIFIED), //
             Arrays.asList(APPLICATION, PROJECT, PROGRAM, DEPARTMENT, INSTITUTION), true), //
@@ -97,7 +74,7 @@ public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
     private List<PrismResourceListFilterExpression> permittedExpressions;
 
     private List<PrismScope> permittedScopes;
-    
+
     private boolean permittedInBulkMode;
 
     private static LinkedHashMultimap<PrismScope, PrismResourceListConstraint> permittedFilters = LinkedHashMultimap.create();
@@ -114,7 +91,7 @@ public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
             List<PrismScope> permittedScopes) {
         this(propertyName, propertyType, permittedExpressions, permittedScopes, false);
     }
-    
+
     private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType, List<PrismResourceListFilterExpression> permittedExpressions,
             List<PrismScope> permittedScopes, boolean permittedInBulkMode) {
         this.propertyName = propertyName;
@@ -129,7 +106,7 @@ public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
             List<PrismScope> permittedScopes) {
         this(propertyName, propertyType, propertyValueSelector, permittedExpressions, permittedScopes, false);
     }
-    
+
     private PrismResourceListConstraint(String propertyName, PrismResourceListFilterPropertyType propertyType,
             Class<? extends PrismResourceListFilterSelector<?>> propertyValueSelector, List<PrismResourceListFilterExpression> permittedExpressions,
             List<PrismScope> permittedScopes, boolean permittedInBulkMode) {
@@ -164,7 +141,7 @@ public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
     public boolean isPermittedInBulkMode() {
         return permittedInBulkMode;
     }
-    
+
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_FILTER_PROPERTY_" + name());

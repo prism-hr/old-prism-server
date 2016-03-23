@@ -1,20 +1,13 @@
 package uk.co.alumeni.prism.mapping;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
 import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_CANDIDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 
@@ -22,7 +15,6 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -34,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.address.Address;
-import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationAdditionalInformation;
 import uk.co.alumeni.prism.domain.application.ApplicationAddress;
 import uk.co.alumeni.prism.domain.application.ApplicationDocument;
@@ -43,7 +34,6 @@ import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
@@ -54,7 +44,6 @@ import uk.co.alumeni.prism.domain.profile.ProfileEmploymentPosition;
 import uk.co.alumeni.prism.domain.profile.ProfilePersonalDetail;
 import uk.co.alumeni.prism.domain.profile.ProfileQualification;
 import uk.co.alumeni.prism.domain.profile.ProfileReferee;
-import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserDocument;
@@ -63,7 +52,6 @@ import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
-import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.ProfileRepresentationCandidate;
@@ -78,15 +66,13 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfilePersonalDetailRepr
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationUser;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.AdvertService;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
-import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 
 @Service
@@ -95,9 +81,6 @@ public class ProfileMapper {
 
     @Inject
     private AddressMapper addressMapper;
-
-    @Inject
-    private AdvertService advertService;
 
     @Inject
     private ApplicationService applicationService;
@@ -112,13 +95,7 @@ public class ProfileMapper {
     private DocumentMapper documentMapper;
 
     @Inject
-    private MessageMapper messageMapper;
-
-    @Inject
     private ResourceMapper resourceMapper;
-
-    @Inject
-    private RoleService roleService;
 
     @Inject
     private UserMapper userMapper;
@@ -141,23 +118,25 @@ public class ProfileMapper {
             Map<Integer, Integer> readMessagesIndex = getMessageCountIndex(userService.getUserReadMessageCounts(userIds, currentUser));
             Map<Integer, Integer> unreadMessagesIndex = getMessageCountIndex(userService.getUserUnreadMessageCounts(userIds, currentUser));
 
-            profiles.forEach(user -> {
-                Integer userId = user.getUserId();
-                Long applicationCount = user.getApplicationCount();
-                Long applicationRatingCount = user.getApplicationRatingCount();
-                BigDecimal applicationRatingAverage = user.getApplicationRatingAverage();
+            Integer maximumCompleteScore = userService.getMaximumUserAccountCompleteScore();
+            profiles.forEach(profile -> {
+                Integer userId = profile.getUserId();
+                Long applicationCount = profile.getApplicationCount();
+                Long applicationRatingCount = profile.getApplicationRatingCount();
+                BigDecimal applicationRatingAverage = profile.getApplicationRatingAverage();
                 representations.add(new ProfileListRowRepresentation()
                         .withReadMessageCount(readMessagesIndex.get(userId))
                         .withUnreadMessageCount(unreadMessagesIndex.get(userId))
-                        .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(baseline))
-                        .withUser(userMapper.getUserRepresentationSimple(user, currentUser))
-                        .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
+                        .withRaisesUpdateFlag(profile.getUpdatedTimestamp().isAfter(baseline))
+                        .withUser(userMapper.getUserRepresentationSimple(profile, currentUser))
+                        .withCompleteScore(getProfileCompleteScoreAsRatio(profile.getCompleteScore(), maximumCompleteScore))
+                        .withLinkedInProfileUrl(profile.getLinkedInProfileUrl())
                         .withApplicationCount(applicationCount == null ? null : applicationCount.intValue())
                         .withApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue())
                         .withApplicationRatingAverage(
                                 applicationRatingAverage == null ? null : applicationRatingAverage.setScale(RATING_PRECISION, HALF_UP))
-                        .withUpdatedTimestamp(user.getUpdatedTimestamp())
-                        .withSequenceIdentifier(user.getSequenceIdentifier()));
+                        .withUpdatedTimestamp(profile.getUpdatedTimestamp())
+                        .withSequenceIdentifier(profile.getSequenceIdentifier()));
             });
         }
 
@@ -317,44 +296,38 @@ public class ProfileMapper {
         User user = userService.getById(userId);
         User currentUser = userService.getCurrentUser();
         if (userService.checkUserCanViewUserProfile(user, currentUser)) {
-            UserProfileRepresentation profileRepresentation = userMapper.getUserProfileRepresentation(user, currentUser);
+            ProfileRepresentationUser profileRepresentation = getProfileRepresentationUser(user, currentUser);
             UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
-
-            Set<Resource> resources = newHashSet();
-            roleService.getUserRolesForWhichUserIsCandidate(user).stream().forEach(ur -> resources.add(ur.getResource()));
-
-            List<PrismRole> recipientRoles = newArrayList(PARTNERSHIP_ADMINISTRATOR_GROUP.getRoles());
-            recipientRoles.addAll(asList(INSTITUTION_STAFF_GROUP.getRoles()));
-            recipientRoles.addAll(asList(DEPARTMENT_STAFF_GROUP.getRoles()));
-
-            List<UserRoleDTO> partnerRecipientUserRoles = roleService.getUserRoles(resources, recipientRoles);
-
-            List<Advert> adverts = newArrayList();
-            resources.stream().forEach(r -> adverts.add(r.getAdvert()));
-            List<Advert> targeterAdverts = advertService.getTargeterAdverts(adverts);
-
-            Set<Resource> targeterResources = newHashSet();
-            targeterAdverts.stream().forEach(ta -> {
-                Resource targeterResource = ta.getResource();
-                targeterResources.add(targeterResource);
-                if (targeterResource.getResourceScope().equals(DEPARTMENT)) {
-                    targeterResources.add(targeterResource);
-                }
-            });
-
-            List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(targeterResources, recipientRoles);
-            recipientUserRoles.add(new UserRoleDTO().withUser(user).withRole(SYSTEM_CANDIDATE));
 
             return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation)
                     .withReadMessageCount(userService.getUserReadMessageCount(user, currentUser))
-                    .withUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser))
-                    .addMessageThreadParticipants(
-                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, recipientUserRoles))
-                    .addPartnerMessageThreadParticipants(
-                            messageMapper.getMessageThreadParticipantRepresentationsPotential(currentUser, partnerRecipientUserRoles));
+                    .withUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser));
         }
 
         throw new PrismForbiddenException("user does not have permission to access candidate data");
+    }
+
+    public ProfileRepresentationUser getProfileRepresentationUser(User user, User currentUser) {
+        UserAccount userAccount = user.getUserAccount();
+        Integer maximumCompleteScore = userService.getMaximumUserAccountCompleteScore();
+        ProfileRepresentationUser representation = new ProfileRepresentationUser()
+                .withCompleteScore(getProfileCompleteScoreAsRatio(userAccount.getCompleteScore(), maximumCompleteScore))
+                .withPersonalDetail(getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
+                .withAddress(getAddressRepresentation(userAccount.getAddress()))
+                .withQualifications(getQualificationRepresentations(userAccount.getQualifications(), user))
+                .withAwards(getAwardRepresentations(userAccount.getAwards()))
+                .withEmploymentPositions(getEmploymentPositionRepresentations(userAccount.getEmploymentPositions(), user))
+                .withReferees(getRefereeRepresentations(userAccount.getReferees(), user))
+                .withDocument(getDocumentRepresentation(userAccount.getDocument()))
+                .withAdditionalInformation(getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
+                .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
+
+        if (equal(user, currentUser)) {
+            representation.setReadMessageCount(userService.getUserReadMessageCount(user, currentUser));
+            representation.setUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser));
+        }
+
+        return representation;
     }
 
     public ActivityRepresentation getProfileActivityRepresentation(User user) {
@@ -458,6 +431,11 @@ public class ProfileMapper {
         Map<Integer, Integer> readMessagesIndex = newHashMap();
         messageCounts.stream().forEach(umc -> readMessagesIndex.put(umc.getId(), umc.getMessageCount().intValue()));
         return readMessagesIndex;
+    }
+
+    private BigDecimal getProfileCompleteScoreAsRatio(Integer completeScore, Integer maximumCompleteScore) {
+        return maximumCompleteScore.equals(0) ? new BigDecimal(0).setScale(RATING_PRECISION) : new BigDecimal(completeScore).divide(new BigDecimal(
+                maximumCompleteScore), RATING_PRECISION, HALF_UP);
     }
 
 }

@@ -640,8 +640,8 @@ public class UserService {
         return userDAO.getMaximumUserAccountCompleteScore();
     }
     
-    public List<Integer> getEnabledUserAccounts() {
-        return userDAO.getEnabledUserAccounts();
+    public List<Integer> getUserAccounts() {
+        return userDAO.getUserAccounts();
     }
 
     @SuppressWarnings("unchecked")

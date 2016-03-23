@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.dto;
 
-public class ResourceMessageCountDTO {
+public class ActivityMessageCountDTO {
 
     private Integer id;
 

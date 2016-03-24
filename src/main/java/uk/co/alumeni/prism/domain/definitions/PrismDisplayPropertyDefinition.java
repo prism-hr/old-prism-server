@@ -1754,6 +1754,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACCOUNT_LINKED_OTHER_PASSWORD_LABEL(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "User Password to Link"),
     SYSTEM_ACCOUNT_LINKED_OTHER_PASSWORD_HINT(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Please enter the password of the other account."),
     SYSTEM_ACCOUNT_LINKED_LINK_BUTTON(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Link Accounts"),
+    SYSTEM_ACCOUNT_LINKED_MESSAGES(PrismDisplayPropertyCategory.SYSTEM_ACCOUNT, "Messages"),
 
     /*
      * *************** SYSTEM ADDRESS *********************

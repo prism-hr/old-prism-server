@@ -89,6 +89,7 @@ import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismFileUtils;
@@ -458,7 +459,8 @@ public class SystemService {
 
     private System initializeSystemResource() throws DeduplicationException {
         System system = getSystem();
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
+        User systemUser = userService.getOrCreateUser(new UserDTO().withFirstName(systemUserFirstName).withLastName(systemUserLastName)
+                .withEmail(systemUserEmail));
         DateTime baseline = new DateTime();
 
         if (system == null) {

@@ -848,8 +848,7 @@ public class ProfileService {
     private <T extends ProfileReferee<U>, U extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> assignReferee(
             U profile, T referee, ProfileRefereeDTO refereeDTO) {
         User oldUser = referee.getUser();
-        UserDTO userDTO = refereeDTO.getResource().getUser();
-        User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User newUser = userService.getOrCreateUser(refereeDTO.getResource().getUser());
         referee.setUser(newUser);
 
         if (referee.getClass().equals(ApplicationReferee.class)) {

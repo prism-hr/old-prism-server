@@ -1,12 +1,28 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.visualization.datasource.DataSourceHelper;
-import com.google.visualization.datasource.DataSourceRequest;
-import com.google.visualization.datasource.datatable.DataTable;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -16,7 +32,12 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
-import uk.co.alumeni.prism.mapping.*;
+import uk.co.alumeni.prism.mapping.ActionMapper;
+import uk.co.alumeni.prism.mapping.CommentMapper;
+import uk.co.alumeni.prism.mapping.MessageMapper;
+import uk.co.alumeni.prism.mapping.ResourceMapper;
+import uk.co.alumeni.prism.mapping.RoleMapper;
+import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
@@ -31,22 +52,28 @@ import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentatio
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantsRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.*;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCreation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceUserRolesRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.*;
+import uk.co.alumeni.prism.services.ApplicationService;
+import uk.co.alumeni.prism.services.MessageService;
+import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.RoleService;
+import uk.co.alumeni.prism.services.UserService;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.visualization.datasource.DataSourceHelper;
+import com.google.visualization.datasource.DataSourceRequest;
+import com.google.visualization.datasource.datatable.DataTable;
 
 @RestController
 @RequestMapping("api/{resourceScope:applications|projects|programs|departments|institutions|systems}")
@@ -236,8 +263,7 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = body.getUser();
-        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
-                resource, body.getMessage(), body.getRoles());
+        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser, resource, body.getMessage(), body.getRoles());
         return userMapper.getUserRepresentationSimple(user, userService.getCurrentUser());
     }
 

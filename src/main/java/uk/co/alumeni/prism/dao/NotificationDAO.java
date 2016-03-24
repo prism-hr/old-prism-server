@@ -199,7 +199,6 @@ public class NotificationDAO {
                                 .add(Restrictions.eq("notificationDefinition.notificationPurpose", REQUEST))
                                 .add(Restrictions.eq("userNotification.active", true))) //
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL)) //
-                .add(Restrictions.eq("action.transitionAction", true)) //
                 .add(Restrictions.eq("resource.id", resource.getId())) //
                 .add(Restrictions.isNull("userNotification.id"));
     }

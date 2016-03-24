@@ -246,11 +246,6 @@ public class Action extends WorkflowDefinition {
         return this;
     }
 
-    public Action withTransitionAction(Boolean transitionAction) {
-        this.transitionAction = transitionAction;
-        return this;
-    }
-
     public Action withDeclinableAction(Boolean declinableAction) {
         this.declinableAction = declinableAction;
         return this;

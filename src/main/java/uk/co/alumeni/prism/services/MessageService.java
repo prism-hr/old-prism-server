@@ -220,7 +220,7 @@ public class MessageService {
             }
         } else {
             if (!userService.checkUserCanViewUserProfile(((UserAccount) activity).getUser(), userService.getCurrentUser())
-                    && messageDAO.getMessageThreads(activity, user).size() > 0) {
+                    && messageDAO.getMessageThreads(activity, user).size() == 0) {
                 throw new PrismForbiddenException("User cannot view or edit messages for the given candidate");
             }
         }

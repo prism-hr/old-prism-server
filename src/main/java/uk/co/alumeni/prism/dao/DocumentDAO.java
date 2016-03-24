@@ -53,7 +53,7 @@ public class DocumentDAO {
                 .add(Restrictions.isNull("logoImageEmail.id")) //
                 .add(Restrictions.isNull("backgroundImage.id")) //
                 .add(Restrictions.isNull("notificationConfigurationDocument.id")) //
-                .add(Restrictions.isNotNull("messageDocument.id"))
+                .add(Restrictions.isNull("messageDocument.id"))
                 .add(Restrictions.le("createdTimestamp", baselineTime.minusDays(1))) //
                 .list();
     }

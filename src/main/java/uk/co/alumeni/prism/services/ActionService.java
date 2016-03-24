@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
@@ -405,7 +406,7 @@ public class ActionService {
     private List<ActionEnhancementDTO> getPermittedActionEnhancements(User user, Resource resource, Collection<PrismAction> actions,
             Collection<Integer> targeterEntities) {
         PrismScope scope = resource.getResourceScope();
-        Set<ActionEnhancementDTO> enhancements = Sets.newHashSet();
+        Set<ActionEnhancementDTO> enhancements = newHashSet();
         for (String enhancementProperty : new String[] { "stateAction.actionEnhancement", "stateActionAssignment.actionEnhancement" }) {
             enhancements.addAll(getPermittedActionEnhancements(user, scope, targeterEntities, newArrayList(resource.getId()), actions, enhancementProperty));
         }

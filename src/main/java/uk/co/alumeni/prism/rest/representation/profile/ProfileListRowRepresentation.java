@@ -1,9 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.profile;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
+import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
@@ -11,8 +14,12 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
     private boolean raisesUpdateFlag;
 
     private UserRepresentationSimple user;
-    
+
     private BigDecimal completeScore;
+    
+    private PrismDomicile domicile;
+
+    private List<ResourceRepresentationRelation> resources;
 
     private String linkedInProfileUrl;
 
@@ -40,6 +47,22 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     public void setUser(UserRepresentationSimple user) {
         this.user = user;
+    }
+
+    public PrismDomicile getDomicile() {
+        return domicile;
+    }
+
+    public void setDomicile(PrismDomicile domicile) {
+        this.domicile = domicile;
+    }
+
+    public List<ResourceRepresentationRelation> getResources() {
+        return resources;
+    }
+
+    public void setResources(List<ResourceRepresentationRelation> resources) {
+        this.resources = resources;
     }
 
     public BigDecimal getCompleteScore() {
@@ -117,7 +140,7 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
         this.user = user;
         return this;
     }
-    
+
     public ProfileListRowRepresentation withCompleteScore(BigDecimal completeScore) {
         this.completeScore = completeScore;
         return this;

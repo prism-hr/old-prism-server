@@ -1009,7 +1009,7 @@ public class ResourceService {
     }
 
     public User joinResource(ResourceParent resource, UserDTO userDTO, PrismRoleContext roleContext) {
-        User user = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User user = userService.getOrCreateUser(userDTO);
         joinResource(resource, user, roleContext, null);
         return user;
     }

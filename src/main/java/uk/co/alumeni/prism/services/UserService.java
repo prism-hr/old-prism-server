@@ -85,6 +85,7 @@ import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.rest.UserDescriptor;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
@@ -190,24 +191,30 @@ public class UserService {
         return null;
     }
 
-    public User getOrCreateUser(UserDTO userDTO) {
-        return userDTO == null ? null : getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
-    }
-
-    public User getOrCreateUser(String firstName, String lastName, String email) {
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
-                .withCreatorUser(getCurrentUser());
-        User persistentUser = entityService.getDuplicateEntity(transientUser);
-        if (persistentUser == null) {
-            persistentUser = transientUser;
-            persistentUser.setActivationCode(getUUID());
-            entityService.save(persistentUser);
-            persistentUser.setParentUser(persistentUser);
-        } else if (checkUserEditable(persistentUser, getCurrentUser())) {
-            persistentUser.setFirstName(firstName);
-            persistentUser.setLastName(lastName);
+    public User getOrCreateUser(UserDescriptor userDescriptor) {
+        if (userDescriptor != null) {
+            Integer id = userDescriptor.getId();
+            if (id != null) {
+                return getById(id);
+            } else {
+                String firstName = userDescriptor.getFirstName();
+                String lastName = userDescriptor.getLastName();
+                User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName)
+                        .withEmail(userDescriptor.getEmail()).withCreatorUser(getCurrentUser());
+                User persistentUser = entityService.getDuplicateEntity(transientUser);
+                if (persistentUser == null) {
+                    persistentUser = transientUser;
+                    persistentUser.setActivationCode(getUUID());
+                    entityService.save(persistentUser);
+                    persistentUser.setParentUser(persistentUser);
+                } else if (checkUserEditable(persistentUser, getCurrentUser())) {
+                    persistentUser.setFirstName(firstName);
+                    persistentUser.setLastName(lastName);
+                }
+                return persistentUser;
+            }
         }
-        return persistentUser;
+        return null;
     }
 
     public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
@@ -218,9 +225,8 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message,
-            Collection<PrismRole> roles) {
-        User user = getOrCreateUser(firstName, lastName, email);
+    public User getOrCreateUserWithRoles(User invoker, UserDescriptor userDescriptor, Resource resource, String message, Collection<PrismRole> roles) {
+        User user = getOrCreateUser(userDescriptor);
         roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
@@ -628,7 +634,7 @@ public class UserService {
     public Integer getMaximumUserAccountCompleteScore() {
         return userDAO.getMaximumUserAccountCompleteScore();
     }
-    
+
     public List<Integer> getUserAccounts() {
         return userDAO.getUserAccounts();
     }

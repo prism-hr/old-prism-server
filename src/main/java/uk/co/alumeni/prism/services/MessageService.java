@@ -219,15 +219,16 @@ public class MessageService {
                 }
             }
         } else {
-            boolean canViewProfile = userService.checkUserCanViewUserProfile(((UserAccount) activity).getUser(), userService.getCurrentUser());
-            if (!canViewProfile || (!canViewProfile && messageDAO.getMessageThreads(activity, user).size() == 0)) {
-                throw new PrismForbiddenException("User cannot view or edit messages for the given candidate");
+            if (userService.checkUserCanViewUserProfile(((UserAccount) activity).getUser(), userService.getCurrentUser())
+                    || messageDAO.getMessageThreads(activity, user).size() > 0) {
+                return user;
             }
+            throw new PrismForbiddenException("User cannot view or edit messages for the given candidate");
         }
 
         return user;
     }
-    
+
     public void setMessageThreadSearchUser(Resource resource, User user) {
         messageDAO.setMessageThreadSearchUser(resource, user);
     }

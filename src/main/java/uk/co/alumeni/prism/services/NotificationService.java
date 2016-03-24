@@ -294,7 +294,6 @@ public class NotificationService {
         if (Resource.class.isAssignableFrom(activity.getClass())) {
             resource = (Resource) activity;
             definition = getById(PrismNotificationDefinition.valueOf(resource.getResourceScope().name() + "_MESSAGE_NOTIFICATION"));
-            definitionDTO.setResource(resource);
             definitionDTO.setTransitionAction(actionService.getMessageAction(resource).getId());
         } else {
             resource = systemService.getSystem();
@@ -302,6 +301,7 @@ public class NotificationService {
             definitionDTO.setCandidate(((UserAccount) activity).getUser());
         }
 
+        definitionDTO.setResource(resource);
         sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
     }
 
@@ -360,8 +360,7 @@ public class NotificationService {
                         .get(new UserNotificationDTO().withUserId(request.getUserId()).withNotificationDefinitionId(request.getNotificationDefinitionId()));
                 NotificationDefinition definition = getById(request.getNotificationDefinitionId());
                 NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
-                        .withResource(resource)
-                        .withComment(comment).withTransitionAction(request.getActionId());
+                        .withResource(resource).withComment(comment).withTransitionAction(request.getActionId());
 
                 recipient = sendIndividualRequestNotification(resource, recipient, definition, definitionDTO, recentRequestCount);
                 if (recipient != null) {

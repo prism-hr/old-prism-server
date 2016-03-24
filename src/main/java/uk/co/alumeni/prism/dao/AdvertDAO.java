@@ -846,11 +846,11 @@ public class AdvertDAO {
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_PROVIDED)) //
                 .list();
     }
-    
+
     public List<Advert> getTargeterAdverts(Collection<Advert> adverts) {
         return sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert")) //
-                .add(Restrictions.in("targetAdvert", adverts)) //
+                .add(Restrictions.in("targetAdvert", adverts))
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_PROVIDED)) //
                 .list();
     }

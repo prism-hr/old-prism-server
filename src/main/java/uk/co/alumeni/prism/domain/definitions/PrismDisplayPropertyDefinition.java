@@ -2141,6 +2141,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_CANDIDATE_VIEW_PROFILE(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "View Profile"),
+    SYSTEM_CANDIDATE_PROFILE(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "Profile"),
+    SYSTEM_CANDIDATE_MESSAGES(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "Messages"),
 
     /*
      * *************** INSTITUTION COMMENT *********************

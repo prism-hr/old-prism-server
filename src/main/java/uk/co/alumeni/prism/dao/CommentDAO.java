@@ -242,9 +242,9 @@ public class CommentDAO {
 
     public List<Comment> getRatingComments(PrismScope scope, User user) {
         return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias(scope.getLowerCamelName(), "resource")
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull(scope.getLowerCamelName())) //
-                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("resource.user", user)) //
                 .add(Restrictions.eq("action.ratingAction", true)) //
                 .list();
     }

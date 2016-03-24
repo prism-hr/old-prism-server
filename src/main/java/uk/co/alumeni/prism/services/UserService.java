@@ -69,8 +69,10 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -82,6 +84,7 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
+import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
@@ -101,6 +104,7 @@ import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -637,6 +641,19 @@ public class UserService {
 
     public List<Integer> getUserAccounts() {
         return userDAO.getUserAccounts();
+    }
+
+    public Map<Integer, PrismDomicile> getUserDomiciles(Collection<Integer> userIds) {
+        Map<Integer, PrismDomicile> userDomiciles = Maps.newHashMap();
+        userDAO.getUserDomiciles(userIds).stream().forEach(ud -> userDomiciles.put(ud.getUserId(), ud.getDomicileId()));
+        return userDomiciles;
+    }
+
+    public HashMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismRoleCategory roleCategory) {
+        HashMultimap<Integer, UserOrganizationDTO> userResourceParents = HashMultimap.create();
+        stream(organizationScopes).forEach(
+                os -> userDAO.getUserOrganizations(userIds, os, roleCategory).forEach(urp -> userResourceParents.put(urp.getUserId(), urp)));
+        return userResourceParents;
     }
 
     @SuppressWarnings("unchecked")

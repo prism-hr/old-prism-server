@@ -1,20 +1,19 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.joda.time.DateTime;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class ResourceRepresentationStandard extends ResourceRepresentationRelation {
 
     private Boolean raisesUrgentFlag;
 
-    private Integer readMessageCount;
+    private Integer readMessageCount = 0;
 
-    private Integer unreadMessageCount;
+    private Integer unreadMessageCount = 0;
 
     private Boolean raisesUpdateFlag;
 

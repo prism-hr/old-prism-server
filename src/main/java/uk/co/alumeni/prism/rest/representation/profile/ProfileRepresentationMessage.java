@@ -2,9 +2,9 @@ package uk.co.alumeni.prism.rest.representation.profile;
 
 public class ProfileRepresentationMessage {
 
-    private Integer readMessageCount;
-    
-    private Integer unreadMessageCount;
+    private Integer readMessageCount = 0;
+
+    private Integer unreadMessageCount = 0;
 
     public Integer getReadMessageCount() {
         return readMessageCount;
@@ -21,5 +21,5 @@ public class ProfileRepresentationMessage {
     public void setUnreadMessageCount(Integer unreadMessageCount) {
         this.unreadMessageCount = unreadMessageCount;
     }
-    
+
 }

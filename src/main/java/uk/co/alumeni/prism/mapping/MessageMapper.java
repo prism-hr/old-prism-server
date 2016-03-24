@@ -143,7 +143,7 @@ public class MessageMapper {
         if (Resource.class.isAssignableFrom(activity.getClass())) {
             return getMessageThreadParticipantsRepresentation((Resource) activity, currentUser);
         } else {
-            return getMessageThreadParticipantsRepresentation(currentUser);
+            return getMessageThreadParticipantsRepresentation(((UserAccount) activity).getUser(), currentUser);
         }
     }
 
@@ -201,9 +201,9 @@ public class MessageMapper {
         return representation;
     }
 
-    private MessageThreadParticipantsRepresentationPotential getMessageThreadParticipantsRepresentation(User currentUser) {
+    private MessageThreadParticipantsRepresentationPotential getMessageThreadParticipantsRepresentation(User user, User currentUser) {
         Set<Resource> resources = newHashSet();
-        roleService.getUserRolesForWhichUserIsCandidate(currentUser).stream().forEach(ur -> resources.add(ur.getResource()));
+        roleService.getUserRolesForWhichUserIsCandidate(user).stream().forEach(ur -> resources.add(ur.getResource()));
 
         List<PrismRole> recipientRoles = newArrayList(PARTNERSHIP_ADMINISTRATOR_GROUP.getRoles());
         recipientRoles.addAll(asList(INSTITUTION_STAFF_GROUP.getRoles()));

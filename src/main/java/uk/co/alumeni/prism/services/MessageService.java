@@ -1,31 +1,14 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Sets.newHashSet;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.joda.time.DateTime.now;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.LinkedHashMultimap;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.dao.MessageDAO;
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.message.Message;
-import uk.co.alumeni.prism.domain.message.MessageDocument;
-import uk.co.alumeni.prism.domain.message.MessageNotification;
-import uk.co.alumeni.prism.domain.message.MessageThread;
-import uk.co.alumeni.prism.domain.message.MessageThreadParticipant;
+import uk.co.alumeni.prism.domain.message.*;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
@@ -35,7 +18,17 @@ import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
-import com.google.common.collect.LinkedHashMultimap;
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.joda.time.DateTime.now;
 
 @Service
 @Transactional

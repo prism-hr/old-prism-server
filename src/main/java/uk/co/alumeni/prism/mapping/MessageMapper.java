@@ -1,8 +1,31 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.TreeMultimap;
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_CANDIDATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
+
 import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -17,30 +40,21 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
-import uk.co.alumeni.prism.rest.representation.message.*;
+import uk.co.alumeni.prism.rest.representation.message.MessageRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantRepresentationPotential;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantsRepresentationPotential;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
-import uk.co.alumeni.prism.services.*;
+import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.MessageService;
+import uk.co.alumeni.prism.services.RoleService;
+import uk.co.alumeni.prism.services.StateService;
+import uk.co.alumeni.prism.services.UserService;
 
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.newTreeMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static java.util.Arrays.asList;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_CANDIDATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional

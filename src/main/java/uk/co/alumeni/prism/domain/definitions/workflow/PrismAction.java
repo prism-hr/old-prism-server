@@ -162,10 +162,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return actionDefinition.isRatingAction();
     }
 
-    public boolean isTransitionAction() {
-        return actionDefinition.isTransitionAction();
-    }
-
     public boolean isDeclinableAction() {
         return actionDefinition.isDeclinableAction();
     }
@@ -210,8 +206,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         private boolean ratingAction = false;
 
-        private boolean transitionAction = false;
-
         private boolean declinableAction = false;
 
         private boolean visibleAction = false;
@@ -238,10 +232,6 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
         public boolean isRatingAction() {
             return ratingAction;
-        }
-
-        public boolean isTransitionAction() {
-            return transitionAction;
         }
 
         public boolean isDeclinableAction() {

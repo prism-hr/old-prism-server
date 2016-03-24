@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.dto;
 
-import java.math.BigDecimal;
-
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
@@ -30,7 +28,7 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
 
     private Long applicationRatingCount;
 
-    private BigDecimal applicationRatingAverage;
+    private Double applicationRatingAverage;
 
     private DateTime updatedTimestamp;
 
@@ -124,11 +122,11 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
         this.applicationRatingCount = applicationRatingCount;
     }
 
-    public BigDecimal getApplicationRatingAverage() {
+    public Double getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+    public void setApplicationRatingAverage(Double applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 

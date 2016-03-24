@@ -98,7 +98,7 @@ public class ApplicationMapper {
 
     @Inject
     private CommentMapper commentMapper;
-    
+
     @Inject
     private DocumentMapper documentMapper;
 
@@ -246,8 +246,12 @@ public class ApplicationMapper {
         representation.setApplicationRatingCount(application.getApplicationRatingCount());
         representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
 
-        List<Comment> ratingComments = commentService.getRatingComments(application);
-        representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(ratingComments));
+        List<PrismRole> creatableRoles = roleService.getCreatableRoles(APPLICATION);
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application, currentUser);
+        List<CommentRepresentation> ratingComments = commentService.getRatingComments(application).stream()
+                .map(rc -> commentMapper.getCommentRepresentation(currentUser, rc, creatableRoles, overridingRoles)).collect(Collectors.toList());
+
+        representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(currentUser, APPLICATION, ratingComments));
 
         representation.setRecentQualifications(profileMapper.getQualificationRepresentations(
                 profileService.getRecentQualifications(application, ApplicationQualification.class), currentUser));

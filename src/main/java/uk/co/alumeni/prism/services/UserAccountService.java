@@ -90,7 +90,7 @@ public class UserAccountService {
     public UserAccount getById(Integer id) {
         return entityService.getById(UserAccount.class, id);
     }
-    
+
     public User getOrCreateUserAccountExternal(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
@@ -123,7 +123,7 @@ public class UserAccountService {
             }
         }
 
-        user = userService.getOrCreateUser(userRegistrationDTO.getFirstName(), userRegistrationDTO.getLastName(), userRegistrationDTO.getEmail());
+        user = userService.getOrCreateUser(userRegistrationDTO);
 
         if (userRegistrationDTO.getPassword() == null) {
             OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
@@ -170,11 +170,11 @@ public class UserAccountService {
         user.setLastLoggedInTimestamp(now());
         user.getUserRoles().stream().forEach(userRole -> activityService.setSequenceIdentifier(userRole, baseline));
     }
-    
+
     public void setUserAccountCompleteScore(Integer userAccountId) {
         setUserAccountCompleteScore(getById(userAccountId));
     }
-    
+
     private void setUserAccountCompleteScore(UserAccount userAccount) {
         Integer completeScore = 0;
         if (!(userAccount.getLinkedinImageUrl() == null && userAccount.getPortraitImage() == null)) {

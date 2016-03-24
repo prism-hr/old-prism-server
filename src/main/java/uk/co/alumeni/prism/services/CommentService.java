@@ -445,7 +445,7 @@ public class CommentService {
         if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
+                User commentUser = userService.getOrCreateUser(commentUserDTO);
                 comment.addAssignedUser(commentUser, entityService.getById(Role.class, assignedUserDTO.getRole()), CREATE);
             }
         }

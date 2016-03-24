@@ -1,10 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import com.google.common.collect.LinkedHashMultimap;
+import java.util.Set;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 
-import java.util.Set;
+import com.google.common.collect.LinkedHashMultimap;
 
 public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategorizable<PrismDisplayPropertyCategory> {
 

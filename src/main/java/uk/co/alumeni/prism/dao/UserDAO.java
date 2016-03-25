@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
@@ -49,6 +50,7 @@ import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.message.MessageThread;
@@ -61,6 +63,8 @@ import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserCompetenceDTO;
+import uk.co.alumeni.prism.dto.UserDomicileDTO;
+import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
@@ -655,7 +659,7 @@ public class UserDAO {
                 .add(getUnreadMessageConstraint()) //
                 .list();
     }
-    
+
     public Integer getMaximumUserAccountCompleteScore() {
         return (Integer) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.property("completeScore")) //
@@ -670,7 +674,55 @@ public class UserDAO {
                 .setProjection(Projections.property("id")) //
                 .list();
     }
-    
+
+    public List<UserDomicileDTO> getUserDomiciles(Collection<Integer> userIds) {
+        return (List<UserDomicileDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("id").as("userId")) //
+                        .add(Projections.property("currentAddress.domicile.id").as("domicileId"))) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.currentAddress", "currentAddress", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", userIds)) //
+                .setResultTransformer(Transformers.aliasToBean(UserDomicileDTO.class)) //
+                .list();
+    }
+
+    public List<UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismScope resourceScope, PrismRoleCategory roleCategory) {
+        String resourcePrefix = resourceScope.getLowerCamelName();
+        ProjectionList projections = Projections.projectionList() //
+                .add(Projections.property("user.id").as("userId")) //
+                .add(Projections.property(resourcePrefix + ".id").as(resourcePrefix + "Id")) //
+                .add(Projections.property(resourcePrefix + ".name").as(resourcePrefix + "Name"));
+
+        boolean departmentScope = resourceScope.equals(DEPARTMENT);
+        if (departmentScope) {
+            projections.add(Projections.property("departmentInstitution.id").as("institutionId")) //
+                    .add(Projections.property("departmentInstitution.name").as("institutionName")) //
+                    .add(Projections.property("departmentInstitution.logoImage.id").as("institutionLogoImageId"));
+        } else {
+            projections.add(Projections.property(resourcePrefix + ".logoImage.id").as(resourcePrefix + "LogoImageId"));
+        }
+
+        projections.add(Projections.property("address.domicile.id").as("domicileId"));
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(projections) //
+                .createAlias(resourcePrefix, resourcePrefix, JoinType.INNER_JOIN) //
+                .createAlias(resourcePrefix + ".advert", "advert", INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN);
+
+        if (departmentScope) {
+            criteria.createAlias(resourcePrefix + ".institution", "departmentInstitution", JoinType.INNER_JOIN);
+        }
+
+        return (List<UserOrganizationDTO>) criteria.createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("user.id", userIds)) //
+                .add(Restrictions.eq("role.roleCategory", roleCategory)) //
+                .setResultTransformer(Transformers.aliasToBean(UserOrganizationDTO.class)) //
+                .list();
+    }
+
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
         enclosedResources.keySet().forEach( //

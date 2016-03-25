@@ -778,6 +778,10 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return action.getActionCategory().equals(CREATE_RESOURCE);
     }
 
+    public boolean isCreateComment(PrismScope scope) {
+        return action.getCreationScope().getId().equals(scope) && isCreateComment();
+    }
+
     public boolean isViewEditComment() {
         return action.getActionCategory().equals(VIEW_EDIT_RESOURCE);
     }
@@ -809,7 +813,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isRatingComment(PrismScope scope) {
-        return action.getId().getScope().equals(scope) && !(rating == null && competences.isEmpty());
+        return action.getId().getScope().equals(scope);
+    }
+
+    public boolean isRatingCommentProvided() {
+        return !(rating == null && competences.isEmpty());
     }
 
     public boolean isRestoreComment() {

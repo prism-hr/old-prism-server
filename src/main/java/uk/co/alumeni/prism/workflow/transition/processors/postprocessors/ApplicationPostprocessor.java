@@ -4,6 +4,8 @@ import static java.math.RoundingMode.HALF_UP;
 import static uk.co.alumeni.prism.PrismConstants.CONFIDENCE_MEDIUM;
 import static uk.co.alumeni.prism.PrismConstants.DEFAULT_RATING;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_APPLY_UPDATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_RATING_UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWEE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
@@ -26,6 +28,7 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
 import uk.co.alumeni.prism.domain.comment.CommentCompetence;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -38,6 +41,7 @@ import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.EntityService;
 import uk.co.alumeni.prism.services.ScopeService;
+import uk.co.alumeni.prism.services.UserAccountService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
 
@@ -65,16 +69,26 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
     private ScopeService scopeService;
 
     @Inject
+    private UserAccountService userAccountService;
+
+    @Inject
     private UserService userService;
 
     @Override
     public void process(Application resource, Comment comment) {
+        if (comment.isApplicationCompleteComment()) {
+            updateUserAccount(resource, PROFILE_APPLY_UPDATE);
+        }
+
         if (comment.isApplicationProvideReferenceComment()) {
             synchronizeApplicationReferees(resource, comment);
         }
 
         if (comment.isRatingComment(APPLICATION)) {
-            synchronizeApplicationRating(resource, comment);
+            updateUserAccount(resource, PROFILE_RATING_UPDATE);
+            if (comment.isRatingCommentProvided()) {
+                synchronizeApplicationRating(resource, comment);
+            }
         }
 
         if (comment.isInterviewScheduledExpeditedComment()) {
@@ -84,6 +98,10 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         if (comment.isApplicationProcessingCompletedComment()) {
             resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
+    }
+
+    private void updateUserAccount(Application resource, PrismDisplayPropertyDefinition update) {
+        userAccountService.updateUserAccount(resource.getUser().getUserAccount(), update);
     }
 
     private void synchronizeApplicationReferees(Application application, Comment comment) {

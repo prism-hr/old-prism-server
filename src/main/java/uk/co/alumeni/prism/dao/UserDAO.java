@@ -681,7 +681,7 @@ public class UserDAO {
                         .add(Projections.property("id").as("userId")) //
                         .add(Projections.property("currentAddress.domicile.id").as("domicileId"))) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .createAlias("address", "address", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.currentAddress", "currentAddress", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", userIds)) //
                 .setResultTransformer(Transformers.aliasToBean(UserDomicileDTO.class)) //
@@ -697,8 +697,11 @@ public class UserDAO {
 
         boolean departmentScope = resourceScope.equals(DEPARTMENT);
         if (departmentScope) {
-            projections.add(Projections.property("departmentInstitution.id").as("institutionId"))
-                    .add(Projections.property("departmentInstitution.name").as("institutionName"));
+            projections.add(Projections.property("departmentInstitution.id").as("institutionId")) //
+                    .add(Projections.property("departmentInstitution.name").as("institutionName")) //
+                    .add(Projections.property("departmentInstitution.logoImage.id").as("institutionLogoImageId"));
+        } else {
+            projections.add(Projections.property(resourcePrefix + ".logoImage.id").as(resourcePrefix + "LogoImageId"));
         }
 
         projections.add(Projections.property("address.domicile.id").as("domicileId"));
@@ -710,7 +713,7 @@ public class UserDAO {
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN);
 
         if (departmentScope) {
-            criteria.createAlias(resourcePrefix + ".institution", "parentResource", JoinType.INNER_JOIN);
+            criteria.createAlias(resourcePrefix + ".institution", "departmentInstitution", JoinType.INNER_JOIN);
         }
 
         return (List<UserOrganizationDTO>) criteria.createAlias("role", "role", JoinType.INNER_JOIN) //

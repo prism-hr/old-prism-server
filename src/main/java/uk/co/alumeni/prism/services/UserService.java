@@ -39,6 +39,7 @@ import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -661,7 +662,7 @@ public class UserService {
 
     public HashMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismRoleCategory roleCategory) {
         HashMultimap<Integer, UserOrganizationDTO> userResourceParents = HashMultimap.create();
-        stream(organizationScopes).forEach(
+        Arrays.stream(organizationScopes).forEach(
                 os -> userDAO.getUserOrganizations(userIds, os, roleCategory).forEach(urp -> userResourceParents.put(urp.getUserId(), urp)));
         return userResourceParents;
     }

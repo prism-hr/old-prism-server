@@ -370,8 +370,8 @@ public class ResourceMapper {
 
     public <T extends Resource> ResourceRepresentationStandard getResourceRepresentationStandard(T resource, User currentUser) {
         List<ActionRepresentationExtended> actions = actionMapper.getActionRepresentations(resource, currentUser);
-        return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions, roleService.getRolesOverridingRedactions(resource),
-                currentUser);
+        return getResourceRepresentationStandard(resource, ResourceRepresentationStandard.class, actions,
+                roleService.getRolesOverridingRedactions(resource, currentUser), currentUser);
     }
 
     public <T extends ResourceFlatToNestedDTO> ResourceRepresentationRelation getResourceRepresentationActivity(T resource) {
@@ -440,7 +440,7 @@ public class ResourceMapper {
         resourceService.validateViewResource(resource);
 
         Class<?> resourceClass = resource.getClass();
-        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
 
         if (Institution.class.equals(resourceClass)) {
             return institutionMapper.getInstitutionRepresentationClient((Institution) resource, overridingRoles, currentUser);
@@ -461,7 +461,7 @@ public class ResourceMapper {
         resourceService.validateViewResource(resource);
 
         PrismScope resourceScope = resource.getResourceScope();
-        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
 
         if (resourceScope.equals(INSTITUTION)) {
             return institutionMapper.getInstitutionRepresentation((Institution) resource, overridingRoles, currentUser);

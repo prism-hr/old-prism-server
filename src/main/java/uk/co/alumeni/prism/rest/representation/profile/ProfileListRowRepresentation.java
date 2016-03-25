@@ -13,13 +13,13 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     private boolean raisesUpdateFlag;
 
+    private BigDecimal completeScore;
+
     private UserRepresentationSimple user;
 
-    private BigDecimal completeScore;
-    
     private PrismDomicile domicile;
 
-    private List<ResourceRepresentationRelation> resources;
+    private List<ResourceRepresentationRelation> organizations;
 
     private String linkedInProfileUrl;
 
@@ -41,6 +41,14 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
         this.raisesUpdateFlag = raisesUpdateFlag;
     }
 
+    public BigDecimal getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
+    }
+
     public UserRepresentationSimple getUser() {
         return user;
     }
@@ -57,20 +65,12 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
         this.domicile = domicile;
     }
 
-    public List<ResourceRepresentationRelation> getResources() {
-        return resources;
+    public List<ResourceRepresentationRelation> getOrganizations() {
+        return organizations;
     }
 
-    public void setResources(List<ResourceRepresentationRelation> resources) {
-        this.resources = resources;
-    }
-
-    public BigDecimal getCompleteScore() {
-        return completeScore;
-    }
-
-    public void setCompleteScore(BigDecimal completeScore) {
-        this.completeScore = completeScore;
+    public void setOrganizations(List<ResourceRepresentationRelation> organizations) {
+        this.organizations = organizations;
     }
 
     public String getLinkedInProfileUrl() {
@@ -136,13 +136,23 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
         return this;
     }
 
+    public ProfileListRowRepresentation withCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
+        return this;
+    }
+
     public ProfileListRowRepresentation withUser(UserRepresentationSimple user) {
         this.user = user;
         return this;
     }
 
-    public ProfileListRowRepresentation withCompleteScore(BigDecimal completeScore) {
-        this.completeScore = completeScore;
+    public ProfileListRowRepresentation withDomicile(PrismDomicile domicile) {
+        this.domicile = domicile;
+        return this;
+    }
+
+    public ProfileListRowRepresentation withOrganizations(List<ResourceRepresentationRelation> organizations) {
+        this.organizations = organizations;
         return this;
     }
 

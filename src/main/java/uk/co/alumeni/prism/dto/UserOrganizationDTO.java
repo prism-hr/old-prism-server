@@ -16,6 +16,8 @@ public class UserOrganizationDTO {
     private Integer institutionId;
 
     private String institutionName;
+    
+    private Integer institutionLogoImageId;
 
     private PrismDomicile domicileId;
 
@@ -57,6 +59,14 @@ public class UserOrganizationDTO {
 
     public void setInstitutionName(String institutionName) {
         this.institutionName = institutionName;
+    }
+
+    public Integer getInstitutionLogoImageId() {
+        return institutionLogoImageId;
+    }
+
+    public void setInstitutionLogoImageId(Integer institutionLogoImageId) {
+        this.institutionLogoImageId = institutionLogoImageId;
     }
 
     public PrismDomicile getDomicileId() {

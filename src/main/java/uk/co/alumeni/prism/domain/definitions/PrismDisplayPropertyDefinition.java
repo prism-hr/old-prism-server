@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory.PROFILE_UPDATE;
+
 import java.util.Set;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismConfigurationCategorizable;
@@ -2502,6 +2504,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_REFEREE_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated referees"),
     PROFILE_DOCUMENT_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated supporting documentation"),
     PROFILE_ADDITIONAL_INFORMATION_UPDATE(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Updated additional information"),
+    PROFILE_APPLY_UPDATE(PROFILE_UPDATE, "Submitted a new application"),
+    PROFILE_RATING_UPDATE(PROFILE_UPDATE, "Received a new rating"),
     PROFILE_SHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Shared profile"),
     PROFILE_UNSHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Hid profile"),
 

@@ -3,11 +3,15 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.longToInteger;
 
@@ -15,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -33,7 +38,8 @@ import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationPersonalDetail;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
-import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.profile.ProfileAdditionalInformation;
 import uk.co.alumeni.prism.domain.profile.ProfileAddress;
@@ -52,10 +58,12 @@ import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceRatingSummaryDTO;
+import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.ProfileRepresentationCandidate;
 import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAdditionalInformationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAddressRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileAwardRepresentation;
@@ -68,12 +76,17 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentat
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationUser;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRelationInvitationRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.ProfileService;
+import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
+
+import com.google.common.collect.HashMultimap;
 
 @Service
 @Transactional
@@ -95,13 +108,16 @@ public class ProfileMapper {
     private DocumentMapper documentMapper;
 
     @Inject
+    private ProfileService profileService;
+
+    @Inject
     private ResourceMapper resourceMapper;
 
     @Inject
-    private UserMapper userMapper;
+    private RoleService roleService;
 
     @Inject
-    private ProfileService profileService;
+    private UserMapper userMapper;
 
     @Inject
     private UserService userService;
@@ -118,25 +134,39 @@ public class ProfileMapper {
             Map<Integer, Integer> readMessagesIndex = getMessageCountIndex(userService.getUserReadMessageCounts(userIds, currentUser));
             Map<Integer, Integer> unreadMessagesIndex = getMessageCountIndex(userService.getUserUnreadMessageCounts(userIds, currentUser));
 
+            Map<Integer, PrismDomicile> userDomicileIndex = userService.getUserDomiciles(userIds);
+            HashMultimap<Integer, UserOrganizationDTO> userOrganizationIndex = userService.getUserOrganizations(userIds, STUDENT);
+
             Integer maximumCompleteScore = userService.getMaximumUserAccountCompleteScore();
             profiles.forEach(profile -> {
                 Integer userId = profile.getUserId();
-                Long applicationCount = profile.getApplicationCount();
-                Long applicationRatingCount = profile.getApplicationRatingCount();
-                BigDecimal applicationRatingAverage = profile.getApplicationRatingAverage();
-                representations.add(new ProfileListRowRepresentation()
-                        .withReadMessageCount(readMessagesIndex.get(userId))
-                        .withUnreadMessageCount(unreadMessagesIndex.get(userId))
-                        .withRaisesUpdateFlag(profile.getUpdatedTimestamp().isAfter(baseline))
-                        .withUser(userMapper.getUserRepresentationSimple(profile, currentUser))
+                PrismDomicile domicile = userDomicileIndex.get(userId);
+
+                Set<ResourceRepresentationRelation> userOrganizations = newTreeSet();
+                for (UserOrganizationDTO userOrganizationDTO : userOrganizationIndex.get(userId)) {
+                    ResourceRepresentationRelation userOrganization = new ResourceRepresentationRelation().withInstitution(new ResourceRepresentationSimple()
+                            .withScope(INSTITUTION).withId(userOrganizationDTO.getInstitutionId()).withName(userOrganizationDTO.getInstitutionName())
+                            .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId())));
+
+                    Integer departmentId = userOrganizationDTO.getDepartmentId();
+                    if (departmentId != null) {
+                        userOrganization.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId)
+                                .withName(userOrganizationDTO.getDepartmentName()));
+                    }
+
+                    userOrganizations.add(userOrganization);
+                    domicile = domicile == null ? userOrganizationDTO.getDomicileId() : domicile;
+                }
+
+                representations.add(new ProfileListRowRepresentation().withReadMessageCount(readMessagesIndex.get(userId))
+                        .withUnreadMessageCount(unreadMessagesIndex.get(userId)).withRaisesUpdateFlag(profile.getUpdatedTimestamp().isAfter(baseline))
                         .withCompleteScore(getProfileCompleteScoreAsRatio(profile.getCompleteScore(), maximumCompleteScore))
-                        .withLinkedInProfileUrl(profile.getLinkedInProfileUrl())
-                        .withApplicationCount(applicationCount == null ? null : applicationCount.intValue())
-                        .withApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue())
-                        .withApplicationRatingAverage(
-                                applicationRatingAverage == null ? null : applicationRatingAverage.setScale(RATING_PRECISION, HALF_UP))
-                        .withUpdatedTimestamp(profile.getUpdatedTimestamp())
-                        .withSequenceIdentifier(profile.getSequenceIdentifier()));
+                        .withUser(userMapper.getUserRepresentationSimple(profile, currentUser)).withDomicile(domicile)
+                        .withOrganizations(newLinkedList(userOrganizations)).withLinkedInProfileUrl(profile.getLinkedInProfileUrl())
+                        .withApplicationCount(longToInteger(profile.getApplicationCount()))
+                        .withApplicationRatingCount(longToInteger(profile.getApplicationRatingCount()))
+                        .withApplicationRatingAverage(doubleToBigDecimal(profile.getApplicationRatingAverage(), RATING_PRECISION))
+                        .withUpdatedTimestamp(profile.getUpdatedTimestamp()).withSequenceIdentifier(profile.getSequenceIdentifier()));
             });
         }
 
@@ -272,8 +302,10 @@ public class ProfileMapper {
             representation.setApplicationRatingCount(longToInteger(ratingSummary.getRatingCount()));
             representation.setApplicationRatingAverage(doubleToBigDecimal(ratingSummary.getRatingAverage(), RATING_PRECISION));
 
-            List<Comment> ratingComments = commentService.getRatingComments(APPLICATION, user);
-            representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(ratingComments));
+            List<PrismRole> creatableRoles = roleService.getCreatableRoles(APPLICATION);
+            List<CommentRepresentation> ratingComments = commentService.getRatingComments(APPLICATION, user).stream()
+                    .map(c -> commentMapper.getCommentRepresentationExtended(c, creatableRoles)).collect(toList());
+            representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(currentUser, APPLICATION, ratingComments));
 
             UserAccount userAccount = user.getUserAccount();
             representation.setRecentQualifications(getQualificationRepresentations(

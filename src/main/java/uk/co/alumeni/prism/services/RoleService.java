@@ -82,9 +82,6 @@ public class RoleService {
     private ResourceService resourceService;
 
     @Inject
-    private UserService userService;
-
-    @Inject
     private ScopeService scopeService;
 
     @Inject
@@ -210,11 +207,10 @@ public class RoleService {
         return false;
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(Resource resource) {
-        User user = userService.getCurrentUser();
+    public List<PrismRole> getRolesOverridingRedactions(Resource resource, User currentUser) {
         PrismScope resourceScope = resource.getResourceScope();
         List<Integer> resourceIds = newArrayList(resource.getId());
-        return getRolesOverridingRedactions(user, resourceScope, resourceIds);
+        return getRolesOverridingRedactions(currentUser, resourceScope, resourceIds);
     }
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, Collection<Integer> resourceIds) {

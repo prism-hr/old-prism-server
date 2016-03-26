@@ -1,11 +1,12 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import org.joda.time.DateTime;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
-import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
-
 import java.math.BigDecimal;
 import java.util.List;
+
+import org.joda.time.DateTime;
+
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
+import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
 
 public class ResourceRepresentationStandard extends ResourceRepresentationRelation {
 

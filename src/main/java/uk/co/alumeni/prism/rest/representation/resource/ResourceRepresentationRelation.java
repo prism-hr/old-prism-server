@@ -161,7 +161,7 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
     public int compareTo(ResourceRepresentationIdentity other) {
         if (ResourceRepresentationRelation.class.isAssignableFrom(other.getClass())) {
             ResourceRepresentationRelation otherActivity = (ResourceRepresentationRelation) other;
-            int compare = ObjectUtils.compare(institution, otherActivity.getInstitution());
+            int compare = compare(institution, otherActivity.getInstitution());
             compare = compare == 0 ? compare(department, otherActivity.getDepartment(), true) : compare;
             compare = compare == 0 ? compare(program, otherActivity.getProgram(), true) : compare;
             compare = compare == 0 ? compare(project, otherActivity.getProject(), true) : compare;

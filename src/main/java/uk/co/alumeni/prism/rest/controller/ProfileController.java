@@ -29,7 +29,6 @@ import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentat
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationSummary;
 import uk.co.alumeni.prism.services.MessageService;
 import uk.co.alumeni.prism.services.UserService;
-import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -51,18 +50,13 @@ public class ProfileController {
 
     @Inject
     private UserService userService;
-    
-    @Inject
-    private PrismJsonMappingUtils prismJsonMappingUtils;
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.GET)
     public List<ProfileListRowRepresentation> getUserProfiles(@RequestParam(required = false) String filter,
             @RequestParam(required = false) String lastSequenceIdentifier) throws IOException {
         ProfileListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ProfileListFilterDTO.class) : null;
-        List<ProfileListRowRepresentation> rows = profileMapper.getProfileListRowRepresentations(filterDTO, lastSequenceIdentifier);
-        prismJsonMappingUtils.writeValue(rows);
-        return rows;
+        return profileMapper.getProfileListRowRepresentations(filterDTO, lastSequenceIdentifier);
     }
 
     @PreAuthorize("isAuthenticated()")

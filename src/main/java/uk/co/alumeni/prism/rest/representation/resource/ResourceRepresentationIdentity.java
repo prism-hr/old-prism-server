@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
+import static com.google.common.base.Objects.equal;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
@@ -77,7 +78,7 @@ public class ResourceRepresentationIdentity implements Comparable<ResourceRepres
             return false;
         }
         ResourceRepresentationIdentity other = (ResourceRepresentationIdentity) object;
-        return Objects.equal(scope, other.getScope()) && Objects.equal(id, other.getId());
+        return equal(scope, other.getScope()) && equal(id, other.getId());
     }
 
     @Override

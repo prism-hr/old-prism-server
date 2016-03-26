@@ -1,7 +1,11 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.base.Strings.emptyToNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.stream.Collectors.toList;
+import static jersey.repackaged.com.google.common.collect.Sets.newLinkedHashSet;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
@@ -10,16 +14,12 @@ import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.Set;
 
-import jersey.repackaged.com.google.common.collect.Sets;
-
-import org.apache.commons.lang3.ObjectUtils;
-
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
 
 public class ResourceRepresentationRelation extends ResourceRepresentationSimple {
 
@@ -87,6 +87,16 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
         return this;
     }
 
+    public ResourceRepresentationRelation withName(String name) {
+        setName(name);
+        return this;
+    }
+
+    public ResourceRepresentationRelation withLogoImage(DocumentRepresentation logoImage) {
+        setLogoImage(logoImage);
+        return this;
+    }
+
     public ResourceRepresentationRelation withCode(String code) {
         setCode(code);
         return this;
@@ -142,9 +152,9 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
             return false;
         }
         ResourceRepresentationRelation other = (ResourceRepresentationRelation) object;
-        return Objects.equal(institution, other.getInstitution()) && Objects.equal(department, other.getDepartment())
-                && Objects.equal(program, other.getProgram()) && Objects.equal(project, other.getProject())
-                && Objects.equal(getScope(), other.getScope()) && Objects.equal(getId(), other.getId());
+        return equal(institution, other.getInstitution()) && equal(department, other.getDepartment())
+                && equal(program, other.getProgram()) && equal(project, other.getProject())
+                && equal(getScope(), other.getScope()) && equal(getId(), other.getId());
     }
 
     @Override
@@ -152,10 +162,10 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
         if (ResourceRepresentationRelation.class.isAssignableFrom(other.getClass())) {
             ResourceRepresentationRelation otherActivity = (ResourceRepresentationRelation) other;
             int compare = ObjectUtils.compare(institution, otherActivity.getInstitution());
-            compare = compare == 0 ? ObjectUtils.compare(department, otherActivity.getDepartment(), true) : compare;
-            compare = compare == 0 ? ObjectUtils.compare(program, otherActivity.getProgram(), true) : compare;
-            compare = compare == 0 ? ObjectUtils.compare(project, otherActivity.getProject(), true) : compare;
-            return compare = compare == 0 ? ObjectUtils.compare(this, otherActivity, true) : compare;
+            compare = compare == 0 ? compare(department, otherActivity.getDepartment(), true) : compare;
+            compare = compare == 0 ? compare(program, otherActivity.getProgram(), true) : compare;
+            compare = compare == 0 ? compare(project, otherActivity.getProject(), true) : compare;
+            return compare == 0 ? super.compareTo(other) : compare;
         }
         return super.compareTo(other);
     }
@@ -165,7 +175,7 @@ public class ResourceRepresentationRelation extends ResourceRepresentationSimple
     }
 
     private Set<ResourceRepresentationSimple> getResourceFamily() {
-        return Sets.newLinkedHashSet(Lists.newArrayList(institution, department, program, project, this));
+        return newLinkedHashSet(newArrayList(institution, department, program, project, this));
     }
 
 }

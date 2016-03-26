@@ -144,14 +144,19 @@ public class ProfileMapper {
 
                 Set<ResourceRepresentationRelation> userOrganizations = newTreeSet();
                 for (UserOrganizationDTO userOrganizationDTO : userOrganizationIndex.get(userId)) {
-                    ResourceRepresentationRelation userOrganization = new ResourceRepresentationRelation().withInstitution(new ResourceRepresentationSimple()
-                            .withScope(INSTITUTION).withId(userOrganizationDTO.getInstitutionId()).withName(userOrganizationDTO.getInstitutionName())
-                            .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId())));
-
                     Integer departmentId = userOrganizationDTO.getDepartmentId();
-                    if (departmentId != null) {
-                        userOrganization.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT).withId(departmentId)
-                                .withName(userOrganizationDTO.getDepartmentName()));
+
+                    ResourceRepresentationRelation userOrganization;
+                    if (departmentId == null) {
+                        userOrganization = new ResourceRepresentationRelation().withScope(INSTITUTION)
+                                .withId(userOrganizationDTO.getInstitutionId()).withName(userOrganizationDTO.getInstitutionName())
+                                .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId()));
+                    } else {
+                        userOrganization = new ResourceRepresentationRelation().withScope(DEPARTMENT)
+                                .withId(userOrganizationDTO.getDepartmentId()).withName(userOrganizationDTO.getDepartmentName())
+                                .withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+                                        .withId(userOrganizationDTO.getInstitutionId()).withName(userOrganizationDTO.getInstitutionName())
+                                        .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId())));
                     }
 
                     userOrganizations.add(userOrganization);

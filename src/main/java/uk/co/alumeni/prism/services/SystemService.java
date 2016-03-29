@@ -372,7 +372,7 @@ public class SystemService {
         for (PrismAction prismAction : PrismAction.values()) {
             Scope scope = scopeService.getById(prismAction.getScope());
             Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
-                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
+                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction()).withTransitionAction(false)
                     .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
                     .withDocumentCirculationAction(prismAction.isDocumentCirculationAction())
                     .withReplicableUserAssignmentAction(prismAction.isReplicableUserAssignmentAction()).withPartnershipState(prismAction.getPartnershipState())

@@ -4,7 +4,8 @@ alter table user_account
 ;
 
 update user_account
-set complete_score = 0;
+set complete_score = 0
+;
 
 alter table user_account
 	modify complete_score int(3) unsigned not null

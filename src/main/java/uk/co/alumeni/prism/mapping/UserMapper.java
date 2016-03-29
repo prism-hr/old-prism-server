@@ -32,6 +32,7 @@ import uk.co.alumeni.prism.dto.ProfileEntityDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
@@ -208,6 +209,9 @@ public class UserMapper {
         return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withProfileActivity(profileMapper.getProfileActivityRepresentation(user))
+                .withMessageActivity(
+                        new ProfileRepresentationMessage().withReadMessageCount(userService.getUserReadMessageCount(user, user))
+                                .withUnreadMessageCount(userService.getUserUnreadMessageCount(user, user)))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
                 .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));

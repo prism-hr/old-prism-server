@@ -10,6 +10,7 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
@@ -21,6 +22,8 @@ public class UserActivityRepresentation {
     private List<ResourceActivityRepresentation> resourceActivities;
 
     private ActivityRepresentation profileActivity;
+
+    private ProfileRepresentationMessage messageActivity;
 
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
@@ -50,6 +53,14 @@ public class UserActivityRepresentation {
 
     public void setProfileActivity(ActivityRepresentation profileActivity) {
         this.profileActivity = profileActivity;
+    }
+
+    public ProfileRepresentationMessage getMessageActivity() {
+        return messageActivity;
+    }
+
+    public void setMessageActivity(ProfileRepresentationMessage messageActivity) {
+        this.messageActivity = messageActivity;
     }
 
     public List<AppointmentActivityRepresentation> getAppointmentActivities() {
@@ -88,6 +99,11 @@ public class UserActivityRepresentation {
 
     public UserActivityRepresentation withProfileActivity(ActivityRepresentation profileActivity) {
         this.profileActivity = profileActivity;
+        return this;
+    }
+
+    public UserActivityRepresentation withMessageActivity(ProfileRepresentationMessage messageActivity) {
+        this.messageActivity = messageActivity;
         return this;
     }
 

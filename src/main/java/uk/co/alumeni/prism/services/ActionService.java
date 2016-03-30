@@ -337,7 +337,7 @@ public class ActionService {
         }
         return actionEnhancements.toArray(new PrismActionEnhancement[actionEnhancements.size()]);
     }
-    
+
     public List<PrismAction> getRatingActions(PrismScope scope) {
         return actionDAO.getRatingActions(scope);
     }
@@ -391,7 +391,7 @@ public class ActionService {
         }
 
         commentService.createOrUpdateComment(resource, comment);
-        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withTransitionAction(action);
+        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withAction(action).withTransitionAction(action);
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

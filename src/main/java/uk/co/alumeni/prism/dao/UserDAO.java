@@ -692,7 +692,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismScope resourceScope, PrismRoleCategory roleCategory) {
+    public List<UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismScope resourceScope, Collection<Integer> resourceIds,
+            PrismRoleCategory roleCategory) {
         String resourcePrefix = resourceScope.getLowerCamelName();
         ProjectionList projections = Projections.projectionList() //
                 .add(Projections.groupProperty("user.id").as("userId")) //
@@ -708,10 +709,9 @@ public class UserDAO {
             projections.add(Projections.property(resourcePrefix + ".logoImage.id").as(resourcePrefix + "LogoImageId"));
         }
 
-        projections.add(Projections.property("address.domicile.id").as("domicileId"));
-
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(projections) //
+                .setProjection(projections.add( //
+                        Projections.property("acceptedTimestamp").as("acceptedTimestamp"))) //
                 .createAlias(resourcePrefix, resourcePrefix, JoinType.INNER_JOIN) //
                 .createAlias(resourcePrefix + ".resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias(resourcePrefix + ".advert", "advert", INNER_JOIN) //
@@ -723,8 +723,10 @@ public class UserDAO {
 
         return (List<UserOrganizationDTO>) criteria.createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("user.id", userIds)) //
+                .add(Restrictions.in(resourcePrefix + ".id", resourceIds))
                 .add(Restrictions.eq("role.roleCategory", roleCategory)) //
                 .add(Restrictions.in("resourceState.state.id", values(PrismState.class, resourceScope, "APPROVED", "DISABLED_COMPLETED"))) //
+                .addOrder(Order.desc("acceptedTimestamp")) //
                 .setResultTransformer(Transformers.aliasToBean(UserOrganizationDTO.class)) //
                 .list();
     }

@@ -109,6 +109,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -541,8 +542,8 @@ public class UserService {
         return users;
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user) {
-        return getUserProfiles(filter, user, null);
+    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User currentUser) {
+        return getUserProfiles(resourceService.getResourcesForWhichUserCanViewProfiles(currentUser), filter, currentUser, null);
     }
 
     public List<ProfileListRowDTO> getUserProfiles(User user) {
@@ -554,9 +555,8 @@ public class UserService {
         return newLinkedList(profiles);
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User user, String lastSequenceIdentifier) {
-        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(user);
-
+    public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User user,
+            String lastSequenceIdentifier) {
         if (isTrue(filter.getWithNewMessages())) {
             filter.setUserIds(userDAO.getUsersWithUnreadMessages(user));
         }
@@ -662,10 +662,12 @@ public class UserService {
         return addressService.getAddressLocationIndex(userDAO.getUserLocations(userIds), ADDRESS_LOCATION_PRECISION);
     }
 
-    public HashMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismRoleCategory roleCategory) {
-        HashMultimap<Integer, UserOrganizationDTO> userResourceParents = HashMultimap.create();
+    public TreeMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, HashMultimap<PrismScope, Integer> resourceIndex,
+            PrismRoleCategory roleCategory) {
+        TreeMultimap<Integer, UserOrganizationDTO> userResourceParents = TreeMultimap.create();
         Arrays.stream(organizationScopes).forEach(
-                os -> userDAO.getUserOrganizations(userIds, os, roleCategory).forEach(urp -> userResourceParents.put(urp.getUserId(), urp)));
+                os -> userDAO.getUserOrganizations(userIds, os, resourceIndex.get(os), roleCategory).forEach(
+                        urp -> userResourceParents.put(urp.getUserId(), urp)));
         return userResourceParents;
     }
 

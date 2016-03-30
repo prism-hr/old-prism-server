@@ -612,8 +612,8 @@ public class AdvertMapper {
 
                     if (isNotEmpty(industries) || isNotEmpty(functions) || isNotEmpty(themes) || isNotEmpty(locations)) {
                         representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries))
-                                .withFunctions(newLinkedList(functions))
-                                .withThemesDisplay(newLinkedList(themes)).withLocationsDisplay(newLinkedList(locations)));
+                                .withFunctions(newLinkedList(functions)).withThemesDisplay(newLinkedList(themes))
+                                .withLocationsDisplay(newLinkedList(locations)));
                     }
 
                     representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));

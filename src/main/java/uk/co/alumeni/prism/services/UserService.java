@@ -21,6 +21,7 @@ import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
 import static org.springframework.beans.BeanUtils.instantiate;
+import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
@@ -105,8 +106,8 @@ import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -120,6 +121,9 @@ public class UserService {
 
     @Inject
     private ActionService actionService;
+
+    @Inject
+    private AddressService addressService;
 
     @Inject
     private AdvertService advertService;
@@ -654,10 +658,8 @@ public class UserService {
         return userDAO.getUserAccounts();
     }
 
-    public Map<Integer, PrismDomicile> getUserDomiciles(Collection<Integer> userIds) {
-        Map<Integer, PrismDomicile> userDomiciles = Maps.newHashMap();
-        userDAO.getUserDomiciles(userIds).stream().forEach(ud -> userDomiciles.put(ud.getUserId(), ud.getDomicileId()));
-        return userDomiciles;
+    public LinkedHashMultimap<Integer, String> getUserLocations(Collection<Integer> userIds) {
+        return addressService.getAddressLocationIndex(userDAO.getUserLocations(userIds), ADDRESS_LOCATION_PRECISION);
     }
 
     public HashMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismRoleCategory roleCategory) {

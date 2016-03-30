@@ -60,10 +60,10 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
+import uk.co.alumeni.prism.dto.EntityLocationDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserCompetenceDTO;
-import uk.co.alumeni.prism.dto.UserDomicileDTO;
 import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
@@ -675,16 +675,20 @@ public class UserDAO {
                 .list();
     }
 
-    public List<UserDomicileDTO> getUserDomiciles(Collection<Integer> userIds) {
-        return (List<UserDomicileDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+    public List<EntityLocationDTO> getUserLocations(Collection<Integer> userIds) {
+        return (List<EntityLocationDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("id").as("userId")) //
-                        .add(Projections.property("currentAddress.domicile.id").as("domicileId"))) //
+                        .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.groupProperty("locationPart.name").as("location"))) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .createAlias("userAccount.address", "address", JoinType.INNER_JOIN) //
                 .createAlias("address.currentAddress", "currentAddress", JoinType.INNER_JOIN) //
+                .createAlias("currentAddress.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", userIds)) //
-                .setResultTransformer(Transformers.aliasToBean(UserDomicileDTO.class)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("location.id")) //
+                .setResultTransformer(Transformers.aliasToBean(EntityLocationDTO.class)) //
                 .list();
     }
 

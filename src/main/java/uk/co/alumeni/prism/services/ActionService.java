@@ -337,6 +337,10 @@ public class ActionService {
         }
         return actionEnhancements.toArray(new PrismActionEnhancement[actionEnhancements.size()]);
     }
+    
+    public List<PrismAction> getRatingActions(PrismScope scope) {
+        return actionDAO.getRatingActions(scope);
+    }
 
     private ActionOutcomeDTO executeAction(Resource resource, Action action, Comment comment, boolean notify) {
         User user = comment.getUser();

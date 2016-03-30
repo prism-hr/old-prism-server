@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.leftPad;
@@ -30,6 +31,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
+import java.util.Map;
 import java.util.Set;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -144,6 +146,12 @@ public enum PrismAction implements PrismLocalizableDefinition {
     SYSTEM_VIEW_PROJECT_LIST(getDefaultSystemViewResourceListActionDefinition()), //
     SYSTEM_VIEW_APPLICATION_LIST(getDefaultSystemViewResourceListActionDefinition());
 
+    private static Map<PrismAction, PrismAction> delegatedActions = newHashMap();
+
+    static {
+        delegatedActions.put(APPLICATION_UPLOAD_REFERENCE, APPLICATION_PROVIDE_REFERENCE);
+    }
+
     private PrismActionDefinition actionDefinition;
 
     private PrismAction(PrismActionDefinition actionDefinition) {
@@ -196,6 +204,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
 
     public String getZeroPaddedOrdinal() {
         return leftPad(String.valueOf(this.ordinal()), (String.valueOf(values().length).length() - 1), "0");
+    }
+    
+    public PrismAction getDelegatedAction() {
+        return delegatedActions.get(this);
     }
 
     private static class PrismActionDefinition {

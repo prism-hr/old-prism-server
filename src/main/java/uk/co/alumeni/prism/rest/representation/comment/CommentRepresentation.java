@@ -23,6 +23,8 @@ public class CommentRepresentation {
     private UserRepresentationSimple delegateUser;
 
     private PrismAction action;
+    
+    private PrismAction delegatedAction;
 
     private Boolean declinedResponse;
 
@@ -112,6 +114,14 @@ public class CommentRepresentation {
 
     public void setAction(PrismAction action) {
         this.action = action;
+    }
+
+    public PrismAction getDelegatedAction() {
+        return delegatedAction;
+    }
+
+    public void setDelegatedAction(PrismAction delegatedAction) {
+        this.delegatedAction = delegatedAction;
     }
 
     public Boolean getDeclinedResponse() {
@@ -366,6 +376,11 @@ public class CommentRepresentation {
         return this;
     }
 
+    public CommentRepresentation withDelegatedAction(PrismAction delegatedAction) {
+        this.delegatedAction = delegatedAction;
+        return this;
+    }
+    
     public CommentRepresentation withDeclinedResponse(Boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
         return this;

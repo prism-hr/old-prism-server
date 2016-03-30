@@ -249,7 +249,7 @@ public class ApplicationMapper {
         List<PrismRole> creatableRoles = roleService.getCreatableRoles(APPLICATION);
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application, currentUser);
         List<CommentRepresentation> ratingComments = commentService.getRatingComments(application).stream()
-                .map(rc -> commentMapper.getCommentRepresentation(currentUser, rc, creatableRoles, overridingRoles)).collect(Collectors.toList());
+                .map(rc -> commentMapper.getCommentRepresentation(currentUser, rc, creatableRoles, overridingRoles)).collect(toList());
 
         representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(currentUser, APPLICATION, ratingComments));
 

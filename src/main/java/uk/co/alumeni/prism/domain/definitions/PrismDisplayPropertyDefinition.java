@@ -49,7 +49,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_TIME_FORMAT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "HH:mm"),
     SYSTEM_YES(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Yes"),
     SYSTEM_NO(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "No"),
-    SYSTEM_DRAFTED(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Drafted"),
+    SYSTEM_DRAFT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "Draft"),
     SYSTEM_LOWER_IN(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "in"),
     SYSTEM_LOWER_AT(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "at"),
     SYSTEM_LOWER_OR(PrismDisplayPropertyCategory.SYSTEM_GLOBAL, "or"),

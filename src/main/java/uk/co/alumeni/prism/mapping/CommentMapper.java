@@ -44,6 +44,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
@@ -192,6 +193,7 @@ public class CommentMapper {
     public CommentRepresentation getCommentRepresentationExtended(Comment comment, List<PrismRole> creatableRoles) {
         State state = comment.getState();
         State transitionState = comment.getTransitionState();
+
         CommentRepresentation representation = getCommentRepresentationSimple(comment).withContent(comment.getContent())
                 .withState(state == null ? null : state.getId()).withTransitionState(transitionState == null ? null : transitionState.getId())
                 .withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
@@ -215,22 +217,28 @@ public class CommentMapper {
     }
 
     public List<CommentRepresentationRatingSummary> getRatingCommentSummaryRepresentations(User user, PrismScope scope,
-            List<CommentRepresentation> ratingCommentList) {
+            List<CommentRepresentation> commentList) {
         Map<PrismAction, CommentRepresentationRatingSummary> representations = newLinkedHashMap();
 
-        LinkedHashMultimap<PrismAction, CommentRepresentation> ratingCommentIndex = LinkedHashMultimap.create();
-        if (isNotEmpty(ratingCommentList)) {
-            ratingCommentList.stream().forEach(ratingComment -> ratingCommentIndex.put(ratingComment.getAction(), ratingComment));
+        LinkedHashMultimap<PrismAction, CommentRepresentation> commentIndex = LinkedHashMultimap.create();
+        if (isNotEmpty(commentList)) {
+            commentList.stream().forEach(comment -> {
+                PrismAction delegatedAction = comment.getDelegatedAction();
+                commentIndex.put(delegatedAction == null ? comment.getAction() : delegatedAction, comment);
+            });
         }
 
-        actionService.getRatingActions(scope).stream().forEach(ratingAction -> {
-            CommentRepresentationRatingSummary representation = representations.get(ratingAction);
+        actionService.getRatingActions(scope).stream().forEach(action -> {
+            Action delegatedAction = action.getDelegatedAction();
+            PrismAction prismAction = delegatedAction == null ? action.getId() : delegatedAction.getId();
+
+            CommentRepresentationRatingSummary representation = representations.get(prismAction);
             if (representation == null) {
-                representation = new CommentRepresentationRatingSummary().withId(ratingAction);
-                representations.put(ratingAction, representation);
+                representation = new CommentRepresentationRatingSummary().withId(prismAction);
+                representations.put(prismAction, representation);
             }
 
-            Set<CommentRepresentation> ratingComments = ratingCommentIndex.get(ratingAction);
+            Set<CommentRepresentation> ratingComments = commentIndex.get(prismAction);
             if (isNotEmpty(ratingComments)) {
                 for (CommentRepresentation ratingComment : ratingComments) {
                     if (isTrue(ratingComment.getDeclinedResponse())) {
@@ -276,9 +284,13 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentationSimple(Comment comment) {
+        Action action = comment.getAction();
+        Action delegatedAction = action.getDelegatedAction();
+
         CommentRepresentation representation = new CommentRepresentation().withId(comment.getId())
                 .withUser(userMapper.getUserRepresentationSimple(comment.getUser(), userService.getCurrentUser()))
-                .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
+                .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(action.getId())
+                .withDelegatedAction(delegatedAction == null ? null : delegatedAction.getId())
                 .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp())
                 .withSubmittedTimestamp(comment.getSubmittedTimestamp());
 

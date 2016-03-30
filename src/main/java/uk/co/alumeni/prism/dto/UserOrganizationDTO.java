@@ -1,11 +1,13 @@
 package uk.co.alumeni.prism.dto;
 
 import static com.google.common.base.Objects.equal;
-import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
+import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
 
-public class UserOrganizationDTO {
+public class UserOrganizationDTO implements Comparable<UserOrganizationDTO> {
 
     private Integer userId;
 
@@ -16,10 +18,10 @@ public class UserOrganizationDTO {
     private Integer institutionId;
 
     private String institutionName;
-    
+
     private Integer institutionLogoImageId;
 
-    private PrismDomicile domicileId;
+    private DateTime acceptedTimestamp;
 
     public Integer getUserId() {
         return userId;
@@ -69,12 +71,12 @@ public class UserOrganizationDTO {
         this.institutionLogoImageId = institutionLogoImageId;
     }
 
-    public PrismDomicile getDomicileId() {
-        return domicileId;
+    public DateTime getAcceptedTimestamp() {
+        return acceptedTimestamp;
     }
 
-    public void setDomicileId(PrismDomicile domicileId) {
-        this.domicileId = domicileId;
+    public void setAcceptedTimestamp(DateTime acceptedTimestamp) {
+        this.acceptedTimestamp = acceptedTimestamp;
     }
 
     @Override
@@ -92,6 +94,14 @@ public class UserOrganizationDTO {
         }
         UserOrganizationDTO other = (UserOrganizationDTO) object;
         return equal(userId, other.getUserId()) && equal(departmentId, other.getDepartmentId()) && equal(institutionId, other.getInstitutionId());
+    }
+
+    @Override
+    public int compareTo(UserOrganizationDTO other) {
+        int compare = compare(userId, other.getUserId());
+        compare = compare == 0 ? compare(acceptedTimestamp, other.getAcceptedTimestamp()) : compare;
+        compare = compare == 0 ? compare(departmentId, other.getDepartmentId()) : compare;
+        return compare == 0 ? compare(institutionId, other.getInstitutionId()) : compare;
     }
 
 }

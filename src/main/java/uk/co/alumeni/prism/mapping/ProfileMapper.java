@@ -3,7 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newTreeSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -91,6 +91,7 @@ import uk.co.alumeni.prism.services.UserService;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -133,7 +134,8 @@ public class ProfileMapper {
         User currentUser = userService.getCurrentUser();
         List<ProfileListRowRepresentation> representations = newLinkedList();
 
-        List<ProfileListRowDTO> profiles = userService.getUserProfiles(filter, currentUser, lastSequenceIdentifier);
+        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(currentUser);
+        List<ProfileListRowDTO> profiles = userService.getUserProfiles(resourceIndex, filter, currentUser, lastSequenceIdentifier);
         if (profiles.size() > 0) {
             DateTime baseline = now().minusDays(1);
 
@@ -142,15 +144,15 @@ public class ProfileMapper {
             Map<Integer, Integer> unreadMessagesIndex = getMessageCountIndex(userService.getUserUnreadMessageCounts(userIds, currentUser));
 
             LinkedHashMultimap<Integer, String> userLocationIndex = userService.getUserLocations(userIds);
-            HashMultimap<Integer, UserOrganizationDTO> userOrganizationIndex = userService.getUserOrganizations(userIds, STUDENT);
+            TreeMultimap<Integer, UserOrganizationDTO> userOrganizationIndex = userService.getUserOrganizations(userIds, resourceIndex, STUDENT);
 
-            HashMultimap<PrismScope, Integer> resourceIndex = HashMultimap.create();
             Integer maximumCompleteScore = userService.getMaximumUserAccountCompleteScore();
+            HashMultimap<PrismScope, Integer> profileResourceIndex = HashMultimap.create();
             profiles.forEach(profile -> {
                 Integer userId = profile.getUserId();
                 Set<String> locations = userLocationIndex.get(userId);
 
-                Set<ResourceRepresentationRelation> userOrganizations = newTreeSet();
+                Set<ResourceRepresentationRelation> userOrganizations = newLinkedHashSet();
                 for (UserOrganizationDTO userOrganizationDTO : userOrganizationIndex.get(userId)) {
                     Integer departmentId = userOrganizationDTO.getDepartmentId();
 
@@ -160,14 +162,14 @@ public class ProfileMapper {
                         userOrganization = new ResourceRepresentationRelation().withScope(INSTITUTION)
                                 .withId(institutionId).withName(userOrganizationDTO.getInstitutionName())
                                 .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId()));
-                        resourceIndex.put(INSTITUTION, institutionId);
+                        profileResourceIndex.put(INSTITUTION, institutionId);
                     } else {
                         userOrganization = new ResourceRepresentationRelation().withScope(DEPARTMENT)
                                 .withId(departmentId).withName(userOrganizationDTO.getDepartmentName())
                                 .withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
                                         .withId(userOrganizationDTO.getInstitutionId()).withName(userOrganizationDTO.getInstitutionName())
                                         .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId())));
-                        resourceIndex.put(DEPARTMENT, departmentId);
+                        profileResourceIndex.put(DEPARTMENT, departmentId);
                     }
 
                     userOrganizations.add(userOrganization);
@@ -184,13 +186,13 @@ public class ProfileMapper {
                         .withUpdatedTimestamp(profile.getUpdatedTimestamp()).withSequenceIdentifier(profile.getSequenceIdentifier()));
             });
 
-            Set<Integer> departmentIds = resourceIndex.get(DEPARTMENT);
+            Set<Integer> departmentIds = profileResourceIndex.get(DEPARTMENT);
             LinkedHashMultimap<Integer, String> departmentLocations = LinkedHashMultimap.create();
             if (isNotEmpty(departmentIds)) {
                 departmentLocations = resourceService.getResourceOrganizationLocations(DEPARTMENT, departmentIds);
             }
 
-            Set<Integer> institutionIds = resourceIndex.get(INSTITUTION);
+            Set<Integer> institutionIds = profileResourceIndex.get(INSTITUTION);
             LinkedHashMultimap<Integer, String> institutionLocations = LinkedHashMultimap.create();
             if (isNotEmpty(institutionIds)) {
                 institutionLocations = resourceService.getResourceOrganizationLocations(INSTITUTION, institutionIds);

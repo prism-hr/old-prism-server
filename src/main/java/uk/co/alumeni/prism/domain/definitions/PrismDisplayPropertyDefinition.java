@@ -1376,7 +1376,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_COMPLETED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Completed"),
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_UNCOMPLETED(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Uncompleted"),
     SYSTEM_HTML_APPLICATION_MULTIPLE_SECTION_NO_MORE_ITEMS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "You cannot provide more than {{maxItems}} item(s)."),
-    SYSTEM_HTML_FILE_UPLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload PDF"),
+    SYSTEM_HTML_FILE_UPLOAD_PDF(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Attach Document (PDF)"),
     SYSTEM_HTML_FILE_UPLOAD_IMAGE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Upload Logo"),
     SYSTEM_HTML_LOOKUP_USER_LABEL(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Lookup User"),
     SYSTEM_HTML_LOOKUP_USER_PLACEHOLDER(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "e.g. first name, last name, or email"),
@@ -2131,14 +2131,15 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_MESSAGE_CONVERSATIONS(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Conversation(s)"),
     SYSTEM_MESSAGE_CONVERSATIONS_SEARCH(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Search"),
-    SYSTEM_MESSAGE_TO(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "To:"),
-    SYSTEM_MESSAGE_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Subject:"),
-    SYSTEM_MESSAGE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Message:"),
-    SYSTEM_MESSAGE_DOCUMENTS(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Documents:"),
+    SYSTEM_MESSAGE_NEW(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "New"), 
+    SYSTEM_MESSAGE_TO(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Recipients"),
+    SYSTEM_MESSAGE_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Subject"),
+    SYSTEM_MESSAGE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Message"),
     SYSTEM_MESSAGE_SEND(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Send Message"),
     SYSTEM_MESSAGE_CANCEL(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Cancel"),
     SYSTEM_MESSAGE_RESTORE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Start Again"),
     SYSTEM_MESSAGE_NO_PERMISSION(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "You no longer have permission to send messages in this conversation"),
+    SYSTEM_MESSAGE_DOCUMENTS(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Attachments"),
 
     /*
      * *************** SYSTEM CANDIDATE *********************

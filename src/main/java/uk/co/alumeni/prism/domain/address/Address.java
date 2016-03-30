@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.address;
 
+import static com.google.common.collect.Lists.newLinkedList;
+
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +22,6 @@ import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.advert.Advert;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 @Entity
@@ -160,12 +161,8 @@ public class Address extends AddressDefinition<Domicile> {
         locations.add(location);
     }
 
-    public String getLocationString() {
-        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getId().name());
-    }
-
-    public List<String> getLocationTokens() {
-        List<String> tokens = Lists.newLinkedList();
+    public List<String> getAddressTokens() {
+        List<String> tokens = newLinkedList();
 
         tokens.add(getAddressLine1());
 
@@ -187,6 +184,11 @@ public class Address extends AddressDefinition<Domicile> {
         }
 
         return tokens;
+    }
+    
+    @Override
+    public String toString() {
+        return Joiner.on(", ").skipNulls().join(addressLine1, addressLine2, addressTown, addressRegion, addressCode, domicile.getId().name());
     }
 
 }

@@ -246,6 +246,7 @@ public class CommentDAO {
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("resource.user", user)) //
                 .add(Restrictions.eq("action.ratingAction", true)) //
+                .addOrder(Order.asc("action.id")) //
                 .list();
     }
 

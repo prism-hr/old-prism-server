@@ -1,9 +1,10 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
@@ -66,17 +67,12 @@ import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 
 @Service
 @Transactional
 public class CommentMapper {
-
-    @Inject
-    private DocumentMapper documentMapper;
-
-    @Inject
-    private UserMapper userMapper;
 
     @Inject
     private ActionService actionService;
@@ -85,10 +81,16 @@ public class CommentMapper {
     private CommentService commentService;
 
     @Inject
+    private DocumentMapper documentMapper;
+
+    @Inject
     private ResourceService resourceService;
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private UserMapper userMapper;
 
     @Inject
     private UserService userService;
@@ -213,36 +215,39 @@ public class CommentMapper {
     }
 
     public List<CommentRepresentationRatingSummary> getRatingCommentSummaryRepresentations(User user, PrismScope scope,
-            List<CommentRepresentation> ratingComments) {
-        Map<PrismAction, BigDecimal> ratingAverages = newHashMap();
-        Map<PrismAction, CommentRepresentationRatingSummary> representations = newHashMap();
+            List<CommentRepresentation> ratingCommentList) {
+        Map<PrismAction, CommentRepresentationRatingSummary> representations = newLinkedHashMap();
 
-        if (ratingComments.size() > 0) {
-            ratingComments.stream().forEach(comment -> {
+        LinkedHashMultimap<PrismAction, CommentRepresentation> ratingCommentIndex = LinkedHashMultimap.create();
+        if (isNotEmpty(ratingCommentList)) {
+            ratingCommentList.stream().forEach(ratingComment -> ratingCommentIndex.put(ratingComment.getAction(), ratingComment));
+        }
 
-                PrismAction prismAction = comment.getAction();
-                CommentRepresentationRatingSummary representation = representations.get(prismAction);
-                if (representation == null) {
-                    representation = new CommentRepresentationRatingSummary().withId(prismAction);
-                    representations.put(prismAction, representation);
-                }
+        actionService.getRatingActions(scope).stream().forEach(ratingAction -> {
+            CommentRepresentationRatingSummary representation = representations.get(ratingAction);
+            if (representation == null) {
+                representation = new CommentRepresentationRatingSummary().withId(ratingAction);
+                representations.put(ratingAction, representation);
+            }
 
-                if (isTrue(comment.getDeclinedResponse())) {
-                    setRatingCommentSummaryCount(representation, "declinedCount");
-                } else {
-                    setRatingCommentSummaryCount(representation, "providedCount");
+            Set<CommentRepresentation> ratingComments = ratingCommentIndex.get(ratingAction);
+            if (isNotEmpty(ratingComments)) {
+                for (CommentRepresentation ratingComment : ratingComments) {
+                    if (isTrue(ratingComment.getDeclinedResponse())) {
+                        setRatingCommentSummaryCount(representation, "declinedCount");
+                    } else {
+                        setRatingCommentSummaryCount(representation, "providedCount");
 
-                    BigDecimal rating = comment.getRating();
-                    if (rating != null) {
-                        BigDecimal averageRating = ratingAverages.get(prismAction);
-                        ratingAverages.put(prismAction, averageRating == null ? rating :
-                                averageRating.add(rating).divide(new BigDecimal(representation.getProvidedCount()), RATING_PRECISION, HALF_UP));
+                        BigDecimal rating = ratingComment.getRating();
+                        if (rating != null) {
+                            BigDecimal ratingAverage = representation.getRatingAverage();
+                            representation.setRatingAverage(ratingAverage.add(rating)
+                                    .divide(new BigDecimal(representation.getProvidedCount()), RATING_PRECISION, HALF_UP));
+                        }
                     }
                 }
-            });
-
-            representations.keySet().forEach(prismAction -> representations.get(prismAction).setRatingAverage(ratingAverages.get(prismAction)));
-        }
+            }
+        });
 
         return newLinkedList(newTreeSet(representations.values()));
     }

@@ -39,6 +39,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
@@ -63,6 +64,7 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
+import uk.co.alumeni.prism.dto.EntityLocationDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
@@ -688,6 +690,22 @@ public class ResourceDAO {
                 .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", targeterResources)) //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED)) //
+                .list();
+    }
+    
+    public List<EntityLocationDTO> getResourceOrganizationLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return (List<EntityLocationDTO>)  sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.groupProperty("locationPart.name").as("location"))) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.location", "location")
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", resourceIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("location.id")) //
+                .setResultTransformer(Transformers.aliasToBean(EntityLocationDTO.class)) //
                 .list();
     }
 

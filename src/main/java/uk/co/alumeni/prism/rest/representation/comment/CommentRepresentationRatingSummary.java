@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.rest.representation.comment;
 
+import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+
 import java.math.BigDecimal;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -11,7 +13,7 @@ public class CommentRepresentationRatingSummary extends ActionRepresentation {
 
     private Integer declinedCount = 0;
 
-    private BigDecimal ratingAverage;
+    private BigDecimal ratingAverage = new BigDecimal(0).setScale(RATING_PRECISION);
 
     public Integer getProvidedCount() {
         return providedCount;

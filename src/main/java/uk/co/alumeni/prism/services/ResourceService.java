@@ -19,6 +19,7 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
@@ -175,6 +176,9 @@ public class ResourceService {
     private ActivityService activityService;
 
     @Inject
+    private AddressService addressService;
+
+    @Inject
     private AdvertService advertService;
 
     @Inject
@@ -191,13 +195,13 @@ public class ResourceService {
 
     @Inject
     private MessageService messageService;
-    
+
     @Inject
     private NotificationService notificationService;
 
     @Inject
     private PrismService prismService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -1196,7 +1200,7 @@ public class ResourceService {
         });
         return resourceIndex;
     }
-    
+
     public void setResourceOwner(Resource resource, User user) {
         if (roleService.getRolesForResource(resource, user).isEmpty()) {
             throw new PrismForbiddenException("User has no role within given resource");
@@ -1210,6 +1214,10 @@ public class ResourceService {
         messageService.setMessageThreadSearchUser(resource, user);
         executeUpdate(resource, userService.getCurrentUser(),
                 PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
+    }
+
+    public LinkedHashMultimap<Integer, String> getResourceOrganizationLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
+        return addressService.getAddressLocationIndex(resourceDAO.getResourceOrganizationLocations(resourceScope, resourceIds), ADDRESS_LOCATION_PRECISION);
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

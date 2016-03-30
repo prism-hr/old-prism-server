@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
@@ -17,7 +16,7 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     private UserRepresentationSimple user;
 
-    private PrismDomicile domicile;
+    private List<String> locations;
 
     private List<ResourceRepresentationRelation> organizations;
 
@@ -57,12 +56,12 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
         this.user = user;
     }
 
-    public PrismDomicile getDomicile() {
-        return domicile;
+    public List<String> getLocations() {
+        return locations;
     }
 
-    public void setDomicile(PrismDomicile domicile) {
-        this.domicile = domicile;
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
     }
 
     public List<ResourceRepresentationRelation> getOrganizations() {
@@ -146,8 +145,8 @@ public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
         return this;
     }
 
-    public ProfileListRowRepresentation withDomicile(PrismDomicile domicile) {
-        this.domicile = domicile;
+    public ProfileListRowRepresentation withLocations(List<String> locations) {
+        this.locations = locations;
         return this;
     }
 

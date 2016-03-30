@@ -14,6 +14,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import static org.joda.time.DateTime.now;
+import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
@@ -300,7 +301,7 @@ public class AdvertService {
                 int counter = 0;
                 int element = partsArray.length;
                 List<String> partsList = newLinkedList();
-                while (counter < 2 && element > 0) {
+                while (counter < ADDRESS_LOCATION_PRECISION && element > 0) {
                     partsList.add(partsArray[counter]);
                     counter++;
                     element--;

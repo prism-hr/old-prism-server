@@ -262,9 +262,9 @@ public class ActionDAO {
                 .list();
     }
     
-    public List<PrismAction> getRatingActions(PrismScope scope) {
-        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("action.id")) //
+    public List<Action> getRatingActions(PrismScope scope) {
+        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("action")) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("action.scope.id", scope)) //
                 .add(Restrictions.eq("action.ratingAction", true)) //

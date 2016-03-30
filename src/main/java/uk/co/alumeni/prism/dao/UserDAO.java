@@ -695,8 +695,8 @@ public class UserDAO {
     public List<UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismScope resourceScope, PrismRoleCategory roleCategory) {
         String resourcePrefix = resourceScope.getLowerCamelName();
         ProjectionList projections = Projections.projectionList() //
-                .add(Projections.property("user.id").as("userId")) //
-                .add(Projections.property(resourcePrefix + ".id").as(resourcePrefix + "Id")) //
+                .add(Projections.groupProperty("user.id").as("userId")) //
+                .add(Projections.groupProperty(resourcePrefix + ".id").as(resourcePrefix + "Id")) //
                 .add(Projections.property(resourcePrefix + ".name").as(resourcePrefix + "Name"));
 
         boolean departmentScope = resourceScope.equals(DEPARTMENT);
@@ -713,6 +713,7 @@ public class UserDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(projections) //
                 .createAlias(resourcePrefix, resourcePrefix, JoinType.INNER_JOIN) //
+                .createAlias(resourcePrefix + ".resourceStates", "resourceState", JoinType.INNER_JOIN) //
                 .createAlias(resourcePrefix + ".advert", "advert", INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN);
 
@@ -723,6 +724,7 @@ public class UserDAO {
         return (List<UserOrganizationDTO>) criteria.createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("user.id", userIds)) //
                 .add(Restrictions.eq("role.roleCategory", roleCategory)) //
+                .add(Restrictions.in("resourceState.state.id", values(PrismState.class, resourceScope, "APPROVED", "DISABLED_COMPLETED"))) //
                 .setResultTransformer(Transformers.aliasToBean(UserOrganizationDTO.class)) //
                 .list();
     }

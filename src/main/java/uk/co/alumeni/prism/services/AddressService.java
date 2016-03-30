@@ -158,10 +158,10 @@ public class AddressService {
         LinkedHashMultimap<Integer, String> entityLocationIndex = LinkedHashMultimap.create();
         for (EntityLocationDTO entityLocation : entityLocations) {
             Integer thisEntityId = entityLocation.getId();
-            entityLocationCount = equal(entityId, thisEntityId) ? 0 : entityLocationCount++;
+            entityLocationCount = equal(entityId, thisEntityId) ? (entityLocationCount + 1) : 0;
             entityId = thisEntityId;
 
-            if (entityLocationCount <= precision) {
+            if (entityLocationCount < precision) {
                 entityLocationIndex.put(entityId, entityLocation.getLocation());
             }
         }

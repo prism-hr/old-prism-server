@@ -388,6 +388,15 @@ public class SystemService {
                 action.getRedactions().add(actionRedaction);
             }
         }
+        
+        for (PrismAction prismAction : PrismAction.values()) {
+            PrismAction prismActionDelegated = prismAction.getDelegatedAction();
+            if (prismActionDelegated != null) {
+                actionService.getById(prismAction).setDelegatedAction(actionService.getById(prismActionDelegated));
+            }
+        }
+        
+        
     }
 
     private void initializeStateGroups() throws DeduplicationException {

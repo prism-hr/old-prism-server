@@ -338,7 +338,7 @@ public class ActionService {
         return actionEnhancements.toArray(new PrismActionEnhancement[actionEnhancements.size()]);
     }
 
-    public List<PrismAction> getRatingActions(PrismScope scope) {
+    public List<Action> getRatingActions(PrismScope scope) {
         return actionDAO.getRatingActions(scope);
     }
 

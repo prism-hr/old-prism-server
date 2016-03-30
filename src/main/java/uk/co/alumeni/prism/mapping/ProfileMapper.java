@@ -7,6 +7,7 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
@@ -183,12 +184,19 @@ public class ProfileMapper {
                         .withUpdatedTimestamp(profile.getUpdatedTimestamp()).withSequenceIdentifier(profile.getSequenceIdentifier()));
             });
 
-            LinkedHashMultimap<Integer, String> departmentLocations = resourceService.getResourceOrganizationLocations(DEPARTMENT,
-                    resourceIndex.get(DEPARTMENT));
-            LinkedHashMultimap<Integer, String> institutionLocations = resourceService.getResourceOrganizationLocations(INSTITUTION,
-                    resourceIndex.get(INSTITUTION));
+            Set<Integer> departmentIds = resourceIndex.get(DEPARTMENT);
+            LinkedHashMultimap<Integer, String> departmentLocations = LinkedHashMultimap.create();
+            if (isNotEmpty(departmentIds)) {
+                departmentLocations = resourceService.getResourceOrganizationLocations(DEPARTMENT, departmentIds);
+            }
 
-            representations.stream().forEach(representation -> {
+            Set<Integer> institutionIds = resourceIndex.get(INSTITUTION);
+            LinkedHashMultimap<Integer, String> institutionLocations = LinkedHashMultimap.create();
+            if (isNotEmpty(institutionIds)) {
+                institutionLocations = resourceService.getResourceOrganizationLocations(INSTITUTION, institutionIds);
+            }
+
+            for (ProfileListRowRepresentation representation : representations) {
                 if (isEmpty(representation.getLocations())) {
                     ResourceRepresentationSimple resource = representation.getOrganizations().iterator().next();
                     if (resource.getScope().equals(DEPARTMENT)) {
@@ -197,8 +205,7 @@ public class ProfileMapper {
                         representation.setLocations(newLinkedList(institutionLocations.get(resource.getId())));
                     }
                 }
-            });
-
+            }
         }
 
         return representations;

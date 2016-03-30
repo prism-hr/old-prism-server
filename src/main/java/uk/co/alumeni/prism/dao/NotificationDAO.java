@@ -87,7 +87,7 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, Resource resource, StateTransition stateTransition) {
-        Criteria criteria = getWorkflowCriteriaListComment(scope) //
+        Criteria criteria = getWorkflowCriteriaListUpdate(scope) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN);
 
         return getIndividualUpdateDefinitionCriteria(criteria, resource, stateTransition)
@@ -96,7 +96,7 @@ public class NotificationDAO {
 
     public List<UserNotificationDefinitionDTO> getIndividualUpdateDefinitions(PrismScope scope, PrismScope parentScope, Resource resource,
             StateTransition stateTransition) {
-        Criteria criteria = getWorkflowCriteriaListComment(scope) //
+        Criteria criteria = getWorkflowCriteriaListUpdate(scope) //
                 .createAlias("resource." + parentScope.getLowerCamelName(), "parentResource", JoinType.INNER_JOIN) //
                 .createAlias("parentResource.userRoles", "userRole", JoinType.INNER_JOIN);
 
@@ -219,7 +219,7 @@ public class NotificationDAO {
                 .add(Restrictions.eq("notificationDefinition.notificationType", INDIVIDUAL));
     }
 
-    private Criteria getWorkflowCriteriaListComment(PrismScope scope) {
+    private Criteria getWorkflowCriteriaListUpdate(PrismScope scope) {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(getIndividualUpdateDefinitionsProjection()) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN); //

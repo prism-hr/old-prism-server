@@ -261,6 +261,16 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
                 .list();
     }
+    
+    public List<PrismAction> getRatingActions(PrismScope scope) {
+        return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("action.id")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.scope.id", scope)) //
+                .add(Restrictions.eq("action.ratingAction", true)) //
+                .addOrder(Order.asc("action.id")) //
+                .list();
+    }
 
     private static Junction getActionConstraint(User user, Collection<Integer> resources, Collection<PrismAction> actions, Criterion restriction) {
         Junction constraint = Restrictions.conjunction() //

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newLinkedList;
 import static uk.co.alumeni.prism.PrismConstants.OK;
 
@@ -27,6 +28,7 @@ import uk.co.alumeni.prism.domain.address.AddressCoordinates;
 import uk.co.alumeni.prism.domain.address.AddressLocation;
 import uk.co.alumeni.prism.domain.address.AddressLocationPart;
 import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
+import uk.co.alumeni.prism.dto.EntityLocationDTO;
 import uk.co.alumeni.prism.dto.json.EstablishmentSearchResponseDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO;
 import uk.co.alumeni.prism.dto.json.GoogleResultDTO.GoogleAddressComponentDTO;
@@ -38,6 +40,7 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 
 @Service
@@ -147,6 +150,24 @@ public class AddressService {
     public void geocodeAddressAsEstablishment(Integer addressId) throws Exception {
         geocodeAddressAsEstablishment(getById(addressId));
     }
+    
+    public LinkedHashMultimap<Integer, String> getAddressLocationIndex(List<EntityLocationDTO> entityLocations, int precision) {
+        Integer entityId = null;
+        int entityLocationCount = 0;
+        
+        LinkedHashMultimap<Integer, String> entityLocationIndex = LinkedHashMultimap.create();
+        for (EntityLocationDTO entityLocation : entityLocations) {
+            Integer thisEntityId = entityLocation.getId();
+            entityLocationCount = equal(entityId, thisEntityId) ? 0 : entityLocationCount++;
+            entityId = thisEntityId;
+
+            if (entityLocationCount <= precision) {
+                entityLocationIndex.put(entityId, entityLocation.getLocation());
+            }
+        }
+        
+        return entityLocationIndex;
+    }
 
     private void geocodeAddress(Address address, String establishmentName) {
         try {
@@ -154,7 +175,7 @@ public class AddressService {
                 geocodeAddressAsLocation(address, establishmentName);
             }
         } catch (Exception e) {
-            logger.error("Problem obtaining location for " + address.getLocationString(), e);
+            logger.error("Problem obtaining location for " + address.toString(), e);
         }
     }
 
@@ -175,7 +196,7 @@ public class AddressService {
     }
 
     private void geocodeAddressAsLocation(Address address, String establishmentName) throws Exception {
-        List<String> addressTokens = Lists.reverse(address.getLocationTokens());
+        List<String> addressTokens = Lists.reverse(address.getAddressTokens());
         addressTokens.add(establishmentName);
 
         Domicile domicile = address.getDomicile();

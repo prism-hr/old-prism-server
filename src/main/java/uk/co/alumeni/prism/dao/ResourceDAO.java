@@ -700,7 +700,7 @@ public class ResourceDAO {
                         .add(Projections.groupProperty("locationPart.name").as("location"))) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.address", "address", JoinType.INNER_JOIN) //
-                .createAlias("address.location", "location")
+                .createAlias("address.locations", "location", JoinType.INNER_JOIN)
                 .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", resourceIds)) //
                 .addOrder(Order.asc("id")) //

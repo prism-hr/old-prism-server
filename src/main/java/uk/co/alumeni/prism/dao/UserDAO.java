@@ -721,10 +721,14 @@ public class UserDAO {
             criteria.createAlias(resourcePrefix + ".institution", "departmentInstitution", JoinType.INNER_JOIN);
         }
 
-        return (List<UserOrganizationDTO>) criteria.createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("user.id", userIds)) //
-                .add(Restrictions.in(resourcePrefix + ".id", resourceIds))
-                .add(Restrictions.eq("role.roleCategory", roleCategory)) //
+        criteria.createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("user.id", userIds));
+
+        if (isNotEmpty(resourceIds)) {
+            criteria.add(Restrictions.in(resourcePrefix + ".id", resourceIds));
+        }
+
+        return (List<UserOrganizationDTO>) criteria.add(Restrictions.eq("role.roleCategory", roleCategory)) //
                 .add(Restrictions.in("resourceState.state.id", values(PrismState.class, resourceScope, "APPROVED", "DISABLED_COMPLETED"))) //
                 .addOrder(Order.desc("acceptedTimestamp")) //
                 .setResultTransformer(Transformers.aliasToBean(UserOrganizationDTO.class)) //

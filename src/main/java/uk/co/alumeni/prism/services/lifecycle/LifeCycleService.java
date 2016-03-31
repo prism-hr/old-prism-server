@@ -1,10 +1,7 @@
 package uk.co.alumeni.prism.services.lifecycle;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.slf4j.LoggerFactory.getLogger;
-import static uk.co.alumeni.prism.PrismConstants.MAINTENANCE_THREAD_POOL_BUFFER;
 import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
 
 import java.util.Set;
@@ -16,6 +13,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,14 +23,16 @@ import uk.co.alumeni.prism.domain.definitions.PrismMaintenanceTask;
 import uk.co.alumeni.prism.mapping.StaticDataMapper;
 import uk.co.alumeni.prism.services.SystemService;
 
+import com.google.common.collect.Sets;
+
 @Service
 public class LifeCycleService {
 
-    private static final Logger logger = getLogger(LifeCycleService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LifeCycleService.class);
 
     private ExecutorService executorService;
 
-    private Set<PrismMaintenanceTask> executions = newHashSet();
+    private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
 
     @Value("${context.environment}")
     private String environment;
@@ -60,7 +60,7 @@ public class LifeCycleService {
 
     @Value("${maintenance.run}")
     private Boolean maintain;
-
+    
     @Inject
     private StaticDataMapper staticDataMapper;
 
@@ -111,7 +111,7 @@ public class LifeCycleService {
         }
 
         if (isTrue(maintain)) {
-            executorService = newFixedThreadPool((PrismMaintenanceTask.values().length + MAINTENANCE_THREAD_POOL_BUFFER));
+            executorService = newFixedThreadPool(PrismMaintenanceTask.values().length);
         }
     }
 
@@ -123,10 +123,6 @@ public class LifeCycleService {
             }
             shutdownExecutor(executorService);
         }
-    }
-    
-    public void scheduleBackgroundTask(Runnable backgroundTask) {
-        executorService.submit(backgroundTask);
     }
 
     @Scheduled(fixedDelay = 60000)

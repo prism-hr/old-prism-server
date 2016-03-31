@@ -582,23 +582,19 @@ public class UserService {
         return userDAO.getUserCreatedTimestamp(user);
     }
 
-    public Set<Integer> getUsersWithActivitiesToCache(DateTime baseline) {
+    public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Integer resourceId, DateTime baseline) {
         Set<Integer> users = Sets.newHashSet();
 
-        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesWithActivitiesToCache(baseline);
-        resourceIndex.keySet().forEach(scope -> {
-            Set<Integer> resources = resourceIndex.get(scope);
-            scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
-                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, roleScope, resources)));
+        scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
+                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, roleScope, resourceId)));
 
-            if (!scope.equals(SYSTEM)) {
-                stream(organizationScopes).forEach(targeterScope -> {
-                    stream(organizationScopes).forEach(targetScope -> {
-                        users.addAll(userDAO.getUsersWithActivitiesToCache(scope, targeterScope, targetScope, resources));
-                    });
+        if (!scope.equals(SYSTEM)) {
+            stream(organizationScopes).forEach(targeterScope -> {
+                stream(organizationScopes).forEach(targetScope -> {
+                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, targeterScope, targetScope, resourceId));
                 });
-            }
-        });
+            });
+        }
 
         return users;
     }

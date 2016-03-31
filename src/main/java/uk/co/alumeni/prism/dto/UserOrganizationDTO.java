@@ -99,9 +99,9 @@ public class UserOrganizationDTO implements Comparable<UserOrganizationDTO> {
     @Override
     public int compareTo(UserOrganizationDTO other) {
         int compare = compare(userId, other.getUserId());
-        compare = compare == 0 ? compare(acceptedTimestamp, other.getAcceptedTimestamp()) : compare;
-        compare = compare == 0 ? compare(departmentId, other.getDepartmentId()) : compare;
-        return compare == 0 ? compare(institutionId, other.getInstitutionId()) : compare;
+        compare = compare == 0 ? compare(other.getAcceptedTimestamp(), acceptedTimestamp) : compare;
+        compare = compare == 0 ? compare(other.getDepartmentId(), departmentId) : compare;
+        return compare == 0 ? compare(other.getInstitutionId(), institutionId) : compare;
     }
 
 }

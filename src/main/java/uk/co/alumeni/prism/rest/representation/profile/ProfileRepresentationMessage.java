@@ -22,6 +22,10 @@ public class ProfileRepresentationMessage {
         this.unreadMessageCount = unreadMessageCount;
     }
     
+    public Integer getMessageCount() {
+        return readMessageCount + unreadMessageCount;
+    }
+    
     public ProfileRepresentationMessage withReadMessageCount(Integer readMessageCount) {
         this.readMessageCount = readMessageCount;
         return this;

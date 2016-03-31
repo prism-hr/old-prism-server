@@ -293,8 +293,12 @@ public class ResourceMapper {
                     setRaisesUrgentFlag(representation, actions);
 
                     ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
-                    representation.setReadMessageCount(indexResource.getReadMessageCount());
-                    representation.setUnreadMessageCount(indexResource.getUnreadMessageCount());
+
+                    Integer readMessageCount = indexResource.getReadMessageCount();
+                    representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
+
+                    Integer unreadMessageCount = indexResource.getUnreadMessageCount();
+                    representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
                     setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
@@ -686,26 +690,22 @@ public class ResourceMapper {
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId,
-            Integer departmentId,
-            String departmentName) {
+            Integer departmentId, String departmentName) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId,
-            Integer departmentId,
-            String departmentName, Integer backgroundImageId) {
+            Integer departmentId, String departmentName, Integer backgroundImageId) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, backgroundImageId, null);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId,
-            Integer departmentId,
-            String departmentName, String opportunityCategories) {
+            Integer departmentId, String departmentName, String opportunityCategories) {
         return getResourceRepresentationConnection(institutionId, institutionName, logoImageId, departmentId, departmentName, null, opportunityCategories);
     }
 
     public ResourceRepresentationConnection getResourceRepresentationConnection(Integer institutionId, String institutionName, Integer logoImageId,
-            Integer departmentId,
-            String departmentName, Integer backgroundImageId, String opportunityCategories) {
+            Integer departmentId, String departmentName, Integer backgroundImageId, String opportunityCategories) {
         ResourceRepresentationConnection representation = new ResourceRepresentationConnection().withInstitution(new ResourceRepresentationSimple()
                 .withScope(INSTITUTION)
                 .withId(institutionId).withName(institutionName).withLogoImage(documentMapper.getDocumentRepresentation(logoImageId)));
@@ -769,8 +769,11 @@ public class ResourceMapper {
         setRaisesUrgentFlag(representation, (List<ActionRepresentationSimple>) (List<?>) actions);
         setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
 
-        representation.setReadMessageCount(resourceService.getResourceReadMessageCount(resource, user));
-        representation.setUnreadMessageCount(resourceService.getResourceUnreadMessageCount(resource, user));
+        Integer readMessageCount = resourceService.getResourceReadMessageCount(resource, user);
+        representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
+
+        Integer unreadMessageCount = resourceService.getResourceUnreadMessageCount(resource, user);
+        representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
         Class<T> resourceClass = (Class<T>) resource.getClass();
         if (!resourceClass.equals(System.class) && actionService.getRedactions(resource, userService.getCurrentUser(), overridingRoles).isEmpty()) {

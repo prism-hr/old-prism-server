@@ -387,6 +387,7 @@ public class ActionService {
                 }
             }
 
+            userService.updateUserActivityCaches(resource, user, comment.getSubmittedTimestamp());
             return actionOutcome;
         }
 

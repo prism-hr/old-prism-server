@@ -775,7 +775,7 @@ public class UserDAO {
                 .createAlias("messages", "message", JoinType.INNER_JOIN) //
                 .createAlias("participants", "participant", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("participant.user", currentUser)) //
-                .add(getVisibleMessageConstraint())
+                .add(getVisibleMessageConstraint("message"))
                 .add(getReadOrUnreadMessageConstraint(read)) //
                 .uniqueResult();
     }

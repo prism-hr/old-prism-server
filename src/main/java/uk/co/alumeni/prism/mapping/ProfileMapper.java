@@ -403,7 +403,7 @@ public class ProfileMapper {
 
         if (equal(user, currentUser)) {
             Integer readMessageCount = userService.getUserReadMessageCount(user, currentUser);
-            Integer unreadMessageCount = userService.getUserReadMessageCount(user, currentUser);
+            Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, currentUser);
             
             representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
             representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);

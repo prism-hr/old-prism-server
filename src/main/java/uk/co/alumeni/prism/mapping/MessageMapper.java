@@ -238,7 +238,7 @@ public class MessageMapper {
         });
 
         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(targeterResources, recipientRoles);
-        recipientUserRoles.add(new UserRoleDTO().withUser(currentUser).withRole(SYSTEM_CANDIDATE));
+        recipientUserRoles.add(new UserRoleDTO().withUser(user).withRole(SYSTEM_CANDIDATE));
 
         return new MessageThreadParticipantsRepresentationPotential().addParticipants(getMessageThreadParticipantRepresentationsPotential(currentUser,
                 recipientUserRoles)).addPartnerParticipants(getMessageThreadParticipantRepresentationsPotential(currentUser, partnerRecipientUserRoles));

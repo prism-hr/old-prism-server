@@ -2143,7 +2143,6 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_MESSAGE_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Subject"),
     SYSTEM_MESSAGE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Message"),
     SYSTEM_MESSAGE_SEND(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Send Message"),
-    SYSTEM_MESSAGE_CANCEL(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Cancel"),
     SYSTEM_MESSAGE_RESTORE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Start Again"),
     SYSTEM_MESSAGE_NO_PERMISSION(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "You no longer have permission to send messages in this conversation"),
     SYSTEM_MESSAGE_DOCUMENTS(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Attachments"),

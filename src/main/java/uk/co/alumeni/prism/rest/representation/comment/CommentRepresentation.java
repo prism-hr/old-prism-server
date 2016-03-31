@@ -50,7 +50,7 @@ public class CommentRepresentation {
 
     private Boolean interested;
 
-    private PrismInterviewState interviewStatus;
+    private PrismInterviewState interviewState;
 
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
@@ -220,12 +220,12 @@ public class CommentRepresentation {
         this.interested = interested;
     }
 
-    public PrismInterviewState getInterviewStatus() {
-        return interviewStatus;
+    public PrismInterviewState getInterviewState() {
+        return interviewState;
     }
 
-    public void setInterviewStatus(PrismInterviewState interviewStatus) {
-        this.interviewStatus = interviewStatus;
+    public void setInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
     }
 
     public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
@@ -441,8 +441,8 @@ public class CommentRepresentation {
         return this;
     }
 
-    public CommentRepresentation withInterviewState(PrismInterviewState interviewStatus) {
-        this.interviewStatus = interviewStatus;
+    public CommentRepresentation withInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
         return this;
     }
 

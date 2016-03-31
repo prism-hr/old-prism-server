@@ -99,6 +99,8 @@ import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+import uk.co.alumeni.prism.services.lifecycle.LifeCycleService;
+import uk.co.alumeni.prism.services.lifecycle.helpers.UserServiceHelper;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
@@ -137,6 +139,9 @@ public class UserService {
     private EntityService entityService;
 
     @Inject
+    private LifeCycleService lifeCycleService;
+    
+    @Inject
     private ResourceService resourceService;
 
     @Inject
@@ -151,6 +156,9 @@ public class UserService {
     @Inject
     private UserAccountService userAccountService;
 
+    @Inject
+    private UserServiceHelper userServiceHelper;
+    
     @Inject
     private PrismJsonMappingUtils prismJsonMappingUtils;
 
@@ -582,27 +590,6 @@ public class UserService {
         return userDAO.getUserCreatedTimestamp(user);
     }
 
-    public Set<Integer> getUsersWithActivitiesToCache(DateTime baseline) {
-        Set<Integer> users = Sets.newHashSet();
-
-        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesWithActivitiesToCache(baseline);
-        resourceIndex.keySet().forEach(scope -> {
-            Set<Integer> resources = resourceIndex.get(scope);
-            scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
-                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, roleScope, resources)));
-
-            if (!scope.equals(SYSTEM)) {
-                stream(organizationScopes).forEach(targeterScope -> {
-                    stream(organizationScopes).forEach(targetScope -> {
-                        users.addAll(userDAO.getUsersWithActivitiesToCache(scope, targeterScope, targetScope, resources));
-                    });
-                });
-            }
-        });
-
-        return users;
-    }
-
     public void setUserActivityCache(Integer user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
         UserAccount userAccount = getById(user).getUserAccount();
         userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
@@ -659,6 +646,20 @@ public class UserService {
                         urp -> userResourceParents.put(urp.getUserId(), urp)));
         return userResourceParents;
     }
+    
+    public void updateUserActivityCaches(Resource resource, User currentUser, DateTime baseline) {
+        lifeCycleService.scheduleBackgroundTask(new Runnable() {
+            @Override
+            public void run() {
+                userServiceHelper.setUserActivityCache(currentUser.getId(), baseline);
+                HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+                resources.put(resource.getResourceScope(), resource.getId());
+                for (Integer user : getUsersWithActivitiesToCache(resources)) {
+                    userServiceHelper.setUserActivityCache(user, baseline);
+                }
+            }
+        });
+    }
 
     @SuppressWarnings("unchecked")
     private void mergeUsers(User oldUser, User newUser) {
@@ -701,6 +702,25 @@ public class UserService {
             return count.getMessageCount().intValue();
         }
         return null;
+    }
+
+    private Set<Integer> getUsersWithActivitiesToCache(HashMultimap<PrismScope, Integer> resourceIndex) {
+        Set<Integer> users = newHashSet();
+        resourceIndex.keySet().forEach(scope -> {
+            Set<Integer> resources = resourceIndex.get(scope);
+            scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
+                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, roleScope, resources)));
+
+            if (!scope.equals(SYSTEM)) {
+                stream(organizationScopes).forEach(targeterScope -> {
+                    stream(organizationScopes).forEach(targetScope -> {
+                        users.addAll(userDAO.getUsersWithActivitiesToCache(scope, targeterScope, targetScope, resources));
+                    });
+                });
+            }
+        });
+
+        return users;
     }
 
 }

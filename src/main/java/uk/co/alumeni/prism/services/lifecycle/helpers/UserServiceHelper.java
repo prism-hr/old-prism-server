@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
-import static org.joda.time.DateTime.now;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.inject.Inject;
@@ -26,8 +24,7 @@ public class UserServiceHelper extends PrismServiceHelperAbstract {
 
     @Override
     public void execute() throws Exception {
-        DateTime baseline = now();
-        userService.getUsersWithActivitiesToCache(baseline).forEach(user -> setUserActivityCache(user, baseline));
+        return;
     }
 
     @Override
@@ -35,7 +32,7 @@ public class UserServiceHelper extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void setUserActivityCache(Integer user, DateTime baseline) {
+    public void setUserActivityCache(Integer user, DateTime baseline) {
         if (!isShuttingDown()) {
             UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
             if (userActivityRepresentation != null) {

@@ -119,9 +119,10 @@ public class MessageService {
         DateTime baseline = now();
         User currentUser = userService.getCurrentUser();
 
+        Resource resource = null;
         MessageThread thread = null;
         if (Resource.class.isAssignableFrom(activity.getClass())) {
-            Resource resource = (Resource) activity;
+            resource = (Resource) activity;
             Action messageAction = actionService.getMessageAction(resource);
 
             if (threadId == null) {
@@ -194,6 +195,10 @@ public class MessageService {
                     message.addDocument(document);
                 }
             }
+        }
+        
+        if (resource != null) {
+            userService.updateUserActivityCaches((Resource) activity, currentUser, baseline);
         }
     }
 

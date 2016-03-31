@@ -69,5 +69,7 @@ public class PrismConstants {
     public static final Integer WORK_DAYS_IN_WEEK = 5;
 
     public static final Integer WORK_HOURS_IN_DAY = 8;
+    
+    public static final Integer MAINTENANCE_THREAD_POOL_BUFFER = 10;
 
 }

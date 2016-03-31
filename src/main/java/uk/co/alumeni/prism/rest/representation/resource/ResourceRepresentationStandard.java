@@ -129,5 +129,9 @@ public class ResourceRepresentationStandard extends ResourceRepresentationRelati
     public void setStateActionPendingCount(Integer stateActionPendingCount) {
         this.stateActionPendingCount = stateActionPendingCount;
     }
+    
+    public Integer getMessageCount() {
+        return readMessageCount + unreadMessageCount;
+    }
 
 }

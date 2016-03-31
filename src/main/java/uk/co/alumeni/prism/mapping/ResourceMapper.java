@@ -295,9 +295,9 @@ public class ResourceMapper {
                     ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
 
                     Integer readMessageCount = indexResource.getReadMessageCount();
-                    representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
-
                     Integer unreadMessageCount = indexResource.getUnreadMessageCount();
+                    
+                    representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
                     representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
                     setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
@@ -770,9 +770,9 @@ public class ResourceMapper {
         setRaisesUpdateFlag(representation, new DateTime(), updatedTimestamp);
 
         Integer readMessageCount = resourceService.getResourceReadMessageCount(resource, user);
-        representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
-
         Integer unreadMessageCount = resourceService.getResourceUnreadMessageCount(resource, user);
+        
+        representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
         representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
         Class<T> resourceClass = (Class<T>) resource.getClass();

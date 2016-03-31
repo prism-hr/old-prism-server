@@ -1,9 +1,9 @@
 package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
@@ -152,28 +152,8 @@ public class ProfileMapper {
                 Integer userId = profile.getUserId();
                 Set<String> locations = userLocationIndex.get(userId);
 
-                Set<ResourceRepresentationRelation> userOrganizations = newLinkedHashSet();
-                for (UserOrganizationDTO userOrganizationDTO : userOrganizationIndex.get(userId)) {
-                    Integer departmentId = userOrganizationDTO.getDepartmentId();
-
-                    ResourceRepresentationRelation userOrganization;
-                    if (departmentId == null) {
-                        Integer institutionId = userOrganizationDTO.getInstitutionId();
-                        userOrganization = new ResourceRepresentationRelation().withScope(INSTITUTION)
-                                .withId(institutionId).withName(userOrganizationDTO.getInstitutionName())
-                                .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId()));
-                        profileResourceIndex.put(INSTITUTION, institutionId);
-                    } else {
-                        userOrganization = new ResourceRepresentationRelation().withScope(DEPARTMENT)
-                                .withId(departmentId).withName(userOrganizationDTO.getDepartmentName())
-                                .withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
-                                        .withId(userOrganizationDTO.getInstitutionId()).withName(userOrganizationDTO.getInstitutionName())
-                                        .withLogoImage(documentMapper.getDocumentRepresentation(userOrganizationDTO.getInstitutionLogoImageId())));
-                        profileResourceIndex.put(DEPARTMENT, departmentId);
-                    }
-
-                    userOrganizations.add(userOrganization);
-                }
+                List<ResourceRepresentationRelation> userOrganizations = getUserOrganizationRepresentations(userOrganizationIndex);
+                userOrganizations.stream().forEach(userOrganization -> profileResourceIndex.put(userOrganization.getScope(), userOrganization.getId()));
 
                 Integer readMessageCount = readMessagesIndex.get(userId);
                 Integer unreadMessageCount = unreadMessagesIndex.get(userId);
@@ -389,8 +369,11 @@ public class ProfileMapper {
     public ProfileRepresentationUser getProfileRepresentationUser(User user, User currentUser) {
         UserAccount userAccount = user.getUserAccount();
         Integer maximumCompleteScore = userService.getMaximumUserAccountCompleteScore();
+        ResourceRatingSummaryDTO ratingSummary = applicationService.getApplicationRatingSummary(user);
+
         ProfileRepresentationUser representation = new ProfileRepresentationUser()
                 .withCompleteScore(getProfileCompleteScoreAsRatio(userAccount.getCompleteScore(), maximumCompleteScore))
+                .withApplicationCount(longToInteger(ratingSummary.getResourceCount()))
                 .withPersonalDetail(getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
                 .withAddress(getAddressRepresentation(userAccount.getAddress()))
                 .withQualifications(getQualificationRepresentations(userAccount.getQualifications(), user))
@@ -404,12 +387,42 @@ public class ProfileMapper {
         if (equal(user, currentUser)) {
             Integer readMessageCount = userService.getUserReadMessageCount(user, currentUser);
             Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, currentUser);
-            
+
             representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
             representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
+        } else {
+            representation.setApplicationRatingAverage(doubleToBigDecimal(ratingSummary.getRatingAverage(), RATING_PRECISION));
+
+            HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(currentUser);
+            TreeMultimap<Integer, UserOrganizationDTO> organizationIndex = userService.getUserOrganizations(newArrayList(user.getId()), resourceIndex, STUDENT);
+            representation.setOrganizations(getUserOrganizationRepresentations(organizationIndex));
         }
 
         return representation;
+    }
+
+    public List<ResourceRepresentationRelation> getUserOrganizationRepresentations(TreeMultimap<Integer, UserOrganizationDTO> organizationIndex) {
+        List<ResourceRepresentationRelation> organizations = newLinkedList();
+        organizationIndex.values().forEach(organizationDTO -> {
+            Integer departmentId = organizationDTO.getDepartmentId();
+
+            ResourceRepresentationRelation organization;
+            if (departmentId == null) {
+                Integer institutionId = organizationDTO.getInstitutionId();
+                organization = new ResourceRepresentationRelation().withScope(INSTITUTION)
+                        .withId(institutionId).withName(organizationDTO.getInstitutionName())
+                        .withLogoImage(documentMapper.getDocumentRepresentation(organizationDTO.getInstitutionLogoImageId()));
+            } else {
+                organization = new ResourceRepresentationRelation().withScope(DEPARTMENT)
+                        .withId(departmentId).withName(organizationDTO.getDepartmentName())
+                        .withInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+                                .withId(organizationDTO.getInstitutionId()).withName(organizationDTO.getInstitutionName())
+                                .withLogoImage(documentMapper.getDocumentRepresentation(organizationDTO.getInstitutionLogoImageId())));
+            }
+
+            organizations.add(organization);
+        });
+        return organizations;
     }
 
     public ActivityRepresentation getProfileActivityRepresentation(User user) {

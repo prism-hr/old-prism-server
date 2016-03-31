@@ -76,6 +76,10 @@ public class MessageThreadRepresentation {
     public void setLastViewedMessage(MessageRepresentation lastViewedMessage) {
         this.lastViewedMessage = lastViewedMessage;
     }
+    
+    public Object getActivity() {
+        return resource == null ? user : resource;
+    }
 
     public MessageThreadRepresentation withId(Integer id) {
         this.id = id;

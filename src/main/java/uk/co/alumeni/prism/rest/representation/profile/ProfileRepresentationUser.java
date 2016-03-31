@@ -5,10 +5,18 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+
 public class ProfileRepresentationUser extends ProfileRepresentationMessage {
-    
+
     private BigDecimal completeScore;
+
+    private Integer applicationCount;
     
+    private BigDecimal applicationRatingAverage;
+
+    private List<ResourceRepresentationRelation> organizations;
+
     private ProfilePersonalDetailRepresentation personalDetail;
 
     private ProfileAddressRepresentation address;
@@ -35,6 +43,30 @@ public class ProfileRepresentationUser extends ProfileRepresentationMessage {
 
     public void setCompleteScore(BigDecimal completeScore) {
         this.completeScore = completeScore;
+    }
+
+    public Integer getApplicationCount() {
+        return applicationCount;
+    }
+
+    public void setApplicationCount(Integer applicationCount) {
+        this.applicationCount = applicationCount;
+    }
+
+    public BigDecimal getApplicationRatingAverage() {
+        return applicationRatingAverage;
+    }
+
+    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
+    }
+
+    public List<ResourceRepresentationRelation> getOrganizations() {
+        return organizations;
+    }
+
+    public void setOrganizations(List<ResourceRepresentationRelation> organizations) {
+        this.organizations = organizations;
     }
 
     public ProfilePersonalDetailRepresentation getPersonalDetail() {
@@ -121,7 +153,22 @@ public class ProfileRepresentationUser extends ProfileRepresentationMessage {
         this.completeScore = completeScore;
         return this;
     }
+
+    public ProfileRepresentationUser withApplicationCount(Integer applicationCount) {
+        this.applicationCount = applicationCount;
+        return this;
+    }
+
+    public ProfileRepresentationUser withApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+        this.applicationRatingAverage = applicationRatingAverage;
+        return this;
+    }
     
+    public ProfileRepresentationUser withOrganizations(List<ResourceRepresentationRelation> organizations) {
+        this.organizations = organizations;
+        return this;
+    }
+
     public ProfileRepresentationUser withPersonalDetail(ProfilePersonalDetailRepresentation personalDetail) {
         this.personalDetail = personalDetail;
         return this;

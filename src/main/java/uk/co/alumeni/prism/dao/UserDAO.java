@@ -28,7 +28,6 @@ import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -582,7 +581,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope roleScope, Set<Integer> resources) {
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope roleScope, Integer resourceId) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
@@ -596,11 +595,11 @@ public class UserDAO {
 
         return criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(getUsersWithActivitiesToCacheConstraint(scope, resources)) //
+                .add(getUsersWithActivitiesToCacheConstraint(scope, resourceId)) //
                 .list();
     }
 
-    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Set<Integer> resources) {
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Integer resourceId) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
@@ -613,7 +612,7 @@ public class UserDAO {
                 .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(getUsersWithActivitiesToCacheConstraint(scope, resources)) //
+                .add(getUsersWithActivitiesToCacheConstraint(scope, resourceId)) //
                 .list();
     }
 
@@ -758,10 +757,10 @@ public class UserDAO {
                         .add(Restrictions.eq("userAccount.enabled", true)));
     }
 
-    private Junction getUsersWithActivitiesToCacheConstraint(PrismScope scope, Set<Integer> resources) {
+    private Junction getUsersWithActivitiesToCacheConstraint(PrismScope scope, Integer resourceId) {
         Junction constraint = Restrictions.conjunction() //
                 .add(Restrictions.isNotNull("user.userAccount")) //
-                .add(Restrictions.in("resource.id", resources));
+                .add(Restrictions.eq("resource.id", resourceId));
 
         if (asList(OPPORTUNITY, ORGANIZATION).contains(scope.getScopeCategory())) {
             constraint.add(Restrictions.ne("state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));

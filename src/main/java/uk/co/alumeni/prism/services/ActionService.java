@@ -73,6 +73,9 @@ public class ActionService {
     private AdvertService advertService;
 
     @Inject
+    private CacheService cacheService;
+    
+    @Inject
     private CommentService commentService;
 
     @Inject
@@ -386,8 +389,8 @@ public class ActionService {
                     actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
                 }
             }
-
-            userService.updateUserActivityCaches(resource, user, comment.getSubmittedTimestamp());
+            
+            cacheService.updateUserActivityCaches(resource.getResourceScope(), resource.getId(), user.getId(), comment.getSubmittedTimestamp());
             return actionOutcome;
         }
 

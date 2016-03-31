@@ -152,7 +152,7 @@ public class ProfileMapper {
                 Integer userId = profile.getUserId();
                 Set<String> locations = userLocationIndex.get(userId);
 
-                List<ResourceRepresentationRelation> userOrganizations = getUserOrganizationRepresentations(userOrganizationIndex);
+                List<ResourceRepresentationRelation> userOrganizations = getUserOrganizationRepresentations(userOrganizationIndex.get(userId));
                 userOrganizations.stream().forEach(userOrganization -> profileResourceIndex.put(userOrganization.getScope(), userOrganization.getId()));
 
                 Integer readMessageCount = readMessagesIndex.get(userId);
@@ -395,15 +395,15 @@ public class ProfileMapper {
 
             HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(currentUser);
             TreeMultimap<Integer, UserOrganizationDTO> organizationIndex = userService.getUserOrganizations(newArrayList(user.getId()), resourceIndex, STUDENT);
-            representation.setOrganizations(getUserOrganizationRepresentations(organizationIndex));
+            representation.setOrganizations(getUserOrganizationRepresentations(organizationIndex.values()));
         }
 
         return representation;
     }
 
-    public List<ResourceRepresentationRelation> getUserOrganizationRepresentations(TreeMultimap<Integer, UserOrganizationDTO> organizationIndex) {
+    public List<ResourceRepresentationRelation> getUserOrganizationRepresentations(Collection<UserOrganizationDTO> organizationDTOs) {
         List<ResourceRepresentationRelation> organizations = newLinkedList();
-        organizationIndex.values().forEach(organizationDTO -> {
+        organizationDTOs.forEach(organizationDTO -> {
             Integer departmentId = organizationDTO.getDepartmentId();
 
             ResourceRepresentationRelation organization;

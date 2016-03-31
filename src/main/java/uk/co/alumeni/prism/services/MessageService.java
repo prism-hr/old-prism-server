@@ -48,6 +48,9 @@ public class MessageService {
     private ActionService actionService;
 
     @Inject
+    private CacheService cacheService;
+
+    @Inject
     private DocumentService documentService;
 
     @Inject
@@ -196,9 +199,9 @@ public class MessageService {
                 }
             }
         }
-        
+
         if (resource != null) {
-            userService.updateUserActivityCaches((Resource) activity, currentUser, baseline);
+            cacheService.updateUserActivityCaches(resource.getResourceScope(), resource.getId(), currentUser.getId(), baseline);
         }
     }
 

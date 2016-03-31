@@ -60,7 +60,7 @@ public class LifeCycleService {
 
     @Value("${maintenance.run}")
     private Boolean maintain;
-
+    
     @Inject
     private StaticDataMapper staticDataMapper;
 
@@ -111,7 +111,7 @@ public class LifeCycleService {
         }
 
         if (isTrue(maintain)) {
-            executorService = newFixedThreadPool((PrismMaintenanceTask.values().length + MAINTENANCE_THREAD_POOL_BUFFER));
+            executorService = newFixedThreadPool(PrismMaintenanceTask.values().length);
         }
     }
 

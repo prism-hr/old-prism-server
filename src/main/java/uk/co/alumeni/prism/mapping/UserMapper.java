@@ -206,12 +206,15 @@ public class UserMapper {
 
     public UserActivityRepresentation getUserActivityRepresentationFresh(User user) {
         Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
+
+        Integer readMessageCount = userService.getUserReadMessageCount(user, user);
+        Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, user);
         return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withProfileActivity(profileMapper.getProfileActivityRepresentation(user))
-                .withMessageActivity(
-                        new ProfileRepresentationMessage().withReadMessageCount(userService.getUserReadMessageCount(user, user))
-                                .withUnreadMessageCount(userService.getUserUnreadMessageCount(user, user)))
+                .withMessageActivity(new ProfileRepresentationMessage()
+                        .withReadMessageCount(readMessageCount == null ? 0 : readMessageCount)
+                        .withUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
                 .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));

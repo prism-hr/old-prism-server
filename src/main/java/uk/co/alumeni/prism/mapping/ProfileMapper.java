@@ -175,8 +175,12 @@ public class ProfileMapper {
                     userOrganizations.add(userOrganization);
                 }
 
-                representations.add(new ProfileListRowRepresentation().withReadMessageCount(readMessagesIndex.get(userId))
-                        .withUnreadMessageCount(unreadMessagesIndex.get(userId)).withRaisesUpdateFlag(profile.getUpdatedTimestamp().isAfter(baseline))
+                Integer readMessageCount = readMessagesIndex.get(userId);
+                Integer unreadMessageCount = unreadMessagesIndex.get(userId);
+
+                representations.add(new ProfileListRowRepresentation().withReadMessageCount(readMessageCount == null ? 0 : readMessageCount)
+                        .withUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount)
+                        .withRaisesUpdateFlag(profile.getUpdatedTimestamp().isAfter(baseline))
                         .withCompleteScore(getProfileCompleteScoreAsRatio(profile.getCompleteScore(), maximumCompleteScore))
                         .withUser(userMapper.getUserRepresentationSimple(profile, currentUser)).withLocations(newLinkedList(locations))
                         .withOrganizations(newLinkedList(userOrganizations)).withLinkedInProfileUrl(profile.getLinkedInProfileUrl())
@@ -371,9 +375,12 @@ public class ProfileMapper {
             ProfileRepresentationUser profileRepresentation = getProfileRepresentationUser(user, currentUser);
             UserRepresentationSimple userRepresentation = userMapper.getUserRepresentationSimple(user, currentUser);
 
+            Integer readMessageCount = userService.getUserReadMessageCount(user, currentUser);
+            Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, currentUser);
+
             return new ProfileRepresentationCandidate().withUser(userRepresentation).withProfile(profileRepresentation)
-                    .withReadMessageCount(userService.getUserReadMessageCount(user, currentUser))
-                    .withUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser));
+                    .withReadMessageCount(readMessageCount == null ? 0 : readMessageCount)
+                    .withUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
         }
 
         throw new PrismForbiddenException("user does not have permission to access candidate data");
@@ -395,8 +402,11 @@ public class ProfileMapper {
                 .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
 
         if (equal(user, currentUser)) {
-            representation.setReadMessageCount(userService.getUserReadMessageCount(user, currentUser));
-            representation.setUnreadMessageCount(userService.getUserUnreadMessageCount(user, currentUser));
+            Integer readMessageCount = userService.getUserReadMessageCount(user, currentUser);
+            Integer unreadMessageCount = userService.getUserReadMessageCount(user, currentUser);
+            
+            representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
+            representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
         }
 
         return representation;

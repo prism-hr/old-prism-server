@@ -101,13 +101,12 @@ public class MessageMapper {
                 MessageThreadRepresentation threadRepresentation = new MessageThreadRepresentation()
                         .withId(thread.getId()).withSubject(thread.getSubject());
 
-                if (Resource.class.isAssignableFrom(activity.getClass())) {
-                    threadRepresentation.setResource(resourceMapper.getResourceRepresentationSimple((Resource) activity));
+                ActivityEditable threadActivity = thread.getActivity();
+                if (Resource.class.isAssignableFrom(threadActivity.getClass())) {
+                    threadRepresentation.setResource(resourceMapper.getResourceRepresentationSimple((Resource) threadActivity));
                 } else {
-                    User user = ((UserAccount) activity).getUser();
-                    if (!equal(user, currentUser)) {
-                        threadRepresentation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
-                    }
+                    User user = ((UserAccount) threadActivity).getUser();
+                    threadRepresentation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
                 }
 
                 Set<MessageThreadParticipantRepresentation> participantRepresentations = newLinkedHashSet();

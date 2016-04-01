@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services.lifecycle;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
 
 import java.util.Set;
@@ -51,7 +52,7 @@ public class LifeCycleService {
 
     @Value("${startup.profile.completeness.initialize}")
     private Boolean initializeProfileCompleteness;
-    
+
     @Value("${startup.section.completeness.initialize}")
     private Boolean initializeSectionCompleteness;
 
@@ -60,7 +61,7 @@ public class LifeCycleService {
 
     @Value("${maintenance.run}")
     private Boolean maintain;
-    
+
     @Inject
     private StaticDataMapper staticDataMapper;
 
@@ -96,7 +97,7 @@ public class LifeCycleService {
         if (isTrue(initializeProfileCompleteness)) {
             systemService.initializeProfileCompleteness();
         }
-        
+
         if (isTrue(initializeSectionCompleteness)) {
             systemService.initializeSectionCompleteness();
         }
@@ -124,6 +125,7 @@ public class LifeCycleService {
             shutdownExecutor(executorService);
         }
     }
+
 
     @Scheduled(fixedDelay = 60000)
     private void maintain() {

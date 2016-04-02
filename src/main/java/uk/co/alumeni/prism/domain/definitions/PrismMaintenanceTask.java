@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.domain.definitions;
 
 import uk.co.alumeni.prism.services.lifecycle.helpers.AdvertServiceHelperAdvertFinancialDetail;
 import uk.co.alumeni.prism.services.lifecycle.helpers.AdvertServiceHelperAdvertTargetPending;
+import uk.co.alumeni.prism.services.lifecycle.helpers.CacheServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperDelete;
 import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperExport;
 import uk.co.alumeni.prism.services.lifecycle.helpers.EmailBounceServiceHelper;
@@ -29,7 +30,8 @@ public enum PrismMaintenanceTask {
     SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class), //
     SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class), //
     SYSTEM_DELETE_USER_NOTIFICATION(NotificationServiceHelperUser.class), //
-    SYSTEM_NOTIFY_MESSAGES(MessageServiceHelper.class);
+    SYSTEM_NOTIFY_MESSAGES(MessageServiceHelper.class), //
+    SYSTEM_CACHE_USER_ACTIVITY(CacheServiceHelper.class);
 
     private Class<? extends PrismServiceHelper> executor;
 

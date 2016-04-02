@@ -21,11 +21,11 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 
 @Service
 public class CacheService {
-    
+
     private Set<Integer> executions = newHashSet();
-    
+
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
-    
+
     @Inject
     private UserMapper userMapper;
 
@@ -40,11 +40,9 @@ public class CacheService {
     }
 
     public void updateUserActivityCaches(PrismScope scope, Integer resource, Integer currentUser, DateTime baseline) {
-        if (!shuttingDown.get()) {
-            setUserActivityCache(currentUser, baseline);
-            for (Integer user : userService.getUsersWithActivitiesToCache(scope, resource, baseline)) {
-                updateUserActivityCache(user, baseline);
-            }
+        setUserActivityCache(currentUser, baseline);
+        for (Integer user : userService.getUsersWithActivitiesToCache(scope, resource, baseline)) {
+            updateUserActivityCache(user, baseline);
         }
     }
 
@@ -58,7 +56,7 @@ public class CacheService {
     }
 
     public synchronized void setUserActivityCache(Integer user, DateTime baseline) {
-        if (!executions.contains(user)) {
+        if (!(shuttingDown.get() && executions.contains(user))) {
             executions.add(user);
             executorService.submit(new Runnable() {
                 @Override

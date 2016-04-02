@@ -35,18 +35,22 @@ public class CacheService {
         executorService = newFixedThreadPool(10);
     }
 
-    public void updateUserActivityCaches(PrismScope scope, Integer resourceId, Integer currentUser, DateTime baseline) {
+    public void updateUserActivityCaches(PrismScope scope, Integer resource, Integer currentUser, DateTime baseline) {
         if (!shuttingDown.get()) {
             setUserActivityCache(currentUser, baseline);
-            for (Integer user : userService.getUsersWithActivitiesToCache(scope, resourceId, baseline)) {
-                executorService.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        setUserActivityCache(user, baseline);
-                    }
-                });
+            for (Integer user : userService.getUsersWithActivitiesToCache(scope, resource, baseline)) {
+                updateUserActivityCache(user, baseline);
             }
         }
+    }
+
+    public void updateUserActivityCache(Integer user, DateTime baseline) {
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                setUserActivityCache(user, baseline);
+            }
+        });
     }
 
     @PreDestroy

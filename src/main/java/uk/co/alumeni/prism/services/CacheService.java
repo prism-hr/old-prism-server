@@ -1,8 +1,10 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
 
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -19,7 +21,11 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 
 @Service
 public class CacheService {
-
+    
+    private Set<Integer> executions = newHashSet();
+    
+    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
+    
     @Inject
     private UserMapper userMapper;
 
@@ -27,8 +33,6 @@ public class CacheService {
     private UserService userService;
 
     private ExecutorService executorService;
-
-    private AtomicBoolean shuttingDown = new AtomicBoolean(false);
 
     @PostConstruct
     public void startup() {
@@ -53,15 +57,23 @@ public class CacheService {
         });
     }
 
+    public synchronized void setUserActivityCache(Integer user, DateTime baseline) {
+        if (!executions.contains(user)) {
+            executions.add(user);
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
+                    userService.setUserActivityCache(user, userActivityRepresentation, baseline);
+                }
+            });
+        }
+    }
+
     @PreDestroy
     public void shutdown() {
         shuttingDown.set(true);
         shutdownExecutor(executorService);
-    }
-
-    private void setUserActivityCache(Integer user, DateTime baseline) {
-        UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
-        userService.setUserActivityCache(user, userActivityRepresentation, baseline);
     }
 
 }

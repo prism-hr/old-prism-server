@@ -39,6 +39,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_CONFIRM_REJECTION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_RESERVE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_TERMINATE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.DEPARTMENT_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.INSTITUTION_COMPLETE_APPROVAL_STAGE_NOTIFICATION;
@@ -180,7 +181,8 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(APPLICATION_RESERVED) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withReplicableSequenceClose() //
-                    .withStateTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
+                    .withStateTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME) //
+                    .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_RESERVE_NOTIFICATION), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVED) //
                     .withTransitionAction(APPLICATION_CONFIRM_OFFER) //

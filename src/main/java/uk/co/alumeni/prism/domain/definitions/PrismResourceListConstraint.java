@@ -1,16 +1,39 @@
 package uk.co.alumeni.prism.domain.definitions;
 
-import com.google.common.collect.LinkedHashMultimap;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.workflow.selectors.filter.*;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.BETWEEN;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.CONTAIN;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.GREATER;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.LESSER;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.NOT_SPECIFIED;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.DATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.DATE_TIME;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.DECIMAL;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.STATE_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.STRING;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.*;
-import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterPropertyType.*;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryLocationSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationByPrimaryThemeSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationBySecondaryLocationSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ApplicationBySecondaryThemeSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.PrismResourceListFilterSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByLocationSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByParentResourceSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByThemeSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.ResourceByUserAndRoleSelector;
+import uk.co.alumeni.prism.workflow.selectors.filter.StateByStateGroupSelector;
+
+import com.google.common.collect.LinkedHashMultimap;
 
 public enum PrismResourceListConstraint implements PrismLocalizableDefinition {
 

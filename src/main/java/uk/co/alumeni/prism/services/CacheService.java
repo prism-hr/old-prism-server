@@ -56,7 +56,7 @@ public class CacheService {
     }
 
     public synchronized void setUserActivityCache(Integer user, DateTime baseline) {
-        if (!(shuttingDown.get() && executions.contains(user))) {
+        if (!(shuttingDown.get() || executions.contains(user))) {
             executions.add(user);
             executorService.submit(new Runnable() {
                 @Override

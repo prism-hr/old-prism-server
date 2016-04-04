@@ -597,12 +597,12 @@ public class UserService {
         Set<Integer> users = Sets.newHashSet();
 
         scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
-                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, roleScope, resourceId)));
+                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resourceId, roleScope)));
 
         if (!scope.equals(SYSTEM)) {
             stream(organizationScopes).forEach(targeterScope -> {
                 stream(organizationScopes).forEach(targetScope -> {
-                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, targeterScope, targetScope, resourceId));
+                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resourceId, targeterScope, targetScope));
                 });
             });
         }

@@ -33,12 +33,14 @@ import javax.inject.Inject;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
@@ -58,6 +60,7 @@ import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserRole;
+import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.EntityLocationDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
@@ -581,7 +584,7 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope roleScope, Integer resourceId) {
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, Integer resourceId, PrismScope roleScope) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
@@ -599,7 +602,7 @@ public class UserDAO {
                 .list();
     }
 
-    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Integer resourceId) {
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, Integer resourceId, PrismScope targeterScope, PrismScope targetScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("user.id")) //
                 .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
@@ -613,6 +616,12 @@ public class UserDAO {
                 .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(getUsersWithActivitiesToCacheConstraint(scope, resourceId)) //
+                .add(Subqueries.propertyIn("userRole.role.id", //
+                        DetachedCriteria.forClass(StateActionAssignment.class) //
+                        .setProjection(Projections.groupProperty("role.id")) //
+                        .createAlias("role", "role", JoinType.INNER_JOIN) //
+                        .add(Restrictions.eq("role.scope.id", targetScope)) //
+                        .add(Restrictions.eq("externalMode", true))))
                 .list();
     }
 

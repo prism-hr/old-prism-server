@@ -2518,6 +2518,9 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     PROFILE_SHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Shared profile"),
     PROFILE_UNSHARED(PrismDisplayPropertyCategory.PROFILE_UPDATE, "Hid profile"),
 
+    PROFILE_REFEREE_NO_ITEMS(PrismDisplayPropertyCategory.PROFILE_REFEREE, "This profile does not contain any referee"),
+    PROFILE_EMPLOYMENT_NO_ITEMS(PrismDisplayPropertyCategory.PROFILE_REFEREE, "This profile does not contain any positions"),
+
     APPLICATION_FORM_FOOTER_CONFIRM_TRUE(
             PrismDisplayPropertyCategory.APPLICATION_FORM,
             "Confirm that the information that you have provided in this form is true and correct.<br/><em>Failure to provide true and correct information may result in a subsequent offer being withdrawn.</em>"),

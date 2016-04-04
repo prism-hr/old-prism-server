@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.services.lifecycle;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.slf4j.LoggerFactory.getLogger;
 import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
 
 import java.util.Set;

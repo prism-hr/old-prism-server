@@ -21,10 +21,10 @@ public class CacheServiceHelper extends PrismServiceHelperAbstract {
 
     @Inject
     private CacheService cacheService;
-    
+
     @Inject
     private ResourceService resourceService;
-    
+
     @Inject
     private UserService userService;
 
@@ -50,7 +50,7 @@ public class CacheServiceHelper extends PrismServiceHelperAbstract {
 
     private void setUserActivityCache(Integer user, DateTime baseline) {
         if (!isShuttingDown()) {
-            cacheService.updateUserActivityCache(user, baseline);
+            cacheService.setUserActivityCache(user, baseline);
         }
     }
 

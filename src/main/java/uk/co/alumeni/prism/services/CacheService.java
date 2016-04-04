@@ -36,23 +36,14 @@ public class CacheService {
 
     @PostConstruct
     public void startup() {
-        executorService = newFixedThreadPool(10);
+        executorService = newFixedThreadPool(100);
     }
 
     public void updateUserActivityCaches(PrismScope scope, Integer resource, Integer currentUser, DateTime baseline) {
         setUserActivityCache(currentUser, baseline);
         for (Integer user : userService.getUsersWithActivitiesToCache(scope, resource, baseline)) {
-            updateUserActivityCache(user, baseline);
+            setUserActivityCache(user, baseline);
         }
-    }
-
-    public void updateUserActivityCache(Integer user, DateTime baseline) {
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                setUserActivityCache(user, baseline);
-            }
-        });
     }
 
     public synchronized void setUserActivityCache(Integer user, DateTime baseline) {
@@ -63,6 +54,7 @@ public class CacheService {
                 public void run() {
                     UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
                     userService.setUserActivityCache(user, userActivityRepresentation, baseline);
+                    executions.remove(user);
                 }
             });
         }

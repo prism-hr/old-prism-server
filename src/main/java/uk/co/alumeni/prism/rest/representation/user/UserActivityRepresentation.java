@@ -30,6 +30,8 @@ public class UserActivityRepresentation {
     private List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities;
 
     private List<AdvertTargetRepresentation> advertTargetActivities;
+    
+    private Integer cacheIncrement;
 
     public PrismRoleCategory getDefaultRoleCategory() {
         return defaultRoleCategory;
@@ -85,6 +87,14 @@ public class UserActivityRepresentation {
 
     public void setAdvertTargetActivities(List<AdvertTargetRepresentation> advertTargetActivities) {
         this.advertTargetActivities = advertTargetActivities;
+    }
+
+    public Integer getCacheIncrement() {
+        return cacheIncrement;
+    }
+
+    public void setCacheIncrement(Integer cacheIncrement) {
+        this.cacheIncrement = cacheIncrement;
     }
 
     public UserActivityRepresentation withDefaultRoleCategory(PrismRoleCategory defaultRoleCategory) {

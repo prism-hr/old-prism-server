@@ -5,7 +5,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismA
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
-public class PrismApplicationApprovedCompleted extends PrismWorkflowState {
+public class PrismApplicationAccepted extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {

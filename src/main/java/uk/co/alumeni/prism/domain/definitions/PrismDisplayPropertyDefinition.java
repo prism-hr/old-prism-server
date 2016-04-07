@@ -142,6 +142,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_STATE_GROUP_APPLICATION_INTERVIEW(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Interview"),
     SYSTEM_STATE_GROUP_APPLICATION_APPROVAL(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Approval"),
     SYSTEM_STATE_GROUP_APPLICATION_APPROVED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Approved"),
+    SYSTEM_STATE_GROUP_APPLICATION_ACCEPTED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Accepted"),
     SYSTEM_STATE_GROUP_APPLICATION_REJECTED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Rejected"),
     SYSTEM_STATE_GROUP_APPLICATION_RESERVED(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Reserved"),
     SYSTEM_STATE_GROUP_APPLICATION_WITHDRAWN(PrismDisplayPropertyCategory.SYSTEM_STATE_GROUP, "Withdrawn"),

@@ -5,6 +5,7 @@ import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.WordUtils.uncapitalize;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.getTransientActions;
 import static uk.co.alumeni.prism.utils.PrismWordUtils.pluralize;
 
 import java.util.Collections;
@@ -120,9 +121,11 @@ public class StaticDataMapper {
 
     private Map<String, Object> getActions() {
         Map<String, Object> staticData = Maps.newHashMap();
+        List<ActionRepresentation> actionRepresentations = getTransientActions().stream().map(action -> actionMapper.getActionRepresentation(action))
+                .collect(toList());
+
         List<Action> actions = entityService.getAll(Action.class);
-        List<ActionRepresentation> actionRepresentations = actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId()))
-                .collect(Collectors.toList());
+        actions.stream().map(action -> actionMapper.getActionRepresentation(action.getId())).forEach(action -> actionRepresentations.add(action));
         staticData.put("actions", actionRepresentations);
         return staticData;
     }

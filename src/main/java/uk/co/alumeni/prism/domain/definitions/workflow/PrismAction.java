@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.leftPad;
@@ -8,10 +9,12 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategor
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.INITIALISE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_CANDIDATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.PROCESS_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.PROPAGATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_ACTIVITY_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_CANDIDATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_RESOURCE_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.WITHDRAW_RESOURCE;
@@ -41,6 +44,8 @@ import com.google.common.collect.Sets;
 
 public enum PrismAction implements PrismLocalizableDefinition {
 
+    CANDIDATE_VIEW(new PrismActionDefinition().withActionCategory(VIEW_CANDIDATE)), //
+    CANDIDATE_SEND_MESSAGE(new PrismActionDefinition().withActionCategory(MESSAGE_CANDIDATE)), //
     APPLICATION_ASSIGN_HIRING_MANAGERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments()), //
     APPLICATION_ASSIGN_INTERVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments()), //
     APPLICATION_ASSIGN_REVIEWERS(getDefaultProcessApplicationActionDefinitionWithRedactionsAndReplicableUserAssignments()), //
@@ -146,9 +151,16 @@ public enum PrismAction implements PrismLocalizableDefinition {
     SYSTEM_VIEW_PROJECT_LIST(getDefaultSystemViewResourceListActionDefinition()), //
     SYSTEM_VIEW_APPLICATION_LIST(getDefaultSystemViewResourceListActionDefinition());
 
+    private static Set<PrismAction> transientActions = newHashSet();
+
     private static Map<PrismAction, PrismAction> delegatedActions = newHashMap();
 
     static {
+        for (PrismAction action : values()) {
+            if (action.getScope() == null) {
+                transientActions.add(action);
+            }
+        }
         delegatedActions.put(APPLICATION_UPLOAD_REFERENCE, APPLICATION_PROVIDE_REFERENCE);
     }
 
@@ -206,6 +218,10 @@ public enum PrismAction implements PrismLocalizableDefinition {
         return leftPad(String.valueOf(this.ordinal()), (String.valueOf(values().length).length() - 1), "0");
     }
     
+    public static Set<PrismAction> getTransientActions() {
+        return transientActions;
+    }
+
     public PrismAction getDelegatedAction() {
         return delegatedActions.get(this);
     }

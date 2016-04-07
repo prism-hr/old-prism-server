@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
@@ -191,11 +192,15 @@ public class UserMapper {
     public UserActivityRepresentation getUserActivityRepresentation(User user) {
         UserAccount userAccount = user.getUserAccount();
         if (userAccount != null) {
+            UserActivityRepresentation representation;
             String userActivityCache = userAccount.getActivityCache();
             if (userActivityCache == null) {
-                return getUserActivityRepresentationFresh(user);
+                representation = getUserActivityRepresentationFresh(user);
+            } else {
+                representation = prismJsonMappingUtils.readValue(userActivityCache, UserActivityRepresentation.class);
             }
-            return prismJsonMappingUtils.readValue(userActivityCache, UserActivityRepresentation.class);
+            representation.setCacheIncrement(userAccount.getActivityCachedIncrement());
+            return representation;
         }
         return null;
     }
@@ -209,7 +214,7 @@ public class UserMapper {
 
         Integer readMessageCount = userService.getUserReadMessageCount(user, user);
         Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, user);
-        return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
+        UserActivityRepresentation representation = new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withProfileActivity(profileMapper.getProfileActivityRepresentation(user))
                 .withMessageActivity(new ProfileRepresentationMessage()
@@ -218,6 +223,9 @@ public class UserMapper {
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
                 .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
                 .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));
+
+        userService.setUserActivityCache(user, representation, now());
+        return representation;
     }
 
     public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity, User user) {

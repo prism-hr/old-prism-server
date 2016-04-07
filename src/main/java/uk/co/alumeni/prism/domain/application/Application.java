@@ -732,7 +732,7 @@ public class Application extends Resource
                 .addProperty("program", program)
                 .addProperty("department", department)
                 .addProperty("institution", institution)
-                .addExclusion("state.id", PrismState.APPLICATION_APPROVED_COMPLETED)
+                .addExclusion("state.id", PrismState.APPLICATION_ACCEPTED)
                 .addExclusion("state.id", PrismState.APPLICATION_REJECTED_COMPLETED)
                 .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED)
                 .addExclusion("state.id", PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED);

@@ -600,9 +600,16 @@ public class UserService {
     }
 
     public void setUserActivityCache(Integer user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
-        UserAccount userAccount = getById(user).getUserAccount();
+        setUserActivityCache(getById(user), userActivityRepresentation, baseline);
+    }
+
+    public void setUserActivityCache(User user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
+        UserAccount userAccount = user.getUserAccount();
         userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
         userAccount.setActivityCachedTimestamp(baseline);
+
+        Integer activityCachedIncrement = userAccount.getActivityCachedIncrement();
+        userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement++);
     }
 
     public boolean checkUserCanViewUserProfile(User user, User currentUser) {

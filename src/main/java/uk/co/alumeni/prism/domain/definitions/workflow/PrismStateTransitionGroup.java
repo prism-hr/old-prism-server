@@ -70,7 +70,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION_ACCEPTANCE;
@@ -321,7 +321,7 @@ public enum PrismStateTransitionGroup {
 
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION( //
             new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_COMPLETED) //
+                    .withTransitionState(APPLICATION_ACCEPTED) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME) //
                     .withStateTransitionNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //

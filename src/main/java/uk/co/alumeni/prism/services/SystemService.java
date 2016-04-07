@@ -370,33 +370,36 @@ public class SystemService {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
-            Scope scope = scopeService.getById(prismAction.getScope());
-            Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
-                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction()).withTransitionAction(false)
-                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
-                    .withDocumentCirculationAction(prismAction.isDocumentCirculationAction())
-                    .withReplicableUserAssignmentAction(prismAction.isReplicableUserAssignmentAction()).withPartnershipState(prismAction.getPartnershipState())
-                    .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
-            Action action = entityService.createOrUpdate(transientAction);
-            action.getRedactions().clear();
+            PrismScope prismScope = prismAction.getScope();
+            if (prismScope != null) {
+                Scope scope = scopeService.getById(prismScope);
+                Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
+                        .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction()).withTransitionAction(false)
+                        .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
+                        .withDocumentCirculationAction(prismAction.isDocumentCirculationAction())
+                        .withReplicableUserAssignmentAction(prismAction.isReplicableUserAssignmentAction())
+                        .withPartnershipState(prismAction.getPartnershipState())
+                        .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
+                Action action = entityService.createOrUpdate(transientAction);
+                action.getRedactions().clear();
 
-            for (PrismActionRedaction prismActionRedaction : prismAction.getActionRedactions()) {
-                Role role = roleService.getById(prismActionRedaction.getRole());
-                ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
-                        .withRedactionType(prismActionRedaction.getRedactionType());
-                ActionRedaction actionRedaction = entityService.createOrUpdate(transientActionRedaction);
-                action.getRedactions().add(actionRedaction);
+                for (PrismActionRedaction prismActionRedaction : prismAction.getActionRedactions()) {
+                    Role role = roleService.getById(prismActionRedaction.getRole());
+                    ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
+                            .withRedactionType(prismActionRedaction.getRedactionType());
+                    ActionRedaction actionRedaction = entityService.createOrUpdate(transientActionRedaction);
+                    action.getRedactions().add(actionRedaction);
+                }
             }
         }
-        
+
         for (PrismAction prismAction : PrismAction.values()) {
             PrismAction prismActionDelegated = prismAction.getDelegatedAction();
             if (prismActionDelegated != null) {
                 actionService.getById(prismAction).setDelegatedAction(actionService.getById(prismActionDelegated));
             }
         }
-        
-        
+
     }
 
     private void initializeStateGroups() throws DeduplicationException {

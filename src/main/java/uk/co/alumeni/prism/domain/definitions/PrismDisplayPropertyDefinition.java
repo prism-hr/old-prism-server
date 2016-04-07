@@ -200,6 +200,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM ACTION *********************
      */
 
+    SYSTEM_ACTION_CANDIDATE_VIEW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View"), 
+    SYSTEM_ACTION_CANDIDATE_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"), 
     SYSTEM_ACTION_APPLICATION_ASSESS_ELIGIBILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Assess Eligibility"),
     SYSTEM_ACTION_APPLICATION_ASSIGN_INTERVIEWERS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Assign Interviewers"),
     SYSTEM_ACTION_APPLICATION_ASSIGN_REVIEWERS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Assign Reviewers"),

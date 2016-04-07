@@ -122,6 +122,9 @@ public class UserAccount
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
 
+    @Column(name = "activity_cached_increment")
+    private Integer activityCachedIncrement;
+    
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
@@ -323,6 +326,14 @@ public class UserAccount
     @Override
     public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
         this.activityCachedTimestamp = activityCachedTimestamp;
+    }
+    
+    public Integer getActivityCachedIncrement() {
+        return activityCachedIncrement;
+    }
+
+    public void setActivityCachedIncrement(Integer activityCachedIncrement) {
+        this.activityCachedIncrement = activityCachedIncrement;
     }
 
     @Override

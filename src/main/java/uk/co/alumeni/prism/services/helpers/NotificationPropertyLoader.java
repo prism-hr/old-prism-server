@@ -1,22 +1,12 @@
 package uk.co.alumeni.prism.services.helpers;
 
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CANDIDATE_VIEW_PROFILE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.CANDIDATE_VIEW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
-
-import java.util.Map;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.ImmutableMap;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
@@ -28,41 +18,39 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
+
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CANDIDATE_VIEW_PROFILE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.CANDIDATE_VIEW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
 @Service
 @Transactional
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotificationPropertyLoader {
 
-    private PropertyLoader propertyLoader;
-
-    private NotificationDefinitionDTO notificationDefinitionDTO;
-
-    @Value("${application.url}")
-    private String applicationUrl;
-
-    @Value("${application.api.url}")
-    private String applicationApiUrl;
-
-    @Value("${system.helpdesk}")
-    private String helpdesk;
-
-    @Inject
-    private ActionService actionService;
-
-    @Inject
-    private SystemService systemService;
-
-    @Inject
-    private UserService userService;
-
-    @Inject
-    private PrismTemplateUtils prismTemplateUtils;
-
     @Inject
     ApplicationContext applicationContext;
+    private PropertyLoader propertyLoader;
+    private NotificationDefinitionDTO notificationDefinitionDTO;
+    @Value("${application.url}")
+    private String applicationUrl;
+    @Value("${application.api.url}")
+    private String applicationApiUrl;
+    @Value("${system.helpdesk}")
+    private String helpdesk;
+    @Inject
+    private ActionService actionService;
+    @Inject
+    private SystemService systemService;
+    @Inject
+    private UserService userService;
+    @Inject
+    private PrismTemplateUtils prismTemplateUtils;
 
     public PropertyLoader getPropertyLoader() {
         return propertyLoader;
@@ -111,16 +99,16 @@ public class NotificationPropertyLoader {
 
     public String getCandidateProfileControl() {
         User candidate = notificationDefinitionDTO.getCandidate();
-        
+        User recipient = notificationDefinitionDTO.getRecipient();
+
         String path;
-        User currentUser = userService.getCurrentUser();
-        if (candidate.equals(currentUser)) {
-            path = applicationApiUrl + "/messages";
+        if (candidate.equals(recipient)) {
+            path = applicationApiUrl + "/mail/messages";
         } else {
-            path = getRedirectionUrl(candidate.getId(), CANDIDATE_VIEW, currentUser);
+            path = getRedirectionUrl(candidate.getId(), CANDIDATE_VIEW, recipient);
         }
-        
-        return getRedirectionControl(applicationApiUrl + path + "messages", SYSTEM_CANDIDATE_VIEW_PROFILE);
+
+        return getRedirectionControl(path, SYSTEM_CANDIDATE_VIEW_PROFILE);
     }
 
     public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {
@@ -154,7 +142,7 @@ public class NotificationPropertyLoader {
     }
 
     private String getRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
-        Map<String, Object> model = Maps.newHashMap();
+        Map<String, Object> model = new HashMap<>();
         ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.loadLazy(linkLabel));
         model.put("link", link);
 

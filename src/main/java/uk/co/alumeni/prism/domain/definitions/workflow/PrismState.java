@@ -24,11 +24,11 @@ import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationAccepted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationAccepted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferAcceptance;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevision;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevisionAcceptance;

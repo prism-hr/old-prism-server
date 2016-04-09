@@ -1,60 +1,7 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.base.Objects.equal;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.newTreeMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.collect.Sets.newLinkedHashSet;
-import static com.google.common.collect.Sets.newTreeSet;
-import static java.math.RoundingMode.HALF_UP;
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.Collections.emptyList;
-import static org.apache.commons.collections.CollectionUtils.isEmpty;
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static org.apache.commons.lang.BooleanUtils.toBoolean;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.WordUtils.capitalize;
-import static org.apache.commons.lang3.ArrayUtils.isEmpty;
-import static org.joda.time.DateTime.now;
-import static org.springframework.beans.BeanUtils.instantiate;
-import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
-import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
-import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
-import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getUUID;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
-import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
-
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
@@ -65,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
-
 import uk.co.alumeni.prism.dao.UserDAO;
 import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
@@ -84,11 +30,7 @@ import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.user.UserCompetence;
 import uk.co.alumeni.prism.domain.workflow.Action;
-import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
-import uk.co.alumeni.prism.dto.ProfileListRowDTO;
-import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
-import uk.co.alumeni.prism.dto.UserOrganizationDTO;
-import uk.co.alumeni.prism.dto.UserSelectionDTO;
+import uk.co.alumeni.prism.dto.*;
 import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
 import uk.co.alumeni.prism.rest.UserDescriptor;
@@ -104,12 +46,40 @@ import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.collect.TreeMultimap;
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newTreeMap;
+import static com.google.common.collect.Sets.*;
+import static java.math.RoundingMode.HALF_UP;
+import static java.util.Arrays.stream;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.*;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.WordUtils.capitalize;
+import static org.apache.commons.lang3.ArrayUtils.isEmpty;
+import static org.joda.time.DateTime.now;
+import static org.springframework.beans.BeanUtils.instantiate;
+import static uk.co.alumeni.prism.PrismConstants.*;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getUUID;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 @Service
 @Transactional
@@ -321,7 +291,7 @@ public class UserService {
         User user = getById(userId);
         if (Objects.equals(user.getId(), user.getParentUser().getId())) {
             User newParent = getCurrentUser();
-            List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[0]));
+            List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[user.getChildUsers().size()]));
             for (User childUser : childUsers) {
                 childUser.setParentUser(newParent);
             }
@@ -421,7 +391,7 @@ public class UserService {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
             return userDAO.getBouncedOrUnverifiedUsers(enclosedResources, userListFilterDTO);
         }
-        return Lists.<User> newArrayList();
+        return Lists.<User>newArrayList();
     }
 
     public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserDTO userDTO) {
@@ -510,7 +480,7 @@ public class UserService {
         Set<UnverifiedUserDTO> userRoles = newTreeSet();
         HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesForWhichUserCanAdminister(user);
         if (!resources.isEmpty()) {
-            for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            for (PrismScope scope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
                 Set<Integer> scopedResources = resources.get(scope);
                 if (isNotEmpty(scopedResources)) {
                     userRoles.addAll(userDAO.getUsersToVerify(scope, resources.get(scope)));
@@ -556,7 +526,7 @@ public class UserService {
     }
 
     public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User user,
-            String lastSequenceIdentifier) {
+                                                   String lastSequenceIdentifier) {
         if (isTrue(filter.getWithNewMessages())) {
             filter.setUserIds(userDAO.getUsersWithUnreadMessages(user));
         }
@@ -578,10 +548,6 @@ public class UserService {
 
     public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
-    }
-
-    public UserDTO getUserDTO(User user) {
-        return new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail());
     }
 
     public boolean checkUserEditable(User user, User currentUser) {
@@ -620,11 +586,11 @@ public class UserService {
         userAccount.setActivityCachedTimestamp(baseline);
 
         Integer activityCachedIncrement = userAccount.getActivityCachedIncrement();
-        userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement++);
+        userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement + 1);
     }
 
     public boolean checkUserCanViewUserProfile(User user, User currentUser) {
-        return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserIds(asList(user.getId())), currentUser));
+        return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserIds(Collections.singletonList(user.getId())), currentUser));
     }
 
     public Long getUserUnreadMessageCount(Collection<Integer> userIds, User currentUser) {
@@ -666,7 +632,7 @@ public class UserService {
     }
 
     public TreeMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, HashMultimap<PrismScope, Integer> resourceIndex,
-            PrismRoleCategory roleCategory) {
+                                                                           PrismRoleCategory roleCategory) {
         TreeMultimap<Integer, UserOrganizationDTO> userResourceParents = TreeMultimap.create();
         Arrays.stream(organizationScopes).forEach(
                 os -> userDAO.getUserOrganizations(userIds, os, resourceIndex.get(os), roleCategory).forEach(

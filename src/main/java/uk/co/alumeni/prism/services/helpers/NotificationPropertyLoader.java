@@ -1,12 +1,23 @@
 package uk.co.alumeni.prism.services.helpers;
 
-import com.google.common.collect.ImmutableMap;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CANDIDATE_VIEW_PROFILE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.CANDIDATE_VIEW;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
@@ -15,42 +26,39 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.ActionService;
 import uk.co.alumeni.prism.services.SystemService;
-import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
-
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CANDIDATE_VIEW_PROFILE;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.CANDIDATE_VIEW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import com.google.common.collect.ImmutableMap;
 
 @Service
 @Transactional
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NotificationPropertyLoader {
 
-    @Inject
-    ApplicationContext applicationContext;
     private PropertyLoader propertyLoader;
+
     private NotificationDefinitionDTO notificationDefinitionDTO;
+
     @Value("${application.url}")
     private String applicationUrl;
+
     @Value("${application.api.url}")
     private String applicationApiUrl;
+
     @Value("${system.helpdesk}")
     private String helpdesk;
+
     @Inject
     private ActionService actionService;
+
     @Inject
     private SystemService systemService;
-    @Inject
-    private UserService userService;
+
     @Inject
     private PrismTemplateUtils prismTemplateUtils;
+
+    @Inject
+    ApplicationContext applicationContext;
 
     public PropertyLoader getPropertyLoader() {
         return propertyLoader;

@@ -74,7 +74,7 @@ public class ActionService {
 
     @Inject
     private CacheService cacheService;
-    
+
     @Inject
     private CommentService commentService;
 
@@ -369,7 +369,7 @@ public class ActionService {
             Resource transitionResource = stateTransition == null ? resource : resource.getEnclosingResource(transitionAction.getScope().getId());
 
             ActionOutcomeDTO actionOutcome = new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(transitionResource)
-                    .withAction(action).withTransitionAction(transitionAction).withStateTransition(stateTransition);
+                    .withAction(action).withTransitionAction(transitionAction).withStateTransition(stateTransition).withComment(comment);
 
             LinkedList<Comment> replicableSequenceComments = null;
             if (stateTransition != null && isTrue(stateTransition.getReplicableSequenceClose())) {
@@ -389,13 +389,14 @@ public class ActionService {
                     actionOutcome.setReplicableSequenceComments(replicableSequenceComments);
                 }
             }
-            
-            cacheService.updateUserActivityCaches(resource.getResourceScope(), resource.getId(), user.getId(), comment.getSubmittedTimestamp());
+
+            cacheService.updateUserActivityCaches(resource, user, comment.getSubmittedTimestamp());
             return actionOutcome;
         }
 
         commentService.createOrUpdateComment(resource, comment);
-        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withAction(action).withTransitionAction(action);
+        return new ActionOutcomeDTO().withUser(user).withResource(resource).withTransitionResource(resource).withAction(action).withTransitionAction(action)
+                .withComment(comment);
     }
 
     private List<ActionDTO> getPermittedActions(User user, Resource resource, PrismAction action) {

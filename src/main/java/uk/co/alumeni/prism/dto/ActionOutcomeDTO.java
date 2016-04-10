@@ -21,6 +21,8 @@ public class ActionOutcomeDTO {
     private Action transitionAction;
 
     private StateTransition stateTransition;
+    
+    private Comment comment;
 
     private List<Comment> replicableSequenceComments;
 
@@ -52,6 +54,10 @@ public class ActionOutcomeDTO {
         return action;
     }
 
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
     public Action getTransitionAction() {
         return transitionAction;
     }
@@ -66,6 +72,14 @@ public class ActionOutcomeDTO {
 
     public void setStateTransition(StateTransition stateTransition) {
         this.stateTransition = stateTransition;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
     }
 
     public List<Comment> getReplicableSequenceComments() {
@@ -103,6 +117,11 @@ public class ActionOutcomeDTO {
 
     public ActionOutcomeDTO withStateTransition(StateTransition stateTransition) {
         this.stateTransition = stateTransition;
+        return this;
+    }
+    
+    public ActionOutcomeDTO withComment(Comment comment) {
+        this.comment = comment;
         return this;
     }
 

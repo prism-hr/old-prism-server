@@ -16,6 +16,8 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 
@@ -39,6 +41,14 @@ public class CacheService {
         executorService = newFixedThreadPool(100);
     }
 
+    public void updateUserActivityCaches(Resource resource, User currentUser, DateTime baseline) {
+        updateUserActivityCaches(resource.getResourceScope(), resource.getId(), currentUser.getId(), baseline);
+    }
+    
+    public void updateUserActivityCaches(PrismScope scope, Integer resource, User currentUser, DateTime baseline) {
+        updateUserActivityCaches(scope, resource, currentUser.getId(), baseline);
+    }
+    
     public void updateUserActivityCaches(PrismScope scope, Integer resource, Integer currentUser, DateTime baseline) {
         setUserActivityCache(currentUser, baseline);
         for (Integer user : userService.getUsersWithActivitiesToCache(scope, resource, baseline)) {

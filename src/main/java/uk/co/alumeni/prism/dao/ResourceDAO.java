@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.hibernate.transform.Transformers.aliasToBean;
@@ -19,6 +20,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITU
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.valueOf;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
@@ -26,11 +28,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
@@ -44,6 +48,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
+import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
@@ -76,6 +81,7 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+import uk.co.alumeni.prism.utils.PrismEnumUtils;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -657,22 +663,57 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+    public Set<Integer> getResourcesWithActivitiesToCache(PrismScope scope, DateTime baseline) {
+        Session session = sessionFactory.getCurrentSession();
+        Class<? extends Resource> resourceClass = scope.getResourceClass();
+        Set<Integer> resources = newHashSet(session.createCriteria(resourceClass) //
                 .setProjection(Projections.groupProperty("id")) //
-                .createAlias("comments", "comment", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("comment.thread", "thread", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("thread.messages", "message", JoinType.LEFT_OUTER_JOIN) //
-                .add(Restrictions.isNotNull("comment.id")) //
+                .createAlias("comments", "comment", JoinType.INNER_JOIN) //
                 .add(Restrictions.le("comment.submittedTimestamp", baseline)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("activityCachedTimestamp")) //
-                        .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp")) //
+                        .add(Restrictions.gtProperty("comment.submittedTimestamp", "activityCachedTimestamp"))) //
+                .list());
+
+        resources.addAll(session.createCriteria(resourceClass) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("comments", "comment", JoinType.INNER_JOIN) //
+                .createAlias("comment.thread", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
+                .add(Restrictions.le("message.createdTimestamp", baseline)) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("activityCachedTimestamp")) //
                         .add(Restrictions.gtProperty("message.createdTimestamp", "activityCachedTimestamp"))) //
-                .list();
+                .list());
+
+        if (scope.getScopeCategory().equals(ORGANIZATION)) {
+            String scopeReference = scope.getLowerCamelName();
+            resources.addAll(session.createCriteria(AdvertTarget.class) //
+                    .setProjection(Projections.groupProperty("resource.id")) //
+                    .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
+                    .createAlias("advert." + scopeReference, "resource", JoinType.INNER_JOIN) //
+                    .add(Restrictions.le("createdTimestamp", baseline)) //
+                    .add(Restrictions.disjunction() //
+                            .add(Restrictions.isNull("resource.activityCachedTimestamp"))
+                            .add(Restrictions.gtProperty("createdTimestamp", "resource.activityCachedTimestamp"))) //
+                    .list());
+
+            resources.addAll(session.createCriteria(UserRole.class) //
+                    .setProjection(Projections.groupProperty("resource.id")) //
+                    .createAlias(scopeReference, "resource", JoinType.INNER_JOIN) //
+                    .createAlias("role", "role", JoinType.INNER_JOIN) //
+                    .add(Restrictions.le("assignedTimestamp", baseline)) //
+                    .add(Restrictions.disjunction() //
+                            .add(Restrictions.isNull("resource.activityCachedTimestamp"))
+                            .add(Restrictions.gtProperty("assignedTimestamp", "resource.activityCachedTimestamp"))) //
+                    .add(Restrictions.in("role.id", PrismEnumUtils.values(PrismRole.class, scope, "VIEWER_UNVERIFIED", "STUDENT_UNVERIFIED"))) //
+                    .list());
+        }
+
+        return resources;
     }
 
-    public void setResourceActivityCachedTimestamp(PrismScope scope, List<Integer> resources, DateTime baseline) {
+    public void setResourceActivityCachedTimestamp(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
         sessionFactory.getCurrentSession().createQuery( //
                 "update " + scope.getUpperCamelName() + " " //
                         + "set activityCachedTimestamp = :baseline " //
@@ -692,9 +733,9 @@ public class ResourceDAO {
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED)) //
                 .list();
     }
-    
+
     public List<EntityLocationDTO> getResourceOrganizationLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
-        return (List<EntityLocationDTO>)  sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
+        return (List<EntityLocationDTO>) sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("id")) //
                         .add(Projections.groupProperty("locationPart.name").as("location"))) //

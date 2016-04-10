@@ -200,8 +200,10 @@ public class MessageService {
             }
         }
 
-        if (resource != null) {
-            cacheService.updateUserActivityCaches(resource.getResourceScope(), resource.getId(), currentUser.getId(), baseline);
+        if (resource == null) {
+            
+        } else {
+            cacheService.updateUserActivityCaches(resource, currentUser, baseline); 
         }
     }
 

@@ -73,8 +73,11 @@ public class RoleService {
     private AdvertService advertService;
 
     @Inject
+    private CacheService cacheService;
+
+    @Inject
     private EntityService entityService;
-    
+
     @Inject
     private NotificationService notificationService;
 
@@ -156,26 +159,30 @@ public class RoleService {
         deleteUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
     }
 
-    public void verifyUserRoles(User invoker, ResourceParent resource, User user, Boolean verify) {
+    public void verifyUserRoles(User currentUser, ResourceParent resource, User user, Boolean verify) {
+        DateTime baseline = now();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker))) {
+
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, currentUser))) {
             boolean isVerify = isTrue(verify);
             for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
                 if (isVerify) {
-                    createUserRoles(invoker, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
+                    createUserRoles(currentUser, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
                     if (isTrue(userRole.getRequested())) {
-                        notificationService.sendJoinNotification(invoker, user, resource);
+                        notificationService.sendJoinNotification(currentUser, user, resource);
                     } else {
                         userRole.setInvitation(invitationService.createInvitation(user));
                     }
                 } else {
                     getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
                             .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED"))))
-                            .withAssignedTimestamp(now()));
+                            .withAssignedTimestamp(baseline));
                 }
                 entityService.delete(userRole);
             }
         }
+
+        cacheService.updateUserActivityCaches(resource, currentUser, baseline);
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {
@@ -236,11 +243,11 @@ public class RoleService {
 
         return newArrayList(roles);
     }
-    
+
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
         return roleDAO.getRolesForResource(resource, user);
     }
-    
+
     public List<PrismRole> getUserRoles(Resource resource, User user) {
         return roleDAO.getUserRoles(resource, user).stream().map(userRole -> userRole.getRole()).collect(toList());
     }
@@ -315,7 +322,7 @@ public class RoleService {
     public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
         return roleDAO.getVerifiedRoles(user, resource);
     }
-    
+
     public List<UserRole> getUserRolesForWhichUserIsCandidate(User user) {
         return roleDAO.getUserRolesForWhichUserIsCandidate(user);
     }

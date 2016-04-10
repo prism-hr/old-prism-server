@@ -71,6 +71,10 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
     @Column(name = "partnership_state", nullable = false)
     private PrismPartnershipState partnershipState;
 
+    @Column(name = "created_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime createdTimestamp;
+    
     @Column(name = "accepted_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime acceptedTimestamp;
@@ -172,6 +176,14 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.partnershipState = partnershipState;
     }
 
+    public DateTime getCreatedTimestamp() {
+        return createdTimestamp;
+    }
+
+    public void setCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
+    }
+
     public DateTime getAcceptedTimestamp() {
         return acceptedTimestamp;
     }
@@ -234,9 +246,14 @@ public class AdvertTarget extends AdvertAttribute implements Activity, UserAssig
         this.invitation = invitation;
         return this;
     }
-
+    
     public AdvertTarget withPartnershipState(PrismPartnershipState partnershipState) {
         this.partnershipState = partnershipState;
+        return this;
+    }
+    
+    public AdvertTarget withCreatedTimestamp(DateTime createdTimestamp) {
+        this.createdTimestamp = createdTimestamp;
         return this;
     }
 

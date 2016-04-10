@@ -90,9 +90,6 @@ public class CommentDTO {
     private ResourceRelationCreationDTO resourceInvitation;
 
     @Valid
-    private ResourceCreationDTO resourceInvited;
-
-    @Valid
     private List<CommentAssignedUserDTO> assignedUsers;
 
     @Valid
@@ -345,14 +342,6 @@ public class CommentDTO {
 
     public void setResourceInvitation(ResourceRelationCreationDTO resourceInvitation) {
         this.resourceInvitation = resourceInvitation;
-    }
-
-    public ResourceCreationDTO getResourceInvited() {
-        return resourceInvited;
-    }
-
-    public void setResourceInvited(ResourceCreationDTO resourceInvited) {
-        this.resourceInvited = resourceInvited;
     }
 
     public List<CommentAssignedUserDTO> getAssignedUsers() {

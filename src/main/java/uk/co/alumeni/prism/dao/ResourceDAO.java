@@ -691,7 +691,7 @@ public class ResourceDAO {
             resources.addAll(session.createCriteria(AdvertTarget.class) //
                     .setProjection(Projections.groupProperty("resource.id")) //
                     .createAlias("acceptAdvert", "acceptAdvert", JoinType.INNER_JOIN) //
-                    .createAlias("advert." + scopeReference, "resource", JoinType.INNER_JOIN) //
+                    .createAlias("acceptAdvert." + scopeReference, "resource", JoinType.INNER_JOIN) //
                     .add(Restrictions.le("createdTimestamp", baseline)) //
                     .add(Restrictions.disjunction() //
                             .add(Restrictions.isNull("resource.activityCachedTimestamp"))

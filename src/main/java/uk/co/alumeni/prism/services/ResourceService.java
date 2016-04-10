@@ -185,6 +185,9 @@ public class ResourceService {
     private ApplicationService applicationService;
 
     @Inject
+    private CacheService cacheService;
+
+    @Inject
     private CommentService commentService;
 
     @Inject
@@ -234,11 +237,12 @@ public class ResourceService {
         return entityService.getById(resourceClass, id);
     }
 
-    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO) {
-        return inviteResourceRelation(resource, user, resourceInvitationDTO, resourceInvitationDTO.getMessage());
+    public ResourceParent inviteResourceRelation(ResourceParent resource, User currentUser, ResourceRelationCreationDTO resourceInvitationDTO) {
+        return inviteResourceRelation(resource, currentUser, resourceInvitationDTO, resourceInvitationDTO.getMessage(), now());
     }
 
-    public ResourceParent inviteResourceRelation(ResourceParent resource, User user, ResourceRelationCreationDTO resourceInvitationDTO, String message) {
+    public ResourceParent inviteResourceRelation(ResourceParent resource, User currentUser, ResourceRelationCreationDTO resourceInvitationDTO, String message,
+            DateTime baseline) {
         if (validateResourceRelationCreation(resourceInvitationDTO)) {
             User childOwner = userService.getOrCreateUser(resourceInvitationDTO.getUser());
 
@@ -248,12 +252,12 @@ public class ResourceService {
 
             if (resource != null) {
                 if (resourceTarget.getState().getId().name().endsWith("_UNSUBMITTED")) {
-                    target = advertService.createAdvertTarget((ResourceParent) resource, user, resourceTarget, childOwner, context);
-                    notificationService.sendOrganizationInvitationNotification(user, childOwner, resourceTarget, target, message);
+                    target = advertService.createAdvertTarget((ResourceParent) resource, currentUser, resourceTarget, childOwner, baseline, context);
+                    notificationService.sendOrganizationInvitationNotification(currentUser, childOwner, resourceTarget, target, message);
                 } else {
-                    advertService.createAdvertTarget(resource, user, resourceTarget, //
+                    advertService.createAdvertTarget(resource, currentUser, resourceTarget, //
                             new UserDTO().withId(childOwner.getId()).withFirstName(childOwner.getFirstName()).withLastName(childOwner.getLastName())
-                                    .withEmail(childOwner.getEmail()), context, message);
+                                    .withEmail(childOwner.getEmail()), baseline, context, message);
                 }
             }
 
@@ -378,54 +382,55 @@ public class ResourceService {
         }
     }
 
-    public ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO) {
-        return executeAction(user, commentDTO, false);
+    public ActionOutcomeDTO executeAction(User currentUser, CommentDTO commentDTO) {
+        return executeAction(currentUser, commentDTO, false);
     }
 
-    public ActionOutcomeDTO executeAction(User user, CommentDTO commentDTO, boolean systemInvocation) {
+    public ActionOutcomeDTO executeAction(User currentUser, CommentDTO commentDTO, boolean systemInvocation) {
         ActionOutcomeDTO actionOutcome = null;
         if (commentDTO.isBypassComment()) {
-            executeActionBypass(user, commentDTO);
+            executeActionBypass(currentUser, commentDTO);
         } else {
             if (commentDTO.isCreateComment()) {
                 ResourceCreationDTO resourceDTO = commentDTO.getResource();
                 Action action = actionService.getById(commentDTO.getAction());
                 resourceDTO.setParentResource(resourceDTO.getParentResource());
-                actionOutcome = createResource(user, action, resourceDTO, systemInvocation);
+                actionOutcome = createResource(currentUser, action, resourceDTO, systemInvocation);
             } else {
                 if (commentDTO.isClaimComment()) {
-                    commentService.preprocessClaimComment(user, commentDTO);
+                    commentService.preprocessClaimComment(currentUser, commentDTO);
                 }
 
                 Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
-                if (actionExecutor != null) {
-                    actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
-                }
+                actionOutcome = applicationContext.getBean(actionExecutor).execute(commentDTO);
             }
 
             ResourceCreationDTO resourceDTO = commentDTO.getResource();
             if (ResourceParentDTO.class.isAssignableFrom(resourceDTO.getClass())) {
-                ResourceParent resource = (ResourceParent) actionOutcome.getResource();
-                advertService.updateAdvertVisibility(user, resource.getAdvert(), (ResourceParentDTO) resourceDTO);
-                setResourceAdvertIncompleteSection(resource);
+                DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
+                if (baseline != null) {
+                    ResourceParent resource = (ResourceParent) actionOutcome.getResource();
+                    advertService.updateAdvertVisibility(currentUser, resource.getAdvert(), (ResourceParentDTO) resourceDTO, baseline);
+                    setResourceAdvertIncompleteSection(resource);
+                }
             }
         }
 
         return actionOutcome;
     }
 
-    public void executeActionBypass(User user, CommentDTO commentDTO) {
+    public void executeActionBypass(User currentUser, CommentDTO commentDTO) {
         PrismRoleContext roleContext = commentDTO.getRoleContext();
         ResourceRelationCreationDTO resourceInvitation = commentDTO.getResourceInvitation();
         if (roleContext != null) {
-            joinResource(commentDTO.getResource(), user, roleContext);
+            joinResource(commentDTO.getResource(), currentUser, roleContext);
         } else if (resourceInvitation != null) {
             ResourceParent resourceInviting = null;
             ResourceCreationDTO resourceInvitingDTO = commentDTO.getResourceInviting();
             if (resourceInvitingDTO != null) {
                 resourceInviting = (ResourceParent) getById(resourceInvitingDTO.getScope(), resourceInvitingDTO.getId());
             }
-            inviteResourceRelation(resourceInviting, user, resourceInvitation);
+            inviteResourceRelation(resourceInviting, currentUser, resourceInvitation);
         }
     }
 
@@ -552,11 +557,11 @@ public class ResourceService {
         entityService.flush();
     }
 
-    public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
-        executeUpdate(resource, user, messageIndex, null, assignees);
+    public ActionOutcomeDTO executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, CommentAssignedUser... assignees) {
+        return executeUpdate(resource, user, messageIndex, null, assignees);
     }
 
-    public void executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, PrismState transitionStateId,
+    public ActionOutcomeDTO executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, PrismState transitionStateId,
             CommentAssignedUser... assignees) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
@@ -569,8 +574,9 @@ public class ResourceService {
                 comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
                 entityService.evict(assignee);
             }
-            actionService.executeUserAction(resource, action, comment);
+            return actionService.executeUserAction(resource, action, comment);
         }
+        return null;
     }
 
     public <T extends Resource> T getOperativeResource(T resource, Action action) {
@@ -1018,12 +1024,16 @@ public class ResourceService {
         return user;
     }
 
-    public void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext) {
-        joinResource(resource, user, roleContext, true);
+    public void joinResource(ResourceParent resource, User currentUser, PrismRoleContext roleContext) {
+        joinResource(resource, currentUser, roleContext, true);
     }
 
-    public void joinResource(ResourceCreationDTO resource, User user, PrismRoleContext roleContext) {
-        joinResource((ResourceParent) getById(resource.getScope(), resource.getId()), user, roleContext, true);
+    public void joinResource(ResourceCreationDTO resourceDTO, User currentUser, PrismRoleContext roleContext) {
+        Integer resourceId = resourceDTO.getId();
+        PrismScope resourceScope = resourceDTO.getScope();
+
+        joinResource((ResourceParent) getById(resourceScope, resourceId), currentUser, roleContext, true);
+        cacheService.updateUserActivityCaches(resourceScope, resourceId, currentUser, now());
     }
 
     public void activateResource(User user, ResourceParent resource) {
@@ -1168,7 +1178,7 @@ public class ResourceService {
     public HashMultimap<PrismScope, Integer> getResourcesWithActivitiesToCache(DateTime baseline) {
         HashMultimap<PrismScope, Integer> resourceIndex = HashMultimap.create();
         stream(PrismScope.values()).forEach(scope -> {
-            List<Integer> resources = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline);
+            Set<Integer> resources = resourceDAO.getResourcesWithActivitiesToCache(scope, baseline);
             if (resources.size() > 0) {
                 resourceIndex.putAll(scope, resources);
                 resourceDAO.setResourceActivityCachedTimestamp(scope, resources, baseline);

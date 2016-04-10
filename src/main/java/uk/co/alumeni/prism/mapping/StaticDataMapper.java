@@ -139,8 +139,8 @@ public class StaticDataMapper {
 
     private Map<String, Object> getRoles() {
         Map<String, Object> staticData = Maps.newHashMap();
-        staticData.put("roles", roleService.getRoles().stream().map(r -> new RoleRepresentation(r.getId(), r.getVerified(), r.getDirectlyAssignable()))
-                .collect(toList()));
+        staticData.put("roles", roleService.getRoles().stream().map(role -> new RoleRepresentation(role.getId(),
+                role.getVerified(), role.getDirectlyAssignable())).collect(toList()));
         return staticData;
     }
 

@@ -574,6 +574,11 @@ public class ResourceService {
                 comment.addAssignedUser(assignee.getUser(), assignee.getRole(), assignee.getRoleTransitionType());
                 entityService.evict(assignee);
             }
+
+            if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+                setResourceAdvertIncompleteSection((ResourceParent) resource);
+            }
+
             return actionService.executeUserAction(resource, action, comment);
         }
         return null;

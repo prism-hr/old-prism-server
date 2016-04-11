@@ -15,6 +15,7 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import static org.joda.time.DateTime.now;
+import static org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
@@ -605,7 +606,7 @@ public class AdvertService {
             target = createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
         }
 
-        cacheService.updateUserActivityCaches(resourceTarget, currentUser, baseline);
+        cacheService.updateUserActivityCaches(resourceTarget, currentUser, baseline, currentTransactionStatus());
         return target;
     }
 
@@ -676,7 +677,7 @@ public class AdvertService {
 
             DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
             if (baseline != null) {
-                cacheService.updateUserActivityCaches(resource, currentUser, baseline);
+                cacheService.updateUserActivityCaches(resource, currentUser, baseline, currentTransactionStatus());
             }
         });
     }
@@ -1201,7 +1202,7 @@ public class AdvertService {
         AdvertTarget advertTarget = entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withAdvertSevered(false).withTargetAdvert(targetAdvert)
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
-        cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline);
+        cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline, currentTransactionStatus());
         return advertTarget;
     }
 
@@ -1253,7 +1254,7 @@ public class AdvertService {
                     notificationService.sendConnectionNotification(currentUser, advertTarget.getOtherUser(), advertTarget);
                 }
 
-                cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline);
+                cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline, currentTransactionStatus());
             }
         }
 

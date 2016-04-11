@@ -211,10 +211,11 @@ public class UserMapper {
 
     public UserActivityRepresentation getUserActivityRepresentationFresh(User user) {
         Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
+        PrismRoleCategory defaultRoleCategory = defaultRoleCategories.size() == 0 ? null : defaultRoleCategories.values().iterator().next();
 
         Integer readMessageCount = userService.getUserReadMessageCount(user, user);
         Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, user);
-        UserActivityRepresentation representation = new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
+        UserActivityRepresentation representation = new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategory)
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
                 .withProfileActivity(profileMapper.getProfileActivityRepresentation(user))
                 .withMessageActivity(new ProfileRepresentationMessage()

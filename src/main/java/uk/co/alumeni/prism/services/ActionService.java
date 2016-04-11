@@ -50,9 +50,6 @@ public class ActionService {
     private AdvertService advertService;
 
     @Inject
-    private CacheService cacheService;
-
-    @Inject
     private CommentService commentService;
 
     @Inject
@@ -368,7 +365,6 @@ public class ActionService {
                 }
             }
 
-            cacheService.updateUserActivityCaches(resource, user, comment.getSubmittedTimestamp());
             return actionOutcome;
         }
 

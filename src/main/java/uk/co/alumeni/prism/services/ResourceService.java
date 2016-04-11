@@ -185,9 +185,6 @@ public class ResourceService {
     private ApplicationService applicationService;
 
     @Inject
-    private CacheService cacheService;
-
-    @Inject
     private CommentService commentService;
 
     @Inject
@@ -1036,9 +1033,7 @@ public class ResourceService {
     public void joinResource(ResourceCreationDTO resourceDTO, User currentUser, PrismRoleContext roleContext) {
         Integer resourceId = resourceDTO.getId();
         PrismScope resourceScope = resourceDTO.getScope();
-
         joinResource((ResourceParent) getById(resourceScope, resourceId), currentUser, roleContext, true);
-        cacheService.updateUserActivityCaches(resourceScope, resourceId, currentUser, now());
     }
 
     public void activateResource(User user, ResourceParent resource) {

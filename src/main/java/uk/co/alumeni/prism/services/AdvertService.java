@@ -15,7 +15,6 @@ import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ObjectUtils.compare;
 import static org.joda.time.DateTime.now;
-import static org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.ADVERT_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.COMMA;
@@ -170,9 +169,6 @@ public class AdvertService {
 
     @Inject
     private ActivityService activityService;
-
-    @Inject
-    private CacheService cacheService;
 
     @Inject
     private EntityService entityService;
@@ -436,7 +432,7 @@ public class AdvertService {
         if (!(baseline == null || advertSettingsDTO.getVisibility() == null)) {
             updateAdvertVisibility(userService.getCurrentUser(), advert, advertSettingsDTO.getVisibility(), baseline);
         }
-        
+
         resourceService.setResourceAdvertIncompleteSection(resource);
     }
 
@@ -599,15 +595,11 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
         Advert advertTarget = resourceTarget.getAdvert();
 
-        AdvertTarget target;
         if (context.equals(EMPLOYER)) {
-            target = createAdvertTarget(advertTarget, userTarget, advert, currentUser, advertTarget, userTarget, baseline, message, sendInvitation);
+            return createAdvertTarget(advertTarget, userTarget, advert, currentUser, advertTarget, userTarget, baseline, message, sendInvitation);
         } else {
-            target = createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
+            return createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
         }
-
-        cacheService.updateUserActivityCaches(resourceTarget, currentUser, baseline, currentTransactionStatus());
-        return target;
     }
 
     public AdvertTargetPending createAdvertTargetPending(ResourceConnectionInvitationsDTO targets) {
@@ -673,12 +665,7 @@ public class AdvertService {
         advertDAO.updateAdvertTargetGroup(advertTarget, properties, severed);
         processedAdverts.stream().forEach(processedAdvert -> {
             ResourceParent resource = (ResourceParent) processedAdvert.getResource();
-            ActionOutcomeDTO actionOutcome = executeUpdate(resource, "COMMENT_UPDATED_TARGET");
-
-            DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
-            if (baseline != null) {
-                cacheService.updateUserActivityCaches(resource, currentUser, baseline, currentTransactionStatus());
-            }
+            executeUpdate(resource, "COMMENT_UPDATED_TARGET");
         });
     }
 
@@ -1201,8 +1188,7 @@ public class AdvertService {
             PrismPartnershipState partnershipState) {
         AdvertTarget advertTarget = entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withAdvertSevered(false).withTargetAdvert(targetAdvert)
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
-        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
-        cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline, currentTransactionStatus());
+        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, baseline);
         return advertTarget;
     }
 
@@ -1253,8 +1239,6 @@ public class AdvertService {
                 if (performed && accept && notify && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
                     notificationService.sendConnectionNotification(currentUser, advertTarget.getOtherUser(), advertTarget);
                 }
-
-                cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline, currentTransactionStatus());
             }
         }
 

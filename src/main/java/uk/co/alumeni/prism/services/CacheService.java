@@ -1,12 +1,9 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
-import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
 import static uk.co.alumeni.prism.utils.PrismExecutorUtils.shutdownExecutor;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -16,10 +13,7 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -30,8 +24,6 @@ import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 @Service
 @Transactional
 public class CacheService {
-
-    private Set<Integer> executions = newHashSet();
 
     private ExecutorService executorService;
 
@@ -67,27 +59,8 @@ public class CacheService {
         users.stream().forEach(user -> updateUserActivityCache(user, baseline));
     }
 
-    @Transactional(propagation = SUPPORTS)
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
-        try {
-            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
-            while (transactionStatus.isCompleted()) {
-                scheduleUpdateUserActivityCache(user, baseline);
-            }
-        } catch (NoTransactionException e) {
-            scheduleUpdateUserActivityCache(user, baseline);
-        }
-    }
-
-    @PreDestroy
-    public void shutdown() {
-        shuttingDown.set(true);
-        shutdownExecutor(executorService);
-    }
-
-    private synchronized void scheduleUpdateUserActivityCache(Integer user, DateTime baseline) {
-        if (!(shuttingDown.get() || executions.contains(user))) {
-            executions.add(user);
+        if (!shuttingDown.get()) {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -97,10 +70,15 @@ public class CacheService {
         }
     }
 
+    @PreDestroy
+    public void shutdown() {
+        shuttingDown.set(true);
+        shutdownExecutor(executorService);
+    }
+
     private synchronized void executeUpdateUserActivityCache(Integer user, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
         userService.setUserActivityCache(user, userActivityRepresentation, baseline);
-        executions.remove(user);
     }
 
 }

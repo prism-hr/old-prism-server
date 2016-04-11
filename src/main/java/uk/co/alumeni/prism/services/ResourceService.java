@@ -19,7 +19,6 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
-import static org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
@@ -184,9 +183,6 @@ public class ResourceService {
 
     @Inject
     private ApplicationService applicationService;
-
-    @Inject
-    private CacheService cacheService;
 
     @Inject
     private CommentService commentService;
@@ -1037,9 +1033,7 @@ public class ResourceService {
     public void joinResource(ResourceCreationDTO resourceDTO, User currentUser, PrismRoleContext roleContext) {
         Integer resourceId = resourceDTO.getId();
         PrismScope resourceScope = resourceDTO.getScope();
-
         joinResource((ResourceParent) getById(resourceScope, resourceId), currentUser, roleContext, true);
-        cacheService.updateUserActivityCaches(resourceScope, resourceId, currentUser, now(), currentTransactionStatus());
     }
 
     public void activateResource(User user, ResourceParent resource) {

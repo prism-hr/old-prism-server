@@ -48,9 +48,6 @@ public class MessageService {
     private ActionService actionService;
 
     @Inject
-    private CacheService cacheService;
-
-    @Inject
     private DocumentService documentService;
 
     @Inject
@@ -198,12 +195,6 @@ public class MessageService {
                     message.addDocument(document);
                 }
             }
-        }
-
-        if (resource == null) {
-            
-        } else {
-            cacheService.updateUserActivityCaches(resource, currentUser, baseline); 
         }
     }
 

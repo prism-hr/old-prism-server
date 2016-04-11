@@ -171,9 +171,6 @@ public class AdvertService {
     private ActivityService activityService;
 
     @Inject
-    private CacheService cacheService;
-
-    @Inject
     private EntityService entityService;
 
     @Inject
@@ -435,7 +432,7 @@ public class AdvertService {
         if (!(baseline == null || advertSettingsDTO.getVisibility() == null)) {
             updateAdvertVisibility(userService.getCurrentUser(), advert, advertSettingsDTO.getVisibility(), baseline);
         }
-        
+
         resourceService.setResourceAdvertIncompleteSection(resource);
     }
 
@@ -598,15 +595,11 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
         Advert advertTarget = resourceTarget.getAdvert();
 
-        AdvertTarget target;
         if (context.equals(EMPLOYER)) {
-            target = createAdvertTarget(advertTarget, userTarget, advert, currentUser, advertTarget, userTarget, baseline, message, sendInvitation);
+            return createAdvertTarget(advertTarget, userTarget, advert, currentUser, advertTarget, userTarget, baseline, message, sendInvitation);
         } else {
-            target = createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
+            return createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
         }
-
-        cacheService.updateUserActivityCaches(resourceTarget, currentUser, baseline);
-        return target;
     }
 
     public AdvertTargetPending createAdvertTargetPending(ResourceConnectionInvitationsDTO targets) {
@@ -672,12 +665,7 @@ public class AdvertService {
         advertDAO.updateAdvertTargetGroup(advertTarget, properties, severed);
         processedAdverts.stream().forEach(processedAdvert -> {
             ResourceParent resource = (ResourceParent) processedAdvert.getResource();
-            ActionOutcomeDTO actionOutcome = executeUpdate(resource, "COMMENT_UPDATED_TARGET");
-
-            DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
-            if (baseline != null) {
-                cacheService.updateUserActivityCaches(resource, currentUser, baseline);
-            }
+            executeUpdate(resource, "COMMENT_UPDATED_TARGET");
         });
     }
 
@@ -1200,8 +1188,7 @@ public class AdvertService {
             PrismPartnershipState partnershipState) {
         AdvertTarget advertTarget = entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withAdvertSevered(false).withTargetAdvert(targetAdvert)
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
-        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
-        cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline);
+        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, baseline);
         return advertTarget;
     }
 
@@ -1252,8 +1239,6 @@ public class AdvertService {
                 if (performed && accept && notify && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
                     notificationService.sendConnectionNotification(currentUser, advertTarget.getOtherUser(), advertTarget);
                 }
-
-                cacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline);
             }
         }
 

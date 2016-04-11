@@ -14,7 +14,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,7 +28,7 @@ import com.google.common.collect.Sets;
 @Service
 public class LifeCycleService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LifeCycleService.class);
+    private static final Logger logger = getLogger(LifeCycleService.class);
 
     private ExecutorService executorService;
 
@@ -125,7 +124,6 @@ public class LifeCycleService {
             shutdownExecutor(executorService);
         }
     }
-
 
     @Scheduled(fixedDelay = 60000)
     private void maintain() {

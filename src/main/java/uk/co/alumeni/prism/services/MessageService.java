@@ -200,11 +200,7 @@ public class MessageService {
             }
         }
 
-        if (resource == null) {
-            
-        } else {
-            cacheService.updateUserActivityCaches(resource, currentUser, baseline); 
-        }
+        cacheService.updateUserActivityCaches(userIds, baseline);
     }
 
     public void viewMessageThread(Integer latestUnreadMessageId) {

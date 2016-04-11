@@ -14,12 +14,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.NoTransactionException;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -36,9 +36,6 @@ public class CacheService {
     private ExecutorService executorService;
 
     private AtomicBoolean shuttingDown = new AtomicBoolean(false);
-
-    @Inject
-    private SessionFactory sessionFactory;
 
     @Inject
     private UserMapper userMapper;
@@ -72,13 +69,13 @@ public class CacheService {
 
     @Transactional(propagation = SUPPORTS)
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
-        Transaction currentTransaction = getCurrentTransaction();
-        if (currentTransaction == null) {
-            scheduleUpdateUserActivityCache(user, baseline);
-        } else {
-            while (currentTransaction.wasCommitted()) {
+        try {
+            TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
+            while (transactionStatus.isCompleted()) {
                 scheduleUpdateUserActivityCache(user, baseline);
             }
+        } catch (NoTransactionException e) {
+            scheduleUpdateUserActivityCache(user, baseline);
         }
     }
 
@@ -86,11 +83,6 @@ public class CacheService {
     public void shutdown() {
         shuttingDown.set(true);
         shutdownExecutor(executorService);
-    }
-
-    private Transaction getCurrentTransaction() {
-        Session session = sessionFactory.getCurrentSession();
-        return session == null ? null : session.getTransaction();
     }
 
     private synchronized void scheduleUpdateUserActivityCache(Integer user, DateTime baseline) {

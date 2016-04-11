@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services.lifecycle;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -23,8 +24,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismMaintenanceTask;
 import uk.co.alumeni.prism.mapping.StaticDataMapper;
 import uk.co.alumeni.prism.services.SystemService;
 
-import com.google.common.collect.Sets;
-
 @Service
 public class LifeCycleService {
 
@@ -32,7 +31,7 @@ public class LifeCycleService {
 
     private ExecutorService executorService;
 
-    private Set<PrismMaintenanceTask> executions = Sets.newHashSet();
+    private Set<PrismMaintenanceTask> executions = newHashSet();
 
     @Value("${context.environment}")
     private String environment;

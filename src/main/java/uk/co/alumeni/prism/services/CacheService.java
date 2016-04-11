@@ -99,12 +99,16 @@ public class CacheService {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
-                    userService.setUserActivityCache(user, userActivityRepresentation, baseline);
-                    executions.remove(user);
+                    executeUpdateUserActivityCache(user, baseline);
                 }
             });
         }
+    }
+
+    private synchronized void executeUpdateUserActivityCache(Integer user, DateTime baseline) {
+        UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
+        userService.setUserActivityCache(user, userActivityRepresentation, baseline);
+        executions.remove(user);
     }
 
 }

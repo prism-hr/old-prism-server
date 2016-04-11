@@ -429,12 +429,11 @@ public class AdvertService {
         advert.setApplyHomepage(advertSettingsDTO.getApplyHomepage());
         resourceService.setResourceConditions(resource, advertSettingsDTO.getConditions());
 
-        ActionOutcomeDTO actionOutcome = executeUpdate(resource, "COMMENT_UPDATED_SETTINGS");
-
-        DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
-        if (!(baseline == null || advertSettingsDTO.getVisibility() == null)) {
-            updateAdvertVisibility(userService.getCurrentUser(), advert, advertSettingsDTO.getVisibility(), baseline);
+        if (advertSettingsDTO.getVisibility() != null) {
+            updateAdvertVisibility(userService.getCurrentUser(), advert, advertSettingsDTO.getVisibility(), now());
         }
+
+        executeUpdate(resource, "COMMENT_UPDATED_SETTINGS");
     }
 
     public void updateAddress(Resource parentResource, Advert advert) {

@@ -124,10 +124,6 @@ public class LifeCycleService {
         }
     }
 
-    public void scheduleBackgroundTask(Runnable backgroundTask) {
-        executorService.submit(backgroundTask);
-    }
-
     @Scheduled(fixedDelay = 60000)
     private void maintain() {
         if (isTrue(maintain)) {

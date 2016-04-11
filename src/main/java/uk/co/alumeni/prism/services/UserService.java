@@ -92,6 +92,7 @@ import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.UserDescriptor;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
@@ -153,6 +154,9 @@ public class UserService {
 
     @Inject
     private UserAccountService userAccountService;
+    
+    @Inject
+    private UserMapper userMapper;
 
     @Inject
     private PrismJsonMappingUtils prismJsonMappingUtils;
@@ -669,6 +673,11 @@ public class UserService {
                 os -> userDAO.getUserOrganizations(userIds, os, resourceIndex.get(os), roleCategory).forEach(
                         urp -> userResourceParents.put(urp.getUserId(), urp)));
         return userResourceParents;
+    }
+    
+    public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
+        UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
+        setUserActivityCache(user, userActivityRepresentation, baseline);
     }
 
     @SuppressWarnings("unchecked")

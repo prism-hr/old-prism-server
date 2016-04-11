@@ -37,7 +37,7 @@ public class CacheServiceHelper extends PrismServiceHelperAbstract {
         for (PrismScope scope : resources.keySet()) {
             resources.get(scope).stream().forEach(resource -> {
                 userService.getUsersWithActivitiesToCache(scope, resource, baseline).stream().forEach(user -> {
-                    setUserActivityCache(user, baseline);
+                    updateUserActivityCache(user, baseline);
                 });
             });
         }
@@ -48,9 +48,9 @@ public class CacheServiceHelper extends PrismServiceHelperAbstract {
         return shuttingDown;
     }
 
-    private void setUserActivityCache(Integer user, DateTime baseline) {
+    private void updateUserActivityCache(Integer user, DateTime baseline) {
         if (!isShuttingDown()) {
-            cacheService.setUserActivityCache(user, baseline);
+            cacheService.updateUserActivityCache(user, baseline);
         }
     }
 

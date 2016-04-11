@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.TransactionStatus;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -22,7 +22,6 @@ import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 
 @Service
-@Transactional
 public class CacheService {
 
     private ExecutorService executorService;
@@ -40,23 +39,29 @@ public class CacheService {
         executorService = newFixedThreadPool(100);
     }
 
-    public void updateUserActivityCaches(Resource resource, User currentUser, DateTime baseline) {
-        updateUserActivityCaches(resource.getResourceScope(), resource.getId(), currentUser.getId(), baseline);
+    public void updateUserActivityCaches(Resource resource, User currentUser, DateTime baseline, TransactionStatus transactionStatus) {
+        updateUserActivityCaches(resource.getResourceScope(), resource.getId(), currentUser.getId(), baseline, transactionStatus);
     }
 
-    public void updateUserActivityCaches(PrismScope scope, Integer resource, User currentUser, DateTime baseline) {
-        updateUserActivityCaches(scope, resource, currentUser.getId(), baseline);
+    public void updateUserActivityCaches(PrismScope scope, Integer resource, User currentUser, DateTime baseline, TransactionStatus transactionStatus) {
+        updateUserActivityCaches(scope, resource, currentUser.getId(), baseline, transactionStatus);
     }
 
-    public void updateUserActivityCaches(PrismScope scope, Integer resource, Integer currentUser, DateTime baseline) {
-        updateUserActivityCache(currentUser, baseline);
-        for (Integer user : userService.getUsersWithActivitiesToCache(scope, resource, baseline)) {
-            updateUserActivityCache(user, baseline);
+    public void updateUserActivityCaches(PrismScope scope, Integer resource, Integer currentUser, DateTime baseline, TransactionStatus transactionStatus) {
+        updateUserActivityCaches(userService.getUsersWithActivitiesToCache(scope, resource, baseline), currentUser, baseline, transactionStatus);
+    }
+
+    public void updateUserActivityCaches(Collection<Integer> users, Integer currentUser, DateTime baseline, TransactionStatus transactionStatus) {
+        if (transactionStatus.isCompleted()) {
+            updateUserActivityCache(currentUser, baseline);
+            users.stream().forEach(user -> {
+                if (!user.equals(currentUser)) {
+                    updateUserActivityCache(user, baseline);
+                }
+            });
+        } else {
+            updateUserActivityCaches(users, currentUser, baseline, transactionStatus);
         }
-    }
-
-    public void updateUserActivityCaches(Collection<Integer> users, DateTime baseline) {
-        users.stream().forEach(user -> updateUserActivityCache(user, baseline));
     }
 
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {

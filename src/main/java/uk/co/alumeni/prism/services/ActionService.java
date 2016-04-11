@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
@@ -390,7 +391,7 @@ public class ActionService {
                 }
             }
 
-            cacheService.updateUserActivityCaches(resource, user, comment.getSubmittedTimestamp());
+            cacheService.updateUserActivityCaches(resource, user, comment.getSubmittedTimestamp(), currentTransactionStatus());
             return actionOutcome;
         }
 

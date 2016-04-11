@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.joda.time.DateTime.now;
-import static org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus;
 
 import java.util.Collection;
 import java.util.List;
@@ -47,9 +46,6 @@ public class MessageService {
 
     @Inject
     private ActionService actionService;
-
-    @Inject
-    private CacheService cacheService;
 
     @Inject
     private DocumentService documentService;
@@ -200,8 +196,6 @@ public class MessageService {
                 }
             }
         }
-
-        cacheService.updateUserActivityCaches(userIds, currentUser.getId(), baseline, currentTransactionStatus());
     }
 
     public void viewMessageThread(Integer latestUnreadMessageId) {

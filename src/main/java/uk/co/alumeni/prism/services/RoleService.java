@@ -11,7 +11,6 @@ import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.joda.time.DateTime.now;
-import static org.springframework.transaction.interceptor.TransactionAspectSupport.currentTransactionStatus;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
@@ -72,9 +71,6 @@ public class RoleService {
 
     @Inject
     private AdvertService advertService;
-
-    @Inject
-    private CacheService cacheService;
 
     @Inject
     private EntityService entityService;
@@ -182,8 +178,6 @@ public class RoleService {
                 entityService.delete(userRole);
             }
         }
-
-        cacheService.updateUserActivityCaches(resource, currentUser, baseline, currentTransactionStatus());
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {

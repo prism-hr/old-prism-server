@@ -19,8 +19,6 @@ import javax.inject.Inject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
@@ -93,7 +91,6 @@ public class StaticDataMapper {
     @Inject
     private CustomizationMapper customizationMapper;
 
-    @RequestMapping(method = RequestMethod.GET)
     public Map<String, Object> getData() {
         Map<String, Object> staticData = Maps.newHashMap();
         staticData.putAll(getActions());

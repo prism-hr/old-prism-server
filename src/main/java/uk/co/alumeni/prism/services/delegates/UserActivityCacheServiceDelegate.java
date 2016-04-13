@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services.delegates;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
@@ -38,7 +39,7 @@ public class UserActivityCacheServiceDelegate{
         DateTime baseline = userActivityUpdateEvent.getBaseline();
         if (isEmpty(users)) {
             ResourceDTO resource = userActivityUpdateEvent.getResource();
-            users.addAll(userService.getUsersWithActivitiesToCache(resource.getScope(), singletonList(resource.getId()), baseline));
+            users = newArrayList(userService.getUsersWithActivitiesToCache(resource.getScope(), singletonList(resource.getId()), baseline));
         }
 
         userActivityCacheService.updateUserActivityCache(userActivityUpdateEvent.getCurrentUser(), baseline);

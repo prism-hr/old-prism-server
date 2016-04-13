@@ -18,7 +18,7 @@ public class NotificationDefinitionDTO {
     private User recipient;
 
     private User signatory;
-    
+
     private User candidate;
 
     private Resource resource;
@@ -187,7 +187,7 @@ public class NotificationDefinitionDTO {
         this.candidate = candidate;
         return this;
     }
-    
+
     public NotificationDefinitionDTO withResource(Resource resource) {
         this.resource = resource;
         return this;

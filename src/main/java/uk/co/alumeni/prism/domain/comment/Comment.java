@@ -23,8 +23,9 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategor
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_REJECTED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup.APPLICATION_WITHDRAWN;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -724,13 +725,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
     }
 
     public boolean isApplicationAutomatedRejectionComment() {
-        return action.getId().equals(APPLICATION_ESCALATE) && state.getStateGroup().getId() != APPLICATION_REJECTED
-                && transitionState.getStateGroup().getId().equals(APPLICATION_REJECTED);
+        return action.getId().equals(APPLICATION_ESCALATE) && transitionState.getId().equals(APPLICATION_REJECTED_COMPLETED);
     }
 
     public boolean isApplicationAutomatedWithdrawalComment() {
-        return action.getId().equals(APPLICATION_ESCALATE) && state.getStateGroup().getId() != APPLICATION_WITHDRAWN
-                && transitionState.getStateGroup().getId().equals(APPLICATION_WITHDRAWN);
+        return action.getId().equals(APPLICATION_ESCALATE)
+                && asList(APPLICATION_WITHDRAWN_COMPLETED, APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED).contains(transitionState.getId());
     }
 
     public boolean isApplicationAssignRefereesComment() {

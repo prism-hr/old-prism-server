@@ -30,12 +30,14 @@ public class UserActivityCacheService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     public void updateUserActivityCaches(Object source, Resource resource, User currentUser, DateTime baseline) {
-        applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(source, new ResourceDTO().withScope(resource.getResourceScope()).withId(
-                resource.getId()), currentUser.getId(), baseline));
+        applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(resource)
+                .withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(
+                        resource.getId())).withCurrentUser(currentUser.getId()).withBaseline(baseline));
     }
 
     public void updateUserActivityCaches(Object source, Collection<Integer> users, User currentUser, DateTime baseline) {
-        applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(source, newArrayList(users), currentUser.getId(), baseline));
+        applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(source).withUsers(newArrayList(users)).withCurrentUser(currentUser.getId())
+                .withBaseline(baseline));
     }
 
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {

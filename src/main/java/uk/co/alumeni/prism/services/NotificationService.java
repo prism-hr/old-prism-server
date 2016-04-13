@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Sets.newHashSet;
 import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
@@ -34,7 +35,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,18 +70,16 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
-import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserConnectionDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
-import uk.co.alumeni.prism.mail.MailSender;
+import uk.co.alumeni.prism.event.NotificationEvent;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
 
@@ -123,7 +122,7 @@ public class NotificationService {
     private UserService userService;
 
     @Inject
-    private ApplicationContext applicationContext;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public NotificationDefinition getById(PrismNotificationDefinition id) {
         return entityService.getByProperty(NotificationDefinition.class, "id", id);
@@ -164,7 +163,7 @@ public class NotificationService {
                     .withResource(resource)
                     .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation)
                     .withAdvertListRepresentation(advertListRepresentation);
-            sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+            sendNotification(definition, definitionDTO);
         }
     }
 
@@ -176,7 +175,7 @@ public class NotificationService {
             NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient)
                     .withResource(resource)
                     .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation);
-            sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+            sendNotification(definition, definitionDTO);
         }
     }
 
@@ -225,7 +224,7 @@ public class NotificationService {
         NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
                 .withInvitationMessage(invitationMessage).withTransitionAction(transitionAction);
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource, AdvertTarget advertTarget, String personalMessage) {
@@ -233,7 +232,7 @@ public class NotificationService {
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
                 .withInvitationMessage(personalMessage).withAdvertTarget(advertTarget)
                 .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE"));
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendCompleteRegistrationRequest(User initiator, ActionOutcomeDTO actionOutcome) {
@@ -241,45 +240,42 @@ public class NotificationService {
         NotificationDefinition definition = getById(SYSTEM_COMPLETE_REGISTRATION_REQUEST);
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
                 .withResource(resource).withTransitionAction(actionOutcome.getTransitionAction().getId());
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendCompleteRegistrationForgottenRequest(User initiator) {
-        System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST);
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
                 .withResource(systemService.getSystem()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
-        sendIndividualUpdateNotification(system, initiator, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendResetPasswordNotification(User initiator, String newPassword) {
-        System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_PASSWORD_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator).withResource(system)
-                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword);
-        sendIndividualUpdateNotification(system, initiator, definition, definitionDTO);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
+                .withResource(systemService.getSystem()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendJoinRequest(User initiator, User recipient, ResourceParent resource) {
         NotificationDefinition definition = getById(SYSTEM_JOIN_REQUEST);
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
                 .withTransitionAction(SYSTEM_VIEW_JOIN_LIST);
-        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
         NotificationDefinition definition = getById(SYSTEM_JOIN_NOTIFICATION);
         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
                 .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT"));
-        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendConnectionNotification(User initiator, User recipient, AdvertTarget advertTarget) {
-        System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_CONNECTION_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system)
-                .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
-        sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
+                .withResource(systemService.getSystem()).withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
+        sendNotification(definition, definitionDTO);
     }
 
     public void sendMessageNotification(MessageNotification messageRecipient) {
@@ -302,7 +298,7 @@ public class NotificationService {
         }
 
         definitionDTO.setResource(resource);
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(definition, definitionDTO);
     }
 
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
@@ -372,9 +368,8 @@ public class NotificationService {
         return recipients;
     }
 
-    public NotificationConfiguration createOrUpdateNotificationConfiguration(
-            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-            NotificationConfigurationDTO notificationConfigurationDTO) {
+    public NotificationConfiguration createOrUpdateNotificationConfiguration(PrismConfiguration configurationType, Resource resource,
+            PrismOpportunityType opportunityType, NotificationConfigurationDTO notificationConfigurationDTO) {
         WorkflowConfiguration<?> configuration = customizationService.createConfiguration(configurationType, resource, opportunityType,
                 notificationConfigurationDTO);
         resourceService.executeUpdate(resource, userService.getCurrentUser(),
@@ -396,6 +391,16 @@ public class NotificationService {
         return notificationConfiguration;
     }
 
+    public void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
+        if (definition.getNotificationPurpose().equals(UPDATE)) {
+            entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
+                    .withActive(true).withNotifiedTimestamp(now()));
+        } else {
+            entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
+                    .withNotifiedTimestamp(now()));
+        }
+    }
+
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<UserNotificationDefinitionDTO> updates, Set<User> exclusions) {
         if (updates.size() > 0) {
             Action viewEditAction = actionService.getViewEditAction(resource);
@@ -407,7 +412,7 @@ public class NotificationService {
                         NotificationDefinition definition = getById(update.getNotificationDefinitionId());
                         NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
                                 .withResource(resource).withComment(comment).withTransitionAction(viewEditAction.getId());
-                        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+                        sendNotification(definition, definitionDTO);
                     }
                 }
             }
@@ -440,11 +445,10 @@ public class NotificationService {
     }
 
     private void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
-        System system = systemService.getSystem();
         NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system)
-                .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST);
-        sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
+        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
+                .withResource(systemService.getSystem()).withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST);
+        sendNotification(definition, definitionDTO);
     }
 
     private <T extends InvitationEntity> void dequeueUserInvitation(Invitation invitation, T invitationEntity) {
@@ -456,42 +460,18 @@ public class NotificationService {
         }
     }
 
-    private void sendIndividualUpdateNotification(Resource resource, User recipient, NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
-        sendNotification(definition, definitionDTO);
-        createUserNotification(resource, recipient, definition);
-    }
-
     private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition,
             NotificationDefinitionDTO definitionDTO, Long recentRequestCount) {
         recentRequestCount = recentRequestCount == null ? 0 : recentRequestCount;
         if (definition.getNotificationPurpose().equals(REQUEST_EAGER) || recentRequestCount < REQUEST_BUFFER) {
             sendNotification(definition, definitionDTO.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));
-            createUserNotification(resource, recipient, definition);
             return recipient;
         }
         return null;
     }
 
     private void sendNotification(NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
-        User user = definitionDTO.getRecipient();
-        NotificationConfiguration configuration = getNotificationConfiguration(definitionDTO.getResource(), user, definition);
-        MailMessageDTO message = new MailMessageDTO();
-
-        message.setNotificationConfiguration(configuration);
-        message.setNotificationDefinitionDTO(definitionDTO);
-
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(definitionDTO.getResource());
-        applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
-    }
-
-    private void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
-        if (definition.getNotificationPurpose().equals(UPDATE)) {
-            entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
-                    .withActive(true).withNotifiedTimestamp(DateTime.now()));
-        } else {
-            entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
-                    .withNotifiedTimestamp(DateTime.now()));
-        }
+        applicationEventPublisher.publishEvent(new NotificationEvent(this, definition, definitionDTO));
     }
 
 }

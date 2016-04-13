@@ -154,7 +154,7 @@ public class UserService {
 
     @Inject
     private UserAccountService userAccountService;
-    
+
     @Inject
     private UserMapper userMapper;
 
@@ -594,16 +594,23 @@ public class UserService {
         return userDAO.getUserCreatedTimestamp(user);
     }
 
-    public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Integer resourceId, DateTime baseline) {
+    public Set<Integer> getUsersWithActivitiesToCache(DateTime baseline) {
+        Set<Integer> users = newHashSet();
+        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesWithActivitiesToCache(baseline);
+        resources.keySet().stream().forEach(scope -> users.addAll(getUsersWithActivitiesToCache(scope, resources.get(scope), baseline)));
+        return users;
+    }
+
+    public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
         Set<Integer> users = Sets.newHashSet();
 
         scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
-                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resourceId, roleScope)));
+                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, roleScope)));
 
         if (!scope.equals(SYSTEM)) {
             stream(organizationScopes).forEach(targeterScope -> {
                 stream(organizationScopes).forEach(targetScope -> {
-                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resourceId, targeterScope, targetScope));
+                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, targeterScope, targetScope));
                 });
             });
         }
@@ -674,7 +681,7 @@ public class UserService {
                         urp -> userResourceParents.put(urp.getUserId(), urp)));
         return userResourceParents;
     }
-    
+
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
         setUserActivityCache(user, userActivityRepresentation, baseline);

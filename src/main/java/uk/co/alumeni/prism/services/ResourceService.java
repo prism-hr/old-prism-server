@@ -215,6 +215,9 @@ public class ResourceService {
     private SystemService systemService;
 
     @Inject
+    private UserActivityCacheService userActivityCacheService;
+
+    @Inject
     private UserService userService;
 
     @Inject
@@ -1454,6 +1457,8 @@ public class ResourceService {
                 });
             }
         }
+
+        userActivityCacheService.updateUserActivityCaches(this, resource, currentUser, now());
     }
 
     private boolean validateResourceRelationCreation(ResourceRelationCreationDTO resourceRelationDTO) {

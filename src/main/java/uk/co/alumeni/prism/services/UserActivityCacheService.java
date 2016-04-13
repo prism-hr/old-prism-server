@@ -16,11 +16,15 @@ import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.event.UserActivityUpdateEvent;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
+import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 
 @Service
 public class UserActivityCacheService {
 
     Set<Integer> executions = newHashSet();
+
+    @Inject
+    private UserActivityCacheServiceDelegate userActivityCacheServiceDelegate;
 
     @Inject
     private ApplicationEventPublisher applicationEventPublisher;
@@ -37,7 +41,7 @@ public class UserActivityCacheService {
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
         if (!executions.contains(user)) {
             executions.add(user);
-            updateUserActivityCache(user, baseline);
+            userActivityCacheServiceDelegate.updateUserActivityCache(user, baseline);
         }
     }
 

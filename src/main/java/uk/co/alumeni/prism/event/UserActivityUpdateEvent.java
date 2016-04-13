@@ -19,20 +19,8 @@ public class UserActivityUpdateEvent extends ApplicationEvent {
 
     private DateTime baseline;
 
-    public UserActivityUpdateEvent(Object source, List<Integer> users, Integer currentUser, DateTime baseline) {
-        this(source, null, users, currentUser, baseline);
-    }
-
-    public UserActivityUpdateEvent(Object source, ResourceDTO resource, Integer currentUser, DateTime baseline) {
-        this(source, resource, null, currentUser, baseline);
-    }
-
-    public UserActivityUpdateEvent(Object source, ResourceDTO resource, List<Integer> users, Integer currentUser, DateTime baseline) {
+    public UserActivityUpdateEvent(Object source) {
         super(source);
-        this.resource = resource;
-        this.users = users;
-        this.currentUser = currentUser;
-        this.baseline = baseline;
     }
 
     public ResourceDTO getResource() {
@@ -65,6 +53,26 @@ public class UserActivityUpdateEvent extends ApplicationEvent {
 
     public void setBaseline(DateTime baseline) {
         this.baseline = baseline;
+    }
+
+    public UserActivityUpdateEvent withResource(ResourceDTO resource) {
+        this.resource = resource;
+        return this;
+    }
+
+    public UserActivityUpdateEvent withUsers(List<Integer> users) {
+        this.users = users;
+        return this;
+    }
+
+    public UserActivityUpdateEvent withCurrentUser(Integer currentUser) {
+        this.currentUser = currentUser;
+        return this;
+    }
+
+    public UserActivityUpdateEvent withBaseline(DateTime baseline) {
+        this.baseline = baseline;
+        return this;
     }
 
 }

@@ -1,6 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+import static java.lang.Thread.sleep;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
@@ -218,12 +217,14 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
-    public UserActivityRepresentation getUserActivitySummary(@RequestParam(required = false) Integer cacheIncrement) {
+    public UserActivityRepresentation getUserActivitySummary(@RequestParam(required = false) Integer cacheIncrement) throws Exception {
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentation(userService.getCurrentUser());
         if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) {
             return representation;
         }
-        throw new UserActivityNotModifiedException();
+
+        sleep(1000);
+        return getUserActivitySummary(cacheIncrement);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -395,13 +396,6 @@ public class UserController {
     public void shareUserProfile(@PathVariable String operation, @RequestBody Map<?, ?> undertow) {
         boolean share = operation.equals("share");
         userAccountService.shareUserProfile(share);
-    }
-    
-    @ResponseStatus(value = NOT_MODIFIED, reason="No updates to user activity") 
-    private static class UserActivityNotModifiedException extends RuntimeException {
-
-        private static final long serialVersionUID = -5269664043567085353L;
-        
     }
 
 }

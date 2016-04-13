@@ -42,6 +42,7 @@ import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.services.DocumentService;
+import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
@@ -80,6 +81,9 @@ public class MailSender {
     private DocumentService documentService;
 
     @Inject
+    private NotificationService notificationService;
+
+    @Inject
     private SystemService systemService;
 
     @Inject
@@ -92,12 +96,16 @@ public class MailSender {
         NotificationDefinitionDTO notificationDefinitionDTO = messageDTO.getNotificationDefinitionDTO();
         NotificationConfiguration notificationConfiguration = messageDTO.getNotificationConfiguration();
         try {
-            Map<String, Object> model = createNotificationModel(messageDTO.getNotificationConfiguration().getDefinition(), notificationDefinitionDTO);
+            User recipient = notificationDefinitionDTO.getRecipient();
+            Resource resource = notificationDefinitionDTO.getResource();
+            NotificationDefinition definition = notificationConfiguration.getDefinition();
+
+            Map<String, Object> model = createNotificationModel(definition, notificationDefinitionDTO);
             String definitionReference = notificationConfiguration.getDefinition().getId().name();
             String subject = prismTemplateUtils.getContent(definitionReference + "_subject", notificationConfiguration.getSubject(), model);
             String content = prismTemplateUtils.getContent(definitionReference + "_content", notificationConfiguration.getContent(), model);
 
-            String htmlContent = getMessage(messageDTO.getNotificationDefinitionDTO().getResource(), subject, content, model);
+            String htmlContent = getMessage(resource, subject, content, model);
             String plainContent = htmlToPlainText(htmlContent) + "\n\n" + propertyLoader.loadLazy(SYSTEM_EMAIL_LINK_MESSAGE);
 
             if (emailStrategy.equals("send")) {
@@ -115,7 +123,7 @@ public class MailSender {
 
                 MimeMessage message = new MimeMessage(mailSession);
                 message.setFrom(new InternetAddress(emailSource));
-                message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(notificationDefinitionDTO.getRecipient()));
+                message.setRecipient(Message.RecipientType.TO, convertToInternetAddresses(recipient));
                 message.setSubject(subject);
 
                 MimeBodyPart messageBodyPart = new MimeBodyPart();
@@ -141,6 +149,8 @@ public class MailSender {
             } else {
                 logger.info("Sending Development Email: " + messageDTO.toString());
             }
+
+            notificationService.createUserNotification(notificationDefinitionDTO.getResource(), recipient, definition);
         } catch (Exception e) {
             logger.error(String.format("Failed to send email %s", messageDTO.toString()), e);
         }

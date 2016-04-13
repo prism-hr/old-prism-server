@@ -201,6 +201,9 @@ public class AdvertService {
     private UserService userService;
 
     @Inject
+    private UserActivityCacheService userActivityCacheService;
+
+    @Inject
     private InvitationService invitationService;
 
     @Inject
@@ -595,11 +598,15 @@ public class AdvertService {
         Advert advert = resource.getAdvert();
         Advert advertTarget = resourceTarget.getAdvert();
 
+        AdvertTarget target;
         if (context.equals(EMPLOYER)) {
-            return createAdvertTarget(advertTarget, userTarget, advert, currentUser, advertTarget, userTarget, baseline, message, sendInvitation);
+            target = createAdvertTarget(advertTarget, userTarget, advert, currentUser, advertTarget, userTarget, baseline, message, sendInvitation);
         } else {
-            return createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
+            target = createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
         }
+
+        userActivityCacheService.updateUserActivityCaches(this, resourceTarget, currentUser, baseline);
+        return target;
     }
 
     public AdvertTargetPending createAdvertTargetPending(ResourceConnectionInvitationsDTO targets) {
@@ -665,7 +672,12 @@ public class AdvertService {
         advertDAO.updateAdvertTargetGroup(advertTarget, properties, severed);
         processedAdverts.stream().forEach(processedAdvert -> {
             ResourceParent resource = (ResourceParent) processedAdvert.getResource();
-            executeUpdate(resource, "COMMENT_UPDATED_TARGET");
+            ActionOutcomeDTO actionOutcome = executeUpdate(resource, "COMMENT_UPDATED_TARGET");
+
+            DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
+            if (baseline != null) {
+                userActivityCacheService.updateUserActivityCaches(this, resource, currentUser, baseline);
+            }
         });
     }
 
@@ -1188,7 +1200,8 @@ public class AdvertService {
             PrismPartnershipState partnershipState) {
         AdvertTarget advertTarget = entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withAdvertSevered(false).withTargetAdvert(targetAdvert)
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
-        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, baseline);
+        setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
+        userActivityCacheService.updateUserActivityCaches(this, acceptAdvert.getResource(), currentUser, baseline);
         return advertTarget;
     }
 
@@ -1239,6 +1252,8 @@ public class AdvertService {
                 if (performed && accept && notify && !oldPartnershipStates.contains(ENDORSEMENT_PROVIDED)) {
                     notificationService.sendConnectionNotification(currentUser, advertTarget.getOtherUser(), advertTarget);
                 }
+
+                userActivityCacheService.updateUserActivityCaches(this, acceptAdvert.getResource(), currentUser, baseline);
             }
         }
 

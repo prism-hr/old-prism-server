@@ -91,6 +91,9 @@ public class ActionService {
     private StateService stateService;
 
     @Inject
+    private UserActivityCacheService userActivityCacheService;
+
+    @Inject
     private UserService userService;
 
     public Action getById(PrismAction id) {
@@ -387,6 +390,7 @@ public class ActionService {
                 }
             }
 
+            userActivityCacheService.updateUserActivityCaches(this, resource, user, comment.getSubmittedTimestamp());
             return actionOutcome;
         }
 

@@ -57,6 +57,9 @@ public class MessageService {
     private NotificationService notificationService;
 
     @Inject
+    private UserActivityCacheService userActivityCacheService;
+
+    @Inject
     private UserService userService;
 
     public MessageThread getMessageThreadById(Integer messageThreadId) {
@@ -196,6 +199,8 @@ public class MessageService {
                 }
             }
         }
+
+        userActivityCacheService.updateUserActivityCaches(this, userIds, currentUser, baseline);
     }
 
     public void viewMessageThread(Integer latestUnreadMessageId) {

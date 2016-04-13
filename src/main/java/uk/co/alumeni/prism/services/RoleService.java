@@ -76,6 +76,9 @@ public class RoleService {
     private EntityService entityService;
 
     @Inject
+    private InvitationService invitationService;
+
+    @Inject
     private NotificationService notificationService;
 
     @Inject
@@ -85,7 +88,7 @@ public class RoleService {
     private ScopeService scopeService;
 
     @Inject
-    private InvitationService invitationService;
+    private UserActivityCacheService userActivityCacheService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -178,6 +181,8 @@ public class RoleService {
                 entityService.delete(userRole);
             }
         }
+
+        userActivityCacheService.updateUserActivityCaches(this, resource, currentUser, baseline);
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {

@@ -31,19 +31,27 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.domain.advert.AdvertTarget;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory;
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
+import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.CommentService;
 import uk.co.alumeni.prism.services.DocumentService;
+import uk.co.alumeni.prism.services.MessageService;
 import uk.co.alumeni.prism.services.NotificationService;
+import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
+import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
@@ -78,7 +86,16 @@ public class MailSender {
     private String emailStrategy;
 
     @Inject
+    private AdvertService advertService;
+
+    @Inject
+    private CommentService commentService;
+
+    @Inject
     private DocumentService documentService;
+
+    @Inject
+    private MessageService messageService;
 
     @Inject
     private NotificationService notificationService;
@@ -87,14 +104,20 @@ public class MailSender {
     private SystemService systemService;
 
     @Inject
+    private ResourceService resourceService;
+
+    @Inject
+    private UserService userService;
+
+    @Inject
     private PrismTemplateUtils prismTemplateUtils;
 
     @Inject
     private ApplicationContext applicationContext;
 
-    public void sendEmail(final MailMessageDTO messageDTO) {
-        NotificationDefinitionDTO notificationDefinitionDTO = messageDTO.getNotificationDefinitionDTO();
-        NotificationConfiguration notificationConfiguration = messageDTO.getNotificationConfiguration();
+    public void sendEmail(MailMessageDTO messageDTO) {
+        NotificationDefinitionDTO notificationDefinitionDTO = getNotificationDefinitionDTO(messageDTO);
+        NotificationConfiguration notificationConfiguration = getNotificationConfiguration(messageDTO);
         try {
             User recipient = notificationDefinitionDTO.getRecipient();
             Resource resource = notificationDefinitionDTO.getResource();
@@ -176,6 +199,40 @@ public class MailSender {
         model.put("SUBJECT", subject);
         model.put("CONTENT", content);
         return prismTemplateUtils.getContentFromLocation("email_template", "email/email_template.ftl", model);
+    }
+
+    public NotificationDefinitionDTO getNotificationDefinitionDTO(MailMessageDTO mailMessageDTO) {
+        NotificationDefinitionDTO notificationDefinitionDTO = mailMessageDTO.getNotificationDefinitionDTO();
+        notificationDefinitionDTO.setInitiator(getUser(notificationDefinitionDTO.getInitiator()));
+        notificationDefinitionDTO.setRecipient(getUser(notificationDefinitionDTO.getRecipient()));
+        notificationDefinitionDTO.setSignatory(getUser(notificationDefinitionDTO.getSignatory()));
+        notificationDefinitionDTO.setCandidate(getUser(notificationDefinitionDTO.getCandidate()));
+        notificationDefinitionDTO.setResource(getResource(notificationDefinitionDTO.getResource()));
+
+        Comment comment = notificationDefinitionDTO.getComment();
+        notificationDefinitionDTO.setComment(comment == null ? null : commentService.getById(comment.getId()));
+
+        uk.co.alumeni.prism.domain.message.Message message = notificationDefinitionDTO.getMessage();
+        notificationDefinitionDTO.setMessage(message == null ? null : messageService.getMessageById(message.getId()));
+
+        AdvertTarget advertTarget = notificationDefinitionDTO.getAdvertTarget();
+        notificationDefinitionDTO.setAdvertTarget(advertTarget == null ? null : advertService.getAdvertTargetById(advertTarget.getId()));
+
+        notificationDefinitionDTO.setInvitedResource((ResourceParent) getResource(notificationDefinitionDTO.getInvitedResource()));
+        return notificationDefinitionDTO;
+    }
+
+    private User getUser(User initiator) {
+        return initiator == null ? null : userService.getById(initiator.getId());
+    }
+
+    private Resource getResource(Resource resource) {
+        return resource == null ? null : resourceService.getById(resource.getResourceScope(), resource.getId());
+    }
+
+    private NotificationConfiguration getNotificationConfiguration(MailMessageDTO mailMessageDTO) {
+        NotificationConfiguration notificationConfiguration = mailMessageDTO.getNotificationConfiguration();
+        return notificationService.getNotificationConfigurationById(notificationConfiguration.getId());
     }
 
     private Map<String, Object> createNotificationModel(NotificationDefinition notificationDefinition, NotificationDefinitionDTO notificationDefinitionDTO) {

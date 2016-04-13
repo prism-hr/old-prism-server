@@ -125,7 +125,11 @@ public class NotificationService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     public NotificationDefinition getById(PrismNotificationDefinition id) {
-        return entityService.getByProperty(NotificationDefinition.class, "id", id);
+        return entityService.getById(NotificationDefinition.class, id);
+    }
+
+    public NotificationConfiguration getNotificationConfigurationById(Integer notificationConfigurationId) {
+        return entityService.getById(NotificationConfiguration.class, notificationConfigurationId);
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {

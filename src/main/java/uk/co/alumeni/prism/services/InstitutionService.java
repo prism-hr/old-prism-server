@@ -72,6 +72,10 @@ public class InstitutionService {
         return businessYearStartMonth == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
+    public List<Integer> getVisibleInstitutions(List<Integer> departments) {
+        return institutionDAO.getVisibleInstitutions(departments);
+    }
+
     private void changeInstitutionCurrency(Institution institution, String currency) {
         List<Integer> advertsWithoutPayConversions = advertService.getAdvertsWithoutPayConversions(institution);
         if (CollectionUtils.isNotEmpty(advertsWithoutPayConversions)) {

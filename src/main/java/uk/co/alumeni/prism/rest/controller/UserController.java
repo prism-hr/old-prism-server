@@ -217,14 +217,14 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
-    public UserActivityRepresentation getUserActivitySummary(@RequestParam(required = false) Integer cacheIncrement) throws Exception {
+    public UserActivityRepresentation getUserActivityRepresentation(@RequestParam(required = false) Integer cacheIncrement) throws Exception {
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentation(userService.getCurrentUser());
         if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) {
             return representation;
         }
 
         sleep(1000);
-        return getUserActivitySummary(cacheIncrement);
+        return getUserActivityRepresentation(cacheIncrement);
     }
 
     @PreAuthorize("isAuthenticated()")

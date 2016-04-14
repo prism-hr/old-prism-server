@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionProperty;
@@ -256,11 +255,11 @@ public class MailSender {
         Integer comment = notificationEvent.getComment();
         notificationDefinitionDTO.setComment(comment == null ? null : commentService.getById(comment));
 
-        uk.co.alumeni.prism.domain.message.Message message = notificationDefinitionDTO.getMessage();
-        notificationDefinitionDTO.setMessage(message == null ? null : messageService.getMessageById(message.getId()));
+        Integer message = notificationEvent.getMessage();
+        notificationDefinitionDTO.setMessage(message == null ? null : messageService.getMessageById(message));
 
-        AdvertTarget advertTarget = notificationDefinitionDTO.getAdvertTarget();
-        notificationDefinitionDTO.setAdvertTarget(advertTarget == null ? null : advertService.getAdvertTargetById(advertTarget.getId()));
+        Integer advertTarget = notificationEvent.getAdvertTarget();
+        notificationDefinitionDTO.setAdvertTarget(advertTarget == null ? null : advertService.getAdvertTargetById(advertTarget));
 
         notificationDefinitionDTO.setInvitedResource((ResourceParent) getResource(notificationEvent.getInvitedResource()));
         notificationDefinitionDTO.setInvitedResourceContext(notificationEvent.getInvitedResourceContext());

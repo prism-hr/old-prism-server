@@ -1046,10 +1046,6 @@ public class AdvertService {
         return adverts;
     }
 
-    public List<Integer> getRevokedAdverts(Collection<Integer> adverts) {
-        return isEmpty(adverts) ? emptyList() : advertDAO.getRevokedAdverts(adverts);
-    }
-
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
         return getAdvertsForWhichUserHasRoles(user, roleExtensions, organizationScopes, null, true, AdvertCategoryDTO.class);
     }

@@ -585,10 +585,10 @@ public class AdvertDAO {
                 .list();
     }
 
-    public List<Integer> getRevokedAdverts(Collection<Integer> userAdverts) {
+    public List<Integer> getRevokedAdverts(Collection<Integer> adverts) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert.id")) //
-                .add(Restrictions.in("acceptAdvert.id", userAdverts)) //
+                .add(Restrictions.in("acceptAdvert.id", adverts)) //
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)) //
                 .list();
     }

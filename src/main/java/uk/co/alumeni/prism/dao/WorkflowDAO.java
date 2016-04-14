@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.dao;
 
+import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
@@ -30,6 +31,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -224,6 +226,18 @@ public class WorkflowDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("participant.closeMessage")) //
                         .add(Restrictions.ltProperty(messageIdReference, "participant.closeMessage.id")));
+    }
+    
+    public static Junction getVisibleResourceConstraint(PrismScope scope) {
+        Junction visibleConstraint = Restrictions.disjunction();
+        stream(PrismScope.values()).forEach(potentialChildScope -> {
+            if (potentialChildScope.ordinal() > scope.ordinal()) {
+                visibleConstraint.add(Restrictions.conjunction() //
+                        .add(Restrictions.eq("resourceCondition.actionCondition", PrismActionCondition.valueOf("ACCEPT_" + potentialChildScope.name())))
+                        .add(Restrictions.eq("action.creationScope.id", potentialChildScope)));
+            }
+        });
+        return visibleConstraint;
     }
 
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {

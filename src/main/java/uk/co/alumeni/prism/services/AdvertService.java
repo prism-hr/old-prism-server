@@ -1043,7 +1043,10 @@ public class AdvertService {
             stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getUserAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
         }
 
-        adverts.removeAll(advertDAO.getRevokedAdverts(adverts));
+        if (adverts.size() > 0) {
+            adverts.removeAll(advertDAO.getRevokedAdverts(adverts));
+        }
+
         return adverts;
     }
 

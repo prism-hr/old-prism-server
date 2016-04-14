@@ -201,8 +201,8 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      * *************** SYSTEM ACTION *********************
      */
 
-    SYSTEM_ACTION_CANDIDATE_VIEW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View"), 
-    SYSTEM_ACTION_CANDIDATE_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"), 
+    SYSTEM_ACTION_CANDIDATE_VIEW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "View"),
+    SYSTEM_ACTION_CANDIDATE_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_APPLICATION_ASSESS_ELIGIBILITY(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Assess Eligibility"),
     SYSTEM_ACTION_APPLICATION_ASSIGN_INTERVIEWERS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Assign Interviewers"),
     SYSTEM_ACTION_APPLICATION_ASSIGN_REVIEWERS(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Assign Reviewers"),
@@ -2150,7 +2150,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
 
     SYSTEM_MESSAGE_CONVERSATIONS(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Conversation(s)"),
     SYSTEM_MESSAGE_CONVERSATIONS_SEARCH(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Search"),
-    SYSTEM_MESSAGE_NEW(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "New"), 
+    SYSTEM_MESSAGE_NEW(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "New"),
     SYSTEM_MESSAGE_TO(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "To"),
     SYSTEM_MESSAGE_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Subject"),
     SYSTEM_MESSAGE_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_MESSAGE, "Message"),
@@ -2164,6 +2164,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
      */
 
     SYSTEM_CANDIDATE_VIEW_PROFILE(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "View Profile"),
+    SYSTEM_CANDIDATE_CONTACT_CANDIDATE(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "Contact Candidate"),
     SYSTEM_CANDIDATE_PROFILE(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "Profile"),
     SYSTEM_CANDIDATE_MESSAGES(PrismDisplayPropertyCategory.SYSTEM_CANDIDATE, "Messages"),
 

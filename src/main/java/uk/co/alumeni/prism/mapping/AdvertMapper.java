@@ -164,7 +164,6 @@ public class AdvertMapper {
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         User user = userService.getCurrentUser();
-
         Set<Integer> userAdverts = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
         if (isTrue(advert.getGloballyVisible()) || (userAdverts != null && userAdverts.contains(advert.getId()))) {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);

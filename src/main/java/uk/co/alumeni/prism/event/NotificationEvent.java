@@ -1,13 +1,16 @@
 package uk.co.alumeni.prism.event;
 
+import static com.google.common.base.Objects.equal;
+
 import org.springframework.context.ApplicationEvent;
 
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
+
+import com.google.common.base.Objects;
 
 public class NotificationEvent extends ApplicationEvent {
 
@@ -30,10 +33,6 @@ public class NotificationEvent extends ApplicationEvent {
     private Integer message;
 
     private Integer advertTarget;
-
-    private ResourceDTO invitedResource;
-
-    private PrismResourceContext invitedResourceContext;
 
     private String invitationMessage;
 
@@ -121,22 +120,6 @@ public class NotificationEvent extends ApplicationEvent {
 
     public void setAdvertTarget(Integer advertTarget) {
         this.advertTarget = advertTarget;
-    }
-
-    public ResourceDTO getInvitedResource() {
-        return invitedResource;
-    }
-
-    public void setInvitedResource(ResourceDTO invitedResource) {
-        this.invitedResource = invitedResource;
-    }
-
-    public PrismResourceContext getInvitedResourceContext() {
-        return invitedResourceContext;
-    }
-
-    public void setInvitedResourceContext(PrismResourceContext invitedResourceContext) {
-        this.invitedResourceContext = invitedResourceContext;
     }
 
     public String getInvitationMessage() {
@@ -227,16 +210,6 @@ public class NotificationEvent extends ApplicationEvent {
         return this;
     }
 
-    public NotificationEvent withInvitedResource(ResourceDTO invitedResource) {
-        this.invitedResource = invitedResource;
-        return this;
-    }
-
-    public NotificationEvent withInvitedResourceContext(PrismResourceContext invitedResourceContext) {
-        this.invitedResourceContext = invitedResourceContext;
-        return this;
-    }
-
     public NotificationEvent withInvitationMessage(String invitationMessage) {
         this.invitationMessage = invitationMessage;
         return this;
@@ -265,6 +238,25 @@ public class NotificationEvent extends ApplicationEvent {
     public NotificationEvent withBuffered(Boolean buffered) {
         this.buffered = buffered;
         return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(notificationDefinition, recipient, resource, comment, message, advertTarget);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        NotificationEvent other = (NotificationEvent) object;
+        return equal(notificationDefinition, other.getNotificationDefinition()) && equal(recipient, other.getRecipient())
+                && equal(resource, other.getResource()) && equal(comment, other.getComment()) && equal(message, other.getMessage())
+                && equal(advertTarget, other.getAdvertTarget());
     }
 
 }

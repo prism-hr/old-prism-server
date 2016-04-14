@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleResourceConstraint;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
@@ -26,6 +29,7 @@ import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 import com.google.common.collect.Maps;
 
 @Repository
+@SuppressWarnings("unchecked")
 public class InstitutionDAO {
 
     @Inject
@@ -41,7 +45,6 @@ public class InstitutionDAO {
                 .uniqueResult();
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getAvailableCurrencies() {
         return (List<String>) sessionFactory.getCurrentSession().createCriteria(Domicile.class) //
                 .setProjection(Projections.distinct(Projections.property("currency"))) //
@@ -73,7 +76,6 @@ public class InstitutionDAO {
                 .executeUpdate();
     }
 
-    @SuppressWarnings("unchecked")
     public List<ResourceLocationDTO> getInstitutions(String query, String[] googleIds) {
         Disjunction searchConstraint = Restrictions.disjunction();
 
@@ -114,6 +116,20 @@ public class InstitutionDAO {
                 .list();
         list.forEach(institution -> institution.setScope(PrismScope.INSTITUTION));
         return list;
+    }
+
+    public List<Integer> getVisibleInstitutions(List<Integer> departments) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
+                .setProjection(Projections.property("institution.id")) //
+                .createAlias("institution", "institution", JoinType.INNER_JOIN) //
+                .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
+                .createAlias("institution.resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateAction", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", departments)) //
+                .add(getVisibleResourceConstraint(INSTITUTION)) //
+                .list();
     }
 
 }

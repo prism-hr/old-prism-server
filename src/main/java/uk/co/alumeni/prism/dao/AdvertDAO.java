@@ -86,6 +86,7 @@ import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Sets;
 
 @Repository
@@ -412,9 +413,8 @@ public class AdvertDAO {
             Collection<Integer> connectAdverts, Collection<Integer> manageAdverts) {
         Criterion visibilityConstraint = Restrictions.conjunction() //
                 .add(Restrictions.eq("target.partnershipState", ENDORSEMENT_PROVIDED))
-                .add(Restrictions.conjunction() //
-                        .add(Restrictions.eq("target.advertSevered", false))
-                        .add(Restrictions.eq("target.targetAdvertSevered", false)));
+                .add(Restrictions.eq("target.advertSevered", false))
+                .add(Restrictions.eq("target.targetAdvertSevered", false));
         if (isNotEmpty(manageAdverts)) {
             visibilityConstraint = Restrictions.disjunction()
                     .add(visibilityConstraint) //
@@ -582,14 +582,6 @@ public class AdvertDAO {
                         .add(Restrictions.eq("target.targetAdvertSevered", false))) //
                 .add(Restrictions.eq("targetUserRole.user", user)) //
                 .add(Restrictions.eq("targetRole.verified", true)) //
-                .list();
-    }
-
-    public List<Integer> getRevokedAdverts(Collection<Integer> adverts) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("advert.id")) //
-                .add(Restrictions.in("acceptAdvert.id", adverts)) //
-                .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)) //
                 .list();
     }
 
@@ -852,6 +844,67 @@ public class AdvertDAO {
                 .setProjection(Projections.groupProperty("advert")) //
                 .add(Restrictions.in("targetAdvert", adverts))
                 .add(Restrictions.eq("partnershipState", ENDORSEMENT_PROVIDED)) //
+                .list();
+    }
+
+    public List<Integer> getVisibleAdverts(HashMultimap<PrismScope, Integer> visibleResources) {
+        Junction visibleConstraint = Restrictions.disjunction();
+        visibleResources.keySet().stream().forEach(visibleResourceScope -> {
+            Set<Integer> visibleResourcesScope = visibleResources.get(visibleResourceScope);
+            if (isNotEmpty(visibleResourcesScope)) {
+                visibleConstraint.add(Restrictions.in(visibleResourceScope.name() + ".id", visibleResourcesScope));
+            }
+        });
+
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.property("id")) //
+                .add(visibleConstraint) //
+                .list();
+    }
+
+    public List<Integer> getVisibleAdverts(HashMultimap<PrismScope, Integer> visibleResources, HashMultimap<PrismScope, Integer> visibleResourcesUser) {
+        Junction visibleConstraint = Restrictions.disjunction();
+        visibleResources.keySet().stream().forEach(visibleResourceScope -> {
+            Set<Integer> visibleResourcesScope = visibleResources.get(visibleResourceScope);
+            if (isNotEmpty(visibleResourcesScope)) {
+                visibleConstraint.add(Restrictions.in("advert." + visibleResourceScope.name() + ".id", visibleResourcesScope));
+            }
+
+            Set<Integer> visibleResourcesUserScope = visibleResourcesUser.get(visibleResourceScope);
+            if (isNotEmpty(visibleResourcesUserScope)) {
+                visibleConstraint.add(Restrictions.in("targetAdvert." + visibleResourceScope.name() + ".id", visibleResourcesScope));
+            }
+        });
+
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.property("advert.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("partnershipState", ENDORSEMENT_PROVIDED))
+                .add(Restrictions.eq("advertSevered", false))
+                .add(Restrictions.eq("targetAdvertSevered", false)) //
+                .add(visibleConstraint) //
+                .list();
+    }
+
+    public List<Integer> getHiddenAdverts(List<Integer> adverts, HashMultimap<PrismScope, Integer> targetedResources) {
+        Junction targetedConstraint = Restrictions.disjunction();
+        targetedResources.keySet().stream().forEach(targetedResourceScope -> {
+            Set<Integer> targetedResourcesScope = targetedResources.get(targetedResourceScope);
+            if (isNotEmpty(targetedResourcesScope)) {
+                targetedConstraint.add(Restrictions.in("targetAdvert." + targetedResourceScope.name() + ".id", targetedResourcesScope));
+            }
+        });
+
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
+                .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)) //
+                        .add(Restrictions.eq("advertSevered", false))
+                        .add(Restrictions.eq("targetAdvertSevered", false))) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(targetedConstraint) //
                 .list();
     }
 

@@ -889,7 +889,7 @@ public class AdvertService {
             }
 
             targetAdverts.forEach(targetAdvert -> {
-                createAdvertTarget(targetAdvert, comment.getUser(), comment.getCreatedTimestamp(), partnershipState);
+                createAdvertTarget(advert, targetAdvert, comment.getUser(), comment.getCreatedTimestamp(), partnershipState);
             });
         }
     }
@@ -1043,6 +1043,7 @@ public class AdvertService {
             stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getUserAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
         }
 
+        adverts.removeAll(advertDAO.getRevokedAdverts(adverts));
         return adverts;
     }
 
@@ -1192,8 +1193,8 @@ public class AdvertService {
                 .withAcceptAdvertUser(acceptAdvertUser).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
     }
 
-    private AdvertTarget createAdvertTarget(Advert targetAdvert, User currentUser, DateTime baseline, PrismPartnershipState partnershipState) {
-        return createAdvertTarget(targetAdvert, currentUser, targetAdvert, targetAdvert, baseline, partnershipState);
+    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, User currentUser, DateTime baseline, PrismPartnershipState partnershipState) {
+        return createAdvertTarget(advert, currentUser, targetAdvert, targetAdvert, baseline, partnershipState);
     }
 
     private AdvertTarget createAdvertTarget(Advert advert, User currentUser, Advert targetAdvert, Advert acceptAdvert, DateTime baseline,

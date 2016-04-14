@@ -42,7 +42,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefiniti
 import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
 import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
@@ -57,6 +56,7 @@ import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
@@ -101,6 +101,9 @@ public class MailSender {
 
     @Inject
     private NotificationService notificationService;
+
+    @Inject
+    private NotificationServiceDelegate notificationServiceDelegate;
 
     @Inject
     private MessageService messageService;
@@ -188,6 +191,7 @@ public class MailSender {
             logger.error(String.format("Failed to send email %s", getMessageString(prismNotificationDefinition, notificationDefinitionDTO)), e);
         }
 
+        notificationServiceDelegate.sentNotification(notificationEvent);
     }
 
     private String getMessage(Resource resource, String subject, String content, Map<String, Object> model) {
@@ -236,15 +240,19 @@ public class MailSender {
         }
     }
 
-    private User getUser(Integer user) {
+    protected NotificationService getNotificationService() {
+        return notificationService;
+    }
+
+    protected User getUser(Integer user) {
         return user == null ? null : userService.getById(user);
     }
 
-    private Resource getResource(ResourceDTO resource) {
+    protected Resource getResource(ResourceDTO resource) {
         return resource == null ? null : resourceService.getById(resource.getScope(), resource.getId());
     }
 
-    private NotificationDefinitionDTO getNotificationDefinitionDTO(User recipient, Resource resource, NotificationEvent notificationEvent) {
+    protected NotificationDefinitionDTO getNotificationDefinitionDTO(User recipient, Resource resource, NotificationEvent notificationEvent) {
         NotificationDefinitionDTO notificationDefinitionDTO = new NotificationDefinitionDTO();
         notificationDefinitionDTO.setInitiator(getUser(notificationEvent.getInitiator()));
         notificationDefinitionDTO.setRecipient(recipient);
@@ -261,8 +269,6 @@ public class MailSender {
         Integer advertTarget = notificationEvent.getAdvertTarget();
         notificationDefinitionDTO.setAdvertTarget(advertTarget == null ? null : advertService.getAdvertTargetById(advertTarget));
 
-        notificationDefinitionDTO.setInvitedResource((ResourceParent) getResource(notificationEvent.getInvitedResource()));
-        notificationDefinitionDTO.setInvitedResourceContext(notificationEvent.getInvitedResourceContext());
         notificationDefinitionDTO.setInvitationMessage(notificationEvent.getInvitationMessage());
         notificationDefinitionDTO.setTransitionAction(notificationEvent.getTransitionAction());
         notificationDefinitionDTO.setNewPassword(notificationEvent.getNewPassword());

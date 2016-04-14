@@ -21,7 +21,7 @@ import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 @Service
 public class UserActivityCacheService {
 
-    Set<Integer> executions = newHashSet();
+    private Set<Integer> executions = newHashSet();
 
     @Inject
     private UserActivityCacheServiceDelegate userActivityCacheServiceDelegate;

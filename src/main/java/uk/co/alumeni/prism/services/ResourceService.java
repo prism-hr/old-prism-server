@@ -72,6 +72,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.ResourceDAO;
+import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -192,6 +193,9 @@ public class ResourceService {
 
     @Inject
     private EntityService entityService;
+
+    @Inject
+    private InstitutionService institutionService;
 
     @Inject
     private MessageService messageService;
@@ -1231,6 +1235,26 @@ public class ResourceService {
 
     public LinkedHashMultimap<Integer, String> getResourceOrganizationLocations(PrismScope resourceScope, Collection<Integer> resourceIds) {
         return addressService.getAddressLocationIndex(resourceDAO.getResourceOrganizationLocations(resourceScope, resourceIds), ADDRESS_LOCATION_PRECISION);
+    }
+
+    public HashMultimap<PrismScope, Integer> getVisibleResourceParents() {
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+        stream(WorkflowDAO.advertScopes).forEach(advertScope -> {
+            resources.putAll(advertScope, resourceDAO.getVisibleResources(advertScope));
+        });
+        return resources;
+    }
+
+    public HashMultimap<PrismScope, Integer> getVisibleResourceParents(User user) {
+        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+        stream(WorkflowDAO.advertScopes).forEach(advertScope -> {
+            List<Integer> visibleResources = resourceDAO.getVisibleResources(user, advertScope);
+            resources.putAll(advertScope, visibleResources);
+            if (advertScope.equals(DEPARTMENT) && visibleResources.size() > 0) {
+                resources.putAll(INSTITUTION, institutionService.getVisibleInstitutions(visibleResources));
+            }
+        });
+        return resources;
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,

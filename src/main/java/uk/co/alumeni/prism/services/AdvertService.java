@@ -1043,11 +1043,11 @@ public class AdvertService {
             stream(displayScopes).forEach(scope -> adverts.addAll(advertDAO.getUserAdverts(scope, stateService.getActiveResourceStates(scope), userAdverts)));
         }
 
-        if (adverts.size() > 0) {
-            adverts.removeAll(advertDAO.getRevokedAdverts(adverts));
-        }
-
         return adverts;
+    }
+
+    public List<Integer> getRevokedAdverts(Collection<Integer> adverts) {
+        return isEmpty(adverts) ? emptyList() : advertDAO.getRevokedAdverts(adverts);
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {

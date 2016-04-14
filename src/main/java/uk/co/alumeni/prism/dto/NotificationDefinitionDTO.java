@@ -2,11 +2,9 @@ package uk.co.alumeni.prism.dto;
 
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.message.Message;
 import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
@@ -28,10 +26,6 @@ public class NotificationDefinitionDTO {
     private Message message;
 
     private AdvertTarget advertTarget;
-
-    private ResourceParent invitedResource;
-
-    private PrismResourceContext invitedResourceContext;
 
     private String invitationMessage;
 
@@ -107,22 +101,6 @@ public class NotificationDefinitionDTO {
 
     public void setAdvertTarget(AdvertTarget advertTarget) {
         this.advertTarget = advertTarget;
-    }
-
-    public ResourceParent getInvitedResource() {
-        return invitedResource;
-    }
-
-    public void setInvitedResource(ResourceParent invitedResource) {
-        this.invitedResource = invitedResource;
-    }
-
-    public PrismResourceContext getInvitedResourceContext() {
-        return invitedResourceContext;
-    }
-
-    public void setInvitedResourceContext(PrismResourceContext invitedResourceContext) {
-        this.invitedResourceContext = invitedResourceContext;
     }
 
     public String getInvitationMessage() {
@@ -205,16 +183,6 @@ public class NotificationDefinitionDTO {
 
     public NotificationDefinitionDTO withAdvertTarget(AdvertTarget advertTarget) {
         this.advertTarget = advertTarget;
-        return this;
-    }
-
-    public NotificationDefinitionDTO withInvitedResource(ResourceParent invitedResource) {
-        this.invitedResource = invitedResource;
-        return this;
-    }
-
-    public NotificationDefinitionDTO withInvitedResourceContext(PrismResourceContext invitedResourceContext) {
-        this.invitedResourceContext = invitedResourceContext;
         return this;
     }
 

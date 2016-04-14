@@ -14,7 +14,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.co.alumeni.prism.domain.workflow.NotificationConfiguration;
-import uk.co.alumeni.prism.dto.MailMessageDTO;
 import uk.co.alumeni.prism.integration.helpers.PropertyLoaderHelper;
 import uk.co.alumeni.prism.integration.helpers.SystemInitialisationHelper;
 import uk.co.alumeni.prism.integration.helpers.WorkflowConfigurationHelper;
@@ -62,9 +61,9 @@ public class LifeCycleTest {
             systemInitialisationHelper.verifyStateActionCreation();
             applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
 
-            List<MailMessageDTO> messages = mailSenderMock.getSentMessages();
+            List<NotificationConfiguration> messages = mailSenderMock.getSentMessages();
             assertEquals(1, messages.size());
-            NotificationConfiguration configuration = messages.get(0).getNotificationConfiguration();
+            NotificationConfiguration configuration = messages.get(0);
             assertEquals(SYSTEM_COMPLETE_REGISTRATION_REQUEST, configuration.getDefinition().getId());
             mailSenderMock.getSentMessages().clear();
         }

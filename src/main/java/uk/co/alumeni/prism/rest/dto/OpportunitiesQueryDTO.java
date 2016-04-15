@@ -39,8 +39,6 @@ public class OpportunitiesQueryDTO {
 
     private List<PrismOpportunityType> opportunityTypes;
 
-    private List<PrismOpportunityType> targetOpportunityTypes;
-
     private List<PrismStudyOption> studyOptions;
 
     private PrismDurationUnit salaryInterval;
@@ -149,14 +147,6 @@ public class OpportunitiesQueryDTO {
 
     public void setOpportunityTypes(List<PrismOpportunityType> opportunityTypes) {
         this.opportunityTypes = opportunityTypes;
-    }
-
-    public List<PrismOpportunityType> getTargetOpportunityTypes() {
-        return targetOpportunityTypes;
-    }
-
-    public void setTargetOpportunityTypes(List<PrismOpportunityType> targetOpportunityTypes) {
-        this.targetOpportunityTypes = targetOpportunityTypes;
     }
 
     public List<PrismStudyOption> getStudyOptions() {

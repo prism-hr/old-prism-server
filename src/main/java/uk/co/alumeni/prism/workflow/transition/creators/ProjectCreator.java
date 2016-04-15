@@ -28,9 +28,10 @@ public class ProjectCreator implements ResourceCreator<ResourceOpportunityDTO> {
     @Override
     public Resource create(User user, ResourceOpportunityDTO newResource) {
         ResourceParent parentResource = resourceCreatorUtils.getParentResource(newResource);
-        Advert advert = advertService.createResourceAdvert(newResource, parentResource, user);
-        Project project = new Project().withImportedCode(newResource.getImportedCode()).withUser(user).withParentResource(parentResource).withAdvert(advert)
-                .withName(advert.getName()).withDurationMinimum(newResource.getDurationMinimum()).withDurationMaximum(newResource.getDurationMaximum());
+        Advert advert = advertService.createAdvert(newResource, parentResource, user);
+        Project project = new Project().withImportedCode(newResource.getImportedCode()).withUser(user)
+                .withParentResource(parentResource).withAdvert(advert).withName(advert.getName());
+        advertService.updateDuration(advert, newResource.getDurationMinimum(), newResource.getDurationMaximum());
         resourceService.setResourceAttributes(project, newResource);
         return project;
     }

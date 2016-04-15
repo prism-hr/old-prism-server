@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.dao;
 
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleResourceConstraint;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
 import java.util.List;
@@ -118,17 +116,13 @@ public class InstitutionDAO {
         return list;
     }
 
-    public List<Integer> getVisibleInstitutions(List<Integer> departments) {
+    public List<Integer> getVisibleUserInstitutions(List<Integer> userDepartments) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
                 .setProjection(Projections.property("institution.id")) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
-                .createAlias("institution.resourceConditions", "resourceCondition", JoinType.INNER_JOIN) //
-                .createAlias("institution.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resourceState.state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateAction", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("id", departments)) //
-                .add(getVisibleResourceConstraint(INSTITUTION)) //
+                .createAlias("institution.advert", "advert", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", userDepartments)) //
+                .add(Restrictions.eq("advert.published", true)) //
                 .list();
     }
 

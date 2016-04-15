@@ -20,6 +20,10 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
     @Override
     public void process(Project resource, Comment comment) {
+        if (comment.isPublishComment()) {
+            resource.getAdvert().setPublished(true);
+        }
+
         if (comment.isRestoreComment()) {
             advertService.retireAdvertClosingDate(resource.getAdvert());
         }

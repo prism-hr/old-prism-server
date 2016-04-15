@@ -24,14 +24,6 @@ public abstract class ResourceOpportunity extends ResourceParent implements Reso
 
     public abstract void setAvailableDate(LocalDate availableDate);
 
-    public abstract Integer getDurationMinimum();
-
-    public abstract void setDurationMinimum(Integer minimum);
-
-    public abstract Integer getDurationMaximum();
-
-    public abstract void setDurationMaximum(Integer maximum);
-
     public abstract Set<ResourceStudyOption> getResourceStudyOptions();
 
     public abstract void setResourceStudyOptions(Set<ResourceStudyOption> resourceStudyOptions);

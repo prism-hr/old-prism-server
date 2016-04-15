@@ -35,9 +35,9 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private PrismOpportunityType opportunityType;
 
-    private String targetOpportunityTypes;
-
     private String opportunityCategories;
+    
+    private String studyOptions;
 
     private Boolean recommended;
 
@@ -197,20 +197,20 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
         this.opportunityType = opportunityType;
     }
 
-    public String getTargetOpportunityTypes() {
-        return targetOpportunityTypes;
-    }
-
-    public void setTargetOpportunityTypes(String targetOpportunityTypes) {
-        this.targetOpportunityTypes = targetOpportunityTypes;
-    }
-
     public String getOpportunityCategories() {
         return opportunityCategories;
     }
 
     public void setOpportunityCategories(String opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public String getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(String studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public Boolean getRecommended() {

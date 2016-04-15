@@ -44,6 +44,7 @@ import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
+import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
 
 import com.google.common.collect.Lists;
@@ -82,6 +83,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private Project project;
 
     @ManyToOne
+    @JoinColumn(name = "scope_id")
+    private Scope scope;
+
+    @ManyToOne
     @JoinColumn(name = "opportunity_type_id")
     private OpportunityType opportunityType;
 
@@ -89,8 +94,8 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private String opportunityCategories;
 
     @Lob
-    @Column(name = "target_opportunity_type")
-    private String targetOpportunityTypes;
+    @Column(name = "study_option")
+    private String studyOptions;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -115,6 +120,12 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Column(name = "telephone")
     private String telephone;
 
+    @Column(name = "duration_minimum")
+    private Integer durationMinimum;
+
+    @Column(name = "duration_maximum")
+    private Integer durationMaximum;
+
     @OneToOne
     @JoinColumn(name = "address_id")
     private Address address;
@@ -128,6 +139,9 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @Column(name = "globally_visible")
     private Boolean globallyVisible;
+
+    @Column(name = "published", nullable = false)
+    private Boolean published;
 
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
@@ -203,6 +217,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.project = project;
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
     public OpportunityType getOpportunityType() {
         return opportunityType;
     }
@@ -219,12 +241,12 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.opportunityCategories = opportunityCategories;
     }
 
-    public String getTargetOpportunityTypes() {
-        return targetOpportunityTypes;
+    public String getStudyOptions() {
+        return studyOptions;
     }
 
-    public void setTargetOpportunityTypes(String targetOpportunityTypes) {
-        this.targetOpportunityTypes = targetOpportunityTypes;
+    public void setStudyOptions(String studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public String getName() {
@@ -283,6 +305,22 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.telephone = telephone;
     }
 
+    public Integer getDurationMinimum() {
+        return durationMinimum;
+    }
+
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+    }
+
+    public Integer getDurationMaximum() {
+        return durationMaximum;
+    }
+
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+    }
+
     public Address getAddress() {
         return address;
     }
@@ -313,6 +351,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setGloballyVisible(Boolean globallyVisible) {
         this.globallyVisible = globallyVisible;
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
     }
 
     public String getSequenceIdentifier() {

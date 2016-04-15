@@ -97,12 +97,6 @@ public class Project extends ResourceOpportunity {
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
     private LocalDate availableDate;
 
-    @Column(name = "duration_minimum")
-    private Integer durationMinimum;
-
-    @Column(name = "duration_maximum")
-    private Integer durationMaximum;
-
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -138,7 +132,7 @@ public class Project extends ResourceOpportunity {
     @Column(name = "activity_cached_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
-    
+
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
@@ -315,26 +309,6 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public Integer getDurationMinimum() {
-        return durationMinimum;
-    }
-
-    @Override
-    public void setDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-    }
-
-    @Override
-    public Integer getDurationMaximum() {
-        return durationMaximum;
-    }
-
-    @Override
-    public void setDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
-    }
-
-    @Override
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
@@ -466,7 +440,7 @@ public class Project extends ResourceOpportunity {
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
-    
+
     @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
@@ -479,7 +453,7 @@ public class Project extends ResourceOpportunity {
     public void setUpdatedTimestampSitemap(DateTime updatedTimestampSitemap) {
         this.updatedTimestampSitemap = updatedTimestampSitemap;
     }
-    
+
     @Override
     public DateTime getActivityCachedTimestamp() {
         return activityCachedTimestamp;
@@ -572,16 +546,6 @@ public class Project extends ResourceOpportunity {
 
     public Project withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public Project withDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-        return this;
-    }
-
-    public Project withDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
         return this;
     }
 

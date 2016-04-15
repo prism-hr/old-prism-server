@@ -17,6 +17,10 @@ public class InstitutionPostprocessor implements ResourceProcessor<Institution> 
 
     @Override
     public void process(Institution resource, Comment comment) {
+        if (comment.isPublishComment()) {
+            resource.getAdvert().setPublished(true);
+        }
+
         advertService.setSequenceIdentifier(resource.getAdvert(), resource.getSequenceIdentifier().substring(0, 13));
     }
 

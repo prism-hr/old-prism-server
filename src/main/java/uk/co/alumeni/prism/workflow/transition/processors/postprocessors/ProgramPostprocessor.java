@@ -19,6 +19,10 @@ public class ProgramPostprocessor implements ResourceProcessor<Program> {
 
     @Override
     public void process(Program resource, Comment comment) {
+        if (comment.isPublishComment()) {
+            resource.getAdvert().setPublished(true);
+        }
+        
         if (comment.isRestoreComment()) {
             advertService.retireAdvertClosingDate(resource.getAdvert());
         }

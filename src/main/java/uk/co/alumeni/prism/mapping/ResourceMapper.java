@@ -296,7 +296,7 @@ public class ResourceMapper {
 
                     Integer readMessageCount = indexResource.getReadMessageCount();
                     Integer unreadMessageCount = indexResource.getUnreadMessageCount();
-                    
+
                     representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
                     representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
@@ -337,8 +337,10 @@ public class ResourceMapper {
     public <T extends ResourceOpportunity> ResourceOpportunityRepresentationSimple getResourceOpportunityRepresentationSimple(T resource) {
         ResourceOpportunityRepresentationSimple representation = getResourceRepresentationSimple(resource, ResourceOpportunityRepresentationSimple.class);
         representation.setAvailableDate(resource.getAvailableDate());
-        representation.setDurationMinimum(resource.getDurationMinimum());
-        representation.setDurationMaximum(resource.getDurationMaximum());
+
+        Advert advert = resource.getAdvert();
+        representation.setDurationMinimum(advert.getDurationMinimum());
+        representation.setDurationMaximum(advert.getDurationMaximum());
         return representation;
     }
 
@@ -428,8 +430,10 @@ public class ResourceMapper {
         representation.setStudyOptions(resourceService.getStudyOptions(resource));
 
         representation.setAvailableDate(resource.getAvailableDate());
-        representation.setDurationMinimum(resource.getDurationMinimum());
-        representation.setDurationMaximum(resource.getDurationMaximum());
+
+        Advert advert = resource.getAdvert();
+        representation.setDurationMinimum(advert.getDurationMinimum());
+        representation.setDurationMaximum(advert.getDurationMaximum());
         return representation;
     }
 
@@ -771,7 +775,7 @@ public class ResourceMapper {
 
         Integer readMessageCount = resourceService.getResourceReadMessageCount(resource, user);
         Integer unreadMessageCount = resourceService.getResourceUnreadMessageCount(resource, user);
-        
+
         representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
         representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 

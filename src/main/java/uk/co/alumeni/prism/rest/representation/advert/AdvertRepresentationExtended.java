@@ -27,8 +27,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private ResourceOpportunityRepresentationSimple project;
 
     private PrismOpportunityType opportunityType;
-
-    private List<PrismOpportunityType> targetOpportunityTypes;
     
     private List<PrismOpportunityCategory> opportunityCategories;
 
@@ -98,14 +96,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setOpportunityType(PrismOpportunityType opportunityType) {
         this.opportunityType = opportunityType;
-    }
-    
-    public List<PrismOpportunityType> getTargetOpportunityTypes() {
-        return targetOpportunityTypes;
-    }
-
-    public void setTargetOpportunityTypes(List<PrismOpportunityType> targetOpportunityTypes) {
-        this.targetOpportunityTypes = targetOpportunityTypes;
     }
     
     public List<PrismOpportunityCategory> getOpportunityCategories() {

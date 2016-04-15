@@ -13,7 +13,6 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableCo
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleResourceConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
@@ -751,32 +750,15 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getVisibleResources(PrismScope scope) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("resource.id")) //
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN)
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("role.verified", true)) //
-                .add(getVisibleResourceConstraint(scope)) //
-                .list();
-    }
-
-    public List<Integer> getVisibleResources(User user, PrismScope scope) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.groupProperty("resource.id")) //
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
-                .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
+    public List<Integer> getVisibleUserResourceParents(User user, PrismScope scope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN)
+                .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .createAlias("resource.resourceConditions", "resourceCondition", JoinType.INNER_JOIN)
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
-                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advert.published", true)) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("role.verified", true)) //
-                .add(getVisibleResourceConstraint(scope)) //
                 .list();
     }
 

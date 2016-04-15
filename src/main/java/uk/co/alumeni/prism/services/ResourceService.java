@@ -20,6 +20,7 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
+import static uk.co.alumeni.prism.PrismConstants.PIPE;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
@@ -366,7 +367,7 @@ public class ResourceService {
             entityService.flush();
 
             if (resourceParent) {
-                advertService.persistResourceAdvert((ResourceParent) resource, advert);
+                advertService.persistAdvert((ResourceParent) resource, advert);
             }
 
             resource.setAdvert(advert);
@@ -807,7 +808,7 @@ public class ResourceService {
             ResourceOpportunity resourceOpportunity = (ResourceOpportunity) resource;
             ResourceOpportunityDTO resourceOpportunityDTO = (ResourceOpportunityDTO) resourceDTO;
             setResourceOpportunityType(resourceOpportunity, resourceOpportunityDTO.getOpportunityType());
-            setStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions());
+            setResourceStudyOptions(resourceOpportunity, resourceOpportunityDTO.getStudyOptions());
         } else {
             setResourceOpportunityCategories(resource, resourceDTO.getOpportunityCategories().stream().map(Enum::name).collect(joining("|")));
         }
@@ -857,7 +858,7 @@ public class ResourceService {
         });
     }
 
-    public void setStudyOptions(ResourceOpportunity resource, List<PrismStudyOption> studyOptions) {
+    public void setResourceStudyOptions(ResourceOpportunity resource, List<PrismStudyOption> studyOptions) {
         if (resource.getId() != null) {
             resourceDAO.deleteResourceStudyOptions(resource);
             resource.getResourceStudyOptions().clear();
@@ -870,6 +871,7 @@ public class ResourceService {
         resource.getResourceStudyOptions()
                 .addAll(studyOptions.stream().map(studyOption -> new ResourceStudyOption().withResource(resource).withStudyOption(studyOption))
                         .collect(Collectors.toList()));
+        resource.getAdvert().setStudyOptions(Joiner.on(PIPE).join(studyOptions.stream().map(so -> so.name()).collect(toList())));
     }
 
     public void updateResource(ResourceParent resource, ResourceParentDTO resourceDTO) {
@@ -888,25 +890,15 @@ public class ResourceService {
         updateResource(resource, resourceDTO);
 
         resource.setAvailableDate(resourceDTO.getAvailableDate());
-
-        Integer durationMinimum = resourceDTO.getDurationMinimum();
-        Integer durationMaximum = resourceDTO.getDurationMaximum();
-        if (!(durationMinimum == null && durationMaximum == null)) {
-            durationMinimum = durationMinimum == null ? durationMaximum : durationMinimum;
-            durationMaximum = durationMaximum == null ? durationMinimum : durationMaximum;
-
-            resource.setDurationMinimum(durationMinimum);
-            resource.setDurationMaximum(durationMaximum);
-        }
-
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
 
         Advert advert = resource.getAdvert();
+        advertService.updateDuration(advert, resourceDTO.getDurationMinimum(), resourceDTO.getDurationMaximum());
         advertService.updateFinancialDetail(advert, resourceDTO.getFinancialDetail(), resource.getInstitution());
         applicationService.updateApplicationOpportunityCategories(advert);
 
         List<PrismStudyOption> studyOptions = resourceDTO.getStudyOptions();
-        setStudyOptions(resource, studyOptions == null ? newArrayList() : studyOptions);
+        setResourceStudyOptions(resource, studyOptions == null ? newArrayList() : studyOptions);
     }
 
     public Junction getFilterConditions(PrismScope resourceScope, ResourceListFilterDTO filter) {
@@ -1237,21 +1229,13 @@ public class ResourceService {
         return addressService.getAddressLocationIndex(resourceDAO.getResourceOrganizationLocations(resourceScope, resourceIds), ADDRESS_LOCATION_PRECISION);
     }
 
-    public HashMultimap<PrismScope, Integer> getVisibleResourceParents() {
+    public HashMultimap<PrismScope, Integer> getVisibleUserResourceParents(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
         stream(WorkflowDAO.advertScopes).forEach(advertScope -> {
-            resources.putAll(advertScope, resourceDAO.getVisibleResources(advertScope));
-        });
-        return resources;
-    }
-
-    public HashMultimap<PrismScope, Integer> getVisibleResourceParents(User user) {
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        stream(WorkflowDAO.advertScopes).forEach(advertScope -> {
-            List<Integer> visibleResources = resourceDAO.getVisibleResources(user, advertScope);
+            List<Integer> visibleResources = resourceDAO.getVisibleUserResourceParents(user, advertScope);
             resources.putAll(advertScope, visibleResources);
             if (advertScope.equals(DEPARTMENT) && visibleResources.size() > 0) {
-                resources.putAll(INSTITUTION, institutionService.getVisibleInstitutions(visibleResources));
+                resources.putAll(INSTITUTION, institutionService.getVisibleUserInstitutions(visibleResources));
             }
         });
         return resources;
@@ -1441,8 +1425,7 @@ public class ResourceService {
 
     private void setResourceOpportunityCategories(ResourceParent resource, String opportunityCategories) {
         resource.setOpportunityCategories(opportunityCategories);
-        Advert advert = resource.getAdvert();
-        advert.setOpportunityCategories(opportunityCategories);
+        resource.getAdvert().setOpportunityCategories(opportunityCategories);
     }
 
     private void joinResource(ResourceParent resource, User user, PrismRoleContext roleContext, Boolean requested) {

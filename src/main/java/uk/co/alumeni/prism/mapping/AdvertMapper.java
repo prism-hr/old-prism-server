@@ -48,7 +48,7 @@ import javax.transaction.Transactional;
 import jersey.repackaged.com.google.common.base.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
@@ -93,6 +92,7 @@ import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
@@ -164,8 +164,13 @@ public class AdvertMapper {
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         User user = userService.getCurrentUser();
-        Set<Integer> userAdverts = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
-        if (isTrue(advert.getGloballyVisible()) || (userAdverts != null && userAdverts.contains(advert.getId()))) {
+        UserAdvertDTO userAdvertDTO = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
+
+        Integer advertId = advert.getId();
+        List<Integer> userAdverts = userAdvertDTO.getVisibleAdverts();
+        List<Integer> userAdvertsRevoked = userAdvertDTO.getRevokedAdverts();
+        if ((isEmpty(userAdvertsRevoked) || !userAdvertsRevoked.contains(advertId)) && (isTrue(advert.getGloballyVisible())
+                || userAdvertDTO.isAllVisible() || (isNotEmpty(userAdverts) && userAdverts.contains(advertId)))) {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
             ResourceParent resource = advert.getResource();
@@ -191,7 +196,6 @@ public class AdvertMapper {
 
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
-                setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
                 representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream()
                         .map(resourceStudyOption -> resourceStudyOption.getStudyOption()).collect(toList()));
             }
@@ -238,7 +242,6 @@ public class AdvertMapper {
         }
 
         representation.setOpportunityType(advert.getOpportunityType());
-        setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
         setOpportunityCategories(representation, advert.getOpportunityCategories());
         representation.setRecommended(advert.getRecommended());
 
@@ -707,12 +710,6 @@ public class AdvertMapper {
         if (opportunityCategories != null) {
             representation.setOpportunityCategories(asList(opportunityCategories.split("\\|")).stream().map(PrismOpportunityCategory::valueOf)
                     .collect(toList()));
-        }
-    }
-
-    private void setTargetOpportunityTypes(AdvertRepresentationExtended representation, String targetOpportunityTypes) {
-        if (targetOpportunityTypes != null) {
-            representation.setTargetOpportunityTypes(asList(targetOpportunityTypes.split("\\|")).stream().map(PrismOpportunityType::valueOf).collect(toList()));
         }
     }
 

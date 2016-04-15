@@ -92,12 +92,6 @@ public class Program extends ResourceOpportunity {
     @Column(name = "available_date")
     private LocalDate availableDate;
 
-    @Column(name = "duration_minimum")
-    private Integer durationMinimum;
-
-    @Column(name = "duration_maximum")
-    private Integer durationMaximum;
-
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -133,7 +127,7 @@ public class Program extends ResourceOpportunity {
     @Column(name = "activity_cached_timestamp")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime activityCachedTimestamp;
-    
+
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestampSitemap;
@@ -324,26 +318,6 @@ public class Program extends ResourceOpportunity {
     }
 
     @Override
-    public Integer getDurationMinimum() {
-        return durationMinimum;
-    }
-
-    @Override
-    public void setDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-    }
-
-    @Override
-    public Integer getDurationMaximum() {
-        return durationMaximum;
-    }
-
-    @Override
-    public void setDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
-    }
-
-    @Override
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
@@ -432,7 +406,7 @@ public class Program extends ResourceOpportunity {
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
-    
+
     @Override
     public DateTime getActivityCachedTimestamp() {
         return activityCachedTimestamp;
@@ -571,16 +545,6 @@ public class Program extends ResourceOpportunity {
 
     public Program withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public Program withDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-        return this;
-    }
-
-    public Program withDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
         return this;
     }
 

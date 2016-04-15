@@ -18,6 +18,10 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
 
     @Override
     public void process(Department resource, Comment comment) {
+        if (comment.isPublishComment()) {
+            resource.getAdvert().setPublished(true);
+        }
+
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
         resource.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);

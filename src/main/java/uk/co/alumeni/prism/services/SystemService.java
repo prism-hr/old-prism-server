@@ -84,6 +84,7 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.WorkflowConfigurationException;
+import uk.co.alumeni.prism.mapping.StaticDataMapper;
 import uk.co.alumeni.prism.rest.dto.DisplayPropertyConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO;
@@ -162,6 +163,9 @@ public class SystemService {
 
     @Inject
     private RoleService roleService;
+
+    @Inject
+    private StaticDataMapper staticDataMapper;
 
     @Inject
     private ScopeService scopeService;
@@ -290,6 +294,11 @@ public class SystemService {
         for (Integer addressId : addressService.getAddressesWithNoLocationParts()) {
             addressService.geocodeAddressAsEstablishment(addressId);
         }
+    }
+
+    public void initializeStaticData() {
+        logger.info("Initializing static data");
+        staticDataMapper.getData();
     }
 
     public void initializePropertyLoader() {

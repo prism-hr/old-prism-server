@@ -140,7 +140,7 @@ public class CustomizationService {
     }
 
     public List<WorkflowDefinition> getDefinitions(PrismConfiguration configurationType, PrismScope scope) {
-        return customizationDAO.listDefinitions(configurationType, scope);
+        return customizationDAO.getDefinitions(configurationType, scope);
     }
 
     public void restoreDefaultConfiguration(PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,

@@ -35,7 +35,7 @@ public class AdvertRepresentationSimple {
     private LocalDate closingDate;
 
     private AdvertCategoriesRepresentation categories;
-    
+
     private List<AdvertCompetenceRepresentation> competences;
 
     private List<PrismActionCondition> externalConditions;

@@ -93,10 +93,6 @@ public class Project extends ResourceOpportunity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "available_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate availableDate;
-
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -296,16 +292,6 @@ public class Project extends ResourceOpportunity {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public LocalDate getAvailableDate() {
-        return availableDate;
-    }
-
-    @Override
-    public void setAvailableDate(LocalDate availableDate) {
-        this.availableDate = availableDate;
     }
 
     @Override

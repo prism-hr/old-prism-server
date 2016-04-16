@@ -27,12 +27,12 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITU
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSame;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSome;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.ArrayList;
@@ -49,7 +49,6 @@ import jersey.repackaged.com.google.common.base.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.LocalDate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -263,6 +262,13 @@ public class AdvertMapper {
                 .withGoogleId(advert.getAddressGoogleId())
                 .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()) //
                         .withLongitude(advert.getAddressCoordinateLongitude())));
+
+        ResourceRepresentationSimple resource = representation.getResource();
+        if (ResourceOpportunityRepresentationSimple.class.isAssignableFrom(resource.getClass())) {
+            ResourceOpportunityRepresentationSimple resourceOpportunity = (ResourceOpportunityRepresentationSimple) resource;
+            resourceOpportunity.setDurationMinimum(advert.getDurationMinimum());
+            resourceOpportunity.setDurationMaximum(advert.getDurationMaximum());
+        }
 
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
@@ -683,21 +689,15 @@ public class AdvertMapper {
     private <T extends ResourceRepresentationSimple> T getAdvertResourceRepresentation(AdvertDTO advert, PrismScope scope) {
         ResourceFlatToNestedDTO resource = advert.getEnclosingResource(scope);
         if (resource != null) {
-            boolean isOpportunity = asList(PROGRAM, PROJECT).contains(scope);
-            Class<?> representationClass = isOpportunity ? ResourceOpportunityRepresentationSimple.class : ResourceRepresentationSimple.class;
+            Class<?> representationClass = scope.getScopeCategory().equals(OPPORTUNITY) ? ResourceOpportunityRepresentationSimple.class
+                    : ResourceRepresentationSimple.class;
             T resourceRepresentation = (T) BeanUtils.instantiate(representationClass);
 
             resourceRepresentation.setScope(scope);
             resourceRepresentation.setId(resource.getId());
             resourceRepresentation.setName(resource.getName());
 
-            if (isOpportunity) {
-                String scopeReference = scope.getLowerCamelName();
-                ResourceOpportunityRepresentationSimple resourceOpportunityRepresentation = (ResourceOpportunityRepresentationSimple) resourceRepresentation;
-                resourceOpportunityRepresentation.setAvailableDate((LocalDate) getProperty(advert, scopeReference + "AvailableDate"));
-                resourceOpportunityRepresentation.setDurationMinimum((Integer) getProperty(advert, scopeReference + "DurationMinimum"));
-                resourceOpportunityRepresentation.setDurationMaximum((Integer) getProperty(advert, scopeReference + "DurationMaximum"));
-            } else if (scope.equals(INSTITUTION)) {
+            if (scope.equals(INSTITUTION)) {
                 resourceRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(advert.getLogoImageId()));
             }
 

@@ -58,6 +58,8 @@ import com.google.common.collect.Maps;
 @Transactional
 public class StaticDataMapper {
 
+    private Map<String, Object> staticData;
+
     @Value("${integration.google.api.key}")
     private String googleApiKey;
 
@@ -92,28 +94,31 @@ public class StaticDataMapper {
     private CustomizationMapper customizationMapper;
 
     public Map<String, Object> getData() {
-        Map<String, Object> staticData = Maps.newHashMap();
-        staticData.putAll(getActions());
-        staticData.putAll(getStates());
-        staticData.putAll(getRoles());
-        staticData.putAll(getPerformanceIndicatorGroups());
-        staticData.putAll(getReportFilterEntities());
-        staticData.putAll(getSimpleProperties());
-        staticData.putAll(getFilterProperties());
-        staticData.putAll(getConfigurations());
-        staticData.putAll(getOpportunityCategories());
-        staticData.putAll(getActionConditions());
-        staticData.putAll(getRequiredSections());
-        staticData.putAll(getWorkflowConstraints());
-        staticData.putAll(getResourceFamilyCreations());
-        staticData.putAll(getDomiciles());
-        staticData.putAll(getEthnicities());
-        staticData.putAll(getDisabilities());
-        staticData.putAll(getAdvertFunctions());
-        staticData.putAll(getAdvertIndustries());
-        staticData.putAll(getAdvertBenefits());
-        staticData.putAll(getAgeRanges());
-        return staticData;
+        if (this.staticData == null) {
+            Map<String, Object> staticData = Maps.newHashMap();
+            staticData.putAll(getActions());
+            staticData.putAll(getStates());
+            staticData.putAll(getRoles());
+            staticData.putAll(getPerformanceIndicatorGroups());
+            staticData.putAll(getReportFilterEntities());
+            staticData.putAll(getSimpleProperties());
+            staticData.putAll(getFilterProperties());
+            staticData.putAll(getConfigurations());
+            staticData.putAll(getOpportunityCategories());
+            staticData.putAll(getActionConditions());
+            staticData.putAll(getRequiredSections());
+            staticData.putAll(getWorkflowConstraints());
+            staticData.putAll(getResourceFamilyCreations());
+            staticData.putAll(getDomiciles());
+            staticData.putAll(getEthnicities());
+            staticData.putAll(getDisabilities());
+            staticData.putAll(getAdvertFunctions());
+            staticData.putAll(getAdvertIndustries());
+            staticData.putAll(getAdvertBenefits());
+            staticData.putAll(getAgeRanges());
+            this.staticData = staticData;
+        }
+        return this.staticData;
     }
 
     private Map<String, Object> getActions() {

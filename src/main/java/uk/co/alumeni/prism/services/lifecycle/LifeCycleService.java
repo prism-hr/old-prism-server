@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.definitions.PrismMaintenanceTask;
-import uk.co.alumeni.prism.mapping.StaticDataMapper;
 import uk.co.alumeni.prism.services.SystemService;
 
 @Service
@@ -59,9 +58,6 @@ public class LifeCycleService {
 
     @Value("${maintenance.run}")
     private Boolean maintain;
-
-    @Inject
-    private StaticDataMapper staticDataMapper;
 
     @Inject
     private SystemService systemService;
@@ -105,7 +101,7 @@ public class LifeCycleService {
         }
 
         if (!environment.equals("test")) {
-            staticDataMapper.getData();
+            systemService.initializeStaticData();
             systemService.initializePropertyLoader();
         }
 

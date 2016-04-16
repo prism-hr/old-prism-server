@@ -2,8 +2,6 @@ package uk.co.alumeni.prism.domain.resource;
 
 import java.util.Set;
 
-import org.joda.time.LocalDate;
-
 import uk.co.alumeni.prism.api.model.resource.ResourceOpportunityDefinition;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
@@ -19,10 +17,6 @@ public abstract class ResourceOpportunity extends ResourceParent implements Reso
 
     @Override
     public abstract void setOpportunityType(OpportunityType opportunityType);
-
-    public abstract LocalDate getAvailableDate();
-
-    public abstract void setAvailableDate(LocalDate availableDate);
 
     public abstract Set<ResourceStudyOption> getResourceStudyOptions();
 

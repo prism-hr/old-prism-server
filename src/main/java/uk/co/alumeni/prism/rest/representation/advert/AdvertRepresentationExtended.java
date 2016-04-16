@@ -30,11 +30,11 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     
     private List<PrismOpportunityCategory> opportunityCategories;
 
+    private List<PrismStudyOption> studyOptions;
+    
     private Boolean recommended;
 
     private String name;
-
-    private List<PrismStudyOption> studyOptions;
 
     private Integer applicationCount;
 
@@ -105,6 +105,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     public void setOpportunityCategories(List<PrismOpportunityCategory> opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
     }
+    
+    public List<PrismStudyOption> getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
+        this.studyOptions = studyOptions;
+    }
 
     public Boolean getRecommended() {
         return recommended;
@@ -120,14 +128,6 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<PrismStudyOption> getStudyOptions() {
-        return studyOptions;
-    }
-
-    public void setStudyOptions(List<PrismStudyOption> studyOptions) {
-        this.studyOptions = studyOptions;
     }
 
     public Integer getApplicationCount() {

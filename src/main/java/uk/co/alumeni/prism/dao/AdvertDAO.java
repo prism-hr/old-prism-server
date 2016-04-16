@@ -134,17 +134,11 @@ public class AdvertDAO {
                         .add(Projections.property("department.name").as("departmentName"))
                         .add(Projections.property("program.id").as("programId"))
                         .add(Projections.property("program.name").as("programName"))
-                        .add(Projections.property("program.availableDate").as("programAvailableDate"))
-                        .add(Projections.property("program.durationMinimum").as("programDurationMinimum"))
-                        .add(Projections.property("program.durationMaximum").as("programDurationMaximum"))
                         .add(Projections.property("project.id").as("projectId"))
                         .add(Projections.property("project.name").as("projectName"))
-                        .add(Projections.property("project.availableDate").as("projectAvailableDate"))
-                        .add(Projections.property("project.durationMinimum").as("projectDurationMinimum"))
-                        .add(Projections.property("project.durationMaximum").as("projectDurationMaximum"))
                         .add(Projections.property("opportunityType.id").as("opportunityType"))
                         .add(Projections.property("opportunityCategories").as("opportunityCategories"))
-                        .add(Projections.property("studyOptions").as("studyoptions"))
+                        .add(Projections.property("studyOptions").as("studyOptions"))
                         .add(Projections.property("name").as("name"))
                         .add(Projections.property("summary").as("summary"))
                         .add(Projections.property("description").as("description"))
@@ -161,6 +155,8 @@ public class AdvertDAO {
                         .add(Projections.property("address.googleId").as("addressGoogleId"))
                         .add(Projections.property("address.addressCoordinates.latitude").as("addressCoordinateLatitude"))
                         .add(Projections.property("address.addressCoordinates.longitude").as("addressCoordinateLongitude"))
+                        .add(Projections.property("durationMinimum").as("durationMinimum"))
+                        .add(Projections.property("durationMaximum").as("durationMaximum"))
                         .add(Projections.property("pay.interval").as("payInterval"))
                         .add(Projections.property("pay.hoursWeekMinimum").as("payHoursWeekMinimum"))
                         .add(Projections.property("pay.hoursWeekMaximum").as("payHoursWeekMaximum"))
@@ -196,7 +192,7 @@ public class AdvertDAO {
                 .setProjection(Projections.projectionList()
                         .add(Projections.groupProperty("id").as("id")) //
                         .add(Projections.property("opportunityCategories").as("opportunityCategories")) //
-                        .add(Projections.property("resource.opportunityType.id").as("opportunityType"))
+                        .add(Projections.property("opportunityType.id").as("opportunityType"))
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
                 .createAlias("targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("categories.industries", "industry", JoinType.LEFT_OUTER_JOIN) //
@@ -326,7 +322,7 @@ public class AdvertDAO {
                 .createAlias("resource.resourceStudyOptions", "resourceStudyOption", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .addOrder(Order.asc("id")) //
-                .addOrder(Order.asc("resourceStudyOption.studyOption"))
+                .addOrder(Order.asc("resourceStudyOption.studyOption")) //
                 .setResultTransformer(Transformers.aliasToBean(AdvertStudyOptionDTO.class)) //
                 .list();
     }
@@ -535,24 +531,16 @@ public class AdvertDAO {
     public List<Integer> getAdvertsForTargetResource(PrismScope targeterScope, PrismScope resourceScope, Integer resourceId, PrismScope advertScope) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advertResourceAdvert.id")) //
-                .createAlias("advert", "targeterAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targeterAdvert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN, //
-                        Restrictions.eqProperty("targeterResource.advert.id", "targeterAdvert.id"))
-                .createAlias("targeterResource." + advertScope.getLowerCamelName() + "s", "advertResource", JoinType.INNER_JOIN) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN, //
+                        Restrictions.eqProperty("resource.advert.id", "advert.id"))
+                .createAlias("resource." + advertScope.getLowerCamelName() + "s", "advertResource", JoinType.INNER_JOIN) //
                 .createAlias("advertResource.advert", "advertResourceAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + resourceScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN, //
                         Restrictions.eqProperty("targetResource.advert.id", "targetAdvert.id")) //
                 .add(Restrictions.eq("advertResourceAdvert.published", true)) //
                 .add(Restrictions.eq("targetResource.id", resourceId)) //
-                .list();
-    }
-
-    public List<Integer> getAdvertsForWhichUserIsTarget(User user, String advertProperty) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty(advertProperty + ".id")) //
-                .add(Restrictions.eq("acceptAdvertUser", user)) //
-                .add(Restrictions.neProperty(advertProperty, "acceptAdvert")) //
                 .list();
     }
 
@@ -729,6 +717,7 @@ public class AdvertDAO {
     public List<Integer> getUserAdvertsRevoked(Collection<Integer> userAdverts, HashMultimap<PrismScope, Integer> userResources, PrismScope... scopes) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.groupProperty("advert.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.eq("partnershipState", ENDORSEMENT_REVOKED)) //
@@ -944,7 +933,7 @@ public class AdvertDAO {
         }
         return conjunction;
     }
-    
+
     private Junction getVisibilityConstraint(UserAdvertDTO userAdvertDTO, boolean recommendation) {
         Junction constraint = Restrictions.conjunction();
         if (recommendation) {

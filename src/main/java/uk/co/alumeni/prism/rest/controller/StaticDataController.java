@@ -4,7 +4,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +17,6 @@ public class StaticDataController {
     private StaticDataMapper staticDataMapper;
 
     @RequestMapping
-    @Cacheable(value = "staticData")
     public Map<String, Object> getData() {
         return staticDataMapper.getData();
     }

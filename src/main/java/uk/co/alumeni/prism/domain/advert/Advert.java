@@ -122,16 +122,15 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Column(name = "telephone")
     private String telephone;
 
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     @Column(name = "duration_minimum")
     private Integer durationMinimum;
 
     @Column(name = "duration_maximum")
     private Integer durationMaximum;
-
-    @OneToOne
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "address_id")
-    private Address address;
 
     @Embedded
     private AdvertFinancialDetail pay;
@@ -308,6 +307,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.telephone = telephone;
     }
 
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public Integer getDurationMinimum() {
         return durationMinimum;
     }
@@ -322,14 +329,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setDurationMaximum(Integer durationMaximum) {
         this.durationMaximum = durationMaximum;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
     }
 
     public AdvertFinancialDetail getPay() {

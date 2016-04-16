@@ -89,3 +89,11 @@ alter table program
 	drop column duration_minimum,
 	drop column duration_maximum
 ;
+
+alter table project
+	drop column available_date
+;
+
+alter table program
+	drop column available_date
+;

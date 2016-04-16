@@ -173,7 +173,7 @@ public class CustomizationDAO {
         query.executeUpdate();
     }
 
-    public <T extends WorkflowDefinition> List<T> listDefinitions(PrismConfiguration configurationType, PrismScope scope) {
+    public <T extends WorkflowDefinition> List<T> getDefinitions(PrismConfiguration configurationType, PrismScope scope) {
         return (List<T>) sessionFactory.getCurrentSession().createCriteria(configurationType.getDefinitionClass()) //
                 .add(Restrictions.eq("scope.id", scope)) //
                 .addOrder(Order.asc("id")) //

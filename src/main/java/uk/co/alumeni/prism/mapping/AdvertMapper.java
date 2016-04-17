@@ -204,7 +204,6 @@ public class AdvertMapper {
             Boolean recommended = userAdverts.contains(advert.getId());
             representation.setRecommended(recommended);
 
-            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert), user));
             representation.setName(advert.getName());
 
             AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
@@ -214,6 +213,9 @@ public class AdvertMapper {
             Long applicationRatingCount = applicationSummary.getApplicationRatingCount();
             representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
             representation.setApplicationRatingAverage(doubleToBigDecimal(applicationSummary.getApplicationRatingAverage(), RATING_PRECISION));
+
+            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert), user));
+            representation.setSuggestedThemes(advertService.getSuggestedAdvertThemes(advert));
 
             List<Integer> advertIds = newArrayList(advert.getId());
             Map<Integer, AdvertRepresentationExtended> representations = ImmutableMap.of(advert.getId(), representation);

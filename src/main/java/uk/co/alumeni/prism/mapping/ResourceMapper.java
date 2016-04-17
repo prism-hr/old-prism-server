@@ -336,8 +336,7 @@ public class ResourceMapper {
 
     public <T extends ResourceOpportunity> ResourceOpportunityRepresentationSimple getResourceOpportunityRepresentationSimple(T resource) {
         ResourceOpportunityRepresentationSimple representation = getResourceRepresentationSimple(resource, ResourceOpportunityRepresentationSimple.class);
-        representation.setAvailableDate(resource.getAvailableDate());
-
+        
         Advert advert = resource.getAdvert();
         representation.setDurationMinimum(advert.getDurationMinimum());
         representation.setDurationMaximum(advert.getDurationMaximum());
@@ -428,8 +427,6 @@ public class ResourceMapper {
         representation.setOpportunityType(resource.getOpportunityType().getId());
         representation.setOpportunityCategory(PrismOpportunityCategory.valueOf(resource.getOpportunityCategories()));
         representation.setStudyOptions(resourceService.getStudyOptions(resource));
-
-        representation.setAvailableDate(resource.getAvailableDate());
 
         Advert advert = resource.getAdvert();
         representation.setDurationMinimum(advert.getDurationMinimum());

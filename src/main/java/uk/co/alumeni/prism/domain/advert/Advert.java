@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
@@ -50,7 +51,6 @@ import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
@@ -153,15 +153,15 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertTarget> targets = Sets.newHashSet();
+    private Set<AdvertTarget> targets = newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertCompetence> competences = Sets.newHashSet();
+    private Set<AdvertCompetence> competences = newHashSet();
 
     @OrderBy(clause = "sequence_identifier desc")
     @OneToMany(mappedBy = "advert")
-    private Set<Application> applications = Sets.newHashSet();
+    private Set<Application> applications = newHashSet();
 
     public Integer getId() {
         return id;

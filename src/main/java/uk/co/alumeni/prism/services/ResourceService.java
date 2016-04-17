@@ -888,8 +888,6 @@ public class ResourceService {
     public void updateOpportunity(PrismScope resourceScope, Integer resourceId, ResourceOpportunityDTO resourceDTO) {
         ResourceOpportunity resource = (ResourceOpportunity) getById(resourceScope, resourceId);
         updateResource(resource, resourceDTO);
-
-        resource.setAvailableDate(resourceDTO.getAvailableDate());
         setResourceOpportunityType(resource, resourceDTO.getOpportunityType());
 
         Advert advert = resource.getAdvert();
@@ -1240,7 +1238,7 @@ public class ResourceService {
         });
         return resources;
     }
-
+    
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //

@@ -136,6 +136,7 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Joiner;
@@ -988,6 +989,9 @@ public class AdvertService {
     }
 
     public UserAdvertDTO getUserAdverts(User user, PrismScope... displayScopes) {
+        if (user == null) {
+            return new UserAdvertDTO().withAllVisible(false).withVisibleAdverts(emptyList()).withRevokedAdverts(emptyList());
+        }
         HashMultimap<PrismScope, Integer> userResources = resourceService.getVisibleUserResourceParents(user);
 
         Set<Integer> visibleAdverts = newHashSet(advertDAO.getUserAdverts(userResources));
@@ -1067,6 +1071,10 @@ public class AdvertService {
 
     public List<Advert> getTargeterAdverts(Collection<Advert> adverts) {
         return advertDAO.getTargeterAdverts(adverts);
+    }
+
+    public List<AdvertThemeRepresentation> getSuggestedAdvertThemes(Advert advert) {
+        return advertDAO.getSuggestedAdvertThemes(advert);
     }
 
     private <T> List<T> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, PrismScope[] advertScopes, Collection<Integer> advertIds,

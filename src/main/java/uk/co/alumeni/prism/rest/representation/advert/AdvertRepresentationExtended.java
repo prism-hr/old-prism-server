@@ -43,6 +43,8 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
     private BigDecimal applicationRatingAverage;
 
     private List<AdvertTargetConnectionRepresentation> targets;
+    
+    private List<AdvertThemeRepresentation> suggestedThemes;
 
     private PrismConnectionState joinStateStaff;
 
@@ -160,6 +162,14 @@ public class AdvertRepresentationExtended extends AdvertRepresentationSimple {
 
     public void setTargets(List<AdvertTargetConnectionRepresentation> targets) {
         this.targets = targets;
+    }
+    
+    public List<AdvertThemeRepresentation> getSuggestedThemes() {
+        return suggestedThemes;
+    }
+
+    public void setSuggestedThemes(List<AdvertThemeRepresentation> suggestedThemes) {
+        this.suggestedThemes = suggestedThemes;
     }
 
     public PrismConnectionState getJoinStateStaff() {

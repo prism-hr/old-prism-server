@@ -57,6 +57,7 @@ import uk.co.alumeni.prism.domain.advert.AdvertAttribute;
 import uk.co.alumeni.prism.domain.advert.AdvertLocation;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.advert.AdvertTargetPending;
+import uk.co.alumeni.prism.domain.advert.AdvertTheme;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertFunction;
 import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
@@ -85,6 +86,7 @@ import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -728,6 +730,19 @@ public class AdvertDAO {
                 .list();
     }
 
+    public List<AdvertThemeRepresentation> getSuggestedAdvertThemes(Advert advert) {
+        return (List<AdvertThemeRepresentation>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("theme.id")) //
+                        .add(Projections.property("theme.name"))) //
+                .createAlias("advert", "advert") //
+                .createAlias("theme", "theme", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("advert.institution", advert.getInstitution())) //
+                .addOrder(Order.asc("theme.name")) //
+                .setResultTransformer(Transformers.aliasToBean(AdvertThemeRepresentation.class)) //
+                .list();
+    }
+
     private void appendContextConstraint(Criteria criteria, OpportunitiesQueryDTO queryDTO) {
         PrismResourceContext context = queryDTO.getContext();
         if (context != null) {
@@ -746,7 +761,7 @@ public class AdvertDAO {
     }
 
     private void appendNodeVisibilityConstraint(Criteria criteria, Collection<Integer> nodeAdverts, UserAdvertDTO userAdvertDTO, boolean recommendation) {
-        criteria.add(Restrictions.in("advert.id", nodeAdverts));
+        criteria.add(Restrictions.in("id", nodeAdverts));
         appendVisibilityConstraint(criteria, userAdvertDTO, recommendation);
     }
 
@@ -896,7 +911,7 @@ public class AdvertDAO {
         userResources.keySet().stream().forEach(userResourceScope -> {
             Set<Integer> userResourcesScope = userResources.get(userResourceScope);
             if (isNotEmpty(userResourcesScope)) {
-                permissionConstraint.add(Restrictions.in(resolvedRestrictAdvertReference + userResourceScope.name() + ".id", userResourcesScope));
+                permissionConstraint.add(Restrictions.in(resolvedRestrictAdvertReference + userResourceScope.getLowerCamelName() + ".id", userResourcesScope));
             }
         });
 

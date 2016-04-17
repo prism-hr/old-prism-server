@@ -370,7 +370,7 @@ public class ResourceController {
     public void viewMessageThread(@RequestBody Map<String, Integer> body) {
         messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
-
+    
     @ModelAttribute
     private ResourceDescriptor getResourceDescriptor(@PathVariable String resourceScope) {
         return PrismRestUtils.getResourceDescriptor(resourceScope);

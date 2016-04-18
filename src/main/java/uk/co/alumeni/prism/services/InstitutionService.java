@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.InstitutionDAO;
 import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
 
@@ -72,7 +73,7 @@ public class InstitutionService {
         return businessYearStartMonth == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
-    public List<Integer> getVisibleUserInstitutions(List<Integer> userDepartments) {
+    public List<ResourceAdvertDTO> getVisibleUserInstitutions(List<Integer> userDepartments) {
         return institutionDAO.getVisibleUserInstitutions(userDepartments);
     }
 

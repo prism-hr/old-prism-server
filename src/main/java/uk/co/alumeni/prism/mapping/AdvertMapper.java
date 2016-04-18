@@ -166,8 +166,8 @@ public class AdvertMapper {
         UserAdvertDTO userAdvertDTO = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
 
         Integer advertId = advert.getId();
-        List<Integer> userAdverts = userAdvertDTO.getVisibleAdverts();
-        List<Integer> userAdvertsRevoked = userAdvertDTO.getInvisibleAdverts();
+        List<Integer> userAdverts = userAdvertDTO.getVisibleDirect();
+        List<Integer> userAdvertsRevoked = userAdvertDTO.getInvisible();
         if ((isEmpty(userAdvertsRevoked) || !userAdvertsRevoked.contains(advertId)) && (isTrue(advert.getGloballyVisible())
                 || userAdvertDTO.isAllVisible() || (isNotEmpty(userAdverts) && userAdverts.contains(advertId)))) {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);

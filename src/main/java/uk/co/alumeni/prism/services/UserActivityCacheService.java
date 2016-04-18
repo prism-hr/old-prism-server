@@ -1,22 +1,20 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
-
-import java.util.Collection;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.joda.time.DateTime;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.event.UserActivityUpdateEvent;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
 
 @Service
 public class UserActivityCacheService {
@@ -29,7 +27,7 @@ public class UserActivityCacheService {
     @Inject
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public void updateUserActivityCaches(Object source, Resource resource, User currentUser, DateTime baseline) {
+    public void updateUserActivityCaches(Resource resource, User currentUser, DateTime baseline) {
         applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(resource)
                 .withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(
                         resource.getId())).withCurrentUser(currentUser.getId()).withBaseline(baseline));

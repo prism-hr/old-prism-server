@@ -198,7 +198,7 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
     public DeferredResult<UserActivityRepresentation> getUserActivityRepresentation(@RequestParam(required = false) Integer cacheIncrement) {
-        DeferredResult<UserActivityRepresentation> result = new DeferredResult<>(10000L);
+        DeferredResult<UserActivityRepresentation> result = new DeferredResult<>(55000L);
         User currentUser = userService.getCurrentUser();
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentation(currentUser);
         if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) { // return immediately

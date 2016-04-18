@@ -620,7 +620,7 @@ public class AdvertService {
             target = createAdvertTarget(advert, currentUser, advertTarget, userTarget, advertTarget, userTarget, baseline, message, sendInvitation);
         }
 
-        userActivityCacheService.updateUserActivityCaches(this, resourceTarget, currentUser, baseline);
+        userActivityCacheService.updateUserActivityCaches(resourceTarget, currentUser, baseline);
         return target;
     }
 
@@ -691,7 +691,7 @@ public class AdvertService {
 
             DateTime baseline = actionOutcome.getComment().getSubmittedTimestamp();
             if (baseline != null) {
-                userActivityCacheService.updateUserActivityCaches(this, resource, currentUser, baseline);
+                userActivityCacheService.updateUserActivityCaches(resource, currentUser, baseline);
             }
         });
     }
@@ -1158,7 +1158,7 @@ public class AdvertService {
         AdvertTarget advertTarget = entityService.createOrUpdate(new AdvertTarget().withAdvert(advert).withAdvertSevered(false).withTargetAdvert(targetAdvert)
                 .withTargetAdvertSevered(false).withAcceptAdvert(acceptAdvert).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
         setAdvertTargetSequenceIdentifier(advertTarget, partnershipState, now());
-        userActivityCacheService.updateUserActivityCaches(this, acceptAdvert.getResource(), currentUser, baseline);
+        userActivityCacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline);
         return advertTarget;
     }
 
@@ -1210,7 +1210,7 @@ public class AdvertService {
                     notificationService.sendConnectionNotification(currentUser, advertTarget.getOtherUser(), advertTarget);
                 }
 
-                userActivityCacheService.updateUserActivityCaches(this, acceptAdvert.getResource(), currentUser, baseline);
+                userActivityCacheService.updateUserActivityCaches(acceptAdvert.getResource(), currentUser, baseline);
             }
         }
 

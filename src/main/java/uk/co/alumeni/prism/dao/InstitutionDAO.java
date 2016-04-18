@@ -21,6 +21,7 @@ import uk.co.alumeni.prism.domain.Domicile;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
@@ -116,13 +117,16 @@ public class InstitutionDAO {
         return list;
     }
 
-    public List<Integer> getVisibleUserInstitutions(List<Integer> userDepartments) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
-                .setProjection(Projections.property("institution.id")) //
+    public List<ResourceAdvertDTO> getVisibleUserInstitutions(List<Integer> userDepartments) {
+        return (List<ResourceAdvertDTO>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("institution.id").as("resourceId")) //
+                        .add(Projections.property("advert.id").as("advertId"))) //
                 .createAlias("institution", "institution", JoinType.INNER_JOIN) //
                 .createAlias("institution.advert", "advert", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("id", userDepartments)) //
                 .add(Restrictions.eq("advert.published", true)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceAdvertDTO.class)) //
                 .list();
     }
 

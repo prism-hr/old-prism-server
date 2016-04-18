@@ -118,6 +118,7 @@ import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.UserAdvertDTO;
+import uk.co.alumeni.prism.dto.UserResourceDTO;
 import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
@@ -517,7 +518,7 @@ public class AdvertService {
         advert.setClosingDate(closingDate);
         advert.getResource().setDueDate(closingDate);
 
-        advertDAO.deleteCustomAdvertTargets(advert);
+        advertDAO.deleteAdvertTargets(advert);
         List<Integer> customTargetIds = advertVisibilityDTO.getCustomTargets();
         if (isNotEmpty(customTargetIds)) {
             updateAdvertTargets(currentUser, advert, customTargetIds, baseline);
@@ -849,12 +850,12 @@ public class AdvertService {
         }
 
         UserAdvertDTO userAdvertDTO = getUserAdverts(user, scopes);
-        List<Integer> userAdverts = userAdvertDTO.getVisibleAdverts();
+        List<Integer> visibleDirect = userAdvertDTO.getVisibleDirect();
         Set<EntityOpportunityCategoryDTO<?>> adverts = Sets.newTreeSet();
-        if (!(resourceScope != null && isEmpty(nodeAdverts) || (isTrue(query.getRecommendation()) && isEmpty(userAdverts)))) {
+        if (!(resourceScope != null && isEmpty(nodeAdverts) || (isTrue(query.getRecommendation()) && isEmpty(visibleDirect)))) {
             advertDAO.getVisibleAdverts(asList(scopes), nodeAdverts, userAdvertDTO, query).forEach(advert -> {
                 Integer visibleAdvertId = advert.getId();
-                advert.setPriority(new BigDecimal(userAdverts.contains(visibleAdvertId) ? 1 : 0));
+                advert.setPriority(new BigDecimal(visibleDirect.contains(visibleAdvertId) ? 1 : 0));
                 adverts.add(advert);
             });
         }
@@ -886,9 +887,15 @@ public class AdvertService {
                 }
             }
 
-            targetAdverts.forEach(targetAdvert -> {
-                createAdvertTarget(advert, targetAdvert, comment.getUser(), comment.getCreatedTimestamp(), partnershipState);
-            });
+            if (targetAdverts.size() > 0) {
+                if (partnershipState.equals(ENDORSEMENT_REVOKED)) {
+                    targetAdverts.forEach(targetAdvert -> {
+                        createAdvertTarget(advert, comment.getUser(), targetAdvert, comment.getCreatedTimestamp(), partnershipState);
+                    });
+                } else {
+                    advertDAO.deleteAdvertTargets(advert, targetAdverts, ENDORSEMENT_REVOKED);
+                }
+            }
         }
     }
 
@@ -985,22 +992,37 @@ public class AdvertService {
 
     public UserAdvertDTO getUserAdverts(User user, PrismScope... displayScopes) {
         if (user == null) {
-            return new UserAdvertDTO().withAllVisible(false).withVisibleAdverts(emptyList()).withInvisibleAdverts(emptyList());
+            return new UserAdvertDTO().withAllVisible(false).withVisibleDirect(emptyList()).withInvisibleAdverts(emptyList());
         }
 
-        HashMultimap<PrismScope, Integer> userResources = resourceService.getVisibleUserResourceParents(user);
+        Set<Integer> visibleDirect = newHashSet();
+        Set<Integer> visibleIndirect = newHashSet();
+        Set<Integer> invisible = newHashSet();
+        if (ArrayUtils.isNotEmpty(displayScopes) && stream(displayScopes).anyMatch(displayScope -> displayScope.getScopeCategory().equals(OPPORTUNITY))) {
+            UserResourceDTO userResourceDTO = resourceService.getVisibleUserResourceParents(user);
+            HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getVisibleResources();
 
-        Set<Integer> visibleAdverts = newHashSet(advertDAO.getUserAdverts(userResources, displayScopes));
-        visibleAdverts.addAll(advertDAO.getUserAdvertsTargeted(userResources, displayScopes));
+            visibleDirect.addAll(advertDAO.getUserAdverts(userResources, displayScopes));
 
-        Set<Integer> invisibleAdverts = newHashSet();
-        if (visibleAdverts.size() > 0 && ArrayUtils.isNotEmpty(displayScopes)
-                && stream(displayScopes).anyMatch(displayScope -> displayScope.getScopeCategory().equals(OPPORTUNITY))) {
-            invisibleAdverts.addAll(newHashSet(advertDAO.getUserAdvertsRevoked(visibleAdverts, userResources, displayScopes)));
+            Set<Integer> visibleDirectIndex = userResourceDTO.getVisibleAdvertsDirect();
+            advertDAO.getUserAdvertsTargeted(userResources, displayScopes).stream().forEach(advert -> {
+                if (visibleDirectIndex.contains(advert.getTargetAdvertId())) {
+                    visibleDirect.add(advert.getAdvertId());
+                } else {
+                    visibleIndirect.add(advert.getAdvertId());
+                }
+            });
+
+            Set<Integer> visible = visibleDirect;
+            visible.addAll(visibleIndirect);
+            if (visible.size() > 0) {
+                invisible.addAll(newHashSet(advertDAO.getUserAdvertsRevoked(visible, userResources, displayScopes)));
+            }
         }
 
         return new UserAdvertDTO().withAllVisible(roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR))
-                .withVisibleAdverts(newArrayList(visibleAdverts)).withInvisibleAdverts(newArrayList(invisibleAdverts));
+                .withVisibleDirect(newArrayList(visibleDirect)).withVisibleIndirect(newArrayList(visibleIndirect))
+                .withInvisibleAdverts(newArrayList(invisible));
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {
@@ -1149,7 +1171,7 @@ public class AdvertService {
                 .withAcceptAdvertUser(acceptAdvertUser).withCreatedTimestamp(baseline).withPartnershipState(partnershipState));
     }
 
-    private AdvertTarget createAdvertTarget(Advert advert, Advert targetAdvert, User currentUser, DateTime baseline, PrismPartnershipState partnershipState) {
+    private AdvertTarget createAdvertTarget(Advert advert, User currentUser, Advert targetAdvert, DateTime baseline, PrismPartnershipState partnershipState) {
         return createAdvertTarget(advert, currentUser, targetAdvert, targetAdvert, baseline, partnershipState);
     }
 

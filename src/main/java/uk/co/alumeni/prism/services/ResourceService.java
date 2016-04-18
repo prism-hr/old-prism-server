@@ -1467,7 +1467,7 @@ public class ResourceService {
             }
         }
 
-        userActivityCacheService.updateUserActivityCaches(this, resource, currentUser, now());
+        userActivityCacheService.updateUserActivityCaches(resource, currentUser, now());
     }
 
     private boolean validateResourceRelationCreation(ResourceRelationCreationDTO resourceRelationDTO) {

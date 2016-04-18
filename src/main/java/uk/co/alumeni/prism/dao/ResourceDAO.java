@@ -70,6 +70,7 @@ import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.EntityLocationDTO;
+import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
@@ -750,15 +751,18 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getVisibleUserResourceParents(User user, PrismScope scope) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
-                .setProjection(Projections.groupProperty("id")) //
+    public List<ResourceAdvertDTO> getVisibleUserResourceParents(User user, PrismScope scope) {
+        return (List<ResourceAdvertDTO>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("resourceId")) //
+                        .add(Projections.groupProperty("advert.id").as("advertId"))) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("advert.published", true)) //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("role.verified", true)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceAdvertDTO.class)) //
                 .list();
     }
 

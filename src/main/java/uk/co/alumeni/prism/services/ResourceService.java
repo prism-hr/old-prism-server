@@ -121,6 +121,7 @@ import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
@@ -128,6 +129,7 @@ import uk.co.alumeni.prism.dto.ResourceListRowDTO;
 import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.UserResourceDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
@@ -1227,18 +1229,20 @@ public class ResourceService {
         return addressService.getAddressLocationIndex(resourceDAO.getResourceOrganizationLocations(resourceScope, resourceIds), ADDRESS_LOCATION_PRECISION);
     }
 
-    public HashMultimap<PrismScope, Integer> getVisibleUserResourceParents(User user) {
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
+    public UserResourceDTO getVisibleUserResourceParents(User user) {
+        HashMultimap<PrismScope, ResourceAdvertDTO> visibleDirect = HashMultimap.create();
+        HashMultimap<PrismScope, ResourceAdvertDTO> visibleIndirect = HashMultimap.create();
         stream(WorkflowDAO.advertScopes).forEach(advertScope -> {
-            List<Integer> visibleResources = resourceDAO.getVisibleUserResourceParents(user, advertScope);
-            resources.putAll(advertScope, visibleResources);
+            List<ResourceAdvertDTO> visibleResources = resourceDAO.getVisibleUserResourceParents(user, advertScope);
+            visibleDirect.putAll(advertScope, visibleResources);
             if (advertScope.equals(DEPARTMENT) && visibleResources.size() > 0) {
-                resources.putAll(INSTITUTION, institutionService.getVisibleUserInstitutions(visibleResources));
+                List<Integer> visibleResourceIds = visibleResources.stream().map(vr -> vr.getResourceId()).collect(toList());
+                visibleIndirect.putAll(INSTITUTION, institutionService.getVisibleUserInstitutions(visibleResourceIds));
             }
         });
-        return resources;
+        return new UserResourceDTO().withVisibleDirect(visibleDirect).withVisibleIndirect(visibleIndirect);
     }
-    
+
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
             ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //

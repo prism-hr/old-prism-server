@@ -50,10 +50,9 @@ public class AdvertController {
 
     @Inject
     private UserService userService;
-    
+
     @RequestMapping(value = "/targets", method = RequestMethod.GET)
-    public List<AdvertTargetConnectionRepresentation> getTargets(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public List<AdvertTargetConnectionRepresentation> getTargets(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         List<AdvertTargetDTO> advertTargets = advertService.getAdvertTargets(advert);
         return advertMapper.getAdvertTargetConnectionRepresentations(advertTargets, userService.getCurrentUser());

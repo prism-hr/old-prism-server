@@ -233,6 +233,10 @@ public class WorkflowDAO {
                 .add(Restrictions.like(property, "|" + searchTerm, MatchMode.END));
     }
 
+    public static String getResolvedAliasReference(String aliasReference) {
+        return isEmpty(aliasReference) ? aliasReference : aliasReference + ".";
+    }
+
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {
         return sessionFactory.getCurrentSession().createCriteria(ResourceState.class)
                 .setProjection(projection) //

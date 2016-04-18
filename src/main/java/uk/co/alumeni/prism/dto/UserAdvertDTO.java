@@ -8,7 +8,7 @@ public class UserAdvertDTO {
 
     private List<Integer> visibleAdverts;
 
-    private List<Integer> revokedAdverts;
+    private List<Integer> invisibleAdverts;
 
     public boolean isAllVisible() {
         return allVisible;
@@ -26,12 +26,12 @@ public class UserAdvertDTO {
         this.visibleAdverts = visibleAdverts;
     }
 
-    public List<Integer> getRevokedAdverts() {
-        return revokedAdverts;
+    public List<Integer> getInvisibleAdverts() {
+        return invisibleAdverts;
     }
 
-    public void setRevokedAdverts(List<Integer> revokedAdverts) {
-        this.revokedAdverts = revokedAdverts;
+    public void setInvisibleAdverts(List<Integer> invisibleAdverts) {
+        this.invisibleAdverts = invisibleAdverts;
     }
 
     public UserAdvertDTO withAllVisible(boolean allVisible) {
@@ -44,8 +44,8 @@ public class UserAdvertDTO {
         return this;
     }
 
-    public UserAdvertDTO withRevokedAdverts(List<Integer> revokedAdverts) {
-        this.revokedAdverts = revokedAdverts;
+    public UserAdvertDTO withInvisibleAdverts(List<Integer> revokedAdverts) {
+        this.invisibleAdverts = revokedAdverts;
         return this;
     }
 

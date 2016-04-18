@@ -395,11 +395,11 @@ public class NotificationService {
 
     public void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
         if (definition.getNotificationPurpose().equals(UPDATE)) {
-            entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
-                    .withActive(true).withNotifiedTimestamp(now()));
+            entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient)
+                    .withNotificationDefinition(definition).withActive(true).withNotifiedTimestamp(now()));
         } else {
-            entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
-                    .withNotifiedTimestamp(now()));
+            entityService.save(new UserNotification().withResource(resource).withUser(recipient)
+                    .withNotificationDefinition(definition).withActive(true).withNotifiedTimestamp(now()));
         }
     }
 

@@ -64,6 +64,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -841,14 +842,8 @@ public class AdvertService {
         Set<Integer> nodeAdverts = Sets.newHashSet();
         if (resourceScope != null) {
             Integer resourceId = query.getResourceId();
-            stream(scopes).forEach(advertScope -> {
-                nodeAdverts.addAll(advertDAO.getAdvertsForEnclosingResource(resourceScope, resourceId, advertScope));
-                stream(organizationScopes).forEach(targeterScope -> {
-                    if (advertScope.ordinal() > targeterScope.ordinal()) {
-                        nodeAdverts.addAll(advertDAO.getAdvertsForTargetResource(targeterScope, resourceScope, resourceId, advertScope));
-                    }
-                });
-            });
+            nodeAdverts.addAll(advertDAO.getResourceAdverts(resourceScope, resourceId, scopes));
+            nodeAdverts.addAll(advertDAO.getResourceAdvertsTargeted(resourceScope, resourceId, scopes));
         } else if (advertId != null) {
             nodeAdverts.add(advertId);
         }
@@ -990,15 +985,22 @@ public class AdvertService {
 
     public UserAdvertDTO getUserAdverts(User user, PrismScope... displayScopes) {
         if (user == null) {
-            return new UserAdvertDTO().withAllVisible(false).withVisibleAdverts(emptyList()).withRevokedAdverts(emptyList());
+            return new UserAdvertDTO().withAllVisible(false).withVisibleAdverts(emptyList()).withInvisibleAdverts(emptyList());
         }
+
         HashMultimap<PrismScope, Integer> userResources = resourceService.getVisibleUserResourceParents(user);
 
-        Set<Integer> visibleAdverts = newHashSet(advertDAO.getUserAdverts(userResources));
-        visibleAdverts.addAll(advertDAO.getUserTargetedAdverts(userResources));
+        Set<Integer> visibleAdverts = newHashSet(advertDAO.getUserAdverts(userResources, displayScopes));
+        visibleAdverts.addAll(advertDAO.getUserAdvertsTargeted(userResources, displayScopes));
+
+        Set<Integer> invisibleAdverts = newHashSet();
+        if (visibleAdverts.size() > 0 && ArrayUtils.isNotEmpty(displayScopes)
+                && stream(displayScopes).anyMatch(displayScope -> displayScope.getScopeCategory().equals(OPPORTUNITY))) {
+            invisibleAdverts.addAll(newHashSet(advertDAO.getUserAdvertsRevoked(visibleAdverts, userResources, displayScopes)));
+        }
 
         return new UserAdvertDTO().withAllVisible(roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR))
-                .withVisibleAdverts(newArrayList(visibleAdverts)).withRevokedAdverts(advertDAO.getUserAdvertsRevoked(visibleAdverts, userResources));
+                .withVisibleAdverts(newArrayList(visibleAdverts)).withInvisibleAdverts(newArrayList(invisibleAdverts));
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRolesStrict(User user, String[] roleExtensions) {

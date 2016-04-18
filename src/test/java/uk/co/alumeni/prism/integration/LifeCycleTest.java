@@ -61,11 +61,13 @@ public class LifeCycleTest {
             systemInitialisationHelper.verifyStateActionCreation();
             applicationContext.getBean(WorkflowConfigurationHelper.class).verifyWorkflowConfiguration();
 
-            List<NotificationConfiguration> messages = mailSenderMock.getSentMessages();
-            assertEquals(1, messages.size());
-            NotificationConfiguration configuration = messages.get(0);
-            assertEquals(SYSTEM_COMPLETE_REGISTRATION_REQUEST, configuration.getDefinition().getId());
-            mailSenderMock.getSentMessages().clear();
+            if (i == 0) {
+                List<NotificationConfiguration> messages = mailSenderMock.getSentMessages();
+                assertEquals(1, messages.size());
+                NotificationConfiguration configuration = messages.get(0);
+                assertEquals(SYSTEM_COMPLETE_REGISTRATION_REQUEST, configuration.getDefinition().getId());
+                mailSenderMock.getSentMessages().clear();
+            }
         }
 
         propertyLoaderHelper.verifyPropertyLoader();

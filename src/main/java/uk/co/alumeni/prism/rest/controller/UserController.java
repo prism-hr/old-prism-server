@@ -1,7 +1,14 @@
 package uk.co.alumeni.prism.rest.controller;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -11,16 +18,36 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
+
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.user.*;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
+import uk.co.alumeni.prism.domain.user.UserAward;
+import uk.co.alumeni.prism.domain.user.UserEmploymentPosition;
+import uk.co.alumeni.prism.domain.user.UserQualification;
+import uk.co.alumeni.prism.domain.user.UserReferee;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
-import uk.co.alumeni.prism.rest.dto.profile.*;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileQualificationDTO;
+import uk.co.alumeni.prism.rest.dto.profile.ProfileRefereeDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserActivateDTO;
@@ -38,16 +65,15 @@ import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.rest.validation.UserLinkingValidator;
 import uk.co.alumeni.prism.rest.validation.UserRegistrationValidator;
 import uk.co.alumeni.prism.security.AuthenticationTokenHelper;
-import uk.co.alumeni.prism.services.*;
+import uk.co.alumeni.prism.services.EntityService;
+import uk.co.alumeni.prism.services.ProfileService;
+import uk.co.alumeni.prism.services.ResourceListFilterService;
+import uk.co.alumeni.prism.services.UserAccountService;
+import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.List;
-import java.util.Map;
-
-import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 @RestController
 @RequestMapping("/api/user")
@@ -201,7 +227,7 @@ public class UserController {
         DeferredResult<UserActivityRepresentation> result = new DeferredResult<>(55000L);
         User currentUser = userService.getCurrentUser();
         UserActivityRepresentation representation = userMapper.getUserActivityRepresentation(currentUser);
-        if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) { // return immediately
+        if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) {
             result.setResult(representation);
         } else {
             result.onTimeout(() -> {

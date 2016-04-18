@@ -182,7 +182,7 @@ public class RoleService {
             }
         }
 
-        userActivityCacheService.updateUserActivityCaches(this, resource, currentUser, baseline);
+        userActivityCacheService.updateUserActivityCaches(resource, currentUser, baseline);
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {

@@ -46,8 +46,8 @@ public class RoleMapper {
 
     @SuppressWarnings("unchecked")
     public List<ResourceUserRolesRepresentation> getResourceUserRoleRepresentations(Resource resource, PrismRole searchRole, String searchTerm) {
-        resourceService.validateViewResource(resource);
         User currentUser = userService.getCurrentUser();
+        resourceService.validateViewResource(resource, currentUser);
 
         Set<ResourceUserRolesRepresentation> representations = newTreeSet();
         HashMultimap<User, PrismRole> userRoles = roleService.getUserRolesStrict(resource, searchRole, searchTerm);

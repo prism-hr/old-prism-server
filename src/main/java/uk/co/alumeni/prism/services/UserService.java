@@ -108,6 +108,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
@@ -203,6 +204,12 @@ public class UserService {
             return user;
         }
         return null;
+    }
+
+    public Map<Integer, User> getUsers(List<Integer> userIds) {
+        Map<Integer, User> users = Maps.newHashMap();
+        userDAO.getUsers(userIds).stream().forEach(user -> users.put(user.getId(), user));
+        return users;
     }
 
     public User getOrCreateUser(UserDescriptor userDescriptor) {
@@ -674,6 +681,11 @@ public class UserService {
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
         setUserActivityCache(user, userActivityRepresentation, baseline);
+    }
+
+    public boolean isMatchingUser(User user, String searchTerm) {
+        return user.getFirstName().contains(searchTerm) || user.getLastName().contains(searchTerm) || user.getFullName().contains(searchTerm)
+                || user.getEmail().contains(searchTerm);
     }
 
     @SuppressWarnings("unchecked")

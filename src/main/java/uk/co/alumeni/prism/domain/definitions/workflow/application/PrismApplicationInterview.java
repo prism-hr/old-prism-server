@@ -12,6 +12,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_POTENTIAL_INTERVIEWER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_SCHEDULED_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_SCHEDULED_INTERVIEW_GROUP;
@@ -133,7 +134,8 @@ public class PrismApplicationInterview extends PrismWorkflowState {
 
     public static PrismStateAction applicationViewEditInterviewScheduling(PrismState state) {
         return applicationViewEditInterviewScheduled(state) //
-                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
+                .withStateActionAssignments(APPLICATION_POTENTIAL_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER) //
+                .withStateActionAssignments(APPLICATION_SCHEDULED_INTERVIEWER, APPLICATION_VIEW_AS_RECRUITER);
     }
 
     public static PrismStateAction applicationViewEditInterviewScheduled(PrismState state) {

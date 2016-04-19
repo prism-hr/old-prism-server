@@ -29,7 +29,8 @@ import uk.co.alumeni.prism.workflow.user.UserRoleReassignmentProcessor;
 
 @Entity
 @Table(name = "user_role", uniqueConstraints = { @UniqueConstraint(columnNames = { "system_id", "user_id", "role_id" }),
-        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
+        @UniqueConstraint(columnNames = { "institution_id", "user_id", "role_id" }),
+        @UniqueConstraint(columnNames = { "department_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "program_id", "user_id", "role_id" }), @UniqueConstraint(columnNames = { "project_id", "user_id", "role_id" }), //
         @UniqueConstraint(columnNames = { "application_id", "user_id", "role_id" }) })
 public class UserRole extends WorkflowResourceExecution implements Activity, UserAssignment<UserRoleReassignmentProcessor>, InvitationEntity {

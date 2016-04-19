@@ -797,15 +797,15 @@ public class AdvertDAO {
     }
 
     public List<AdvertThemeRepresentation> getSuggestedAdvertThemes(Advert advert) {
-        return (List<AdvertThemeRepresentation>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("theme.id")) //
-                        .add(Projections.property("theme.name"))) //
-                .createAlias("advert", "advert") //
-                .createAlias("theme", "theme", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("advert.institution", advert.getInstitution())) //
-                .addOrder(Order.asc("theme.name")) //
-                .setResultTransformer(Transformers.aliasToBean(AdvertThemeRepresentation.class)) //
+        return (List<AdvertThemeRepresentation>) sessionFactory.getCurrentSession().createCriteria(AdvertTheme.class)
+                .setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("theme.id"), "id")
+                        .add(Projections.property("theme.name"), "name"))
+                .createAlias("advert", "advert")
+                .createAlias("theme", "theme", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("advert.institution", advert.getInstitution()))
+                .addOrder(Order.asc("theme.name"))
+                .setResultTransformer(Transformers.aliasToBean(AdvertThemeRepresentation.class))
                 .list();
     }
 

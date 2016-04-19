@@ -404,12 +404,7 @@ public class CommentService {
         }
 
         if (actionId.equals(APPLICATION_ASSIGN_INTERVIEWERS)) {
-            PrismRole interviewerRole = commentDTO.getInterviewState().getInterviewerRole();
-            commentDTO.getAssignedUsers().stream().forEach(assignedUser -> {
-                if (assignedUser.getRole().equals(APPLICATION_INTERVIEWER)) {
-                    assignedUser.setRole(interviewerRole);
-                }
-            });
+            resolveApplicationInterviewerAssignments(commentDTO);
         }
 
         appendCommentProperties(comment, commentDTO);
@@ -471,6 +466,15 @@ public class CommentService {
                 comment.addSecondaryTransitionState(stateService.getById(secondaryTransitionState));
             }
         }
+    }
+
+    private void resolveApplicationInterviewerAssignments(CommentDTO commentDTO) {
+        PrismRole interviewerRole = commentDTO.getInterviewState().getInterviewerRole();
+        commentDTO.getAssignedUsers().stream().forEach(assignedUser -> {
+            if (assignedUser.getRole().equals(APPLICATION_INTERVIEWER)) {
+                assignedUser.setRole(interviewerRole);
+            }
+        });
     }
 
     private void appendAppointmentTimeslots(Comment comment, CommentDTO commentDTO) {

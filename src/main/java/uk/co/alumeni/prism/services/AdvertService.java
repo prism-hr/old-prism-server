@@ -123,6 +123,7 @@ import uk.co.alumeni.prism.dto.json.ExchangeRateLookupResponseDTO;
 import uk.co.alumeni.prism.mapping.AdvertMapper;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
+import uk.co.alumeni.prism.rest.dto.TagDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCategoriesDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertCompetenceDTO;
 import uk.co.alumeni.prism.rest.dto.advert.AdvertFinancialDetailDTO;
@@ -558,25 +559,28 @@ public class AdvertService {
         }
 
         Set<AdvertIndustry> advertIndustries = categories.getIndustries();
-        if (categoriesDTO.getIndustries() != null) {
-            for (PrismAdvertIndustry prismAdvertIndustry : categoriesDTO.getIndustries()) {
-                AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(prismAdvertIndustry);
+        List<PrismAdvertIndustry> industries = categoriesDTO.getIndustries();
+        if (isNotEmpty(industries)) {
+            industries.stream().forEach(industry -> {
+                AdvertIndustry advertIndustry = new AdvertIndustry().withAdvert(advert).withIndustry(industry);
                 entityService.save(advertIndustry);
                 advertIndustries.add(advertIndustry);
-            }
+            });
         }
 
         Set<AdvertFunction> advertFunctions = categories.getFunctions();
-        if (categoriesDTO.getFunctions() != null) {
-            for (PrismAdvertFunction prismAdvertFunction : categoriesDTO.getFunctions()) {
-                AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(prismAdvertFunction);
+        List<PrismAdvertFunction> functions = categoriesDTO.getFunctions();
+        if (isNotEmpty(functions)) {
+            functions.stream().forEach(function -> {
+                AdvertFunction advertFunction = new AdvertFunction().withAdvert(advert).withFunction(function);
                 entityService.save(advertFunction);
                 advertFunctions.add(advertFunction);
-            }
+            });
         }
 
+        List<TagDTO> themes = categoriesDTO.getThemes();
         Set<AdvertTheme> advertThemes = categories.getThemes();
-        if (isNotEmpty(advertThemes)) {
+        if (isNotEmpty(themes)) {
             categoriesDTO.getThemes().stream().forEach(themeDTO -> {
                 Theme theme = tagService.createOrUpdateTag(Theme.class, themeDTO);
                 AdvertTheme advertTheme = new AdvertTheme();

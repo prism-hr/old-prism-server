@@ -483,7 +483,7 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourceForWhichUserHasRoles(User user, PrismRole... roles) {
+    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
         String resourceReference = roles[0].getScope().getLowerCamelName();
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.property(resourceReference + ".id"))

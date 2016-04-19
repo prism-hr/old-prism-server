@@ -679,11 +679,11 @@ public class ResourceService {
     }
 
     public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
-        return resourceDAO.getResourceForWhichUserHasRoles(user, roles);
+        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles);
     }
 
     public List<Integer> getResourcesForWhichUserHasRoles(User user, Collection<PrismRole> roles) {
-        return resourceDAO.getResourceForWhichUserHasRoles(user, roles.toArray(new PrismRole[roles.size()]));
+        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles.toArray(new PrismRole[roles.size()]));
     }
 
     public List<Integer> getResourceIds(PrismScope resourceScope) {

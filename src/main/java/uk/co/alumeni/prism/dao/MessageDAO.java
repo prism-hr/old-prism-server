@@ -177,16 +177,21 @@ public class MessageDAO {
                 .uniqueResult();
     }
 
-    public void setMessageThreadSearchUser(Resource resource, User user) {
+    public List<Integer> getMessageThreadsForResource(Resource resource) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(MessageThread.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("comment", "comment", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("comment." + resource.getResourceScope().getLowerCamelName(), resource)) //
+                .list();
+    }
+
+    public void setMessageThreadSearchUser(List<Integer> messageThreads, User user) {
         sessionFactory.getCurrentSession().createQuery(
                 "update MessageThread "
                         + "set searchUser = :user "
-                        + "where id in ("
-                        + "select id "
-                        + "from MessageThread join comment "
-                        + "where comment." + resource.getResourceScope() + " = :resource)")
+                        + "where id in (:messageThreads)")
                 .setParameter("user", user)
-                .setParameter("resource", resource)
+                .setParameterList("messageThreads", messageThreads) //
                 .executeUpdate();
     }
 

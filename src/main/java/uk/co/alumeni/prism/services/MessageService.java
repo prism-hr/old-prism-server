@@ -208,6 +208,7 @@ public class MessageService {
         MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser());
         if (participant != null) {
             participant.setLastViewedMessage(latestUnreadMessage);
+            userActivityCacheService.updateUserActivityCache(participant.getUser().getId(), now());
         }
     }
 
@@ -235,7 +236,10 @@ public class MessageService {
     }
 
     public void setMessageThreadSearchUser(Resource resource, User user) {
-        messageDAO.setMessageThreadSearchUser(resource, user);
+        List<Integer> messageThreads = messageDAO.getMessageThreadsForResource(resource);
+        if (messageThreads.size() > 0) {
+            messageDAO.setMessageThreadSearchUser(messageThreads, user);
+        }
     }
 
     private boolean checkActiveMessageThreadParticipant(MessageThread thread, User user) {

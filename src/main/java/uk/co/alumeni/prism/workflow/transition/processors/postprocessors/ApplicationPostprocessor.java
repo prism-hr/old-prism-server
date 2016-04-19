@@ -96,7 +96,7 @@ public class ApplicationPostprocessor implements ResourceProcessor<Application> 
         }
 
         if (comment.isApplicationProcessingCompletedComment()) {
-            resource.setCompletionDate(comment.getSubmittedTimestamp().toLocalDate());
+            resource.setCompletionDate(comment.getCreatedTimestamp().toLocalDate());
         }
     }
 

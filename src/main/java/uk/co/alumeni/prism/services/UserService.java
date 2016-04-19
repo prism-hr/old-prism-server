@@ -72,6 +72,8 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.application.ApplicationReferee;
+import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
@@ -108,6 +110,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.TreeMultimap;
 
@@ -203,6 +206,12 @@ public class UserService {
             return user;
         }
         return null;
+    }
+
+    public Map<Integer, User> getUsers(List<Integer> userIds) {
+        Map<Integer, User> users = Maps.newHashMap();
+        userDAO.getUsers(userIds).stream().forEach(user -> users.put(user.getId(), user));
+        return users;
     }
 
     public User getOrCreateUser(UserDescriptor userDescriptor) {
@@ -357,6 +366,15 @@ public class UserService {
             DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
             if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
                 orderedUsers.put(userInterested.getIndexName(), userInterested);
+            }
+        }
+
+        DateTime baseline = now();
+        for (ApplicationReferee applicationReferee : application.getReferees()) {
+            User referee = applicationReferee.getUser();
+            Comment referenceComment = applicationReferee.getComment();
+            if ((referenceComment == null || isFalse(referenceComment.getDeclinedResponse())) && !userNotInterestedIndex.contains(referee)) {
+                orderedUsers.put(referee.getFullName(), new UserSelectionDTO().withUser(referee).withEventTimestamp(baseline));
             }
         }
 
@@ -674,6 +692,11 @@ public class UserService {
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
         setUserActivityCache(user, userActivityRepresentation, baseline);
+    }
+
+    public boolean isMatchingUser(User user, String searchTerm) {
+        return user.getFirstName().contains(searchTerm) || user.getLastName().contains(searchTerm) || user.getFullName().contains(searchTerm)
+                || user.getEmail().contains(searchTerm);
     }
 
     @SuppressWarnings("unchecked")

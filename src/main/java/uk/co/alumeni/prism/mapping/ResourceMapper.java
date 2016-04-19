@@ -376,7 +376,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource, User currentUser) {
-        resourceService.validateViewResource(resource);
+        resourceService.validateViewResource(resource, currentUser);
 
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
@@ -397,7 +397,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource, User currentUser) {
-        resourceService.validateViewResource(resource);
+        resourceService.validateViewResource(resource, currentUser);
 
         PrismScope resourceScope = resource.getResourceScope();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
@@ -416,7 +416,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationSummary getResourceRepresentationSummary(T resource) {
-        resourceService.validateViewResource(resource);
+        resourceService.validateViewResource(resource, userService.getCurrentUser());
 
         PrismScope resourceScope = resource.getResourceScope();
         PrismScopeCategory resourceScopeCategory = resourceScope.getScopeCategory();

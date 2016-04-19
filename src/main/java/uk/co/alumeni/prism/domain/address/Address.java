@@ -13,13 +13,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 import uk.co.alumeni.prism.domain.Domicile;
-import uk.co.alumeni.prism.domain.advert.Advert;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -58,9 +56,6 @@ public class Address extends AddressDefinition<Domicile> {
 
     @Embedded
     private AddressCoordinates addressCoordinates;
-
-    @OneToOne(mappedBy = "address")
-    private Advert advert;
 
     @OneToMany(mappedBy = "address")
     private Set<AddressLocation> locations = Sets.newHashSet();
@@ -135,22 +130,6 @@ public class Address extends AddressDefinition<Domicile> {
 
     public void setAddressCoordinates(AddressCoordinates addressCoordinates) {
         this.addressCoordinates = addressCoordinates;
-    }
-
-    public Advert getAdvert() {
-        return advert;
-    }
-
-    public void setAdvert(Advert advert) {
-        this.advert = advert;
-    }
-
-    public Set<AddressLocation> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(Set<AddressLocation> locations) {
-        this.locations = locations;
     }
 
     public Set<AddressLocation> getAddressLocations() {

@@ -14,7 +14,6 @@ public class PrismApplicationApprovedPendingOfferAcceptance extends PrismWorkflo
     protected void setStateActions() {
         stateActions.add(applicationConfirmOfferAcceptance(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_REQUEST));
         stateActions.add(applicationCommentViewerRecruiter()); //
-        stateActions.add(applicationCompleteApprovedAppointeeHiringManager(state)); //
         stateActions.add(applicationSendMessageApproved()); //
         stateActions.add(applicationCompleteApprovedAppointeeHiringManager(state)); //
         stateActions.add(applicationViewEdit()); //

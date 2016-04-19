@@ -5,7 +5,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_EARLIEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_LATEST_BUFFER;
 import static uk.co.alumeni.prism.PrismConstants.START_DATE_RECOMMENDED_BUFFER;
@@ -32,6 +31,7 @@ import javax.transaction.Transactional;
 
 import jersey.repackaged.com.google.common.collect.Maps;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
@@ -153,7 +153,8 @@ public class ApplicationMapper {
         Advert advert = application.getAdvert();
         AdvertCategoriesRepresentation advertCategories = advertMapper.getAdvertCategoriesRepresentation(advert);
         representation.setPossibleThemes(advertCategories.getThemes());
-        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> isTrue(location.getSelected())).collect(toList()));
+        representation.setPossibleLocations(advertCategories.getLocations().stream().filter(location -> BooleanUtils.isTrue(location.getSelected()))
+                .collect(toList()));
 
         List<UserSelectionDTO> usersInterested = userService.getUsersInterestedInApplication(application);
         representation.setUsersInterestedInApplication(userMapper.getUserRepresentations(usersInterested));
@@ -373,7 +374,7 @@ public class ApplicationMapper {
             User manager = getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
                 sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager,
-                        sourceComment.getSubmittedTimestamp());
+                        sourceComment.getCreatedTimestamp());
             }
 
             if (sourceComment != null) {
@@ -450,10 +451,20 @@ public class ApplicationMapper {
                 }
 
                 return newArrayList(assignedSupervisors);
+            } else {
+                List<ApplicationAssignedHiringManagerRepresentation> assignedSupervisors = newArrayList();
+
+                for (ApplicationReferee applicationReferee : application.getReferees()) {
+                    Comment referenceComment = applicationReferee.getComment();
+                    if (referenceComment == null || BooleanUtils.isFalse(referenceComment.getDeclinedResponse())) {
+                        assignedSupervisors.add(new ApplicationAssignedHiringManagerRepresentation().withUser(userMapper.getUserRepresentationSimple(
+                                applicationReferee.getUser(), currentUser)).withRole(APPLICATION_HIRING_MANAGER).withApprovedAppointment(true));
+                    }
+                }
+
+                return assignedSupervisors;
             }
         }
-
-        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

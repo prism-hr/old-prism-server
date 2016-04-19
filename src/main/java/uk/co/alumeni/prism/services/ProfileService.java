@@ -413,7 +413,7 @@ public class ProfileService {
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> List<U> getRecentQualifications(T profile,
-            Class<U> qualificationClass) {
+                                                                                                                                Class<U> qualificationClass) {
         List<U> qualifications = newLinkedList();
         qualifications.add(profileDAO.getCurrentQualification(profile, qualificationClass));
         qualifications.add(profileDAO.getMostRecentQualification(profile, qualificationClass));
@@ -421,7 +421,7 @@ public class ProfileService {
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> List<U> getRecentEmploymentPositions(T profile,
-            Class<U> qualificationClass) {
+                                                                                                                                          Class<U> qualificationClass) {
         List<U> employmentPositions = newLinkedList();
         employmentPositions.add(profileDAO.getCurrentEmploymentPosition(profile, qualificationClass));
         employmentPositions.add(profileDAO.getMostRecentEmploymentPosition(profile, qualificationClass));

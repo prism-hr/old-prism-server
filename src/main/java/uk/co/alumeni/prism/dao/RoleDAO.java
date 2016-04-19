@@ -165,10 +165,6 @@ public class RoleDAO {
                 .uniqueResult();
     }
 
-    public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
-        return getUserRolesStrict(resource, searchRole, searchTerm, true);
-    }
-
     public Role getCreatorRole(Resource resource) {
         return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class) //
                 .add(Restrictions.eq("scope.id", resource.getResourceScope())) //
@@ -353,17 +349,8 @@ public class RoleDAO {
                 .add(Restrictions.eq("role.roleCategory", STUDENT)) //
                 .list();
     }
-
-    private static Junction getRolesOverridingRedactionsConstraint(User user, Collection<Integer> resourceIds) {
-        return Restrictions.conjunction() //
-                .add(Restrictions.in("resource.id", resourceIds)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.eq("role.verified", true)) //
-                .add(Restrictions.isEmpty("role.actionRedactions")) //
-                .add(Restrictions.eq("userAccount.enabled", true));
-    }
-
-    private List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm, boolean verified) {
+    
+    public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("user").as("user")) //
@@ -383,6 +370,15 @@ public class RoleDAO {
         return (List<UserRoleDTO>) criteria //
                 .setResultTransformer(Transformers.aliasToBean(UserRoleDTO.class))
                 .list();
+    }
+
+    private static Junction getRolesOverridingRedactionsConstraint(User user, Collection<Integer> resourceIds) {
+        return Restrictions.conjunction() //
+                .add(Restrictions.in("resource.id", resourceIds)) //
+                .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .add(Restrictions.isEmpty("role.actionRedactions")) //
+                .add(Restrictions.eq("userAccount.enabled", true));
     }
 
 }

@@ -83,11 +83,17 @@ public class UserDAO {
 
     @Inject
     private SessionFactory sessionFactory;
-
+    
     public User getUserByActivationCode(String activationCode) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.eq("activationCode", activationCode)) //
                 .uniqueResult();
+    }
+    
+    public List<User> getUsers(List<Integer> userIds) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .add(Restrictions.in("id", userIds)) //
+                .list();
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {

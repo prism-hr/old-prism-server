@@ -7,10 +7,12 @@ import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_BULK_PROCESSED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -399,6 +401,15 @@ public class CommentService {
         if (offerDetailDTO != null) {
             comment.setOfferDetail(new CommentOfferDetail().withPositionProvisionStartDate(offerDetailDTO.getPositionProvisionalStartDate())
                     .withAppointmentConditions(offerDetailDTO.getAppointmentConditions()));
+        }
+
+        if (actionId.equals(APPLICATION_ASSIGN_INTERVIEWERS)) {
+            PrismRole interviewerRole = commentDTO.getInterviewState().getInterviewerRole();
+            commentDTO.getAssignedUsers().stream().forEach(assignedUser -> {
+                if (assignedUser.getRole().equals(APPLICATION_INTERVIEWER)) {
+                    assignedUser.setRole(interviewerRole);
+                }
+            });
         }
 
         appendCommentProperties(comment, commentDTO);

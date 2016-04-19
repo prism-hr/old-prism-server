@@ -3,6 +3,7 @@ package uk.co.alumeni.prism.domain.comment;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
@@ -57,7 +58,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.Competence;
 import uk.co.alumeni.prism.domain.activity.Activity;
 import uk.co.alumeni.prism.domain.application.Application;
@@ -824,7 +824,7 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
 
     public boolean isPublishComment() {
         PrismAction prismAction = action.getId();
-        return contains(WorkflowDAO.advertScopes, prismAction.getScope()) && prismAction.name().endsWith("_APPROVED");
+        return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_APPROVED");
     }
 
     public boolean isRestoreComment() {

@@ -93,8 +93,8 @@ public class WorkflowDAO {
         return getWorkflowCriteriaListResource(scope, projection)
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
+                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targeterAdvert.targets", "targeterTarget", JoinType.INNER_JOIN) //
                 .createAlias("targeterTarget.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //

@@ -711,8 +711,8 @@ public class ResourceService {
         return getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, null);
     }
 
-    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(
-            Resource enclosingResource, PrismScope responseScope, PrismScope creationScope, String searchTerm) {
+    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
+            PrismScope creationScope, String searchTerm) {
         User user = userService.getCurrentUser();
         Set<ResourceChildCreationDTO> resources = newTreeSet();
 

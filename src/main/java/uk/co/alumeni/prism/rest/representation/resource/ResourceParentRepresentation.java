@@ -1,9 +1,5 @@
 package uk.co.alumeni.prism.rest.representation.resource;
 
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
-
 import java.util.List;
 import java.util.Set;
 

@@ -93,7 +93,8 @@ public class ApplicationDAO {
     public List<ApplicationReportListRowDTO> getApplicationReport(Collection<Integer> applicationIds, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
-                        + "from Application as application " + "join application.user as user " //
+                        + "from Application as application "
+                        + "join application.user as user " //
                         + "left join user.userAccount as userAccount " //
                         + "left join userAccount.personalDetail as userPersonalDetail " //
                         + "left join application.personalDetail as applicationPersonalDetail " //
@@ -404,7 +405,7 @@ public class ApplicationDAO {
                 .add(Restrictions.eq("user", user)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
                 .uniqueResult();
-	}
+    }
 
     public void deleteApplicationHiringManagers(Application application) {
         sessionFactory.getCurrentSession().createQuery( //

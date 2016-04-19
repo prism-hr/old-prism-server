@@ -97,7 +97,9 @@ public class CommentMapper {
     private UserService userService;
 
     public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource resource) {
-        User currentUser = resourceService.validateViewResource(resource);
+        User currentUser = userService.getCurrentUser();
+        resourceService.validateViewResource(resource, currentUser);
+        
         List<Comment> comments = commentService.getTimelineComments(resource);
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
 

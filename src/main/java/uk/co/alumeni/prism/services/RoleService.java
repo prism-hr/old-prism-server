@@ -111,7 +111,7 @@ public class RoleService {
 
     public HashMultimap<User, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
         HashMultimap<User, PrismRole> userRoles = HashMultimap.create();
-        roleDAO.getUserRolesStrict(resource, searchRole, searchTerm).forEach(userRole -> {
+        roleDAO.getUserRolesStrict(resource, searchRole, searchTerm).stream().forEach(userRole -> {
             userRoles.put(userRole.getUser(), userRole.getRole());
         });
         return userRoles;

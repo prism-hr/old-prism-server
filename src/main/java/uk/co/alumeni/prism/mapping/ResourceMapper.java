@@ -1,53 +1,5 @@
 package uk.co.alumeni.prism.mapping;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Splitter;
-import com.google.common.collect.*;
-import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.*;
-import uk.co.alumeni.prism.domain.resource.System;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.dto.*;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
-import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
-import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
-import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
-import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
-import uk.co.alumeni.prism.rest.representation.resource.*;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
-import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
-import uk.co.alumeni.prism.services.*;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newTreeMap;
@@ -59,15 +11,130 @@ import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.joda.time.Days.daysBetween;
-import static uk.co.alumeni.prism.PrismConstants.*;
+import static uk.co.alumeni.prism.PrismConstants.ANGULAR_HASH;
+import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
+import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EXTERNAL_HOMEPAGE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+
+import org.apache.commons.lang.BooleanUtils;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.Department;
+import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.resource.Program;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.System;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.ApplicationProcessingSummaryDTO;
+import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
+import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
+import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
+import uk.co.alumeni.prism.dto.ResourceListRowDTO;
+import uk.co.alumeni.prism.dto.ResourceLocationDTO;
+import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO.ResourceReportFilterPropertyDTO;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.action.ActionRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.address.AddressCoordinatesRepresentation;
+import uk.co.alumeni.prism.rest.representation.address.AddressRepresentation;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ProgramRepresentationClient;
+import uk.co.alumeni.prism.rest.representation.resource.ProjectRepresentationClient;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceConditionRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceCountRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceListFilterRepresentation.FilterExpressionRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceListRowRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceLocationRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationClient;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceOpportunityRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationClient;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceParentRepresentationSummary;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationChildCreation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobot;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationStandard;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotConstraintRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationMonth;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationWeek;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotDataRepresentation.ApplicationProcessingSummaryRepresentationYear;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserRepresentation;
+import uk.co.alumeni.prism.services.ActionService;
+import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.ApplicationService;
+import uk.co.alumeni.prism.services.ResourceService;
+import uk.co.alumeni.prism.services.RoleService;
+import uk.co.alumeni.prism.services.ScopeService;
+import uk.co.alumeni.prism.services.StateService;
+import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -376,7 +443,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationClient(T resource, User currentUser) {
-        resourceService.validateViewResource(resource);
+        resourceService.validateViewResource(resource, currentUser);
 
         Class<?> resourceClass = resource.getClass();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
@@ -397,7 +464,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationExtended getResourceRepresentationExport(T resource, User currentUser) {
-        resourceService.validateViewResource(resource);
+        resourceService.validateViewResource(resource, currentUser);
 
         PrismScope resourceScope = resource.getResourceScope();
         List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
@@ -416,7 +483,7 @@ public class ResourceMapper {
     }
 
     public <T extends Resource> ResourceRepresentationSummary getResourceRepresentationSummary(T resource) {
-        resourceService.validateViewResource(resource);
+        resourceService.validateViewResource(resource, userService.getCurrentUser());
 
         PrismScope resourceScope = resource.getResourceScope();
         PrismScopeCategory resourceScopeCategory = resourceScope.getScopeCategory();

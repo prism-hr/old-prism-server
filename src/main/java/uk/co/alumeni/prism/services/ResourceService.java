@@ -1064,13 +1064,11 @@ public class ResourceService {
         return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
     }
 
-    public <T extends Resource> User validateViewResource(T resource) {
-        User user = userService.getCurrentUser();
+    public <T extends Resource> void validateViewResource(T resource, User currentUser) {
         Action action = actionService.getViewEditAction(resource);
-        if (action == null || !actionService.checkActionAvailable(resource, action, user)) {
+        if (action == null || !actionService.checkActionAvailable(resource, action, currentUser)) {
             throw new PrismForbiddenException("User cannot view or edit the given resource");
         }
-        return user;
     }
 
     public HashMultimap<PrismScope, Integer> getEnclosedResources(Resource resource) {

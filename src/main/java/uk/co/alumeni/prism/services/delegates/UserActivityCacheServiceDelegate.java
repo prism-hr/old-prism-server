@@ -3,12 +3,14 @@ package uk.co.alumeni.prism.services.delegates;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -41,15 +43,17 @@ public class UserActivityCacheServiceDelegate {
     public void updateUserActivityCaches(UserActivityUpdateEvent userActivityUpdateEvent) {
         List<Integer> users = userActivityUpdateEvent.getUsers();
         DateTime baseline = userActivityUpdateEvent.getBaseline();
-        if (isEmpty(users)) {
-            ResourceDTO resource = userActivityUpdateEvent.getResource();
+        ResourceDTO resource = userActivityUpdateEvent.getResource();
+        if (isEmpty(users) && resource != null) {
             users = newArrayList(userService.getUsersWithActivitiesToCache(resource.getScope(), singletonList(resource.getId()), baseline));
         }
 
         userActivityCacheService.updateUserActivityCache(userActivityUpdateEvent.getCurrentUser(), baseline);
-        users.stream().forEach(user -> {
-            userActivityCacheService.updateUserActivityCache(user, baseline);
-        });
+        if (isNotEmpty(users)) {
+            users.stream().forEach(user -> {
+                userActivityCacheService.updateUserActivityCache(user, baseline);
+            });     
+        }
     }
 
     @Async

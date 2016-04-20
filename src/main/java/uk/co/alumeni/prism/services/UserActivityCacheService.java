@@ -29,6 +29,10 @@ public class UserActivityCacheService {
     @Inject
     private ApplicationEventPublisher applicationEventPublisher;
 
+    public void updateUserActivityCache(Object source, User currentUser, DateTime baseline) {
+        applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(source).withCurrentUser(currentUser.getId()).withBaseline(baseline));
+    }
+    
     public void updateUserActivityCaches(Resource resource, User currentUser, DateTime baseline) {
         applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(resource)
                 .withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(
@@ -39,7 +43,7 @@ public class UserActivityCacheService {
         applicationEventPublisher.publishEvent(new UserActivityUpdateEvent(source).withUsers(newArrayList(users)).withCurrentUser(currentUser.getId())
                 .withBaseline(baseline));
     }
-
+   
     public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
         if (!executions.contains(user)) {
             executions.add(user);

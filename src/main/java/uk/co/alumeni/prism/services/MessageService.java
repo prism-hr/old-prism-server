@@ -204,11 +204,12 @@ public class MessageService {
     }
 
     public void viewMessageThread(Integer latestUnreadMessageId) {
+        User currentUser = userService.getCurrentUser();
         Message latestUnreadMessage = getMessageById(latestUnreadMessageId);
-        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), userService.getCurrentUser());
+        MessageThreadParticipant participant = messageDAO.getMessageThreadParticipant(latestUnreadMessage.getThread(), currentUser);
         if (participant != null) {
             participant.setLastViewedMessage(latestUnreadMessage);
-            userActivityCacheService.updateUserActivityCache(participant.getUser().getId(), now());
+            userActivityCacheService.updateUserActivityCache(this, currentUser, now());
         }
     }
 

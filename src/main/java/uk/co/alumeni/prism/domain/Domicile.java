@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain;
 
+import static org.apache.commons.lang3.ObjectUtils.compare;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,7 +13,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismDomicile;
 
 @Entity
 @Table(name = "domicile")
-public class Domicile extends Definition<PrismDomicile> {
+public class Domicile extends Definition<PrismDomicile> implements Comparable<Domicile> {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -63,6 +65,11 @@ public class Domicile extends Definition<PrismDomicile> {
     public Domicile withOrdinal(Integer ordinal) {
         this.ordinal = ordinal;
         return this;
+    }
+
+    @Override
+    public int compareTo(Domicile other) {
+        return compare(id, other.getId());
     }
 
 }

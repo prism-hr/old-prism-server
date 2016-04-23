@@ -480,7 +480,7 @@ public class AdvertService {
 
         AdvertCategories categories = advert.getCategories();
         Set<AdvertLocation> advertLocations = categories.getLocations();
-        if (CollectionUtils.isNotEmpty(locations)) {
+        if (isNotEmpty(locations)) {
             PrismResourceContext context = getResourceContexts(resource.getOpportunityCategories()).iterator().next();
             User user = resource.getUser();
             for (ResourceRelationDTO locationDTO : locations) {

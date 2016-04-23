@@ -17,6 +17,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEP
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_VIEWER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.DEPARTMENT_MANAGE_USERS_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.PROGRAM_CREATE_ADMINISTRATOR_GROUP;
@@ -87,7 +88,7 @@ public class PrismDepartmentWorkflow {
     public static PrismStateAction departmentViewEditApproval(PrismState state) {
         return departmentViewEditAbstract()
                 .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(DEPARTMENT_VIEW_EDIT)
@@ -98,6 +99,9 @@ public class PrismDepartmentWorkflow {
         return departmentViewEditAbstract() //
                 .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_EDIT_AS_USER) //
                 .withStateActionAssignments(DEPARTMENT_VIEWER_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, DEPARTMENT_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, DEPARTMENT_VIEW_AS_USER) //
                 .withStateTransitions(DEPARTMENT_VIEW_EDIT_TRANSITION //
                         .withRoleTransitions(DEPARTMENT_MANAGE_USERS_GROUP));
     }

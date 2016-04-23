@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
@@ -279,7 +280,15 @@ public class ApplicationDAO {
     public List<Integer> getApplications(Collection<Integer> adverts, Collection<Integer> users) {
         return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.property("id")) //
-                .add(Restrictions.in("advert.id", adverts)) //
+                .createAlias("institution", "institution", LEFT_OUTER_JOIN) //
+                .createAlias("department", "department", LEFT_OUTER_JOIN) //
+                .createAlias("program", "program", LEFT_OUTER_JOIN) //
+                .createAlias("project", "project", LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.in("institution.advert.id", adverts)) //
+                        .add(Restrictions.in("department.advert.id", adverts)) //
+                        .add(Restrictions.in("program.advert.id", adverts)) //
+                        .add(Restrictions.in("project.advert.id", adverts))) //
                 .add(Restrictions.in("user.id", users)) //
                 .list();
     }

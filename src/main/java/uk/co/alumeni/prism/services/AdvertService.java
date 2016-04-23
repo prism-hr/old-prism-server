@@ -952,7 +952,7 @@ public class AdvertService {
         if (!(user == null || roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR))) {
             UserResourceDTO userResourceDTO = resourceService.getUserResourceParents(user, false);
             HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getResourcesAll();
-            List<Integer> adverts = advertDAO.getUserAdvertsTargeted(userResources, scope);
+            List<Integer> adverts = advertDAO.getUserAdvertsTargeted(userResources, scope, advertScopes);
 
             if (scope.getScopeCategory().equals(APPLICATION)) {
                 List<Integer> students = userService.getUserAssociates(userResources, STUDENT);

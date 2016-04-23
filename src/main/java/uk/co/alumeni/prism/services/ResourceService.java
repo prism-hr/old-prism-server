@@ -73,7 +73,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.ResourceDAO;
-import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -678,12 +677,8 @@ public class ResourceService {
         return resourceDAO.getSimilarResources(enclosingResourceScope, searchTerm);
     }
 
-    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
-        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles);
-    }
-
-    public List<Integer> getResourcesForWhichUserHasRoles(User user, Collection<PrismRole> roles) {
-        return resourceDAO.getResourcesForWhichUserHasRoles(user, roles.toArray(new PrismRole[roles.size()]));
+    public List<Integer> getResourcesForWhichUserHasRolesStrict(User user, Collection<PrismRole> roles) {
+        return resourceDAO.getResourcesForWhichUserHasRolesStrict(user, roles);
     }
 
     public List<Integer> getResourceIds(PrismScope resourceScope) {
@@ -724,8 +719,8 @@ public class ResourceService {
                 if (!scope.equals(creationScope)) {
                     List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-                    Map<String, Integer> summaries = Maps.newHashMap();
-                    Set<Integer> onlyAsPartnerResources = Sets.newHashSet();
+                    Map<String, Integer> summaries = newHashMap();
+                    Set<Integer> onlyAsPartnerResources = newHashSet();
                     List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
                     Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
                     processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
@@ -1227,18 +1222,29 @@ public class ResourceService {
         return addressService.getAddressLocationIndex(resourceDAO.getResourceOrganizationLocations(resourceScope, resourceIds), ADDRESS_LOCATION_PRECISION);
     }
 
-    public UserResourceDTO getVisibleUserResourceParents(User user) {
+    public UserResourceDTO getUserResourceParents(User user, boolean publishedOnly) {
         HashMultimap<PrismScope, ResourceAdvertDTO> visibleDirect = HashMultimap.create();
         HashMultimap<PrismScope, ResourceAdvertDTO> visibleIndirect = HashMultimap.create();
-        stream(WorkflowDAO.advertScopes).forEach(advertScope -> {
-            List<ResourceAdvertDTO> visibleResources = resourceDAO.getVisibleUserResourceParents(user, advertScope);
-            visibleDirect.putAll(advertScope, visibleResources);
-            if (advertScope.equals(DEPARTMENT) && visibleResources.size() > 0) {
-                List<Integer> visibleResourceIds = visibleResources.stream().map(vr -> vr.getResourceId()).collect(toList());
-                visibleIndirect.putAll(INSTITUTION, institutionService.getVisibleUserInstitutions(visibleResourceIds));
+        stream(advertScopes).forEach(advertScope -> {
+            List<ResourceAdvertDTO> resources = resourceDAO.getUserResourceParents(user, advertScope, publishedOnly);
+            visibleDirect.putAll(advertScope, resources);
+            if (publishedOnly && advertScope.equals(DEPARTMENT) && resources.size() > 0) {
+                List<Integer> resourceIds = resources.stream().map(vr -> vr.getResourceId()).collect(toList());
+                visibleIndirect.putAll(INSTITUTION, institutionService.getPublishedUserInstitutions(resourceIds));
             }
         });
-        return new UserResourceDTO().withVisibleDirect(visibleDirect).withVisibleIndirect(visibleIndirect);
+        return new UserResourceDTO().withResourcesDirect(visibleDirect).withResourcesIndirect(visibleIndirect);
+    }
+
+    public void setResourceParentAdvertState(ResourceParent resource, Comment comment) {
+        Advert advert = resource.getAdvert();
+        if (comment.isAdvertSubmitComment()) {
+            advert.setSubmitted(true);
+        }
+
+        if (comment.isAdvertPublishComment()) {
+            advert.setPublished(true);
+        }
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
@@ -1447,7 +1453,7 @@ public class ResourceService {
             UserRole transientRole = new UserRole().withResource(resource).withUser(user).withRole(role).withRequested(requested).withAssignedTimestamp(now());
             UserRole persistentRole = entityService.getDuplicateEntity(transientRole);
             if (persistentRole == null) {
-                entityService.save(transientRole);
+                roleService.getOrCreateUserRole(transientRole);
                 newRoleCreated = true;
             }
         }

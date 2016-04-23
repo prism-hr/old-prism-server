@@ -128,9 +128,6 @@ public class UserService {
     private AddressService addressService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private RoleService roleService;
 
     @Inject
@@ -462,12 +459,9 @@ public class UserService {
                 users.addAll(userDAO.getUsersWithActions(scope, parentScope, resource, actions));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : WorkflowDAO.organizationScopes) {
-                    for (PrismScope targetScope : WorkflowDAO.organizationScopes) {
-                        users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, targeterEntities, resource, actions));
-                    }
+            for (PrismScope targeterScope : WorkflowDAO.organizationScopes) {
+                for (PrismScope targetScope : WorkflowDAO.organizationScopes) {
+                    users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, resource, actions));
                 }
             }
         }
@@ -686,6 +680,10 @@ public class UserService {
     public boolean isMatchingUser(User user, String searchTerm) {
         return user.getFirstName().contains(searchTerm) || user.getLastName().contains(searchTerm) || user.getFullName().contains(searchTerm)
                 || user.getEmail().contains(searchTerm);
+    }
+
+    public List<Integer> getUserAssociates(HashMultimap<PrismScope, Integer> userResources, PrismRoleCategory roleCategory) {
+        return userDAO.getUserAssociates(userResources, roleCategory);
     }
 
     @SuppressWarnings("unchecked")

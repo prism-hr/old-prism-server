@@ -140,6 +140,9 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Column(name = "globally_visible")
     private Boolean globallyVisible;
 
+    @Column(name = "submitted", nullable = false)
+    private Boolean submitted;
+    
     @Column(name = "published", nullable = false)
     private Boolean published;
 
@@ -351,6 +354,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setGloballyVisible(Boolean globallyVisible) {
         this.globallyVisible = globallyVisible;
+    }
+
+    public Boolean getSubmitted() {
+        return submitted;
+    }
+
+    public void setSubmitted(Boolean submitted) {
+        this.submitted = submitted;
     }
 
     public Boolean getPublished() {

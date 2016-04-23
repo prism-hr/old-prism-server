@@ -10,6 +10,7 @@ import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Program;
 import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
 
 @Component
@@ -17,12 +18,13 @@ public class ProjectPostprocessor implements ResourceProcessor<Project> {
 
     @Inject
     private AdvertService advertService;
+    
+    @Inject
+    private ResourceService resourceService;
 
     @Override
     public void process(Project resource, Comment comment) {
-        if (comment.isPublishComment()) {
-            resource.getAdvert().setPublished(true);
-        }
+        resourceService.setResourceParentAdvertState(resource, comment);
 
         if (comment.isRestoreComment()) {
             advertService.retireAdvertClosingDate(resource.getAdvert());

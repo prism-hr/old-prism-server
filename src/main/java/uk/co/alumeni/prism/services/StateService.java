@@ -449,7 +449,7 @@ public class StateService {
                 stateActionAssignments.addAll(stateDAO.getStateActionAssignments(user, scope, parentScope, resourceId, action));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
             if (isNotEmpty(targeterEntities)) {
                 for (PrismScope targeterScope : organizationScopes) {
                     for (PrismScope targetScope : organizationScopes) {

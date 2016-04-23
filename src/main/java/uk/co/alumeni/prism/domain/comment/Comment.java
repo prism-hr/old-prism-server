@@ -822,7 +822,12 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         return !(rating == null && competences.isEmpty());
     }
 
-    public boolean isPublishComment() {
+    public boolean isAdvertSubmitComment() {
+        PrismAction prismAction = action.getId();
+        return contains(advertScopes, prismAction.getScope()) && !transitionState.getId().name().endsWith("_UNSUBMITTED");
+    }
+
+    public boolean isAdvertPublishComment() {
         PrismAction prismAction = action.getId();
         return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_APPROVED");
     }

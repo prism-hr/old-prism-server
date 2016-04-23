@@ -95,9 +95,6 @@ public class NotificationService {
     private ActionService actionService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private CustomizationService customizationService;
 
     @Inject
@@ -335,12 +332,9 @@ public class NotificationService {
                 requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, parentScope, resource));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(resource.getResourceScope());
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : organizationScopes) {
-                    for (PrismScope targetScope : organizationScopes) {
-                        requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, targeterScope, targetScope, targeterEntities, resource));
-                    }
+            for (PrismScope targeterScope : organizationScopes) {
+                for (PrismScope targetScope : organizationScopes) {
+                    requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, targeterScope, targetScope, resource));
                 }
             }
         }

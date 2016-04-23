@@ -63,7 +63,7 @@ public class AdvertController {
         Advert advert = advertService.getAdvert(resourceDescriptor.getResourceScope(), resourceId);
         AdvertCategories categories = advertService.getAdvertCategories(advert);
         if (categories != null) {
-            return advertMapper.getAllAdvertLocationRepresentations(advert, categories);
+            return advertMapper.getAdvertLocationRepresentations(advert, categories);
         }
         return Collections.emptyList();
     }

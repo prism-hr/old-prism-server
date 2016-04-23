@@ -154,7 +154,7 @@ public class ScopeMapper {
                 if (scope.equals(INSTITUTION) && isNotEmpty(scopesCreatorFor)) {
                     resourceForWhichCanCreateCount = 1;
                 } else if (isResourceCreator(scope, scopesCreatorFor)) {
-                    resourceForWhichCanCreateCount = resourceService.getResourcesForWhichUserCanCreateResource(system, INSTITUTION, scope).size();
+                    resourceForWhichCanCreateCount = resourceService.getResourcesParentsForWhichUserCanCreateResource(system, INSTITUTION, scope).size();
                 }
 
                 representations.add(new ResourceActivityRepresentation().withScope(scope).withDefaultRoleCategory(defaultRoleCategories.get(scope))

@@ -701,7 +701,7 @@ public class ResourceService {
         return new ArrayList<>(resources);
     }
 
-    public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
+    public List<ResourceChildCreationDTO> getResourcesParentsForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
             PrismScope creationScope) {
         return getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, null);
     }
@@ -711,45 +711,43 @@ public class ResourceService {
         User user = userService.getCurrentUser();
         Set<ResourceChildCreationDTO> resources = newTreeSet();
 
-        String scopeReference = responseScope.getLowerCamelName();
-        List<Integer> resourceIds = resourceDAO.getResourceIds(enclosingResource, responseScope, searchTerm);
-        if (isNotEmpty(resourceIds)) {
-            ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceIds);
-            for (PrismScope scope : scopeService.getEnclosingScopesDescending(creationScope, responseScope)) {
-                if (!scope.equals(creationScope)) {
-                    List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+        stream(organizationScopes).filter(scope -> scope.ordinal() >= responseScope.ordinal()).forEach(scope -> {
+            Map<String, Integer> summaries = newHashMap();
+            Set<Integer> onlyAsPartnerResources = newHashSet();
+            List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
 
-                    Map<String, Integer> summaries = newHashMap();
-                    Set<Integer> onlyAsPartnerResources = newHashSet();
-                    List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
-                    Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
-                    processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
+            ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceDAO.getResourceIds(enclosingResource, responseScope,
+                    scope, searchTerm));
+            Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
+            processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
 
-                    for (ResourceListRowDTO row : getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null,
-                            onlyAsPartnerResources, false)) {
-                        ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
-                        resource.setScope(responseScope);
+            String responseScopeReference = responseScope.getLowerCamelName();
+            Collection<ResourceListRowDTO> rows = getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null,
+                    onlyAsPartnerResources, false);
 
-                        resource.setId((Integer) getProperty(row, scopeReference + "Id"));
-                        resource.setName((String) getProperty(row, scopeReference + "Name"));
+            rows.stream().forEach(row -> {
+                ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
+                resource.setScope(responseScope);
 
-                        if (scope.equals(INSTITUTION)) {
-                            resource.setLogoImageId(row.getLogoImageId());
-                        }
+                resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
+                resource.setName((String) getProperty(row, responseScopeReference + "Name"));
 
-                        row.getActions().forEach(action -> {
-                            PrismAction prismAction = action.getActionId();
-                            if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
-                                if (prismAction.getScope().equals(responseScope)) {
-                                    resource.setCreateDirectly(true);
-                                }
-                                resources.add(resource);
-                            }
-                        });
-                    }
+                if (scope.equals(INSTITUTION)) {
+                    resource.setLogoImageId(row.getLogoImageId());
                 }
-            }
-        }
+
+                row.getActions().forEach(action -> {
+                    PrismAction prismAction = action.getActionId();
+                    if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
+                        if (prismAction.getScope().equals(responseScope)) {
+                            resource.setCreateDirectly(true);
+                        }
+                        resources.add(resource);
+                    }
+                });
+            });
+        });
 
         return newLinkedList(resources);
     }
@@ -757,7 +755,7 @@ public class ResourceService {
     public HashMultimap<PrismScope, Integer> getResourcesForWhichUserCanAdminister(User user) {
         HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
 
-        List<PrismScope> scopes = Arrays.asList(PrismScope.values());
+        List<PrismScope> scopes = asList(PrismScope.values());
         for (PrismScope scope : scopes) {
             String scopeReference = scope.name();
 

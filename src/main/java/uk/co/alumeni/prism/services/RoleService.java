@@ -70,9 +70,6 @@ public class RoleService {
     private ActivityService activityService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private EntityService entityService;
 
     @Inject
@@ -117,8 +114,14 @@ public class RoleService {
         return userRoles;
     }
 
-    public UserRole getOrCreateUserRole(UserRole transientUserRole) {
-        return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
+    public UserRole getOrCreateUserRole(UserRole userRole) {
+        Resource resource = userRole.getResource();
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            userRole.setAdvert(resource.getAdvert());
+        }
+
+        userRole.setAssignedTimestamp(now());
+        return entityService.getOrCreate(userRole);
     }
 
     public void acceptUnnacceptedUserRoles(User user, DateTime baseline) {
@@ -231,12 +234,9 @@ public class RoleService {
                 roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, parentScope, resourceIds));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : organizationScopes) {
-                    for (PrismScope targetScope : organizationScopes) {
-                        roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, targeterScope, targetScope, targeterEntities, resourceIds));
-                    }
+            for (PrismScope targeterScope : organizationScopes) {
+                for (PrismScope targetScope : organizationScopes) {
+                    roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, targeterScope, targetScope, resourceIds));
                 }
             }
         }

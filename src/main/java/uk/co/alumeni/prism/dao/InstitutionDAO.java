@@ -117,7 +117,7 @@ public class InstitutionDAO {
         return list;
     }
 
-    public List<ResourceAdvertDTO> getVisibleUserInstitutions(List<Integer> userDepartments) {
+    public List<ResourceAdvertDTO> getPublishedUserInstitutions(List<Integer> userDepartments) {
         return (List<ResourceAdvertDTO>) sessionFactory.getCurrentSession().createCriteria(Department.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.property("institution.id").as("resourceId")) //

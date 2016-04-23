@@ -18,6 +18,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -88,9 +89,13 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            Collection<Integer> targeterEntities, Projection projection) {
-        return getWorkflowCriteriaListResource(scope, projection)
+    public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Projection projection) {
+        return getWorkflowCriteriaList(scope, targeterScope, targetScope, null, projection);
+    }
+
+    public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+            Projection projection) {
+        Criteria criteria = getWorkflowCriteriaListResource(scope, projection)
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
@@ -108,8 +113,13 @@ public class WorkflowDAO {
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(scope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities)) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN);
+
+        if (CollectionUtils.isNotEmpty(targeterEntities)) {
+            criteria.add(Restrictions.in(scope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities));
+        }
+
+        return criteria //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));

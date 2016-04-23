@@ -396,12 +396,8 @@ public class ApplicationService {
         return applicationDAO.getApplicationOnCourse(application);
     }
 
-    public List<Integer> getApplicationsForTargets() {
-        return applicationDAO.getApplicationsForTargets();
-    }
-
-    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
-        return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
+    public List<Integer> getApplications(Collection<Integer> adverts, Collection<Integer> students) {
+        return isEmpty(adverts) || isEmpty(students) ? emptyList() : applicationDAO.getApplications(adverts, students);
     }
 
     public List<Integer> getApplicationsByTheme(String theme, PrismResourceListFilterExpression expression, Boolean preference) {
@@ -434,9 +430,9 @@ public class ApplicationService {
 
     public ResourceRatingSummaryDTO getApplicationRatingSummary(User user) {
         return applicationDAO.getApplicationRatingSummary(user);
-	}
-    
-	public void deleteApplicationHiringManagers(Application application) {
+    }
+
+    public void deleteApplicationHiringManagers(Application application) {
         applicationDAO.deleteApplicationHiringManagers(application);
     }
 

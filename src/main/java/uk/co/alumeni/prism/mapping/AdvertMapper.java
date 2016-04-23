@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -35,7 +36,6 @@ import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -411,7 +411,7 @@ public class AdvertMapper {
             List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
             List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
-            List<ResourceLocationRepresentationRelation> locations = getAllAdvertLocationRepresentations(advert, categories);
+            List<ResourceLocationRepresentationRelation> locations = getAdvertLocationRepresentations(advert, categories);
 
             Resource resource = advert.getResource();
             List<String> displayThemes = newLinkedList();
@@ -438,23 +438,11 @@ public class AdvertMapper {
         return null;
     }
 
-    public List<ResourceLocationRepresentationRelation> getAllAdvertLocationRepresentations(Advert advert, AdvertCategories categories) {
-        Set<ResourceLocationRepresentationRelation> locationsIndex = Sets.newHashSet();
-        Map<String, ResourceLocationRepresentationRelation> locationsOrder = Maps.newTreeMap();
-
-        getAdvertLocationRepresentations(categories).stream().forEach(location -> {
-            locationsIndex.add(location);
-            locationsOrder.put(location.getDisplayName(), location);
-        });
-
-        getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert)).forEach(location -> {
-            if (!locationsIndex.contains(location)) {
-                locationsIndex.add(location);
-                locationsOrder.put(location.getDisplayName(), location);
-            }
-        });
-
-        return new ArrayList<>(locationsOrder.values());
+    public List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(Advert advert, AdvertCategories categories) {
+        Set<ResourceLocationRepresentationRelation> locations = newTreeSet();
+        getAdvertLocationRepresentations(categories).stream().forEach(location -> locations.add(location));
+        getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert)).forEach(location -> locations.add(location));
+        return newLinkedList(locations);
     }
 
     public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(AdvertCategories categories) {
@@ -821,16 +809,15 @@ public class AdvertMapper {
     private List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(AdvertCategories categories) {
         Set<AdvertLocation> advertLocations = categories.getLocations();
         List<ResourceLocationRepresentationRelation> advertLocationRepresentations = getAdvertLocationRepresentations(
-                advertLocations.stream().map(AdvertLocation::getLocationAdvert).collect(Collectors.toList()));
+                advertLocations.stream().map(AdvertLocation::getLocationAdvert).collect(toList()));
         advertLocationRepresentations.stream().forEach(representation -> representation.setSelected(true));
         return advertLocationRepresentations;
     }
 
     private List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(Collection<Advert> locations) {
         User currentUser = userService.getCurrentUser();
-        return locations.stream()
-                .map(location -> resourceMapper.getResourceLocationRepresentationRelation(location.getResource(), currentUser)) //
-                .collect(Collectors.toList());
+        return locations.stream().map(location -> resourceMapper.getResourceLocationRepresentationRelation(location.getResource(), currentUser))
+                .collect(toList());
     }
 
 }

@@ -11,7 +11,6 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getReadOrUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
@@ -49,6 +48,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
@@ -544,18 +544,14 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourceIds(Resource enclosingResource, PrismScope resourceScope, String query) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
-                .setProjection(Projections.property("resource.id")) //
-                .createAlias(resourceScope.getLowerCamelName(), "resource", JoinType.INNER_JOIN)
-                .createAlias("resource.state", "state", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("resource." + enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource));
-
-        if (!isNullOrEmpty(query)) {
-            criteria.add(Restrictions.like("resource.name", query, MatchMode.ANYWHERE));
-        }
-
-        return (List<Integer>) criteria.add(getResourceParentManageableStateConstraint(resourceScope))
+    public List<Integer> getResourceIds(Resource enclosingResource, PrismScope searchScope, PrismScope selectScope, String searchTerm) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+                .setProjection(Projections.groupProperty(selectScope.getLowerCamelName() + ".id")) //
+                .createAlias(searchScope.getLowerCamelName(), "searchResource", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
+                .add(Restrictions.eq("scope.id", selectScope)) //
+                .add(Restrictions.eq("submitted", true)) //
+                .add(Restrictions.like("searchResource.name", searchTerm, MatchMode.ANYWHERE)) //
                 .list();
     }
 

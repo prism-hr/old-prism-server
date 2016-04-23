@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.services.AdvertService;
+import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
 
 @Component
@@ -16,12 +17,12 @@ public class DepartmentPostprocessor implements ResourceProcessor<Department> {
     @Inject
     private AdvertService advertService;
 
+    @Inject
+    private ResourceService resourceService;
+
     @Override
     public void process(Department resource, Comment comment) {
-        if (comment.isPublishComment()) {
-            resource.getAdvert().setPublished(true);
-        }
-
+        resourceService.setResourceParentAdvertState(resource, comment);
         DateTime updatedTimestamp = resource.getUpdatedTimestamp();
         resource.setUpdatedTimestampSitemap(updatedTimestamp);
         resource.getInstitution().setUpdatedTimestampSitemap(updatedTimestamp);

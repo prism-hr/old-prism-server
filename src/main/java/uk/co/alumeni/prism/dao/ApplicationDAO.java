@@ -5,13 +5,11 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.hibernate.sql.JoinType.INNER_JOIN;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +35,6 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationLocation;
@@ -49,7 +46,6 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -280,28 +276,11 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<Integer> getApplicationsForTargets() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.applications", "application", JoinType.INNER_JOIN) //
-                .list();
-    }
-
-    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", INNER_JOIN,
-                        Restrictions.eqProperty("advert.id", "targeterResource.advert.id"))
-                .createAlias("targeterResource.applications", "application", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource") //
-                .createAlias("targetResource.userRoles", "targetUserRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("application.user.id", students)) //
-                .add(Restrictions.eq("targetUserRole.user", user)) //
-                .add(Restrictions.in("targetUserRole.role.id", values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" }))) //
-                .add(Restrictions.eq("application.shared", true)) //
+    public List<Integer> getApplications(Collection<Integer> adverts, Collection<Integer> users) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.in("advert.id", adverts)) //
+                .add(Restrictions.in("user.id", users)) //
                 .list();
     }
 

@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
@@ -483,14 +484,17 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<Integer> getResourcesForWhichUserHasRoles(User user, PrismRole... roles) {
-        String resourceReference = roles[0].getScope().getLowerCamelName();
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.property(resourceReference + ".id"))
-                .add(Restrictions.isNotNull(resourceReference))
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.in("role.id", roles)) //
-                .list();
+    public List<Integer> getResourcesForWhichUserHasRolesStrict(User user, Collection<PrismRole> roles) {
+        if (isNotEmpty(roles)) {
+            String resourceReference = roles.iterator().next().getScope().getLowerCamelName();
+            return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                    .setProjection(Projections.property(resourceReference + ".id"))
+                    .add(Restrictions.isNotNull(resourceReference))
+                    .add(Restrictions.eq("user", user)) //
+                    .add(Restrictions.in("role.id", roles)) //
+                    .list();
+        }
+        return newArrayList();
     }
 
     public List<PrismStateGroup> getResourceStateGroups(Resource resource) {
@@ -751,15 +755,20 @@ public class ResourceDAO {
                 .list();
     }
 
-    public List<ResourceAdvertDTO> getVisibleUserResourceParents(User user, PrismScope scope) {
-        return (List<ResourceAdvertDTO>) sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
+    public List<ResourceAdvertDTO> getUserResourceParents(User user, PrismScope scope, boolean publishedOnly) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(scope.getResourceClass()) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("id").as("resourceId")) //
                         .add(Projections.groupProperty("advert.id").as("advertId"))) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN)
                 .createAlias("userRoles", "userRole", JoinType.INNER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("advert.published", true)) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
+
+        if (publishedOnly) {
+            criteria.add(Restrictions.eq("advert.published", true));
+        }
+
+        return (List<ResourceAdvertDTO>) criteria //
                 .add(Restrictions.eq("userRole.user", user)) //
                 .add(Restrictions.eq("role.verified", true)) //
                 .setResultTransformer(Transformers.aliasToBean(ResourceAdvertDTO.class)) //

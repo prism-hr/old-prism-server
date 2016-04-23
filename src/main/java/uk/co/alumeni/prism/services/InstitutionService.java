@@ -73,8 +73,8 @@ public class InstitutionService {
         return businessYearStartMonth == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
     }
 
-    public List<ResourceAdvertDTO> getVisibleUserInstitutions(List<Integer> userDepartments) {
-        return institutionDAO.getVisibleUserInstitutions(userDepartments);
+    public List<ResourceAdvertDTO> getPublishedUserInstitutions(List<Integer> userDepartments) {
+        return institutionDAO.getPublishedUserInstitutions(userDepartments);
     }
 
     private void changeInstitutionCurrency(Institution institution, String currency) {

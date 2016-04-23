@@ -78,9 +78,9 @@ public class NotificationDAO {
     }
 
     public List<UserNotificationDefinitionDTO> getIndividualRequestDefinitions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            Collection<Integer> targeterEntities, Resource resource) {
+            Resource resource) {
         return getIndividualRequestDefinitionCriteria(
-                workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, getInvidualRequestDefinitionsProjection()), resource)
+                workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, getInvidualRequestDefinitionsProjection()), resource)
                 .add(getTargetActionConstraint())
                 .setResultTransformer(Transformers.aliasToBean(UserNotificationDefinitionDTO.class)) //
                 .list();

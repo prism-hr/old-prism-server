@@ -37,13 +37,12 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipSt
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
-import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
@@ -99,7 +98,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
@@ -357,6 +355,7 @@ public class AdvertService {
             }
         }
 
+        advert.setSubmitted(false);
         advert.setPublished(false);
         return advert;
     }
@@ -949,49 +948,21 @@ public class AdvertService {
         return getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR" }, null);
     }
 
-    public List<Integer> getAdvertTargeterEntities(PrismScope scope) {
-        return getAdvertTargeterEntities(null, scope);
-    }
-
     public List<Integer> getAdvertTargeterEntities(User user, PrismScope scope) {
-        PrismScopeCategory scopeCategory = scope.getScopeCategory();
-        boolean applicationCategory = scopeCategory.equals(APPLICATION);
-        boolean opportunityCategory = scopeCategory.equals(OPPORTUNITY);
+        if (!(user == null || roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR))) {
+            UserResourceDTO userResourceDTO = resourceService.getUserResourceParents(user, false);
+            HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getResourcesAll();
+            List<Integer> adverts = advertDAO.getUserAdvertsTargeted(userResources, scope);
 
-        Set<Integer> targeterEntities = Sets.newHashSet();
-        if (user == null || roleService.hasUserRole(systemService.getSystem(), user, SYSTEM_ADMINISTRATOR)) {
-            targeterEntities.addAll(applicationCategory ? applicationService.getApplicationsForTargets() : advertDAO.getAdvertsForTargets());
-        } else if (applicationCategory) {
-            HashMultimap<PrismScope, Integer> students = HashMultimap.create();
-            for (PrismScope targetScope : organizationScopes) {
-                List<PrismRole> roles = values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR" });
-                List<Integer> resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
-                if (isNotEmpty(resources)) {
-                    students.putAll(targetScope, userService.getUsersWithRoles(targetScope, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
-                }
-
-                if (targetScope.equals(DEPARTMENT)) {
-                    roles = values(PrismRole.class, INSTITUTION, new String[] { "ADMINISTRATOR" });
-                    resources = resourceService.getResourcesForWhichUserHasRoles(user, roles);
-                    if (isNotEmpty(resources)) {
-                        students.putAll(targetScope,
-                                userService.getUsersWithRoles(targetScope, INSTITUTION, resources, PrismRole.valueOf(targetScope.name() + "_STUDENT")));
-                    }
-                }
+            if (scope.getScopeCategory().equals(APPLICATION)) {
+                List<Integer> students = userService.getUserAssociates(userResources, STUDENT);
+                return applicationService.getApplications(adverts, students);
             }
 
-            for (PrismScope targeterScope : organizationScopes) {
-                for (PrismScope targetScope : organizationScopes) {
-                    targeterEntities.addAll(applicationService.getApplicationsForTargets(user, targeterScope, targetScope, students.get(targetScope)));
-                }
-            }
-        } else if (opportunityCategory) {
-            for (PrismScope targetScope : organizationScopes) {
-                targeterEntities.addAll(advertDAO.getAdvertsForTargets(user, targetScope));
-            }
+            return adverts;
         }
 
-        return newArrayList(targeterEntities);
+        return emptyList();
     }
 
     public UserAdvertDTO getUserAdverts(User user, PrismScope... displayScopes) {
@@ -1003,12 +974,12 @@ public class AdvertService {
         Set<Integer> visibleIndirect = newHashSet();
         Set<Integer> invisible = newHashSet();
         if (ArrayUtils.isNotEmpty(displayScopes) && stream(displayScopes).anyMatch(displayScope -> displayScope.getScopeCategory().equals(OPPORTUNITY))) {
-            UserResourceDTO userResourceDTO = resourceService.getVisibleUserResourceParents(user);
-            HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getVisibleResources();
+            UserResourceDTO userResourceDTO = resourceService.getUserResourceParents(user, true);
+            HashMultimap<PrismScope, Integer> userResources = userResourceDTO.getResourcesAll();
 
             visibleDirect.addAll(advertDAO.getUserAdverts(userResources, displayScopes));
 
-            Set<Integer> visibleDirectIndex = userResourceDTO.getVisibleAdvertsDirect();
+            Set<Integer> visibleDirectIndex = userResourceDTO.getAdvertsDirect();
             advertDAO.getUserAdvertsTargeted(userResources, displayScopes).stream().forEach(advert -> {
                 if (visibleDirectIndex.contains(advert.getTargetAdvertId())) {
                     visibleDirect.add(advert.getAdvertId());

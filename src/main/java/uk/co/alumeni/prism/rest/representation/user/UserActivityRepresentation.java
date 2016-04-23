@@ -30,7 +30,7 @@ public class UserActivityRepresentation {
     private List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities;
 
     private List<AdvertTargetRepresentation> advertTargetActivities;
-    
+
     private Integer cacheIncrement;
 
     public PrismRoleCategory getDefaultRoleCategory() {

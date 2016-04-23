@@ -768,13 +768,13 @@ public class AdvertDAO {
         return newArrayList(adverts);
     }
 
-    public List<Integer> getUserAdvertsTargeted(HashMultimap<PrismScope, Integer> userResources, PrismScope displayScope) {
+    public List<Integer> getUserAdvertsTargeted(HashMultimap<PrismScope, Integer> userResources, PrismScope displayScope, PrismScope... sourceScopes) {
         Set<Integer> adverts = newHashSet();
         adverts.addAll((List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
                 .setProjection(Projections.property("advert.id").as("advertId")) //
                 .createAlias("advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .add(getVisibleAdvertConstraint("advert", "targetAdvert", userResources, false, displayScope)) //
+                .add(getVisibleAdvertConstraint("advert", "targetAdvert", userResources, false, sourceScopes)) //
                 .list());
 
         Junction notSeveredConstraint = null;
@@ -798,7 +798,7 @@ public class AdvertDAO {
                 criteria.add(notSeveredConstraint);
             }
 
-            criteria.add(getVisibleAdvertConstraint(EMPTY, "resourceTargetAdvert", userResources, false, displayScope)) //
+            criteria.add(getVisibleAdvertConstraint(EMPTY, "resourceTargetAdvert", userResources, false, sourceScopes)) //
                     .add(Restrictions.isNull("target.id"));
 
             adverts.addAll((List<Integer>) criteria.list());

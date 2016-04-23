@@ -9,57 +9,57 @@ import com.google.common.collect.Sets;
 
 public class UserResourceDTO {
 
-    public HashMultimap<PrismScope, ResourceAdvertDTO> visibleDirect;
+    public HashMultimap<PrismScope, ResourceAdvertDTO> resourcesDirect;
 
-    public HashMultimap<PrismScope, ResourceAdvertDTO> visibleIndirect;
+    public HashMultimap<PrismScope, ResourceAdvertDTO> resourcesIndirect;
 
-    public HashMultimap<PrismScope, ResourceAdvertDTO> getVisibleDirect() {
-        return visibleDirect;
+    public HashMultimap<PrismScope, ResourceAdvertDTO> getResourcesDirect() {
+        return resourcesDirect;
     }
 
-    public void setVisibleDirect(HashMultimap<PrismScope, ResourceAdvertDTO> visibleDirect) {
-        this.visibleDirect = visibleDirect;
+    public void setResourcesDirect(HashMultimap<PrismScope, ResourceAdvertDTO> resourcesDirect) {
+        this.resourcesDirect = resourcesDirect;
     }
 
-    public HashMultimap<PrismScope, ResourceAdvertDTO> getVisibleIndirect() {
-        return visibleIndirect;
+    public HashMultimap<PrismScope, ResourceAdvertDTO> getResourcesIndirect() {
+        return resourcesIndirect;
     }
 
-    public void setVisibleIndirect(HashMultimap<PrismScope, ResourceAdvertDTO> visibleIndirect) {
-        this.visibleIndirect = visibleIndirect;
+    public void setResourcesIndirect(HashMultimap<PrismScope, ResourceAdvertDTO> resourcesIndirect) {
+        this.resourcesIndirect = resourcesIndirect;
     }
 
-    public HashMultimap<PrismScope, Integer> getVisibleResources() {
+    public HashMultimap<PrismScope, Integer> getResourcesAll() {
         HashMultimap<PrismScope, Integer> target = HashMultimap.create();
-        appendVisibleResources(visibleDirect, target);
-        appendVisibleResources(visibleIndirect, target);
+        appendResources(resourcesDirect, target);
+        appendResources(resourcesIndirect, target);
         return target;
     }
 
-    public Set<Integer> getVisibleAdvertsDirect() {
+    public Set<Integer> getAdvertsDirect() {
         Set<Integer> target = Sets.newHashSet();
-        if (visibleDirect != null) {
-            visibleDirect.keySet().stream().forEach(scope -> {
-                visibleDirect.get(scope).stream().forEach(resource -> target.add(resource.getAdvertId()));
+        if (resourcesDirect != null) {
+            resourcesDirect.keySet().stream().forEach(scope -> {
+                resourcesDirect.get(scope).stream().forEach(resource -> target.add(resource.getAdvertId()));
             });
         }
         return target;
     }
 
-    public UserResourceDTO withVisibleDirect(HashMultimap<PrismScope, ResourceAdvertDTO> visibleDirect) {
-        this.visibleDirect = visibleDirect;
+    public UserResourceDTO withResourcesDirect(HashMultimap<PrismScope, ResourceAdvertDTO> resourcesDirect) {
+        this.resourcesDirect = resourcesDirect;
         return this;
     }
 
-    public UserResourceDTO withVisibleIndirect(HashMultimap<PrismScope, ResourceAdvertDTO> visibleIndirect) {
-        this.visibleIndirect = visibleIndirect;
+    public UserResourceDTO withResourcesIndirect(HashMultimap<PrismScope, ResourceAdvertDTO> resourcesIndirect) {
+        this.resourcesIndirect = resourcesIndirect;
         return this;
     }
 
-    private void appendVisibleResources(HashMultimap<PrismScope, ResourceAdvertDTO> source, HashMultimap<PrismScope, Integer> target) {
+    private void appendResources(HashMultimap<PrismScope, ResourceAdvertDTO> source, HashMultimap<PrismScope, Integer> target) {
         if (source != null) {
-            visibleDirect.keySet().stream().forEach(scope -> {
-                visibleDirect.get(scope).stream().forEach(resource -> target.put(scope, resource.getResourceId()));
+            resourcesDirect.keySet().stream().forEach(scope -> {
+                resourcesDirect.get(scope).stream().forEach(resource -> target.put(scope, resource.getResourceId()));
             });
         }
     }

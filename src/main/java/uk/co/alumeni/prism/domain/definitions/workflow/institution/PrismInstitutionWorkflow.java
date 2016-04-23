@@ -16,7 +16,6 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhance
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_VIEWER_GROUP;
@@ -100,7 +99,7 @@ public class PrismInstitutionWorkflow {
     public static PrismStateAction institutionViewEditApproval(PrismState state) {
         return institutionViewEditAbstract()
                 .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
+                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withStateTransitions(new PrismStateTransition() //
                         .withTransitionState(state)
                         .withTransitionAction(INSTITUTION_VIEW_EDIT)

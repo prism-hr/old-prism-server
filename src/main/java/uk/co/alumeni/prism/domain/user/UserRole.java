@@ -16,6 +16,7 @@ import org.joda.time.DateTime;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
 import uk.co.alumeni.prism.domain.activity.Activity;
+import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
@@ -62,6 +63,10 @@ public class UserRole extends WorkflowResourceExecution implements Activity, Use
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advert_id")
+    private Advert advert;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -157,6 +162,14 @@ public class UserRole extends WorkflowResourceExecution implements Activity, Use
     @Override
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+    public Advert getAdvert() {
+        return advert;
+    }
+
+    public void setAdvert(Advert advert) {
+        this.advert = advert;
     }
 
     public User getUser() {

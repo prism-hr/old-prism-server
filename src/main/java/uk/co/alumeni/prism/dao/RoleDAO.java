@@ -75,8 +75,8 @@ public class RoleDAO {
     }
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            Collection<Integer> targeterEntities, Collection<Integer> resourceIds) {
-        return (List<PrismRole>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("role.id"))
+            Collection<Integer> resourceIds) {
+        return (List<PrismRole>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("role.id"))
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
                 .add(getTargetActionConstraint()) //
                 .list();
@@ -332,7 +332,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("role.verified", true)) //
                 .list();
     }
-    
+
     public List<UserRole> getUserRolesForWhichUserIsCandidate(User user) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
@@ -349,7 +349,7 @@ public class RoleDAO {
                 .add(Restrictions.eq("role.roleCategory", STUDENT)) //
                 .list();
     }
-    
+
     public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.projectionList() //

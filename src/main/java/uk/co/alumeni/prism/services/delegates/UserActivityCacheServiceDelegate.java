@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

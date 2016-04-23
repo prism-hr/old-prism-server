@@ -28,9 +28,11 @@ import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
@@ -83,13 +85,13 @@ public class UserDAO {
 
     @Inject
     private SessionFactory sessionFactory;
-    
+
     public User getUserByActivationCode(String activationCode) {
         return (User) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.eq("activationCode", activationCode)) //
                 .uniqueResult();
     }
-    
+
     public List<User> getUsers(List<Integer> userIds) {
         return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .add(Restrictions.in("id", userIds)) //
@@ -289,9 +291,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
-            Resource resource, PrismAction... actions) {
-        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
+    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Resource resource, PrismAction... actions) {
+        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("userRole.user"))
                 .add(getUsersWithActionsConstraint(resource, actions)) //
                 .add(WorkflowDAO.getTargetActionConstraint()) //
                 .list();
@@ -746,6 +747,24 @@ public class UserDAO {
                 .add(Restrictions.in("resourceState.state.id", values(PrismState.class, resourceScope, "APPROVED", "DISABLED_COMPLETED"))) //
                 .addOrder(Order.desc("acceptedTimestamp")) //
                 .setResultTransformer(Transformers.aliasToBean(UserOrganizationDTO.class)) //
+                .list();
+    }
+
+    public List<Integer> getUserAssociates(HashMultimap<PrismScope, Integer> userResources, PrismRoleCategory roleCategory) {
+        Junction resourceConstraint = Restrictions.disjunction();
+        userResources.keySet().stream().forEach(scope -> {
+            Set<Integer> resources = userResources.get(scope);
+            if (CollectionUtils.isNotEmpty(resources)) {
+                resourceConstraint.add(Restrictions.in("advert." + scope.getLowerCamelName() + ".id", resources));
+            }
+        });
+
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(resourceConstraint) //
+                .add(Restrictions.eq("role.roleCategory", roleCategory)) //
                 .list();
     }
 

@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.program;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_DEACTIVATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_REENDORSE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROGRAM_UNENDORSE;
@@ -8,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROGRAM_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROGRAM_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROGRAM_ENDORSE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programCreateProject;
 import static uk.co.alumeni.prism.domain.definitions.workflow.program.PrismProgramWorkflow.programEscalateApproved;
@@ -24,6 +26,14 @@ public class PrismProgramApproved extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(programCreateProject());
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROGRAM_DEACTIVATE)
+                .withStateActionAssignments(PROGRAM_ADMINISTRATOR_GROUP) //
+                .withStateTransitions(new PrismStateTransition() //
+                        .withTransitionState(PROGRAM_DISABLED_COMPLETED) //
+                        .withTransitionAction(PROGRAM_DEACTIVATE)));
+
         stateActions.add(programEscalateApproved());
 
         stateActions.add(programSendMessageApproved() //

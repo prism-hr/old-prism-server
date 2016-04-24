@@ -90,6 +90,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROJECT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(PROJECT)), //
     PROJECT_ESCALATE(getDefaultEscalateResourceActionDefinition(PROJECT)), //
+    PROJECT_DEACTIVATE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROJECT)), //
     PROJECT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROJECT)), //
@@ -104,6 +105,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     PROGRAM_CREATE_PROJECT(getDefaultCreateResourceActionDefinitionInvisible(PROGRAM)), //
     PROGRAM_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(PROGRAM)), //
     PROGRAM_ESCALATE(getDefaultEscalateResourceActionDefinition(PROGRAM)), //
+    PROGRAM_DEACTIVATE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_RESTORE(getDefaultProcessResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(PROGRAM)), //
     PROGRAM_WITHDRAW(getDefaultWithdrawResourceActionDefinition(PROGRAM)), //
@@ -118,6 +120,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     DEPARTMENT_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(DEPARTMENT)), //
     DEPARTMENT_ESCALATE(getDefaultEscalateResourceActionDefinition(DEPARTMENT)), //
+    DEPARTMENT_DEACTIVATE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_RESTORE(getDefaultProcessResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(DEPARTMENT)), //
     DEPARTMENT_WITHDRAW(getDefaultWithdrawResourceActionDefinition(DEPARTMENT)), //
@@ -132,6 +135,7 @@ public enum PrismAction implements PrismLocalizableDefinition {
     INSTITUTION_CREATE_APPLICATION(getDefaultCreateResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_SEND_MESSAGE(getDefaultMessageResourceActionDefinition(INSTITUTION)), //
     INSTITUTION_ESCALATE(getDefaultEscalateResourceActionDefinition(INSTITUTION)), //
+    INSTITUTION_DEACTIVATE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_RESTORE(getDefaultProcessResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_TERMINATE(getDefaultPropagateResourceActionDefinitionVisible(INSTITUTION)), //
     INSTITUTION_WITHDRAW(getDefaultWithdrawResourceActionDefinition(INSTITUTION)), //

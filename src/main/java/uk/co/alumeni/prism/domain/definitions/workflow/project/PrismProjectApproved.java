@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.project;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_DEACTIVATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_REENDORSE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.PROJECT_UNENDORSE;
@@ -11,6 +12,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PAR
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PROJECT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.PROJECT_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.PROJECT_ENDORSE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.project.PrismProjectWorkflow.projectEscalateApproved;
@@ -31,6 +33,13 @@ public class PrismProjectApproved extends PrismWorkflowState {
                 .withActionCondition(ACCEPT_APPLICATION) //
                 .withStateTransitions(APPLICATION_CREATE_TRANSITION //
                         .withRoleTransitions(APPLICATION_CREATE_CREATOR_GROUP))); //
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(PROJECT_DEACTIVATE)
+                .withStateActionAssignments(PROJECT_ADMINISTRATOR_GROUP) //
+                .withStateTransitions(new PrismStateTransition() //
+                        .withTransitionState(PROJECT_DISABLED_COMPLETED) //
+                        .withTransitionAction(PROJECT_DEACTIVATE)));
 
         stateActions.add(projectSendMessageApproved() //
                 .withStateActionAssignment(PROJECT_ENQUIRER, PROJECT_ADMINISTRATOR) //

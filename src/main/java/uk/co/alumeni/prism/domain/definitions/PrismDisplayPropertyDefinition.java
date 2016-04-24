@@ -254,6 +254,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_INSTITUTION_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
     SYSTEM_ACTION_INSTITUTION_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_INSTITUTION_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
+    SYSTEM_ACTION_INSTITUTION_DEACTIVATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Deactivate"),
     SYSTEM_ACTION_INSTITUTION_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_DEPARTMENT_ENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Approve as Placement Provider"),
     SYSTEM_ACTION_DEPARTMENT_UNENDORSE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Suspend as Placement Provider"),
@@ -269,6 +270,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_DEPARTMENT_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"),
     SYSTEM_ACTION_DEPARTMENT_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_DEPARTMENT_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
+    SYSTEM_ACTION_DEPARTMENT_DEACTIVATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Deactivate"),
     SYSTEM_ACTION_DEPARTMENT_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_DEPARTMENT_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_DEPARTMENT_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
@@ -284,6 +286,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROGRAM_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
     SYSTEM_ACTION_PROGRAM_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_PROGRAM_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
+    SYSTEM_ACTION_PROGRAM_DEACTIVATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Deactivate"),
     SYSTEM_ACTION_PROGRAM_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROGRAM_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),
     SYSTEM_ACTION_PROGRAM_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
@@ -298,6 +301,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_ACTION_PROJECT_DISABLE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Disable"), //
     SYSTEM_ACTION_PROJECT_SEND_MESSAGE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Send Message"),
     SYSTEM_ACTION_PROJECT_ESCALATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Escalate"),
+    SYSTEM_ACTION_PROJECT_DEACTIVATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Deactivate"),
     SYSTEM_ACTION_PROJECT_RESTORE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Restore"),
     SYSTEM_ACTION_PROJECT_TERMINATE(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Terminate"),
     SYSTEM_ACTION_PROJECT_WITHDRAW(PrismDisplayPropertyCategory.SYSTEM_ACTION, "Withdraw"),

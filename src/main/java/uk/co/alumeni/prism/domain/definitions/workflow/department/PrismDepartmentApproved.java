@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.department;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_DEACTIVATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
@@ -8,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTME
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.DEPARTMENT_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProgram;
 import static uk.co.alumeni.prism.domain.definitions.workflow.department.PrismDepartmentWorkflow.departmentCreateProject;
@@ -32,6 +34,13 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
         stateActions.add(departmentCreateProgram()); //
         stateActions.add(departmentCreateProject()); //
 
+        stateActions.add(new PrismStateAction() //
+                .withAction(DEPARTMENT_DEACTIVATE)
+                .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP) //
+                .withStateTransitions(new PrismStateTransition() //
+                        .withTransitionState(DEPARTMENT_DISABLED_COMPLETED) //
+                        .withTransitionAction(DEPARTMENT_DEACTIVATE)));
+
         stateActions.add(departmentSendMessageApproved() //
                 .withStateActionAssignment(DEPARTMENT_ENQUIRER, DEPARTMENT_ADMINISTRATOR) //
                 .withStateActionAssignments(DEPARTMENT_ADMINISTRATOR_GROUP, DEPARTMENT_ENQUIRER) //
@@ -49,5 +58,4 @@ public class PrismDepartmentApproved extends PrismWorkflowState {
         stateActions.add(departmentTerminateApproved()); //
         stateActions.add(departmentViewEditApproved()); //
     }
-
 }

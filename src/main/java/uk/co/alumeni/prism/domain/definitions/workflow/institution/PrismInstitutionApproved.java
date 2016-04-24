@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.institution;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_CREATE_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_DEACTIVATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
@@ -8,6 +9,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_CREATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_CREATE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateDepartment;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProgram;
@@ -33,6 +35,13 @@ public class PrismInstitutionApproved extends PrismWorkflowState {
         stateActions.add(institutionCreateDepartment());
         stateActions.add(institutionCreateProgram());
         stateActions.add(institutionCreateProject());
+
+        stateActions.add(new PrismStateAction() //
+                .withAction(INSTITUTION_DEACTIVATE)
+                .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP) //
+                .withStateTransitions(new PrismStateTransition() //
+                        .withTransitionState(INSTITUTION_DISABLED_COMPLETED) //
+                        .withTransitionAction(INSTITUTION_DEACTIVATE)));
 
         stateActions.add(institutionSendMessageApproved() //
                 .withStateActionAssignment(INSTITUTION_ENQUIRER, INSTITUTION_ADMINISTRATOR) //

@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
 import static javax.mail.Session.getInstance;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_EMAIL_LINK_MESSAGE;
@@ -57,6 +58,7 @@ import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
+import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
@@ -115,6 +117,9 @@ public class MailSender {
     private SystemService systemService;
 
     @Inject
+    private UserActivityCacheServiceDelegate userActivityCacheServiceDelegate;
+
+    @Inject
     private UserService userService;
 
     @Inject
@@ -128,6 +133,7 @@ public class MailSender {
         NotificationDefinition notificationDefinition = notificationService.getById(prismNotificationDefinition);
 
         User recipient = getUser(notificationEvent.getRecipient());
+        userActivityCacheServiceDelegate.updateUserActivityCache(recipient.getId(), now());
         Resource resource = getResource(notificationEvent.getResource());
 
         NotificationDefinitionDTO notificationDefinitionDTO = getNotificationDefinitionDTO(recipient, resource, notificationEvent);

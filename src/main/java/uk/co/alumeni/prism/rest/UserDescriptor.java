@@ -22,7 +22,7 @@ public abstract class UserDescriptor implements Comparable<UserDescriptor> {
     public abstract String getEmail();
 
     public abstract void setEmail(String email);
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(getUserIdentity());
@@ -43,9 +43,15 @@ public abstract class UserDescriptor implements Comparable<UserDescriptor> {
     @Override
     public int compareTo(UserDescriptor other) {
         int compare = compare(getFirstName(), other.getFirstName());
-        return compare == 0 ? compare(getLastName(), other.getLastName()) : compare;
+        compare = compare == 0 ? compare(getLastName(), other.getLastName()) : compare;
+        return compare == 0 ? compare(getEmail(), other.getEmail()) : compare;
     }
-    
+
+    @Override
+    public String toString() {
+        return getFirstName() + " " + getLastName() + " " + "(" + getEmail() + ")";
+    }
+
     private String getUserIdentity() {
         Integer id = getId();
         return id == null ? getEmail() : id.toString();

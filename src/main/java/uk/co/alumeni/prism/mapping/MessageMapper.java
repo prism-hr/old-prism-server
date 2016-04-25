@@ -236,8 +236,14 @@ public class MessageMapper {
             }
         });
 
+        User creatorUser = user.getCreatorUser();
+        Document portraitImage = user.getPortraitImage();
         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(targeterResources, recipientRoles);
-        recipientUserRoles.add(new UserRoleDTO().withUser(user).withRole(SYSTEM_CANDIDATE));
+        recipientUserRoles.add(new UserRoleDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName())
+                .withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3()).withFullName(user.getFullName()).withEnabled(user.getEnabled())
+                .withLinkedinProfileUrl(user.getLinkedinProfileUrl()).withLinkedinImageUrl(user.getLinkedinImageUrl())
+                .withPortraitImage(portraitImage == null ? null : portraitImage.getId()).withCreatorUser(creatorUser == null ? null : creatorUser.getId())
+                .withRole(SYSTEM_CANDIDATE));
 
         return new MessageThreadParticipantsRepresentationPotential().addParticipants(getMessageThreadParticipantRepresentationsPotential(currentUser,
                 recipientUserRoles)).addPartnerParticipants(getMessageThreadParticipantRepresentationsPotential(currentUser, partnerRecipientUserRoles));
@@ -245,8 +251,8 @@ public class MessageMapper {
 
     private List<MessageThreadParticipantRepresentationPotential> getMessageThreadParticipantRepresentationsPotential(User currentUser,
             List<UserRoleDTO> recipientUserRoles) {
-        TreeMultimap<PrismRole, User> index = TreeMultimap.create();
-        recipientUserRoles.stream().forEach(userRole -> index.put(userRole.getRole(), userRole.getUser()));
+        TreeMultimap<PrismRole, UserRoleDTO> index = TreeMultimap.create();
+        recipientUserRoles.stream().forEach(userRole -> index.put(userRole.getRole(), userRole));
 
         Map<PrismRole, MessageThreadParticipantRepresentationPotential> recipients = newTreeMap();
         index.keySet().stream().forEach(key -> {

@@ -1,16 +1,6 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
-
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import org.joda.time.LocalDateTime;
-
 import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
@@ -20,6 +10,15 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import java.math.BigDecimal;
+import java.util.List;
+
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 
 public class CommentDTO {
 
@@ -412,6 +411,10 @@ public class CommentDTO {
         return action.getActionCategory().equals(CREATE_RESOURCE);
     }
 
+    public boolean isEnquirerAssignmentComment() {
+        return action.getActionCategory().equals(MESSAGE_RESOURCE) && interested == true;
+    }
+
     public boolean isClaimComment() {
         return resource.getScope().getScopeCategory().equals(ORGANIZATION) && action.name().endsWith("_COMPLETE");
     }
@@ -419,12 +422,12 @@ public class CommentDTO {
     public boolean isBypassComment() {
         return !(roleContext == null && resourceInvitation == null);
     }
-    
+
     public CommentDTO withAction(PrismAction action) {
         this.action = action;
         return this;
     }
-    
+
     public CommentDTO withResource(ResourceCreationDTO resource) {
         this.resource = resource;
         return this;

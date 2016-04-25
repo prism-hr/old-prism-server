@@ -344,7 +344,7 @@ public class RoleDAO {
                 .list();
     }
 
-    public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
+    public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm, boolean directlyAssignableOnly) {
         Criteria criteria = getUserRoleCriteria() //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
 
@@ -354,6 +354,10 @@ public class RoleDAO {
 
         if (isNotBlank(searchTerm)) {
             criteria.add(getMatchingUserConstraint("user", searchTerm));
+        }
+
+        if (directlyAssignableOnly) {
+            criteria.add(Restrictions.eq("role.directlyAssignable", true));
         }
 
         return (List<UserRoleDTO>) criteria //

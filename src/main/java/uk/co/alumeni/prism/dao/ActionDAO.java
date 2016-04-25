@@ -30,6 +30,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
@@ -71,7 +72,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
                 .add(getUnsecuredActionVisibilityConstraint(userLoggedIn)) //
-                .addOrder(Order.asc("creationScope.ordinal")) //
                 .uniqueResult();
     }
 
@@ -97,6 +97,21 @@ public class ActionDAO {
                 .addOrder(Order.asc("creationScope.ordinal")) //
                 .setResultTransformer(Transformers.aliasToBean(ActionDTO.class)) //
                 .list();
+    }
+
+    public Action getPermittedEnquiryAction(ResourceParent resource, Action action) {
+        PrismScope resourceScope = resource.getResourceScope();
+        return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("stateAction.action")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .add(Restrictions.eq("stateActionAssignment.role.id", PrismRole.valueOf(resourceScope.name() + "_ENQUIRER"))) //
+                .uniqueResult();
     }
 
     public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
@@ -261,7 +276,7 @@ public class ActionDAO {
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
                 .list();
     }
-    
+
     public List<Action> getRatingActions(PrismScope scope) {
         return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
                 .setProjection(Projections.groupProperty("action")) //

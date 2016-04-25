@@ -3,7 +3,6 @@ package uk.co.alumeni.prism.services;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
@@ -47,7 +46,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -344,25 +342,23 @@ public class UserService {
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
-        TreeMap<String, UserSelectionDTO> orderedUsers = newTreeMap();
+        Set<UserSelectionDTO> orderedUsers = newTreeSet();
 
-        Set<User> userNotInterestedIndex = newHashSet();
         Map<UserSelectionDTO, DateTime> userNotInterestedEvents = newHashMap();
         List<UserSelectionDTO> usersNotInterested = userDAO.getUsersNotInterestedInApplication(application);
         for (UserSelectionDTO userNotInterested : usersNotInterested) {
             userNotInterestedEvents.put(userNotInterested, userNotInterested.getEventTimestamp());
-            userNotInterestedIndex.add(userNotInterested.getUser());
         }
 
         List<UserSelectionDTO> usersInterested = userDAO.getUsersInterestedInApplication(application);
         for (UserSelectionDTO userInterested : usersInterested) {
             DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
             if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
-                orderedUsers.put(userInterested.getIndexName(), userInterested);
+                orderedUsers.add(userInterested);
             }
         }
 
-        return newLinkedList(orderedUsers.values());
+        return newLinkedList(orderedUsers);
     }
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {

@@ -51,7 +51,7 @@ public class RoleMapper {
         resourceService.validateViewResource(resource, currentUser);
 
         Set<ResourceUserRolesRepresentation> representations = newTreeSet();
-        HashMultimap<UserRoleDTO, PrismRole> userRoles = roleService.getUserRolesStrict(resource, searchRole, searchTerm);
+        HashMultimap<UserRoleDTO, PrismRole> userRoles = roleService.getUserRolesStrict(resource, searchRole, searchTerm, true);
         userRoles.keySet().stream().forEach(user -> {
             representations.add(new ResourceUserRolesRepresentation()
                     .withUser(userMapper.getUserRepresentationSimpleWithEmail(user, currentUser))

@@ -29,8 +29,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import jersey.repackaged.com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -87,6 +85,7 @@ import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -175,9 +174,11 @@ public class ApplicationMapper {
     public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Class<T> returnType,
             List<PrismRole> overridingRoles, User currentUser) {
         T representation = getApplicationRepresentation(application, returnType, overridingRoles, currentUser);
+
         representation.setWithoutReference(
                 applicationService.getApplicationRefereesNotResponded(application).stream()
                         .map(user -> userMapper.getUserRepresentationSimple(user, userService.getCurrentUser())).collect(Collectors.toList()));
+
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
         representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application, currentUser));
         return representation;
@@ -277,14 +278,19 @@ public class ApplicationMapper {
         boolean viewEqualOpportunities = applicationService.isCanViewEqualOpportunities(application, userService.getCurrentUser());
         representation.setProgramDetail(getApplicationProgramDetailRepresentation(application, currentUser));
         representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
+
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
         representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications(), currentUser));
+
         representation.setAwards(profileMapper.getAwardRepresentations(application.getAwards()));
         representation.setEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions(), currentUser));
+
         representation.setReferees(getApplicationRefereeRepresentations(application.getReferees(), overridingRoles, currentUser));
+
         representation.setDocument(profileMapper.getDocumentRepresentation(application.getDocument()));
         representation.setAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(application.getAdditionalInformation(),
                 viewEqualOpportunities));
+
         return representation;
     }
 

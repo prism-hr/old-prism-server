@@ -181,7 +181,7 @@ public class UserMapper {
         User currentUser = userService.getCurrentUser();
         List<UserRepresentationSimple> representations = newLinkedList();
         users.stream().forEach(user -> {
-            UserRepresentationSimple representation = getUserRepresentationSimple(user.getUser(), currentUser);
+            UserRepresentationSimple representation = getUserRepresentationSimple(user, currentUser);
             representation.setEmail(getObfuscatedEmail(representation.getEmail()));
             representations.add(representation);
         });
@@ -286,7 +286,7 @@ public class UserMapper {
                     representation.setPortraitImage(documentMapper.getDocumentRepresentation((Integer) portraitImage));
                 } else {
                     representation.setPortraitImage(documentMapper.getDocumentRepresentation((Document) portraitImage));
-                }   
+                }
             }
 
             representation.setEditable(userExtended.checkUserEditable(currentUser));

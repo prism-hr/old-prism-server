@@ -15,6 +15,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionConditi
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.INSTITUTION_VIEW_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.INSTITUTION_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_ENQUIRER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.SYSTEM_ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
@@ -111,6 +112,7 @@ public class PrismInstitutionWorkflow {
         return institutionViewEditAbstract()
                 .withStateActionAssignments(INSTITUTION_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_EDIT_AS_USER) //
                 .withStateActionAssignments(INSTITUTION_VIEWER_GROUP, INSTITUTION_VIEW_AS_USER) //
+                .withStateActionAssignments(INSTITUTION_ENQUIRER, INSTITUTION_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, INSTITUTION_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, INSTITUTION_VIEW_AS_USER) //

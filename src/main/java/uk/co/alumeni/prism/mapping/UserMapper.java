@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static org.joda.time.DateTime.now;
+import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
@@ -17,7 +18,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,7 @@ import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
@@ -32,6 +33,8 @@ import uk.co.alumeni.prism.domain.user.UserFeedback;
 import uk.co.alumeni.prism.dto.ProfileEntityDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
+import uk.co.alumeni.prism.rest.UserDescriptor;
+import uk.co.alumeni.prism.rest.UserDescriptorExtended;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
@@ -106,11 +109,11 @@ public class UserMapper {
     @Inject
     private ApplicationContext applicationContext;
 
-    public UserRepresentationSimple getUserRepresentationSimple(User user, User currentUser) {
+    public <T extends UserDescriptor> UserRepresentationSimple getUserRepresentationSimple(T user, User currentUser) {
         return getUserRepresentation(user, currentUser, UserRepresentationSimple.class);
     }
 
-    public UserRepresentationSimple getUserRepresentationSimpleWithEmail(User user, User currentUser) {
+    public <T extends UserDescriptor> UserRepresentationSimple getUserRepresentationSimpleWithEmail(T user, User currentUser) {
         return getUserRepresentation(user, currentUser, true, UserRepresentationSimple.class);
     }
 
@@ -166,7 +169,7 @@ public class UserMapper {
         return representation;
     }
 
-    public <T extends UserRepresentationSimple> T getUserRepresentation(User user, User currentUser, Class<T> returnType) {
+    public <T extends UserDescriptor, U extends UserRepresentationSimple> U getUserRepresentation(T user, User currentUser, Class<U> returnType) {
         return getUserRepresentation(user, currentUser, false, returnType);
     }
 
@@ -259,25 +262,36 @@ public class UserMapper {
         return representations;
     }
 
-    private <T extends UserRepresentationSimple> T getUserRepresentation(User user, User currentUser, boolean forceReturnEmail, Class<T> returnType) {
-        T representation = BeanUtils.instantiate(returnType);
+    private <T extends UserDescriptor, U extends UserRepresentationSimple> U getUserRepresentation(T user, User currentUser, boolean forceReturnEmail,
+            Class<U> returnType) {
+        U representation = instantiate(returnType);
 
         representation.setId(user.getId());
         representation.setFirstName(user.getFirstName());
-        representation.setFirstName2(user.getFirstName2());
-        representation.setFirstName3(user.getFirstName3());
         representation.setLastName(user.getLastName());
-        representation.setFullName(user.getFullName());
         representation.setEmail(userService.getSecuredUserEmailAddress(user.getEmail(), currentUser, forceReturnEmail));
 
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount != null) {
-            representation.setAccountProfileUrl(userAccount.getLinkedinProfileUrl());
-            representation.setAccountImageUrl(userAccount.getLinkedinImageUrl());
-            representation.setPortraitImage(documentMapper.getDocumentRepresentation(userAccount.getPortraitImage()));
+        if (UserDescriptorExtended.class.isAssignableFrom(user.getClass())) {
+            UserDescriptorExtended<?, ?> userExtended = (UserDescriptorExtended<?, ?>) user;
+            representation.setFirstName2(userExtended.getFirstName2());
+            representation.setFirstName3(userExtended.getFirstName3());
+            representation.setFullName(userExtended.getFullName());
+
+            representation.setAccountProfileUrl(userExtended.getLinkedinProfileUrl());
+            representation.setAccountImageUrl(userExtended.getLinkedinImageUrl());
+
+            Object portraitImage = userExtended.getPortraitImage();
+            if (portraitImage != null) {
+                if (portraitImage.getClass().equals(Integer.class)) {
+                    representation.setPortraitImage(documentMapper.getDocumentRepresentation((Integer) portraitImage));
+                } else {
+                    representation.setPortraitImage(documentMapper.getDocumentRepresentation((Document) portraitImage));
+                }   
+            }
+
+            representation.setEditable(userExtended.checkUserEditable(currentUser));
         }
 
-        representation.setEditable(userService.checkUserEditable(user, currentUser));
         return representation;
     }
 

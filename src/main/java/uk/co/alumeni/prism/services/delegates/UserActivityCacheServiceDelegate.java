@@ -51,14 +51,19 @@ public class UserActivityCacheServiceDelegate {
         if (isNotEmpty(users)) {
             users.stream().forEach(user -> {
                 userActivityCacheService.updateUserActivityCache(user, baseline);
-            });     
+            });
         }
     }
 
-    @Async
-    public void updateUserActivityCache(Integer userId, DateTime baseline) {
+    public UserActivityRepresentation updateUserActivityCache(Integer userId, DateTime baseline) {
         UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(userId);
         userService.setUserActivityCache(userId, userActivityRepresentation, baseline);
+        return userActivityRepresentation;
+    }
+
+    @Async
+    public void updateUserActivityCacheAsynchronous(Integer userId, DateTime baseline) {
+        UserActivityRepresentation userActivityRepresentation = updateUserActivityCache(userId, baseline);
         userActivityCacheService.updateUserActivityCache(userId);
         DeferredResult<UserActivityRepresentation> result = pollingUsers.get(userId);
         if (result != null) {
@@ -66,11 +71,12 @@ public class UserActivityCacheServiceDelegate {
         }
     }
 
+    public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
+        pollingUsers.put(userId, result);
+    }
+
     public void removePollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
         pollingUsers.remove(userId, result);
     }
 
-    public void addPollingUser(Integer userId, DeferredResult<UserActivityRepresentation> result) {
-        pollingUsers.put(userId, result);
-    }
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceUserRolesRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ResourceService;
@@ -50,7 +51,7 @@ public class RoleMapper {
         resourceService.validateViewResource(resource, currentUser);
 
         Set<ResourceUserRolesRepresentation> representations = newTreeSet();
-        HashMultimap<User, PrismRole> userRoles = roleService.getUserRolesStrict(resource, searchRole, searchTerm);
+        HashMultimap<UserRoleDTO, PrismRole> userRoles = roleService.getUserRolesStrict(resource, searchRole, searchTerm);
         userRoles.keySet().stream().forEach(user -> {
             representations.add(new ResourceUserRolesRepresentation()
                     .withUser(userMapper.getUserRepresentationSimpleWithEmail(user, currentUser))

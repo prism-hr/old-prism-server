@@ -141,15 +141,9 @@ public class RoleDAO {
             }
         });
 
-        return (List<UserRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("user").as("user")) //
-                        .add(Projections.property("role.id").as("role"))) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
+        return (List<UserRoleDTO>) getUserRoleCriteria() //
                 .createAlias("role.scope", "roleScope", JoinType.INNER_JOIN) //
                 .add(constraints) //
-                .add(Restrictions.eq("role.verified", true)) //
                 .addOrder(Order.asc("roleScope.ordinal")) //
                 .addOrder(Order.asc("role.id")) //
                 .addOrder(Order.asc("user.fullName")) //
@@ -351,13 +345,8 @@ public class RoleDAO {
     }
 
     public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("user").as("user")) //
-                        .add(Projections.property("role.id").as("role"))) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("role.verified", true));
+        Criteria criteria = getUserRoleCriteria() //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
 
         if (searchRole != null) {
             criteria.add(Restrictions.eq("role.id", searchRole));
@@ -379,6 +368,28 @@ public class RoleDAO {
                 .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.eq("userAccount.enabled", true));
+    }
+
+    private Criteria getUserRoleCriteria() {
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("user.id").as("id")) //
+                        .add(Projections.property("user.firstName").as("firstName")) //
+                        .add(Projections.property("user.lastName").as("lastName")) //
+                        .add(Projections.property("user.email").as("email")) //
+                        .add(Projections.property("user.firstName2").as("firstName2")) //
+                        .add(Projections.property("user.firstName3").as("firstName3")) //
+                        .add(Projections.property("user.fullName").as("fullName")) //
+                        .add(Projections.property("userAccount.enabled").as("enabled")) //
+                        .add(Projections.property("userAccount.linkedinProfileUrl").as("linkedinProfileUrl")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("linkedinImageUrl")) //
+                        .add(Projections.property("userAccount.portraitImage.id").as("portraitImage")) //
+                        .add(Projections.property("user.creatorUser.id").as("creatorUser")) //
+                        .add(Projections.property("role.id").as("role"))) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("role.verified", true));
     }
 
 }

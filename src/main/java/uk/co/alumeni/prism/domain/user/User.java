@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.domain.user;
 
-import static org.apache.commons.lang3.ObjectUtils.compare;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -46,14 +44,14 @@ import uk.co.alumeni.prism.domain.resource.Program;
 import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
+import uk.co.alumeni.prism.rest.UserDescriptorExtended;
 import uk.co.alumeni.prism.workflow.user.UserReassignmentProcessor;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor>, Comparable<User> {
+public class User extends UserDescriptorExtended<Document, User> implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor> {
 
     private static final long serialVersionUID = 5910410212695389060L;
 
@@ -189,7 +187,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "searchUser")
     private Set<MessageThread> threads = Sets.newHashSet();
-    
+
     @OneToMany(mappedBy = "user")
     private Set<Message> messages = Sets.newHashSet();
 
@@ -276,10 +274,12 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         this.userAccount = userAccount;
     }
 
+    @Override
     public User getCreatorUser() {
         return creatorUser;
     }
 
+    @Override
     public void setCreatorUser(User creatorUser) {
         this.creatorUser = creatorUser;
     }
@@ -411,7 +411,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public Set<AdvertTargetPending> getAdvertTargetPendings() {
         return advertTargetPendings;
     }
-    
+
     public Set<MessageThread> getThreads() {
         return threads;
     }
@@ -459,11 +459,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     }
 
     @Override
-    public boolean isEnabled() {
-        return userAccount != null && userAccount.getEnabled();
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
     }
@@ -494,25 +489,52 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     }
 
     @Override
-    public String toString() {
-        return firstName + " " + lastName + " " + "(" + email + ")";
+    public Boolean getEnabled() {
+        return userAccount == null ? null : userAccount.getEnabled();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(email);
+    public void setEnabled(Boolean enabled) {
+        if (userAccount != null) {
+            userAccount.setEnabled(enabled);
+        }
+
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
+    public String getLinkedinProfileUrl() {
+        return userAccount == null ? null : userAccount.getLinkedinProfileUrl();
+    }
+
+    @Override
+    public void setLinkedinProfileUrl(String linkedinProfileUrl) {
+        if (userAccount != null) {
+            userAccount.setLinkedinProfileUrl(linkedinProfileUrl);
         }
-        if (getClass() != object.getClass()) {
-            return false;
+    }
+
+    @Override
+    public String getLinkedinImageUrl() {
+        return userAccount == null ? null : userAccount.getLinkedinImageUrl();
+    }
+
+    @Override
+    public void setLinkedinImageUrl(String linkedinImageUrl) {
+        if (userAccount != null) {
+            userAccount.setLinkedinImageUrl(linkedinImageUrl);
         }
-        final User other = (User) object;
-        return Objects.equal(email, other.getEmail());
+    }
+
+    @Override
+    public Document getPortraitImage() {
+        return userAccount == null ? null : userAccount.getPortraitImage();
+    }
+
+    @Override
+    public void setPortraitImage(Document portraitImage) {
+        if (userAccount != null) {
+            userAccount.setPortraitImage(portraitImage);
+        }
     }
 
     @Override
@@ -523,13 +545,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @Override
     public boolean isResourceUserAssignmentProperty() {
         return false;
-    }
-
-    @Override
-    public int compareTo(User other) {
-        int compare = compare(firstName, other.getFirstName());
-        compare = compare == 0 ? compare(lastName, other.getLastName()) : compare;
-        return compare == 0 ? compare(email, other.getEmail()) : compare;
     }
 
     @Override

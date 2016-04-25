@@ -106,10 +106,10 @@ public class RoleService {
         return roleDAO.getUserRoleStrict(resource, user, role);
     }
 
-    public HashMultimap<User, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
-        HashMultimap<User, PrismRole> userRoles = HashMultimap.create();
+    public HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
+        HashMultimap<UserRoleDTO, PrismRole> userRoles = HashMultimap.create();
         roleDAO.getUserRolesStrict(resource, searchRole, searchTerm).stream().forEach(userRole -> {
-            userRoles.put(userRole.getUser(), userRole.getRole());
+            userRoles.put(userRole, userRole.getRole());
         });
         return userRoles;
     }
@@ -411,13 +411,13 @@ public class RoleService {
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
 
             User owner = resource.getUser();
-            HashMultimap<User, PrismRole> existingUserRoles = getUserRolesStrict(resource);
+            HashMultimap<UserRoleDTO, PrismRole> existingUserRoles = getUserRolesStrict(resource);
             users.forEach(user -> {
                 boolean delete = transitionType.equals(DELETE);
                 boolean deleteOwnerRole = delete && user.equals(owner);
                 stream(roles).forEach(role -> {
                     if (!(deleteOwnerRole && role.getRoleCategory().equals(ADMINISTRATOR))) {
-                        Set<PrismRole> existingRoles = existingUserRoles.get(user);
+                        Set<PrismRole> existingRoles = existingUserRoles.get(new UserRoleDTO().withId(user.getId()).withEmail(user.getEmail()));
                         if (existingRoles == null || delete || !existingRoles.contains(role)) {
                             comment.addAssignedUser(user, getById(role), transitionType);
                         }
@@ -437,7 +437,7 @@ public class RoleService {
         }
     }
 
-    private HashMultimap<User, PrismRole> getUserRolesStrict(Resource resource) {
+    private HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource) {
         return getUserRolesStrict(resource, null, null);
     }
 

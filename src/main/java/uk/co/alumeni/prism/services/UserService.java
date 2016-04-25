@@ -1,6 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newHashMap;
@@ -14,7 +13,6 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -225,7 +223,7 @@ public class UserService {
                     persistentUser.setActivationCode(getUUID());
                     entityService.save(persistentUser);
                     persistentUser.setParentUser(persistentUser);
-                } else if (checkUserEditable(persistentUser, getCurrentUser())) {
+                } else if (persistentUser.checkUserEditable(getCurrentUser())) {
                     persistentUser.setFirstName(firstName);
                     persistentUser.setLastName(lastName);
                 }
@@ -573,11 +571,6 @@ public class UserService {
 
     public List<Integer> getUsersWithRoles(PrismScope scope, PrismScope parentScope, List<Integer> resources, PrismRole... roles) {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
-    }
-
-    public boolean checkUserEditable(User user, User currentUser) {
-        UserAccount userAccount = user.getUserAccount();
-        return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
     }
 
     public DateTime getUserCreatedTimestamp(User user) {

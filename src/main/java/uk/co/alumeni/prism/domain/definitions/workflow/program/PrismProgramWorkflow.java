@@ -12,6 +12,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhance
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROGRAM_VIEW_EDIT_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.PROJECT_VIEW_AS_USER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROGRAM_ENQUIRER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
@@ -96,6 +97,7 @@ public class PrismProgramWorkflow {
                 .withStateActionAssignments(INSTITUTION_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
                 .withStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROJECT_VIEW_AS_USER) //
                 .withStateActionAssignments(PROGRAM_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
+                .withStateActionAssignments(PROGRAM_ENQUIRER, PROGRAM_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //
                 .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, PROGRAM_VIEW_AS_USER) //

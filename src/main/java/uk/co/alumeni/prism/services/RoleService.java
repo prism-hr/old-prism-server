@@ -106,9 +106,9 @@ public class RoleService {
         return roleDAO.getUserRoleStrict(resource, user, role);
     }
 
-    public HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm) {
+    public HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm, boolean directlyAssignableOnly) {
         HashMultimap<UserRoleDTO, PrismRole> userRoles = HashMultimap.create();
-        roleDAO.getUserRolesStrict(resource, searchRole, searchTerm).stream().forEach(userRole -> {
+        roleDAO.getUserRolesStrict(resource, searchRole, searchTerm, directlyAssignableOnly).stream().forEach(userRole -> {
             userRoles.put(userRole, userRole.getRole());
         });
         return userRoles;
@@ -438,7 +438,7 @@ public class RoleService {
     }
 
     private HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource) {
-        return getUserRolesStrict(resource, null, null);
+        return getUserRolesStrict(resource, null, null, false);
     }
 
 }

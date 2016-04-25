@@ -323,6 +323,8 @@ public class ActionService {
             return true;
         } else if (actionDAO.getPermittedUnsecuredAction(resource, action, userService.isUserLoggedIn()) != null) {
             return true;
+        } else if (ResourceParent.class.isAssignableFrom(resource.getClass()) && actionDAO.getPermittedEnquiryAction((ResourceParent) resource, action) != null) {
+            return true;
         } else if (getPermittedAction(user, resource, action) != null) {
             return true;
         }

@@ -1,59 +1,5 @@
 package uk.co.alumeni.prism.services;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.*;
-import jersey.repackaged.com.google.common.collect.Iterables;
-import jersey.repackaged.com.google.common.collect.Sets;
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.criterion.Junction;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import uk.co.alumeni.prism.dao.ResourceDAO;
-import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertTarget;
-import uk.co.alumeni.prism.domain.comment.*;
-import uk.co.alumeni.prism.domain.definitions.*;
-import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelation;
-import uk.co.alumeni.prism.domain.definitions.workflow.*;
-import uk.co.alumeni.prism.domain.document.Document;
-import uk.co.alumeni.prism.domain.resource.*;
-import uk.co.alumeni.prism.domain.user.User;
-import uk.co.alumeni.prism.domain.user.UserRole;
-import uk.co.alumeni.prism.domain.workflow.*;
-import uk.co.alumeni.prism.dto.*;
-import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
-import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
-import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
-import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
-import uk.co.alumeni.prism.rest.dto.comment.CommentAssignedUserDTO;
-import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
-import uk.co.alumeni.prism.rest.dto.resource.*;
-import uk.co.alumeni.prism.rest.dto.user.UserDTO;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
-import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
-import uk.co.alumeni.prism.services.builders.PrismResourceListConstraintBuilder;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
-import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
-import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
-import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
-import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
-import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
-import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
-
-import javax.inject.Inject;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.google.common.collect.HashMultimap.create;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
@@ -61,6 +7,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static jersey.repackaged.com.google.common.base.Objects.equal;
@@ -81,17 +28,144 @@ import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.*;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition.getRequiredSections;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getRowsToReturn;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import jersey.repackaged.com.google.common.collect.Iterables;
+import jersey.repackaged.com.google.common.collect.Sets;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.criterion.Junction;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import uk.co.alumeni.prism.dao.ResourceDAO;
+import uk.co.alumeni.prism.domain.advert.Advert;
+import uk.co.alumeni.prism.domain.advert.AdvertTarget;
+import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
+import uk.co.alumeni.prism.domain.comment.CommentState;
+import uk.co.alumeni.prism.domain.comment.CommentStateDefinition;
+import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceRelationContext.PrismResourceRelation;
+import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
+import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
+import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceCondition;
+import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.ResourcePreviousState;
+import uk.co.alumeni.prism.domain.resource.ResourceState;
+import uk.co.alumeni.prism.domain.resource.ResourceStateDefinition;
+import uk.co.alumeni.prism.domain.resource.ResourceStateTransitionSummary;
+import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
+import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserRole;
+import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.domain.workflow.OpportunityType;
+import uk.co.alumeni.prism.domain.workflow.Role;
+import uk.co.alumeni.prism.domain.workflow.Scope;
+import uk.co.alumeni.prism.domain.workflow.State;
+import uk.co.alumeni.prism.domain.workflow.StateAction;
+import uk.co.alumeni.prism.domain.workflow.StateDurationConfiguration;
+import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
+import uk.co.alumeni.prism.domain.workflow.StateTransition;
+import uk.co.alumeni.prism.dto.ActionDTO;
+import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
+import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
+import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
+import uk.co.alumeni.prism.dto.ResourceConnectionDTO;
+import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.ResourceListRowDTO;
+import uk.co.alumeni.prism.dto.ResourceOpportunityCategoryDTO;
+import uk.co.alumeni.prism.dto.ResourceRoleDTO;
+import uk.co.alumeni.prism.dto.ResourceSimpleDTO;
+import uk.co.alumeni.prism.dto.UserResourceDTO;
+import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
+import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
+import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentAssignedUserDTO;
+import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceConditionDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceCreationDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterConstraintDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterTagDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceOpportunityDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadata;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRobotMetadataRelated;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSitemap;
+import uk.co.alumeni.prism.services.builders.PrismResourceListConstraintBuilder;
+import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+import uk.co.alumeni.prism.workflow.evaluators.ResourceCompletenessEvaluator;
+import uk.co.alumeni.prism.workflow.executors.action.ActionExecutor;
+import uk.co.alumeni.prism.workflow.resolvers.state.duration.StateDurationResolver;
+import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
+import uk.co.alumeni.prism.workflow.transition.creators.ResourceCreator;
+import uk.co.alumeni.prism.workflow.transition.populators.ResourcePopulator;
+import uk.co.alumeni.prism.workflow.transition.processors.ResourceProcessor;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -176,7 +250,7 @@ public class ResourceService {
     }
 
     public ResourceParent inviteResourceRelation(ResourceParent resource, User currentUser, ResourceRelationCreationDTO resourceInvitationDTO, String message,
-                                                 DateTime baseline) {
+            DateTime baseline) {
         if (validateResourceRelationCreation(resourceInvitationDTO)) {
             User childOwner = userService.getOrCreateUser(resourceInvitationDTO.getUser());
 
@@ -207,20 +281,20 @@ public class ResourceService {
             User student = null;
             User childOwner = null;
             switch (resourceDTO.getContext()) {
-                case QUALIFICATION:
-                    viewer = userService.getOrCreateUser(resourceDTO.getUser());
-                    student = userService.getCurrentUser();
-                    childOwner = student;
-                    break;
-                case EMPLOYMENT_POSITION:
-                    childOwner = userService.getCurrentUser();
-                    break;
-                case REFEREE:
-                    viewer = userService.getOrCreateUser(resourceDTO.getUser());
-                    childOwner = viewer;
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Invalid resource relation creation attempt");
+            case QUALIFICATION:
+                viewer = userService.getOrCreateUser(resourceDTO.getUser());
+                student = userService.getCurrentUser();
+                childOwner = student;
+                break;
+            case EMPLOYMENT_POSITION:
+                childOwner = userService.getCurrentUser();
+                break;
+            case REFEREE:
+                viewer = userService.getOrCreateUser(resourceDTO.getUser());
+                childOwner = viewer;
+                break;
+            default:
+                throw new UnsupportedOperationException("Invalid resource relation creation attempt");
             }
 
             ResourceParent resource = createResourceRelation(resourceDTO.getResource(), resourceDTO.getContext().getContext(), childOwner);
@@ -334,11 +408,7 @@ public class ResourceService {
                 if (commentDTO.isClaimComment()) {
                     commentService.preprocessClaimComment(currentUser, commentDTO);
                 } else if (commentDTO.isEnquirerAssignmentComment()) {
-                    UserDTO userDTO = new UserDTO().withEmail(currentUser.getEmail())
-                            .withFirstName(currentUser.getFirstName()).withLastName(currentUser.getLastName());
-                    PrismRole role = PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ENQUIRER");
-                    CommentAssignedUserDTO assignedUser = new CommentAssignedUserDTO().withUser(userDTO).withRole(role);
-                    commentDTO.setAssignedUsers(Collections.singletonList(assignedUser));
+                    assignEnquirer(currentUser, commentDTO);
                 }
 
                 Class<? extends ActionExecutor> actionExecutor = commentDTO.getAction().getScope().getActionExecutor();
@@ -502,7 +572,7 @@ public class ResourceService {
     }
 
     public ActionOutcomeDTO executeUpdate(Resource resource, User user, PrismDisplayPropertyDefinition messageIndex, PrismState transitionStateId,
-                                          CommentAssignedUser... assignees) {
+            CommentAssignedUser... assignees) {
         Action action = actionService.getViewEditAction(resource);
         if (action != null) {
             State transitionState = transitionStateId == null ? null : stateService.getById(transitionStateId);
@@ -537,8 +607,8 @@ public class ResourceService {
     }
 
     public Collection<ResourceListRowDTO> getResourceList(User user, PrismScope scope, List<PrismScope> parentScopes, Collection<Integer> targeterEntities,
-                                                          Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
-                                                          Collection<Integer> onlyAsPartnerResources, boolean extended) {
+            Collection<ResourceOpportunityCategoryDTO> resourceDTOs, ResourceListFilterDTO filter, String lastSequenceIdentifier, Integer maxRecords,
+            Collection<Integer> onlyAsPartnerResources, boolean extended) {
         if (!resourceDTOs.isEmpty()) {
             Map<Integer, BigDecimal> resources = getRowsToReturn(resourceDTOs, filter.getOpportunityCategory(), filter.getOpportunityTypes(),
                     lastSequenceIdentifier, maxRecords);
@@ -629,19 +699,19 @@ public class ResourceService {
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, String searchTerm) {
         Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
-        for (PrismScope resourceScope : new PrismScope[]{INSTITUTION, DEPARTMENT}) {
+        for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
             resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> resources.add(resource));
         }
         return new ArrayList<>(resources);
     }
 
     public List<ResourceChildCreationDTO> getResourcesParentsForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
-                                                                                           PrismScope creationScope) {
+            PrismScope creationScope) {
         return getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, null);
     }
 
     public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
-                                                                                    PrismScope creationScope, String searchTerm) {
+            PrismScope creationScope, String searchTerm) {
         User user = userService.getCurrentUser();
         Set<ResourceChildCreationDTO> resources = newTreeSet();
 
@@ -694,8 +764,8 @@ public class ResourceService {
             String scopeReference = scope.name();
 
             getResources(user, scope, scopes.stream() //
-                            .filter(parentScope -> parentScope.ordinal() < scope.ordinal())
-                            .collect(Collectors.toList()), //
+                    .filter(parentScope -> parentScope.ordinal() < scope.ordinal())
+                    .collect(Collectors.toList()), //
                     advertService.getAdvertTargeterEntities(user, scope), //
                     new ResourceListFilterDTO().withRoleCategories(ADMINISTRATOR)
                             .withActionIds(Arrays.asList((PrismAction.valueOf(scopeReference + "_VIEW_EDIT")))) //
@@ -752,26 +822,26 @@ public class ResourceService {
         if (isEmpty(resourceConditions)) {
             resourceConditions = Lists.newArrayList();
             switch (resource.getResourceScope()) {
-                case INSTITUTION:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                case DEPARTMENT:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                case PROGRAM:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                case PROJECT:
-                    resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
-                    break;
-                default:
-                    throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
+            case INSTITUTION:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_DEPARTMENT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case DEPARTMENT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROGRAM).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case PROGRAM:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_PROJECT).withInternalMode(true).withExternalMode(true));
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            case PROJECT:
+                resourceConditions.add(new ResourceConditionDTO().withActionCondition(ACCEPT_APPLICATION).withInternalMode(false).withExternalMode(true));
+                break;
+            default:
+                throw new UnsupportedOperationException("Resource type " + resource.getResourceScope().name() + " does not have action conditions");
             }
         }
 
@@ -861,7 +931,7 @@ public class ResourceService {
     }
 
     public ResourceRepresentationRobotMetadata getResourceRobotMetadataRepresentation(Resource resource, List<PrismState> scopeStates,
-                                                                                      HashMultimap<PrismScope, PrismState> enclosedScopes) {
+            HashMultimap<PrismScope, PrismState> enclosedScopes) {
         return resourceDAO.getResourceRobotMetadataRepresentation(resource, scopeStates, enclosedScopes);
     }
 
@@ -927,18 +997,18 @@ public class ResourceService {
     }
 
     public Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-                                                            ResourceListFilterDTO filter) {
+            ResourceListFilterDTO filter) {
         filter = resourceListFilterService.saveOrGetByUserAndScope(user, scope, filter);
         return getResources(user, scope, parentScopes, targeterEntities, filter, getFilterConditions(scope, filter));
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-                                                                           List<Integer> targeterEntities, ProjectionList columns, Class<T> responseClass) {
+            List<Integer> targeterEntities, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, new ResourceListFilterDTO(), columns, responseClass);
     }
 
     public <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-                                                                           List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
+            List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Class<T> responseClass) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, columns, getFilterConditions(scope, filter), responseClass);
     }
 
@@ -1024,7 +1094,7 @@ public class ResourceService {
     }
 
     public List<Integer> getResourcesForStateActionPendingAssignment(User user, Resource templateResource, StateTransition stateTransition,
-                                                                     List<Comment> templateComments) {
+            List<Comment> templateComments) {
         PrismScope templateScope = templateResource.getResourceScope();
         List<PrismAction> actions = templateComments.stream().map(rcs -> rcs.getAction().getId()).collect(Collectors.toList());
         List<Integer> replicableSequenceResources = getResources(user, templateScope,
@@ -1033,13 +1103,13 @@ public class ResourceService {
         replicableSequenceResources.removeAll(resourceDAO.getResourcesWithStateActionsPending(templateScope, actions));
 
         templateComments.iterator().next().getCommentTransitionStates().forEach(transition -> { //
-            Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId()
-                    .getReplicableActionExclusionSelector();
-            if (replicableActionExclusionSelector != null) {
-                replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(
-                        templateResource.getParentResource()));
-            }
-        });
+                    Class<? extends PrismResourceByParentResourceSelector> replicableActionExclusionSelector = transition.getState().getId()
+                            .getReplicableActionExclusionSelector();
+                    if (replicableActionExclusionSelector != null) {
+                        replicableSequenceResources.removeAll(applicationContext.getBean(replicableActionExclusionSelector).getPossible(
+                                templateResource.getParentResource()));
+                    }
+                });
 
         return replicableSequenceResources;
     }
@@ -1180,7 +1250,7 @@ public class ResourceService {
     }
 
     private Set<ResourceOpportunityCategoryDTO> getResources(User user, PrismScope scope, List<PrismScope> parentScopes, List<Integer> targeterEntities,
-                                                             ResourceListFilterDTO filter, Junction conditions) {
+            ResourceListFilterDTO filter, Junction conditions) {
         return getResources(user, scope, parentScopes, targeterEntities, filter, //
                 Projections.projectionList() //
                         .add(Projections.groupProperty("resource.id").as("id")) //
@@ -1192,7 +1262,7 @@ public class ResourceService {
     }
 
     private <T extends EntityOpportunityCategoryDTO<?>> Set<T> getResources(User user, PrismScope scope, List<PrismScope> parentScopes,
-                                                                            List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
+            List<Integer> targeterEntities, ResourceListFilterDTO filter, ProjectionList columns, Junction conditions, Class<T> responseClass) {
         Set<T> resources = newTreeSet();
         if (!(setReplicableActionFilter(scope, filter) && isEmpty(filter.getResourceIds()))) {
             DateTime baseline = now().minusDays(1);
@@ -1298,7 +1368,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void deleteResourceStates(Set<T> resourceStateDefinitions,
-                                                                                                            Set<U> commentStateDefinitions) {
+            Set<U> commentStateDefinitions) {
         List<State> preservedStates = commentStateDefinitions.stream().map(CommentStateDefinition::getState)
                 .collect(Collectors.toList());
 
@@ -1308,7 +1378,7 @@ public class ResourceService {
     }
 
     private <T extends ResourceStateDefinition, U extends CommentStateDefinition> void insertResourceStates(Resource resource, Set<T> resourceStateDefinitions,
-                                                                                                            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) {
+            Set<U> commentStateDefinitions, Class<T> resourceStateClass, LocalDate baseline) {
         for (U commentState : commentStateDefinitions) {
             T transientResourceStateDefinition;
             try {
@@ -1346,7 +1416,7 @@ public class ResourceService {
         String opportunityCategory = opportunityType.getOpportunityCategory().name();
         setResourceOpportunityCategories(resourceOpportunity, opportunityCategory);
 
-        for (PrismScope scope : new PrismScope[]{DEPARTMENT, INSTITUTION}) {
+        for (PrismScope scope : new PrismScope[] { DEPARTMENT, INSTITUTION }) {
             ResourceParent enclosing = (ResourceParent) resourceOpportunity.getEnclosingResource(scope);
             if (enclosing != null) {
                 String opportunityCategories = enclosing.getOpportunityCategories();
@@ -1444,6 +1514,14 @@ public class ResourceService {
         }
 
         return outcome;
+    }
+
+    private void assignEnquirer(User currentUser, CommentDTO commentDTO) {
+        UserDTO userDTO = new UserDTO().withEmail(currentUser.getEmail())
+                .withFirstName(currentUser.getFirstName()).withLastName(currentUser.getLastName());
+        PrismRole role = PrismRole.valueOf(commentDTO.getResource().getScope().name() + "_ENQUIRER");
+        CommentAssignedUserDTO assignedUser = new CommentAssignedUserDTO().withUser(userDTO).withRole(role);
+        commentDTO.setAssignedUsers(singletonList(assignedUser));
     }
 
 }

@@ -100,9 +100,7 @@ public class UserDAO {
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
+                .setProjection(getUserSelectionProjectionEvent()) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -115,9 +113,7 @@ public class UserDAO {
 
     public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
+                .setProjection(getUserSelectionProjectionEvent()) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -130,7 +126,7 @@ public class UserDAO {
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(List<Integer> programs, List<Integer> projects, List<Integer> applications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user").as("user")) //
+                .setProjection(getUserSelectionProjection()) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
@@ -832,6 +828,19 @@ public class UserDAO {
                 .add(getReadOrUnreadMessageConstraint(read)) //
                 .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
                 .list();
+    }
+
+    private ProjectionList getUserSelectionProjection() {
+        return Projections.projectionList() //
+                .add(Projections.groupProperty("user.id").as("id")) //
+                .add(Projections.property("user.firstName").as("firstName")) //
+                .add(Projections.property("user.lastName").as("lastName")) //
+                .add(Projections.property("user.email").as("email"));
+    }
+
+    private ProjectionList getUserSelectionProjectionEvent() {
+        return getUserSelectionProjection()
+                .add(Projections.max("submittedTimestamp").as("eventTimestamp"));
     }
 
 }

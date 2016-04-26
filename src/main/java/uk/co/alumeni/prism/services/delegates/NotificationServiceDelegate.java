@@ -35,4 +35,8 @@ public class NotificationServiceDelegate {
         executions.remove(notificationEvent);
     }
 
+    public Set<NotificationEvent> getExecutions() {
+        return executions;
+    }
+
 }

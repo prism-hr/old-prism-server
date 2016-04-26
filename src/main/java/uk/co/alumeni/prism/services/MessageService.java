@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -34,6 +35,7 @@ import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
+import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 
 import com.google.common.collect.LinkedHashMultimap;
 
@@ -57,6 +59,9 @@ public class MessageService {
     private NotificationService notificationService;
 
     @Inject
+    private NotificationServiceDelegate notificationServiceDelegate;
+
+    @Inject
     private UserActivityCacheService userActivityCacheService;
 
     @Inject
@@ -75,7 +80,10 @@ public class MessageService {
     }
 
     public List<Integer> getMessagesNotificationsPending() {
-        return messageDAO.getMessageNotificationsPending();
+        if (!(notificationServiceDelegate.getExecutionBatches().stream().anyMatch(exectionBatch -> exectionBatch.name().contains("_MESSAGE_")))) {
+            return messageDAO.getMessageNotificationsPending();
+        }
+        return emptyList();
     }
 
     public void sendMessageNotification(Integer messageRecipientId, DateTime baseline) {

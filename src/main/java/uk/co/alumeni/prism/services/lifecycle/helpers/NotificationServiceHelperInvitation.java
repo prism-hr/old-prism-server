@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.services.lifecycle.helpers;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
+
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,12 +33,12 @@ public class NotificationServiceHelperInvitation extends PrismServiceHelperAbstr
     @Override
     public void execute() throws Exception {
         Set<UserRoleCategoryDTO> userRoleInvitations = Sets.newHashSet();
-        invitationService.getInvitationEntities(UserRole.class).forEach(userRole -> {
+        invitationService.getInvitationEntities(UserRole.class, SYSTEM_USER_INVITATION_NOTIFICATION).forEach(userRole -> {
             sendInvitationRequest(userRole, userRoleInvitations);
         });
 
         Set<UserConnectionDTO> advertTargetInvitations = Sets.newHashSet();
-        invitationService.getInvitationEntities(AdvertTarget.class).forEach(advertTarget -> {
+        invitationService.getInvitationEntities(AdvertTarget.class, SYSTEM_CONNECTION_REQUEST).forEach(advertTarget -> {
             sendConnectionRequest(advertTarget, advertTargetInvitations);
         });
     }

@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +58,6 @@ import uk.co.alumeni.prism.services.NotificationService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
-import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
@@ -105,9 +105,6 @@ public class MailSender {
     private NotificationService notificationService;
 
     @Inject
-    private NotificationServiceDelegate notificationServiceDelegate;
-
-    @Inject
     private MessageService messageService;
 
     @Inject
@@ -127,6 +124,9 @@ public class MailSender {
 
     @Inject
     private ApplicationContext applicationContext;
+
+    @Inject
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public void sendEmail(NotificationEvent notificationEvent) {
         PrismNotificationDefinition prismNotificationDefinition = notificationEvent.getNotificationDefinition();
@@ -197,7 +197,8 @@ public class MailSender {
             logger.error(String.format("Failed to send email %s", getMessageString(prismNotificationDefinition, notificationDefinitionDTO)), e);
         }
 
-        notificationServiceDelegate.sentNotification(notificationEvent);
+        notificationEvent.setSent(true);
+        applicationEventPublisher.publishEvent(notificationEvent);
     }
 
     private String getMessage(Resource resource, String subject, String content, Map<String, Object> model) {

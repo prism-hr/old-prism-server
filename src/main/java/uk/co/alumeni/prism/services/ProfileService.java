@@ -23,6 +23,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_DOCUMENT_CV;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
@@ -413,7 +414,7 @@ public class ProfileService {
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> List<U> getRecentQualifications(T profile,
-                                                                                                                                Class<U> qualificationClass) {
+            Class<U> qualificationClass) {
         List<U> qualifications = newLinkedList();
         qualifications.add(profileDAO.getCurrentQualification(profile, qualificationClass));
         qualifications.add(profileDAO.getMostRecentQualification(profile, qualificationClass));
@@ -421,7 +422,7 @@ public class ProfileService {
     }
 
     public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> List<U> getRecentEmploymentPositions(T profile,
-                                                                                                                                          Class<U> qualificationClass) {
+            Class<U> qualificationClass) {
         List<U> employmentPositions = newLinkedList();
         employmentPositions.add(profileDAO.getCurrentEmploymentPosition(profile, qualificationClass));
         employmentPositions.add(profileDAO.getMostRecentEmploymentPosition(profile, qualificationClass));
@@ -542,8 +543,13 @@ public class ProfileService {
             application.setDocument(applicationDocument);
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
-            applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            applicationDocument.setLastUpdatedTimestamp(now());
+
+            Document cv = documentService.cloneDocument(userDocument.getCv());
+            applicationDocument.setCv(cv);
+
+            if (APPLICATION_DOCUMENT_CV.getMinimumPermitted().equals(0) || cv != null) {
+                applicationDocument.setLastUpdatedTimestamp(now());
+            }
         }
     }
 

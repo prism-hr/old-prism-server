@@ -25,6 +25,8 @@ import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -96,6 +98,7 @@ import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
@@ -128,6 +131,9 @@ public class UserService {
 
     @Inject
     private NotificationService notificationService;
+
+    @Inject
+    private NotificationServiceDelegate notificationServiceDelegate;
 
     @Inject
     private EntityService entityService;
@@ -514,20 +520,24 @@ public class UserService {
     }
 
     public Set<Integer> getUsersForActivityNotification() {
-        Set<Integer> users = Sets.newHashSet();
-        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
-        stream(values()).forEach(scope -> {
-            users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
-        });
+        Set<Integer> users = newHashSet();
+        if (!notificationServiceDelegate.getExecutionBatches().contains(SYSTEM_ACTIVITY_NOTIFICATION)) {
+            DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+            stream(values()).forEach(scope -> {
+                users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
+            });
+        }
         return users;
     }
 
     public Set<Integer> getUsersForReminderNotification() {
-        Set<Integer> users = Sets.newHashSet();
-        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
-        stream(values()).forEach(scope -> {
-            users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
-        });
+        Set<Integer> users = newHashSet();
+        if (!notificationServiceDelegate.getExecutionBatches().contains(SYSTEM_REMINDER_NOTIFICATION)) {
+            DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+            stream(values()).forEach(scope -> {
+                users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
+            });
+        }
         return users;
     }
 

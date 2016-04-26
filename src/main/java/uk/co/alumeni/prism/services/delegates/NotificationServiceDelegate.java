@@ -1,6 +1,8 @@
 package uk.co.alumeni.prism.services.delegates;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 
 import java.util.Set;
 
@@ -11,6 +13,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition;
 import uk.co.alumeni.prism.event.NotificationEvent;
 import uk.co.alumeni.prism.mail.MailSender;
 
@@ -25,18 +28,16 @@ public class NotificationServiceDelegate {
     @Async
     @TransactionalEventListener
     public synchronized void sendNotification(NotificationEvent notificationEvent) {
-        if (!executions.contains(notificationEvent)) {
+        if (isTrue(notificationEvent.getSent())) {
+            executions.remove(notificationEvent);
+        } else if (!executions.contains(notificationEvent)) {
             executions.add(notificationEvent);
             applicationContext.getBean(MailSender.class).sendEmail(notificationEvent);
         }
     }
 
-    public synchronized void sentNotification(NotificationEvent notificationEvent) {
-        executions.remove(notificationEvent);
-    }
-
-    public synchronized Set<NotificationEvent> getExecutions() {
-        return executions;
+    public synchronized Set<PrismNotificationDefinition> getExecutionBatches() {
+        return executions.stream().map(execution -> execution.getNotificationDefinition()).collect(toSet());
     }
 
 }

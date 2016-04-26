@@ -46,6 +46,8 @@ public class NotificationEvent extends ApplicationEvent {
 
     private Boolean buffered;
 
+    private Boolean sent;
+
     public NotificationEvent(Object source) {
         super(source);
     }
@@ -168,6 +170,14 @@ public class NotificationEvent extends ApplicationEvent {
 
     public void setBuffered(Boolean buffered) {
         this.buffered = buffered;
+    }
+
+    public Boolean getSent() {
+        return sent;
+    }
+
+    public void setSent(Boolean sent) {
+        this.sent = sent;
     }
 
     public NotificationEvent withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {

@@ -5,6 +5,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
@@ -545,14 +546,18 @@ public class ResourceDAO {
     }
 
     public List<Integer> getResourceIds(Resource enclosingResource, PrismScope searchScope, PrismScope selectScope, String searchTerm) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
                 .setProjection(Projections.groupProperty(selectScope.getLowerCamelName() + ".id")) //
                 .createAlias(searchScope.getLowerCamelName(), "searchResource", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(enclosingResource.getResourceScope().getLowerCamelName(), enclosingResource)) //
                 .add(Restrictions.eq("scope.id", selectScope)) //
-                .add(Restrictions.eq("submitted", true)) //
-                .add(Restrictions.like("searchResource.name", searchTerm, MatchMode.ANYWHERE)) //
-                .list();
+                .add(Restrictions.eq("submitted", true));
+
+        if (isNotEmpty(searchTerm)) {
+            criteria.add(Restrictions.like("searchResource.name", searchTerm, MatchMode.ANYWHERE));
+        }
+
+        return criteria.list();
     }
 
     public List<ResourceSimpleDTO> getResources(Resource enclosingResource, PrismScope resourceScope, Optional<String> query) {

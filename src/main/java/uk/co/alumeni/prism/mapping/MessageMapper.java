@@ -240,8 +240,8 @@ public class MessageMapper {
         Document portraitImage = user.getPortraitImage();
         List<UserRoleDTO> recipientUserRoles = roleService.getUserRoles(targeterResources, recipientRoles);
         recipientUserRoles.add(new UserRoleDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName())
-                .withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3()).withFullName(user.getFullName()).withEnabled(user.getEnabled())
-                .withLinkedinProfileUrl(user.getLinkedinProfileUrl()).withLinkedinImageUrl(user.getLinkedinImageUrl())
+                .withEmail(user.getEmail()).withFirstName2(user.getFirstName2()).withFirstName3(user.getFirstName3()).withFullName(user.getFullName())
+                .withEnabled(user.getEnabled()).withLinkedinProfileUrl(user.getLinkedinProfileUrl()).withLinkedinImageUrl(user.getLinkedinImageUrl())
                 .withPortraitImage(portraitImage == null ? null : portraitImage.getId()).withCreatorUser(creatorUser == null ? null : creatorUser.getId())
                 .withRole(SYSTEM_CANDIDATE));
 

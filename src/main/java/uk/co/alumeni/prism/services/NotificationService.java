@@ -80,6 +80,7 @@ import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
+import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 
 import com.google.common.collect.Lists;
 
@@ -103,6 +104,9 @@ public class NotificationService {
     @Inject
     private EntityService entityService;
 
+    @Inject
+    private NotificationServiceDelegate notificationServiceDelegate;
+    
     @Inject
     private ResourceService resourceService;
 
@@ -304,7 +308,7 @@ public class NotificationService {
     }
 
     public void resetUserNotifications() {
-        notificationDAO.resetUserNotifications(DateTime.now().minusDays(1));
+        notificationDAO.resetUserNotifications(now().minusDays(1));
     }
 
     public void resetUserNotifications(User user) {
@@ -466,7 +470,9 @@ public class NotificationService {
     }
 
     private void sendNotification(NotificationEvent notificationEvent) {
-        applicationEventPublisher.publishEvent(notificationEvent);
+        if (!notificationServiceDelegate.getExecutions().contains(notificationEvent)) {
+            applicationEventPublisher.publishEvent(notificationEvent);
+        }
     }
 
 }

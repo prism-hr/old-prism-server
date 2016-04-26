@@ -613,11 +613,13 @@ public class UserService {
 
     public void setUserActivityCache(User user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
         UserAccount userAccount = user.getUserAccount();
-        userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
-        userAccount.setActivityCachedTimestamp(baseline);
+        if (userAccount != null) {
+            userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
+            userAccount.setActivityCachedTimestamp(baseline);
 
-        Integer activityCachedIncrement = userAccount.getActivityCachedIncrement();
-        userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement + 1);
+            Integer activityCachedIncrement = userAccount.getActivityCachedIncrement();
+            userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement + 1);
+        }
     }
 
     public boolean checkUserCanViewUserProfile(User user, User currentUser) {

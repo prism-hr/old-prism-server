@@ -721,36 +721,38 @@ public class ResourceService {
             List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
             List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
 
-            ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceDAO.getResourceIds(enclosingResource, responseScope,
-                    scope, searchTerm));
-            Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
-            processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
+            List<Integer> resourceIds = resourceDAO.getResourceIds(enclosingResource, responseScope, scope, searchTerm);
+            if (resourceIds.size() > 0) {
+                ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceIds);
+                Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
+                processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
 
-            String responseScopeReference = responseScope.getLowerCamelName();
-            Collection<ResourceListRowDTO> rows = getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null,
-                    onlyAsPartnerResources, false);
+                String responseScopeReference = responseScope.getLowerCamelName();
+                Collection<ResourceListRowDTO> rows = getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null,
+                        onlyAsPartnerResources, false);
 
-            rows.stream().forEach(row -> {
-                ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
-                resource.setScope(responseScope);
+                rows.stream().forEach(row -> {
+                    ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
+                    resource.setScope(responseScope);
 
-                resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
-                resource.setName((String) getProperty(row, responseScopeReference + "Name"));
+                    resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
+                    resource.setName((String) getProperty(row, responseScopeReference + "Name"));
 
-                if (scope.equals(INSTITUTION)) {
-                    resource.setLogoImageId(row.getLogoImageId());
-                }
-
-                row.getActions().forEach(action -> {
-                    PrismAction prismAction = action.getActionId();
-                    if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
-                        if (prismAction.getScope().equals(responseScope)) {
-                            resource.setCreateDirectly(true);
-                        }
-                        resources.add(resource);
+                    if (scope.equals(INSTITUTION)) {
+                        resource.setLogoImageId(row.getLogoImageId());
                     }
+
+                    row.getActions().forEach(action -> {
+                        PrismAction prismAction = action.getActionId();
+                        if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
+                            if (prismAction.getScope().equals(responseScope)) {
+                                resource.setCreateDirectly(true);
+                            }
+                            resources.add(resource);
+                        }
+                    });
                 });
-            });
+            }
         });
 
         return newLinkedList(resources);

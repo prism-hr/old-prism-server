@@ -23,6 +23,7 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_DOCUMENT_CV;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
@@ -542,8 +543,13 @@ public class ProfileService {
             application.setDocument(applicationDocument);
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
-            applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            applicationDocument.setLastUpdatedTimestamp(now());
+
+            Document cv = documentService.cloneDocument(userDocument.getCv());
+            applicationDocument.setCv(cv);
+
+            if (APPLICATION_DOCUMENT_CV.getMinimumPermitted().equals(0) || cv != null) {
+                applicationDocument.setLastUpdatedTimestamp(now());
+            }
         }
     }
 

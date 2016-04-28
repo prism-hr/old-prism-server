@@ -47,7 +47,11 @@ public class UserActivityCacheServiceDelegate {
             users = newArrayList(userService.getUsersWithActivitiesToCache(resource.getScope(), singletonList(resource.getId()), baseline));
         }
 
-        userActivityCacheService.updateUserActivityCache(userActivityUpdateEvent.getCurrentUser(), baseline);
+        Integer currentUser = userActivityUpdateEvent.getCurrentUser();
+        if (currentUser != null) {
+            userActivityCacheService.updateUserActivityCache(currentUser, baseline);
+        }
+
         if (isNotEmpty(users)) {
             users.stream().forEach(user -> {
                 userActivityCacheService.updateUserActivityCache(user, baseline);

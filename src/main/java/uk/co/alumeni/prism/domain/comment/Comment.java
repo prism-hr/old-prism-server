@@ -831,6 +831,11 @@ public class Comment extends WorkflowResourceExecution implements Activity, User
         PrismAction prismAction = action.getId();
         return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_APPROVED");
     }
+    
+    public boolean isAdvertDisableComment() {
+        PrismAction prismAction = action.getId();
+        return contains(advertScopes, prismAction.getScope()) && transitionState.getId().name().endsWith("_DISABLED_COMPLETED"); 
+    }
 
     public boolean isRestoreComment() {
         return action.getId().name().endsWith("RESTORE");

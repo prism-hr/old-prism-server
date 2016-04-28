@@ -1252,6 +1252,8 @@ public class ResourceService {
 
         if (comment.isAdvertPublishComment()) {
             advert.setPublished(true);
+        } else if (comment.isAdvertDisableComment()) {
+            advert.setPublished(false);
         }
     }
 

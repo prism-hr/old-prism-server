@@ -47,7 +47,6 @@ public class InstitutionExecutor implements ActionExecutor {
 
         Action action = actionService.getById(actionId);
         Comment comment = commentService.prepareProcessResourceComment(institution, user, action, commentDTO);
-
         return actionService.executeUserAction(institution, action, comment);
     }
 

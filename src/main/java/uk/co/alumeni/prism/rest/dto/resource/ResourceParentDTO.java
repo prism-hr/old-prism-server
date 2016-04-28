@@ -14,9 +14,6 @@ import uk.co.alumeni.prism.utils.validation.PhoneNumber;
 
 public class ResourceParentDTO extends ResourceCreationDTO implements ResourceParentDefinition {
 
-    @Valid
-    private ResourceDTO parentResource;
-
     private String importedCode;
 
     @NotEmpty
@@ -45,16 +42,6 @@ public class ResourceParentDTO extends ResourceCreationDTO implements ResourcePa
     private ResourceRelationCreationDTO target;
 
     private Integer targetInvitation;
-
-    @Override
-    public ResourceDTO getParentResource() {
-        return parentResource;
-    }
-
-    @Override
-    public void setParentResource(ResourceDTO parentResource) {
-        this.parentResource = parentResource;
-    }
 
     public String getImportedCode() {
         return importedCode;

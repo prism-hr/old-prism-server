@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.dto.resource;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
@@ -22,24 +23,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public class ResourceCreationDTO {
 
-    private Integer id;
-
     @NotNull
     private PrismScope scope;
+
+    private Integer id;
 
     private PrismResourceContext context;
 
     private PrismState initialState;
 
+    @Valid
     private ResourceDTO parentResource;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public PrismScope getScope() {
         return scope;
@@ -47,6 +41,14 @@ public class ResourceCreationDTO {
 
     public void setScope(PrismScope scope) {
         this.scope = scope;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public PrismResourceContext getContext() {
@@ -73,13 +75,13 @@ public class ResourceCreationDTO {
         this.parentResource = parentResource;
     }
 
-    public ResourceCreationDTO withId(Integer id) {
-        this.id = id;
+    public ResourceCreationDTO withScope(PrismScope scope) {
+        this.scope = scope;
         return this;
     }
 
-    public ResourceCreationDTO withScope(PrismScope scope) {
-        this.scope = scope;
+    public ResourceCreationDTO withId(Integer id) {
+        this.id = id;
         return this;
     }
 

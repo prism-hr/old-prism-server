@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.InstitutionDAO;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
+import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.rest.dto.resource.InstitutionDTO;
 
@@ -71,6 +73,10 @@ public class InstitutionService {
         Integer businessYearStartMonth = institution.getBusinessYearStartMonth();
         Integer businessYear = month < businessYearStartMonth ? (year - 1) : year;
         return businessYearStartMonth == 1 ? businessYear.toString() : (businessYear.toString() + "/" + Integer.toString(businessYear + 1));
+    }
+
+    public List<ResourceChildCreationDTO> getPublishedInstitutions(PrismResourceContext context) {
+        return institutionDAO.getPublishedInstitutions(context);
     }
 
     public List<ResourceAdvertDTO> getPublishedUserInstitutions(List<Integer> userDepartments) {

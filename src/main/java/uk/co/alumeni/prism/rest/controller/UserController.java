@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.HttpStatus.NOT_MODIFIED;
 
 import java.util.List;
@@ -10,7 +11,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,7 +79,7 @@ import com.google.common.collect.Maps;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = getLogger(UserController.class);
 
     @Inject
     private AuthenticationTokenHelper authenticationTokenHelper;

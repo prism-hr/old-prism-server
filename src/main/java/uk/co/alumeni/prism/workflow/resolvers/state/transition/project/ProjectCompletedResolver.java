@@ -34,7 +34,7 @@ public class ProjectCompletedResolver implements StateTransitionResolver<Project
     @Override
     public StateTransition resolve(Project resource, Comment comment) {
         State transitionState = comment.getTransitionState();
-        if (resourceService.isUnderApproval(resource)) {
+        if (resourceService.isInState(resource, "APPROVAL")) {
             return stateService.getStateTransition(resource, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
         } else if (transitionState == null) {
             User user = comment.getUser();

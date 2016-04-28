@@ -40,7 +40,7 @@ public class ProgramCreatedResolver implements StateTransitionResolver<Program> 
         if (initialState == null) {
             User user = comment.getUser();
             ResourceParent resourceParent = resourceService.getResourceParent(resource);
-            if (resourceService.isUnderApproval(resourceParent)) {
+            if (resourceService.isInState(resourceParent, "APPROVAL")) {
                 return stateService.getStateTransition(parentResource, comment.getAction(), PROGRAM_APPROVAL_PARENT_APPROVAL);
             } else if (roleService.hasUserRole(resource, user, DEPARTMENT_ADMINISTRATOR_GROUP)) {
                 return stateService.getStateTransition(parentResource, comment.getAction(), PROGRAM_APPROVED);

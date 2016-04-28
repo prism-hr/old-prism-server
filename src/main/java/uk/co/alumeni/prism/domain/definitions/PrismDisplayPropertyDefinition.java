@@ -1364,6 +1364,7 @@ public enum PrismDisplayPropertyDefinition implements PrismConfigurationCategori
     SYSTEM_HTML_GENERAL_ENQUIRY_SUBJECT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Question Regarding UCL Prism Application {{code}}"),
     SYSTEM_HTML_GENERAL_PRIVACY_POLICY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Privacy Policy"),
     SYSTEM_HTML_GENERAL_TERMS_AND_CONDITIONS(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Terms & Conditions"),
+    SYSTEM_HTML_GENERAL_MEMBER_UNIVERSITY(PrismDisplayPropertyCategory.SYSTEM_GENERAL, " Are you part of this university?"),
     SYSTEM_HTML_GENERAL_JOIN_DEPARTMENT(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Join Department"),
     SYSTEM_HTML_GENERAL_BROWSE_EMPLOYER(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Browse Employers"),
     SYSTEM_HTML_GENERAL_ADVERTISE(PrismDisplayPropertyCategory.SYSTEM_GENERAL, "Advertise"),

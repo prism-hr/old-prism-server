@@ -39,7 +39,7 @@ public class DepartmentCreatedResolver implements StateTransitionResolver<Depart
         ResourceParent parentResource = (ResourceParent) resource.getParentResource();
         if (initialState == null) {
             User user = comment.getUser();
-            if (resourceService.isUnderApproval(resource.getInstitution())) {
+            if (resourceService.isInState(resource.getInstitution(), "APPROVAL")) {
                 return stateService.getStateTransition(parentResource, comment.getAction(), DEPARTMENT_APPROVAL_PARENT_APPROVAL);
             } else if (roleService.hasUserRole(resource, user, INSTITUTION_ADMINISTRATOR_GROUP)) {
                 return stateService.getStateTransition(parentResource, comment.getAction(), DEPARTMENT_APPROVED);

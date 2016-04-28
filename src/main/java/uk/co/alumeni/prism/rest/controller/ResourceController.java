@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -192,12 +193,12 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope, @RequestParam Optional<String> q) {
+    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(@PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope,
+            @RequestParam Optional<PrismResourceContext> context, @RequestParam Optional<String> q) {
         Resource enclosingResource = loadResource(resourceId, resourceDescriptor);
         List<ResourceChildCreationDTO> resources = resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope,
-                q.orElse(null));
+                context.orElse(null), q.orElse(null));
         return resources.stream().map(resourceMapper::getResourceRepresentationChildCreation).collect(Collectors.toList());
     }
 

@@ -252,7 +252,7 @@ public class NotificationEvent extends ApplicationEvent {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(notificationDefinition, recipient, resource, comment, message, advertTarget);
+        return Objects.hashCode(notificationDefinition, initiator, recipient, resource, comment, message, advertTarget);
     }
 
     @Override
@@ -264,9 +264,9 @@ public class NotificationEvent extends ApplicationEvent {
             return false;
         }
         NotificationEvent other = (NotificationEvent) object;
-        return equal(notificationDefinition, other.getNotificationDefinition()) && equal(recipient, other.getRecipient())
-                && equal(resource, other.getResource()) && equal(comment, other.getComment()) && equal(message, other.getMessage())
-                && equal(advertTarget, other.getAdvertTarget());
+        return equal(notificationDefinition, other.getNotificationDefinition()) && equal(initiator, other.getInitiator())
+                && equal(recipient, other.getRecipient()) && equal(resource, other.getResource()) && equal(comment, other.getComment())
+                && equal(message, other.getMessage()) && equal(advertTarget, other.getAdvertTarget());
     }
 
 }

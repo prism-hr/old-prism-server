@@ -417,7 +417,7 @@ public class CommentDTO {
         return action.getActionCategory().equals(MESSAGE_RESOURCE) && interested == true;
     }
 
-    public boolean isClaimComment() {
+    public boolean isCompleteComment() {
         return resource.getScope().getScopeCategory().equals(ORGANIZATION) && action.name().endsWith("_COMPLETE");
     }
 
@@ -425,6 +425,11 @@ public class CommentDTO {
         return !(roleContext == null && resourceInvitation == null);
     }
 
+    public CommentDTO withUser(Integer user) {
+        this.user = user;
+        return this;
+    }
+    
     public CommentDTO withAction(PrismAction action) {
         this.action = action;
         return this;

@@ -27,6 +27,7 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismFilterMatchMode.ANY;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_COMPLETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition.ACCEPT_DEPARTMENT;
@@ -400,13 +401,10 @@ public class ResourceService {
             executeActionBypass(currentUser, commentDTO);
         } else {
             if (commentDTO.isCreateComment()) {
-                ResourceCreationDTO resourceDTO = commentDTO.getResource();
-                Action action = actionService.getById(commentDTO.getAction());
-                resourceDTO.setParentResource(resourceDTO.getParentResource());
-                actionOutcome = createResource(currentUser, action, resourceDTO, systemInvocation);
+                actionOutcome = executeCompleteAction(currentUser, commentDTO, systemInvocation);
             } else {
-                if (commentDTO.isClaimComment()) {
-                    commentService.preprocessClaimComment(currentUser, commentDTO);
+                if (commentDTO.isCompleteComment()) {
+                    prepareCompleteAction(currentUser, commentDTO);
                 } else if (commentDTO.isEnquirerAssignmentComment()) {
                     assignEnquirer(currentUser, commentDTO);
                 }
@@ -707,53 +705,59 @@ public class ResourceService {
 
     public List<ResourceChildCreationDTO> getResourcesParentsForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
             PrismScope creationScope) {
-        return getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, null);
+        return getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope, null, null);
     }
 
     public List<ResourceChildCreationDTO> getResourcesForWhichUserCanCreateResource(Resource enclosingResource, PrismScope responseScope,
-            PrismScope creationScope, String searchTerm) {
-        User user = userService.getCurrentUser();
+            PrismScope creationScope, PrismResourceContext context, String searchTerm) {
+        User currentUser = userService.getCurrentUser();
         Set<ResourceChildCreationDTO> resources = newTreeSet();
 
-        stream(organizationScopes).filter(scope -> scope.ordinal() >= responseScope.ordinal()).forEach(scope -> {
-            Map<String, Integer> summaries = newHashMap();
-            Set<Integer> onlyAsPartnerResources = newHashSet();
-            List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(user, scope);
+        if (currentUser == null && responseScope.equals(INSTITUTION) && context != null) {
+            resources.addAll(institutionService.getPublishedInstitutions(context));
+        } else {
+            stream(organizationScopes).filter(scope -> scope.ordinal() >= responseScope.ordinal()).forEach(
+                    scope -> {
+                        Map<String, Integer> summaries = newHashMap();
+                        Set<Integer> onlyAsPartnerResources = newHashSet();
+                        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+                        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(currentUser, scope);
 
-            List<Integer> resourceIds = resourceDAO.getResourceIds(enclosingResource, responseScope, scope, searchTerm);
-            if (resourceIds.size() > 0) {
-                ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceIds);
-                Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(user, scope, parentScopes, targeterEntities, filter);
-                processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
+                        List<Integer> resourceIds = resourceDAO.getResourceIds(enclosingResource, responseScope, scope, searchTerm);
+                        if (resourceIds.size() > 0) {
+                            ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceIds);
+                            Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(currentUser, scope, parentScopes, targeterEntities, filter);
+                            processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
 
-                String responseScopeReference = responseScope.getLowerCamelName();
-                Collection<ResourceListRowDTO> rows = getResourceList(user, scope, parentScopes, targeterEntities, scopedResources, filter, null, null,
-                        onlyAsPartnerResources, false);
+                            String responseScopeReference = responseScope.getLowerCamelName();
+                            Collection<ResourceListRowDTO> rows = getResourceList(currentUser, scope, parentScopes, targeterEntities, scopedResources, filter,
+                                    null, null,
+                                    onlyAsPartnerResources, false);
 
-                rows.stream().forEach(row -> {
-                    ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
-                    resource.setScope(responseScope);
+                            rows.stream().forEach(row -> {
+                                ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
+                                resource.setScope(responseScope);
 
-                    resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
-                    resource.setName((String) getProperty(row, responseScopeReference + "Name"));
+                                resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
+                                resource.setName((String) getProperty(row, responseScopeReference + "Name"));
 
-                    if (scope.equals(INSTITUTION)) {
-                        resource.setLogoImageId(row.getLogoImageId());
-                    }
+                                if (scope.equals(INSTITUTION)) {
+                                    resource.setLogoImageId(row.getLogoImageId());
+                                }
 
-                    row.getActions().forEach(action -> {
-                        PrismAction prismAction = action.getActionId();
-                        if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
-                            if (prismAction.getScope().equals(responseScope)) {
-                                resource.setCreateDirectly(true);
-                            }
-                            resources.add(resource);
+                                row.getActions().forEach(action -> {
+                                    PrismAction prismAction = action.getActionId();
+                                    if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
+                                        if (prismAction.getScope().equals(responseScope)) {
+                                            resource.setCreateDirectly(true);
+                                        }
+                                        resources.add(resource);
+                                    }
+                                });
+                            });
                         }
                     });
-                });
-            }
-        });
+        }
 
         return newLinkedList(resources);
     }
@@ -1058,9 +1062,9 @@ public class ResourceService {
         return resource;
     }
 
-    public boolean isUnderApproval(ResourceParent resource) {
+    public boolean isInState(ResourceParent resource, String statePostfix) {
         List<PrismState> states = stateService.getResourceStates(resource);
-        return states.stream().filter(s -> s.name().contains("APPROVAL")).count() > 0;
+        return states.stream().filter(s -> s.name().contains(statePostfix)).count() > 0;
     }
 
     public <T extends Resource> void validateViewResource(T resource, User currentUser) {
@@ -1516,6 +1520,29 @@ public class ResourceService {
         }
 
         return outcome;
+    }
+
+    private ActionOutcomeDTO executeCompleteAction(User currentUser, CommentDTO commentDTO, boolean systemInvocation) {
+        ActionOutcomeDTO actionOutcome;
+        ResourceCreationDTO resourceDTO = commentDTO.getResource();
+        Action action = actionService.getById(commentDTO.getAction());
+        resourceDTO.setParentResource(resourceDTO.getParentResource());
+        actionOutcome = createResource(currentUser, action, resourceDTO, systemInvocation);
+        return actionOutcome;
+    }
+
+    private void prepareCompleteAction(User currentUser, CommentDTO commentDTO) {
+        ResourceCreationDTO resourceDTO = commentDTO.getResource();
+        if (resourceDTO.getScope().equals(DEPARTMENT)) {
+            ResourceDTO parentResourceDTO = commentDTO.getResource().getParentResource();
+            ResourceParent parentResource = (ResourceParent) getById(parentResourceDTO.getScope(), parentResourceDTO.getId());
+            if (isInState(parentResource, "UNSUBMITTED")) {
+                executeAction(currentUser, new CommentDTO().withUser(commentDTO.getUser()).withAction(INSTITUTION_COMPLETE).withResource(
+                        new ResourceCreationDTO().withScope(parentResourceDTO.getScope()).withId(parentResourceDTO.getId())));
+            }
+        }
+
+        commentService.preprocessClaimComment(currentUser, commentDTO);
     }
 
     private void assignEnquirer(User currentUser, CommentDTO commentDTO) {

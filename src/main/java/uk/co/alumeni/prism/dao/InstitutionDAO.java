@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
+import static java.util.Arrays.stream;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingFlattenedPropertyConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_DISABLED_COMPLETED;
 
 import java.util.List;
@@ -9,6 +11,7 @@ import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -18,10 +21,13 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.Domicile;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PrismScopeCreationDefault;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
+import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.dto.ResourceLocationDTO;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
@@ -115,6 +121,27 @@ public class InstitutionDAO {
                 .list();
         list.forEach(institution -> institution.setScope(PrismScope.INSTITUTION));
         return list;
+    }
+
+    public List<ResourceChildCreationDTO> getPublishedInstitutions(PrismResourceContext context) {
+        Junction contextConstraint = Restrictions.disjunction();
+        PrismScopeCreationDefault contextDefault = PrismScope.INSTITUTION.getDefault(context);
+        stream(contextDefault.getDefaultOpportunityCategories()).forEach(
+                opportunityCategory -> contextConstraint.add(getMatchingFlattenedPropertyConstraint("opportunityCategories", opportunityCategory.name())));
+
+        return (List<ResourceChildCreationDTO>) sessionFactory.getCurrentSession().createCriteria(Institution.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("advert.scope.id").as("scope")) //
+                        .add(Projections.property("id").as("id")) //
+                        .add(Projections.property("name").as("name")) //
+                        .add(Projections.property("logoImage.id").as("logoImageId"))) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .add(contextConstraint) //
+                .add(Restrictions.eq("advert.published", true)) //
+                .addOrder(Order.asc("name")) //
+                .addOrder(Order.asc("id")) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceChildCreationDTO.class)) //
+                .list();
     }
 
     public List<ResourceAdvertDTO> getPublishedUserInstitutions(List<Integer> userDepartments) {

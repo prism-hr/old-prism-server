@@ -898,7 +898,7 @@ public class AdvertDAO {
         if (isNotEmpty(studyOptions)) {
             Disjunction studyOptionConstraint = Restrictions.disjunction();
             for (PrismStudyOption studyOption : studyOptions) {
-                studyOptionConstraint.add(getMatchingFlattenedPropertyConstraint("studyOption", studyOption.name()));
+                studyOptionConstraint.add(getMatchingFlattenedPropertyConstraint("studyOptions", studyOption.name()));
             }
             criteria.add(studyOptionConstraint);
         }

@@ -424,12 +424,12 @@ public class CommentDTO {
     public boolean isBypassComment() {
         return !(roleContext == null && resourceInvitation == null);
     }
-    
+
     public CommentDTO withAction(PrismAction action) {
         this.action = action;
         return this;
     }
-    
+
     public CommentDTO withResource(ResourceCreationDTO resource) {
         this.resource = resource;
         return this;
@@ -437,16 +437,6 @@ public class CommentDTO {
 
     public CommentDTO withUser(Integer user) {
         this.user = user;
-        return this;
-    }
-    
-    public CommentDTO withAction(PrismAction action) {
-        this.action = action;
-        return this;
-    }
-
-    public CommentDTO withResource(ResourceCreationDTO resource) {
-        this.resource = resource;
         return this;
     }
 

@@ -895,7 +895,7 @@ public class ResourceMapper {
     private void setRobotResourceRepresentation(ResourceRepresentationRobot representation, Resource resource) {
         PrismScope resourceScope = resource.getResourceScope();
         ResourceRepresentationRobotMetadata resourceRepresentation = resourceService.getResourceRobotMetadataRepresentation(resource,
-                stateService.getActiveResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
+                stateService.getPublishedResourceStates(resourceScope), scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
         resourceRepresentation.setAuthor(resource.getUser().getRobotRepresentation());
         resourceRepresentation.setThumbnailUrl(getResourceThumbnailUrlRobot(resource));
         resourceRepresentation.setResourceUrl(getResourceUrlRobot(resource));

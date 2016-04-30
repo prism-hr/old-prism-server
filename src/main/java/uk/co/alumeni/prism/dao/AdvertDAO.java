@@ -16,6 +16,7 @@ import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingFlattenedPropertyConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getResolvedAliasReference;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDurationUnit.HOUR;
@@ -47,7 +48,6 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -72,11 +72,11 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
+import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
 import uk.co.alumeni.prism.dto.AdvertDTO;
 import uk.co.alumeni.prism.dto.AdvertFunctionDTO;
 import uk.co.alumeni.prism.dto.AdvertIndustryDTO;
@@ -435,45 +435,39 @@ public class AdvertDAO {
                 .list();
     }
 
-    public <T> List<T> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, Collection<PrismState> states, String[] roleExtensions,
-            Collection<Integer> advertIds,
-            boolean strict, Class<T> responseClass) {
-        Projection projections;
-        boolean integerResponse = responseClass.equals(Integer.class);
-        if (integerResponse) {
-            projections = Projections.groupProperty("advert.id");
+    public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, String[] roleExtensions, Collection<Integer> advertIds) {
+        ProjectionList projections;
+        boolean hasRoleExtensions = isNotEmpty(roleExtensions);
+        if (hasRoleExtensions) {
+            projections = Projections.projectionList() //
+                    .add(Projections.groupProperty("id").as("advert")) //
+                    .add(Projections.property("opportunityCategories").as("opportunityCategories"));
         } else {
             projections = Projections.projectionList() //
-                    .add(Projections.groupProperty("advert.id").as("advert")) //
-                    .add(Projections.property("advert.opportunityCategories").as("opportunityCategories"));
+                    .add(Projections.property("id").as("advert")) //
+                    .add(Projections.property("opportunityCategories").as("opportunityCategories")) //
+                    .add(Projections.property("userRole.role.id").as("role"));
         }
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class, "advert") //
-                .setProjection(projections);
+                .setProjection(projections)
+                .createAlias("advert." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("advert.id", "resource.advert.id"));
 
-        if (strict) {
-            criteria.createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN,
-                    Restrictions.eqProperty("advert.id", "resource.advert.id"));
-        } else {
-            criteria.createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
+        criteria.createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN)
+                .add(Restrictions.eq("advert.published", true)) //
+                .add(Restrictions.eq("userRole.user", user));
+
+        if (hasRoleExtensions) {
+            criteria.add(Restrictions.in("userRole.role.id", values(PrismRole.class, scope, roleExtensions)));
         }
-
-        criteria.createAlias("resource.resourceStates", "resourceState", JoinType.INNER_JOIN) //
-                .createAlias("resource.userRoles", "resourceUserRole", JoinType.INNER_JOIN)
-                .add(Restrictions.in("resourceState.state.id", states))
-                .add(Restrictions.eq("resourceUserRole.user", user)) //
-                .add(Restrictions.in("resourceUserRole.role.id", values(PrismRole.class, scope, roleExtensions)));
 
         if (isNotEmpty(advertIds)) {
             criteria.add(Restrictions.in("advert.id", advertIds));
         }
 
-        if (integerResponse) {
-            return (List<T>) criteria.list();
-        }
-
-        return (List<T>) criteria //
-                .setResultTransformer(Transformers.aliasToBean(responseClass)) //
+        return (List<AdvertCategoryDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(AdvertCategoryDTO.class)) //
                 .list();
     }
 
@@ -973,7 +967,7 @@ public class AdvertDAO {
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
-                .add(WorkflowDAO.getResourceParentManageableStateConstraint(resourceScope));
+                .add(getResourceParentManageableStateConstraint(resourceScope));
     }
 
     private Junction getAdvertTargetAcceptUserConstraint(User user) {

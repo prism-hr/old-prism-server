@@ -327,9 +327,9 @@ public class ResourceDAO {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(resourceScope.getResourceClass()) //
                 .setProjection(Projections.property("updatedTimestampSitemap"));
 
-        Junction enclosedScopeExclusion = getResourceActiveEnclosedScopeRestriction(criteria, enclosedScopes);
+        Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
 
-        return (DateTime) criteria.add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion)) //
+        return (DateTime) criteria.add(getResourceActiveScopeConstraint(scopeStates, enclosedScopeConstraint)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(1) //
                 .uniqueResult();
@@ -342,10 +342,10 @@ public class ResourceDAO {
                         .add(Projections.groupProperty("id"), "id") //
                         .add(Projections.property("updatedTimestampSitemap"), "updatedTimestampSitemap"));
 
-        Junction enclosedScopeExclusion = getResourceActiveEnclosedScopeRestriction(criteria, enclosedScopes);
+        Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
 
         return (List<ResourceRepresentationSitemap>) criteria
-                .add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion)) //
+                .add(getResourceActiveScopeConstraint(scopeStates, enclosedScopeConstraint)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setMaxResults(50000) //
                 .setResultTransformer(aliasToBean(ResourceRepresentationSitemap.class)) //
@@ -363,11 +363,11 @@ public class ResourceDAO {
                         .add(Projections.property("advert.homepage"), "homepage"))
                 .createAlias("advert", "advert", JoinType.INNER_JOIN);
 
-        Junction enclosedScopeExclusion = getResourceActiveEnclosedScopeRestriction(criteria, enclosedScopes);
+        Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
 
         return (ResourceRepresentationRobotMetadata) criteria
                 .add(Restrictions.eq("id", resource.getId()))
-                .add(getResourceActiveScopeExclusion(scopeStates, enclosedScopeExclusion))
+                .add(getResourceActiveScopeConstraint(scopeStates, enclosedScopeConstraint))
                 .addOrder(Order.desc("updatedTimestampSitemap"))
                 .setResultTransformer(aliasToBean(ResourceRepresentationRobotMetadata.class))
                 .uniqueResult();
@@ -381,11 +381,11 @@ public class ResourceDAO {
                         .add(Projections.groupProperty("id"), "id") //
                         .add(Projections.property("name"), "name"));
 
-        Junction enclosedScopeExclusion = getResourceActiveEnclosedScopeRestriction(criteria, enclosedScopes);
+        Junction enclosedScopeConstraint = getResourcePublishedEnclosedScopeConstraint(criteria, enclosedScopes);
 
         return (List<ResourceRepresentationIdentity>) criteria //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource))
-                .add(getResourceActiveScopeExclusion(relatedScopeStates, enclosedScopeExclusion)) //
+                .add(getResourceActiveScopeConstraint(relatedScopeStates, enclosedScopeConstraint)) //
                 .addOrder(Order.desc("updatedTimestampSitemap")) //
                 .setResultTransformer(aliasToBean(ResourceRepresentationIdentity.class)).list();
     }
@@ -828,23 +828,23 @@ public class ResourceDAO {
         }
     }
 
-    private static Junction getResourceActiveScopeExclusion(List<PrismState> relatedScopeStates, Junction enclosedScopeExclusion) {
+    private static Junction getResourceActiveScopeConstraint(List<PrismState> relatedScopeStates, Junction enclosedScopeConstraint) {
         return Restrictions.disjunction() //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.in("state.id", relatedScopeStates)) //
-                        .add(Restrictions.not(enclosedScopeExclusion)));
+                        .add(Restrictions.not(enclosedScopeConstraint)));
     }
 
-    private static Junction getResourceActiveEnclosedScopeRestriction(Criteria criteria, HashMultimap<PrismScope, PrismState> enclosedScopes) {
-        Junction enclosedScopeExclusion = Restrictions.conjunction();
+    private static Junction getResourcePublishedEnclosedScopeConstraint(Criteria criteria, HashMultimap<PrismScope, PrismState> enclosedScopes) {
+        Junction enclosedScopeConstraint = Restrictions.conjunction();
         for (PrismScope enclosedScope : enclosedScopes.keySet()) {
             String enclosedScopeReference = enclosedScope.getLowerCamelName();
             criteria.createAlias(enclosedScopeReference + "s", enclosedScopeReference, JoinType.LEFT_OUTER_JOIN, //
                     Restrictions.in(enclosedScopeReference + ".state.id", enclosedScopes.get(enclosedScope)));
 
-            enclosedScopeExclusion.add(Restrictions.isNull(enclosedScopeReference + ".id"));
+            enclosedScopeConstraint.add(Restrictions.isNull(enclosedScopeReference + ".id"));
         }
-        return enclosedScopeExclusion;
+        return enclosedScopeConstraint;
     }
 
     private void appendResourceProjections(PrismScope resourceScope, ProjectionList projections, boolean rootScope) {

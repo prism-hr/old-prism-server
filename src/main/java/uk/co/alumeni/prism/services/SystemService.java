@@ -559,7 +559,7 @@ public class SystemService {
         actionService.setStateGroupTransitionActions();
 
         stateService.setRepeatableStateGroups();
-        stateService.setHiddenStates();
+        stateService.setHiddenPublishedStates();
         stateService.setParallelizableStates();
 
         roleService.setCreatorRoles();

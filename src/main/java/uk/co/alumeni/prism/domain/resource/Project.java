@@ -93,16 +93,6 @@ public class Project extends ResourceOpportunity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "available_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentLocalDate")
-    private LocalDate availableDate;
-
-    @Column(name = "duration_minimum")
-    private Integer durationMinimum;
-
-    @Column(name = "duration_maximum")
-    private Integer durationMaximum;
-
     @Column(name = "application_rating_count")
     private Integer applicationRatingCount;
 
@@ -134,6 +124,10 @@ public class Project extends ResourceOpportunity {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+
+    @Column(name = "activity_cached_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
 
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -301,36 +295,6 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
-    public LocalDate getAvailableDate() {
-        return availableDate;
-    }
-
-    @Override
-    public void setAvailableDate(LocalDate availableDate) {
-        this.availableDate = availableDate;
-    }
-
-    @Override
-    public Integer getDurationMinimum() {
-        return durationMinimum;
-    }
-
-    @Override
-    public void setDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-    }
-
-    @Override
-    public Integer getDurationMaximum() {
-        return durationMaximum;
-    }
-
-    @Override
-    public void setDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
-    }
-
-    @Override
     public Integer getApplicationRatingCount() {
         return applicationRatingCount;
     }
@@ -477,6 +441,16 @@ public class Project extends ResourceOpportunity {
     }
 
     @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
+    }
+
+    @Override
     public String getSequenceIdentifier() {
         return sequenceIdentifier;
     }
@@ -558,16 +532,6 @@ public class Project extends ResourceOpportunity {
 
     public Project withName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public Project withDurationMinimum(Integer durationMinimum) {
-        this.durationMinimum = durationMinimum;
-        return this;
-    }
-
-    public Project withDurationMaximum(Integer durationMaximum) {
-        this.durationMaximum = durationMaximum;
         return this;
     }
 

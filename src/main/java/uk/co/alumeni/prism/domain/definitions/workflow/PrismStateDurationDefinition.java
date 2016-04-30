@@ -1,20 +1,26 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
+
 public enum PrismStateDurationDefinition {
 
-    APPLICATION_CONFIRM_ELIGIBILITY_DURATION(3, false, PrismScope.APPLICATION), //
-    APPLICATION_PROVIDE_REFERENCE_DURATION(7, false, PrismScope.APPLICATION), //
-    APPLICATION_PROVIDE_REVIEW_DURATION(7, false, PrismScope.APPLICATION), //
-    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION(3, false, PrismScope.APPLICATION), //
-    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION(7, false, PrismScope.APPLICATION), //
-    APPLICATION_CONFIRM_APPOINTMENT_DURATION(3, false, PrismScope.APPLICATION), //
-    APPLICATION_RESERVE_DURATION(28, false, PrismScope.APPLICATION), //
-    APPLICATION_RESERVE_ESCALATE_DURATION(14, false, PrismScope.APPLICATION), //
-    APPLICATION_ESCALATE_DURATION(84, true, PrismScope.APPLICATION), //
-    PROJECT_ESCALATE_DURATION(28, true, PrismScope.PROJECT), //
-    PROGRAM_ESCALATE_DURATION(28, true, PrismScope.PROGRAM), //
-    DEPARTMENT_ESCALATE_DURATION(28, true, PrismScope.DEPARTMENT), //
-    INSTITUTION_ESCALATE_DURATION(28, true, PrismScope.INSTITUTION);
+    APPLICATION_MESSAGE_DURATION(28, false, APPLICATION), //
+    APPLICATION_PROVIDE_REFERENCE_DURATION(7, false, APPLICATION), //
+    APPLICATION_PROVIDE_REVIEW_DURATION(7, false, APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION(3, false, APPLICATION), //
+    APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION(7, false, APPLICATION), //
+    APPLICATION_CONFIRM_APPOINTMENT_DURATION(3, false, APPLICATION), //
+    APPLICATION_RESERVE_DURATION(28, false, APPLICATION), //
+    APPLICATION_RESERVE_ESCALATE_DURATION(14, false, APPLICATION), //
+    APPLICATION_ESCALATE_DURATION(84, true, APPLICATION), //
+    PROJECT_ESCALATE_DURATION(28, true, PROJECT), //
+    PROGRAM_ESCALATE_DURATION(28, true, PROGRAM), //
+    DEPARTMENT_ESCALATE_DURATION(28, true, DEPARTMENT), //
+    INSTITUTION_ESCALATE_DURATION(28, true, INSTITUTION);
 
     private Integer defaultDuration;
 

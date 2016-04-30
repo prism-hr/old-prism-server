@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.dao;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
@@ -11,11 +13,12 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
@@ -31,8 +34,11 @@ import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
+import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
+
+import com.google.common.base.Joiner;
 
 @Component
 public class WorkflowDAO {
@@ -83,13 +89,17 @@ public class WorkflowDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
     }
 
-    public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
-            Collection<Integer> targeterEntities, Projection projection) {
-        return getWorkflowCriteriaListResource(scope, projection)
+    public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Projection projection) {
+        return getWorkflowCriteriaList(scope, targeterScope, targetScope, null, projection);
+    }
+
+    public Criteria getWorkflowCriteriaList(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+            Projection projection) {
+        Criteria criteria = getWorkflowCriteriaListResource(scope, projection)
                 .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
                 .createAlias("advert.targets", "target", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
+                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targeterAdvert.targets", "targeterTarget", JoinType.INNER_JOIN) //
                 .createAlias("targeterTarget.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
                 .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
@@ -103,8 +113,13 @@ public class WorkflowDAO {
                 .createAlias("stateAction.state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
-                .createAlias("action.scope", "scope", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(scope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities)) //
+                .createAlias("action.scope", "scope", JoinType.INNER_JOIN);
+
+        if (CollectionUtils.isNotEmpty(targeterEntities)) {
+            criteria.add(Restrictions.in(scope.equals(APPLICATION) ? "resource.id" : "targeterResource.advert.id", targeterEntities));
+        }
+
+        return criteria //
                 .add(Restrictions.eqProperty("state", "stateAction.state")) //
                 .add(Restrictions.isNull("state.hidden")) //
                 .add(Restrictions.eq("action.systemInvocationOnly", false));
@@ -124,12 +139,12 @@ public class WorkflowDAO {
                                 .add(Restrictions.eq("scope.defaultShared", true))));
     }
 
-    public static Junction getSimilarUserConstraint(String searchTerm) {
-        return getSimilarUserConstraint(null, searchTerm);
+    public static Junction getMatchingUserConstraint(String searchTerm) {
+        return getMatchingUserConstraint(null, searchTerm);
     }
 
-    public static Junction getSimilarUserConstraint(String alias, String searchTerm) {
-        alias = StringUtils.isEmpty(alias) ? "" : alias + ".";
+    public static Junction getMatchingUserConstraint(String alias, String searchTerm) {
+        alias = isEmpty(alias) ? "" : alias + ".";
         return Restrictions.disjunction() //
                 .add(Restrictions.like(alias + "firstName", searchTerm, MatchMode.START)) //
                 .add(Restrictions.like(alias + "lastName", searchTerm, MatchMode.START)) //
@@ -144,8 +159,12 @@ public class WorkflowDAO {
     }
 
     public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
+        return getResourceParentManageableStateConstraint(resourceScope, "state.id");
+    }
+
+    public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope, String stateIdReference) {
         return Restrictions
-                .not(Restrictions.in("state.id",
+                .not(Restrictions.in(stateIdReference,
                         values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
     }
 
@@ -175,6 +194,57 @@ public class WorkflowDAO {
 
     public static MatchMode getMatchMode(PrismResourceListFilterExpression expression) {
         return expression.equals(EQUAL) ? MatchMode.EXACT : MatchMode.ANYWHERE;
+    }
+
+    public static Junction getUserRoleResourceConstraint(Resource resource, String userRoleAlias) {
+        Junction constraint = Restrictions.disjunction();
+        Arrays.stream(PrismScope.values()).forEach(prismScope -> {
+            Resource enclosingResource = resource.getEnclosingResource(prismScope);
+            if (enclosingResource != null) {
+                constraint.add(Restrictions.eq(Joiner.on(FULL_STOP).skipNulls().join(userRoleAlias, prismScope.getLowerCamelName()), enclosingResource));
+            }
+        });
+        return constraint;
+    }
+
+    public static Junction getReadMessageConstraint() {
+        return Restrictions.conjunction() //
+                .add(Restrictions.isNotNull("participant.lastViewedMessage")) //
+                .add(Restrictions.geProperty("participant.lastViewedMessage.id", "message.id")); //
+    }
+
+    public static Junction getUnreadMessageConstraint() {
+        return Restrictions.disjunction() //
+                .add(Restrictions.isNull("participant.lastViewedMessage")) //
+                .add(Restrictions.ltProperty("participant.lastViewedMessage.id", "message.id"));
+    }
+
+    public static Junction getReadOrUnreadMessageConstraint(boolean read) {
+        return read ? getReadMessageConstraint() : getUnreadMessageConstraint();
+    }
+
+    public static Junction getVisibleMessageConstraint() {
+        return getVisibleMessageConstraint(null);
+    }
+
+    public static Junction getVisibleMessageConstraint(String messageAlias) {
+        String messageIdReference = Joiner.on(FULL_STOP).skipNulls().join(messageAlias, "id");
+        return Restrictions.conjunction() //
+                .add(Restrictions.geProperty(messageIdReference, "participant.startMessage.id")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNull("participant.closeMessage")) //
+                        .add(Restrictions.ltProperty(messageIdReference, "participant.closeMessage.id")));
+    }
+
+    public static Junction getMatchingFlattenedPropertyConstraint(String property, String searchTerm) {
+        return Restrictions.disjunction(Restrictions.eq(property, searchTerm))
+                .add(Restrictions.like(property, searchTerm + "|", MatchMode.START))
+                .add(Restrictions.like(property, "|" + searchTerm + "|", MatchMode.ANYWHERE))
+                .add(Restrictions.like(property, "|" + searchTerm, MatchMode.END));
+    }
+
+    public static String getResolvedAliasReference(String aliasReference) {
+        return isEmpty(aliasReference) ? aliasReference : aliasReference + ".";
     }
 
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {

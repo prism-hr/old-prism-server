@@ -1,10 +1,10 @@
 package uk.co.alumeni.prism.dao;
 
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_STARTUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.ESCALATE_RESOURCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.VIEW_EDIT_RESOURCE;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,11 +24,13 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
+import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.Action;
@@ -70,7 +72,6 @@ public class ActionDAO {
                 .add(Restrictions.eq("action.systemInvocationOnly", false)) //
                 .add(Restrictions.isEmpty("stateAction.stateActionAssignments")) //
                 .add(getUnsecuredActionVisibilityConstraint(userLoggedIn)) //
-                .addOrder(Order.asc("creationScope.ordinal")) //
                 .uniqueResult();
     }
 
@@ -98,6 +99,21 @@ public class ActionDAO {
                 .list();
     }
 
+    public Action getPermittedEnquiryAction(ResourceParent resource, Action action) {
+        PrismScope resourceScope = resource.getResourceScope();
+        return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("stateAction.action")) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
+                .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.stateActionAssignments", "stateActionAssignment", JoinType.INNER_JOIN) //
+                .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("stateAction.action", action)) //
+                .add(Restrictions.eq("action.systemInvocationOnly", false)) //
+                .add(Restrictions.eq("stateActionAssignment.role.id", PrismRole.valueOf(resourceScope.name() + "_ENQUIRER"))) //
+                .uniqueResult();
+    }
+
     public List<PrismAction> getCreateResourceActions(PrismScope creationScope) {
         return (List<PrismAction>) sessionFactory.getCurrentSession().createCriteria(Action.class) //
                 .setProjection(Projections.property("id")) //
@@ -119,7 +135,8 @@ public class ActionDAO {
                 .list();
     }
 
-    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, Collection<PrismAction> actions, ProjectionList columns, Criterion restriction,
+    public <T> List<T> getActionEntities(User user, PrismScope scope, Collection<Integer> resources, Collection<PrismAction> actions, ProjectionList columns,
+            Criterion restriction,
             Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, columns) //
                 .add(getActionConstraint(user, resources, actions, restriction)) //
@@ -139,20 +156,20 @@ public class ActionDAO {
             Collection<Integer> resources, Collection<PrismAction> actions, ProjectionList columns, Criterion restriction, Class<T> responseClass) {
         return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, columns)
                 .add(getActionConstraint(user, resources, actions, restriction))
-                .add(WorkflowDAO.getTargetActionConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .setResultTransformer(Transformers.aliasToBean(responseClass)) //
                 .list();
     }
 
-    public Action getViewEditAction(Resource resource) {
-        return (Action) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+    public List<Action> getActionsByActionCategory(Resource resource, PrismActionCategory actionCategory) {
+        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(Projections.groupProperty("stateAction.action")) //
                 .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .createAlias("state.stateActions", "stateAction", JoinType.INNER_JOIN) //
                 .createAlias("stateAction.action", "action", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("action.actionCategory", VIEW_EDIT_RESOURCE)) //
-                .uniqueResult();
+                .add(Restrictions.eq("action.actionCategory", actionCategory)) //
+                .list();
     }
 
     public List<PrismAction> getEscalationActions() {
@@ -257,6 +274,16 @@ public class ActionDAO {
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("stateAction.action", action)) //
                 .add(Restrictions.isNotNull("stateActionAssignment.actionEnhancement"))
+                .list();
+    }
+
+    public List<Action> getRatingActions(PrismScope scope) {
+        return (List<Action>) sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
+                .setProjection(Projections.groupProperty("action")) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("action.scope.id", scope)) //
+                .add(Restrictions.eq("action.ratingAction", true)) //
+                .addOrder(Order.asc("action.id")) //
                 .list();
     }
 

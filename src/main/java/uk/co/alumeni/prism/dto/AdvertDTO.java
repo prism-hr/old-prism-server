@@ -21,23 +21,11 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private String userAccountImageUrl;
 
-    private LocalDate programAvailableDate;
-
-    private Integer programDurationMinimum;
-
-    private Integer programDurationMaximum;
-
-    private LocalDate projectAvailableDate;
-
-    private Integer projectDurationMinimum;
-
-    private Integer projectDurationMaximum;
-
     private PrismOpportunityType opportunityType;
 
-    private String targetOpportunityTypes;
-
     private String opportunityCategories;
+
+    private String studyOptions;
 
     private Boolean recommended;
 
@@ -73,6 +61,10 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
 
     private BigDecimal addressCoordinateLongitude;
 
+    private Integer durationMinimum;
+
+    private Integer durationMaximum;
+    
     private PrismPaymentOption payOption;
 
     private PrismDurationUnit payInterval;
@@ -141,54 +133,6 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
         this.userAccountImageUrl = userAccountImageUrl;
     }
 
-    public LocalDate getProgramAvailableDate() {
-        return programAvailableDate;
-    }
-
-    public void setProgramAvailableDate(LocalDate programAvailableDate) {
-        this.programAvailableDate = programAvailableDate;
-    }
-
-    public Integer getProgramDurationMinimum() {
-        return programDurationMinimum;
-    }
-
-    public void setProgramDurationMinimum(Integer programDurationMinimum) {
-        this.programDurationMinimum = programDurationMinimum;
-    }
-
-    public Integer getProgramDurationMaximum() {
-        return programDurationMaximum;
-    }
-
-    public void setProgramDurationMaximum(Integer programDurationMaximum) {
-        this.programDurationMaximum = programDurationMaximum;
-    }
-
-    public LocalDate getProjectAvailableDate() {
-        return projectAvailableDate;
-    }
-
-    public void setProjectAvailableDate(LocalDate projectAvailableDate) {
-        this.projectAvailableDate = projectAvailableDate;
-    }
-
-    public Integer getProjectDurationMinimum() {
-        return projectDurationMinimum;
-    }
-
-    public void setProjectDurationMinimum(Integer projectDurationMinimum) {
-        this.projectDurationMinimum = projectDurationMinimum;
-    }
-
-    public Integer getProjectDurationMaximum() {
-        return projectDurationMaximum;
-    }
-
-    public void setProjectDurationMaximum(Integer projectDurationMaximum) {
-        this.projectDurationMaximum = projectDurationMaximum;
-    }
-
     public PrismOpportunityType getOpportunityType() {
         return opportunityType;
     }
@@ -197,20 +141,20 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
         this.opportunityType = opportunityType;
     }
 
-    public String getTargetOpportunityTypes() {
-        return targetOpportunityTypes;
-    }
-
-    public void setTargetOpportunityTypes(String targetOpportunityTypes) {
-        this.targetOpportunityTypes = targetOpportunityTypes;
-    }
-
     public String getOpportunityCategories() {
         return opportunityCategories;
     }
 
     public void setOpportunityCategories(String opportunityCategories) {
         this.opportunityCategories = opportunityCategories;
+    }
+
+    public String getStudyOptions() {
+        return studyOptions;
+    }
+
+    public void setStudyOptions(String studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public Boolean getRecommended() {
@@ -349,6 +293,22 @@ public class AdvertDTO extends ResourceFlatToNestedDTO {
         this.addressCoordinateLongitude = addressCoordinateLongitude;
     }
 
+    public Integer getDurationMinimum() {
+        return durationMinimum;
+    }
+
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+    }
+
+    public Integer getDurationMaximum() {
+        return durationMaximum;
+    }
+
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+    }
+    
     public PrismPaymentOption getPayOption() {
         return payOption;
     }

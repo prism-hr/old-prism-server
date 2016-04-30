@@ -267,7 +267,7 @@ public class ApplicationService {
         }
     }
 
-    public <T extends Application> ResourceRatingSummaryDTO getApplicationRatingSummary(T application) {
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(Application application) {
         return applicationDAO.getApplicationRatingSummary(application);
     }
 
@@ -315,7 +315,7 @@ public class ApplicationService {
                 && !application.getState().equals(APPLICATION_APPROVED);
     }
 
-    public <T extends Application> void synchronizeApplicationRating(T application) {
+    public void synchronizeApplicationRating(Application application) {
         ResourceRatingSummaryDTO ratingSummary = getApplicationRatingSummary(application);
         application.setApplicationRatingCount(ratingSummary.getRatingCount().intValue());
         application.setApplicationRatingAverage(BigDecimal.valueOf(ratingSummary.getRatingAverage()));
@@ -396,12 +396,8 @@ public class ApplicationService {
         return applicationDAO.getApplicationOnCourse(application);
     }
 
-    public List<Integer> getApplicationsForTargets() {
-        return applicationDAO.getApplicationsForTargets();
-    }
-
-    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
-        return isEmpty(students) ? emptyList() : applicationDAO.getApplicationsForTargets(user, targeterScope, targetScope, students);
+    public List<Integer> getApplications(Collection<Integer> adverts, Collection<Integer> students) {
+        return isEmpty(adverts) || isEmpty(students) ? emptyList() : applicationDAO.getApplications(adverts, students);
     }
 
     public List<Integer> getApplicationsByTheme(String theme, PrismResourceListFilterExpression expression, Boolean preference) {
@@ -430,6 +426,10 @@ public class ApplicationService {
 
     public List<Integer> getApplicationsWithReferencesProvided(Resource parentResource) {
         return applicationDAO.getApplicationsWithReferencesProvided(parentResource);
+    }
+
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(User user) {
+        return applicationDAO.getApplicationRatingSummary(user);
     }
 
     public void deleteApplicationHiringManagers(Application application) {

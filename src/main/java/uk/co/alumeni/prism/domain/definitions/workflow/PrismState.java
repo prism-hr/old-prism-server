@@ -1,8 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_CONFIRM_APPOINTMENT_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_ESCALATE_DURATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_MESSAGE_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_DURATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition.APPLICATION_PROVIDE_REFERENCE_DURATION;
@@ -22,11 +24,11 @@ import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
 
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationAccepted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovalPendingFeedback;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved;
-import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedCompleted;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferAcceptance;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevision;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApprovedPendingOfferRevisionAcceptance;
@@ -37,6 +39,8 @@ import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicat
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingFeedback;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingInterview;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterviewPendingScheduling;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationMessaging;
+import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationMessagingPendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationReferencePendingCompletion;
 import uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationRejected;
@@ -87,14 +91,16 @@ import uk.co.alumeni.prism.workflow.resolvers.state.transition.selection.StateTr
 import uk.co.alumeni.prism.workflow.selectors.action.ApplicationByReferencesProvidedSelector;
 import uk.co.alumeni.prism.workflow.selectors.action.PrismResourceByParentResourceSelector;
 
-import com.google.common.collect.Maps;
-
 public enum PrismState {
 
     APPLICATION_UNSUBMITTED(PrismStateGroup.APPLICATION_UNSUBMITTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationUnsubmitted.class),
     APPLICATION_VALIDATION(PrismStateGroup.APPLICATION_VALIDATION, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationValidation.class),
+    APPLICATION_MESSAGING(PrismStateGroup.APPLICATION_MESSAGING, APPLICATION_MESSAGE_DURATION, null,
+            PrismApplicationMessaging.class),
+    APPLICATION_MESSAGING_PENDING_COMPLETION(PrismStateGroup.APPLICATION_MESSAGING, APPLICATION_ESCALATE_DURATION, null,
+            PrismApplicationMessagingPendingCompletion.class),
     APPLICATION_REVIEW(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationReview.class),
     APPLICATION_REVIEW_PENDING_FEEDBACK(PrismStateGroup.APPLICATION_REVIEW, APPLICATION_PROVIDE_REVIEW_DURATION, null,
@@ -134,7 +140,7 @@ public enum PrismState {
     APPLICATION_APPROVED_PENDING_OFFER_REVISION(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedPendingOfferRevision.class),
     APPLICATION_APPROVED_PENDING_OFFER_REVISION_ACCEPTANCE(PrismStateGroup.APPLICATION_APPROVED, null, null,
             PrismApplicationApprovedPendingOfferRevisionAcceptance.class),
-    APPLICATION_APPROVED_COMPLETED(PrismStateGroup.APPLICATION_APPROVED, null, null, PrismApplicationApprovedCompleted.class),
+    APPLICATION_ACCEPTED(PrismStateGroup.APPLICATION_ACCEPTED, null, null, PrismApplicationAccepted.class),
     APPLICATION_REJECTED(PrismStateGroup.APPLICATION_REJECTED, APPLICATION_ESCALATE_DURATION, null,
             PrismApplicationRejected.class),
     APPLICATION_REJECTED_COMPLETED(PrismStateGroup.APPLICATION_REJECTED, null, null, PrismApplicationRejectedCompleted.class),
@@ -188,7 +194,7 @@ public enum PrismState {
 
     SYSTEM_RUNNING(PrismStateGroup.SYSTEM_RUNNING, null, null, PrismSystemRunning.class);
 
-    private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = Maps.newHashMap();
+    private static final HashMap<PrismState, PrismWorkflowState> workflowStateDefinitions = newHashMap();
 
     static {
         for (PrismState state : PrismState.values()) {

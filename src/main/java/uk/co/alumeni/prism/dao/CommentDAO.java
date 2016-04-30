@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -24,6 +23,7 @@ import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 
@@ -141,7 +141,12 @@ public class CommentDAO {
     }
 
     public List<Comment> getTimelineComments(Resource resource) {
-        return getCommentTimelineCriteria() //
+        return sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
+                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getClass().getSimpleName().toLowerCase(), resource)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.conjunction() //
@@ -227,13 +232,22 @@ public class CommentDAO {
                 .list();
     }
 
-    private Criteria getCommentTimelineCriteria() {
-        return sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+    public List<Comment> getRatingComments(Resource resource) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
                 .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .createAlias("state", "state", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("state.stateGroup", "stateGroup", JoinType.INNER_JOIN) //
-                .createAlias("transitionState", "transitionState", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("transitionState.stateGroup", "transitionStateGroup", JoinType.INNER_JOIN);
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("action.ratingAction", true)) //
+                .list();
+    }
+
+    public List<Comment> getRatingComments(PrismScope scope, User user) {
+        return (List<Comment>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
+                .createAlias(scope.getLowerCamelName(), "resource")
+                .createAlias("action", "action", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("resource.user", user)) //
+                .add(Restrictions.eq("action.ratingAction", true)) //
+                .addOrder(Order.asc("action.id")) //
+                .list();
     }
 
 }

@@ -1,8 +1,18 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Sets.newTreeSet;
+import static java.math.RoundingMode.HALF_UP;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType.ALL_ASSESSMENT_CONTENT;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,8 +41,10 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionRedactionType;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentAppointmentPreferenceRepresentation;
@@ -45,6 +57,7 @@ import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructi
 import uk.co.alumeni.prism.rest.representation.comment.CommentOfferDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentPositionDetailRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentation;
+import uk.co.alumeni.prism.rest.representation.comment.CommentRepresentationRatingSummary;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation.CommentGroupRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
@@ -55,17 +68,12 @@ import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 
 @Service
 @Transactional
 public class CommentMapper {
-
-    @Inject
-    private DocumentMapper documentMapper;
-
-    @Inject
-    private UserMapper userMapper;
 
     @Inject
     private ActionService actionService;
@@ -74,42 +82,48 @@ public class CommentMapper {
     private CommentService commentService;
 
     @Inject
+    private DocumentMapper documentMapper;
+
+    @Inject
     private ResourceService resourceService;
 
     @Inject
     private RoleService roleService;
 
     @Inject
+    private UserMapper userMapper;
+
+    @Inject
     private UserService userService;
 
     public CommentTimelineRepresentation getCommentTimelineRepresentation(Resource resource) {
-        resourceService.validateViewResource(resource);
-
+        User currentUser = userService.getCurrentUser();
+        resourceService.validateViewResource(resource, currentUser);
+        
         List<Comment> comments = commentService.getTimelineComments(resource);
-        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource);
-        User user = userService.getCurrentUser();
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(resource, currentUser);
 
         CommentTimelineRepresentation timelineRepresentation = new CommentTimelineRepresentation();
         if (!comments.isEmpty()) {
             CommentGroupRepresentation groupRepresentation = null;
 
             List<PrismRole> creatableRoles = roleService.getCreatableRoles(resource.getResourceScope());
-            List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(user, resource);
-            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, user, overridingRoles);
+            List<PrismActionEnhancement> actionEnhancements = actionService.getPermittedActionEnhancements(currentUser, resource);
+            HashMultimap<PrismAction, PrismActionRedactionType> redactions = actionService.getRedactions(resource, currentUser, overridingRoles);
             for (Comment comment : commentService.getTimelineComments(resource)) {
                 Set<PrismActionRedactionType> actionRedactions = redactions.get(comment.getAction().getId());
                 if (groupRepresentation == null) {
                     groupRepresentation = new CommentGroupRepresentation().withStateGroup(comment.getTransitionState().getStateGroup().getId());
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles,
+                    groupRepresentation.addComment(getCommentRepresentation(currentUser, comment, creatableRoles, actionEnhancements, overridingRoles,
                             actionRedactions));
                     timelineRepresentation.addCommentGroup(groupRepresentation);
                 } else if (comment.isStateGroupTransitionComment() && !comment.isSecondaryStateGroupTransitionComment()) {
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles,
+                    groupRepresentation.addComment(getCommentRepresentation(currentUser, comment, creatableRoles, actionEnhancements, overridingRoles,
                             actionRedactions));
                     groupRepresentation = new CommentGroupRepresentation().withStateGroup(comment.getTransitionState().getStateGroup().getId());
                     timelineRepresentation.addCommentGroup(groupRepresentation);
                 } else {
-                    groupRepresentation.addComment(getCommentRepresentation(user, comment, creatableRoles, actionEnhancements, overridingRoles,
+                    groupRepresentation.addComment(getCommentRepresentation(currentUser, comment, creatableRoles, actionEnhancements, overridingRoles,
                             actionRedactions));
                 }
             }
@@ -133,15 +147,13 @@ public class CommentMapper {
             CommentAppointmentPreferenceRepresentation representation = new CommentAppointmentPreferenceRepresentation()
                     .withUser(userMapper.getUserRepresentationSimple(user, currentUser));
 
-            List<Integer> inviteePreferences = Lists.newLinkedList();
             Comment preferenceComment = commentService.getLatestAppointmentPreferenceComment(schedulingComment.getApplication(), schedulingComment, user);
             if (preferenceComment != null) {
                 List<LocalDateTime> preferences = commentService.getAppointmentPreferences(preferenceComment);
-                for (CommentAppointmentTimeslot timeslot : timeslots) {
-                    if (preferences.contains(timeslot.getDateTime())) {
-                        inviteePreferences.add(timeslot.getId());
-                    }
-                }
+
+                List<Integer> inviteePreferences = timeslots.stream()
+                        .filter(timeslot -> preferences.contains(timeslot.getDateTime()))
+                        .map(CommentAppointmentTimeslot::getId).collect(Collectors.toList());
                 representation.setPreferences(inviteePreferences);
             }
 
@@ -183,11 +195,12 @@ public class CommentMapper {
     public CommentRepresentation getCommentRepresentationExtended(Comment comment, List<PrismRole> creatableRoles) {
         State state = comment.getState();
         State transitionState = comment.getTransitionState();
+
         CommentRepresentation representation = getCommentRepresentationSimple(comment).withContent(comment.getContent())
                 .withState(state == null ? null : state.getId()).withTransitionState(transitionState == null ? null : transitionState.getId())
                 .withEligible(comment.getEligible()).withApplicantKnown(comment.getApplicantKnown())
                 .withApplicantKnownDuration(comment.getApplicantKnownDuration()).withApplicantKnownCapacity(comment.getApplicantKnownCapacity())
-                .withRating(comment.getRating()).withInterested(comment.getInterested())
+                .withRating(comment.getRating()).withInterested(comment.getInterested()).withInterviewState(comment.getInterviewState())
                 .withInterviewAppointment(getCommentInterviewAppointmentRepresentation(comment))
                 .withInterviewInstruction(getCommentInterviewInstructionRepresentation(comment, true)).withInterviewAvailable(comment.getInterviewAvailable())
                 .withPositionDetail(getCommentPositionDetailRepresentation(comment)).withOfferDetail(getCommentOfferDetailRepresentation(comment))
@@ -203,6 +216,55 @@ public class CommentMapper {
                 .collect(Collectors.toList()));
 
         return representation;
+    }
+
+    public List<CommentRepresentationRatingSummary> getRatingCommentSummaryRepresentations(User user, PrismScope scope,
+            List<CommentRepresentation> commentList) {
+        Map<PrismAction, CommentRepresentationRatingSummary> representations = newLinkedHashMap();
+
+        LinkedHashMultimap<PrismAction, CommentRepresentation> commentIndex = LinkedHashMultimap.create();
+        if (isNotEmpty(commentList)) {
+            commentList.stream().forEach(comment -> {
+                PrismAction delegatedAction = comment.getDelegatedAction();
+                commentIndex.put(delegatedAction == null ? comment.getAction() : delegatedAction, comment);
+            });
+        }
+
+        actionService.getRatingActions(scope).stream().forEach(action -> {
+            Action delegatedAction = action.getDelegatedAction();
+            PrismAction prismAction = delegatedAction == null ? action.getId() : delegatedAction.getId();
+
+            CommentRepresentationRatingSummary representation = representations.get(prismAction);
+            if (representation == null) {
+                representation = new CommentRepresentationRatingSummary().withId(prismAction);
+                representations.put(prismAction, representation);
+            }
+
+            Set<CommentRepresentation> ratingComments = commentIndex.get(prismAction);
+            if (isNotEmpty(ratingComments)) {
+                for (CommentRepresentation ratingComment : ratingComments) {
+                    if (isTrue(ratingComment.getDeclinedResponse())) {
+                        setRatingCommentSummaryCount(representation, "declinedCount");
+                    } else {
+                        setRatingCommentSummaryCount(representation, "providedCount");
+
+                        BigDecimal rating = ratingComment.getRating();
+                        if (rating != null) {
+                            BigDecimal ratingAverage = representation.getRatingAverage();
+                            representation.setRatingAverage(ratingAverage.add(rating)
+                                    .divide(new BigDecimal(representation.getProvidedCount()), RATING_PRECISION, HALF_UP));
+                        }
+                    }
+                }
+            }
+        });
+
+        return newLinkedList(newTreeSet(representations.values()));
+    }
+
+    private void setRatingCommentSummaryCount(CommentRepresentationRatingSummary commentRepresentation, String countProperty) {
+        Integer count = (Integer) getProperty(commentRepresentation, countProperty);
+        setProperty(commentRepresentation, countProperty, count == null ? 1 : (count + 1));
     }
 
     private CommentRepresentation getCommentRepresentation(User user, Comment comment, List<PrismRole> creatableRoles,
@@ -224,9 +286,13 @@ public class CommentMapper {
     }
 
     private CommentRepresentation getCommentRepresentationSimple(Comment comment) {
+        Action action = comment.getAction();
+        Action delegatedAction = action.getDelegatedAction();
+
         CommentRepresentation representation = new CommentRepresentation().withId(comment.getId())
                 .withUser(userMapper.getUserRepresentationSimple(comment.getUser(), userService.getCurrentUser()))
-                .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(comment.getAction().getId())
+                .withDelegateUser(getCommentDelegateUserRepresentation(comment)).withAction(action.getId())
+                .withDelegatedAction(delegatedAction == null ? null : delegatedAction.getId())
                 .withDeclinedResponse(comment.getDeclinedResponse()).withCreatedTimestamp(comment.getCreatedTimestamp())
                 .withSubmittedTimestamp(comment.getSubmittedTimestamp());
 
@@ -258,7 +324,8 @@ public class CommentMapper {
         for (CommentCompetence commentCompetence : commentCompetences) {
             Competence competence = commentCompetence.getCompetence();
             CommentCompetenceGroupRepresentation group = groups.get(commentCompetence.getImportance());
-            group.getCompetences().add(new CommentCompetenceRepresentation().withName(competence.getName())
+            group.getCompetences().add(new CommentCompetenceRepresentation()
+                    .withCompetenceId(competence.getId()).withName(competence.getName())
                     .withDescription(competence.getDescription()).withRating(commentCompetence.getRating())
                     .withRemark(commentCompetence.getRemark()));
         }

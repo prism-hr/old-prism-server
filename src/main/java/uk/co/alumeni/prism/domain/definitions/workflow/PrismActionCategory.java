@@ -3,7 +3,7 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 public enum PrismActionCategory {
 
     CREATE_RESOURCE, //
-    EMAIL_RESOURCE_CREATOR, //
+    MESSAGE_RESOURCE, //
     ESCALATE_RESOURCE, //
     INITIALISE_RESOURCE, //
     MANAGE_ACCOUNT, //
@@ -12,6 +12,8 @@ public enum PrismActionCategory {
     VIEW_ACTIVITY_LIST, //
     VIEW_RESOURCE_LIST, //
     VIEW_EDIT_RESOURCE, //
-    WITHDRAW_RESOURCE
+    WITHDRAW_RESOURCE, //
+    VIEW_CANDIDATE, //
+    MESSAGE_CANDIDATE;
 
 }

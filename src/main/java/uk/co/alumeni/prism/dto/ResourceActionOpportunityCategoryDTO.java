@@ -1,17 +1,13 @@
 package uk.co.alumeni.prism.dto;
 
-import org.apache.commons.lang3.ObjectUtils;
-import org.joda.time.DateTime;
-
+import static com.google.common.base.Objects.equal;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 
 import com.google.common.base.Objects;
 
-public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCategoryDTO<ResourceActionOpportunityCategoryDTO> {
+public class ResourceActionOpportunityCategoryDTO extends ResourceOpportunityCategoryDTO {
 
     private PrismAction actionId;
-
-    private DateTime updatedTimestamp;
 
     public PrismAction getActionId() {
         return actionId;
@@ -21,14 +17,6 @@ public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCateg
         this.actionId = actionId;
     }
 
-    public DateTime getUpdatedTimestamp() {
-        return updatedTimestamp;
-    }
-
-    public void setUpdatedTimestamp(DateTime updatedTimestamp) {
-        this.updatedTimestamp = updatedTimestamp;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hashCode(getId(), actionId);
@@ -36,17 +24,19 @@ public class ResourceActionOpportunityCategoryDTO extends EntityOpportunityCateg
 
     @Override
     public boolean equals(Object object) {
-        return super.equals(object) && actionId.equals(((ResourceActionOpportunityCategoryDTO) object).getActionId());
+        if (object == null) {
+            return false;
+        }
+        if (!getClass().equals(object.getClass())) {
+            return false;
+        }
+        ResourceActionOpportunityCategoryDTO other = (ResourceActionOpportunityCategoryDTO) object;
+        return equal(actionId, other.getActionId()) && super.equals(object);
     }
 
     @Override
     public String toString() {
         return actionId.getZeroPaddedOrdinal() + getSequenceIdentifier();
-    }
-
-    @Override
-    public int compareTo(ResourceActionOpportunityCategoryDTO other) {
-        return ObjectUtils.compare(toString(), other.toString());
     }
 
 }

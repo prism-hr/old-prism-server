@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import static org.slf4j.LoggerFactory.getLogger;
+import static org.springframework.http.HttpStatus.NOT_MODIFIED;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +11,6 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.user.User;
@@ -33,6 +37,7 @@ import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.domain.user.UserReferee;
 import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
+import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ProfileMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAdditionalInformationDTO;
@@ -40,7 +45,6 @@ import uk.co.alumeni.prism.rest.dto.profile.ProfileAddressDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileAwardDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileDocumentDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileEmploymentPositionDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfilePersonalDetailDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileQualificationDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileRefereeDTO;
@@ -49,13 +53,13 @@ import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserActivateDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserEmailDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserLinkingDTO;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileEmploymentPositionRepresentation;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileQualificationRepresentation;
 import uk.co.alumeni.prism.rest.representation.profile.ProfileRefereeRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationUser;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.rest.validation.UserLinkingValidator;
@@ -66,6 +70,7 @@ import uk.co.alumeni.prism.services.ProfileService;
 import uk.co.alumeni.prism.services.ResourceListFilterService;
 import uk.co.alumeni.prism.services.UserAccountService;
 import uk.co.alumeni.prism.services.UserService;
+import uk.co.alumeni.prism.services.delegates.UserActivityCacheServiceDelegate;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -74,7 +79,7 @@ import com.google.common.collect.Maps;
 @RequestMapping("/api/user")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private static final Logger logger = getLogger(UserController.class);
 
     @Inject
     private AuthenticationTokenHelper authenticationTokenHelper;
@@ -84,9 +89,6 @@ public class UserController {
 
     @Inject
     private EntityService entityService;
-
-    @Inject
-    private UserMapper userMapper;
 
     @Inject
     private ProfileService profileService;
@@ -101,7 +103,16 @@ public class UserController {
     private UserAccountService userAccountService;
 
     @Inject
+    private MessageMapper messageMapper;
+
+    @Inject
     private ProfileMapper profileMapper;
+
+    @Inject
+    private UserMapper userMapper;
+
+    @Inject
+    private UserActivityCacheServiceDelegate userActivityCacheServiceDelegate;
 
     @Inject
     private UserLinkingValidator userLinkingValidator;
@@ -114,6 +125,13 @@ public class UserController {
     public UserRepresentationExtended getUser() {
         User currentUser = userService.getCurrentUser();
         return userMapper.getUserRepresentationExtended(currentUser, currentUser);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/messages", method = RequestMethod.GET)
+    public List<MessageThreadRepresentation> getMessageThreads(@RequestParam(required = false) String q) {
+        User currentUser = userService.getCurrentUser();
+        return messageMapper.getMessageThreadRepresentations(currentUser.getUserAccount(), q);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -205,8 +223,20 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/activity", method = RequestMethod.GET)
-    public UserActivityRepresentation getActivitySummary() {
-        return userMapper.getUserActivityRepresentation(userService.getCurrentUser());
+    public DeferredResult<UserActivityRepresentation> getUserActivityRepresentation(@RequestParam(required = false) Integer cacheIncrement) {
+        DeferredResult<UserActivityRepresentation> result = new DeferredResult<>(55000L);
+        User currentUser = userService.getCurrentUser();
+        UserActivityRepresentation representation = userMapper.getUserActivityRepresentation(currentUser);
+        if (cacheIncrement == null || representation.getCacheIncrement() > cacheIncrement) {
+            result.setResult(representation);
+        } else {
+            result.onTimeout(() -> {
+                userActivityCacheServiceDelegate.removePollingUser(currentUser.getId(), result);
+                throw new UserActivityNotModifiedException();
+            });
+            userActivityCacheServiceDelegate.addPollingUser(currentUser.getId(), result);
+        }
+        return result;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -368,8 +398,9 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public UserProfileRepresentation getUserProfile() {
-        return userMapper.getUserProfileRepresentation();
+    public ProfileRepresentationUser getUserProfile() {
+        User currentUser = userService.getCurrentUser();
+        return profileMapper.getProfileRepresentationUser(currentUser, currentUser);
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -379,10 +410,11 @@ public class UserController {
         userAccountService.shareUserProfile(share);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "profiles", method = RequestMethod.GET)
-    public List<ProfileListRowRepresentation> getUserProfiles(@RequestBody ProfileListFilterDTO filter) {
-        return userMapper.getProfileListRowRepresentations(filter);
+    @ResponseStatus(value = NOT_MODIFIED, reason = "No updates to user activity")
+    private static class UserActivityNotModifiedException extends RuntimeException {
+
+        private static final long serialVersionUID = -5269664043567085353L;
+
     }
 
 }

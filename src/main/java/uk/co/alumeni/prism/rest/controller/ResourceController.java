@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
@@ -33,20 +35,24 @@ import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.mapping.ActionMapper;
 import uk.co.alumeni.prism.mapping.CommentMapper;
+import uk.co.alumeni.prism.mapping.MessageMapper;
 import uk.co.alumeni.prism.mapping.ResourceMapper;
 import uk.co.alumeni.prism.mapping.RoleMapper;
 import uk.co.alumeni.prism.mapping.UserMapper;
 import uk.co.alumeni.prism.rest.PrismRestUtils;
 import uk.co.alumeni.prism.rest.ResourceDescriptor;
+import uk.co.alumeni.prism.rest.dto.MessageDTO;
 import uk.co.alumeni.prism.rest.dto.ReplicableActionSequenceDTO;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceReportFilterDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserCorrectionDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.representation.action.ActionOutcomeRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresentation;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantsRepresentationPotential;
+import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCreation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
@@ -54,11 +60,13 @@ import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationId
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationLocation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceSummaryPlotRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceUserRolesRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 import uk.co.alumeni.prism.services.ApplicationService;
+import uk.co.alumeni.prism.services.MessageService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.UserService;
@@ -73,6 +81,12 @@ import com.google.visualization.datasource.datatable.DataTable;
 public class ResourceController {
 
     @Inject
+    private ApplicationService applicationService;
+
+    @Inject
+    private MessageService messageService;
+
+    @Inject
     private ResourceService resourceService;
 
     @Inject
@@ -82,16 +96,16 @@ public class ResourceController {
     private RoleService roleService;
 
     @Inject
-    private ApplicationService applicationService;
-
-    @Inject
     private ActionMapper actionMapper;
 
     @Inject
-    private ResourceMapper resourceMapper;
+    private CommentMapper commentMapper;
 
     @Inject
-    private CommentMapper commentMapper;
+    private MessageMapper messageMapper;
+
+    @Inject
+    private ResourceMapper resourceMapper;
 
     @Inject
     private RoleMapper roleMapper;
@@ -110,6 +124,13 @@ public class ResourceController {
     }
 
     @Transactional
+    @RequestMapping(value = "/{resourceId}", method = RequestMethod.GET, params = "type=summary")
+    public ResourceRepresentationSummary getResourceSummary(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getResourceRepresentationSummary(resource);
+    }
+
+    @Transactional
     @RequestMapping(value = "/{resourceId}/timeline", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public CommentTimelineRepresentation getResourceTimeline(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
@@ -120,9 +141,11 @@ public class ResourceController {
     @Transactional
     @RequestMapping(value = "/{resourceId}/users", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public List<ResourceUserRolesRepresentation> getResourceUsers(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+    public List<ResourceUserRolesRepresentation> getResourceUsers(
+            @PathVariable Integer resourceId, @RequestParam(required = false) PrismRole qRole,
+            @RequestParam(required = false) String qTerm, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        return roleMapper.getResourceUserRoleRepresentations(resource, userService.getCurrentUser());
+        return roleMapper.getResourceUserRoleRepresentations(resource, qRole, qTerm);
     }
 
     @Transactional
@@ -152,8 +175,7 @@ public class ResourceController {
     @RequestMapping(value = "/{resourceId}/displayProperties", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
     public Map<PrismDisplayPropertyDefinition, String> getDisplayProperties(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam PrismScope propertiesScope) {
+            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam PrismScope propertiesScope) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getDisplayProperties(resource, propertiesScope);
     }
@@ -163,26 +185,26 @@ public class ResourceController {
     public List<ResourceRepresentationCreation> getResources(
             @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
             @RequestParam PrismScope childResourceScope, @RequestParam Optional<String> q) {
+        User user = userService.getCurrentUser();
         Resource resource = loadResource(resourceId, resourceDescriptor);
         return resourceService.getResources(resource, childResourceScope, q).stream()
-                .map(resourceMapper::getResourceRepresentationCreation).collect(toList());
+                .map(rr -> resourceMapper.getResourceRepresentationLocation(rr, user)).collect(toList());
     }
 
     @RequestMapping(value = "/{resourceId}/acceptingResources", method = RequestMethod.GET)
     @PreAuthorize("permitAll")
-    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(
-            @PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope, @RequestParam Optional<String> q) {
+    public List<ResourceRepresentationIdentity> getResourcesForWhichUserCanCreateResource(@PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam PrismScope responseScope, @RequestParam PrismScope creationScope,
+            @RequestParam Optional<PrismResourceContext> context, @RequestParam Optional<String> q) {
         Resource enclosingResource = loadResource(resourceId, resourceDescriptor);
         List<ResourceChildCreationDTO> resources = resourceService.getResourcesForWhichUserCanCreateResource(enclosingResource, responseScope, creationScope,
-                q.orElse(null));
+                context.orElse(null), q.orElse(null));
         return resources.stream().map(resourceMapper::getResourceRepresentationChildCreation).collect(Collectors.toList());
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResourceListRepresentation getResources(
-            @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter,
+    public ResourceListRepresentation getResources(@ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam(required = false) String filter,
             @RequestParam(required = false) String lastSequenceIdentifier) throws Exception {
         PrismScope resourceScope = resourceDescriptor.getResourceScope();
         ResourceListFilterDTO filterDTO = filter != null ? objectMapper.readValue(filter, ResourceListFilterDTO.class) : null;
@@ -223,8 +245,7 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-
-        List<PrismRole> roles = body.getRoles();
+        Set<PrismRole> roles = body.getRoles();
         roleService.createUserRoles(userService.getCurrentUser(), resource, user, body.getMessage(), roles.toArray(new PrismRole[roles.size()]));
     }
 
@@ -243,8 +264,7 @@ public class ResourceController {
             @RequestBody ResourceUserRolesRepresentation body) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         UserRepresentationSimple newUser = body.getUser();
-        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(),
-                resource, body.getMessage(), body.getRoles());
+        User user = userService.getOrCreateUserWithRoles(userService.getCurrentUser(), newUser, resource, body.getMessage(), body.getRoles());
         return userMapper.getUserRepresentationSimple(user, userService.getCurrentUser());
     }
 
@@ -270,7 +290,7 @@ public class ResourceController {
             @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = resourceService.getById(resourceDescriptor.getType(), resourceId);
         User user = userService.getById(userId);
-        roleService.setResourceOwner(resource, user);
+        resourceService.setResourceOwner(resource, user);
     }
 
     @RequestMapping(value = "{resourceId}/users/{userId}/{decision:accept|reject}", method = RequestMethod.POST)
@@ -286,8 +306,7 @@ public class ResourceController {
 
     @RequestMapping(value = "/{resourceId}/comments", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ActionOutcomeRepresentation executeAction(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
-            @Valid @RequestBody CommentDTO commentDTO) {
+    public ActionOutcomeRepresentation executeAction(@ModelAttribute ResourceDescriptor resourceDescriptor, @Valid @RequestBody CommentDTO commentDTO) {
         ActionOutcomeDTO actionOutcome = resourceService.executeAction(userService.getCurrentUser(), commentDTO);
         return actionOutcome == null ? null : actionMapper.getActionOutcomeRepresentation(actionOutcome);
     }
@@ -299,6 +318,7 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
     public List<UserRepresentationInvitationBounced> getBouncedOrUnverifiedUsers(
             @PathVariable Integer resourceId, UserListFilterDTO filterDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
@@ -306,11 +326,50 @@ public class ResourceController {
     }
 
     @RequestMapping(value = "/{resourceId}/bouncedUsers/{userId}", method = RequestMethod.PUT)
+    @PreAuthorize("isAuthenticated()")
     public void reassignBouncedOrUnverifiedUser(
             @PathVariable Integer resourceId, @PathVariable Integer userId,
-            @Valid @RequestBody UserCorrectionDTO userCorrectionDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
+            @Valid @RequestBody UserDTO userDTO, @ModelAttribute ResourceDescriptor resourceDescriptor) {
         Resource resource = loadResource(resourceId, resourceDescriptor);
-        userService.reassignBouncedOrUnverifiedUser(resource, userId, userCorrectionDTO);
+        userService.reassignBouncedOrUnverifiedUser(resource, userId, userDTO);
+    }
+
+    @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public List<MessageThreadRepresentation> getMessageThreads(@PathVariable Integer resourceId, @RequestParam(required = false) String q,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return messageMapper.getMessageThreadRepresentations(resource, q);
+    }
+
+    @RequestMapping(value = "{resourceId}/messageParticipants", method = RequestMethod.GET)
+    @PreAuthorize("isAuthenticated()")
+    public MessageThreadParticipantsRepresentationPotential getMessageThreadParticipants(@PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return messageMapper.getMessageThreadParticipantsRepresentation(resource);
+    }
+
+    @RequestMapping(value = "{resourceId}/threads", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void createMessageThread(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor,
+            @Valid @RequestBody MessageDTO messageDTO) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        messageService.createMessageThread(resource, messageDTO);
+    }
+
+    @RequestMapping(value = "{resourceId}/threads/{threadId}/messages", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void createMessage(@PathVariable Integer resourceId, @ModelAttribute ResourceDescriptor resourceDescriptor, @PathVariable Integer threadId,
+            @Valid @RequestBody MessageDTO messageDTO) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        messageService.createMessage(resource, threadId, messageDTO);
+    }
+
+    @RequestMapping(value = "{resourceId}/threads/{threadId}/view", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated()")
+    public void viewMessageThread(@RequestBody Map<String, Integer> body) {
+        messageService.viewMessageThread(body.get("latestUnreadMessageId"));
     }
 
     @ModelAttribute

@@ -11,9 +11,6 @@
    	${APPLICATION_CREATOR_FULL_NAME} has accepted the terms of offer:
 </p>
 
-<p><b>
-	${APPLICATION_OFFER_ACCEPTANCE}.
-</p></b>
 <ul>
 	<li><b>Project:</b> ${APPLICATION_POSITION_NAME}</li>
 	<li><b>Supervisor:</b> ${APPLICATION_MANAGER}</li>

@@ -5,6 +5,7 @@ import uk.co.alumeni.prism.services.lifecycle.helpers.AdvertServiceHelperAdvertT
 import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperDelete;
 import uk.co.alumeni.prism.services.lifecycle.helpers.DocumentServiceHelperExport;
 import uk.co.alumeni.prism.services.lifecycle.helpers.EmailBounceServiceHelper;
+import uk.co.alumeni.prism.services.lifecycle.helpers.MessageServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperActivity;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperInvitation;
 import uk.co.alumeni.prism.services.lifecycle.helpers.NotificationServiceHelperReminder;
@@ -13,6 +14,7 @@ import uk.co.alumeni.prism.services.lifecycle.helpers.PrismServiceHelper;
 import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperEscalation;
 import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperPending;
 import uk.co.alumeni.prism.services.lifecycle.helpers.StateServiceHelperPropagation;
+import uk.co.alumeni.prism.services.lifecycle.helpers.UserActivityCacheServiceHelper;
 
 public enum PrismMaintenanceTask {
 
@@ -27,7 +29,9 @@ public enum PrismMaintenanceTask {
     SYSTEM_EXPORT_DOCUMENT(DocumentServiceHelperExport.class), //
     SYSTEM_DELETE_DOCUMENT(DocumentServiceHelperDelete.class), //
     SYSTEM_EMAIL_BOUNCE_HANDLE(EmailBounceServiceHelper.class), //
-    SYSTEM_DELETE_USER_NOTIFICATION(NotificationServiceHelperUser.class);
+    SYSTEM_DELETE_USER_NOTIFICATION(NotificationServiceHelperUser.class), //
+    SYSTEM_NOTIFY_MESSAGES(MessageServiceHelper.class), //
+    SYSTEM_CACHE_USER_ACTIVITY(UserActivityCacheServiceHelper.class);
 
     private Class<? extends PrismServiceHelper> executor;
 

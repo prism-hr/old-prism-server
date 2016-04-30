@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.rest.dto.comment;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.CREATE_RESOURCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCategory.MESSAGE_RESOURCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 
 import org.joda.time.LocalDateTime;
 
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
@@ -23,7 +25,7 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 public class CommentDTO {
 
     private Integer id;
-    
+
     private Integer user;
 
     private Integer delegateUser;
@@ -54,6 +56,8 @@ public class CommentDTO {
     private BigDecimal rating;
 
     private Boolean interested;
+
+    private PrismInterviewState interviewState;
 
     @Valid
     private CommentInterviewAppointmentDTO interviewAppointment;
@@ -87,9 +91,6 @@ public class CommentDTO {
     private ResourceRelationCreationDTO resourceInvitation;
 
     @Valid
-    private ResourceCreationDTO resourceInvited;
-
-    @Valid
     private List<CommentAssignedUserDTO> assignedUsers;
 
     @Valid
@@ -111,7 +112,7 @@ public class CommentDTO {
     private List<DocumentDTO> documents;
 
     private Boolean submit;
-    
+
     public Integer getId() {
         return id;
     }
@@ -232,6 +233,14 @@ public class CommentDTO {
         this.interested = interested;
     }
 
+    public PrismInterviewState getInterviewState() {
+        return interviewState;
+    }
+
+    public void setInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
+    }
+
     public CommentInterviewAppointmentDTO getInterviewAppointment() {
         return interviewAppointment;
     }
@@ -336,14 +345,6 @@ public class CommentDTO {
         this.resourceInvitation = resourceInvitation;
     }
 
-    public ResourceCreationDTO getResourceInvited() {
-        return resourceInvited;
-    }
-
-    public void setResourceInvited(ResourceCreationDTO resourceInvited) {
-        this.resourceInvited = resourceInvited;
-    }
-
     public List<CommentAssignedUserDTO> getAssignedUsers() {
         return assignedUsers;
     }
@@ -412,7 +413,11 @@ public class CommentDTO {
         return action.getActionCategory().equals(CREATE_RESOURCE);
     }
 
-    public boolean isClaimComment() {
+    public boolean isEnquirerAssignmentComment() {
+        return action.getActionCategory().equals(MESSAGE_RESOURCE) && interested == true;
+    }
+
+    public boolean isCompleteComment() {
         return resource.getScope().getScopeCategory().equals(ORGANIZATION) && action.name().endsWith("_COMPLETE");
     }
 
@@ -425,6 +430,21 @@ public class CommentDTO {
         return this;
     }
     
+    public CommentDTO withResource(ResourceCreationDTO resource) {
+        this.resource = resource;
+        return this;
+    }
+
+    public CommentDTO withUser(Integer user) {
+        this.user = user;
+        return this;
+    }
+    
+    public CommentDTO withAction(PrismAction action) {
+        this.action = action;
+        return this;
+    }
+
     public CommentDTO withResource(ResourceCreationDTO resource) {
         this.resource = resource;
         return this;

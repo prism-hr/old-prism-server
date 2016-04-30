@@ -1,25 +1,24 @@
 package uk.co.alumeni.prism.rest.dto.profile;
 
-public class ProfileListFilterDTO {
+import java.util.List;
 
-    private String keyword;
+import uk.co.alumeni.prism.rest.dto.ListFilterDTO;
 
-    private String sequenceIdentifier;
+public class ProfileListFilterDTO extends ListFilterDTO {
 
-    public String getKeyword() {
-        return keyword;
+    private List<Integer> userIds;
+
+    public List<Integer> getUserIds() {
+        return userIds;
     }
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
+    public void setUserIds(List<Integer> userIds) {
+        this.userIds = userIds;
     }
 
-    public String getSequenceIdentifier() {
-        return sequenceIdentifier;
-    }
-
-    public void setSequenceIdentifier(String sequenceIdentifier) {
-        this.sequenceIdentifier = sequenceIdentifier;
+    public ProfileListFilterDTO withUserIds(List<Integer> userIds) {
+        this.userIds = userIds;
+        return this;
     }
 
 }

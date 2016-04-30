@@ -13,13 +13,14 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUserUnverifiedRepresentation;
 import uk.co.alumeni.prism.services.helpers.NotificationPropertyLoader;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
@@ -36,7 +37,7 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
 
         List<ResourceActivityRepresentation> resourceActivityRepresentations = userActivityRepresentation.getResourceActivities();
         List<AppointmentActivityRepresentation> appointmentActivityRepresentations = userActivityRepresentation.getAppointmentActivities();
-        List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities = userActivityRepresentation.getUnverifiedUserActivities();
+        List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities = userActivityRepresentation.getUnverifiedUserActivities();
         List<AdvertTargetRepresentation> advertTargetActivities = userActivityRepresentation.getAdvertTargetActivities();
 
         List<String> bullets = Lists.newLinkedList();
@@ -44,6 +45,7 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
         if (isNotEmpty(resourceActivityRepresentations)) {
             Integer actionCount = 0;
             Integer updateCount = 0;
+            Integer messageCount = 0;
             for (ResourceActivityRepresentation resourceActivityRepresentation : resourceActivityRepresentations) {
                 List<ActionActivityRepresentation> actionActivityRepresentations = resourceActivityRepresentation.getActions();
                 if (isNotEmpty(actionActivityRepresentations)) {
@@ -53,9 +55,10 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
                 }
 
                 Integer resourceUpdateCount = resourceActivityRepresentation.getUpdateCount();
-                if (resourceUpdateCount != null) {
-                    updateCount = updateCount + resourceUpdateCount;
-                }
+                updateCount = resourceUpdateCount == null ? updateCount : (updateCount + resourceUpdateCount);
+
+                Integer resourceMessageCount = resourceActivityRepresentation.getMessageCount();
+                messageCount = resourceMessageCount == null ? messageCount : (messageCount + resourceMessageCount);
             }
 
             if (actionCount > 0) {
@@ -65,6 +68,10 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
             if (updateCount > 0) {
                 bullets.add(updateCount.toString() + SPACE + displayPropertyLoader.loadLazy(SYSTEM_NOTIFICATION_UPDATES));
             }
+            
+            if (messageCount > 0) {
+                bullets.add(messageCount.toString() + SPACE + displayPropertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_NOTIFICATION_MESSAGES));
+            }
         }
 
         if (isNotEmpty(appointmentActivityRepresentations)) {
@@ -73,7 +80,7 @@ public class SystemActivitySummaryBuilder implements NotificationPropertyBuilder
 
         if (isNotEmpty(unverifiedUserActivities)) {
             Integer joinCount = 0;
-            for (ResourceUnverifiedUserRepresentation unverifiedUserActivity : unverifiedUserActivities) {
+            for (ResourceUserUnverifiedRepresentation unverifiedUserActivity : unverifiedUserActivities) {
                 joinCount = joinCount + unverifiedUserActivity.getUsers().size();
             }
             bullets.add(joinCount.toString() + SPACE + displayPropertyLoader.loadLazy(SYSTEM_NOTIFICATION_JOINS));

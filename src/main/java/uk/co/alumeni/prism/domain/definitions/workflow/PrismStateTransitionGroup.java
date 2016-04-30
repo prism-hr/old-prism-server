@@ -4,6 +4,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_REVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE_REVIEW_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_INTERVIEW_ARRANGEMENTS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
@@ -15,7 +16,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REVIEW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_COMPLETE_PARENT_APPROVAL_STAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.DEPARTMENT_TERMINATE;
@@ -65,12 +66,13 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_COMPLETION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVAL_PENDING_FEEDBACK;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_PARTNER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW;
@@ -79,6 +81,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_FEEDBACK;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_SCHEDULING;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_MESSAGING;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REJECTED_COMPLETED;
@@ -159,6 +162,11 @@ public enum PrismStateTransitionGroup {
                     .withStateTransitionNotifications(APPLICATION_CREATOR, APPLICATION_COMPLETE_NOTIFICATION)), //
 
     APPLICATION_COMPLETE_STATE_TRANSITION( //
+            new PrismStateTransition() //
+                    .withTransitionState(APPLICATION_MESSAGING) //
+                    .withTransitionAction(APPLICATION_SEND_MESSAGE) //
+                    .withReplicableSequenceClose() //
+                    .withStateTransitionEvaluation(APPLICATION_COMPLETED_STATE_OUTCOME), //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_REFERENCE) //
                     .withTransitionAction(APPLICATION_PROVIDE_REFERENCE) //
@@ -304,23 +312,23 @@ public enum PrismStateTransitionGroup {
     APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL_TRANSITION( //
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVAL_PENDING_COMPLETION) //
-                    .withTransitionAction(PrismAction.APPLICATION_COMPLETE_APPROVAL_STAGE) //
+                    .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
                     .withStateTransitionEvaluation(APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME),
             new PrismStateTransition() //
                     .withTransitionState(APPLICATION_APPROVAL_PENDING_FEEDBACK) //
-                    .withTransitionAction(PrismAction.SYSTEM_VIEW_APPLICATION_LIST) //
+                    .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_PROVIDED_HIRING_MANAGER_APPROVAL_OUTCOME)), //
 
     APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION( //
             new PrismStateTransition() //
-                    .withTransitionState(APPLICATION_APPROVED_COMPLETED) //
+                    .withTransitionState(APPLICATION_ACCEPTED) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME) //
                     .withStateTransitionNotifications(APPLICATION_PARENT_APPROVER_GROUP, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                     .withStateTransitionNotifications(APPLICATION_HIRING_MANAGER, APPLICATION_CONFIRM_OFFER_ACCEPTANCE_NOTIFICATION) //
                     .withRoleTransitions(APPLICATION_RETIRE_HIRING_MANAGER_GROUP, APPLICATION_RETIRE_APPOINTEE_GROUP), //
             new PrismStateTransition() //
-                    .withTransitionState(PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION) //
+                    .withTransitionState(APPLICATION_APPROVED_PENDING_OFFER_REVISION) //
                     .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST) //
                     .withStateTransitionEvaluation(APPLICATION_CONFIRMED_OFFER_ACCEPTANCE_OUTCOME)), //
 
@@ -385,8 +393,7 @@ public enum PrismStateTransitionGroup {
             new PrismStateTransition() //
                     .withTransitionState(PROJECT_DISABLED_COMPLETED) //
                     .withTransitionAction(PROJECT_VIEW_EDIT) //
-                    .withStateTransitionEvaluation(PROJECT_UPDATED_OUTCOME) //
-                    .withPropagatedActions(APPLICATION_TERMINATE)), //
+                    .withStateTransitionEvaluation(PROJECT_UPDATED_OUTCOME)), //
 
     PROJECT_ENDORSE_TRANSITION( //
             new PrismStateTransition() //
@@ -516,7 +523,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(DEPARTMENT_DISABLED_COMPLETED) //
                     .withTransitionAction(DEPARTMENT_VIEW_EDIT) //
                     .withStateTransitionEvaluation(DEPARTMENT_UPDATED_OUTCOME) //
-                    .withPropagatedActions(PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE)), //
+                    .withPropagatedActions(PROGRAM_TERMINATE, PROJECT_TERMINATE)), //
 
     INSTITUTION_CREATE_TRANSITION( //
             new PrismStateTransition() //
@@ -569,7 +576,7 @@ public enum PrismStateTransitionGroup {
                     .withTransitionState(INSTITUTION_DISABLED_COMPLETED) //
                     .withTransitionAction(INSTITUTION_VIEW_EDIT) //
                     .withStateTransitionEvaluation(INSTITUTION_UPDATED_OUTCOME) //
-                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE, APPLICATION_TERMINATE));
+                    .withPropagatedActions(DEPARTMENT_TERMINATE, PROGRAM_TERMINATE, PROJECT_TERMINATE));
 
     private PrismStateTransition[] stateTransitionTemplates;
 
@@ -633,7 +640,7 @@ public enum PrismStateTransitionGroup {
                         .withReplicableSequenceFilterSecondaryLocation(stateTransition.getReplicableSequenceFilterSecondaryLocation()) //
                         .withStateTransitionEvaluation(stateTransition.getStateTransitionEvaluation()) //
                         .withStateTransitionNotifications(
-                                definedStateTransitionNotifications.toArray(new PrismStateTransitionNotification[definedStateTransitionNotifications.size()]))
+                                definedStateTransitionNotifications.toArray(new PrismStateTransitionNotification[definedStateTransitionNotifications.size()])) //
                         .withRoleTransitions(definedRoleTransitions.toArray(new PrismRoleTransition[definedRoleTransitions.size()])) //
                         .withRoleTransitions(roleTransitions.toArray(new PrismRoleTransition[roleTransitions.size()])) //
                         .withStateTerminations(definedStateTerminations.toArray(new PrismStateTermination[definedStateTerminations.size()])) //

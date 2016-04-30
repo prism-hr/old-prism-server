@@ -17,9 +17,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminat
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_REFERENCE_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationTerminateSubmitted;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationSendMessageViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
@@ -42,7 +41,7 @@ public class PrismApplicationReference extends PrismWorkflowState {
                         .withStateTerminations(new PrismStateTermination() //
                                 .withTerminationState(APPLICATION_REFERENCE)))); //
 
-        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
+        stateActions.add(applicationSendMessageReference()); //
         stateActions.add(applicationEscalate(APPLICATION_REFERENCE_PENDING_COMPLETION));
 
         stateActions.add(applicationProvideReference() //
@@ -64,7 +63,6 @@ public class PrismApplicationReference extends PrismWorkflowState {
                                         .withTerminationState(APPLICATION_REFERENCE) //
                                         .withStateTerminationEvaluation(APPLICATION_REFERENCED_TERMINATION)))); //
 
-        stateActions.add(applicationTerminateReference());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditReference(state)); //
         stateActions.add(applicationWithdrawReference());
@@ -83,9 +81,10 @@ public class PrismApplicationReference extends PrismWorkflowState {
                 .withStateActionAssignments(APPLICATION_REFEREE);
     }
 
-    public static PrismStateAction applicationTerminateReference() {
-        return applicationTerminateSubmitted(APPLICATION_TERMINATE_REFERENCE_GROUP, //
-                APPLICATION_RETIRE_REFEREE_GROUP);
+    public static PrismStateAction applicationSendMessageReference() {
+        return applicationSendMessageViewerRecruiter() //
+                .withStateActionAssignment(APPLICATION_REFEREE, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_REFEREE); //
     }
 
     public static PrismStateAction applicationViewEditReference(PrismState state) {

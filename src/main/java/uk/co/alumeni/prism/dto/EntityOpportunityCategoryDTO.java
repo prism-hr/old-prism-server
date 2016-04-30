@@ -1,8 +1,13 @@
 package uk.co.alumeni.prism.dto;
 
+import static com.google.common.base.Objects.equal;
+import static org.apache.commons.lang.StringUtils.rightPad;
 import static org.apache.commons.lang3.ObjectUtils.compare;
+import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
+import static uk.co.alumeni.prism.PrismConstants.ORDERING_PRECISION;
+import static uk.co.alumeni.prism.PrismConstants.ZERO;
 
-import org.apache.commons.lang3.BooleanUtils;
+import java.math.BigDecimal;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 
@@ -16,7 +21,7 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
 
     private PrismOpportunityType opportunityType;
 
-    private Boolean prioritize;
+    private BigDecimal priority;
 
     private String sequenceIdentifier;
 
@@ -44,12 +49,12 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
         this.opportunityType = opportunityType;
     }
 
-    public Boolean getPrioritize() {
-        return prioritize;
+    public BigDecimal getPriority() {
+        return priority;
     }
 
-    public void setPrioritize(Boolean prioritize) {
-        this.prioritize = prioritize;
+    public void setPriority(BigDecimal priority) {
+        this.priority = priority;
     }
 
     public String getSequenceIdentifier() {
@@ -75,12 +80,13 @@ public class EntityOpportunityCategoryDTO<T extends EntityOpportunityCategoryDTO
             return false;
         }
         T other = (T) object;
-        return id.equals(other.getId());
+        return equal(id, other.getId());
     }
 
     @Override
     public String toString() {
-        return (BooleanUtils.toBoolean(prioritize) ? 1 : 0) + sequenceIdentifier;
+        String prefix = (priority == null ? new BigDecimal(0) : priority).toPlainString().replace(FULL_STOP, "");
+        return rightPad(prefix, (ORDERING_PRECISION + 1), ZERO) + sequenceIdentifier;
     }
 
     @Override

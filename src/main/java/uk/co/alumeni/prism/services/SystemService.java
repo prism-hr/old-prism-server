@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.services;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_INITIALIZED_SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityType.getSystemOpportunityType;
@@ -50,6 +51,7 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionAssignment;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateActionRecipient;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTermination;
@@ -71,6 +73,7 @@ import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
+import uk.co.alumeni.prism.domain.workflow.StateActionRecipient;
 import uk.co.alumeni.prism.domain.workflow.StateDurationDefinition;
 import uk.co.alumeni.prism.domain.workflow.StateGroup;
 import uk.co.alumeni.prism.domain.workflow.StateTermination;
@@ -81,11 +84,13 @@ import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.exceptions.DeduplicationException;
 import uk.co.alumeni.prism.exceptions.IntegrationException;
 import uk.co.alumeni.prism.exceptions.WorkflowConfigurationException;
+import uk.co.alumeni.prism.mapping.StaticDataMapper;
 import uk.co.alumeni.prism.rest.dto.DisplayPropertyConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO;
 import uk.co.alumeni.prism.rest.dto.StateDurationConfigurationDTO.StateDurationConfigurationValueDTO;
 import uk.co.alumeni.prism.rest.dto.WorkflowConfigurationDTO;
+import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 import uk.co.alumeni.prism.utils.PrismFileUtils;
@@ -160,10 +165,16 @@ public class SystemService {
     private RoleService roleService;
 
     @Inject
+    private StaticDataMapper staticDataMapper;
+
+    @Inject
     private ScopeService scopeService;
 
     @Inject
     private StateService stateService;
+
+    @Inject
+    private UserAccountService userAccountService;
 
     @Inject
     private UserService userService;
@@ -261,6 +272,13 @@ public class SystemService {
         initializeDisplayPropertyConfigurations(getSystem());
     }
 
+    public void initializeProfileCompleteness() throws Exception {
+        logger.info("Initializing user profile completeness");
+        for (Integer userAccount : userService.getUserAccounts()) {
+            userAccountService.setUserAccountCompleteScore(userAccount);
+        }
+    }
+
     public void initializeSectionCompleteness() throws Exception {
         logger.info("Initializing advert section completeness");
         for (PrismScope resourceScope : advertScopes) {
@@ -274,8 +292,13 @@ public class SystemService {
     public void initializeAddressCompleteness() throws Exception {
         logger.info("Initializing address location completeness");
         for (Integer addressId : addressService.getAddressesWithNoLocationParts()) {
-            addressService.geocodeAddress(addressId);
+            addressService.geocodeAddressAsEstablishment(addressId);
         }
+    }
+
+    public void initializeStaticData() {
+        logger.info("Initializing static data");
+        staticDataMapper.getData();
     }
 
     public void initializePropertyLoader() {
@@ -356,25 +379,36 @@ public class SystemService {
         entityService.deleteAll(ActionRedaction.class);
 
         for (PrismAction prismAction : PrismAction.values()) {
-            Scope scope = scopeService.getById(prismAction.getScope());
-            Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
-                    .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction())
-                    .withTransitionAction(prismAction.isTransitionAction())
-                    .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
-                    .withDocumentCirculationAction(prismAction.isDocumentCirculationAction())
-                    .withReplicableUserAssignmentAction(prismAction.isReplicableUserAssignmentAction()).withPartnershipState(prismAction.getPartnershipState())
-                    .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
-            Action action = entityService.createOrUpdate(transientAction);
-            action.getRedactions().clear();
+            PrismScope prismScope = prismAction.getScope();
+            if (prismScope != null) {
+                Scope scope = scopeService.getById(prismScope);
+                Action transientAction = new Action().withId(prismAction).withSystemInvocationOnly(prismAction.isSystemInvocationOnly())
+                        .withActionCategory(prismAction.getActionCategory()).withRatingAction(prismAction.isRatingAction()).withTransitionAction(false)
+                        .withDeclinableAction(prismAction.isDeclinableAction()).withVisibleAction(prismAction.isVisibleAction())
+                        .withDocumentCirculationAction(prismAction.isDocumentCirculationAction())
+                        .withReplicableUserAssignmentAction(prismAction.isReplicableUserAssignmentAction())
+                        .withPartnershipState(prismAction.getPartnershipState())
+                        .withPartnershipTransitionState(prismAction.getPartnershipTransitionState()).withScope(scope);
+                Action action = entityService.createOrUpdate(transientAction);
+                action.getRedactions().clear();
 
-            for (PrismActionRedaction prismActionRedaction : prismAction.getRedactions()) {
-                Role role = roleService.getById(prismActionRedaction.getRole());
-                ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
-                        .withRedactionType(prismActionRedaction.getRedactionType());
-                ActionRedaction actionRedaction = entityService.createOrUpdate(transientActionRedaction);
-                action.getRedactions().add(actionRedaction);
+                for (PrismActionRedaction prismActionRedaction : prismAction.getActionRedactions()) {
+                    Role role = roleService.getById(prismActionRedaction.getRole());
+                    ActionRedaction transientActionRedaction = new ActionRedaction().withAction(action).withRole(role)
+                            .withRedactionType(prismActionRedaction.getRedactionType());
+                    ActionRedaction actionRedaction = entityService.createOrUpdate(transientActionRedaction);
+                    action.getRedactions().add(actionRedaction);
+                }
             }
         }
+
+        for (PrismAction prismAction : PrismAction.values()) {
+            PrismAction prismActionDelegated = prismAction.getDelegatedAction();
+            if (prismActionDelegated != null) {
+                actionService.getById(prismAction).setDelegatedAction(actionService.getById(prismActionDelegated));
+            }
+        }
+
     }
 
     private void initializeStateGroups() throws DeduplicationException {
@@ -445,7 +479,8 @@ public class SystemService {
 
     private System initializeSystemResource() throws DeduplicationException {
         System system = getSystem();
-        User systemUser = userService.getOrCreateUser(systemUserFirstName, systemUserLastName, systemUserEmail);
+        User systemUser = userService.getOrCreateUser(new UserDTO().withFirstName(systemUserFirstName).withLastName(systemUserLastName)
+                .withEmail(systemUserEmail));
         DateTime baseline = new DateTime();
 
         if (system == null) {
@@ -524,7 +559,7 @@ public class SystemService {
         actionService.setStateGroupTransitionActions();
 
         stateService.setRepeatableStateGroups();
-        stateService.setHiddenStates();
+        stateService.setHiddenPublishedStates();
         stateService.setParallelizableStates();
 
         roleService.setCreatorRoles();
@@ -554,16 +589,27 @@ public class SystemService {
     private void initializeStateActionAssignments(PrismStateAction prismStateAction, StateAction stateAction) {
         for (PrismStateActionAssignment prismStateActionAssignment : prismStateAction.getStateActionAssignments()) {
             Role role = roleService.getById(prismStateActionAssignment.getRole());
-            StateActionAssignment assignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
+            StateActionAssignment stateActionAssignment = new StateActionAssignment().withStateAction(stateAction).withRole(role)
                     .withExternalMode(prismStateActionAssignment.getExternalMode()).withActionEnhancement(prismStateActionAssignment.getActionEnhancement());
-            entityService.save(assignment);
-            stateAction.getStateActionAssignments().add(assignment);
+            entityService.save(stateActionAssignment);
+            stateAction.getStateActionAssignments().add(stateActionAssignment);
+            initializeStateActionRecipients(prismStateActionAssignment, stateActionAssignment);
+        }
+    }
+
+    private void initializeStateActionRecipients(PrismStateActionAssignment prismStateActionAssignment, StateActionAssignment stateActionAssignment) {
+        for (PrismStateActionRecipient prismStateActionRecipient : prismStateActionAssignment.getStateActionRecipients()) {
+            Role recipientRole = roleService.getById(prismStateActionRecipient.getRole());
+            StateActionRecipient stateActionRecipient = new StateActionRecipient().withStateActionAssignment(stateActionAssignment)
+                    .withRole(recipientRole).withExternalMode(prismStateActionRecipient.getExternalMode());
+            entityService.save(stateActionRecipient);
+            stateActionAssignment.addStateActionRecipient(stateActionRecipient);
         }
     }
 
     private void initializeStateTransitions(PrismStateAction prismStateAction, StateAction stateAction) {
         Set<PrismStateTransition> stateTransitions = prismStateAction.getStateTransitions();
-        if (stateTransitions.isEmpty()) {
+        if (isEmpty(stateTransitions)) {
             stateTransitions.add(new PrismStateTransition().withTransitionState(stateAction.getState().getId()) //
                     .withTransitionAction(stateAction.getAction().getId()));
         }
@@ -605,7 +651,7 @@ public class SystemService {
     private void initializeStateTransitionNotifications(PrismStateTransition prismStateTransition, StateTransition stateTransition) {
         for (PrismStateTransitionNotification prismStateActionNotification : prismStateTransition.getStateTransitionNotifications()) {
             Role role = roleService.getById(prismStateActionNotification.getRole());
-            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotificationDefinition());
+            NotificationDefinition notificationDefinition = notificationService.getById(prismStateActionNotification.getNotificationdDefinition());
             StateTransitionNotification stateTransitionNotification = new StateTransitionNotification().withStateAction(stateTransition).withRole(role)
                     .withNotificationDefinition(notificationDefinition);
             entityService.save(stateTransitionNotification);

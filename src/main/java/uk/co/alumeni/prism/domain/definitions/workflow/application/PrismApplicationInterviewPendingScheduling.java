@@ -11,11 +11,11 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationCompleteInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationConfirmInterviewArrangements;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationProvideInterviewAvailability;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationSendMessageInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationUpdateInterviewAvailability;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduling;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -31,7 +31,7 @@ public class PrismApplicationInterviewPendingScheduling extends PrismWorkflowSta
         stateActions.add(applicationConfirmInterviewArrangements() //
                 .withRaisesUrgentFlag()); //
 
-        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
+        stateActions.add(applicationSendMessageInterviewScheduling()); //
 
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, APPLICATION_RETIRE_INTERVIEWEE_GROUP,
                 APPLICATION_RETIRE_INTERVIEWER_GROUP));

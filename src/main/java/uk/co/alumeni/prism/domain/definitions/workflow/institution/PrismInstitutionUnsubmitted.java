@@ -1,9 +1,12 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.institution;
 
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.INSTITUTION_COMPLETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.INSTITUTION_CREATE_ADMINISTRATOR_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.INSTITUTION_COMPLETE_TRANSITION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateDepartment;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProgram;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProject;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
 
 public class PrismInstitutionUnsubmitted extends PrismWorkflowState {
@@ -11,13 +14,13 @@ public class PrismInstitutionUnsubmitted extends PrismWorkflowState {
     @Override
     protected void setStateActions() {
         stateActions.add(new PrismStateAction() //
-                .withAction(PrismAction.INSTITUTION_COMPLETE) //
-                .withStateTransitions(PrismStateTransitionGroup.INSTITUTION_COMPLETE_TRANSITION //
-                        .withRoleTransitions(PrismRoleTransitionGroup.INSTITUTION_CREATE_ADMINISTRATOR_GROUP)));
+                .withAction(INSTITUTION_COMPLETE) //
+                .withStateTransitions(INSTITUTION_COMPLETE_TRANSITION //
+                        .withRoleTransitions(INSTITUTION_CREATE_ADMINISTRATOR_GROUP)));
 
-        stateActions.add(PrismInstitutionWorkflow.institutionCreateDepartment());
-        stateActions.add(PrismInstitutionWorkflow.institutionCreateProgram());
-        stateActions.add(PrismInstitutionWorkflow.institutionCreateProject());
+        stateActions.add(institutionCreateDepartment());
+        stateActions.add(institutionCreateProgram());
+        stateActions.add(institutionCreateProject());
     }
 
 }

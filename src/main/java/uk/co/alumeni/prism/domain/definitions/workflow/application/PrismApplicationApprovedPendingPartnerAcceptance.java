@@ -10,13 +10,13 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUT
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.INSTITUTION_APPROVER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_APPOINTEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_CREATE_HIRING_MANAGER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionEvaluation.APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationCompleteApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproved.applicationSendMessageApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEdit;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
@@ -29,8 +29,7 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
     protected void setStateActions() {
         stateActions.add(applicationCommentViewerRecruiter()); //
         stateActions.add(applicationCompleteApproved(state)); //
-        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
-        stateActions.add(applicationEscalate(APPLICATION_APPROVED_COMPLETED)); //
+        stateActions.add(applicationEscalate(APPLICATION_ACCEPTED)); //
 
         stateActions.add(new PrismStateAction() //
                 .withAction(APPLICATION_PROVIDE_PARTNER_APPROVAL) //
@@ -47,7 +46,7 @@ public class PrismApplicationApprovedPendingPartnerAcceptance extends PrismWorkf
                                 .withStateTransitionEvaluation(APPLICATION_PROVIDED_PARTNER_APPROVAL_OUTCOME) //
                                 .withRoleTransitions(APPLICATION_CREATE_HIRING_MANAGER_GROUP, APPLICATION_CREATE_APPOINTEE_GROUP)));
 
-        stateActions.add(applicationEscalate(APPLICATION_APPROVED_COMPLETED)); //
+        stateActions.add(applicationSendMessageApproved()); //
         stateActions.add(applicationViewEdit()); //
     }
 

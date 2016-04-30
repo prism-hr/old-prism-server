@@ -2,7 +2,7 @@ package uk.co.alumeni.prism.rest.representation.resource;
 
 import java.util.List;
 
-public abstract class ResourceOpportunityRepresentationClient extends ResourceOpportunityRepresentation implements ResourceRepresentationClient {
+public abstract class ResourceOpportunityRepresentationClient extends ResourceOpportunityRepresentation implements ResourceParentRepresentationClient {
 
     private List<ResourceCountRepresentation> counts;
 

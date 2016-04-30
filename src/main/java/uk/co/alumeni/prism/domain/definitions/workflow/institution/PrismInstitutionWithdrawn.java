@@ -6,7 +6,7 @@ public class PrismInstitutionWithdrawn extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(PrismInstitutionWorkflow.institutionEmailCreatorUnnapproved());
+		stateActions.add(PrismInstitutionWorkflow.institutionSendMessageUnnapproved());
 		stateActions.add(PrismInstitutionWorkflow.institutionViewEditInactive());
 	}
 

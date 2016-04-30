@@ -7,7 +7,8 @@ public enum PrismRejectionReason implements PrismLocalizableDefinition {
     APPLICATION_INFORMATION,
     APPLICATION_INTERVIEW_ATTENDANCE,
     APPLICATION_WITHDRAWAL,
-    PARTNER;
+    PARTNER, 
+    ELIGIBILITY;
 
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {

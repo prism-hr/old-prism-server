@@ -39,7 +39,7 @@
           p:configLocation="classpath:ehcache.xml"/>
 
     <import resource="data-context.xml"/>
-    <import resource="scheduler-context.xml"/>
+    <import resource="executor-context.xml"/>
     <import resource="security-context.xml"/>
     <import resource="mvc-context.xml"/>
 

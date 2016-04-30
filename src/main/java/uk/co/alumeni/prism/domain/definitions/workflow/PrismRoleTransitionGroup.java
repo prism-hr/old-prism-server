@@ -77,7 +77,7 @@ public enum PrismRoleTransitionGroup {
 
     APPLICATION_PROVIDE_REFERENCE_GROUP( //
             new PrismRoleTransition() //
-                    .withRole(PrismRole.APPLICATION_REFEREE) //
+                    .withRole(APPLICATION_REFEREE) //
                     .withTransitionType(UPDATE) //
                     .withTransitionRole(APPLICATION_VIEWER_REFEREE) //
                     .withRestrictToOwner()), //

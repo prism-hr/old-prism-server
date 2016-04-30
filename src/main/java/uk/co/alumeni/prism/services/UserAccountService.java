@@ -5,6 +5,7 @@ import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_SHARED;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.PROFILE_UNSHARED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
+import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getMD5;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
@@ -25,6 +26,7 @@ import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAccountUpdate;
+import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
@@ -34,7 +36,6 @@ import uk.co.alumeni.prism.rest.dto.auth.OauthUserDefinition;
 import uk.co.alumeni.prism.rest.dto.comment.CommentDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserRegistrationDTO;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
-import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -86,6 +87,10 @@ public class UserAccountService {
     @Inject
     private ApplicationContext applicationContext;
 
+    public UserAccount getById(Integer id) {
+        return entityService.getById(UserAccount.class, id);
+    }
+
     public User getOrCreateUserAccountExternal(OauthLoginDTO oauthLoginDTO, HttpSession session) {
         OauthAssociationType oauthAssociationType = oauthLoginDTO.getAssociationType();
         OauthUserDefinition oauthUserDefinition = getLinkedinUserDefinition(oauthLoginDTO);
@@ -118,7 +123,7 @@ public class UserAccountService {
             }
         }
 
-        user = userService.getOrCreateUser(userRegistrationDTO.getFirstName(), userRegistrationDTO.getLastName(), userRegistrationDTO.getEmail());
+        user = userService.getOrCreateUser(userRegistrationDTO);
 
         if (userRegistrationDTO.getPassword() == null) {
             OauthUserDefinition oauthUserDefinition = (OauthUserDefinition) session.getAttribute(OAUTH_USER_TO_CONFIRM);
@@ -146,7 +151,7 @@ public class UserAccountService {
     }
 
     public void updateUserAccount(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
-        DateTime baseline = DateTime.now();
+        DateTime baseline = now();
         userAccount.setUpdatedTimestamp(baseline);
         activityService.setSequenceIdentifier(userAccount, baseline);
         createUserAccountUpdate(userAccount, message);
@@ -166,12 +171,66 @@ public class UserAccountService {
         user.getUserRoles().stream().forEach(userRole -> activityService.setSequenceIdentifier(userRole, baseline));
     }
 
+    public void setUserAccountCompleteScore(Integer userAccountId) {
+        setUserAccountCompleteScore(getById(userAccountId));
+    }
+
+    private void setUserAccountCompleteScore(UserAccount userAccount) {
+        Integer completeScore = 0;
+        if (!(userAccount.getLinkedinImageUrl() == null && userAccount.getPortraitImage() == null)) {
+            completeScore++;
+        }
+
+        if (userAccount.getPersonalDetail() != null) {
+            completeScore++;
+        }
+
+        if (userAccount.getAddress() != null) {
+            completeScore++;
+        }
+
+        if (userAccount.getQualifications().size() > 0) {
+            completeScore++;
+        }
+
+        if (userAccount.getEmploymentPositions().size() > 0) {
+            completeScore++;
+        }
+
+        if (userAccount.getAwards().size() > 0) {
+            completeScore++;
+        }
+
+        if (userAccount.getReferees().size() > 0) {
+            completeScore++;
+        }
+
+        UserDocument userDocument = userAccount.getDocument();
+        if (userDocument != null) {
+            if (userDocument.getPersonalSummary() != null) {
+                completeScore++;
+            }
+
+            if (userDocument.getCv() != null) {
+                completeScore++;
+            }
+        }
+
+        if (userAccount.getAdditionalInformation() != null) {
+            completeScore++;
+        }
+
+        userAccount.setCompleteScore(completeScore);
+    }
+
     private void createUserAccountUpdate(UserAccount userAccount, PrismDisplayPropertyDefinition message) {
         UserAccountUpdate update = new UserAccountUpdate().withUserAccount(userAccount)
                 .withContent(applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem()).loadLazy(message))
                 .withCreatedTimestamp(now());
         entityService.save(update);
-        userAccount.getUpdates().add(update);
+        userAccount.addUpdate(update);
+
+        setUserAccountCompleteScore(userAccount);
         update.setSequenceIdentifier(Long.toString(update.getCreatedTimestamp().getMillis()) + String.format("%010d", update.getId()));
     }
 
@@ -251,10 +310,10 @@ public class UserAccountService {
     }
 
     private UserAccount createUserAccount(User user, String password, boolean enableAccount) {
-        DateTime baseline = DateTime.now();
-        String encryptedPassword = password != null ? PrismEncryptionUtils.getMD5(password) : null;
+        DateTime baseline = now();
+        String encryptedPassword = password != null ? getMD5(password) : null;
         UserAccount userAccount = new UserAccount().withSendActivityNotification(true).withPassword(encryptedPassword).withUpdatedTimestamp(baseline)
-                .withEnabled(enableAccount).withShared(true);
+                .withEnabled(enableAccount).withShared(true).withCompleteScore(0);
         entityService.save(userAccount);
         user.setUserAccount(userAccount);
         if (enableAccount) {

@@ -3,8 +3,11 @@ package uk.co.alumeni.prism.domain.definitions.workflow;
 import static com.google.common.base.CaseFormat.LOWER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static com.google.common.base.CaseFormat.UPPER_UNDERSCORE;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static java.time.Month.APRIL;
 import static java.time.Month.OCTOBER;
+import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory.EXPERIENCE;
@@ -16,11 +19,11 @@ import static uk.co.alumeni.prism.domain.definitions.PrismResourceContext.UNIVER
 
 import java.time.Month;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import jersey.repackaged.com.google.common.collect.Maps;
 import uk.co.alumeni.prism.api.model.advert.EnumDefinition;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -56,8 +59,6 @@ import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.Institu
 import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ProgramPostprocessor;
 import uk.co.alumeni.prism.workflow.transition.processors.postprocessors.ProjectPostprocessor;
 import uk.co.alumeni.prism.workflow.transition.processors.preprocessors.ApplicationPreprocessor;
-
-import com.google.common.collect.Sets;
 
 public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.PrismScope>, PrismLocalizableDefinition {
 
@@ -107,9 +108,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
 
     private PrismScopeDefinition definition;
 
-    private static Map<PrismScope, PrismScope> parentScopes = Maps.newHashMap();
+    private static Map<PrismScope, PrismScope> parentScopes = newHashMap();
 
-    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = Maps.newHashMap();
+    private static Map<Entry<PrismScope, PrismResourceContext>, PrismScopeCreationDefault> defaults = newHashMap();
 
     static {
         PrismScope parentScope = null;
@@ -201,9 +202,9 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
     }
 
     public static Set<PrismResourceContext> getResourceContexts(String opportunityCategories) {
-        Set<PrismResourceContext> contexts = Sets.newLinkedHashSet();
+        Set<PrismResourceContext> contexts = newLinkedHashSet();
         if (isNotEmpty(opportunityCategories)) {
-            for(String categoryString : opportunityCategories.split("\\|")) {
+            for (String categoryString : opportunityCategories.split("\\|")) {
                 PrismOpportunityCategory opportunityCategory = PrismOpportunityCategory.valueOf(categoryString);
                 defaults.keySet().forEach(key -> {
                     if (contains(defaults.get(key).getDefaultOpportunityCategories(), opportunityCategory)) {
@@ -213,6 +214,17 @@ public enum PrismScope implements EnumDefinition<uk.co.alumeni.prism.enums.Prism
             }
         }
         return contexts;
+    }
+
+    public List<PrismScope> getEnclosingScopes() {
+        int thisOrdinal = this.ordinal();
+        List<PrismScope> enclosingScopes = newArrayList();
+        for (PrismScope scope : PrismScope.values()) {
+            if (scope.ordinal() <= thisOrdinal) {
+                enclosingScopes.add(scope);
+            }
+        }
+        return enclosingScopes;
     }
 
     private static class PrismScopeDefinition {

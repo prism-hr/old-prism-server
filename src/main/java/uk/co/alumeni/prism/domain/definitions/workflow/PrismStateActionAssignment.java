@@ -1,5 +1,10 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Sets.newHashSet;
+
+import java.util.Set;
+
 import com.google.common.base.Objects;
 
 public class PrismStateActionAssignment {
@@ -9,6 +14,8 @@ public class PrismStateActionAssignment {
     private Boolean externalMode = false;
 
     private PrismActionEnhancement actionEnhancement;
+
+    private Set<PrismStateActionRecipient> stateActionRecipients = newHashSet();
 
     public PrismRole getRole() {
         return role;
@@ -20,6 +27,10 @@ public class PrismStateActionAssignment {
 
     public PrismActionEnhancement getActionEnhancement() {
         return actionEnhancement;
+    }
+
+    public Set<PrismStateActionRecipient> getStateActionRecipients() {
+        return stateActionRecipients;
     }
 
     public PrismStateActionAssignment withRole(PrismRole role) {
@@ -42,6 +53,16 @@ public class PrismStateActionAssignment {
         return this;
     }
 
+    public PrismStateActionAssignment addRecipient(PrismRole role) {
+        this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role));
+        return this;
+    }
+
+    public PrismStateActionAssignment addPartnerRecipient(PrismRole role) {
+        this.stateActionRecipients.add(new PrismStateActionRecipient().withRole(role).withExternalMode());
+        return this;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hashCode(role, externalMode, actionEnhancement);
@@ -56,8 +77,7 @@ public class PrismStateActionAssignment {
             return false;
         }
         final PrismStateActionAssignment other = (PrismStateActionAssignment) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(externalMode, other.getExternalMode())
-                && Objects.equal(actionEnhancement, other.getActionEnhancement());
+        return equal(role, other.getRole()) && equal(externalMode, other.getExternalMode()) && equal(actionEnhancement, other.getActionEnhancement());
     }
 
 }

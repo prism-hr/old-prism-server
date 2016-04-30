@@ -1,13 +1,11 @@
 package uk.co.alumeni.prism.domain.definitions.workflow.application;
 
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_EMAIL_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ESCALATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_TERMINATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_SEND_MESSAGE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPLOAD_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_VIEW_EDIT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_WITHDRAW;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_APPROVER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_CREATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement.APPLICATION_VIEW_AS_PARTNER;
@@ -30,20 +28,20 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PROJECT_VIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_VIEWER_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.DEPARTMENT_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_STAFF_GROUP;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.PARTNERSHIP_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_PROVIDE_REFERENCE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_UPDATE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_REFERENCE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTerminationEvaluation.APPLICATION_REFERENCED_TERMINATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_COMPLETE_STATE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_ESCALATE_TRANSITION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_TERMINATE_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_WITHDRAW_TRANSITION;
 
 import java.util.List;
 
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup;
@@ -62,15 +60,14 @@ public class PrismApplicationWorkflow {
                 .withAction(APPLICATION_COMMENT)
                 .withStateActionAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
                 .withStateActionAssignments(APPLICATION_VIEWER_REFEREE) //
-                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withPartnerStateActionAssignments(INSTITUTION_APPROVER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR) //
-                .withPartnerStateActionAssignments(DEPARTMENT_APPROVER); //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP)
+                .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP)
+                .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP); //
     }
 
     public static PrismStateAction applicationCommentViewerRecruiter() {
         return applicationComment() //
-                .withStateActionAssignments(PrismRole.APPLICATION_VIEWER_RECRUITER);
+                .withStateActionAssignments(APPLICATION_VIEWER_RECRUITER);
     }
 
     public static PrismStateAction applicationCompleteState(PrismAction action, PrismState state, PrismRoleGroup assignees) {
@@ -86,20 +83,24 @@ public class PrismApplicationWorkflow {
                         .withRoleTransitionsAndExclusions(applicationNextStateExclusions(state), roleTransitions));
     }
 
-    public static PrismStateAction applicationEmailCreator() {
+    public static PrismStateAction applicationSendMessage() {
         return new PrismStateAction() //
-                .withAction(APPLICATION_EMAIL_CREATOR) //
-                .withStateActionAssignments(APPLICATION_PARENT_VIEWER_GROUP) //
-                .withStateActionAssignments(APPLICATION_VIEWER_REFEREE) //
-                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR) //
-                .withPartnerStateActionAssignments(INSTITUTION_APPROVER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR) //
-                .withPartnerStateActionAssignments(DEPARTMENT_APPROVER);
+                .withAction(APPLICATION_SEND_MESSAGE) //
+                .withStateActionAssignment(APPLICATION_VIEWER_REFEREE, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_VIEWER_REFEREE) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CREATOR) //
+                .withStateActionAssignments(APPLICATION_PARENT_VIEWER_GROUP, APPLICATION_PARENT_VIEWER_GROUP) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, APPLICATION_CREATOR) //
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, APPLICATION_CREATOR) //
+                .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, APPLICATION_CREATOR) //
+                .withPartnerStateActionRecipientAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, PARTNERSHIP_ADMINISTRATOR_GROUP);
     }
 
-    public static PrismStateAction applicationEmailCreatorViewerRecruiter() {
-        return applicationEmailCreator() //
-                .withStateActionAssignments(APPLICATION_VIEWER_RECRUITER);
+    public static PrismStateAction applicationSendMessageViewerRecruiter() {
+        return applicationSendMessage() //
+                .withStateActionAssignment(APPLICATION_VIEWER_RECRUITER, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_VIEWER_RECRUITER);
     }
 
     public static PrismStateAction applicationEscalate(PrismState state) {
@@ -121,29 +122,6 @@ public class PrismApplicationWorkflow {
                         .withTransitionState(state) //
                         .withTransitionAction(APPLICATION_ESCALATE) //
                         .withRoleTransitions(roleTransitions));
-    }
-
-    public static PrismStateAction applicationTerminateAbstract() {
-        return new PrismStateAction() //
-                .withAction(APPLICATION_TERMINATE);
-    }
-
-    public static PrismStateAction applicationTerminateUnsubmitted() {
-        return applicationTerminateAbstract()
-                .withStateTransitions(new PrismStateTransition() //
-                        .withTransitionState(APPLICATION_WITHDRAWN_COMPLETED_UNSUBMITTED) //
-                        .withTransitionAction(SYSTEM_VIEW_APPLICATION_LIST));
-    }
-
-    public static PrismStateAction applicationTerminateSubmitted() {
-        return applicationTerminateAbstract() //
-                .withStateTransitions(APPLICATION_TERMINATE_TRANSITION);
-    }
-
-    public static PrismStateAction applicationTerminateSubmitted(PrismStateTerminationGroup stateTerminations, PrismRoleTransitionGroup... roleTransitions) {
-        return applicationTerminateAbstract() //
-                .withStateTransitions(APPLICATION_TERMINATE_TRANSITION //
-                        .withStateTerminationsAndRoleTransitions(stateTerminations, roleTransitions));
     }
 
     public static PrismStateAction applicationUploadReference(PrismState state) {
@@ -184,10 +162,9 @@ public class PrismApplicationWorkflow {
                 .withStateActionAssignments(PROJECT_VIEWER, APPLICATION_VIEW_AS_RECRUITER)
                 .withStateActionAssignments(APPLICATION_CREATOR, APPLICATION_VIEW_AS_CREATOR) //
                 .withStateActionAssignments(APPLICATION_VIEWER_REFEREE, APPLICATION_VIEW_AS_REFEREE) //
-                .withPartnerStateActionAssignments(INSTITUTION_ADMINISTRATOR, APPLICATION_VIEW_AS_PARTNER) //
-                .withPartnerStateActionAssignments(INSTITUTION_APPROVER, APPLICATION_VIEW_AS_PARTNER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_ADMINISTRATOR, APPLICATION_VIEW_AS_PARTNER) //
-                .withPartnerStateActionAssignments(DEPARTMENT_APPROVER, APPLICATION_VIEW_AS_PARTNER);
+                .withPartnerStateActionAssignments(PARTNERSHIP_ADMINISTRATOR_GROUP, APPLICATION_VIEW_AS_PARTNER) //
+                .withPartnerStateActionAssignments(DEPARTMENT_STAFF_GROUP, APPLICATION_VIEW_AS_PARTNER) //
+                .withPartnerStateActionAssignments(INSTITUTION_STAFF_GROUP, APPLICATION_VIEW_AS_PARTNER);
     }
 
     public static PrismStateAction applicationViewEditWithViewerRecruiter(PrismState state) {

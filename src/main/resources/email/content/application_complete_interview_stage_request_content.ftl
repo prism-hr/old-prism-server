@@ -8,8 +8,8 @@
 </b></p>
 
 <p>
-    All of the interviewers have provided their interview feedback. Follow the link below to advance the 
-    application to the next stage of consideration.
+    The interview stage is now due for completion. Follow the link below to advance the application to 
+    the next stage of consideration.
 </p>
 
 ${ACTION_COMPLETE}

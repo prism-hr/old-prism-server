@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.application;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.collections.CollectionUtils.containsAny;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.DEPARTMENT_ADMINISTRATOR;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.ResourceService;
@@ -38,8 +40,11 @@ public class ApplicationConfirmedOfferResolver implements StateTransitionResolve
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
         if (isTrue(applicationService.getApplicationOnCourse(resource))) {
-            List<Integer> creatorDepartments = resourceService.getResourcesForWhichUserHasRoles(resource.getUser(), DEPARTMENT_STUDENT, DEPARTMENT_STUDENT_UNVERIFIED);
-            List<Integer> recruiterDepartment = resourceService.getResourcesForWhichUserHasRoles(comment.getUser(), DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER);
+            User user = comment.getUser();
+            List<Integer> creatorDepartments = resourceService.getResourcesForWhichUserHasRolesStrict(user,
+                    newArrayList(DEPARTMENT_STUDENT, DEPARTMENT_STUDENT_UNVERIFIED));
+            List<Integer> recruiterDepartment = resourceService.getResourcesForWhichUserHasRolesStrict(user,
+                    newArrayList(DEPARTMENT_ADMINISTRATOR, DEPARTMENT_APPROVER));
             if (containsAny(creatorDepartments, recruiterDepartment)) {
                 return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_OFFER_ACCEPTANCE);
             }
@@ -49,4 +54,3 @@ public class ApplicationConfirmedOfferResolver implements StateTransitionResolve
     }
 
 }
-

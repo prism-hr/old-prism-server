@@ -73,6 +73,10 @@ public class Action extends WorkflowDefinition {
     private Action fallbackAction;
 
     @ManyToOne
+    @JoinColumn(name = "delegated_action_id")
+    private Action delegatedAction;
+
+    @ManyToOne
     @JoinColumn(name = "creation_scope_id")
     private Scope creationScope;
 
@@ -185,6 +189,14 @@ public class Action extends WorkflowDefinition {
 
     public void setFallbackAction(Action fallbackAction) {
         this.fallbackAction = fallbackAction;
+    }
+
+    public Action getDelegatedAction() {
+        return delegatedAction;
+    }
+
+    public void setDelegatedAction(Action delegatedAction) {
+        this.delegatedAction = delegatedAction;
     }
 
     @Override

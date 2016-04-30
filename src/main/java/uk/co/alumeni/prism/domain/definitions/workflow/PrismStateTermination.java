@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
+
 import com.google.common.base.Objects;
 
 public class PrismStateTermination {
@@ -28,7 +30,7 @@ public class PrismStateTermination {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(terminationState, stateTerminationEvaluation);
+        return Objects.hashCode(terminationState);
     }
 
     @Override
@@ -39,8 +41,8 @@ public class PrismStateTermination {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTermination other = (PrismStateTermination) object;
-        return Objects.equal(terminationState, other.getTerminationState()) && Objects.equal(stateTerminationEvaluation, other.getStateTerminationEvaluation());
+        PrismStateTermination other = (PrismStateTermination) object;
+        return equal(terminationState, other.getTerminationState()) && equal(stateTerminationEvaluation, other.getStateTerminationEvaluation());
     }
 
 }

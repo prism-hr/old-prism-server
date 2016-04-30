@@ -1,5 +1,8 @@
 package uk.co.alumeni.prism.rest.controller;
 
+import static org.springframework.http.HttpStatus.I_AM_A_TEAPOT;
+import static uk.co.alumeni.prism.services.UserAccountService.OAUTH_USER_TO_CONFIRM;
+
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -9,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -77,10 +79,10 @@ public class AuthenticationController {
 
     private Map<String, Object> generateTokenOrSuggestedDetails(User user, HttpServletRequest request, HttpServletResponse response) {
         if (user == null) {
-            OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(UserAccountService.OAUTH_USER_TO_CONFIRM);
+            OauthUserDefinition userDefinition = (OauthUserDefinition) request.getSession().getAttribute(OAUTH_USER_TO_CONFIRM);
             UserRepresentation suggestedDetails = new UserRepresentation().withFirstName(userDefinition.getFirstName())
                     .withLastName(userDefinition.getLastName()).withEmail(userDefinition.getEmail());
-            response.setStatus(HttpStatus.I_AM_A_TEAPOT.value());
+            response.setStatus(I_AM_A_TEAPOT.value());
             return ImmutableMap.of("suggestedUserDetails", (Object) suggestedDetails);
         }
 

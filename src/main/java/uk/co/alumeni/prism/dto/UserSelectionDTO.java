@@ -2,22 +2,50 @@ package uk.co.alumeni.prism.dto;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.rest.UserDescriptor;
 
-import com.google.common.base.Objects;
+public class UserSelectionDTO extends UserDescriptor {
 
-public class UserSelectionDTO {
-
-    private User user;
+    private Integer id;
+    
+    private String firstName;
+    
+    private String lastName;
+    
+    private String email;
 
     private DateTime eventTimestamp;
 
-    public User getUser() {
-        return user;
+    public Integer getId() {
+        return id;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public DateTime getEventTimestamp() {
@@ -28,25 +56,29 @@ public class UserSelectionDTO {
         this.eventTimestamp = eventTimestamp;
     }
 
-    public String getIndexName() {
-        return user.getFullName();
+    public UserSelectionDTO withId(Integer id) {
+        this.id = id;
+        return this;
+    }
+    
+    public UserSelectionDTO withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+    }
+    
+    public UserSelectionDTO withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(user.getId());
+    public UserSelectionDTO withEmail(String email) {
+        this.email = email;
+        return this;
     }
-
-    @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (getClass() != object.getClass()) {
-            return false;
-        }
-        final UserSelectionDTO other = (UserSelectionDTO) object;
-        return Objects.equal(user.getId(), other.getUser().getId());
+    
+    public UserSelectionDTO withEventTimestamp(DateTime eventTimestamp) {
+        this.eventTimestamp = eventTimestamp;
+        return this;
     }
 
 }

@@ -1,18 +1,30 @@
 package uk.co.alumeni.prism.dao;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
+import static org.hibernate.sql.JoinType.INNER_JOIN;
+import static org.hibernate.transform.Transformers.aliasToBean;
 import static uk.co.alumeni.prism.PrismConstants.PROFILE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.PrismConstants.RESOURCE_LIST_PAGE_ROW_COUNT;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getReadOrUnreadMessageConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PENDING;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_POTENTIAL_SUPERVISOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
+import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,14 +32,17 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.Transformers;
 import org.joda.time.DateTime;
@@ -35,25 +50,25 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.application.ApplicationAdvertRelationSection;
 import uk.co.alumeni.prism.domain.comment.Comment;
-import uk.co.alumeni.prism.domain.definitions.PrismOauthProvider;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
-import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
-import uk.co.alumeni.prism.domain.user.UserAdvertRelationSection;
-import uk.co.alumeni.prism.domain.user.UserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.user.UserRole;
+import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
+import uk.co.alumeni.prism.dto.EntityLocationDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserCompetenceDTO;
+import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
@@ -77,46 +92,15 @@ public class UserDAO {
                 .uniqueResult();
     }
 
-    public List<User> getUsersForResourceAndRoles(Resource resource, PrismRole... roleIds) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("application", resource.getApplication())) //
-                        .add(Restrictions.eq("project", resource.getProject())) //
-                        .add(Restrictions.eq("program", resource.getProgram())) //
-                        .add(Restrictions.eq("institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("system", resource.getSystem()))) //
-                .add(Restrictions.in("role.id", roleIds)) //
+    public List<User> getUsers(List<Integer> userIds) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .add(Restrictions.in("id", userIds)) //
                 .list();
-    }
-
-    public List<User> getUsersForResourcesAndRoles(Set<Resource> resources, PrismRole... roleIds) {
-        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
-                .add(Restrictions.in(roleIds[0].getScope().getLowerCamelName(), resources)) //
-                .add(Restrictions.in("role.id", roleIds)) //
-                .list();
-    }
-
-    public String getUserInstitutionId(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
-        return (String) sessionFactory.getCurrentSession().createCriteria(UserInstitutionIdentity.class) //
-                .setProjection(Projections.property("identifier")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("institution", institution)) //
-                .add(Restrictions.eqOrIsNull("identityType", identityType)) //
-                .setMaxResults(1) //
-                .uniqueResult();
     }
 
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
+                .setProjection(getUserSelectionProjectionEvent()) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -129,9 +113,7 @@ public class UserDAO {
 
     public List<UserSelectionDTO> getUsersNotInterestedInApplication(Application application) {
         return (List<UserSelectionDTO>) sessionFactory.getCurrentSession().createCriteria(Comment.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.groupProperty("user"), "user") //
-                        .add(Projections.max("submittedTimestamp"), "eventTimestamp")) //
+                .setProjection(getUserSelectionProjectionEvent()) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
                 .add(Restrictions.eq("application", application)) //
@@ -144,7 +126,7 @@ public class UserDAO {
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(List<Integer> programs, List<Integer> projects, List<Integer> applications) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user").as("user")) //
+                .setProjection(getUserSelectionProjection()) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
                 .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN); //
 
@@ -203,32 +185,23 @@ public class UserDAO {
     public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
         return (List<UserRepresentationSimple>) sessionFactory.getCurrentSession().createCriteria(User.class) //
                 .setProjection(Projections.projectionList() //
-                        .add(Projections.property("firstName"), "firstName") //
-                        .add(Projections.property("lastName"), "lastName") //
-                        .add(Projections.groupProperty("email"), "email") //
-                        .add(Projections.property("userAccount.linkedinImageUrl"), "accountImageUrl") //
-                        .add(Projections.property("userAccount.linkedinProfileUrl"), "accountProfileUrl")) //
+                        .add(Projections.groupProperty("id").as("id"))
+                        .add(Projections.property("firstName").as("firstName")) //
+                        .add(Projections.property("lastName").as("lastName")) //
+                        .add(Projections.property("email").as("email")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("accountImageUrl")) //
+                        .add(Projections.property("userAccount.linkedinProfileUrl").as("accountProfileUrl"))) //
                 .createAlias("userRoles", "userRole", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("userAccount.enabled", true)) //
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("userRole.id")) //
                         .add(Restrictions.ne("userRole.role.id", PrismRole.APPLICATION_CREATOR))) //
-                .add(WorkflowDAO.getSimilarUserConstraint(searchTerm)) //
+                .add(getMatchingUserConstraint(searchTerm)) //
                 .addOrder(Order.desc("lastName")) //
                 .addOrder(Order.desc("firstName")) //
                 .setMaxResults(10) //
                 .setResultTransformer(Transformers.aliasToBean(UserRepresentationSimple.class)) //
-                .list();
-    }
-
-    public List<User> getResourceUsers(Resource resource) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .addOrder(Order.desc("user.lastName")) //
-                .addOrder(Order.desc("user.firstName")) //
                 .list();
     }
 
@@ -276,7 +249,7 @@ public class UserDAO {
 
         String searchTerm = userListFilterDTO.getSearchTerm();
         if (searchTerm != null) {
-            criteria.add(WorkflowDAO.getSimilarUserConstraint("user", searchTerm)); //
+            criteria.add(WorkflowDAO.getMatchingUserConstraint("user", searchTerm)); //
         }
 
         Integer lastUserId = userListFilterDTO.getLastUserId();
@@ -314,10 +287,8 @@ public class UserDAO {
                 .list();
     }
 
-    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
-            Resource resource,
-            PrismAction... actions) {
-        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("userRole.user"))
+    public List<User> getUsersWithActions(PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Resource resource, PrismAction... actions) {
+        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("userRole.user"))
                 .add(getUsersWithActionsConstraint(resource, actions)) //
                 .add(WorkflowDAO.getTargetActionConstraint()) //
                 .list();
@@ -358,7 +329,7 @@ public class UserDAO {
                 .add(Projections.property("userAccount.linkedinProfileUrl").as("userLinkedinProfileUrl"))
                 .add(Projections.property("userAccount.linkedinImageUrl").as("userLinkedinImageUrl")) //
                 .add(Projections.property("userAccount.portraitImage.id").as("userPortraitImageId")) //
-                .add(Projections.groupProperty("role.id").as("roleId"));
+                .add(Projections.groupProperty("userRole.role.id").as("roleId"));
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections) //
@@ -370,17 +341,16 @@ public class UserDAO {
         }
 
         criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userRole.role", "role", JoinType.INNER_JOIN);
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
 
-        criteria.add(WorkflowDAO.getResourceParentManageableStateConstraint(resourceScope));
+        criteria.add(getResourceParentManageableStateConstraint(resourceScope));
         if (isNotEmpty(resources)) {
             criteria.add(Restrictions.in(resourceReference + ".id", resources));
         }
 
         return (List<UnverifiedUserDTO>) criteria //
-                .add(Restrictions.eq("role.verified", false)) //
-                .setResultTransformer(Transformers.aliasToBean(UnverifiedUserDTO.class)) //
+                .add(Restrictions.in("userRole.role.id", values(PrismRole.class, resourceScope, "STUDENT_UNVERIFIED", "VIEWER_UNVERIFIED"))) //
+                .setResultTransformer(aliasToBean(UnverifiedUserDTO.class)) //
                 .list();
     }
 
@@ -449,7 +419,25 @@ public class UserDAO {
                 .list();
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter) {
+    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, User user) {
+        return (List<ProfileListRowDTO>) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("user.id").as("userId")) //
+                        .add(Projections.property("updatedTimestamp").as("updatedTimestamp"))) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN)
+                .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
+                .add(Restrictions.eq("role.roleCategory", STUDENT)) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .add(Restrictions.eq("shared", true)) //
+                .add(Restrictions.ne("user.id", user.getId())) //
+                .setResultTransformer(Transformers.aliasToBean(ProfileListRowDTO.class))
+                .list();
+    }
+
+    public List<ProfileListRowDTO> getUserProfiles(PrismScope scope, Collection<Integer> resources, ProfileListFilterDTO filter, User user,
+            String lastSequenceIdentifier) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty("user.id").as("userId")) //
@@ -457,55 +445,64 @@ public class UserDAO {
                         .add(Projections.property("user.firstName2").as("userFirstName2")) //
                         .add(Projections.property("user.firstName3").as("userFirstName3")) //
                         .add(Projections.property("user.lastName").as("userLastName")) //
-                        .add(Projections.property("userAccount.linkedinImageUrl").as("userAccountImageUrl")) //
-                        .add(Projections.property("userDocument.personalSummary").as("personalSummary")) //
-                        .add(Projections.property("userDocument.cv.id").as("cvId")) //
-                        .add(Projections.property("externalAccount.accountProfileUrl").as("linkedInProfileUrl")) //
+                        .add(Projections.property("user.email").as("userEmail")) //
+                        .add(Projections.property("linkedinImageUrl").as("userAccountImageUrl")) //
+                        .add(Projections.property("linkedinProfileUrl").as("linkedInProfileUrl")) //
+                        .add(Projections.property("completeScore").as("completeScore")) //
                         .add(Projections.countDistinct("application.id").as("applicationCount")) //
                         .add(Projections.sum("application.applicationRatingCount").as("applicationRatingCount")) //
                         .add(Projections.avg("application.applicationRatingAverage").as("applicationRatingAverage")) //
                         .add(Projections.property("updatedTimestamp").as("updatedTimestamp")) //
                         .add(Projections.property("sequenceIdentifier").as("sequenceIdentifier"))) //
-                .createAlias("externalAccounts", "externalAccount", JoinType.LEFT_OUTER_JOIN,
-                        Restrictions.eq("externalAccount.accountType", PrismOauthProvider.LINKEDIN)) //
                 .createAlias("user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN,
-                        Restrictions.eq("userRole.role.id", PrismRole.DEPARTMENT_STUDENT)) //
+                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
                 .createAlias("qualifications", "qualification", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("qualification.advert", "qualificationAdvert", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPositions", "employmentPosition", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("employmentPosition.advert", "employmentPositionAdvert", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("userDocument", "userDocument", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("document", "userDocument", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("user.applications", "application", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("user.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .add(Restrictions.in("userRole." + scope.getLowerCamelName() + ".id", resources)) //
-                .add(Restrictions.eq("shared", true));
+                .add(Restrictions.eq("role.roleCategory", STUDENT)) //
+                .add(Restrictions.eq("role.verified", true)) //
+                .add(Restrictions.eq("shared", true)) //
+                .add(Restrictions.ne("user.id", user.getId()));
 
-        String keyword = filter.getKeyword();
-        if (keyword != null) {
+        List<Integer> userIds = filter.getUserIds();
+        if (isNotEmpty(userIds)) {
+            criteria.add(Restrictions.in("user.id", userIds));
+        }
+
+        String valueString = filter.getValueString();
+        if (valueString != null) {
             criteria.add(Restrictions.disjunction() //
-                    .add(Restrictions.like("user.fullName", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("user.email", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("advert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("qualificationAdvert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.name", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.summary", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("employmentPositionAdvert.description", keyword, MatchMode.ANYWHERE)) //
-                    .add(Restrictions.like("userDocument.personalSummary", keyword, MatchMode.ANYWHERE)));
+                    .add(Restrictions.like("user.fullName", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("user.email", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("qualificationAdvert.name", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("qualificationAdvert.summary", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("qualificationAdvert.description", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("employmentPositionAdvert.name", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("employmentPositionAdvert.summary", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("employmentPositionAdvert.description", valueString, MatchMode.ANYWHERE)) //
+                    .add(Restrictions.like("userDocument.personalSummary", valueString, MatchMode.ANYWHERE)));
         }
 
-        String sequenceIdentifier = filter.getSequenceIdentifier();
-        if (sequenceIdentifier != null) {
-            criteria.add(Restrictions.lt("sequenceIdentifier", sequenceIdentifier));
+        if (lastSequenceIdentifier != null) {
+            criteria.add(Restrictions.lt("sequenceIdentifier", lastSequenceIdentifier));
         }
 
-        return (List<ProfileListRowDTO>) criteria.addOrder(Order.desc("sequenceIdentifier")) //
-                .setMaxResults(PROFILE_LIST_PAGE_ROW_COUNT) //
-                .setResultTransformer(Transformers.aliasToBean(ProfileListRowDTO.class)) //
+        return (List<ProfileListRowDTO>) criteria.addOrder(Order.desc("sequenceIdentifier"))
+                .setMaxResults(PROFILE_LIST_PAGE_ROW_COUNT)
+                .setResultTransformer(Transformers.aliasToBean(ProfileListRowDTO.class))
+                .list();
+    }
+
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... roles) {
+        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user")) //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.in("role.id", roles)) //
                 .list();
     }
 
@@ -581,21 +578,196 @@ public class UserDAO {
         return (List<Integer>) criteria.list();
     }
 
-    public <T extends UserAdvertRelationSection, U extends ApplicationAdvertRelationSection> void deleteUserProfileSection(
-            Class<T> userProfileSectionClass, Class<U> applicationSectionClass, Integer propertyId) {
-        sessionFactory.getCurrentSession().createQuery( //
-                "delete " + userProfileSectionClass.getSimpleName() + " " //
-                        + "where " + applicationSectionClass.getSimpleName().toLowerCase() + " = :propertyId") //
-                .setParameter("propertyId", propertyId) //
-                .executeUpdate();
+    public DateTime getUserCreatedTimestamp(User user) {
+        return (DateTime) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.property("acceptedTimestamp")) //
+                .add(Restrictions.eq("user", user)) //
+                .addOrder(Order.asc("acceptedTimestamp")) //
+                .setMaxResults(1)
+                .uniqueResult();
+    }
+
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, PrismScope roleScope) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN);
+
+        if (scope.equals(roleScope)) {
+            criteria.createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN);
+        } else {
+            criteria.createAlias("resource." + roleScope.getLowerCamelName(), "roleResource", JoinType.INNER_JOIN) //
+                    .createAlias("roleResource.userRoles", "userRole", JoinType.INNER_JOIN);
+        }
+
+        return criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(getUsersWithActivitiesToCacheConstraint(scope, resources)) //
+                .list();
+    }
+
+    public List<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, PrismScope targeterScope, PrismScope targetScope) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN) //
+                .createAlias("resource.advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", JoinType.INNER_JOIN) //
+                .createAlias("targeterResource.advert", "targeterAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targeterAdvert.targets", "target", JoinType.INNER_JOIN) //
+                .createAlias("target.targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
+                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource", JoinType.INNER_JOIN) //
+                .createAlias("targetResource.userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .add(getUsersWithActivitiesToCacheConstraint(scope, resources)) //
+                .add(Subqueries.propertyIn("userRole.role.id", //
+                        DetachedCriteria.forClass(StateActionAssignment.class) //
+                                .setProjection(Projections.groupProperty("role.id")) //
+                                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                                .add(Restrictions.eq("role.scope.id", targetScope)) //
+                                .add(Restrictions.eq("externalMode", true))))
+                .list();
+    }
+
+    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User currentUser) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.countDistinct("message.id")) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.threads", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", userIds))
+                .add(Restrictions.eq("participant.user", currentUser)) //
+                .add(getVisibleMessageConstraint("message")) //
+                .add(getUnreadMessageConstraint()) //
+                .uniqueResult();
+    }
+
+    public Long getUserReadMessageCounts(User currentUser) {
+        return getUserMessageCounts(currentUser, true);
+    }
+
+    public Long getUserUnreadMessageCounts(User currentUser) {
+        return getUserMessageCounts(currentUser, false);
+    }
+
+    public List<ActivityMessageCountDTO> getUserReadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return getUserMessageCounts(userIds, currentUser, true);
+    }
+
+    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return getUserMessageCounts(userIds, currentUser, false);
+    }
+
+    public List<Integer> getUsersWithUnreadMessages(User user) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.groupProperty("id")) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.threads", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("participant.user", user)) //
+                .add(getVisibleMessageConstraint("message")) //
+                .add(getUnreadMessageConstraint()) //
+                .list();
+    }
+
+    public Integer getMaximumUserAccountCompleteScore() {
+        return (Integer) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
+                .setProjection(Projections.property("completeScore")) //
+                .add(Restrictions.eq("enabled", true)) //
+                .addOrder(Order.desc("completeScore")) //
+                .setMaxResults(1) //
+                .uniqueResult();
+    }
+
+    public List<Integer> getUserAccounts() {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserAccount.class) //
+                .setProjection(Projections.property("id")) //
+                .list();
+    }
+
+    public List<EntityLocationDTO> getUserLocations(Collection<Integer> userIds) {
+        return (List<EntityLocationDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.groupProperty("locationPart.name").as("location"))) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.address", "address", JoinType.INNER_JOIN) //
+                .createAlias("address.currentAddress", "currentAddress", JoinType.INNER_JOIN) //
+                .createAlias("currentAddress.locations", "location", JoinType.INNER_JOIN) //
+                .createAlias("location.locationPart", "locationPart", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("id", userIds)) //
+                .addOrder(Order.asc("id")) //
+                .addOrder(Order.asc("location.id")) //
+                .setResultTransformer(Transformers.aliasToBean(EntityLocationDTO.class)) //
+                .list();
+    }
+
+    public List<UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, PrismScope resourceScope, Collection<Integer> resourceIds,
+            PrismRoleCategory roleCategory) {
+        String resourcePrefix = resourceScope.getLowerCamelName();
+        ProjectionList projections = Projections.projectionList() //
+                .add(Projections.groupProperty("user.id").as("userId")) //
+                .add(Projections.groupProperty(resourcePrefix + ".id").as(resourcePrefix + "Id")) //
+                .add(Projections.property(resourcePrefix + ".name").as(resourcePrefix + "Name"));
+
+        boolean departmentScope = resourceScope.equals(DEPARTMENT);
+        if (departmentScope) {
+            projections.add(Projections.property("departmentInstitution.id").as("institutionId")) //
+                    .add(Projections.property("departmentInstitution.name").as("institutionName")) //
+                    .add(Projections.property("departmentInstitution.logoImage.id").as("institutionLogoImageId"));
+        } else {
+            projections.add(Projections.property(resourcePrefix + ".logoImage.id").as(resourcePrefix + "LogoImageId"));
+        }
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(projections.add( //
+                        Projections.property("acceptedTimestamp").as("acceptedTimestamp"))) //
+                .createAlias(resourcePrefix, resourcePrefix, JoinType.INNER_JOIN) //
+                .createAlias(resourcePrefix + ".resourceStates", "resourceState", JoinType.INNER_JOIN) //
+                .createAlias(resourcePrefix + ".advert", "advert", INNER_JOIN) //
+                .createAlias("advert.address", "address", JoinType.INNER_JOIN);
+
+        if (departmentScope) {
+            criteria.createAlias(resourcePrefix + ".institution", "departmentInstitution", JoinType.INNER_JOIN);
+        }
+
+        criteria.createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.in("user.id", userIds));
+
+        if (isNotEmpty(resourceIds)) {
+            criteria.add(Restrictions.in(resourcePrefix + ".id", resourceIds));
+        }
+
+        return (List<UserOrganizationDTO>) criteria.add(Restrictions.eq("role.roleCategory", roleCategory)) //
+                .add(Restrictions.in("resourceState.state.id", values(PrismState.class, resourceScope, "APPROVED", "DISABLED_COMPLETED"))) //
+                .addOrder(Order.desc("acceptedTimestamp")) //
+                .setResultTransformer(Transformers.aliasToBean(UserOrganizationDTO.class)) //
+                .list();
+    }
+
+    public List<Integer> getUserAssociates(HashMultimap<PrismScope, Integer> userResources, PrismRoleCategory roleCategory) {
+        Junction resourceConstraint = Restrictions.disjunction();
+        userResources.keySet().stream().forEach(scope -> {
+            Set<Integer> resources = userResources.get(scope);
+            if (CollectionUtils.isNotEmpty(resources)) {
+                resourceConstraint.add(Restrictions.in("advert." + scope.getLowerCamelName() + ".id", resources));
+            }
+        });
+
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.groupProperty("user.id")) //
+                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(resourceConstraint) //
+                .add(Restrictions.eq("role.roleCategory", roleCategory)) //
+                .list();
     }
 
     private void appendAdministratorConditions(Criteria criteria, HashMultimap<PrismScope, Integer> enclosedResources) {
         Junction resourceConstraint = Restrictions.disjunction();
-        enclosedResources
-                .keySet()
-                .forEach(
-                        enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
+        enclosedResources.keySet().forEach( //
+                enclosedScope -> resourceConstraint.add(Restrictions.in(enclosedScope.getLowerCamelName() + ".id", enclosedResources.get(enclosedScope))));
         criteria.add(resourceConstraint);
     }
 
@@ -613,6 +785,62 @@ public class UserDAO {
                 .add(Restrictions.disjunction() //
                         .add(Restrictions.isNull("user.userAccount")) //
                         .add(Restrictions.eq("userAccount.enabled", true)));
+    }
+
+    private Junction getUsersWithActivitiesToCacheConstraint(PrismScope scope, Collection<Integer> resources) {
+        Junction constraint = Restrictions.conjunction() //
+                .add(Restrictions.isNotNull("user.userAccount")) //
+                .add(Restrictions.in("resource.id", resources));
+
+        if (asList(OPPORTUNITY, ORGANIZATION).contains(scope.getScopeCategory())) {
+            constraint.add(Restrictions.ne("state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
+        }
+
+        return constraint.add(Restrictions.disjunction() //
+                .add(Restrictions.isNull("resource.activityCachedTimestamp")) //
+                .add(Restrictions.isNull("userAccount.activityCachedTimestamp")) //
+                .add(Restrictions.ltProperty("userAccount.activityCachedTimestamp", "resource.activityCachedTimestamp")));
+    }
+
+    private Long getUserMessageCounts(User currentUser, boolean read) {
+        return (Long) sessionFactory.getCurrentSession().createCriteria(MessageThread.class) //
+                .setProjection(Projections.countDistinct("message.id").as("id")) //
+                .createAlias("messages", "message", JoinType.INNER_JOIN) //
+                .createAlias("participants", "participant", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("participant.user", currentUser)) //
+                .add(getVisibleMessageConstraint("message"))
+                .add(getReadOrUnreadMessageConstraint(read)) //
+                .uniqueResult();
+    }
+
+    private List<ActivityMessageCountDTO> getUserMessageCounts(Collection<Integer> userIds, User currentUser, boolean read) {
+        return (List<ActivityMessageCountDTO>) sessionFactory.getCurrentSession().createCriteria(User.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.groupProperty("id").as("id")) //
+                        .add(Projections.countDistinct("message.id").as("messageCount"))) //
+                .createAlias("userAccount", "userAccount", JoinType.INNER_JOIN) //
+                .createAlias("userAccount.threads", "thread", JoinType.INNER_JOIN) //
+                .createAlias("thread.participants", "participant", JoinType.INNER_JOIN) //
+                .createAlias("thread.messages", "message") //
+                .add(Restrictions.in("id", userIds)) //
+                .add(Restrictions.eq("participant.user", currentUser)) //
+                .add(getVisibleMessageConstraint("message"))
+                .add(getReadOrUnreadMessageConstraint(read)) //
+                .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
+                .list();
+    }
+
+    private ProjectionList getUserSelectionProjection() {
+        return Projections.projectionList() //
+                .add(Projections.groupProperty("user.id").as("id")) //
+                .add(Projections.property("user.firstName").as("firstName")) //
+                .add(Projections.property("user.lastName").as("lastName")) //
+                .add(Projections.property("user.email").as("email"));
+    }
+
+    private ProjectionList getUserSelectionProjectionEvent() {
+        return getUserSelectionProjection()
+                .add(Projections.max("submittedTimestamp").as("eventTimestamp"));
     }
 
 }

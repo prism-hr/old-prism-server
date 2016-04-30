@@ -7,7 +7,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhance
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.INSTITUTION_VIEWER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.INSTITUTION_APPROVED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorApproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionSendMessageApproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditAbstract;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -17,7 +17,7 @@ public class PrismInstitutionDisabledCompleted extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
-        stateActions.add(institutionEmailCreatorApproved()); //
+        stateActions.add(institutionSendMessageApproved()); //
 
         stateActions.add(new PrismStateAction() //
                 .withAction(INSTITUTION_RESTORE) //

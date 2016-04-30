@@ -27,7 +27,7 @@ public class NotificationServiceHelperReminder extends PrismServiceHelperAbstrac
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersForReminderRepresentation().forEach(this::sendUserReminderNotification);
+        userService.getUsersForReminderNotification().forEach(this::sendUserReminderNotification);
     }
 
     @Override
@@ -38,7 +38,9 @@ public class NotificationServiceHelperReminder extends PrismServiceHelperAbstrac
     private void sendUserReminderNotification(Integer user) {
         if (!isShuttingDown()) {
             UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentation(user);
-            notificationService.sendUserReminderNotification(user, userActivityRepresentation);
+            if (userActivityRepresentation != null) {
+                notificationService.sendUserReminderNotification(user, userActivityRepresentation);
+            }
         }
     }
 

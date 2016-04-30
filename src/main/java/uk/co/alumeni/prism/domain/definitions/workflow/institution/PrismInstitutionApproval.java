@@ -9,8 +9,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateDepartment;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProgram;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionCreateProject;
-import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEmailCreatorUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionEscalateUnapproved;
+import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionSendMessageUnnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionTerminateUnapproved;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.institution.PrismInstitutionWorkflow.institutionWithdraw;
@@ -32,7 +32,7 @@ public class PrismInstitutionApproval extends PrismWorkflowState {
         stateActions.add(institutionCreateDepartment());
         stateActions.add(institutionCreateProgram());
         stateActions.add(institutionCreateProject());
-        stateActions.add(institutionEmailCreatorUnnapproved()); //
+        stateActions.add(institutionSendMessageUnnapproved()); //
         stateActions.add(institutionEscalateUnapproved()); //
         stateActions.add(institutionTerminateUnapproved()); //
         stateActions.add(institutionViewEditApproval(state)); //

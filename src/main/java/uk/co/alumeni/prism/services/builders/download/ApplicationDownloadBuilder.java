@@ -528,8 +528,11 @@ public class ApplicationDownloadBuilder {
                     addReferenceCommentAssessmentCriteria(pdfDocument, competenceGroupRepresentations);
                 }
 
-                for (DocumentRepresentation document : commentRepresentation.getDocuments()) {
-                    addDocument(document, pdfDocument, pdfWriter);
+                List<DocumentRepresentation> documents = commentRepresentation.getDocuments();
+                if (isNotEmpty(documents)) {
+                    for (DocumentRepresentation document : documents) {
+                        addDocument(document, pdfDocument, pdfWriter);
+                    }
                 }
             }
 
@@ -559,15 +562,21 @@ public class ApplicationDownloadBuilder {
     private void addReferenceCommentAssessmentCriteria(Document pdfDocument, List<CommentCompetenceGroupRepresentation> competenceGroupRepresentations)
             throws Exception {
         Joiner joiner = Joiner.on(COLON + SPACE).skipNulls();
-        
+
         PdfPTable body = applicationDownloadBuilderHelper.startSubSection(propertyLoader.loadLazy(SYSTEM_RESOURCE_COMPETENCES_HEADER));
-        competenceGroupRepresentations.stream().forEach(competenceGroupRepresentation -> {
-            competenceGroupRepresentation.getCompetences().stream().forEach(competenceRepresentation -> { 
-                applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(), joiner.join(competenceRepresentation.getRating().toString(),
-                        competenceRepresentation.getRemark()), body);
-            });
-        });
-        
+        competenceGroupRepresentations.stream().forEach(
+                competenceGroupRepresentation -> {
+                    competenceGroupRepresentation
+                            .getCompetences()
+                            .stream()
+                            .forEach(
+                                    competenceRepresentation -> {
+                                        applicationDownloadBuilderHelper.addContentRowMedium(competenceRepresentation.getName(),
+                                                joiner.join(competenceRepresentation.getRating().toString(),
+                                                        competenceRepresentation.getRemark()), body);
+                                    });
+                });
+
         applicationDownloadBuilderHelper.closeSection(pdfDocument, body);
     }
 

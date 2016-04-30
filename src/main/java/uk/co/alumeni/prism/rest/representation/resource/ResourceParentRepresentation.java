@@ -5,6 +5,7 @@ import java.util.Set;
 
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
+import uk.co.alumeni.prism.rest.representation.advert.AdvertThemeRepresentation;
 
 public class ResourceParentRepresentation extends ResourceRepresentationExtended {
 
@@ -13,6 +14,8 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
     private List<PrismOpportunityCategory> opportunityCategories;
 
     private Set<PrismResourceContext> contexts;
+
+    private List<AdvertThemeRepresentation> suggestedThemes;
 
     @Override
     public String getImportedCode() {
@@ -38,5 +41,13 @@ public class ResourceParentRepresentation extends ResourceRepresentationExtended
 
     public void setContexts(Set<PrismResourceContext> contexts) {
         this.contexts = contexts;
+    }
+
+    public List<AdvertThemeRepresentation> getSuggestedThemes() {
+        return suggestedThemes;
+    }
+
+    public void setSuggestedThemes(List<AdvertThemeRepresentation> suggestedThemes) {
+        this.suggestedThemes = suggestedThemes;
     }
 }

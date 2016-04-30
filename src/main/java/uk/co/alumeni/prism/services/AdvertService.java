@@ -997,7 +997,7 @@ public class AdvertService {
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, Collection<Integer> advertIds) {
-        return getAdvertsForWhichUserHasRoles(user, null, advertScopes, advertIds);
+        return getAdvertsForWhichUserHasRoles(user, new String[0], advertScopes, advertIds);
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, Collection<Integer> advertIds) {
@@ -1071,10 +1071,8 @@ public class AdvertService {
         List<AdvertCategoryDTO> adverts = newArrayList();
         if (user != null) {
             stream(advertScopes).forEach(scope -> {
-                String[] filteredRoleExtensions = roleExtensions == null ? null : getFilteredRoleExtensions(scope, roleExtensions);
-                if (roleExtensions.length > 0) {
-                    adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, filteredRoleExtensions, advertIds));
-                }
+                String[] filteredRoleExtensions = ArrayUtils.isEmpty(roleExtensions) ? roleExtensions : getFilteredRoleExtensions(scope, roleExtensions);
+                adverts.addAll(advertDAO.getAdvertsForWhichUserHasRoles(user, scope, filteredRoleExtensions, advertIds));
             });
         }
         return adverts;

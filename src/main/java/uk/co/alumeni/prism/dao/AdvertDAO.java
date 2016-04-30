@@ -437,15 +437,16 @@ public class AdvertDAO {
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, PrismScope scope, String[] roleExtensions, Collection<Integer> advertIds) {
         ProjectionList projections;
-        if (roleExtensions == null) {
+        boolean hasRoleExtensions = isNotEmpty(roleExtensions);
+        if (hasRoleExtensions) {
+            projections = Projections.projectionList() //
+                    .add(Projections.groupProperty("id").as("advert")) //
+                    .add(Projections.property("opportunityCategories").as("opportunityCategories"));
+        } else {
             projections = Projections.projectionList() //
                     .add(Projections.property("id").as("advert")) //
                     .add(Projections.property("opportunityCategories").as("opportunityCategories")) //
                     .add(Projections.property("userRole.role.id").as("role"));
-        } else {
-            projections = Projections.projectionList() //
-                    .add(Projections.groupProperty("id").as("advert")) //
-                    .add(Projections.property("opportunityCategories").as("opportunityCategories"));
         }
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
@@ -455,8 +456,11 @@ public class AdvertDAO {
 
         criteria.createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN)
                 .add(Restrictions.eq("published", true)) //
-                .add(Restrictions.eq("userRole.user", user)) //
-                .add(Restrictions.in("userRole.role.id", values(PrismRole.class, scope, roleExtensions)));
+                .add(Restrictions.eq("userRole.user", user));
+
+        if (hasRoleExtensions) {
+            criteria.add(Restrictions.in("userRole.role.id", values(PrismRole.class, scope, roleExtensions)));
+        }
 
         if (isNotEmpty(advertIds)) {
             criteria.add(Restrictions.in("id", advertIds));

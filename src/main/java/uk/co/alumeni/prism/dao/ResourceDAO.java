@@ -781,12 +781,6 @@ public class ResourceDAO {
         if (isNotEmpty(resourceIds)) {
             criteria.add(Restrictions.in("resource.id", resourceIds));
         }
-        
-        List<Integer> excludedResourceIds = filter.getExcludedResourceIds();
-        if (isNotEmpty(excludedResourceIds)) {
-            criteria.add(Restrictions.not(
-                    Restrictions.in("resource.id", excludedResourceIds)));
-        }
 
         List<Integer> excludedResourceIds = filter.getExcludedResourceIds();
         if (isNotEmpty(excludedResourceIds)) {

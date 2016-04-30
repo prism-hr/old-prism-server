@@ -1,5 +1,5 @@
 alter table state
-	add column published int(1) unsigned after submitted,
+	add column published int(1) unsigned after hidden,
 	add index (published)
 ;
 

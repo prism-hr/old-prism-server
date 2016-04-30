@@ -50,7 +50,7 @@ public class ScopeService {
     public HashMultimap<PrismScope, PrismState> getChildScopesWithActiveStates(PrismScope scope, PrismScope finalScope) {
         HashMultimap<PrismScope, PrismState> childScopes = HashMultimap.create();
         for (PrismScope childScope : getChildScopesAscending(scope, finalScope)) {
-            childScopes.putAll(childScope, stateService.getActiveResourceStates(childScope));
+            childScopes.putAll(childScope, stateService.getPublishedResourceStates(childScope));
         }
         return childScopes;
     }

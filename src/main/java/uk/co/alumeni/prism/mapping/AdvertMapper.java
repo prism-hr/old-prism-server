@@ -705,7 +705,7 @@ public class AdvertMapper {
     private void setAdvertCallToActionStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         if (isNotEmpty(advertIds)) {
             HashMultimap<String, AdvertCategoryDTO> adverts = HashMultimap.create();
-            advertService.getAdvertsForWhichUserHasRoles(user, advertIds).stream().forEach(advert -> {
+            advertService.getAdvertsForWhichUserHasRoles(user).stream().forEach(advert -> {
                 String roleName = advert.getRole().name();
                 if (endsWith(roleName, "ADMINISTRATOR", "APPROVER", "VIEWER")) {
                     adverts.put("staff", advert);

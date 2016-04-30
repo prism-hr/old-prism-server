@@ -992,12 +992,12 @@ public class AdvertService {
                 .withInvisibleAdverts(newArrayList(invisible));
     }
 
-    public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions) {
-        return getAdvertsForWhichUserHasRoles(user, roleExtensions, organizationScopes, null);
+    public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user) {
+        return getAdvertsForWhichUserHasRoles(user, new String[0], advertScopes, null);
     }
 
-    public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, Collection<Integer> advertIds) {
-        return getAdvertsForWhichUserHasRoles(user, new String[0], advertScopes, advertIds);
+    public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions) {
+        return getAdvertsForWhichUserHasRoles(user, roleExtensions, organizationScopes, null);
     }
 
     public List<AdvertCategoryDTO> getAdvertsForWhichUserHasRoles(User user, String[] roleExtensions, Collection<Integer> advertIds) {

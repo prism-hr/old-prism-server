@@ -449,13 +449,13 @@ public class AdvertDAO {
                     .add(Projections.property("userRole.role.id").as("role"));
         }
 
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class) //
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Advert.class, "advert") //
                 .setProjection(projections)
-                .createAlias(scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN,
-                        Restrictions.eqProperty("id", "advert.id"));
+                .createAlias("advert." + scope.getLowerCamelName(), "resource", JoinType.INNER_JOIN,
+                        Restrictions.eqProperty("advert.id", "resource.advert.id"));
 
         criteria.createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN)
-                .add(Restrictions.eq("published", true)) //
+                .add(Restrictions.eq("advert.published", true)) //
                 .add(Restrictions.eq("userRole.user", user));
 
         if (hasRoleExtensions) {
@@ -463,7 +463,7 @@ public class AdvertDAO {
         }
 
         if (isNotEmpty(advertIds)) {
-            criteria.add(Restrictions.in("id", advertIds));
+            criteria.add(Restrictions.in("advert.id", advertIds));
         }
 
         return (List<AdvertCategoryDTO>) criteria //

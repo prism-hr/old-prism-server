@@ -1,6 +1,7 @@
 package uk.co.alumeni.prism.utils;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static java.util.Arrays.stream;
 import static uk.co.alumeni.prism.PrismConstants.ASTERISK;
 import static uk.co.alumeni.prism.PrismConstants.AT;
 
@@ -42,6 +43,10 @@ public class PrismStringUtils {
         }
 
         return Joiner.on(".").join(newNameParts) + AT + emailParts[1];
+    }
+
+    public static boolean endsWith(String string, String... postfixes) {
+        return stream(postfixes).anyMatch(postFix -> string.endsWith(postFix));
     }
 
 }

@@ -35,6 +35,7 @@ import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.endsWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -703,23 +704,35 @@ public class AdvertMapper {
 
     private void setAdvertCallToActionStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         if (isNotEmpty(advertIds)) {
-            setAdvertJoinStates(user, advertIds, representations);
-            setAdvertConnectStates(user, advertIds, representations);
+            HashMultimap<String, AdvertCategoryDTO> adverts = HashMultimap.create();
+            advertService.getAdvertsForWhichUserHasRoles(user, advertIds).stream().forEach(advert -> {
+                String roleName = advert.getRole().name();
+                if (endsWith(roleName, "ADMINISTRATOR", "APPROVER", "VIEWER")) {
+                    adverts.put("staff", advert);
+                } else if (endsWith(roleName, "VIEWER_UNVERIFIED", "VIEWER_REJECTED")) {
+                    adverts.put("staffPending", advert);
+                } else if (endsWith(roleName, "STUDENT")) {
+                    adverts.put("student", advert);
+                } else if (endsWith(roleName, "STUDENT_UNVERIFIED", "STUDENT_REJECTED")) {
+                    adverts.put("studentPending", advert);
+                }
+            });
+
+            setAdvertJoinStates(user, advertIds, adverts, representations);
+            setAdvertConnectStates(user, advertIds, adverts.get("staff"), representations);
         }
     }
 
-    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" },
-                advertIds);
-        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" },
-                advertIds);
-        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
-        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED",
-                "STUDENT_REJECTED" }, advertIds);
+    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, HashMultimap<String, AdvertCategoryDTO> adverts,
+            Map<Integer, AdvertRepresentationExtended> representations) {
+        List<Integer> advertsAsStaff = adverts.get("staff").stream().map(advert -> advert.getAdvert()).collect(toList());
+        List<Integer> advertsAsStaffPending = adverts.get("staffPending").stream().map(advert -> advert.getAdvert()).collect(toList());
+        List<Integer> advertsAsStudent = adverts.get("student").stream().map(advert -> advert.getAdvert()).collect(toList());
+        List<Integer> advertsAsStudentPending = adverts.get("studentPending").stream().map(advert -> advert.getAdvert()).collect(toList());
 
-        representations.keySet().forEach(advert -> {
-            representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
-            representations.get(advert).setJoinStateStudent(getAdvertJoinState(advert, advertsAsStudent, advertsAsStudentPending));
+        representations.keySet().forEach(representation -> {
+            representations.get(representation).setJoinStateStaff(getAdvertJoinState(representation, advertsAsStaff, advertsAsStaffPending));
+            representations.get(representation).setJoinStateStudent(getAdvertJoinState(representation, advertsAsStudent, advertsAsStudentPending));
         });
     }
 
@@ -732,10 +745,9 @@ public class AdvertMapper {
         return UNKNOWN;
     }
 
-    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
+    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Collection<AdvertCategoryDTO> advertsAsStaff,
+            Map<Integer, AdvertRepresentationExtended> representations) {
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user,
-                new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
 
         HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
         HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();

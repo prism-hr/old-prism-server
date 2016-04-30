@@ -317,8 +317,8 @@ public class StateService {
         return stateDAO.getResourceStates(resourceScope);
     }
 
-    public List<PrismState> getActiveResourceStates(PrismScope resourceScope) {
-        return stateDAO.getActiveResourceStates(resourceScope);
+    public List<PrismState> getPublishedResourceStates(PrismScope resourceScope) {
+        return stateDAO.getPublishedResourceStates(resourceScope);
     }
 
     public List<State> getCurrentStates(Resource resource) {
@@ -381,12 +381,14 @@ public class StateService {
         }
     }
 
-    public void setHiddenStates() {
-        List<PrismState> states = Lists.newArrayList();
-        getStates().forEach(state -> {
+    public void setHiddenPublishedStates() {
+        List<State> states = getStates();
+
+        List<PrismState> hiddenStates = newArrayList();
+        states.stream().forEach(state -> {
             Set<StateAction> stateActions = state.getStateActions();
             if (stateActions.isEmpty()) {
-                states.add(state.getId());
+                hiddenStates.add(state.getId());
             } else {
                 int userActions = 0;
                 int userAssignments = 0;
@@ -398,13 +400,30 @@ public class StateService {
                 }
 
                 if (userActions == 0 || userAssignments == 0) {
-                    states.add(state.getId());
+                    hiddenStates.add(state.getId());
                 }
             }
         });
 
-        if (!states.isEmpty()) {
-            stateDAO.setHiddenStates(states);
+        List<PrismState> publishedStates = newArrayList();
+        states.stream().forEach(state -> {
+            PrismState prismState = state.getId();
+            if (!hiddenStates.contains(prismState) && prismState.name().endsWith("_APPROVED")) {
+                for (StateAction stateAction : state.getStateActions()) {
+                    if (stateAction.getAction().getCreationScope() != null) {
+                        publishedStates.add(prismState);
+                        break;
+                    }
+                }
+            }
+        });
+
+        if (hiddenStates.size() > 0) {
+            stateDAO.setHiddenStates(hiddenStates);
+        }
+
+        if (publishedStates.size() > 0) {
+            stateDAO.setPublishedStates(publishedStates);
         }
     }
 

@@ -51,6 +51,9 @@ public class State extends WorkflowDefinition {
     @Column(name = "hidden")
     private Boolean hidden;
 
+    @Column(name = "published")
+    private Boolean published;
+
     @Column(name = "parallelizable")
     private Boolean parallelizable;
 
@@ -132,6 +135,14 @@ public class State extends WorkflowDefinition {
 
     public void setHidden(Boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
     }
 
     public Boolean getParallelizable() {

@@ -926,13 +926,13 @@ public class ResourceService {
 
     public DateTime getLatestUpdatedTimestampSitemap(PrismScope resourceScope) {
         return resourceDAO.getLatestUpdatedTimestampSitemap(resourceScope,
-                stateService.getActiveResourceStates(resourceScope),
+                stateService.getPublishedResourceStates(resourceScope),
                 scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
     }
 
     public List<ResourceRepresentationSitemap> getResourceSitemapRepresentations(PrismScope resourceScope) {
         return resourceDAO.getResourceSitemapRepresentations(resourceScope,
-                stateService.getActiveResourceStates(resourceScope),
+                stateService.getPublishedResourceStates(resourceScope),
                 scopeService.getChildScopesWithActiveStates(resourceScope, PROJECT));
     }
 
@@ -944,7 +944,7 @@ public class ResourceService {
     public ResourceRepresentationRobotMetadataRelated getResourceRobotRelatedRepresentations(Resource resource, PrismScope relatedScope, String label) {
         HashMultimap<PrismScope, PrismState> childScopes = scopeService.getChildScopesWithActiveStates(relatedScope, PROJECT);
         List<ResourceRepresentationIdentity> childResources = resourceDAO.getResourceRobotRelatedRepresentations(
-                resource, relatedScope, stateService.getActiveResourceStates(relatedScope), childScopes);
+                resource, relatedScope, stateService.getPublishedResourceStates(relatedScope), childScopes);
         return childResources.isEmpty() ? null
                 : new ResourceRepresentationRobotMetadataRelated().withLabel(label).withResources(childResources);
     }
@@ -1127,6 +1127,20 @@ public class ResourceService {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
+        List<PrismScopeSectionDefinition> incompleteSections = Lists.newLinkedList();
+        for (PrismScopeSectionDefinition section : getRequiredSections(resource.getResourceScope())) {
+            ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(section
+                    .getCompletenessEvaluator());
+            if (!completenessEvaluator.evaluate(resource)) {
+                incompleteSections.add(section);
+            }
+        }
+
+        resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
+    }
+
     public List<Integer> getResourcesWithUnreadMessages(PrismScope scope, User user) {
         return resourceDAO.getResourcesWithUnreadMessages(scope, user);
     }
@@ -1159,20 +1173,6 @@ public class ResourceService {
             resourceRoles.addAll(resourceDAO.getResourceRoles(user, resourceScope));
         }
         return resourceRoles;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends ResourceParent> void setResourceAdvertIncompleteSection(T resource) {
-        List<PrismScopeSectionDefinition> incompleteSections = Lists.newLinkedList();
-        for (PrismScopeSectionDefinition section : getRequiredSections(resource.getResourceScope())) {
-            ResourceCompletenessEvaluator<T> completenessEvaluator = (ResourceCompletenessEvaluator<T>) applicationContext.getBean(section
-                    .getCompletenessEvaluator());
-            if (!completenessEvaluator.evaluate(resource)) {
-                incompleteSections.add(section);
-            }
-        }
-
-        resource.setAdvertIncompleteSection(Joiner.on("|").join(incompleteSections));
     }
 
     public HashMultimap<PrismScope, Integer> getResourcesWithActivitiesToCache(DateTime baseline) {

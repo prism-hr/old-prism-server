@@ -22,8 +22,6 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.resource.Resource;
-import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
-import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
 import uk.co.alumeni.prism.domain.resource.ResourceStateTransitionSummary;
 import uk.co.alumeni.prism.domain.user.User;
@@ -181,25 +179,11 @@ public class StateDAO {
                 .list();
     }
 
-    public List<PrismState> getActiveResourceStates(PrismScope resourceScope) {
-        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(StateAction.class) //
-                .setProjection(Projections.groupProperty("state.id")) //
-                .createAlias("state", "state", JoinType.INNER_JOIN) //
-                .createAlias("action", "action", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq("action.scope.id", resourceScope)) //
-                .add(Restrictions.isNull("state.hidden"));
-
-        Class<? extends Resource> resourceClass = resourceScope.getResourceClass();
-        if (ResourceParent.class.isAssignableFrom(resourceClass)) {
-            String resourceName = resourceScope.name();
-            if (ResourceOpportunity.class.isAssignableFrom(resourceClass)) {
-                criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceName + "_APPROVAL_PARENT_APPROVAL")));
-            }
-            criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceName + "_APPROVAL")));
-            criteria.add(Restrictions.ne("state.id", PrismState.valueOf(resourceName + "_APPROVAL_PENDING_CORRECTION")));
-        }
-
-        return (List<PrismState>) criteria.add(Restrictions.isNotNull("action.creationScope")) //
+    public List<PrismState> getPublishedResourceStates(PrismScope resourceScope) {
+        return (List<PrismState>) sessionFactory.getCurrentSession().createCriteria(State.class) //
+                .setProjection(Projections.property("id")) //
+                .add(Restrictions.eq("scope.id", resourceScope)) //
+                .add(Restrictions.eq("published", true)) //
                 .list();
     }
 
@@ -292,6 +276,15 @@ public class StateDAO {
         sessionFactory.getCurrentSession().createQuery( //
                 "update State " //
                         + "set hidden = true " //
+                        + "where id in (:states)")
+                .setParameterList("states", states) //
+                .executeUpdate();
+    }
+
+    public void setPublishedStates(List<PrismState> states) {
+        sessionFactory.getCurrentSession().createQuery( //
+                "update State " //
+                        + "set published = true " //
                         + "where id in (:states)")
                 .setParameterList("states", states) //
                 .executeUpdate();

@@ -20,6 +20,7 @@ import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.ApplicationDocument;
 import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.comment.Comment;
+import uk.co.alumeni.prism.domain.message.MessageDocument;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
@@ -29,6 +30,8 @@ import uk.co.alumeni.prism.domain.user.UserDocument;
 import uk.co.alumeni.prism.domain.user.UserQualification;
 import uk.co.alumeni.prism.domain.workflow.NotificationConfigurationDocument;
 import uk.co.alumeni.prism.workflow.user.DocumentReassignmentProcessor;
+
+import com.google.common.base.Objects;
 
 @Entity
 @Table(name = "document")
@@ -97,6 +100,9 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     @OneToOne(mappedBy = "document")
     private NotificationConfigurationDocument notificationConfigurationDocument;
+
+    @OneToOne(mappedBy = "document")
+    private MessageDocument messageDocument;
 
     public void setId(Integer id) {
         this.id = id;
@@ -206,6 +212,10 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
         return notificationConfigurationDocument;
     }
 
+    public MessageDocument getMessageDocument() {
+        return messageDocument;
+    }
+
     public Document withId(Integer id) {
         this.id = id;
         return this;
@@ -261,6 +271,23 @@ public class Document implements UniqueEntity, UserAssignment<DocumentReassignme
 
     public String getExportFilenameAmazon() {
         return id.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        Document other = (Document) object;
+        return Objects.equal(id, other.getId());
     }
 
     @Override

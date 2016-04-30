@@ -2,6 +2,7 @@ package uk.co.alumeni.prism.mapping;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -27,15 +28,15 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITU
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.getResourceContexts;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSame;
 import static uk.co.alumeni.prism.utils.PrismCollectionUtils.containsSome;
 import static uk.co.alumeni.prism.utils.PrismConversionUtils.doubleToBigDecimal;
 import static uk.co.alumeni.prism.utils.PrismListUtils.getSummaryRepresentations;
 import static uk.co.alumeni.prism.utils.PrismListUtils.processRowDescriptors;
-import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.endsWith;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,7 @@ import javax.transaction.Transactional;
 import jersey.repackaged.com.google.common.base.Objects;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-import org.joda.time.LocalDate;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +71,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismAdvertIndustry;
 import uk.co.alumeni.prism.domain.definitions.PrismConnectionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDurationUnit;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
-import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismStudyOption;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionCondition;
@@ -84,6 +83,7 @@ import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
+import uk.co.alumeni.prism.domain.resource.ResourceStudyOption;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.dto.AdvertApplicationSummaryDTO;
 import uk.co.alumeni.prism.dto.AdvertCategoryDTO;
@@ -93,6 +93,7 @@ import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.AdvertUserDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceFlatToNestedDTO;
+import uk.co.alumeni.prism.dto.UserAdvertDTO;
 import uk.co.alumeni.prism.rest.dto.AddressDTO;
 import uk.co.alumeni.prism.rest.dto.OpportunitiesQueryDTO;
 import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
@@ -164,9 +165,13 @@ public class AdvertMapper {
 
     public AdvertRepresentationExtended getAdvertRepresentationExtended(Advert advert) {
         User user = userService.getCurrentUser();
+        UserAdvertDTO userAdvertDTO = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
 
-        Set<Integer> userAdverts = advertService.getUserAdverts(user, advert.getResource().getResourceScope());
-        if (isTrue(advert.getGloballyVisible()) || (userAdverts != null && userAdverts.contains(advert.getId()))) {
+        Integer advertId = advert.getId();
+        List<Integer> userAdverts = userAdvertDTO.getVisibleDirect();
+        List<Integer> userAdvertsRevoked = userAdvertDTO.getInvisible();
+        if ((isEmpty(userAdvertsRevoked) || !userAdvertsRevoked.contains(advertId)) && (isTrue(advert.getGloballyVisible())
+                || userAdvertDTO.isAllVisible() || (isNotEmpty(userAdverts) && userAdverts.contains(advertId)))) {
             AdvertRepresentationExtended representation = getAdvertRepresentation(advert, AdvertRepresentationExtended.class);
 
             ResourceParent resource = advert.getResource();
@@ -192,9 +197,8 @@ public class AdvertMapper {
 
             if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
                 representation.setOpportunityType(((ResourceOpportunity) resource).getOpportunityType().getId());
-                setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
                 representation.setStudyOptions(((ResourceOpportunity) resource).getResourceStudyOptions().stream()
-                        .map(resourceStudyOption -> resourceStudyOption.getStudyOption()).collect(toList()));
+                        .map(ResourceStudyOption::getStudyOption).collect(toList()));
             }
 
             setOpportunityCategories(representation, resource.getOpportunityCategories());
@@ -202,7 +206,6 @@ public class AdvertMapper {
             Boolean recommended = userAdverts.contains(advert.getId());
             representation.setRecommended(recommended);
 
-            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert)));
             representation.setName(advert.getName());
 
             AdvertApplicationSummaryDTO applicationSummary = advertService.getAdvertApplicationSummary(advert);
@@ -212,6 +215,8 @@ public class AdvertMapper {
             Long applicationRatingCount = applicationSummary.getApplicationRatingCount();
             representation.setApplicationRatingCount(applicationRatingCount == null ? null : applicationRatingCount.intValue());
             representation.setApplicationRatingAverage(doubleToBigDecimal(applicationSummary.getApplicationRatingAverage(), RATING_PRECISION));
+
+            representation.setTargets(getAdvertTargetConnectionRepresentations(advertService.getAdvertTargets(advert), user));
 
             List<Integer> advertIds = newArrayList(advert.getId());
             Map<Integer, AdvertRepresentationExtended> representations = ImmutableMap.of(advert.getId(), representation);
@@ -239,7 +244,6 @@ public class AdvertMapper {
         }
 
         representation.setOpportunityType(advert.getOpportunityType());
-        setTargetOpportunityTypes(representation, advert.getTargetOpportunityTypes());
         setOpportunityCategories(representation, advert.getOpportunityCategories());
         representation.setRecommended(advert.getRecommended());
 
@@ -261,6 +265,13 @@ public class AdvertMapper {
                 .withGoogleId(advert.getAddressGoogleId())
                 .withCoordinates(new AddressCoordinatesRepresentation().withLatitude(advert.getAddressCoordinateLatitude()) //
                         .withLongitude(advert.getAddressCoordinateLongitude())));
+
+        ResourceRepresentationSimple resource = representation.getResource();
+        if (ResourceOpportunityRepresentationSimple.class.isAssignableFrom(resource.getClass())) {
+            ResourceOpportunityRepresentationSimple resourceOpportunity = (ResourceOpportunityRepresentationSimple) resource;
+            resourceOpportunity.setDurationMinimum(advert.getDurationMinimum());
+            resourceOpportunity.setDurationMaximum(advert.getDurationMaximum());
+        }
 
         PrismDurationUnit payInterval = advert.getPayInterval();
         if (payInterval != null) {
@@ -345,11 +356,11 @@ public class AdvertMapper {
         return null;
     }
 
-    public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets) {
+    public List<AdvertTargetRepresentation> getAdvertTargetRepresentations(List<AdvertTargetDTO> advertTargets, User user) {
         Map<ResourceRepresentationConnection, AdvertTargetRepresentation> representationIndex = Maps.newHashMap();
         TreeMultimap<AdvertTargetRepresentation, AdvertTargetConnectionRepresentation> filteredRepresentations = TreeMultimap.create();
 
-        Set<Integer> otherAdvertIds = advertTargets.stream().filter(at -> at.getOtherUserId() == null).map(at -> at.getOtherAdvertId()).collect(toSet());
+        Set<Integer> otherAdvertIds = advertTargets.stream().filter(at -> at.getOtherUserId() == null).map(AdvertTargetDTO::getOtherAdvertId).collect(toSet());
         Map<Integer, AdvertUserDTO> advertUsers = advertService.getAdvertUsers(otherAdvertIds);
 
         for (AdvertTargetDTO advertTarget : advertTargets) {
@@ -376,7 +387,7 @@ public class AdvertMapper {
                 advertTarget.setOtherUserPortraitImageId(advertUser.getUserPortraitImageId());
             }
 
-            AdvertTargetConnectionRepresentation targetRepresentation = getAdvertTargetConnectionRepresentation(advertTarget);
+            AdvertTargetConnectionRepresentation targetRepresentation = getAdvertTargetConnectionRepresentation(advertTarget, user);
             filteredRepresentations.put(representation, targetRepresentation);
         }
 
@@ -389,11 +400,9 @@ public class AdvertMapper {
         return representations;
     }
 
-    public List<AdvertTargetConnectionRepresentation> getAdvertTargetConnectionRepresentations(List<AdvertTargetDTO> advertTargets) {
+    public List<AdvertTargetConnectionRepresentation> getAdvertTargetConnectionRepresentations(List<AdvertTargetDTO> advertTargets, User currentUser) {
         Set<AdvertTargetConnectionRepresentation> representations = Sets.newTreeSet();
-        getAdvertTargetRepresentations(advertTargets).forEach(advertTarget -> {
-            representations.addAll(advertTarget.getConnections());
-        });
+        getAdvertTargetRepresentations(advertTargets, currentUser).forEach(advertTarget -> representations.addAll(advertTarget.getConnections()));
         return newLinkedList(representations);
     }
 
@@ -403,7 +412,7 @@ public class AdvertMapper {
             List<PrismAdvertIndustry> industries = categories.getIndustries().stream().map(AdvertIndustry::getIndustry).collect(toList());
             List<PrismAdvertFunction> functions = categories.getFunctions().stream().map(AdvertFunction::getFunction).collect(toList());
             List<AdvertThemeRepresentation> themes = getAdvertThemeRepresentations(categories);
-            List<ResourceLocationRepresentationRelation> locations = getAllAdvertLocationRepresentations(advert, categories);
+            List<ResourceLocationRepresentationRelation> locations = getAdvertLocationRepresentations(advert, categories);
 
             Resource resource = advert.getResource();
             List<String> displayThemes = newLinkedList();
@@ -430,23 +439,11 @@ public class AdvertMapper {
         return null;
     }
 
-    public List<ResourceLocationRepresentationRelation> getAllAdvertLocationRepresentations(Advert advert, AdvertCategories categories) {
-        Set<ResourceLocationRepresentationRelation> locationsIndex = Sets.newHashSet();
-        Map<String, ResourceLocationRepresentationRelation> locationsOrder = Maps.newTreeMap();
-
-        getAdvertLocationRepresentations(categories).stream().forEach(location -> {
-            locationsIndex.add(location);
-            locationsOrder.put(location.getDisplayName(), location);
-        });
-
-        getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert)).forEach(location -> {
-            if (!locationsIndex.contains(location)) {
-                locationsIndex.add(location);
-                locationsOrder.put(location.getDisplayName(), location);
-            }
-        });
-        
-        return new ArrayList<>(locationsOrder.values());
+    public List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(Advert advert, AdvertCategories categories) {
+        Set<ResourceLocationRepresentationRelation> locations = newTreeSet();
+        getAdvertLocationRepresentations(categories).stream().forEach(location -> locations.add(location));
+        getAdvertLocationRepresentations(advertService.getPossibleAdvertLocations(advert)).forEach(location -> locations.add(location));
+        return newLinkedList(locations);
     }
 
     public List<AdvertThemeRepresentation> getAdvertThemeRepresentations(AdvertCategories categories) {
@@ -612,8 +609,8 @@ public class AdvertMapper {
 
                     if (isNotEmpty(industries) || isNotEmpty(functions) || isNotEmpty(themes) || isNotEmpty(locations)) {
                         representation.setCategories(new AdvertCategoriesRepresentation().withIndustries(newLinkedList(industries))
-                                .withFunctions(newLinkedList(functions))
-                                .withThemesDisplay(newLinkedList(themes)).withLocationsDisplay(newLinkedList(locations)));
+                                .withFunctions(newLinkedList(functions)).withThemesDisplay(newLinkedList(themes))
+                                .withLocationsDisplay(newLinkedList(locations)));
                     }
 
                     representation.setStudyOptions(newLinkedList(studyOptionIndex.get(advert)));
@@ -624,7 +621,7 @@ public class AdvertMapper {
         return new AdvertListRepresentation().withRows(newLinkedList(representations.values())).withSummaries(getSummaryRepresentations(summaries));
     }
 
-    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget) {
+    private AdvertTargetConnectionRepresentation getAdvertTargetConnectionRepresentation(AdvertTargetDTO advertTarget, User user) {
         boolean canManage = isTrue(advertTarget.getCanManage());
         boolean severed = isTrue(advertTarget.getThisAdvertSevered()) || isTrue(advertTarget.getOtherAdvertSevered());
         AdvertTargetConnectionRepresentation connectionRepresentation = new AdvertTargetConnectionRepresentation().withAdvertTargetId(advertTarget.getId())
@@ -637,7 +634,8 @@ public class AdvertMapper {
         if (otherUserId != null) {
             connectionRepresentation.setUser(new UserRepresentationSimple().withId(advertTarget.getOtherUserId())
                     .withFirstName(advertTarget.getOtherUserFirstName())
-                    .withLastName(advertTarget.getOtherUserLastName()).withEmail(advertTarget.getOtherUserEmail())
+                    .withLastName(advertTarget.getOtherUserLastName())
+                    .withEmail(userService.getSecuredUserEmailAddress(advertTarget.getOtherUserEmail(), user))
                     .withAccountProfileUrl(advertTarget.getOtherUserLinkedinProfileUrl()).withAccountImageUrl(advertTarget.getOtherUserLinkedinImageUrl())
                     .withPortraitImage(documentMapper.getDocumentRepresentation(advertTarget.getOtherUserPortraitImageId())));
         }
@@ -680,21 +678,15 @@ public class AdvertMapper {
     private <T extends ResourceRepresentationSimple> T getAdvertResourceRepresentation(AdvertDTO advert, PrismScope scope) {
         ResourceFlatToNestedDTO resource = advert.getEnclosingResource(scope);
         if (resource != null) {
-            boolean isOpportunity = asList(PROGRAM, PROJECT).contains(scope);
-            Class<?> representationClass = isOpportunity ? ResourceOpportunityRepresentationSimple.class : ResourceRepresentationSimple.class;
+            Class<?> representationClass = scope.getScopeCategory().equals(OPPORTUNITY) ? ResourceOpportunityRepresentationSimple.class
+                    : ResourceRepresentationSimple.class;
             T resourceRepresentation = (T) BeanUtils.instantiate(representationClass);
 
             resourceRepresentation.setScope(scope);
             resourceRepresentation.setId(resource.getId());
             resourceRepresentation.setName(resource.getName());
 
-            if (isOpportunity) {
-                String scopeReference = scope.getLowerCamelName();
-                ResourceOpportunityRepresentationSimple resourceOpportunityRepresentation = (ResourceOpportunityRepresentationSimple) resourceRepresentation;
-                resourceOpportunityRepresentation.setAvailableDate((LocalDate) getProperty(advert, scopeReference + "AvailableDate"));
-                resourceOpportunityRepresentation.setDurationMinimum((Integer) getProperty(advert, scopeReference + "DurationMinimum"));
-                resourceOpportunityRepresentation.setDurationMaximum((Integer) getProperty(advert, scopeReference + "DurationMaximum"));
-            } else if (scope.equals(INSTITUTION)) {
+            if (scope.equals(INSTITUTION)) {
                 resourceRepresentation.setLogoImage(documentMapper.getDocumentRepresentation(advert.getLogoImageId()));
             }
 
@@ -710,31 +702,37 @@ public class AdvertMapper {
         }
     }
 
-    private void setTargetOpportunityTypes(AdvertRepresentationExtended representation, String targetOpportunityTypes) {
-        if (targetOpportunityTypes != null) {
-            representation.setTargetOpportunityTypes(asList(targetOpportunityTypes.split("\\|")).stream().map(PrismOpportunityType::valueOf).collect(toList()));
-        }
-    }
-
     private void setAdvertCallToActionStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
         if (isNotEmpty(advertIds)) {
-            setAdvertJoinStates(user, advertIds, representations);
-            setAdvertConnectStates(user, advertIds, representations);
+            HashMultimap<String, AdvertCategoryDTO> adverts = HashMultimap.create();
+            advertService.getAdvertsForWhichUserHasRoles(user).stream().forEach(advert -> {
+                String roleName = advert.getRole().name();
+                if (endsWith(roleName, "ADMINISTRATOR", "APPROVER", "VIEWER")) {
+                    adverts.put("staff", advert);
+                } else if (endsWith(roleName, "VIEWER_UNVERIFIED", "VIEWER_REJECTED")) {
+                    adverts.put("staffPending", advert);
+                } else if (endsWith(roleName, "STUDENT")) {
+                    adverts.put("student", advert);
+                } else if (endsWith(roleName, "STUDENT_UNVERIFIED", "STUDENT_REJECTED")) {
+                    adverts.put("studentPending", advert);
+                }
+            });
+
+            setAdvertJoinStates(user, advertIds, adverts, representations);
+            setAdvertConnectStates(user, advertIds, adverts.get("staff"), representations);
         }
     }
 
-    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
-        List<Integer> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" },
-                advertIds);
-        List<Integer> advertsAsStaffPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "VIEWER_UNVERIFIED", "VIEWER_REJECTED" },
-                advertIds);
-        List<Integer> advertsAsStudent = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT" }, advertIds);
-        List<Integer> advertsAsStudentPending = advertService.getAdvertsForWhichUserHasRolesStrict(user, new String[] { "STUDENT_UNVERIFIED",
-                "STUDENT_REJECTED" }, advertIds);
+    public void setAdvertJoinStates(User user, Collection<Integer> advertIds, HashMultimap<String, AdvertCategoryDTO> adverts,
+            Map<Integer, AdvertRepresentationExtended> representations) {
+        List<Integer> advertsAsStaff = adverts.get("staff").stream().map(advert -> advert.getAdvert()).collect(toList());
+        List<Integer> advertsAsStaffPending = adverts.get("staffPending").stream().map(advert -> advert.getAdvert()).collect(toList());
+        List<Integer> advertsAsStudent = adverts.get("student").stream().map(advert -> advert.getAdvert()).collect(toList());
+        List<Integer> advertsAsStudentPending = adverts.get("studentPending").stream().map(advert -> advert.getAdvert()).collect(toList());
 
-        representations.keySet().forEach(advert -> {
-            representations.get(advert).setJoinStateStaff(getAdvertJoinState(advert, advertsAsStaff, advertsAsStaffPending));
-            representations.get(advert).setJoinStateStudent(getAdvertJoinState(advert, advertsAsStudent, advertsAsStudentPending));
+        representations.keySet().forEach(representation -> {
+            representations.get(representation).setJoinStateStaff(getAdvertJoinState(representation, advertsAsStaff, advertsAsStaffPending));
+            representations.get(representation).setJoinStateStudent(getAdvertJoinState(representation, advertsAsStudent, advertsAsStudentPending));
         });
     }
 
@@ -747,10 +745,9 @@ public class AdvertMapper {
         return UNKNOWN;
     }
 
-    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Map<Integer, AdvertRepresentationExtended> representations) {
+    private void setAdvertConnectStates(User user, Collection<Integer> advertIds, Collection<AdvertCategoryDTO> advertsAsStaff,
+            Map<Integer, AdvertRepresentationExtended> representations) {
         List<AdvertTarget> targets = advertService.getAdvertTargetsForAdverts(advertIds);
-        List<AdvertCategoryDTO> advertsAsStaff = advertService.getAdvertsForWhichUserHasRolesStrict(user,
-                new String[] { "ADMINISTRATOR", "APPROVER", "VIEWER" });
 
         HashMultimap<Integer, Integer> pendingForIndex = HashMultimap.create();
         HashMultimap<Integer, Integer> acceptedForIndex = HashMultimap.create();
@@ -824,16 +821,15 @@ public class AdvertMapper {
     private List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(AdvertCategories categories) {
         Set<AdvertLocation> advertLocations = categories.getLocations();
         List<ResourceLocationRepresentationRelation> advertLocationRepresentations = getAdvertLocationRepresentations(
-                advertLocations.stream().map(AdvertLocation::getLocationAdvert).collect(Collectors.toList()));
+                advertLocations.stream().map(AdvertLocation::getLocationAdvert).collect(toList()));
         advertLocationRepresentations.stream().forEach(representation -> representation.setSelected(true));
         return advertLocationRepresentations;
     }
 
     private List<ResourceLocationRepresentationRelation> getAdvertLocationRepresentations(Collection<Advert> locations) {
         User currentUser = userService.getCurrentUser();
-        return locations.stream()
-                .map(location -> resourceMapper.getResourceLocationRepresentationRelation(location.getResource(), currentUser)) //
-                .collect(Collectors.toList());
+        return locations.stream().map(location -> resourceMapper.getResourceLocationRepresentationRelation(location.getResource(), currentUser))
+                .collect(toList());
     }
 
 }

@@ -1,11 +1,24 @@
 package uk.co.alumeni.prism.dao;
 
-import static org.apache.commons.lang.ArrayUtils.contains;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.advertScopes;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Arrays.asList;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
+import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -34,8 +47,10 @@ import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.StateAction;
 import uk.co.alumeni.prism.domain.workflow.StateActionAssignment;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ResourceRoleDTO;
 import uk.co.alumeni.prism.dto.UserRoleDTO;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 
 @Repository
 @SuppressWarnings("unchecked")
@@ -48,103 +63,100 @@ public class RoleDAO {
     private SessionFactory sessionFactory;
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, Collection<Integer> resourceIds) {
-        return workflowDAO.getWorkflowCriteriaList(scope, Projections.groupProperty("role.id")) //
+        return (List<PrismRole>) workflowDAO.getWorkflowCriteriaList(scope, Projections.groupProperty("role.id")) //
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
                 .list();
     }
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope parentScope, Collection<Integer> resourceIds) {
-        return workflowDAO.getWorkflowCriteriaList(scope, parentScope, Projections.groupProperty("role.id")) //
+        return (List<PrismRole>) workflowDAO.getWorkflowCriteriaList(scope, parentScope, Projections.groupProperty("role.id")) //
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
                 .list();
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> targeterEntities,
+    public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, PrismScope targeterScope, PrismScope targetScope,
             Collection<Integer> resourceIds) {
-        return workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, targeterEntities, Projections.groupProperty("role.id"))
+        return (List<PrismRole>) workflowDAO.getWorkflowCriteriaList(scope, targeterScope, targetScope, Projections.groupProperty("role.id"))
                 .add(getRolesOverridingRedactionsConstraint(user, resourceIds)) //
-                .add(WorkflowDAO.getTargetActionConstraint()) //
+                .add(getTargetActionConstraint()) //
                 .list();
     }
 
     public List<PrismRole> getRolesForResource(Resource resource, User user) {
-        return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class, "userRole") //
-                .setProjection(Projections.groupProperty("role.id")) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("userRole.application", resource.getApplication())) //
-                        .add(Restrictions.eq("userRole.project", resource.getProject())) //
-                        .add(Restrictions.eq("userRole.program", resource.getProgram())) //
-                        .add(Restrictions.eq("userRole.department", resource.getDepartment())) //
-                        .add(Restrictions.eq("userRole.institution", resource.getInstitution())) //
-                        .add(Restrictions.eq("userRole.system", resource.getSystem()))) //
-                .list();
-    }
-
-    public List<PrismRole> getRolesForResourceStrict(Resource resource, User user) {
         return (List<PrismRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .setProjection(Projections.groupProperty("role.id")) //
-                .add(Restrictions.eq("user", user)) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.verified", true)) //
                 .list();
     }
 
-    public UserRole getUserRole(Resource resource, User user, Role role) {
+    public List<UserRoleDTO> getUserRoles(Resource resource, User user) {
+        return getUserRoles(resource, user, null);
+    }
+
+    public List<UserRoleDTO> getUserRoles(Resource resource, Collection<PrismRole> roles) {
+        return getUserRoles(resource, null, roles);
+    }
+
+    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, Collection<PrismRole> roles) {
+        return getUserRoles(resources, null, roles);
+    }
+
+    public List<UserRoleDTO> getUserRoles(Resource resource, User user, Collection<PrismRole> roles) {
+        return getUserRoles(newArrayList(resource), user, roles);
+    }
+
+    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, User user, Collection<PrismRole> roles) {
+        Junction constraints = Restrictions.disjunction();
+        LinkedHashMultimap<PrismScope, Resource> constrainingResources = LinkedHashMultimap.create();
+        resources.stream().forEach(resource -> {
+            Map<PrismScope, Resource> enclosingResources = resource.getEnclosingResources();
+            enclosingResources.keySet().forEach(enclosingScope -> constrainingResources.put(enclosingScope, enclosingResources.get(enclosingScope)));
+        });
+
+        boolean constrainedByUser = user != null;
+        boolean constrainedByRole = isNotEmpty(roles);
+        HashMultimap<PrismScope, PrismRole> rolesByScope = HashMultimap.create();
+        if (constrainedByRole) {
+            roles.forEach(role -> rolesByScope.put(role.getScope(), role));
+        }
+
+        constrainingResources.keySet().forEach(constrainingScope -> {
+            Set<PrismRole> constrainingRoles = rolesByScope.get(constrainingScope);
+            if (!(constrainedByRole && constrainingRoles.size() == 0)) {
+                Junction constraint = Restrictions.conjunction() //
+                        .add(Restrictions.in(constrainingScope.getLowerCamelName(), constrainingResources.get(constrainingScope)));
+
+                if (constrainedByUser) {
+                    constraint.add(Restrictions.eq("user", user));
+                }
+
+                if (isNotEmpty(constrainingRoles)) {
+                    constraint.add(Restrictions.in("role.id", constrainingRoles));
+                }
+
+                constraints.add(constraint);
+            }
+        });
+
+        return (List<UserRoleDTO>) getUserRoleCriteria() //
+                .createAlias("role.scope", "roleScope", JoinType.INNER_JOIN) //
+                .add(constraints) //
+                .addOrder(Order.asc("roleScope.ordinal")) //
+                .addOrder(Order.asc("role.id")) //
+                .addOrder(Order.asc("user.fullName")) //
+                .setResultTransformer(Transformers.aliasToBean(UserRoleDTO.class)) //
+                .list();
+    }
+
+    public UserRole getUserRoleStrict(Resource resource, User user, Role role) {
         return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role", role)) //
                 .uniqueResult();
-    }
-
-    public UserRole getUserRole(Resource resource, User user, PrismRole prismRole) {
-        return (UserRole) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.id", prismRole)) //
-                .uniqueResult();
-    }
-
-    public List<UserRoleDTO> getUserRoles(Resource resource) {
-        return (List<UserRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("user").as("user")) //
-                        .add(Projections.property("role.id").as("role"))) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .setResultTransformer(Transformers.aliasToBean(UserRoleDTO.class))
-                .list();
-    }
-
-    public List<ResourceRoleDTO> getUserRoles(User user, PrismScope resourceScope) {
-        String resourceReference = resourceScope.getLowerCamelName();
-        return (List<ResourceRoleDTO>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.projectionList() //
-                        .add(Projections.property("role.scope.id").as("scope")) //
-                        .add(Projections.property(resourceReference + ".id").as("id")) //
-                        .add(Projections.property("role.id").as("role")) //
-                        .add(Projections.property("role.verified").as("verified")) //
-                        .add(Projections.property("role.directlyAssignable").as("directlyAssignable"))) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.isNotNull(resourceReference)) //
-                .add(Restrictions.eq("user", user)) //
-                .setResultTransformer(Transformers.aliasToBean(ResourceRoleDTO.class)) //
-                .list();
-    }
-
-    public List<User> getRoleUsers(Resource resource, Role... roles) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.in("role", roles)) //
-                .list();
-    }
-
-    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return (List<User>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .setProjection(Projections.groupProperty("user")) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
-                .add(Restrictions.in("role.id", prismRoles)) //
-                .list();
     }
 
     public Role getCreatorRole(Resource resource) {
@@ -280,11 +292,11 @@ public class RoleDAO {
     }
 
     public List<UserRole> getUnverifiedRoles(Resource resource, User user) {
+        PrismScope resourceScope = resource.getResourceScope();
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
-                .createAlias("role", "role", JoinType.INNER_JOIN) //
-                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource)) //
+                .add(Restrictions.eq(resourceScope.getLowerCamelName(), resource)) //
                 .add(Restrictions.eq("user", user)) //
-                .add(Restrictions.eq("role.verified", false)) //
+                .add(Restrictions.in("role.id", values(PrismRole.class, resourceScope, "STUDENT_UNVERIFIED", "VIEWER_UNVERIFIED"))) //
                 .list();
     }
 
@@ -297,7 +309,7 @@ public class RoleDAO {
                 .createAlias("role.scope", "scope", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq("user", user));
 
-        if (contains(advertScopes, scope)) {
+        if (asList(OPPORTUNITY, ORGANIZATION).contains(scope.getScopeCategory())) {
             criteria.add(Restrictions.ne("resourceState.state.id", PrismState.valueOf(scope.name() + "_UNSUBMITTED")));
         }
 
@@ -315,12 +327,73 @@ public class RoleDAO {
                 .list();
     }
 
+    public List<UserRole> getUserRolesForWhichUserIsCandidate(User user) {
+        return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("department.resourceStates", "departmentState", JoinType.LEFT_OUTER_JOIN,
+                        getResourceParentManageableStateConstraint(DEPARTMENT, "departmentState.state.id"))
+                .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institution.resourceStates", "institutionState", JoinType.LEFT_OUTER_JOIN, //
+                        getResourceParentManageableStateConstraint(INSTITUTION, "institutionState.state.id")) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.isNotNull("departmentState.id")) //
+                        .add(Restrictions.isNotNull("institutionState.id"))) //
+                .add(Restrictions.eq("user", user)) //
+                .add(Restrictions.eq("role.roleCategory", STUDENT)) //
+                .list();
+    }
+
+    public List<UserRoleDTO> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm, boolean directlyAssignableOnly) {
+        Criteria criteria = getUserRoleCriteria() //
+                .add(Restrictions.eq(resource.getResourceScope().getLowerCamelName(), resource));
+
+        if (searchRole != null) {
+            criteria.add(Restrictions.eq("role.id", searchRole));
+        }
+
+        if (isNotBlank(searchTerm)) {
+            criteria.add(getMatchingUserConstraint("user", searchTerm));
+        }
+
+        if (directlyAssignableOnly) {
+            criteria.add(Restrictions.eq("role.directlyAssignable", true));
+        }
+
+        return (List<UserRoleDTO>) criteria //
+                .setResultTransformer(Transformers.aliasToBean(UserRoleDTO.class))
+                .list();
+    }
+
     private static Junction getRolesOverridingRedactionsConstraint(User user, Collection<Integer> resourceIds) {
         return Restrictions.conjunction() //
                 .add(Restrictions.in("resource.id", resourceIds)) //
                 .add(Restrictions.eq("userRole.user", user)) //
+                .add(Restrictions.eq("role.verified", true)) //
                 .add(Restrictions.isEmpty("role.actionRedactions")) //
                 .add(Restrictions.eq("userAccount.enabled", true));
+    }
+
+    private Criteria getUserRoleCriteria() {
+        return sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.property("user.id").as("id")) //
+                        .add(Projections.property("user.firstName").as("firstName")) //
+                        .add(Projections.property("user.lastName").as("lastName")) //
+                        .add(Projections.property("user.email").as("email")) //
+                        .add(Projections.property("user.firstName2").as("firstName2")) //
+                        .add(Projections.property("user.firstName3").as("firstName3")) //
+                        .add(Projections.property("user.fullName").as("fullName")) //
+                        .add(Projections.property("userAccount.enabled").as("enabled")) //
+                        .add(Projections.property("userAccount.linkedinProfileUrl").as("linkedinProfileUrl")) //
+                        .add(Projections.property("userAccount.linkedinImageUrl").as("linkedinImageUrl")) //
+                        .add(Projections.property("userAccount.portraitImage.id").as("portraitImage")) //
+                        .add(Projections.property("user.creatorUser.id").as("creatorUser")) //
+                        .add(Projections.property("role.id").as("role"))) //
+                .createAlias("user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("role", "role", JoinType.INNER_JOIN) //
+                .add(Restrictions.eq("role.verified", true));
     }
 
 }

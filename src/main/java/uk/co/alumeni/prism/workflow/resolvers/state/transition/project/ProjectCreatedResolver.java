@@ -40,7 +40,7 @@ public class ProjectCreatedResolver implements StateTransitionResolver<Project> 
         if (initialState == null) {
             User user = comment.getUser();
             ResourceParent resourceParent = resourceService.getResourceParent(resource);
-            if (resourceService.isUnderApproval(resourceParent)) {
+            if (resourceService.isInState(resourceParent, "APPROVAL")) {
                 return stateService.getStateTransition(parentResource, comment.getAction(), PROJECT_APPROVAL_PARENT_APPROVAL);
             } else if (roleService.hasUserRole(resource, user, PROGRAM_ADMINISTRATOR_GROUP)) {
                 return stateService.getStateTransition(parentResource, comment.getAction(), PROJECT_APPROVED);

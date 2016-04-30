@@ -6,7 +6,7 @@ public class PrismProgramWithdrawn extends PrismWorkflowState {
 
 	@Override
 	protected void setStateActions() {
-		stateActions.add(PrismProgramWorkflow.programEmailCreatorUnnapproved()); //
+		stateActions.add(PrismProgramWorkflow.programSendMessageUnnapproved()); //
 		stateActions.add(PrismProgramWorkflow.programViewEditInactive()); //
 	}
 

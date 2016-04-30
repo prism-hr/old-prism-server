@@ -34,7 +34,7 @@ public class ProgramCompletedResolver implements StateTransitionResolver<Program
     @Override
     public StateTransition resolve(Program resource, Comment comment) {
         State transitionState = comment.getTransitionState();
-        if (resourceService.isUnderApproval(resource)) {
+        if (resourceService.isInState(resource, "APPROVAL")) {
             return stateService.getStateTransition(resource, comment.getAction(), PROGRAM_APPROVAL_PARENT_APPROVAL);
         } else if (transitionState == null) {
             User user = comment.getUser();

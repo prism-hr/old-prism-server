@@ -34,7 +34,7 @@ public class PrismDepartmentParentApproval extends PrismWorkflowState {
                         .withTransitionAction(PrismAction.PROJECT_VIEW_EDIT)
                         .withRoleTransitions(PrismRoleTransitionGroup.PROJECT_CREATE_ADMINISTRATOR_GROUP)));
 
-        stateActions.add(PrismDepartmentWorkflow.departmentEmailCreatorUnnapproved()); //
+        stateActions.add(PrismDepartmentWorkflow.departmentSendMessageUnnapproved()); //
         stateActions.add(PrismDepartmentWorkflow.departmentEscalateUnapproved()); //
         stateActions.add(PrismDepartmentWorkflow.departmentTerminateUnapproved()); //
         stateActions.add(PrismDepartmentWorkflow.departmentViewEditApproval(state)); //

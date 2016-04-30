@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
+
 import com.google.common.base.Objects;
 
 public class PrismRoleTransition {
@@ -82,21 +84,21 @@ public class PrismRoleTransition {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, transitionType, transitionRole, restrictToActionOwner, minimumPermitted, maximumPermitted);
+        return Objects.hashCode(role, transitionType, transitionRole);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object object) {
+        if (object == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismRoleTransition other = (PrismRoleTransition) obj;
-        return Objects.equal(role, other.getRole()) && Objects.equal(transitionType, other.getTransitionType())
-                && Objects.equal(transitionRole, other.getTransitionRole()) && Objects.equal(restrictToActionOwner, other.getRestrictToActionOwner())
-                && Objects.equal(minimumPermitted, other.getMinimumPermitted()) && Objects.equal(maximumPermitted, other.getMaximumPermitted());
+        PrismRoleTransition other = (PrismRoleTransition) object;
+        return equal(role, other.getRole()) && equal(transitionType, other.getTransitionType()) && equal(transitionRole, other.getTransitionRole())
+                && equal(restrictToActionOwner, other.getRestrictToActionOwner()) && equal(minimumPermitted, other.getMinimumPermitted())
+                && equal(maximumPermitted, other.getMaximumPermitted());
     }
 
 }

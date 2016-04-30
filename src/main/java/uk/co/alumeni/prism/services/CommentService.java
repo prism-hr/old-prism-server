@@ -2,16 +2,17 @@ package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang.BooleanUtils.isFalse;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_COMMENT_CONTENT_BULK_PROCESSED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_COMPLETE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_INTERVIEW_AVAILABILITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_PARTNER_APPROVAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_UPDATE_INTERVIEW_AVAILABILITY;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_INTERVIEWER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
@@ -48,6 +49,7 @@ import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -118,6 +120,13 @@ public class CommentService {
         return (Objects.equals(comment.getUser().getId(), userId) || (ownerDelegate != null && Objects.equals(ownerDelegate.getId(), userId)));
     }
 
+    public void persistComment(Resource resource, Comment comment) {
+        createOrUpdateComment(resource, comment);
+        DateTime baseline = comment.getCreatedTimestamp();
+        comment.setSubmittedTimestamp(baseline);
+        setSequenceIdentifier(comment, baseline);
+    }
+
     public void createOrUpdateComment(Resource resource, Comment comment) {
         Set<CommentAssignedUser> transientAssignees = comment.getAssignedUsers();
         Set<CommentAssignedUser> persistentAssignees = newHashSet(transientAssignees);
@@ -144,9 +153,7 @@ public class CommentService {
             setSequenceIdentifier(comment, comment.getCreatedTimestamp());
         }
 
-        comment.getAssignedUsers().addAll(persistentAssignees.stream().map(assignee -> assignee.withRoleTransitionType( //
-                assignee.getRoleTransitionType() == null ? CREATE : assignee.getRoleTransitionType())).collect(toSet()));
-
+        comment.getAssignedUsers().addAll(persistentAssignees);
         comment.getCommentTransitionStates().addAll(persistentTransitionStates);
         comment.getAppointmentTimeslots().addAll(persistentTimeslots);
         comment.getAppointmentPreferences().addAll(persistentPreferences);
@@ -154,13 +161,6 @@ public class CommentService {
         resource.addComment(comment);
 
         entityService.flush();
-    }
-
-    public void persistComment(Resource resource, Comment comment) {
-        createOrUpdateComment(resource, comment);
-        DateTime baseline = comment.getCreatedTimestamp();
-        comment.setSubmittedTimestamp(baseline);
-        setSequenceIdentifier(comment, baseline);
     }
 
     public Comment replicateComment(Resource resource, Comment templateComment) {
@@ -245,8 +245,8 @@ public class CommentService {
 
     public Comment createInterviewPreferenceComment(Resource resource, Action action, User invoker, User user, LocalDateTime interviewDateTime,
             DateTime baseline) {
-        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker).withDelegateUser(user)
-                .withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
+        Comment preferenceComment = new Comment().withResource(resource).withAction(action).withUser(invoker)
+                .withDelegateUser(invoker.equals(user) ? null : user).withDeclinedResponse(false).withState(resource.getState()).withCreatedTimestamp(baseline);
         preferenceComment.getAppointmentPreferences().add(new CommentAppointmentPreference().withDateTime(interviewDateTime));
         return preferenceComment;
     }
@@ -318,6 +318,10 @@ public class CommentService {
         Integer commentId = commentDTO.getId();
         Comment comment = commentId == null ? new Comment() : getById(commentId);
 
+        comment.getAssignedUsers().clear();
+        comment.getAppointmentTimeslots().clear();
+        comment.getAppointmentPreferences().clear();
+        comment.getCompetences().clear();
         comment.setUser(user);
         comment.setDelegateUser(userService.getById(commentDTO.getDelegateUser()));
         comment.setResource(resource);
@@ -326,9 +330,10 @@ public class CommentService {
         comment.setTransitionState(entityService.getById(State.class, commentDTO.getTransitionState()));
         comment.setCreatedTimestamp(now());
         comment.setDeclinedResponse(toBoolean(commentDTO.getDeclinedResponse()));
+        entityService.flush();
 
         if (resource.getResourceScope().equals(APPLICATION)) {
-            prepareProcessApplicationComment((Application) resource, user, action, comment, commentDTO);
+            prepareProcessApplicationComment((Application) resource, action, comment, commentDTO);
         } else {
             prepareProcessResourceParentComment((ResourceParent) resource, user, action, comment, commentDTO);
         }
@@ -348,6 +353,14 @@ public class CommentService {
         return comments;
     }
 
+    public List<Comment> getRatingComments(Resource resource) {
+        return commentDAO.getRatingComments(resource);
+    }
+
+    public List<Comment> getRatingComments(PrismScope scope, User user) {
+        return commentDAO.getRatingComments(scope, user);
+    }
+
     public Boolean prepareComment(Comment comment) {
         Boolean submit = comment.getSubmit();
         submit = submit == null ? true : submit;
@@ -355,7 +368,7 @@ public class CommentService {
         return submit;
     }
 
-    private void prepareProcessApplicationComment(Application application, User user, Action action, Comment comment, CommentDTO commentDTO) {
+    private void prepareProcessApplicationComment(Application application, Action action, Comment comment, CommentDTO commentDTO) {
         PrismAction actionId = action.getId();
         boolean isCompleteAction = actionId.equals(APPLICATION_COMPLETE);
 
@@ -365,10 +378,12 @@ public class CommentService {
         comment.setApplicantKnownCapacity(commentDTO.getApplicantKnownCapacity());
         comment.setEligible(commentDTO.getEligible());
         comment.setInterested(commentDTO.getInterested());
+        comment.setInterviewState(commentDTO.getInterviewState());
         comment.setInterviewAvailable(commentDTO.getInterviewAvailable());
         comment.setRecruiterAcceptAppointment(commentDTO.getRecruiterAcceptAppointment());
         comment.setPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment());
         comment.setPartnerAcceptAppointment(commentDTO.getPartnerAcceptAppointment());
+        comment.setApplicantAcceptAppointment(commentDTO.getApplicantAcceptAppointment());
         comment.setRejectionReason(commentDTO.getRejectionReason());
 
         if (isCompleteAction) {
@@ -388,13 +403,18 @@ public class CommentService {
                     .withAppointmentConditions(offerDetailDTO.getAppointmentConditions()));
         }
 
+        if (actionId.equals(APPLICATION_ASSIGN_INTERVIEWERS)) {
+            resolveApplicationInterviewerAssignments(commentDTO);
+        }
+
         appendCommentProperties(comment, commentDTO);
         appendCommentApplicationProperties(comment, commentDTO);
 
         if (isCompleteAction) {
             Role refereeRole = entityService.getById(Role.class, APPLICATION_REFEREE);
             for (ApplicationReferee referee : application.getReferees()) {
-                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser()).withRole(refereeRole));
+                comment.getAssignedUsers().add(new CommentAssignedUser().withUser(referee.getUser())
+                        .withRole(refereeRole).withRoleTransitionType(CREATE));
             }
         }
 
@@ -432,9 +452,8 @@ public class CommentService {
         if (commentDTO.getAssignedUsers() != null) {
             for (CommentAssignedUserDTO assignedUserDTO : commentDTO.getAssignedUsers()) {
                 UserDTO commentUserDTO = assignedUserDTO.getUser();
-                User commentUser = userService.getOrCreateUser(commentUserDTO.getFirstName(), commentUserDTO.getLastName(), commentUserDTO.getEmail());
-                comment.getAssignedUsers().add(
-                        new CommentAssignedUser().withUser(commentUser).withRole(entityService.getById(Role.class, assignedUserDTO.getRole())));
+                User commentUser = userService.getOrCreateUser(commentUserDTO);
+                comment.addAssignedUser(commentUser, entityService.getById(Role.class, assignedUserDTO.getRole()), CREATE);
             }
         }
     }
@@ -447,6 +466,15 @@ public class CommentService {
                 comment.addSecondaryTransitionState(stateService.getById(secondaryTransitionState));
             }
         }
+    }
+
+    private void resolveApplicationInterviewerAssignments(CommentDTO commentDTO) {
+        PrismRole interviewerRole = commentDTO.getInterviewState().getInterviewerRole();
+        commentDTO.getAssignedUsers().stream().forEach(assignedUser -> {
+            if (assignedUser.getRole().equals(APPLICATION_INTERVIEWER)) {
+                assignedUser.setRole(interviewerRole);
+            }
+        });
     }
 
     private void appendAppointmentTimeslots(Comment comment, CommentDTO commentDTO) {

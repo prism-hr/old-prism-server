@@ -1,9 +1,12 @@
 package uk.co.alumeni.prism.services.helpers;
 
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_CANDIDATE_VIEW_PROFILE;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_PROCEED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.CANDIDATE_VIEW;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -26,7 +29,6 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 @Service
 @Transactional
@@ -103,6 +105,20 @@ public class NotificationPropertyLoader {
                 SYSTEM_MANAGE_ACCOUNT.getDisplayProperty());
     }
 
+    public String getCandidateProfileControl() {
+        User candidate = notificationDefinitionDTO.getCandidate();
+        User recipient = notificationDefinitionDTO.getRecipient();
+
+        String path;
+        if (candidate.equals(recipient)) {
+            path = applicationApiUrl + "/mail/messages";
+        } else {
+            path = getRedirectionUrl(candidate.getId(), CANDIDATE_VIEW, recipient);
+        }
+
+        return getRedirectionControl(path, SYSTEM_CANDIDATE_VIEW_PROFILE);
+    }
+
     public String getRedirectionControl(PrismDisplayPropertyDefinition linkLabel) {
         return getRedirectionControl(linkLabel, null);
     }
@@ -134,7 +150,7 @@ public class NotificationPropertyLoader {
     }
 
     private String getRedirectionControl(String url, PrismDisplayPropertyDefinition linkLabel, PrismDisplayPropertyDefinition declineLinkLabel) {
-        Map<String, Object> model = Maps.newHashMap();
+        Map<String, Object> model = new HashMap<>();
         ImmutableMap<String, String> link = ImmutableMap.of("url", url, "label", propertyLoader.loadLazy(linkLabel));
         model.put("link", link);
 

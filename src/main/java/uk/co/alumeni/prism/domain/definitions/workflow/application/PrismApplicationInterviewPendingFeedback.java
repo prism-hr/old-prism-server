@@ -5,11 +5,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICA
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransitionGroup.APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationCompleteInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationProvideInterviewFeedback;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationTerminateInterviewScheduled;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationSendMessageInterviewFeedback;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationViewEditInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationInterview.applicationWithdrawInterviewScheduled;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowState;
@@ -20,14 +19,13 @@ public class PrismApplicationInterviewPendingFeedback extends PrismWorkflowState
     protected void setStateActions() {
         stateActions.add(applicationCommentViewerRecruiter()); //
         stateActions.add(applicationCompleteInterviewScheduled(state)); //
-        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
+        stateActions.add(applicationSendMessageInterviewFeedback()); //
         stateActions.add(applicationEscalate(APPLICATION_INTERVIEW_PENDING_COMPLETION)); //
 
         stateActions.add(applicationProvideInterviewFeedback() //
                 .withStateTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_TRANSITION //
                         .withRoleTransitions(APPLICATION_PROVIDE_INTERVIEW_FEEDBACK_GROUP)));
 
-        stateActions.add(applicationTerminateInterviewScheduled());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditInterviewScheduled(state)); //
         stateActions.add(applicationWithdrawInterviewScheduled());

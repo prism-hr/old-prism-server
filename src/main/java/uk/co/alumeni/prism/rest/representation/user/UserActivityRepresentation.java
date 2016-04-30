@@ -10,6 +10,7 @@ import uk.co.alumeni.prism.rest.representation.action.ActionRepresentation;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertTargetRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewAppointmentRepresentation;
 import uk.co.alumeni.prism.rest.representation.comment.CommentInterviewInstructionRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceActivityRepresentation.ActionActivityRepresentation;
@@ -20,11 +21,17 @@ public class UserActivityRepresentation {
 
     private List<ResourceActivityRepresentation> resourceActivities;
 
+    private ActivityRepresentation profileActivity;
+
+    private ProfileRepresentationMessage messageActivity;
+
     private List<AppointmentActivityRepresentation> appointmentActivities;
 
-    private List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities;
+    private List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities;
 
     private List<AdvertTargetRepresentation> advertTargetActivities;
+
+    private Integer cacheIncrement;
 
     public PrismRoleCategory getDefaultRoleCategory() {
         return defaultRoleCategory;
@@ -42,6 +49,22 @@ public class UserActivityRepresentation {
         this.resourceActivities = resourceActivities;
     }
 
+    public ActivityRepresentation getProfileActivity() {
+        return profileActivity;
+    }
+
+    public void setProfileActivity(ActivityRepresentation profileActivity) {
+        this.profileActivity = profileActivity;
+    }
+
+    public ProfileRepresentationMessage getMessageActivity() {
+        return messageActivity;
+    }
+
+    public void setMessageActivity(ProfileRepresentationMessage messageActivity) {
+        this.messageActivity = messageActivity;
+    }
+
     public List<AppointmentActivityRepresentation> getAppointmentActivities() {
         return appointmentActivities;
     }
@@ -50,11 +73,11 @@ public class UserActivityRepresentation {
         this.appointmentActivities = appointmentActivities;
     }
 
-    public List<ResourceUnverifiedUserRepresentation> getUnverifiedUserActivities() {
+    public List<ResourceUserUnverifiedRepresentation> getUnverifiedUserActivities() {
         return unverifiedUserActivities;
     }
 
-    public void setUnverifiedUserActivities(List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities) {
+    public void setUnverifiedUserActivities(List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities) {
         this.unverifiedUserActivities = unverifiedUserActivities;
     }
 
@@ -64,6 +87,14 @@ public class UserActivityRepresentation {
 
     public void setAdvertTargetActivities(List<AdvertTargetRepresentation> advertTargetActivities) {
         this.advertTargetActivities = advertTargetActivities;
+    }
+
+    public Integer getCacheIncrement() {
+        return cacheIncrement;
+    }
+
+    public void setCacheIncrement(Integer cacheIncrement) {
+        this.cacheIncrement = cacheIncrement;
     }
 
     public UserActivityRepresentation withDefaultRoleCategory(PrismRoleCategory defaultRoleCategory) {
@@ -76,12 +107,22 @@ public class UserActivityRepresentation {
         return this;
     }
 
+    public UserActivityRepresentation withProfileActivity(ActivityRepresentation profileActivity) {
+        this.profileActivity = profileActivity;
+        return this;
+    }
+
+    public UserActivityRepresentation withMessageActivity(ProfileRepresentationMessage messageActivity) {
+        this.messageActivity = messageActivity;
+        return this;
+    }
+
     public UserActivityRepresentation withAppointmentActivities(List<AppointmentActivityRepresentation> appointmentActivities) {
         this.appointmentActivities = appointmentActivities;
         return this;
     }
 
-    public UserActivityRepresentation withUnverifiedUserActivities(List<ResourceUnverifiedUserRepresentation> unverifiedUserActivities) {
+    public UserActivityRepresentation withUnverifiedUserActivities(List<ResourceUserUnverifiedRepresentation> unverifiedUserActivities) {
         this.unverifiedUserActivities = unverifiedUserActivities;
         return this;
     }
@@ -95,7 +136,7 @@ public class UserActivityRepresentation {
         boolean hasResourceActivity = false;
         if (isNotEmpty(resourceActivities)) {
             for (ResourceActivityRepresentation resourceActivity : resourceActivities) {
-                if (resourceActivity.getUpdateCount() > 0) {
+                if (resourceActivity.getUpdateCount() > 0 || resourceActivity.getMessageCount() > 0) {
                     hasResourceActivity = true;
                     break;
                 } else {
@@ -131,17 +172,13 @@ public class UserActivityRepresentation {
         return false;
     }
 
-    public static class ResourceActivityRepresentation {
+    public static class ResourceActivityRepresentation extends ActivityRepresentation {
 
         private PrismScope scope;
 
         private PrismRoleCategory defaultRoleCategory;
 
         private Boolean resourceCreator;
-
-        private Integer count;
-
-        private Integer updateCount;
 
         private List<ActionActivityRepresentation> actions;
 
@@ -169,22 +206,6 @@ public class UserActivityRepresentation {
             this.resourceCreator = resourceCreator;
         }
 
-        public Integer getCount() {
-            return count;
-        }
-
-        public void setCount(Integer count) {
-            this.count = count;
-        }
-
-        public Integer getUpdateCount() {
-            return updateCount;
-        }
-
-        public void setUpdateCount(Integer updateCount) {
-            this.updateCount = updateCount;
-        }
-
         public List<ActionActivityRepresentation> getActions() {
             return actions;
         }
@@ -209,12 +230,17 @@ public class UserActivityRepresentation {
         }
 
         public ResourceActivityRepresentation withCount(Integer count) {
-            this.count = count;
+            setCount(count);
             return this;
         }
 
         public ResourceActivityRepresentation withUpdateCount(Integer updateCount) {
-            this.updateCount = updateCount;
+            setUpdateCount(updateCount);
+            return this;
+        }
+
+        public ResourceActivityRepresentation withMessageCount(Integer messageCount) {
+            setMessageCount(messageCount);
             return this;
         }
 
@@ -255,6 +281,55 @@ public class UserActivityRepresentation {
                 return this;
             }
 
+        }
+
+    }
+
+    public static class ActivityRepresentation {
+
+        private Integer count;
+
+        private Integer updateCount;
+
+        private Integer messageCount;
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+
+        public Integer getUpdateCount() {
+            return updateCount;
+        }
+
+        public void setUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+        }
+
+        public Integer getMessageCount() {
+            return messageCount;
+        }
+
+        public void setMessageCount(Integer messageCount) {
+            this.messageCount = messageCount;
+        }
+
+        public ActivityRepresentation withCount(Integer count) {
+            this.count = count;
+            return this;
+        }
+
+        public ActivityRepresentation withUpdateCount(Integer updateCount) {
+            this.updateCount = updateCount;
+            return this;
+        }
+
+        public ActivityRepresentation withMessageCount(Integer messageCount) {
+            this.messageCount = messageCount;
+            return this;
         }
 
     }
@@ -308,7 +383,7 @@ public class UserActivityRepresentation {
 
     }
 
-    public static class ResourceUnverifiedUserRepresentation {
+    public static class ResourceUserUnverifiedRepresentation {
 
         private ResourceRepresentationConnection resource;
 
@@ -330,12 +405,12 @@ public class UserActivityRepresentation {
             this.users = users;
         }
 
-        public ResourceUnverifiedUserRepresentation withResource(ResourceRepresentationConnection resource) {
+        public ResourceUserUnverifiedRepresentation withResource(ResourceRepresentationConnection resource) {
             this.resource = resource;
             return this;
         }
 
-        public ResourceUnverifiedUserRepresentation withUsers(List<UserRepresentationUnverified> users) {
+        public ResourceUserUnverifiedRepresentation withUsers(List<UserRepresentationUnverified> users) {
             this.users = users;
             return this;
         }

@@ -1,7 +1,7 @@
 package uk.co.alumeni.prism.workflow.resolvers.state.transition.application;
 
 import static org.apache.commons.lang.BooleanUtils.isTrue;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_COMPLETED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_ACCEPTED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_APPROVED_PENDING_OFFER_REVISION;
 
 import javax.inject.Inject;
@@ -23,7 +23,7 @@ public class ApplicationConfirmedOfferAcceptanceResolver implements StateTransit
     @Override
     public StateTransition resolve(Application resource, Comment comment) {
         if (isTrue(comment.getApplicantAcceptAppointment())) {
-            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_COMPLETED);
+            return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_ACCEPTED);
         }
         return stateService.getStateTransition(resource, comment.getAction(), APPLICATION_APPROVED_PENDING_OFFER_REVISION);
     }

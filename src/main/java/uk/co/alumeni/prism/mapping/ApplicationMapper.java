@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.mapping;
 
+import static com.google.common.collect.Iterables.getFirst;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -12,6 +14,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_ASSIGN_INTERVIEWERS;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_REVISE_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_HIRING_MANAGER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
@@ -27,8 +30,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import jersey.repackaged.com.google.common.collect.Maps;
-
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.BeanUtils;
@@ -37,7 +38,10 @@ import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
+import uk.co.alumeni.prism.domain.application.ApplicationDocument;
+import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationProgramDetail;
+import uk.co.alumeni.prism.domain.application.ApplicationQualification;
 import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAppointmentTimeslot;
@@ -67,19 +71,21 @@ import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationP
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationClient;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationSimple;
+import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationRepresentationSummary;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationStartDateRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.application.ApplicationThemeRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.AppointmentActivityRepresentation;
 import uk.co.alumeni.prism.services.ApplicationService;
 import uk.co.alumeni.prism.services.CommentService;
+import uk.co.alumeni.prism.services.ProfileService;
 import uk.co.alumeni.prism.services.ResourceService;
 import uk.co.alumeni.prism.services.RoleService;
 import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -87,16 +93,10 @@ import com.google.common.collect.Sets;
 public class ApplicationMapper {
 
     @Inject
-    private ApplicationService applicationService;
-
-    @Inject
     private AdvertMapper advertMapper;
 
     @Inject
     private CommentMapper commentMapper;
-
-    @Inject
-    private CommentService commentService;
 
     @Inject
     private DocumentMapper documentMapper;
@@ -106,6 +106,15 @@ public class ApplicationMapper {
 
     @Inject
     private ResourceMapper resourceMapper;
+
+    @Inject
+    private ApplicationService applicationService;
+
+    @Inject
+    private CommentService commentService;
+
+    @Inject
+    private ProfileService profileService;
 
     @Inject
     private ResourceService resourceService;
@@ -152,9 +161,6 @@ public class ApplicationMapper {
                 userMapper.getUserRepresentations(userService.getUsersPotentiallyInterestedInApplication(application, usersInterested)));
 
         representation.setInterview(getApplicationInterviewRepresentation(application));
-        representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
-        representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
-
         representation.setCompetences(advertMapper.getAdvertCompetenceRepresentations(advert));
 
         return representation;
@@ -167,11 +173,13 @@ public class ApplicationMapper {
     public <T extends ApplicationRepresentationExtended> T getApplicationRepresentationExtended(Application application, Class<T> returnType,
             List<PrismRole> overridingRoles, User currentUser) {
         T representation = getApplicationRepresentation(application, returnType, overridingRoles, currentUser);
+
         representation.setWithoutReference(
                 applicationService.getApplicationRefereesNotResponded(application).stream()
                         .map(user -> userMapper.getUserRepresentationSimple(user, userService.getCurrentUser())).collect(Collectors.toList()));
+
         representation.setOfferRecommendation(getApplicationOfferRecommendationRepresentation(application));
-        representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application));
+        representation.setAssignedSupervisors(getApplicationSupervisorRepresentations(application, currentUser));
         return representation;
     }
 
@@ -219,6 +227,47 @@ public class ApplicationMapper {
                 .withLatestDate(getNextMonday(baseline.plusYears(START_DATE_LATEST_BUFFER)));
     }
 
+    public ApplicationRepresentationSummary getApplicationRepresentationSummary(Application application) {
+        User user = application.getUser();
+        User currentUser = userService.getCurrentUser();
+
+        ApplicationRepresentationSummary representation = new ApplicationRepresentationSummary();
+        representation.setUser(userMapper.getUserRepresentationSimple(user, currentUser));
+        representation.setCreatedTimestamp(application.getCreatedTimestamp());
+        representation.setSubmittedTimestamp(application.getSubmittedTimestamp());
+        representation.setClosingDate(application.getClosingDate());
+
+        ApplicationProgramDetail applicationProgramDetail = application.getProgramDetail();
+        if (applicationProgramDetail != null) {
+            representation.setStudyOption(applicationProgramDetail.getStudyOption());
+            representation.setStartDate(applicationProgramDetail.getStartDate());
+        }
+
+        representation.setApplicationRatingCount(application.getApplicationRatingCount());
+        representation.setApplicationRatingAverage(application.getApplicationRatingAverage());
+
+        List<PrismRole> creatableRoles = roleService.getCreatableRoles(APPLICATION);
+        List<PrismRole> overridingRoles = roleService.getRolesOverridingRedactions(application, currentUser);
+        List<CommentRepresentation> ratingComments = commentService.getRatingComments(application).stream()
+                .map(rc -> commentMapper.getCommentRepresentation(currentUser, rc, creatableRoles, overridingRoles)).collect(toList());
+
+        representation.setActionSummaries(commentMapper.getRatingCommentSummaryRepresentations(currentUser, APPLICATION, ratingComments));
+
+        representation.setRecentQualifications(profileMapper.getQualificationRepresentations(
+                profileService.getRecentQualifications(application, ApplicationQualification.class), currentUser));
+        representation.setRecentEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(
+                profileService.getRecentEmploymentPositions(application, ApplicationEmploymentPosition.class), currentUser));
+
+        ApplicationDocument document = application.getDocument();
+        if (document != null) {
+            representation.setCv(documentMapper.getDocumentRepresentation(document.getCv()));
+            representation.setCoveringLetter(documentMapper.getDocumentRepresentation(document.getCoveringLetter()));
+            representation.setPersonalSummary(document.getPersonalSummary());
+        }
+
+        return representation;
+    }
+
     private <T extends ApplicationRepresentationSimple> T getApplicationRepresentation(Application application, Class<T> returnType,
             List<PrismRole> overridingRoles, User currentUser) {
         T representation = resourceMapper.getResourceRepresentationExtended(application, returnType, overridingRoles, currentUser);
@@ -228,14 +277,19 @@ public class ApplicationMapper {
         boolean viewEqualOpportunities = applicationService.isCanViewEqualOpportunities(application, userService.getCurrentUser());
         representation.setProgramDetail(getApplicationProgramDetailRepresentation(application, currentUser));
         representation.setPersonalDetail(profileMapper.getPersonalDetailRepresentation(application.getPersonalDetail(), viewEqualOpportunities));
+
         representation.setAddress(profileMapper.getAddressRepresentation(application.getAddress()));
         representation.setQualifications(profileMapper.getQualificationRepresentations(application.getQualifications(), currentUser));
+
         representation.setAwards(profileMapper.getAwardRepresentations(application.getAwards()));
         representation.setEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(application.getEmploymentPositions(), currentUser));
+
         representation.setReferees(getApplicationRefereeRepresentations(application.getReferees(), overridingRoles, currentUser));
+
         representation.setDocument(profileMapper.getDocumentRepresentation(application.getDocument()));
         representation.setAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(application.getAdditionalInformation(),
                 viewEqualOpportunities));
+
         return representation;
     }
 
@@ -312,7 +366,7 @@ public class ApplicationMapper {
     }
 
     private ApplicationOfferRepresentation getApplicationOfferRecommendationRepresentation(Application application) {
-        Comment sourceComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
+        Comment sourceComment = commentService.getLatestComment(application, APPLICATION_REVISE_OFFER, APPLICATION_CONFIRM_OFFER);
 
         if (sourceComment != null) {
             return getApplicationOfferRecommendationRepresentation(sourceComment);
@@ -322,7 +376,7 @@ public class ApplicationMapper {
         if (sourceComment != null) {
             ApplicationOfferRepresentation offerRepresentation = getApplicationOfferRecommendationRepresentation(sourceComment);
 
-            User manager = Iterables.getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
+            User manager = getFirst(commentService.getAssignedUsers(sourceComment, APPLICATION_HIRING_MANAGER), null);
             if (manager != null) {
                 sourceComment = commentService.getLatestComment(application, APPLICATION_PROVIDE_HIRING_MANAGER_APPROVAL, manager,
                         sourceComment.getSubmittedTimestamp());
@@ -382,11 +436,11 @@ public class ApplicationMapper {
         return representation;
     }
 
-    private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application) {
-        Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_CONFIRM_OFFER);
+    private List<ApplicationAssignedHiringManagerRepresentation> getApplicationSupervisorRepresentations(Application application, User currentUser) {
+        Comment assignmentComment = commentService.getLatestComment(application, APPLICATION_REVISE_OFFER, APPLICATION_CONFIRM_OFFER);
 
         if (assignmentComment != null) {
-            return Lists.newArrayList(getApplicationHiringManagerRepresentations(assignmentComment));
+            return newArrayList(getApplicationHiringManagerRepresentations(assignmentComment));
         } else {
             assignmentComment = commentService.getLatestComment(application, APPLICATION_ASSIGN_HIRING_MANAGERS);
 
@@ -401,11 +455,11 @@ public class ApplicationMapper {
                     }
                 }
 
-                return Lists.newArrayList(assignedSupervisors);
+                return newArrayList(assignedSupervisors);
             }
         }
 
-        return Lists.newArrayList();
+        return newArrayList();
     }
 
     private Set<ApplicationAssignedHiringManagerRepresentation> getApplicationHiringManagerRepresentations(Comment comment) {

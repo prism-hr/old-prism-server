@@ -27,7 +27,7 @@ public class DepartmentMapper {
     public DepartmentRepresentationClient getDepartmentRepresentationClient(Department department, List<PrismRole> overridingRoles, User currentUser) {
         DepartmentRepresentationClient representation = getDepartmentRepresentation(department, DepartmentRepresentationClient.class, overridingRoles,
                 currentUser);
-        resourceMapper.appendResourceSummaryRepresentation(department, representation);
+        resourceMapper.appendResourceParentRepresentationSummary(department, representation);
         return representation;
     }
 

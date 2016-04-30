@@ -12,17 +12,21 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismActionEnhancement;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.dto.ResourceIdentityDTO;
+import uk.co.alumeni.prism.rest.dto.ListFilterDTO;
 
-public class ResourceListFilterDTO {
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-    private PrismRoleCategory roleCategory;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ResourceListFilterDTO extends ListFilterDTO {
 
     private List<PrismAction> actionIds;
 
     private PrismActionEnhancement[] actionEnhancements;
 
+    private PrismRoleCategory[] roleCategories;
+
     private List<Integer> resourceIds;
-    
+
     private List<Integer> excludedResourceIds;
 
     private ResourceIdentityDTO parentResource;
@@ -47,25 +51,11 @@ public class ResourceListFilterDTO {
 
     private Boolean secondaryLocationsApplied;
 
-    private PrismFilterMatchMode matchMode;
-
-    private PrismFilterSortOrder sortOrder;
-
-    private String valueString;
-
     private Boolean urgentOnly;
 
     private Boolean updateOnly;
 
     private List<ResourceListFilterConstraintDTO> constraints;
-
-    public PrismRoleCategory getRoleCategory() {
-        return roleCategory;
-    }
-
-    public void setRoleCategory(PrismRoleCategory roleCategory) {
-        this.roleCategory = roleCategory;
-    }
 
     public List<PrismAction> getActionIds() {
         return actionIds;
@@ -83,6 +73,14 @@ public class ResourceListFilterDTO {
         this.actionEnhancements = actionEnhancements;
     }
 
+    public PrismRoleCategory[] getRoleCategories() {
+        return roleCategories;
+    }
+
+    public void setRoleCategories(PrismRoleCategory[] roleCategories) {
+        this.roleCategories = roleCategories;
+    }
+
     public List<Integer> getResourceIds() {
         return resourceIds;
     }
@@ -90,7 +88,7 @@ public class ResourceListFilterDTO {
     public void setResourceIds(List<Integer> resourceIds) {
         this.resourceIds = resourceIds;
     }
-    
+
     public List<Integer> getExcludedResourceIds() {
         return excludedResourceIds;
     }
@@ -187,30 +185,6 @@ public class ResourceListFilterDTO {
         this.secondaryLocationsApplied = secondaryLocationsApplied;
     }
 
-    public final PrismFilterMatchMode getMatchMode() {
-        return matchMode;
-    }
-
-    public final void setMatchMode(PrismFilterMatchMode matchMode) {
-        this.matchMode = matchMode;
-    }
-
-    public final PrismFilterSortOrder getSortOrder() {
-        return sortOrder;
-    }
-
-    public final void setSortOrder(PrismFilterSortOrder sortOrder) {
-        this.sortOrder = sortOrder;
-    }
-
-    public final String getValueString() {
-        return valueString;
-    }
-
-    public final void setValueString(String valueString) {
-        this.valueString = valueString;
-    }
-
     public final Boolean getUrgentOnly() {
         return urgentOnly;
     }
@@ -244,14 +218,9 @@ public class ResourceListFilterDTO {
         this.excludedResourceIds = excludedResourceIds;
         return this;
     }
-    
+
     public ResourceListFilterDTO withParentResource(ResourceIdentityDTO parentResource) {
         this.parentResource = parentResource;
-        return this;
-    }
-
-    public ResourceListFilterDTO withRoleCategory(PrismRoleCategory roleCategory) {
-        this.roleCategory = roleCategory;
         return this;
     }
 
@@ -262,6 +231,11 @@ public class ResourceListFilterDTO {
 
     public ResourceListFilterDTO withActionEnhancements(PrismActionEnhancement... actionEnhancements) {
         this.actionEnhancements = actionEnhancements;
+        return this;
+    }
+
+    public ResourceListFilterDTO withRoleCategories(PrismRoleCategory... roleCategories) {
+        this.roleCategories = roleCategories;
         return this;
     }
 
@@ -311,12 +285,12 @@ public class ResourceListFilterDTO {
     }
 
     public ResourceListFilterDTO withMatchMode(PrismFilterMatchMode matchMode) {
-        this.matchMode = matchMode;
+        setMatchMode(matchMode);
         return this;
     }
 
     public ResourceListFilterDTO withSortOrder(PrismFilterSortOrder sortOrder) {
-        this.sortOrder = sortOrder;
+        setSortOrder(sortOrder);
         return this;
     }
 

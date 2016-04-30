@@ -1,24 +1,24 @@
 package uk.co.alumeni.prism.utils;
 
-import java.util.Collection;
+import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 
-import org.apache.commons.collections.CollectionUtils;
+import java.util.Collection;
 
 public class PrismCollectionUtils {
 
     public static boolean containsSome(Collection<?> collection, Collection<?> otherCollection) {
-        if (CollectionUtils.isNotEmpty(collection) && CollectionUtils.isNotEmpty(otherCollection)) {
-            int collectionSize = collection == null ? 0 : collection.size();
-            int otherCollectionSize = otherCollection == null ? 0 : otherCollection.size();
+        if (isNotEmpty(collection) && isNotEmpty(otherCollection)) {
+            int collectionSize = collection.size();
+            int otherCollectionSize = otherCollection.size();
             return collectionSize > 0 && otherCollectionSize > 0 && intersects(collection, otherCollection);
         }
         return false;
     }
 
     public static boolean containsSame(Collection<?> collection, Collection<?> otherCollection) {
-        if (CollectionUtils.isNotEmpty(collection) && CollectionUtils.isNotEmpty(otherCollection)) {
-            int collectionSize = collection == null ? 0 : collection.size();
-            int otherCollectionSize = otherCollection == null ? 0 : otherCollection.size();
+        if (isNotEmpty(collection) && isNotEmpty(otherCollection)) {
+            int collectionSize = collection.size();
+            int otherCollectionSize = otherCollection.size();
             return collectionSize > 0 && otherCollectionSize > 0 && collectionSize == otherCollectionSize && collection.containsAll(otherCollection);
         }
         return false;

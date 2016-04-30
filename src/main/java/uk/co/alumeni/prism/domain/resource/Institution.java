@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -22,7 +21,6 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -35,7 +33,7 @@ import uk.co.alumeni.prism.domain.workflow.StateActionPending;
 import com.google.common.collect.Sets;
 
 @Entity
-@Table(name = "institution", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "name" }) })
+@Table(name = "institution")
 public class Institution extends ResourceParent {
 
     @Id
@@ -121,6 +119,10 @@ public class Institution extends ResourceParent {
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
+
+    @Column(name = "activity_cached_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
 
     @Column(name = "updated_timestamp_sitemap", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
@@ -537,6 +539,16 @@ public class Institution extends ResourceParent {
         this.updatedTimestamp = updatedTimestamp;
     }
 
+    @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
+    }
+
     public DateTime getUpdatedTimestampSitemap() {
         return updatedTimestampSitemap;
     }
@@ -556,8 +568,11 @@ public class Institution extends ResourceParent {
     }
 
     @Override
-    public UniqueEntity.EntitySignature getEntitySignature() {
-        return super.getEntitySignature().addProperty("user", user);
+    public EntitySignature getEntitySignature() {
+        if (googleId != null) {
+            return super.getEntitySignature().addProperty("googleId", googleId);
+        }
+        return new EntitySignature().addProperty("id", id);
     }
 
 }

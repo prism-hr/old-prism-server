@@ -10,9 +10,13 @@ import uk.co.alumeni.prism.rest.representation.state.StateRepresentationSimple;
 
 public class ResourceRepresentationStandard extends ResourceRepresentationRelation {
 
-    private boolean raisesUrgentFlag;
+    private Boolean raisesUrgentFlag;
 
-    private boolean raisesUpdateFlag;
+    private Integer readMessageCount = 0;
+
+    private Integer unreadMessageCount = 0;
+
+    private Boolean raisesUpdateFlag;
 
     private BigDecimal applicationRatingAverage;
 
@@ -30,15 +34,31 @@ public class ResourceRepresentationStandard extends ResourceRepresentationRelati
 
     private Integer stateActionPendingCount;
 
-    public boolean isRaisesUrgentFlag() {
+    public Boolean getRaisesUrgentFlag() {
         return raisesUrgentFlag;
     }
 
-    public void setRaisesUrgentFlag(boolean raisesUrgentFlag) {
+    public void setRaisesUrgentFlag(Boolean raisesUrgentFlag) {
         this.raisesUrgentFlag = raisesUrgentFlag;
     }
 
-    public boolean isRaisesUpdateFlag() {
+    public Integer getReadMessageCount() {
+        return readMessageCount;
+    }
+
+    public void setReadMessageCount(Integer readMessageCount) {
+        this.readMessageCount = readMessageCount;
+    }
+
+    public Integer getUnreadMessageCount() {
+        return unreadMessageCount;
+    }
+
+    public void setUnreadMessageCount(Integer unreadMessageCount) {
+        this.unreadMessageCount = unreadMessageCount;
+    }
+
+    public boolean getRaisesUpdateFlag() {
         return raisesUpdateFlag;
     }
 
@@ -108,6 +128,10 @@ public class ResourceRepresentationStandard extends ResourceRepresentationRelati
 
     public void setStateActionPendingCount(Integer stateActionPendingCount) {
         this.stateActionPendingCount = stateActionPendingCount;
+    }
+    
+    public Integer getMessageCount() {
+        return readMessageCount + unreadMessageCount;
     }
 
 }

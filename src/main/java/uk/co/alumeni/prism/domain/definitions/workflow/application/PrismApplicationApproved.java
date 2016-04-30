@@ -4,6 +4,8 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLIC
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_CONFIRM_OFFER_ACCEPTANCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_APPOINTEE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_CREATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_ADMINISTRATOR_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_PARENT_APPROVER_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_APPOINTEE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_HIRING_MANAGER_GROUP;
@@ -14,6 +16,7 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransiti
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCompleteState;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationSendMessageViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationViewEditWithViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationWithdrawSubmitted;
@@ -49,7 +52,7 @@ public class PrismApplicationApproved extends PrismWorkflowState {
     public static PrismStateAction applicationCompleteApprovedAppointeeHiringManager(PrismState state) {
         return applicationCompleteApproved(state, true);
     }
-    
+
     public static PrismStateAction applicationConfirmOfferAcceptance(PrismNotificationDefinition notificationDefinition) {
         return new PrismStateAction() //
                 .withAction(APPLICATION_CONFIRM_OFFER_ACCEPTANCE) //
@@ -57,6 +60,12 @@ public class PrismApplicationApproved extends PrismWorkflowState {
                 .withNotificationDefinition(notificationDefinition)
                 .withStateActionAssignments(APPLICATION_APPOINTEE) //
                 .withStateTransitions(APPLICATION_CONFIRM_OFFER_ACCEPTANCE_TRANSITION);
+    }
+
+    public static PrismStateAction applicationSendMessageApproved() {
+        return applicationSendMessageViewerRecruiter() //
+                .withStateActionAssignment(APPLICATION_CREATOR, APPLICATION_PARENT_ADMINISTRATOR_GROUP) //
+                .withStateActionAssignments(APPLICATION_PARENT_ADMINISTRATOR_GROUP, APPLICATION_CREATOR);
     }
 
     private static PrismStateAction applicationCompleteApproved(PrismState state, boolean retireAppointee) {

@@ -1,7 +1,5 @@
 package uk.co.alumeni.prism.dto;
 
-import java.math.BigDecimal;
-
 import org.joda.time.DateTime;
 
 import com.google.common.base.Objects;
@@ -22,17 +20,15 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
 
     private String userAccountImageUrl;
 
-    private String personalSummary;
-
-    private Integer cvId;
-
     private String linkedInProfileUrl;
+    
+    private Integer completeScore;
 
     private Long applicationCount;
 
     private Long applicationRatingCount;
 
-    private BigDecimal applicationRatingAverage;
+    private Double applicationRatingAverage;
 
     private DateTime updatedTimestamp;
 
@@ -94,28 +90,20 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
         this.userAccountImageUrl = userAccountImageUrl;
     }
 
-    public String getPersonalSummary() {
-        return personalSummary;
-    }
-
-    public void setPersonalSummary(String personalSummary) {
-        this.personalSummary = personalSummary;
-    }
-
-    public Integer getCvId() {
-        return cvId;
-    }
-
-    public void setCvId(Integer cvId) {
-        this.cvId = cvId;
-    }
-
     public String getLinkedInProfileUrl() {
         return linkedInProfileUrl;
     }
 
     public void setLinkedInProfileUrl(String linkedInProfileURL) {
         this.linkedInProfileUrl = linkedInProfileURL;
+    }
+
+    public Integer getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(Integer completeScore) {
+        this.completeScore = completeScore;
     }
 
     public Long getApplicationCount() {
@@ -134,11 +122,11 @@ public class ProfileListRowDTO implements ProfileEntityDTO {
         this.applicationRatingCount = applicationRatingCount;
     }
 
-    public BigDecimal getApplicationRatingAverage() {
+    public Double getApplicationRatingAverage() {
         return applicationRatingAverage;
     }
 
-    public void setApplicationRatingAverage(BigDecimal applicationRatingAverage) {
+    public void setApplicationRatingAverage(Double applicationRatingAverage) {
         this.applicationRatingAverage = applicationRatingAverage;
     }
 

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -18,8 +19,9 @@ import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.domain.Activity;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.profile.ProfileEntity;
 import uk.co.alumeni.prism.domain.resource.ResourceListFilter;
 import uk.co.alumeni.prism.domain.workflow.Scope;
@@ -29,7 +31,10 @@ import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user_account")
-public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserAward, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
+public class UserAccount
+        implements
+        ActivityEditable,
+        ProfileEntity<UserPersonalDetail, UserAddress, UserQualification, UserAward, UserEmploymentPosition, UserReferee, UserDocument, UserAdditionalInformation> {
 
     @Id
     @GeneratedValue
@@ -106,6 +111,20 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
     @Column(name = "shared", nullable = false)
     private Boolean shared;
 
+    @Column(name = "complete_score", nullable = false)
+    private Integer completeScore;
+    
+    @Lob
+    @Column(name = "activity_cache")
+    private String activityCache;
+
+    @Column(name = "activity_cached_timestamp")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
+    private DateTime activityCachedTimestamp;
+
+    @Column(name = "activity_cached_increment")
+    private Integer activityCachedIncrement;
+    
     @Column(name = "updated_timestamp", nullable = false)
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime updatedTimestamp;
@@ -119,6 +138,9 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
 
     @OneToMany(mappedBy = "userAccount")
     private Set<UserAccountUpdate> updates = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "userAccount")
+    private Set<MessageThread> threads = Sets.newHashSet();
 
     @Override
     public Integer getId() {
@@ -280,10 +302,46 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
         this.shared = shared;
     }
 
+    public Integer getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(Integer completeScore) {
+        this.completeScore = completeScore;
+    }
+
+    public String getActivityCache() {
+        return activityCache;
+    }
+
+    public void setActivityCache(String activityCache) {
+        this.activityCache = activityCache;
+    }
+
+    @Override
+    public DateTime getActivityCachedTimestamp() {
+        return activityCachedTimestamp;
+    }
+
+    @Override
+    public void setActivityCachedTimestamp(DateTime activityCachedTimestamp) {
+        this.activityCachedTimestamp = activityCachedTimestamp;
+    }
+    
+    public Integer getActivityCachedIncrement() {
+        return activityCachedIncrement;
+    }
+
+    public void setActivityCachedIncrement(Integer activityCachedIncrement) {
+        this.activityCachedIncrement = activityCachedIncrement;
+    }
+
+    @Override
     public DateTime getUpdatedTimestamp() {
         return updatedTimestamp;
     }
 
+    @Override
     public void setUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
     }
@@ -306,6 +364,10 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
         return updates;
     }
 
+    public Set<MessageThread> getThreads() {
+        return threads;
+    }
+
     public UserAccount withPassword(String password) {
         this.password = password;
         return this;
@@ -326,6 +388,11 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
         return this;
     }
 
+    public UserAccount withCompleteScore(Integer completeScore) {
+        this.completeScore = completeScore;
+        return this;
+    }
+    
     public UserAccount withUpdatedTimestamp(DateTime updatedTimestamp) {
         this.updatedTimestamp = updatedTimestamp;
         return this;
@@ -333,6 +400,16 @@ public class UserAccount implements Activity, ProfileEntity<UserPersonalDetail, 
 
     public UserAccount withSequenceIdentifier(String sequenceIdentifier) {
         this.sequenceIdentifier = sequenceIdentifier;
+        return this;
+    }
+
+    public UserAccount addUpdate(UserAccountUpdate update) {
+        this.updates.add(update);
+        return this;
+    }
+
+    public UserAccount addThread(MessageThread thread) {
+        this.threads.add(thread);
         return this;
     }
 

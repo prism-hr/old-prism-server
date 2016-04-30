@@ -1,7 +1,9 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static jersey.repackaged.com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.PrismConstants.REQUEST_BUFFER;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_MANAGE_ACCOUNT;
@@ -16,11 +18,13 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_CONNECTION_REQUEST;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_JOIN_REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_MESSAGE_CANDIDATE_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_PASSWORD_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_USER_INVITATION_NOTIFICATION;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.REQUEST_EAGER;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationPurpose.UPDATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 
@@ -30,16 +34,15 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import jersey.repackaged.com.google.common.collect.Maps;
-
 import org.joda.time.DateTime;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.alumeni.prism.dao.NotificationDAO;
 import uk.co.alumeni.prism.domain.Invitation;
 import uk.co.alumeni.prism.domain.InvitationEntity;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -50,10 +53,13 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefiniti
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.message.Message;
+import uk.co.alumeni.prism.domain.message.MessageNotification;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
+import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserNotification;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.Action;
@@ -64,21 +70,18 @@ import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.domain.workflow.WorkflowConfiguration;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
-import uk.co.alumeni.prism.dto.MailMessageDTO;
-import uk.co.alumeni.prism.dto.NotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserConnectionDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDTO;
 import uk.co.alumeni.prism.dto.UserNotificationDefinitionDTO;
 import uk.co.alumeni.prism.dto.UserRoleCategoryDTO;
-import uk.co.alumeni.prism.mail.MailSender;
+import uk.co.alumeni.prism.event.NotificationEvent;
 import uk.co.alumeni.prism.rest.dto.DocumentDTO;
 import uk.co.alumeni.prism.rest.dto.NotificationConfigurationDTO;
+import uk.co.alumeni.prism.rest.dto.resource.ResourceDTO;
 import uk.co.alumeni.prism.rest.representation.advert.AdvertListRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @Service
 @Transactional
@@ -92,9 +95,6 @@ public class NotificationService {
     private ActionService actionService;
 
     @Inject
-    private AdvertService advertService;
-
-    @Inject
     private CustomizationService customizationService;
 
     @Inject
@@ -102,7 +102,7 @@ public class NotificationService {
 
     @Inject
     private EntityService entityService;
-
+    
     @Inject
     private ResourceService resourceService;
 
@@ -119,10 +119,14 @@ public class NotificationService {
     private UserService userService;
 
     @Inject
-    private ApplicationContext applicationContext;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public NotificationDefinition getById(PrismNotificationDefinition id) {
-        return entityService.getByProperty(NotificationDefinition.class, "id", id);
+        return entityService.getById(NotificationDefinition.class, id);
+    }
+
+    public NotificationConfiguration getNotificationConfigurationById(Integer notificationConfigurationId) {
+        return entityService.getById(NotificationConfiguration.class, notificationConfigurationId);
     }
 
     public NotificationConfiguration getNotificationConfiguration(Resource resource, User user, NotificationDefinition definition) {
@@ -155,12 +159,12 @@ public class NotificationService {
         if (userActivityRepresentation.hasNotifiableUpdates() || advertListRepresentation.hasNotifiableUpdates()) {
             User recipient = userService.getById(user);
             System resource = systemService.getSystem();
-            NotificationDefinition definition = getById(SYSTEM_ACTIVITY_NOTIFICATION);
-            NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient)
-                    .withResource(resource)
-                    .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation)
-                    .withAdvertListRepresentation(advertListRepresentation);
-            sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+            sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_ACTIVITY_NOTIFICATION)
+                    .withInitiator(resource.getUser().getId()).withRecipient(recipient.getId())
+                    .withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                    .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST)
+                    .withUserActivityRepresentation(userActivityRepresentation)
+                    .withAdvertListRepresentation(advertListRepresentation));
         }
     }
 
@@ -168,11 +172,9 @@ public class NotificationService {
         if (userActivityRepresentation.hasNotifiableReminders()) {
             User recipient = userService.getById(user);
             System resource = systemService.getSystem();
-            NotificationDefinition definition = getById(SYSTEM_REMINDER_NOTIFICATION);
-            NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(resource.getUser()).withRecipient(recipient)
-                    .withResource(resource)
-                    .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation);
-            sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+            sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_REMINDER_NOTIFICATION).withInitiator(resource.getUser().getId())
+                    .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                    .withTransitionAction(SYSTEM_VIEW_ACTIVITY_LIST).withUserActivityRepresentation(userActivityRepresentation));
         }
     }
 
@@ -218,64 +220,83 @@ public class NotificationService {
     }
 
     public void sendUserInvitationNotification(User initiator, User recipient, Resource resource, String invitationMessage, PrismAction transitionAction) {
-        NotificationDefinition definition = getById(SYSTEM_USER_INVITATION_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
-                .withInvitationMessage(invitationMessage).withTransitionAction(transitionAction);
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_USER_INVITATION_NOTIFICATION).withInitiator(initiator.getId())
+                .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withInvitationMessage(invitationMessage).withTransitionAction(transitionAction));
     }
 
     public void sendOrganizationInvitationNotification(User initiator, User recipient, Resource resource, AdvertTarget advertTarget, String personalMessage) {
-        NotificationDefinition definition = getById(SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
-                .withInvitationMessage(personalMessage).withAdvertTarget(advertTarget)
-                .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE"));
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_ORGANIZATION_INVITATION_NOTIFICATION).withInitiator(initiator.getId())
+                .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withInvitationMessage(personalMessage).withAdvertTarget(advertTarget.getId())
+                .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_COMPLETE")));
     }
 
     public void sendCompleteRegistrationRequest(User initiator, ActionOutcomeDTO actionOutcome) {
+        Integer initiatorId = initiator.getId();
         Resource resource = actionOutcome.getResource();
-        NotificationDefinition definition = getById(SYSTEM_COMPLETE_REGISTRATION_REQUEST);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
-                .withResource(resource).withTransitionAction(actionOutcome.getTransitionAction().getId());
-        sendIndividualUpdateNotification(resource, initiator, definition, definitionDTO);
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_COMPLETE_REGISTRATION_REQUEST).withInitiator(initiatorId)
+                .withRecipient(initiatorId).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withTransitionAction(actionOutcome.getTransitionAction().getId()));
     }
 
     public void sendCompleteRegistrationForgottenRequest(User initiator) {
-        System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator)
-                .withResource(systemService.getSystem()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
-        sendIndividualUpdateNotification(system, initiator, definition, definitionDTO);
+        Integer initiatorId = initiator.getId();
+        System resource = systemService.getSystem();
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_COMPLETE_REGISTRATION_FORGOTTEN_REQUEST).withInitiator(initiatorId)
+                .withRecipient(initiatorId).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
     }
 
     public void sendResetPasswordNotification(User initiator, String newPassword) {
-        System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_PASSWORD_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(initiator).withResource(system)
-                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword);
-        sendIndividualUpdateNotification(system, initiator, definition, definitionDTO);
+        Integer initiatorId = initiator.getId();
+        System resource = systemService.getSystem();
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_PASSWORD_NOTIFICATION).withInitiator(initiatorId)
+                .withRecipient(initiatorId).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withTransitionAction(SYSTEM_MANAGE_ACCOUNT).withNewPassword(newPassword));
     }
 
     public void sendJoinRequest(User initiator, User recipient, ResourceParent resource) {
-        NotificationDefinition definition = getById(SYSTEM_JOIN_REQUEST);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
-                .withTransitionAction(SYSTEM_VIEW_JOIN_LIST);
-        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_JOIN_REQUEST).withInitiator(initiator.getId())
+                .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withTransitionAction(SYSTEM_VIEW_JOIN_LIST));
     }
 
     public void sendJoinNotification(User initiator, User recipient, ResourceParent resource) {
-        NotificationDefinition definition = getById(SYSTEM_JOIN_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(resource)
-                .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT"));
-        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_JOIN_NOTIFICATION).withInitiator(initiator.getId())
+                .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withTransitionAction(PrismAction.valueOf(resource.getResourceScope().name() + "_VIEW_EDIT")));
     }
 
     public void sendConnectionNotification(User initiator, User recipient, AdvertTarget advertTarget) {
-        System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_CONNECTION_NOTIFICATION);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system)
-                .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_MANAGE_ACCOUNT);
-        sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
+        System resource = systemService.getSystem();
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_CONNECTION_NOTIFICATION).withInitiator(initiator.getId())
+                .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withAdvertTarget(advertTarget.getId()).withTransitionAction(SYSTEM_MANAGE_ACCOUNT));
+    }
+
+    public void sendMessageNotification(MessageNotification messageRecipient) {
+        User initiator = systemService.getSystem().getUser();
+        Message message = messageRecipient.getMessage();
+        ActivityEditable activity = message.getThread().getActivity();
+
+        Resource resource;
+        PrismNotificationDefinition definition;
+        NotificationEvent notificationEvent = new NotificationEvent(this).withInitiator(initiator.getId())
+                .withRecipient(messageRecipient.getUser().getId()).withMessage(message.getId());
+        if (Resource.class.isAssignableFrom(activity.getClass())) {
+            resource = (Resource) activity;
+            definition = PrismNotificationDefinition.valueOf(resource.getResourceScope().name() + "_MESSAGE_NOTIFICATION");
+            notificationEvent.setTransitionAction(actionService.getMessageAction(resource).getId());
+        } else {
+            resource = systemService.getSystem();
+            definition = SYSTEM_MESSAGE_CANDIDATE_NOTIFICATION;
+            notificationEvent.setCandidate(((UserAccount) activity).getUser().getId());
+        }
+
+        notificationEvent.setNotificationDefinition(definition);
+        notificationEvent.setResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()));
+        sendNotification(notificationEvent);
     }
 
     public List<PrismNotificationDefinition> getEditableTemplates(PrismScope scope) {
@@ -283,7 +304,7 @@ public class NotificationService {
     }
 
     public void resetUserNotifications() {
-        notificationDAO.resetUserNotifications(DateTime.now().minusDays(1));
+        notificationDAO.resetUserNotifications(now().minusDays(1));
     }
 
     public void resetUserNotifications(User user) {
@@ -303,7 +324,7 @@ public class NotificationService {
         PrismScope scope = resource.getResourceScope();
         List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
 
-        Set<UserNotificationDefinitionDTO> requests = Sets.newHashSet();
+        Set<UserNotificationDefinitionDTO> requests = newHashSet();
         requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, resource));
 
         if (!scope.equals(SYSTEM)) {
@@ -311,33 +332,30 @@ public class NotificationService {
                 requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, parentScope, resource));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(resource.getResourceScope());
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : organizationScopes) {
-                    for (PrismScope targetScope : organizationScopes) {
-                        requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, targeterScope, targetScope, targeterEntities, resource));
-                    }
+            for (PrismScope targeterScope : organizationScopes) {
+                for (PrismScope targetScope : organizationScopes) {
+                    requests.addAll(notificationDAO.getIndividualRequestDefinitions(scope, targeterScope, targetScope, resource));
                 }
             }
         }
 
-        Set<User> recipients = Sets.newHashSet();
+        Set<User> recipients = newHashSet();
         if (requests.size() > 0) {
             User initiator = comment.getUser();
-            Map<UserNotificationDTO, Long> recentRequests = Maps.newHashMap();
+            Map<UserNotificationDTO, Long> recentRequests = newHashMap();
             notificationDAO.getRecentRequestCounts(requests, DateTime.now().minusDays(1)).forEach(rr -> recentRequests.put(rr, rr.getSentCount()));
 
             for (UserNotificationDefinitionDTO request : requests) {
                 User recipient = userService.getById(request.getUserId());
                 Long recentRequestCount = recentRequests
                         .get(new UserNotificationDTO().withUserId(request.getUserId()).withNotificationDefinitionId(request.getNotificationDefinitionId()));
-                NotificationDefinition definition = getById(request.getNotificationDefinitionId());
-                NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
-                        .withResource(resource)
-                        .withComment(comment).withTransitionAction(request.getActionId());
 
-                recipient = sendIndividualRequestNotification(resource, recipient, definition, definitionDTO, recentRequestCount);
-                if (recipient != null) {
+                NotificationEvent notificationEvent = new NotificationEvent(this).withNotificationDefinition(request.getNotificationDefinitionId())
+                        .withInitiator(initiator.getId()).withRecipient(recipient.getId())
+                        .withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId())).withComment(comment.getId())
+                        .withTransitionAction(request.getActionId());
+
+                if (sendIndividualRequestNotification(notificationEvent, recentRequestCount)) {
                     recipients.add(recipient);
                 }
             }
@@ -346,9 +364,8 @@ public class NotificationService {
         return recipients;
     }
 
-    public NotificationConfiguration createOrUpdateNotificationConfiguration(
-            PrismConfiguration configurationType, Resource resource, PrismOpportunityType opportunityType,
-            NotificationConfigurationDTO notificationConfigurationDTO) {
+    public NotificationConfiguration createOrUpdateNotificationConfiguration(PrismConfiguration configurationType, Resource resource,
+            PrismOpportunityType opportunityType, NotificationConfigurationDTO notificationConfigurationDTO) {
         WorkflowConfiguration<?> configuration = customizationService.createConfiguration(configurationType, resource, opportunityType,
                 notificationConfigurationDTO);
         resourceService.executeUpdate(resource, userService.getCurrentUser(),
@@ -370,6 +387,16 @@ public class NotificationService {
         return notificationConfiguration;
     }
 
+    public void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
+        if (definition.getNotificationPurpose().equals(UPDATE)) {
+            entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient)
+                    .withNotificationDefinition(definition).withActive(true).withNotifiedTimestamp(now()));
+        } else {
+            entityService.save(new UserNotification().withResource(resource).withUser(recipient)
+                    .withNotificationDefinition(definition).withActive(true).withNotifiedTimestamp(now()));
+        }
+    }
+
     private void sendIndividualUpdateNotifications(Resource resource, Comment comment, Set<UserNotificationDefinitionDTO> updates, Set<User> exclusions) {
         if (updates.size() > 0) {
             Action viewEditAction = actionService.getViewEditAction(resource);
@@ -378,10 +405,10 @@ public class NotificationService {
                 for (UserNotificationDefinitionDTO update : updates) {
                     User recipient = userService.getById(update.getUserId());
                     if (!exclusions.contains(recipient)) {
-                        NotificationDefinition definition = getById(update.getNotificationDefinitionId());
-                        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient)
-                                .withResource(resource).withComment(comment).withTransitionAction(viewEditAction.getId());
-                        sendIndividualUpdateNotification(resource, recipient, definition, definitionDTO);
+                        sendNotification(new NotificationEvent(this).withNotificationDefinition(update.getNotificationDefinitionId())
+                                .withInitiator(initiator.getId()).withRecipient(recipient.getId())
+                                .withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId())).withComment(comment.getId())
+                                .withTransitionAction(viewEditAction.getId()));
                     }
                 }
             }
@@ -414,11 +441,10 @@ public class NotificationService {
     }
 
     private void sendConnectionRequest(User initiator, User recipient, AdvertTarget advertTarget) {
-        System system = systemService.getSystem();
-        NotificationDefinition definition = getById(SYSTEM_CONNECTION_REQUEST);
-        NotificationDefinitionDTO definitionDTO = new NotificationDefinitionDTO().withInitiator(initiator).withRecipient(recipient).withResource(system)
-                .withAdvertTarget(advertTarget).withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST);
-        sendIndividualUpdateNotification(system, recipient, definition, definitionDTO);
+        System resource = systemService.getSystem();
+        sendNotification(new NotificationEvent(this).withNotificationDefinition(SYSTEM_CONNECTION_REQUEST).withInitiator(initiator.getId())
+                .withRecipient(recipient.getId()).withResource(new ResourceDTO().withScope(resource.getResourceScope()).withId(resource.getId()))
+                .withAdvertTarget(advertTarget.getId()).withTransitionAction(SYSTEM_VIEW_CONNECTION_LIST));
     }
 
     private <T extends InvitationEntity> void dequeueUserInvitation(Invitation invitation, T invitationEntity) {
@@ -430,43 +456,17 @@ public class NotificationService {
         }
     }
 
-    private void sendIndividualUpdateNotification(Resource resource, User recipient, NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
-        sendNotification(definition, definitionDTO);
-        createUserNotification(resource, recipient, definition);
-    }
-
-    private User sendIndividualRequestNotification(Resource resource, User recipient, NotificationDefinition definition,
-            NotificationDefinitionDTO definitionDTO, Long recentRequestCount) {
+    private boolean sendIndividualRequestNotification(NotificationEvent notificationEvent, Long recentRequestCount) {
         recentRequestCount = recentRequestCount == null ? 0 : recentRequestCount;
-        if (recentRequestCount < REQUEST_BUFFER) {
-            sendNotification(definition, definitionDTO.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));
-            createUserNotification(resource, recipient, definition);
-            return recipient;
+        if (notificationEvent.getNotificationDefinition().getNotificationPurpose().equals(REQUEST_EAGER) || recentRequestCount < REQUEST_BUFFER) {
+            sendNotification(notificationEvent.withBuffered(recentRequestCount == (REQUEST_BUFFER - 1)));
+            return true;
         }
-        return null;
+        return false;
     }
 
-    private void sendNotification(NotificationDefinition definition, NotificationDefinitionDTO definitionDTO) {
-        User user = definitionDTO.getRecipient();
-        NotificationConfiguration configuration = getNotificationConfiguration(definitionDTO.getResource(), user, definition);
-        MailMessageDTO message = new MailMessageDTO();
-
-        message.setNotificationConfiguration(configuration);
-        message.setNotificationDefinitionDTO(definitionDTO);
-
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(definitionDTO.getResource());
-        applicationContext.getBean(MailSender.class).localize(propertyLoader).sendEmail(message);
-    }
-
-    private void createUserNotification(Resource resource, User recipient, NotificationDefinition definition) {
-        if (definition.getNotificationPurpose().equals(REQUEST)) {
-            entityService.save(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition).withActive(true)
-                    .withNotifiedTimestamp(DateTime.now()));
-        } else {
-            entityService.createOrUpdate(new UserNotification().withResource(resource).withUser(recipient).withNotificationDefinition(definition)
-                    .withActive(true)
-                    .withNotifiedTimestamp(DateTime.now()));
-        }
+    private void sendNotification(NotificationEvent notificationEvent) {
+        applicationEventPublisher.publishEvent(notificationEvent);
     }
 
 }

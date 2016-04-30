@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.services;
 
+import static java.util.Collections.singletonList;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE;
@@ -13,7 +14,6 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,6 +39,9 @@ import uk.co.alumeni.prism.utils.PrismTemplateUtils;
 @Transactional
 public class WidgetService {
 
+    @Value("${application.url}")
+    private String applicationUrl;
+
     @Inject
     private PrismTemplateUtils templateUtils;
 
@@ -48,9 +51,6 @@ public class WidgetService {
     @Inject
     private ApplicationContext applicationContext;
 
-    @Value("${application.url}")
-    private String applicationUrl;
-
     public String getOpportunityBadge(Advert advert) {
         ResourceOpportunity opportunity = advert.getResourceOpportunity();
         if (opportunity == null) {
@@ -58,17 +58,19 @@ public class WidgetService {
         }
         PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(advert.getResource());
         String opportunityType = propertyLoader.loadEager(opportunity.getOpportunityType().getId().getDisplayProperty());
-        Integer durationMinimum = opportunity.getDurationMinimum();
-        Integer durationMaximum = opportunity.getDurationMaximum();
-        Set<String> locations = advertService.getAdvertLocations(opportunity.getResourceScope(), Collections.singletonList(opportunity.getId())).get(advert.getId());
+        Integer durationMinimum = advert.getDurationMinimum();
+        Integer durationMaximum = advert.getDurationMaximum();
+        Set<String> locations = advertService.getAdvertLocations(opportunity.getResourceScope(), singletonList(opportunity.getId())).get(advert.getId());
 
         Map<String, Object> model = new HashMap<>();
         model.put("applicationUrl", applicationUrl);
         model.put("opportunityType", opportunityType);
         model.put("advert", advert);
-        model.put("availabilityLabel", propertyLoader.loadEager(durationMinimum != null ? SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT : SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT));
+        model.put("availabilityLabel", propertyLoader.loadEager(durationMinimum != null ? SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT
+                : SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT));
         model.put("availability", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_LABEL));
-        model.put("studyOptions", opportunity.getResourceStudyOptions().stream().map(s -> propertyLoader.loadEager(s.getStudyOption().getDisplayProperty())).collect(Collectors.toList()));
+        model.put("studyOptions", opportunity.getResourceStudyOptions().stream().map(s -> propertyLoader.loadEager(s.getStudyOption().getDisplayProperty()))
+                .collect(Collectors.toList()));
         model.put("locationLabel", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL));
         model.put("locations", locations);
         model.put("payLabel", propertyLoader.loadEager(SYSTEM_OPPORTUNITIES_PROPERTY_PAY_LABEL));

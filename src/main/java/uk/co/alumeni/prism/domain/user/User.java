@@ -35,20 +35,23 @@ import uk.co.alumeni.prism.domain.application.ApplicationReferee;
 import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.comment.CommentAssignedUser;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.message.Message;
+import uk.co.alumeni.prism.domain.message.MessageNotification;
+import uk.co.alumeni.prism.domain.message.MessageThread;
 import uk.co.alumeni.prism.domain.resource.Department;
 import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Program;
 import uk.co.alumeni.prism.domain.resource.Project;
 import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
+import uk.co.alumeni.prism.rest.UserDescriptorExtended;
 import uk.co.alumeni.prism.workflow.user.UserReassignmentProcessor;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "user")
-public class User implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor> {
+public class User extends UserDescriptorExtended<Document, User> implements UserDetails, UniqueEntity, UserAssignment<UserReassignmentProcessor> {
 
     private static final long serialVersionUID = 5910410212695389060L;
 
@@ -88,7 +91,7 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     @ManyToOne
     @JoinColumn(name = "creator_user_id")
     private User creatorUser;
-    
+
     @ManyToOne
     @JoinColumn(name = "parent_user_id")
     private User parentUser;
@@ -150,9 +153,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     private Set<UserNotification> userNotifications = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
-    private Set<UserInstitutionIdentity> institutionIdentities = Sets.newHashSet();
-
-    @OneToMany(mappedBy = "user")
     private Set<UserCompetence> userCompetences = Sets.newHashSet();
 
     @OneToMany(mappedBy = "user")
@@ -184,6 +184,15 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
 
     @OneToMany(mappedBy = "user")
     private Set<AdvertTargetPending> advertTargetPendings = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "searchUser")
+    private Set<MessageThread> threads = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Message> messages = Sets.newHashSet();
+
+    @OneToMany(mappedBy = "user")
+    private Set<MessageNotification> messageNotifications = Sets.newHashSet();
 
     public Integer getId() {
         return id;
@@ -264,11 +273,13 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
     }
-    
+
+    @Override
     public User getCreatorUser() {
         return creatorUser;
     }
 
+    @Override
     public void setCreatorUser(User creatorUser) {
         this.creatorUser = creatorUser;
     }
@@ -357,10 +368,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return userNotifications;
     }
 
-    public Set<UserInstitutionIdentity> getInstitutionIdentities() {
-        return institutionIdentities;
-    }
-
     public Set<UserCompetence> getUserCompetences() {
         return userCompetences;
     }
@@ -405,6 +412,18 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
         return advertTargetPendings;
     }
 
+    public Set<MessageThread> getThreads() {
+        return threads;
+    }
+
+    public Set<Message> getMessages() {
+        return messages;
+    }
+
+    public Set<MessageNotification> getMessageNotifications() {
+        return messageNotifications;
+    }
+
     public User withId(Integer id) {
         this.id = id;
         return this;
@@ -440,11 +459,6 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     }
 
     @Override
-    public boolean isEnabled() {
-        return userAccount != null && userAccount.getEnabled();
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.emptyList();
     }
@@ -475,25 +489,52 @@ public class User implements UserDetails, UniqueEntity, UserAssignment<UserReass
     }
 
     @Override
-    public String toString() {
-        return firstName + " " + lastName + " " + "(" + email + ")";
+    public Boolean getEnabled() {
+        return userAccount == null ? null : userAccount.getEnabled();
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(email);
+    public void setEnabled(Boolean enabled) {
+        if (userAccount != null) {
+            userAccount.setEnabled(enabled);
+        }
+
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == null) {
-            return false;
+    public String getLinkedinProfileUrl() {
+        return userAccount == null ? null : userAccount.getLinkedinProfileUrl();
+    }
+
+    @Override
+    public void setLinkedinProfileUrl(String linkedinProfileUrl) {
+        if (userAccount != null) {
+            userAccount.setLinkedinProfileUrl(linkedinProfileUrl);
         }
-        if (getClass() != object.getClass()) {
-            return false;
+    }
+
+    @Override
+    public String getLinkedinImageUrl() {
+        return userAccount == null ? null : userAccount.getLinkedinImageUrl();
+    }
+
+    @Override
+    public void setLinkedinImageUrl(String linkedinImageUrl) {
+        if (userAccount != null) {
+            userAccount.setLinkedinImageUrl(linkedinImageUrl);
         }
-        final User other = (User) object;
-        return Objects.equal(email, other.getEmail());
+    }
+
+    @Override
+    public Document getPortraitImage() {
+        return userAccount == null ? null : userAccount.getPortraitImage();
+    }
+
+    @Override
+    public void setPortraitImage(Document portraitImage) {
+        if (userAccount != null) {
+            userAccount.setPortraitImage(portraitImage);
+        }
     }
 
     @Override

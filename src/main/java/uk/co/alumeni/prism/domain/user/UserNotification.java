@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.user;
 
+import static com.google.common.base.Objects.equal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,6 +25,8 @@ import uk.co.alumeni.prism.domain.workflow.NotificationDefinition;
 import uk.co.alumeni.prism.domain.workflow.WorkflowResourceExecution;
 import uk.co.alumeni.prism.workflow.user.UserNotificationReassignmentProcessor;
 
+import com.google.common.base.Objects;
+
 @Entity
 @Table(name = "user_notification")
 public class UserNotification extends WorkflowResourceExecution implements UserAssignment<UserNotificationReassignmentProcessor> {
@@ -33,7 +37,7 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "system_id")
-    private uk.co.alumeni.prism.domain.resource.System system;
+    private System system;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "institution_id")
@@ -203,6 +207,23 @@ public class UserNotification extends WorkflowResourceExecution implements UserA
     @Override
     public boolean isResourceUserAssignmentProperty() {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResource(), user, notificationDefinition);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (getClass() != object.getClass()) {
+            return false;
+        }
+        UserNotification other = (UserNotification) object;
+        return equal(getResource(), other.getResource()) && equal(user, other.getUser()) && equal(notificationDefinition, other.getNotificationDefinition());
     }
 
     @Override

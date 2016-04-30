@@ -1,21 +1,24 @@
 package uk.co.alumeni.prism.rest.representation.profile;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
-import uk.co.alumeni.prism.rest.representation.DocumentRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationRelation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
 
-public class ProfileListRowRepresentation {
+public class ProfileListRowRepresentation extends ProfileRepresentationMessage {
 
     private boolean raisesUpdateFlag;
 
+    private BigDecimal completeScore;
+
     private UserRepresentationSimple user;
 
-    private String personalSummary;
+    private List<String> locations;
 
-    private DocumentRepresentation cv;
+    private List<ResourceRepresentationRelation> organizations;
 
     private String linkedInProfileUrl;
 
@@ -37,6 +40,14 @@ public class ProfileListRowRepresentation {
         this.raisesUpdateFlag = raisesUpdateFlag;
     }
 
+    public BigDecimal getCompleteScore() {
+        return completeScore;
+    }
+
+    public void setCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
+    }
+
     public UserRepresentationSimple getUser() {
         return user;
     }
@@ -45,20 +56,20 @@ public class ProfileListRowRepresentation {
         this.user = user;
     }
 
-    public String getPersonalSummary() {
-        return personalSummary;
+    public List<String> getLocations() {
+        return locations;
     }
 
-    public void setPersonalSummary(String personalSummary) {
-        this.personalSummary = personalSummary;
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
     }
 
-    public DocumentRepresentation getCv() {
-        return cv;
+    public List<ResourceRepresentationRelation> getOrganizations() {
+        return organizations;
     }
 
-    public void setCv(DocumentRepresentation cv) {
-        this.cv = cv;
+    public void setOrganizations(List<ResourceRepresentationRelation> organizations) {
+        this.organizations = organizations;
     }
 
     public String getLinkedInProfileUrl() {
@@ -109,8 +120,23 @@ public class ProfileListRowRepresentation {
         this.sequenceIdentifier = sequenceIdentifier;
     }
 
+    public ProfileListRowRepresentation withReadMessageCount(Integer readMessageCount) {
+        setReadMessageCount(readMessageCount);
+        return this;
+    }
+
+    public ProfileListRowRepresentation withUnreadMessageCount(Integer unreadMessageCount) {
+        setUnreadMessageCount(unreadMessageCount);
+        return this;
+    }
+
     public ProfileListRowRepresentation withRaisesUpdateFlag(boolean raisesUpdateFlag) {
         this.raisesUpdateFlag = raisesUpdateFlag;
+        return this;
+    }
+
+    public ProfileListRowRepresentation withCompleteScore(BigDecimal completeScore) {
+        this.completeScore = completeScore;
         return this;
     }
 
@@ -119,13 +145,13 @@ public class ProfileListRowRepresentation {
         return this;
     }
 
-    public ProfileListRowRepresentation withPersonalSummary(String personalSummary) {
-        this.personalSummary = personalSummary;
+    public ProfileListRowRepresentation withLocations(List<String> locations) {
+        this.locations = locations;
         return this;
     }
 
-    public ProfileListRowRepresentation withCv(DocumentRepresentation cv) {
-        this.cv = cv;
+    public ProfileListRowRepresentation withOrganizations(List<ResourceRepresentationRelation> organizations) {
+        this.organizations = organizations;
         return this;
     }
 

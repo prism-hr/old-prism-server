@@ -1,11 +1,15 @@
 package uk.co.alumeni.prism.services;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
 import static org.apache.commons.lang.ArrayUtils.contains;
 import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.joda.time.DateTime.now;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
@@ -43,14 +47,13 @@ import uk.co.alumeni.prism.domain.workflow.Action;
 import uk.co.alumeni.prism.domain.workflow.Role;
 import uk.co.alumeni.prism.domain.workflow.RoleTransition;
 import uk.co.alumeni.prism.domain.workflow.StateTransition;
-import uk.co.alumeni.prism.dto.ResourceRoleDTO;
+import uk.co.alumeni.prism.dto.UserRoleDTO;
 import uk.co.alumeni.prism.exceptions.PrismForbiddenException;
 import uk.co.alumeni.prism.exceptions.WorkflowEngineException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @Service
@@ -67,10 +70,10 @@ public class RoleService {
     private ActivityService activityService;
 
     @Inject
-    private AdvertService advertService;
+    private EntityService entityService;
 
     @Inject
-    private EntityService entityService;
+    private InvitationService invitationService;
 
     @Inject
     private NotificationService notificationService;
@@ -79,13 +82,10 @@ public class RoleService {
     private ResourceService resourceService;
 
     @Inject
-    private UserService userService;
-
-    @Inject
     private ScopeService scopeService;
 
     @Inject
-    private InvitationService invitationService;
+    private UserActivityCacheService userActivityCacheService;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -102,28 +102,26 @@ public class RoleService {
         return entityService.getAll(Role.class);
     }
 
-    public UserRole getUserRole(Resource resource, User user, Role role) {
-        return roleDAO.getUserRole(resource, user, role);
+    public UserRole getUserRoleStrict(Resource resource, User user, Role role) {
+        return roleDAO.getUserRoleStrict(resource, user, role);
     }
 
-    public List<ResourceRoleDTO> getUserRoles(User user) {
-        List<ResourceRoleDTO> userRoles = Lists.newArrayList();
-        for (PrismScope resourceScope : PrismScope.values()) {
-            userRoles.addAll(roleDAO.getUserRoles(user, resourceScope));
-        }
-        return userRoles;
-    }
-
-    public HashMultimap<User, PrismRole> getUserRoles(Resource resource) {
-        HashMultimap<User, PrismRole> userRoles = HashMultimap.create();
-        roleDAO.getUserRoles(resource).forEach(userRole -> {
-            userRoles.put(userRole.getUser(), userRole.getRole());
+    public HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource, PrismRole searchRole, String searchTerm, boolean directlyAssignableOnly) {
+        HashMultimap<UserRoleDTO, PrismRole> userRoles = HashMultimap.create();
+        roleDAO.getUserRolesStrict(resource, searchRole, searchTerm, directlyAssignableOnly).stream().forEach(userRole -> {
+            userRoles.put(userRole, userRole.getRole());
         });
         return userRoles;
     }
 
-    public UserRole getOrCreateUserRole(UserRole transientUserRole) {
-        return entityService.getOrCreate(transientUserRole.withAssignedTimestamp(new DateTime()));
+    public UserRole getOrCreateUserRole(UserRole userRole) {
+        Resource resource = userRole.getResource();
+        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
+            userRole.setAdvert(resource.getAdvert());
+        }
+
+        userRole.setAssignedTimestamp(now());
+        return entityService.getOrCreate(userRole);
     }
 
     public void acceptUnnacceptedUserRoles(User user, DateTime baseline) {
@@ -134,11 +132,11 @@ public class RoleService {
     }
 
     public void deleteUserRole(Resource resource, User user, Role role) {
-        if (roleDAO.getRolesForResourceStrict(resource, user).size() < 2 && resource.getUser().getId().equals(user.getId())) {
+        if (getRolesForResource(resource, user).size() < 2 && resource.getUser().equals(user)) {
             throw new PrismForbiddenException("Cannot remove the owner");
         }
 
-        UserRole userRole = getUserRole(resource, user, role);
+        UserRole userRole = getUserRoleStrict(resource, user, role);
         entityService.delete(userRole);
         entityService.flush();
     }
@@ -160,34 +158,38 @@ public class RoleService {
     }
 
     public void deleteUserRoles(User invoker, Resource resource, User user) {
-        List<PrismRole> roles = roleDAO.getRolesForResourceStrict(resource, user);
+        List<PrismRole> roles = getRolesForResource(resource, user);
         deleteUserRoles(invoker, resource, user, roles.toArray(new PrismRole[roles.size()]));
     }
 
-    public void verifyUserRoles(User invoker, ResourceParent resource, User user, Boolean verify) {
+    public void verifyUserRoles(User currentUser, ResourceParent resource, User user, Boolean verify) {
+        DateTime baseline = now();
         Action action = actionService.getViewEditAction(resource);
-        if (!(action == null || !actionService.checkActionExecutable(resource, action, invoker))) {
+
+        if (!(action == null || !actionService.checkActionExecutable(resource, action, currentUser))) {
             boolean isVerify = isTrue(verify);
             for (UserRole userRole : roleDAO.getUnverifiedRoles(resource, user)) {
                 if (isVerify) {
-                    createUserRoles(invoker, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
+                    createUserRoles(currentUser, resource, user, PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "")));
                     if (isTrue(userRole.getRequested())) {
-                        notificationService.sendJoinNotification(invoker, user, resource);
+                        notificationService.sendJoinNotification(currentUser, user, resource);
                     } else {
                         userRole.setInvitation(invitationService.createInvitation(user));
                     }
                 } else {
                     getOrCreateUserRole(new UserRole().withResource(userRole.getResource()).withUser(userRole.getUser())
                             .withRole(getById(PrismRole.valueOf(userRole.getRole().getId().name().replace("_UNVERIFIED", "_REJECTED"))))
-                            .withAssignedTimestamp(now()));
+                            .withAssignedTimestamp(baseline));
                 }
                 entityService.delete(userRole);
             }
         }
+
+        userActivityCacheService.updateUserActivityCaches(resource, currentUser, baseline);
     }
 
     public Map<PrismScope, PrismRoleCategory> getDefaultRoleCategories(User user) {
-        Map<PrismScope, PrismRoleCategory> defaults = Maps.newTreeMap();
+        Map<PrismScope, PrismRoleCategory> defaults = newTreeMap();
         for (PrismScope scope : PrismScope.values()) {
             PrismRole defaultRole = roleDAO.getDefaultRoleCategories(scope, user);
             if (defaultRole != null) {
@@ -197,34 +199,12 @@ public class RoleService {
         return defaults;
     }
 
-    public void setResourceOwner(Resource resource, User user) {
-        if (roleDAO.getRolesForResourceStrict(resource, user).isEmpty()) {
-            throw new PrismForbiddenException("User has no role within given resource");
-        }
-
-        resource.setUser(user);
-        if (ResourceParent.class.isAssignableFrom(resource.getClass())) {
-            resource.getAdvert().setUser(user);
-        }
-
-        resourceService.executeUpdate(resource, userService.getCurrentUser(),
-                PrismDisplayPropertyDefinition.valueOf(resource.getResourceScope().name() + "_COMMENT_UPDATED_USER_ROLE"));
-    }
-
     public boolean hasUserRole(Resource resource, User user, PrismRoleGroup prismRoles) {
         return hasUserRole(resource, user, prismRoles.getRoles());
     }
 
-    public boolean hasUserRole(Resource resource, User user, PrismRole... prismRoles) {
-        for (PrismRole prismRole : prismRoles) {
-            PrismScope roleScope = prismRole.getScope();
-            if (roleScope.ordinal() <= resource.getResourceScope().ordinal()) {
-                if (roleDAO.getUserRole(resource.getEnclosingResource(roleScope), user, prismRole) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public boolean hasUserRole(Resource resource, User user, PrismRole... roles) {
+        return isNotEmpty(roles) ? isNotEmpty(roleDAO.getUserRoles(resource, user, asList(roles))) : false;
     }
 
     public boolean createsUserRole(Comment comment, User user, PrismRole... prismRoles) {
@@ -237,11 +217,10 @@ public class RoleService {
         return false;
     }
 
-    public List<PrismRole> getRolesOverridingRedactions(Resource resource) {
-        User user = userService.getCurrentUser();
+    public List<PrismRole> getRolesOverridingRedactions(Resource resource, User currentUser) {
         PrismScope resourceScope = resource.getResourceScope();
         List<Integer> resourceIds = newArrayList(resource.getId());
-        return getRolesOverridingRedactions(user, resourceScope, resourceIds);
+        return getRolesOverridingRedactions(currentUser, resourceScope, resourceIds);
     }
 
     public List<PrismRole> getRolesOverridingRedactions(User user, PrismScope scope, Collection<Integer> resourceIds) {
@@ -255,12 +234,9 @@ public class RoleService {
                 roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, parentScope, resourceIds));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : organizationScopes) {
-                    for (PrismScope targetScope : organizationScopes) {
-                        roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, targeterScope, targetScope, targeterEntities, resourceIds));
-                    }
+            for (PrismScope targeterScope : organizationScopes) {
+                for (PrismScope targetScope : organizationScopes) {
+                    roles.addAll(roleDAO.getRolesOverridingRedactions(user, scope, targeterScope, targetScope, resourceIds));
                 }
             }
         }
@@ -272,12 +248,16 @@ public class RoleService {
         return roleDAO.getRolesForResource(resource, user);
     }
 
-    public List<PrismRole> getRolesForResourceStrict(Resource resource, User user) {
-        return roleDAO.getRolesForResourceStrict(resource, user);
+    public List<PrismRole> getUserRoles(Resource resource, User user) {
+        return roleDAO.getUserRoles(resource, user).stream().map(userRole -> userRole.getRole()).collect(toList());
     }
 
-    public List<User> getRoleUsers(Resource resource, PrismRole... prismRoles) {
-        return resource == null ? Lists.<User> newArrayList() : roleDAO.getRoleUsers(resource, prismRoles);
+    public List<UserRoleDTO> getUserRoles(Resource resource, List<PrismRole> roles) {
+        return roleDAO.getUserRoles(resource, roles);
+    }
+
+    public List<UserRoleDTO> getUserRoles(Collection<Resource> resources, List<PrismRole> roles) {
+        return roleDAO.getUserRoles(resources, roles);
     }
 
     public List<PrismRole> getCreatableRoles(PrismScope prismScope) {
@@ -341,6 +321,10 @@ public class RoleService {
 
     public List<PrismRole> getVerifiedRoles(User user, ResourceParent resource) {
         return roleDAO.getVerifiedRoles(user, resource);
+    }
+
+    public List<UserRole> getUserRolesForWhichUserIsCandidate(User user) {
+        return roleDAO.getUserRolesForWhichUserIsCandidate(user);
     }
 
     private void executeRoleTransitions(Resource resource, Comment comment, List<RoleTransition> roleTransitions) {
@@ -427,13 +411,13 @@ public class RoleService {
                     .withDeclinedResponse(false).withCreatedTimestamp(new DateTime());
 
             User owner = resource.getUser();
-            HashMultimap<User, PrismRole> existingUserRoles = getUserRoles(resource);
+            HashMultimap<UserRoleDTO, PrismRole> existingUserRoles = getUserRolesStrict(resource);
             users.forEach(user -> {
                 boolean delete = transitionType.equals(DELETE);
                 boolean deleteOwnerRole = delete && user.equals(owner);
                 stream(roles).forEach(role -> {
                     if (!(deleteOwnerRole && role.getRoleCategory().equals(ADMINISTRATOR))) {
-                        Set<PrismRole> existingRoles = existingUserRoles.get(user);
+                        Set<PrismRole> existingRoles = existingUserRoles.get(new UserRoleDTO().withId(user.getId()).withEmail(user.getEmail()));
                         if (existingRoles == null || delete || !existingRoles.contains(role)) {
                             comment.addAssignedUser(user, getById(role), transitionType);
                         }
@@ -446,11 +430,15 @@ public class RoleService {
             if (notify && transitionType.equals(CREATE)) {
                 Invitation invitation = invitationService.createInvitation(invoker, message);
                 comment.getAssignedUsers().forEach(assignee -> {
-                    UserRole userRole = getUserRole(resource, assignee.getUser(), assignee.getRole());
+                    UserRole userRole = getUserRoleStrict(resource, assignee.getUser(), assignee.getRole());
                     userRole.setInvitation(invitation);
                 });
             }
         }
+    }
+
+    private HashMultimap<UserRoleDTO, PrismRole> getUserRolesStrict(Resource resource) {
+        return getUserRolesStrict(resource, null, null, false);
     }
 
 }

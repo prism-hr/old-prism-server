@@ -70,7 +70,7 @@ public class PropertyLoader {
 
     public PropertyLoader localizeLazy(Resource resource) {
         if (resource.getResourceScope().equals(SYSTEM)) {
-            PropertyLoader loader = systemService.getPropertyLoader();
+            PropertyLoader loader = localizeDefault();
             if (loader != null) {
                 return loader;
             }
@@ -85,6 +85,10 @@ public class PropertyLoader {
         return this;
     }
 
+    public PropertyLoader localizeDefault() {
+        return systemService.getPropertyLoader();
+    }
+
     private void localize(Resource resource) {
         this.resource = resource;
         if (ResourceOpportunity.class.isAssignableFrom(resource.getClass())) {
@@ -92,8 +96,10 @@ public class PropertyLoader {
         }
     }
 
-    private HashMap<PrismDisplayPropertyDefinition, String> load(Resource resource, PrismScope scope, PrismOpportunityType opportunityType, PrismDisplayPropertyCategory category) {
-        List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations(DISPLAY_PROPERTY, resource, scope, opportunityType, category);
+    private HashMap<PrismDisplayPropertyDefinition, String> load(Resource resource, PrismScope scope, PrismOpportunityType opportunityType,
+            PrismDisplayPropertyCategory category) {
+        List<WorkflowConfigurationRepresentation> values = customizationService.getConfigurationRepresentations(DISPLAY_PROPERTY, resource, scope,
+                opportunityType, category);
         HashMap<PrismDisplayPropertyDefinition, String> displayProperties = Maps.newHashMap();
         for (WorkflowConfigurationRepresentation value : values) {
             DisplayPropertyConfigurationRepresentation displayValue = (DisplayPropertyConfigurationRepresentation) value;

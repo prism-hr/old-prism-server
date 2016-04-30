@@ -6,6 +6,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
+import uk.co.alumeni.prism.domain.definitions.PrismInterviewState;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismYesNoUnsureResponse;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
@@ -22,6 +23,8 @@ public class CommentRepresentation {
     private UserRepresentationSimple delegateUser;
 
     private PrismAction action;
+    
+    private PrismAction delegatedAction;
 
     private Boolean declinedResponse;
 
@@ -46,6 +49,8 @@ public class CommentRepresentation {
     private BigDecimal rating;
 
     private Boolean interested;
+
+    private PrismInterviewState interviewState;
 
     private CommentInterviewAppointmentRepresentation interviewAppointment;
 
@@ -109,6 +114,14 @@ public class CommentRepresentation {
 
     public void setAction(PrismAction action) {
         this.action = action;
+    }
+
+    public PrismAction getDelegatedAction() {
+        return delegatedAction;
+    }
+
+    public void setDelegatedAction(PrismAction delegatedAction) {
+        this.delegatedAction = delegatedAction;
     }
 
     public Boolean getDeclinedResponse() {
@@ -205,6 +218,14 @@ public class CommentRepresentation {
 
     public void setInterested(Boolean interested) {
         this.interested = interested;
+    }
+
+    public PrismInterviewState getInterviewState() {
+        return interviewState;
+    }
+
+    public void setInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
     }
 
     public CommentInterviewAppointmentRepresentation getInterviewAppointment() {
@@ -355,6 +376,11 @@ public class CommentRepresentation {
         return this;
     }
 
+    public CommentRepresentation withDelegatedAction(PrismAction delegatedAction) {
+        this.delegatedAction = delegatedAction;
+        return this;
+    }
+    
     public CommentRepresentation withDeclinedResponse(Boolean declinedResponse) {
         this.declinedResponse = declinedResponse;
         return this;
@@ -412,6 +438,11 @@ public class CommentRepresentation {
 
     public CommentRepresentation withInterested(Boolean interested) {
         this.interested = interested;
+        return this;
+    }
+
+    public CommentRepresentation withInterviewState(PrismInterviewState interviewState) {
+        this.interviewState = interviewState;
         return this;
     }
 

@@ -1,19 +1,21 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.base.Objects.equal;
+
 import com.google.common.base.Objects;
 
 public class PrismStateTransitionNotification {
 
     private PrismRole role;
 
-    private PrismNotificationDefinition notificationDefinition;
+    private PrismNotificationDefinition notificationdDefinition;
 
     public PrismRole getRole() {
         return role;
     }
 
-    public PrismNotificationDefinition getNotificationDefinition() {
-        return notificationDefinition;
+    public PrismNotificationDefinition getNotificationdDefinition() {
+        return notificationdDefinition;
     }
 
     public PrismStateTransitionNotification withRole(PrismRole role) {
@@ -22,13 +24,13 @@ public class PrismStateTransitionNotification {
     }
 
     public PrismStateTransitionNotification withNotificationDefinition(PrismNotificationDefinition notificationDefinition) {
-        this.notificationDefinition = notificationDefinition;
+        this.notificationdDefinition = notificationDefinition;
         return this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(role, notificationDefinition);
+        return Objects.hashCode(role);
     }
 
     @Override
@@ -39,8 +41,8 @@ public class PrismStateTransitionNotification {
         if (getClass() != object.getClass()) {
             return false;
         }
-        final PrismStateTransitionNotification other = (PrismStateTransitionNotification) object;
-        return Objects.equal(role, other.getRole()) && Objects.equal(notificationDefinition, other.getNotificationDefinition());
+        PrismStateTransitionNotification other = (PrismStateTransitionNotification) object;
+        return equal(role, other.getRole()) && equal(notificationdDefinition, other.getNotificationdDefinition());
     }
 
 }

@@ -1,7 +1,9 @@
 package uk.co.alumeni.prism.services;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.joda.time.DateTime.now;
 import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.APPLICATION_COMMENT_UPDATED_ADDRESS;
@@ -21,15 +23,19 @@ import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinit
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.APPLICATION_REFEREE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.DELETE;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismWorkflowConstraint.APPLICATION_DOCUMENT_CV;
 import static uk.co.alumeni.prism.domain.document.PrismFileCategory.DOCUMENT;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 import static uk.co.alumeni.prism.utils.PrismReflectionUtils.setProperty;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Service;
@@ -90,7 +96,6 @@ import uk.co.alumeni.prism.rest.dto.resource.ResourceParentDTO;
 import uk.co.alumeni.prism.rest.dto.resource.ResourceRelationCreationDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -408,6 +413,22 @@ public class ProfileService {
         applicationService.executeUpdate(application, APPLICATION_COMMENT_UPDATED_ADDITIONAL_INFORMATION);
     }
 
+    public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileQualification<T>> List<U> getRecentQualifications(T profile,
+            Class<U> qualificationClass) {
+        List<U> qualifications = newLinkedList();
+        qualifications.add(profileDAO.getCurrentQualification(profile, qualificationClass));
+        qualifications.add(profileDAO.getMostRecentQualification(profile, qualificationClass));
+        return qualifications.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    public <T extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>, U extends ProfileEmploymentPosition<T>> List<U> getRecentEmploymentPositions(T profile,
+            Class<U> qualificationClass) {
+        List<U> employmentPositions = newLinkedList();
+        employmentPositions.add(profileDAO.getCurrentEmploymentPosition(profile, qualificationClass));
+        employmentPositions.add(profileDAO.getMostRecentEmploymentPosition(profile, qualificationClass));
+        return employmentPositions.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
     private void fillApplicationPersonalDetail(Application application, UserAccount userAccount) {
         UserPersonalDetail userPersonalDetail = userAccount.getPersonalDetail();
         if (userPersonalDetail != null) {
@@ -522,9 +543,12 @@ public class ProfileService {
             application.setDocument(applicationDocument);
             applicationDocument.setAssociation(application);
             applicationDocument.setPersonalSummary(userDocument.getPersonalSummary());
-            applicationDocument.setCv(documentService.cloneDocument(userDocument.getCv()));
-            if (applicationDocument.getCv() != null) {
-                applicationDocument.setLastUpdatedTimestamp(new DateTime());
+
+            Document cv = documentService.cloneDocument(userDocument.getCv());
+            applicationDocument.setCv(cv);
+
+            if (APPLICATION_DOCUMENT_CV.getMinimumPermitted().equals(0) || cv != null) {
+                applicationDocument.setLastUpdatedTimestamp(now());
             }
         }
     }
@@ -554,7 +578,7 @@ public class ProfileService {
 
         personalDetail.setNationality(prismService.getDomicileById(personalDetailDTO.getNationality()));
         personalDetail.setDomicile(prismService.getDomicileById(personalDetailDTO.getDomicile()));
-        personalDetail.setVisaRequired(personalDetailDTO.getVisaRequired());
+        personalDetail.setVisaRequired(BooleanUtils.isTrue(personalDetailDTO.getVisaRequired()));
 
         personalDetail.setPhone(personalDetailDTO.getPhone());
         personalDetail.setSkype(Strings.emptyToNull(personalDetailDTO.getSkype()));
@@ -634,7 +658,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("association", qualification.getAssociation()).addProperty("advert", qualification.getAdvert())
                         .addProperty("startYear",
                                 qualification.getStartYear()));
-        if (!(duplicateQualification == null || Objects.equal(qualification.getId(), duplicateQualification.getId()))) {
+        if (!(duplicateQualification == null || Objects.equals(qualification.getId(), duplicateQualification.getId()))) {
             entityService.delete(duplicateQualification);
         }
 
@@ -675,7 +699,7 @@ public class ProfileService {
         U duplicateAward = (U) entityService.getDuplicateEntity((Class<? extends UniqueEntity>) award.getClass(),
                 new EntitySignature().addProperty("association", award.getAssociation()).addProperty("name", award.getName()).addProperty("awardYear",
                         award.getAwardYear()).addProperty("awardMonth", award.getAwardMonth()));
-        if (!(duplicateAward == null || Objects.equal(award.getId(), duplicateAward.getId()))) {
+        if (!(duplicateAward == null || Objects.equals(award.getId(), duplicateAward.getId()))) {
             entityService.delete(duplicateAward);
         }
 
@@ -735,7 +759,7 @@ public class ProfileService {
                 new EntitySignature().addProperty("association", employmentPosition.getAssociation()).addProperty("advert", employmentPosition.getAdvert())
                         .addProperty("startYear",
                                 employmentPosition.getStartYear()).addProperty("startMonth", employmentPosition.getStartMonth()));
-        if (!(duplicateEmploymentPosition == null || Objects.equal(employmentPosition.getId(), duplicateEmploymentPosition.getId()))) {
+        if (!(duplicateEmploymentPosition == null || Objects.equals(employmentPosition.getId(), duplicateEmploymentPosition.getId()))) {
             entityService.delete(duplicateEmploymentPosition);
         }
 
@@ -781,7 +805,7 @@ public class ProfileService {
                 (Class<? extends UniqueEntity>) referee.getClass(),
                 new EntitySignature().addProperty("association", referee.getAssociation()).addProperty("advert", referee.getAdvert())
                         .addProperty("user", referee.getUser()));
-        if (!(duplicateReferee == null || Objects.equal(referee.getId(), duplicateReferee.getId()))) {
+        if (!(duplicateReferee == null || Objects.equals(referee.getId(), duplicateReferee.getId()))) {
             entityService.delete(duplicateReferee);
         }
 
@@ -830,8 +854,7 @@ public class ProfileService {
     private <T extends ProfileReferee<U>, U extends ProfileEntity<?, ?, ?, ?, ?, ?, ?, ?>> List<CommentAssignedUser> assignReferee(
             U profile, T referee, ProfileRefereeDTO refereeDTO) {
         User oldUser = referee.getUser();
-        UserDTO userDTO = refereeDTO.getResource().getUser();
-        User newUser = userService.getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+        User newUser = userService.getOrCreateUser(refereeDTO.getResource().getUser());
         referee.setUser(newUser);
 
         if (referee.getClass().equals(ApplicationReferee.class)) {
@@ -845,9 +868,10 @@ public class ProfileService {
         ResourceRelationCreationDTO resourceRelationDTO = advertRelationDTO.getResource();
         ResourceParent resource = resourceService.createResourceRelation(resourceRelationDTO);
 
-        UserDTO userConnectionDTO = resourceRelationDTO.getUser();
-        if (userConnectionDTO != null) {
-            advertRelation.setUser(userService.getUserByEmail(userConnectionDTO.getEmail()));
+        UserDTO userDTO = resourceRelationDTO.getUser();
+        if (userDTO != null) {
+            User user = userService.getOrCreateUser(userDTO);
+            advertRelation.setUser(user);
         }
 
         Advert advert = resource.getAdvert();
@@ -888,7 +912,7 @@ public class ProfileService {
         if (application.isSubmitted()) {
             Role role = roleService.getById(prismRole);
             assignees.add(new CommentAssignedUser().withUser(newUser).withRole(role).withRoleTransitionType(CREATE));
-            if (!(oldUser == null || Objects.equal(newUser.getId(), oldUser.getId()))) {
+            if (!(oldUser == null || Objects.equals(newUser.getId(), oldUser.getId()))) {
                 assignees.add(new CommentAssignedUser().withUser(oldUser).withRole(role).withRoleTransitionType(DELETE));
             }
         }

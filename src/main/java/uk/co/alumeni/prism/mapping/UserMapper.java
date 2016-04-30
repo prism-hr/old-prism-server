@@ -3,11 +3,12 @@ package uk.co.alumeni.prism.mapping;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static java.math.RoundingMode.HALF_UP;
-import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
+import static org.joda.time.DateTime.now;
+import static org.springframework.beans.BeanUtils.instantiate;
 import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_NO_DIAGNOSTIC_INFORMATION;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.PrismRoleContext.VIEWER;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 import java.util.List;
 import java.util.Map;
@@ -17,17 +18,14 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import uk.co.alumeni.prism.domain.definitions.PrismRoleContext;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Institution;
+import uk.co.alumeni.prism.domain.document.Document;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
@@ -35,16 +33,15 @@ import uk.co.alumeni.prism.domain.user.UserFeedback;
 import uk.co.alumeni.prism.dto.ProfileEntityDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
+import uk.co.alumeni.prism.rest.UserDescriptor;
+import uk.co.alumeni.prism.rest.UserDescriptorExtended;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
-import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
-import uk.co.alumeni.prism.rest.representation.profile.ProfileListRowRepresentation;
+import uk.co.alumeni.prism.rest.representation.profile.ProfileRepresentationMessage;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
 import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUnverifiedUserRepresentation;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation.ResourceUserUnverifiedRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserFeedbackRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserInstitutionIdentityRepresentation;
-import uk.co.alumeni.prism.rest.representation.user.UserProfileRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationInvitationBounced;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
@@ -57,6 +54,7 @@ import uk.co.alumeni.prism.services.SystemService;
 import uk.co.alumeni.prism.services.UserFeedbackService;
 import uk.co.alumeni.prism.services.UserService;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
+import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
@@ -106,30 +104,17 @@ public class UserMapper {
     private DocumentMapper documentMapper;
 
     @Inject
+    private PrismJsonMappingUtils prismJsonMappingUtils;
+
+    @Inject
     private ApplicationContext applicationContext;
 
-    public List<ProfileListRowRepresentation> getProfileListRowRepresentations(ProfileListFilterDTO filter) {
-        DateTime updatedBaseline = DateTime.now().minusDays(1);
-        List<ProfileListRowRepresentation> representations = Lists.newLinkedList();
-        userService.getUserProfiles(filter).forEach(user -> { //
-                    representations.add(new ProfileListRowRepresentation()
-                            .withRaisesUpdateFlag(user.getUpdatedTimestamp().isAfter(updatedBaseline))
-                            .withUser(getUserRepresentationSimple(user))
-                            .withPersonalSummary(user.getPersonalSummary())
-                            .withCv(user.getCvId() == null ? null : documentMapper.getDocumentRepresentation(user.getCvId()))
-                            .withLinkedInProfileUrl(user.getLinkedInProfileUrl())
-                            .withApplicationCount(user.getApplicationCount() == null ? null : user.getApplicationCount().intValue())
-                            .withApplicationRatingCount(user.getApplicationRatingCount() == null ? null : user.getApplicationRatingCount().intValue())
-                            .withApplicationRatingAverage(
-                                    user.getApplicationRatingAverage() == null ? null : user.getApplicationRatingAverage().setScale(RATING_PRECISION, HALF_UP))
-                            .withUpdatedTimestamp(user.getUpdatedTimestamp())
-                            .withSequenceIdentifier(user.getSequenceIdentifier()));
-                });
-        return representations;
+    public <T extends UserDescriptor> UserRepresentationSimple getUserRepresentationSimple(T user, User currentUser) {
+        return getUserRepresentation(user, currentUser, UserRepresentationSimple.class);
     }
 
-    public UserRepresentationSimple getUserRepresentationSimple(User user, User currentUser) {
-        return getUserRepresentation(user, currentUser, UserRepresentationSimple.class);
+    public <T extends UserDescriptor> UserRepresentationSimple getUserRepresentationSimpleWithEmail(T user, User currentUser) {
+        return getUserRepresentation(user, currentUser, true, UserRepresentationSimple.class);
     }
 
     public UserRepresentationExtended getUserRepresentationExtended(User user, User currentUser) {
@@ -153,7 +138,7 @@ public class UserMapper {
 
         User currentUser = userService.getCurrentUser();
         return userService.getBouncedOrUnverifiedUsers(resource, filterDTO).stream()
-                .map(user -> getUserRepresentationUnverified(user, currentUser, noDiagnosis)).collect(Collectors.toList());
+                .map(user -> getUserRepresentationInvitationBounced(user, currentUser, noDiagnosis)).collect(Collectors.toList());
     }
 
     public UserFeedbackRepresentation getUserFeedbackRepresentation(UserFeedback userFeedback, User currentUser) {
@@ -172,14 +157,8 @@ public class UserMapper {
         return representation;
     }
 
-    public UserInstitutionIdentityRepresentation getUserInstitutionIdentityRepresentation(User user, Institution institution,
-            PrismUserInstitutionIdentity identityType) {
-        return new UserInstitutionIdentityRepresentation().withIdentityType(identityType).withIdentifier(
-                userService.getUserInstitutionIdentity(user, institution, identityType));
-    }
-
-    private UserRepresentationInvitationBounced getUserRepresentationUnverified(User user, User currentUser, String noDiagnosisMessage) {
-        UserRepresentationInvitationBounced representation = getUserRepresentation(user, currentUser, UserRepresentationInvitationBounced.class);
+    private UserRepresentationInvitationBounced getUserRepresentationInvitationBounced(User user, User currentUser, String noDiagnosisMessage) {
+        UserRepresentationInvitationBounced representation = getUserRepresentation(user, currentUser, true, UserRepresentationInvitationBounced.class);
 
         String bounceMessage = user.getEmailBouncedMessage();
         if (bounceMessage != null) {
@@ -190,34 +169,23 @@ public class UserMapper {
         return representation;
     }
 
-    public <T extends UserRepresentationSimple> T getUserRepresentation(User user, User currentUser, Class<T> returnType) {
-        T representation = BeanUtils.instantiate(returnType);
+    public <T extends UserDescriptor, U extends UserRepresentationSimple> U getUserRepresentation(T user, User currentUser, Class<U> returnType) {
+        return getUserRepresentation(user, currentUser, false, returnType);
+    }
 
-        representation.setId(user.getId());
-        representation.setFirstName(user.getFirstName());
-        representation.setFirstName2(user.getFirstName2());
-        representation.setFirstName3(user.getFirstName3());
-        representation.setLastName(user.getLastName());
-        representation.setFullName(user.getFullName());
-        representation.setEmail(user.getEmail());
-
-        UserAccount userAccount = user.getUserAccount();
-        if (userAccount != null) {
-            representation.setAccountProfileUrl(userAccount.getLinkedinProfileUrl());
-            representation.setAccountImageUrl(userAccount.getLinkedinImageUrl());
-            representation.setPortraitImage(documentMapper.getDocumentRepresentation(userAccount.getPortraitImage()));
-        }
-
-        representation.setEditable(userService.checkUserEditable(user, currentUser));
-        return representation;
+    public <T extends UserRepresentationSimple> T getUserRepresentationWithEmail(User user, User currentUser, Class<T> returnType) {
+        return getUserRepresentation(user, currentUser, true, returnType);
     }
 
     public List<UserRepresentationSimple> getUserRepresentations(List<UserSelectionDTO> users) {
         User currentUser = userService.getCurrentUser();
-        return users.stream()
-                .map(UserSelectionDTO::getUser)
-                .map(user -> getUserRepresentationSimple(user, currentUser))
-                .collect(Collectors.toList());
+        List<UserRepresentationSimple> representations = newLinkedList();
+        users.stream().forEach(user -> {
+            UserRepresentationSimple representation = getUserRepresentationSimple(user, currentUser);
+            representation.setEmail(getObfuscatedEmail(representation.getEmail()));
+            representations.add(representation);
+        });
+        return representations;
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(Integer user) {
@@ -225,43 +193,60 @@ public class UserMapper {
     }
 
     public UserActivityRepresentation getUserActivityRepresentation(User user) {
+        UserAccount userAccount = user.getUserAccount();
+        if (userAccount != null) {
+            UserActivityRepresentation representation;
+            String userActivityCache = userAccount.getActivityCache();
+            if (userActivityCache == null) {
+                representation = getUserActivityRepresentationFresh(user);
+            } else {
+                representation = prismJsonMappingUtils.readValue(userActivityCache, UserActivityRepresentation.class);
+            }
+            representation.setCacheIncrement(userAccount.getActivityCachedIncrement());
+            return representation;
+        }
+        return null;
+    }
+
+    public UserActivityRepresentation getUserActivityRepresentationFresh(Integer user) {
+        return getUserActivityRepresentationFresh(userService.getById(user));
+    }
+
+    public UserActivityRepresentation getUserActivityRepresentationFresh(User user) {
         Map<PrismScope, PrismRoleCategory> defaultRoleCategories = roleService.getDefaultRoleCategories(user);
-        return new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategories.values().iterator().next())
+        PrismRoleCategory defaultRoleCategory = defaultRoleCategories.size() == 0 ? null : defaultRoleCategories.values().iterator().next();
+
+        Integer readMessageCount = userService.getUserReadMessageCount(user, user);
+        Integer unreadMessageCount = userService.getUserUnreadMessageCount(user, user);
+        UserActivityRepresentation representation = new UserActivityRepresentation().withDefaultRoleCategory(defaultRoleCategory)
                 .withResourceActivities(scopeMapper.getResourceActivityRepresentation(user, defaultRoleCategories))
+                .withProfileActivity(profileMapper.getProfileActivityRepresentation(user))
+                .withMessageActivity(new ProfileRepresentationMessage()
+                        .withReadMessageCount(readMessageCount == null ? 0 : readMessageCount)
+                        .withUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount))
                 .withAppointmentActivities(applicationMapper.getApplicationAppointmentRepresentations(user))
-                .withUnverifiedUserActivities(getUnverifiedUserRepresentations(user))
-                .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user)));
+                .withUnverifiedUserActivities(getUserUnverifiedRepresentations(user))
+                .withAdvertTargetActivities(advertMapper.getAdvertTargetRepresentations(advertService.getAdvertTargetsReceived(user), user));
+
+        userService.setUserActivityCache(user, representation, now());
+        return representation;
     }
 
-    public UserProfileRepresentation getUserProfileRepresentation() {
-        User currentUser = userService.getCurrentUser();
-        UserAccount userAccount = currentUser.getUserAccount();
-        return new UserProfileRepresentation().withPersonalDetail(profileMapper.getPersonalDetailRepresentation(userAccount.getPersonalDetail(), true))
-                .withAddress(profileMapper.getAddressRepresentation(userAccount.getAddress()))
-                .withQualifications(profileMapper.getQualificationRepresentations(userAccount.getQualifications(), currentUser))
-                .withAwards(profileMapper.getAwardRepresentations(userAccount.getAwards()))
-                .withEmploymentPositions(profileMapper.getEmploymentPositionRepresentations(userAccount.getEmploymentPositions(), currentUser))
-                .withReferees(profileMapper.getRefereeRepresentations(userAccount.getReferees(), currentUser))
-                .withDocument(profileMapper.getDocumentRepresentation(userAccount.getDocument()))
-                .withAdditionalInformation(profileMapper.getAdditionalInformationRepresentation(userAccount.getAdditionalInformation(), true))
-                .withShared(userAccount.getShared()).withUpdatedTimestamp(userAccount.getUpdatedTimestamp());
-    }
-
-    public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity) {
+    public UserRepresentationSimple getUserRepresentationSimple(ProfileEntityDTO profileEntity, User user) {
         UserRepresentationSimple representation = new UserRepresentationSimple();
         representation.setId(profileEntity.getUserId());
         representation.setFirstName(profileEntity.getUserFirstName());
         representation.setFirstName2(profileEntity.getUserFirstName2());
         representation.setFirstName3(profileEntity.getUserFirstName3());
         representation.setLastName(profileEntity.getUserLastName());
-        representation.setEmail(profileEntity.getUserEmail());
+        representation.setEmail(userService.getSecuredUserEmailAddress(profileEntity.getUserEmail(), user));
         representation.setAccountImageUrl(profileEntity.getUserAccountImageUrl());
         return representation;
     }
 
     public List<UserRolesRepresentation> getUserRoleRepresentations(User user) {
         HashMultimap<ResourceRepresentationIdentity, PrismRole> index = HashMultimap.create();
-        roleService.getUserRoles(user).forEach( //
+        resourceService.getResourceRoles(user).forEach( //
                 userRole -> index.put(new ResourceRepresentationIdentity().withScope(userRole.getScope()).withId(userRole.getId()), userRole.getRole()));
 
         return index.keySet().stream()
@@ -277,8 +262,41 @@ public class UserMapper {
         return representations;
     }
 
-    private List<ResourceUnverifiedUserRepresentation> getUnverifiedUserRepresentations(User user) {
-        Map<String, ResourceUnverifiedUserRepresentation> representations = newLinkedHashMap();
+    private <T extends UserDescriptor, U extends UserRepresentationSimple> U getUserRepresentation(T user, User currentUser, boolean forceReturnEmail,
+            Class<U> returnType) {
+        U representation = instantiate(returnType);
+
+        representation.setId(user.getId());
+        representation.setFirstName(user.getFirstName());
+        representation.setLastName(user.getLastName());
+        representation.setEmail(userService.getSecuredUserEmailAddress(user.getEmail(), currentUser, forceReturnEmail));
+
+        if (UserDescriptorExtended.class.isAssignableFrom(user.getClass())) {
+            UserDescriptorExtended<?, ?> userExtended = (UserDescriptorExtended<?, ?>) user;
+            representation.setFirstName2(userExtended.getFirstName2());
+            representation.setFirstName3(userExtended.getFirstName3());
+            representation.setFullName(userExtended.getFullName());
+
+            representation.setAccountProfileUrl(userExtended.getLinkedinProfileUrl());
+            representation.setAccountImageUrl(userExtended.getLinkedinImageUrl());
+
+            Object portraitImage = userExtended.getPortraitImage();
+            if (portraitImage != null) {
+                if (portraitImage.getClass().equals(Integer.class)) {
+                    representation.setPortraitImage(documentMapper.getDocumentRepresentation((Integer) portraitImage));
+                } else {
+                    representation.setPortraitImage(documentMapper.getDocumentRepresentation((Document) portraitImage));
+                }
+            }
+
+            representation.setEditable(userExtended.checkUserEditable(currentUser));
+        }
+
+        return representation;
+    }
+
+    private List<ResourceUserUnverifiedRepresentation> getUserUnverifiedRepresentations(User user) {
+        Map<String, ResourceUserUnverifiedRepresentation> representations = newLinkedHashMap();
         TreeMultimap<UserRepresentationUnverified, PrismRoleContext> userRepresentationIndex = TreeMultimap.create();
         for (UnverifiedUserDTO unverifiedUser : userService.getUsersToVerify(user)) {
             Integer departmentId = unverifiedUser.getDepartmentId();
@@ -286,10 +304,10 @@ public class UserMapper {
             String resourceKey = Joiner.on("|").skipNulls().join(institutionId, departmentId);
 
             List<UserRepresentationUnverified> userRepresentations;
-            ResourceUnverifiedUserRepresentation representation = representations.get(resourceKey);
+            ResourceUserUnverifiedRepresentation representation = representations.get(resourceKey);
             if (representation == null) {
                 userRepresentations = newLinkedList();
-                representation = new ResourceUnverifiedUserRepresentation()
+                representation = new ResourceUserUnverifiedRepresentation()
                         .withResource(resourceMapper.getResourceRepresentationConnection(institutionId, unverifiedUser.getInstitutionName(),
                                 unverifiedUser.getLogoImageId(), departmentId, unverifiedUser.getDepartmentName()))
                         .withUsers(userRepresentations);

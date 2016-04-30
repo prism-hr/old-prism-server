@@ -2,6 +2,8 @@ package uk.co.alumeni.prism.rest.representation.comment;
 
 public class CommentCompetenceRepresentation {
 
+    private Integer competenceId;
+
     private String name;
 
     private String description;
@@ -9,6 +11,14 @@ public class CommentCompetenceRepresentation {
     private Integer rating;
 
     private String remark;
+
+    public Integer getCompetenceId() {
+        return competenceId;
+    }
+
+    public void setCompetenceId(Integer competenceId) {
+        this.competenceId = competenceId;
+    }
 
     public String getName() {
         return name;
@@ -40,6 +50,11 @@ public class CommentCompetenceRepresentation {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public CommentCompetenceRepresentation withCompetenceId(final Integer competenceId) {
+        this.competenceId = competenceId;
+        return this;
     }
 
     public CommentCompetenceRepresentation withName(String name) {

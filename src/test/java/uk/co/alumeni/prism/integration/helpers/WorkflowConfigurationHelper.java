@@ -1,9 +1,7 @@
 package uk.co.alumeni.prism.integration.helpers;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -157,8 +155,8 @@ public class WorkflowConfigurationHelper {
                 assigneeRoleScopes.add(stateActionAssignment.getRole().getScope().getId());
             });
 
-            if (isTrue(stateAction.getRaisesUrgentFlag()) && assigneeRoleScopes.contains(action.getScope().getId())) {
-                assertNotNull(stateAction.getNotificationDefinition());
+            if (stateAction.getNotificationDefinition() != null) {
+                assertTrue(stateAction.getRaisesUrgentFlag());
             }
 
             if (actionCategory == ESCALATE_RESOURCE) {

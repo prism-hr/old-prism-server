@@ -7,11 +7,10 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitio
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionGroup.APPLICATION_RETIRE_REFEREE_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationCompleteApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationProvideHiringManagerApproval;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationTerminateApproval;
+import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationSendMessageApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationViewEditApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationApproval.applicationWithdrawApproval;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationCommentViewerRecruiter;
-import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEmailCreatorViewerRecruiter;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationEscalate;
 import static uk.co.alumeni.prism.domain.definitions.workflow.application.PrismApplicationWorkflow.applicationUploadReference;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateTransition;
@@ -33,12 +32,11 @@ public class PrismApplicationApprovalPendingCompletion extends PrismWorkflowStat
                         .withTransitionAction(APPLICATION_COMPLETE_APPROVAL_STAGE) //
                         .withRoleTransitions(APPLICATION_CONFIRM_APPOINTMENT_GROUP))); //
 
-        stateActions.add(applicationEmailCreatorViewerRecruiter()); //
+        stateActions.add(applicationSendMessageApproval()); //
 
         stateActions.add(applicationEscalate(APPLICATION_RETIRE_REFEREE_GROUP, //
                 APPLICATION_RETIRE_HIRING_MANAGER_GROUP));
 
-        stateActions.add(applicationTerminateApproval());
         stateActions.add(applicationUploadReference(state));
         stateActions.add(applicationViewEditApproval(state)); //
         stateActions.add(applicationWithdrawApproval());

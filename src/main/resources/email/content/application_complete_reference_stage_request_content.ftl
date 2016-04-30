@@ -8,8 +8,8 @@
 </b></p>
 
 <p>
-    All of the requested references have been provided. Follow the link below to advance the application 
-    to the next stage of consideration.
+    The reference stage is now due for completion. Follow the link below to advance the application to 
+    the next stage of consideration.
 </p>
 
 ${ACTION_COMPLETE}

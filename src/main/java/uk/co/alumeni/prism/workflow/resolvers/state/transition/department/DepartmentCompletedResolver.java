@@ -34,7 +34,7 @@ public class DepartmentCompletedResolver implements StateTransitionResolver<Depa
     @Override
     public StateTransition resolve(Department resource, Comment comment) {
         State transitionState = comment.getTransitionState();
-        if (resourceService.isUnderApproval(resource.getInstitution())) {
+        if (resourceService.isInState(resource.getInstitution(), "APPROVAL")) {
             return stateService.getStateTransition(resource, comment.getAction(), DEPARTMENT_APPROVAL_PARENT_APPROVAL);
         } else if (transitionState == null) {
             User user = comment.getUser();

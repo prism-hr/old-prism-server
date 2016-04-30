@@ -32,7 +32,7 @@ public class CommentCompetence {
     @Column(name = "importance", nullable = false)
     private Integer importance;
 
-    @Column(name = "rating", nullable = false)
+    @Column(name = "rating")
     private Integer rating;
 
     @Column(name = "remark")

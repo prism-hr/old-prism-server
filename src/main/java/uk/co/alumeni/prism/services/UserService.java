@@ -1,23 +1,32 @@
 package uk.co.alumeni.prism.services;
 
-import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.math.RoundingMode.HALF_UP;
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
+import static java.util.Collections.singletonList;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang.BooleanUtils.isTrue;
 import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.WordUtils.capitalize;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.joda.time.DateTime.now;
+import static org.springframework.beans.BeanUtils.instantiate;
+import static uk.co.alumeni.prism.PrismConstants.ADDRESS_LOCATION_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.RATING_PRECISION;
 import static uk.co.alumeni.prism.PrismConstants.SYSTEM_NOTIFICATION_INTERVAL;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.organizationScopes;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.SYSTEM_VIEW_APPLICATION_LIST;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_ACTIVITY_NOTIFICATION;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinition.SYSTEM_REMINDER_NOTIFICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -25,24 +34,26 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.values;
+import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getTemporaryPassword;
 import static uk.co.alumeni.prism.utils.PrismEncryptionUtils.getUUID;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.invokeMethod;
+import static uk.co.alumeni.prism.utils.PrismStringUtils.getObfuscatedEmail;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.joda.time.DateTime;
@@ -59,42 +70,46 @@ import uk.co.alumeni.prism.dao.WorkflowDAO;
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.UniqueEntity.EntitySignature;
 import uk.co.alumeni.prism.domain.application.Application;
-import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
-import uk.co.alumeni.prism.domain.definitions.PrismUserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAccount;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.user.UserCompetence;
-import uk.co.alumeni.prism.domain.user.UserInstitutionIdentity;
 import uk.co.alumeni.prism.domain.workflow.Action;
+import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
 import uk.co.alumeni.prism.dto.ProfileListRowDTO;
 import uk.co.alumeni.prism.dto.UnverifiedUserDTO;
+import uk.co.alumeni.prism.dto.UserOrganizationDTO;
 import uk.co.alumeni.prism.dto.UserSelectionDTO;
 import uk.co.alumeni.prism.exceptions.PrismValidationException;
 import uk.co.alumeni.prism.exceptions.WorkflowPermissionException;
+import uk.co.alumeni.prism.mapping.UserMapper;
+import uk.co.alumeni.prism.rest.UserDescriptor;
 import uk.co.alumeni.prism.rest.dto.StateActionPendingDTO;
 import uk.co.alumeni.prism.rest.dto.UserListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.profile.ProfileListFilterDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserAccountDTO;
-import uk.co.alumeni.prism.rest.dto.user.UserCorrectionDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserDTO;
 import uk.co.alumeni.prism.rest.dto.user.UserSimpleDTO;
+import uk.co.alumeni.prism.rest.representation.user.UserActivityRepresentation;
 import uk.co.alumeni.prism.rest.representation.user.UserRepresentationSimple;
+import uk.co.alumeni.prism.services.delegates.NotificationServiceDelegate;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismEncryptionUtils;
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
+import uk.co.alumeni.prism.utils.PrismJsonMappingUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.TreeMultimap;
 
 @Service
 @Transactional
@@ -109,13 +124,16 @@ public class UserService {
     private ActionService actionService;
 
     @Inject
-    private AdvertService advertService;
+    private AddressService addressService;
 
     @Inject
     private RoleService roleService;
 
     @Inject
     private NotificationService notificationService;
+
+    @Inject
+    private NotificationServiceDelegate notificationServiceDelegate;
 
     @Inject
     private EntityService entityService;
@@ -134,6 +152,12 @@ public class UserService {
 
     @Inject
     private UserAccountService userAccountService;
+
+    @Inject
+    private UserMapper userMapper;
+
+    @Inject
+    private PrismJsonMappingUtils prismJsonMappingUtils;
 
     @Inject
     private ApplicationContext applicationContext;
@@ -181,24 +205,36 @@ public class UserService {
         return null;
     }
 
-    public User getOrCreateUser(UserDTO userDTO) {
-        return userDTO == null ? null : getOrCreateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail());
+    public Map<Integer, User> getUsers(List<Integer> userIds) {
+        Map<Integer, User> users = Maps.newHashMap();
+        userDAO.getUsers(userIds).stream().forEach(user -> users.put(user.getId(), user));
+        return users;
     }
 
-    public User getOrCreateUser(String firstName, String lastName, String email) {
-        User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName).withEmail(email)
-                .withCreatorUser(getCurrentUser());
-        User persistentUser = entityService.getDuplicateEntity(transientUser);
-        if (persistentUser == null) {
-            persistentUser = transientUser;
-            persistentUser.setActivationCode(getUUID());
-            entityService.save(persistentUser);
-            persistentUser.setParentUser(persistentUser);
-        } else if (checkUserEditable(persistentUser, getCurrentUser())) {
-            persistentUser.setFirstName(firstName);
-            persistentUser.setLastName(lastName);
+    public User getOrCreateUser(UserDescriptor userDescriptor) {
+        if (userDescriptor != null) {
+            Integer id = userDescriptor.getId();
+            if (id != null) {
+                return getById(id);
+            } else {
+                String firstName = userDescriptor.getFirstName();
+                String lastName = userDescriptor.getLastName();
+                User transientUser = new User().withFirstName(firstName).withLastName(lastName).withFullName(firstName + " " + lastName)
+                        .withEmail(userDescriptor.getEmail()).withCreatorUser(getCurrentUser());
+                User persistentUser = entityService.getDuplicateEntity(transientUser);
+                if (persistentUser == null) {
+                    persistentUser = transientUser;
+                    persistentUser.setActivationCode(getUUID());
+                    entityService.save(persistentUser);
+                    persistentUser.setParentUser(persistentUser);
+                } else if (persistentUser.checkUserEditable(getCurrentUser())) {
+                    persistentUser.setFirstName(firstName);
+                    persistentUser.setLastName(lastName);
+                }
+                return persistentUser;
+            }
         }
-        return persistentUser;
+        return null;
     }
 
     public void getOrCreateUsersWithRoles(Resource resource, StateActionPendingDTO stateActionPendingDTO) {
@@ -209,8 +245,8 @@ public class UserService {
         }
     }
 
-    public User getOrCreateUserWithRoles(User invoker, String firstName, String lastName, String email, Resource resource, String message, List<PrismRole> roles) {
-        User user = getOrCreateUser(firstName, lastName, email);
+    public User getOrCreateUserWithRoles(User invoker, UserDescriptor userDescriptor, Resource resource, String message, Collection<PrismRole> roles) {
+        User user = getOrCreateUser(userDescriptor);
         roleService.createUserRoles(invoker, resource, user, message, roles.toArray(new PrismRole[roles.size()]));
         return user;
     }
@@ -227,21 +263,21 @@ public class UserService {
     }
 
     public void updateUser(UserSimpleDTO userDTO) {
-        User user = getCurrentUser();
-        User userByEmail = getUserByEmail(userDTO.getEmail());
-        if (!(userByEmail == null || user.equals(userByEmail))) {
+        User currentUser = getCurrentUser();
+        User dereferencedUser = getById(userDTO.getId());
+        if (!(dereferencedUser == null || currentUser.equals(dereferencedUser))) {
             BeanPropertyBindingResult errors = new BeanPropertyBindingResult(userDTO, "userDTO");
             PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(systemService.getSystem());
-            errors.rejectValue("email", null, propertyLoader.loadLazy(PrismDisplayPropertyDefinition.SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
+            errors.rejectValue("email", null, propertyLoader.loadLazy(SYSTEM_VALIDATION_EMAIL_ALREADY_IN_USE));
             throw new PrismValidationException("Cannot update user", errors);
         }
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setFullName(user.getFirstName() + " " + user.getLastName());
-        user.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
-        user.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
-        user.setEmail(userDTO.getEmail());
+        currentUser.setFirstName(userDTO.getFirstName());
+        currentUser.setLastName(userDTO.getLastName());
+        currentUser.setFullName(currentUser.getFirstName() + " " + currentUser.getLastName());
+        currentUser.setFirstName2(Strings.emptyToNull(userDTO.getFirstName2()));
+        currentUser.setFirstName3(Strings.emptyToNull(userDTO.getFirstName3()));
+        currentUser.setEmail(userDTO.getEmail());
     }
 
     public void updateUserAccount(UserAccountDTO userAccountDTO) {
@@ -275,7 +311,7 @@ public class UserService {
             if (account == null) {
                 notificationService.sendCompleteRegistrationForgottenRequest(user);
             } else {
-                String newPassword = PrismEncryptionUtils.getTemporaryPassword();
+                String newPassword = getTemporaryPassword();
                 notificationService.sendResetPasswordNotification(user, newPassword);
                 account.setTemporaryPassword(PrismEncryptionUtils.getMD5(newPassword));
                 account.setTemporaryPasswordExpiryTimestamp(new DateTime().plusDays(2));
@@ -294,7 +330,7 @@ public class UserService {
         User user = getById(userId);
         if (Objects.equals(user.getId(), user.getParentUser().getId())) {
             User newParent = getCurrentUser();
-            List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[0]));
+            List<User> childUsers = Lists.asList(user, user.getChildUsers().toArray(new User[user.getChildUsers().size()]));
             for (User childUser : childUsers) {
                 childUser.setParentUser(newParent);
             }
@@ -311,14 +347,10 @@ public class UserService {
         return userDAO.getLinkedUsers(user);
     }
 
-    public String getUserInstitutionIdentity(User user, Institution institution, PrismUserInstitutionIdentity identityType) {
-        return userDAO.getUserInstitutionId(user, institution, identityType);
-    }
-
     public List<UserSelectionDTO> getUsersInterestedInApplication(Application application) {
-        TreeMap<String, UserSelectionDTO> orderedUsers = Maps.newTreeMap();
+        Set<UserSelectionDTO> orderedUsers = newTreeSet();
 
-        Map<UserSelectionDTO, DateTime> userNotInterestedEvents = Maps.newHashMap();
+        Map<UserSelectionDTO, DateTime> userNotInterestedEvents = newHashMap();
         List<UserSelectionDTO> usersNotInterested = userDAO.getUsersNotInterestedInApplication(application);
         for (UserSelectionDTO userNotInterested : usersNotInterested) {
             userNotInterestedEvents.put(userNotInterested, userNotInterested.getEventTimestamp());
@@ -328,11 +360,11 @@ public class UserService {
         for (UserSelectionDTO userInterested : usersInterested) {
             DateTime userNotInterestedTimestamp = userNotInterestedEvents.get(userInterested);
             if (userNotInterestedTimestamp == null || userNotInterestedTimestamp.isBefore(userInterested.getEventTimestamp())) {
-                orderedUsers.put(userInterested.getIndexName(), userInterested);
+                orderedUsers.add(userInterested);
             }
         }
 
-        return Lists.newLinkedList(orderedUsers.values());
+        return newLinkedList(orderedUsers);
     }
 
     public List<UserSelectionDTO> getUsersPotentiallyInterestedInApplication(Application application, List<UserSelectionDTO> usersToExclude) {
@@ -342,7 +374,7 @@ public class UserService {
         List<Integer> projects = resourceService.getResourceIds(parent, PROJECT);
         List<Integer> applications = resourceService.getResourceIds(parent, APPLICATION);
 
-        List<UserSelectionDTO> usersToInclude = Lists.newLinkedList();
+        List<UserSelectionDTO> usersToInclude = newLinkedList();
         List<UserSelectionDTO> users = userDAO.getUsersPotentiallyInterestedInApplication(programs, projects, applications);
         for (UserSelectionDTO userPotentiallyInterested : users) {
             if (!usersToExclude.contains(userPotentiallyInterested)) {
@@ -354,30 +386,30 @@ public class UserService {
     }
 
     public List<UserRepresentationSimple> getSimilarUsers(String searchTerm) {
-        String trimmedSearchTerm = StringUtils.trim(searchTerm);
+        User currentUser = getCurrentUser();
 
-        if (trimmedSearchTerm.length() >= 1) {
-            List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(trimmedSearchTerm);
-            similarUsers.forEach(similarUser -> similarUser.setEditable(false));
+        if (isNotBlank(searchTerm)) {
+            List<UserRepresentationSimple> similarUsers = userDAO.getSimilarUsers(searchTerm);
+            similarUsers.forEach(similarUser -> {
+                similarUser.setEmail(getSecuredUserEmailAddress(similarUser.getEmail(), currentUser));
+                similarUser.setEditable(false);
+            });
             return similarUsers;
         }
 
         return Lists.newArrayList();
     }
 
-    public List<User> getResourceUsers(Resource resource) {
-        return userDAO.getResourceUsers(resource);
+    public String getSecuredUserEmailAddress(String email, User currentUser) {
+        return getSecuredUserEmailAddress(email, currentUser, false);
+    }
+
+    public String getSecuredUserEmailAddress(String email, User currentUser, boolean forceReturnEmail) {
+        return (forceReturnEmail || Objects.equals(email, (currentUser == null ? null : currentUser.getEmail()))) ? email : getObfuscatedEmail(email);
     }
 
     public List<User> getResourceUsers(Resource resource, PrismRole role) {
         return userDAO.getResourceUsers(resource, role);
-    }
-
-    public void createOrUpdateUserInstitutionIdentity(Application application, String exportUserId) {
-        UserInstitutionIdentity transientUserInstitutionIdentity = new UserInstitutionIdentity().withUser(application.getUser())
-                .withInstitution(application.getInstitution()).withIdentityType(PrismUserInstitutionIdentity.STUDY_APPLICANT)
-                .withIdentitier(exportUserId);
-        entityService.createOrUpdate(transientUserInstitutionIdentity);
     }
 
     public List<User> getBouncedOrUnverifiedUsers(Resource resource, UserListFilterDTO userListFilterDTO) {
@@ -390,25 +422,25 @@ public class UserService {
         return Lists.<User> newArrayList();
     }
 
-    public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserCorrectionDTO userCorrectionDTO) {
+    public void reassignBouncedOrUnverifiedUser(Resource resource, Integer userId, UserDTO userDTO) {
         User user = getCurrentUser();
         Action action = actionService.getViewEditAction(resource);
         if (!(action == null || !actionService.checkActionExecutable(resource, action, user))) {
             HashMultimap<PrismScope, Integer> enclosedResources = resourceService.getEnclosedResources(resource);
-            User bouncedOrUnverifiedUser = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
+            User userBouncedOrUnverified = userDAO.getBouncedOrUnverifiedUser(userId, enclosedResources);
 
-            String email = userCorrectionDTO.getEmail();
+            String email = userDTO.getEmail();
             User userDuplicate = getUserByEmail(email);
 
-            if (bouncedOrUnverifiedUser != null && userDuplicate == null) {
-                bouncedOrUnverifiedUser.setFirstName(userCorrectionDTO.getFirstName());
-                bouncedOrUnverifiedUser.setLastName(userCorrectionDTO.getLastName());
-                bouncedOrUnverifiedUser.setFullName(bouncedOrUnverifiedUser.getFirstName() + " " + bouncedOrUnverifiedUser.getLastName());
-                bouncedOrUnverifiedUser.setEmail(userCorrectionDTO.getEmail());
-                bouncedOrUnverifiedUser.setEmailBouncedMessage(null);
-                notificationService.resetUserNotifications(bouncedOrUnverifiedUser);
+            if (userBouncedOrUnverified != null && userDuplicate == null) {
+                userBouncedOrUnverified.setFirstName(userDTO.getFirstName());
+                userBouncedOrUnverified.setLastName(userDTO.getLastName());
+                userBouncedOrUnverified.setFullName(userBouncedOrUnverified.getFirstName() + " " + userBouncedOrUnverified.getLastName());
+                userBouncedOrUnverified.setEmail(userDTO.getEmail());
+                userBouncedOrUnverified.setEmailBouncedMessage(null);
+                notificationService.resetUserNotifications(userBouncedOrUnverified);
             } else if (userDuplicate != null) {
-                mergeUsers(bouncedOrUnverifiedUser, userDuplicate);
+                mergeUsers(userBouncedOrUnverified, userDuplicate);
             } else {
                 throw new WorkflowPermissionException(systemService.getSystem(), actionService.getById(SYSTEM_VIEW_APPLICATION_LIST));
             }
@@ -427,12 +459,9 @@ public class UserService {
                 users.addAll(userDAO.getUsersWithActions(scope, parentScope, resource, actions));
             }
 
-            List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(scope);
-            if (isNotEmpty(targeterEntities)) {
-                for (PrismScope targeterScope : WorkflowDAO.organizationScopes) {
-                    for (PrismScope targetScope : WorkflowDAO.organizationScopes) {
-                        users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, targeterEntities, resource, actions));
-                    }
+            for (PrismScope targeterScope : WorkflowDAO.organizationScopes) {
+                for (PrismScope targetScope : WorkflowDAO.organizationScopes) {
+                    users.addAll(userDAO.getUsersWithActions(scope, targeterScope, targetScope, resource, actions));
                 }
             }
         }
@@ -460,7 +489,7 @@ public class UserService {
 
         T mergedAssignmentConflict = entityService.getDuplicateEntity((Class<T>) oldAssignment.getClass(), newSignature);
         if (mergedAssignmentConflict == null) {
-            PrismReflectionUtils.invokeMethod(oldAssignment, "set" + capitalize(userProperty), newUser);
+            invokeMethod(oldAssignment, "set" + capitalize(userProperty), newUser);
             return true;
         }
         return false;
@@ -490,35 +519,56 @@ public class UserService {
         return getCurrentUser() != null;
     }
 
-    public Set<Integer> getUsersForActivityRepresentation() {
-        Set<Integer> users = Sets.newHashSet();
-        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
-        stream(values()).forEach(scope -> {
-            users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
-        });
+    public Set<Integer> getUsersForActivityNotification() {
+        Set<Integer> users = newHashSet();
+        if (!notificationServiceDelegate.getExecutionBatches().contains(SYSTEM_ACTIVITY_NOTIFICATION)) {
+            DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+            stream(values()).forEach(scope -> {
+                users.addAll(userDAO.getUsersForActivityNotification(scope, baseline));
+            });
+        }
         return users;
     }
 
-    public Set<Integer> getUsersForReminderRepresentation() {
-        Set<Integer> users = Sets.newHashSet();
-        DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
-        stream(values()).forEach(scope -> {
-            users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
-        });
+    public Set<Integer> getUsersForReminderNotification() {
+        Set<Integer> users = newHashSet();
+        if (!notificationServiceDelegate.getExecutionBatches().contains(SYSTEM_REMINDER_NOTIFICATION)) {
+            DateTime baseline = now().minusDays(SYSTEM_NOTIFICATION_INTERVAL);
+            stream(values()).forEach(scope -> {
+                users.addAll(userDAO.getUsersForReminderNotification(scope, baseline));
+            });
+        }
         return users;
     }
 
-    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter) {
-        User user = getCurrentUser();
+    public List<ProfileListRowDTO> getUserProfiles(ProfileListFilterDTO filter, User currentUser) {
+        return getUserProfiles(resourceService.getResourcesForWhichUserCanViewProfiles(currentUser), filter, currentUser, null);
+    }
 
-        HashMultimap<PrismScope, Integer> resources = HashMultimap.create();
-        Arrays.stream(WorkflowDAO.organizationScopes).forEach(ts -> resources.putAll(ts,
-                resourceService.getResources(user, ts, scopeService.getParentScopesDescending(ts, SYSTEM)).stream().map(d -> d.getId()).collect(toList())));
+    public List<ProfileListRowDTO> getUserProfiles(User user) {
+        HashMultimap<PrismScope, Integer> resourceIndex = resourceService.getResourcesForWhichUserCanViewProfiles(user);
 
-        Set<ProfileListRowDTO> profiles = Sets.newLinkedHashSet();
-        resources.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resources.get(scope), filter)));
+        Set<ProfileListRowDTO> profiles = newLinkedHashSet();
+        resourceIndex.keySet().forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), user)));
 
         return newLinkedList(profiles);
+    }
+
+    public List<ProfileListRowDTO> getUserProfiles(HashMultimap<PrismScope, Integer> resourceIndex, ProfileListFilterDTO filter, User user,
+            String lastSequenceIdentifier) {
+        if (isTrue(filter.getWithNewMessages())) {
+            filter.setUserIds(userDAO.getUsersWithUnreadMessages(user));
+        }
+
+        Set<ProfileListRowDTO> profiles = newLinkedHashSet();
+        resourceIndex.keySet()
+                .forEach(scope -> profiles.addAll(userDAO.getUserProfiles(scope, resourceIndex.get(scope), filter, user, lastSequenceIdentifier)));
+
+        return newLinkedList(profiles);
+    }
+
+    public List<User> getUsersWithRoles(Resource resource, PrismRole... roles) {
+        return (resource == null || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(resource, roles);
     }
 
     public List<Integer> getUsersWithRoles(PrismScope scope, List<Integer> resources, PrismRole... roles) {
@@ -529,13 +579,112 @@ public class UserService {
         return (isEmpty(resources) || isEmpty(roles)) ? emptyList() : userDAO.getUsersWithRoles(scope, parentScope, resources, roles);
     }
 
-    public UserDTO getUserDTO(User user) {
-        return new UserDTO().withId(user.getId()).withFirstName(user.getFirstName()).withLastName(user.getLastName()).withEmail(user.getEmail());
+    public DateTime getUserCreatedTimestamp(User user) {
+        return userDAO.getUserCreatedTimestamp(user);
     }
 
-    public boolean checkUserEditable(User user, User currentUser) {
+    public Set<Integer> getUsersWithActivitiesToCache(DateTime baseline) {
+        Set<Integer> users = newHashSet();
+        HashMultimap<PrismScope, Integer> resources = resourceService.getResourcesWithActivitiesToCache(baseline);
+        resources.keySet().stream().forEach(scope -> users.addAll(getUsersWithActivitiesToCache(scope, resources.get(scope), baseline)));
+        return users;
+    }
+
+    public Set<Integer> getUsersWithActivitiesToCache(PrismScope scope, Collection<Integer> resources, DateTime baseline) {
+        Set<Integer> users = Sets.newHashSet();
+
+        scopeService.getEnclosingScopesDescending(scope, SYSTEM).forEach(roleScope ->
+                users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, roleScope)));
+
+        if (!scope.equals(SYSTEM)) {
+            stream(organizationScopes).forEach(targeterScope -> {
+                stream(organizationScopes).forEach(targetScope -> {
+                    users.addAll(userDAO.getUsersWithActivitiesToCache(scope, resources, targeterScope, targetScope));
+                });
+            });
+        }
+
+        return users;
+    }
+
+    public void setUserActivityCache(Integer user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
+        setUserActivityCache(getById(user), userActivityRepresentation, baseline);
+    }
+
+    public void setUserActivityCache(User user, UserActivityRepresentation userActivityRepresentation, DateTime baseline) {
         UserAccount userAccount = user.getUserAccount();
-        return (userAccount == null || isFalse(userAccount.getEnabled())) && equal(user.getCreatorUser(), currentUser);
+        if (userAccount != null) {
+            userAccount.setActivityCache(prismJsonMappingUtils.writeValue(userActivityRepresentation));
+            userAccount.setActivityCachedTimestamp(baseline);
+
+            Integer activityCachedIncrement = userAccount.getActivityCachedIncrement();
+            userAccount.setActivityCachedIncrement(activityCachedIncrement == null ? 0 : activityCachedIncrement + 1);
+        }
+    }
+
+    public boolean checkUserCanViewUserProfile(User user, User currentUser) {
+        return isNotEmpty(getUserProfiles(new ProfileListFilterDTO().withUserIds(singletonList(user.getId())), currentUser));
+    }
+
+    public Long getUserUnreadMessageCount(Collection<Integer> userIds, User currentUser) {
+        return userDAO.getUserUnreadMessageCount(userIds, currentUser);
+    }
+
+    public Integer getUserReadMessageCount(User user, User currentUser) {
+        if (user.equals(currentUser)) {
+            return userDAO.getUserReadMessageCounts(currentUser).intValue();
+        }
+        return getFirstUserMessageCount(getUserReadMessageCounts(newArrayList(user.getId()), currentUser));
+    }
+
+    public Integer getUserUnreadMessageCount(User user, User currentUser) {
+        if (user.equals(currentUser)) {
+            return userDAO.getUserUnreadMessageCounts(currentUser).intValue();
+        }
+        return getFirstUserMessageCount(getUserUnreadMessageCounts(newArrayList(user.getId()), currentUser));
+    }
+
+    public List<ActivityMessageCountDTO> getUserReadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return userDAO.getUserReadMessageCounts(userIds, currentUser);
+    }
+
+    public List<ActivityMessageCountDTO> getUserUnreadMessageCounts(Collection<Integer> userIds, User currentUser) {
+        return userDAO.getUserUnreadMessageCounts(userIds, currentUser);
+    }
+
+    public Integer getMaximumUserAccountCompleteScore() {
+        return userDAO.getMaximumUserAccountCompleteScore();
+    }
+
+    public List<Integer> getUserAccounts() {
+        return userDAO.getUserAccounts();
+    }
+
+    public LinkedHashMultimap<Integer, String> getUserLocations(Collection<Integer> userIds) {
+        return addressService.getAddressLocationIndex(userDAO.getUserLocations(userIds), ADDRESS_LOCATION_PRECISION);
+    }
+
+    public TreeMultimap<Integer, UserOrganizationDTO> getUserOrganizations(Collection<Integer> userIds, HashMultimap<PrismScope, Integer> resourceIndex,
+            PrismRoleCategory roleCategory) {
+        TreeMultimap<Integer, UserOrganizationDTO> userResourceParents = TreeMultimap.create();
+        Arrays.stream(organizationScopes).forEach(
+                os -> userDAO.getUserOrganizations(userIds, os, resourceIndex.get(os), roleCategory).forEach(
+                        urp -> userResourceParents.put(urp.getUserId(), urp)));
+        return userResourceParents;
+    }
+
+    public synchronized void updateUserActivityCache(Integer user, DateTime baseline) {
+        UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentationFresh(user);
+        setUserActivityCache(user, userActivityRepresentation, baseline);
+    }
+
+    public boolean isMatchingUser(User user, String searchTerm) {
+        return user.getFirstName().contains(searchTerm) || user.getLastName().contains(searchTerm) || user.getFullName().contains(searchTerm)
+                || user.getEmail().contains(searchTerm);
+    }
+
+    public List<Integer> getUserAssociates(HashMultimap<PrismScope, Integer> userResources, PrismRoleCategory roleCategory) {
+        return userDAO.getUserAssociates(userResources, roleCategory);
     }
 
     @SuppressWarnings("unchecked")
@@ -543,7 +692,7 @@ public class UserService {
         for (Entry<Class<? extends UniqueEntity>, String> userAssignmentEntry : userAssignments.entries()) {
             Class<? extends UniqueEntity> userAssignmentClass = userAssignmentEntry.getKey();
             if (UserAssignment.class.isAssignableFrom(userAssignmentClass)) {
-                UserAssignment<?> userAssignment = BeanUtils.instantiate((Class<? extends UserAssignment<?>>) userAssignmentClass);
+                UserAssignment<?> userAssignment = instantiate((Class<? extends UserAssignment<?>>) userAssignmentClass);
                 applicationContext.getBean(userAssignment.getUserReassignmentProcessor()).reassign(oldUser, newUser, userAssignmentEntry.getValue());
             } else if (Resource.class.isAssignableFrom(userAssignmentClass)) {
                 Resource resource = BeanUtils.instantiate((Class<? extends Resource>) userAssignmentClass);
@@ -572,6 +721,13 @@ public class UserService {
         }
 
         return userAssignments;
+    }
+
+    private Integer getFirstUserMessageCount(List<ActivityMessageCountDTO> counts) {
+        for (ActivityMessageCountDTO count : counts) {
+            return count.getMessageCount().intValue();
+        }
+        return null;
     }
 
 }

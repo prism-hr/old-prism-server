@@ -1,5 +1,7 @@
 package uk.co.alumeni.prism.domain.definitions.workflow;
 
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.apache.commons.lang3.ObjectUtils.compare;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.APPLICANT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
@@ -18,7 +20,6 @@ import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismLocalizableDefinition;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Sets;
 
 public enum PrismRole implements PrismLocalizableDefinition {
 
@@ -38,14 +39,17 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     PROJECT_ADMINISTRATOR(ADMINISTRATOR, true, PROJECT), //
     PROJECT_APPROVER(RECRUITER, true, PROJECT), //
+    PROJECT_ENQUIRER(APPLICANT, false, PROJECT), //
     PROJECT_VIEWER(RECRUITER, true, PROJECT), //
 
     PROGRAM_ADMINISTRATOR(ADMINISTRATOR, true, PROGRAM), //
     PROGRAM_APPROVER(RECRUITER, true, PROGRAM), //
+    PROGRAM_ENQUIRER(APPLICANT, false, PROGRAM), //
     PROGRAM_VIEWER(RECRUITER, true, PROGRAM), //
 
     DEPARTMENT_ADMINISTRATOR(ADMINISTRATOR, true, DEPARTMENT), //
     DEPARTMENT_APPROVER(RECRUITER, true, DEPARTMENT), //
+    DEPARTMENT_ENQUIRER(APPLICANT, false, DEPARTMENT), //
     DEPARTMENT_VIEWER(RECRUITER, true, DEPARTMENT), //
     DEPARTMENT_VIEWER_UNVERIFIED(RECRUITER, false, DEPARTMENT), //
     DEPARTMENT_VIEWER_REJECTED(RECRUITER, false, DEPARTMENT), //
@@ -55,6 +59,7 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     INSTITUTION_ADMINISTRATOR(ADMINISTRATOR, true, INSTITUTION), //
     INSTITUTION_APPROVER(RECRUITER, true, INSTITUTION), //
+    INSTITUTION_ENQUIRER(APPLICANT, false, INSTITUTION), //
     INSTITUTION_VIEWER(RECRUITER, true, INSTITUTION), //
     INSTITUTION_VIEWER_UNVERIFIED(RECRUITER, false, INSTITUTION), //
     INSTITUTION_VIEWER_REJECTED(RECRUITER, false, INSTITUTION), //
@@ -62,7 +67,8 @@ public enum PrismRole implements PrismLocalizableDefinition {
     INSTITUTION_STUDENT_UNVERIFIED(STUDENT, false, INSTITUTION), //
     INSTITUTION_STUDENT_REJECTED(STUDENT, false, INSTITUTION), //
 
-    SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM);
+    SYSTEM_ADMINISTRATOR(ADMINISTRATOR, true, SYSTEM), //
+    SYSTEM_CANDIDATE(STUDENT, false, SYSTEM);
 
     private PrismRoleCategory roleCategory;
 
@@ -70,13 +76,14 @@ public enum PrismRole implements PrismLocalizableDefinition {
 
     private PrismScope scope;
 
-    private static Set<PrismRole> verifiedRoles = Sets.newHashSet();
+    private static Set<PrismRole> verifiedRoles = newLinkedHashSet();
 
     private static HashMultimap<PrismRole, PrismScope> visibleScopes = HashMultimap.create();
 
     static {
         for (PrismRole role : values()) {
-            if (!role.name().endsWith("_UNVERIFIED")) {
+            String roleName = role.name();
+            if (!(roleName.endsWith("_UNVERIFIED") || roleName.endsWith("_REJECTED"))) {
                 verifiedRoles.add(role);
 
                 PrismScope roleScope = role.getScope();
@@ -130,6 +137,11 @@ public enum PrismRole implements PrismLocalizableDefinition {
     @Override
     public PrismDisplayPropertyDefinition getDisplayProperty() {
         return PrismDisplayPropertyDefinition.valueOf("SYSTEM_ROLE_" + name());
+    }
+
+    public int compareWith(PrismRole other) {
+        int compare = compare(getScope().ordinal(), other.getScope().ordinal());
+        return compare == 0 ? compare(name(), other.name()) : compare;
     }
 
     public enum PrismRoleCategory {

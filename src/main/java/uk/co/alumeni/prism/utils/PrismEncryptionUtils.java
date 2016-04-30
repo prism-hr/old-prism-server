@@ -1,9 +1,8 @@
 package uk.co.alumeni.prism.utils;
 
-import java.util.UUID;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.RandomStringUtils;
+import static java.util.UUID.randomUUID;
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.lang.RandomStringUtils.random;
 
 public class PrismEncryptionUtils {
 
@@ -14,15 +13,15 @@ public class PrismEncryptionUtils {
             '3', '4', '5', '6', '7', '8', '9' };
 
     public static String getMD5(String string) {
-        return DigestUtils.md5Hex(string);
+        return md5Hex(string);
     }
 
     public static String getUUID() {
-        return UUID.randomUUID().toString();
+        return randomUUID().toString();
     }
 
     public static String getTemporaryPassword() {
-        return RandomStringUtils.random(PASSWORD_LENGTH, PASSWORD_CHARACTERS);
+        return random(PASSWORD_LENGTH, PASSWORD_CHARACTERS);
     }
 
 }

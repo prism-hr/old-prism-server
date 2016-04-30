@@ -16,7 +16,7 @@ public class PrismDepartmentDisabledCompleted extends PrismWorkflowState {
 
     @Override
     protected void setStateActions() {
-        stateActions.add(PrismDepartmentWorkflow.departmentEmailCreatorApproved()); //
+        stateActions.add(PrismDepartmentWorkflow.departmentSendMessageApproved()); //
 
         stateActions.add(new PrismStateAction() //
                 .withAction(DEPARTMENT_RESTORE) //

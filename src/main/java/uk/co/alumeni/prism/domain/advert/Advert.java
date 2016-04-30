@@ -1,5 +1,6 @@
 package uk.co.alumeni.prism.domain.advert;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
@@ -44,10 +45,10 @@ import uk.co.alumeni.prism.domain.resource.System;
 import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserAssignment;
 import uk.co.alumeni.prism.domain.workflow.OpportunityType;
+import uk.co.alumeni.prism.domain.workflow.Scope;
 import uk.co.alumeni.prism.workflow.user.AdvertReassignmentProcessor;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 @Entity
 @Table(name = "advert", uniqueConstraints = { @UniqueConstraint(columnNames = { "institution_id", "department_id", "program_id", "project_id" }) })
@@ -82,6 +83,10 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private Project project;
 
     @ManyToOne
+    @JoinColumn(name = "scope_id")
+    private Scope scope;
+
+    @ManyToOne
     @JoinColumn(name = "opportunity_type_id")
     private OpportunityType opportunityType;
 
@@ -89,8 +94,8 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     private String opportunityCategories;
 
     @Lob
-    @Column(name = "target_opportunity_type")
-    private String targetOpportunityTypes;
+    @Column(name = "study_option")
+    private String studyOptions;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -119,6 +124,12 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @Column(name = "duration_minimum")
+    private Integer durationMinimum;
+
+    @Column(name = "duration_maximum")
+    private Integer durationMaximum;
+
     @Embedded
     private AdvertFinancialDetail pay;
 
@@ -129,6 +140,12 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
     @Column(name = "globally_visible")
     private Boolean globallyVisible;
 
+    @Column(name = "submitted", nullable = false)
+    private Boolean submitted;
+    
+    @Column(name = "published", nullable = false)
+    private Boolean published;
+
     @Column(name = "sequence_identifier", unique = true)
     private String sequenceIdentifier;
 
@@ -137,15 +154,15 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertTarget> targets = Sets.newHashSet();
+    private Set<AdvertTarget> targets = newHashSet();
 
     @OrderBy(clause = "id")
     @OneToMany(mappedBy = "advert")
-    private Set<AdvertCompetence> competences = Sets.newHashSet();
+    private Set<AdvertCompetence> competences = newHashSet();
 
     @OrderBy(clause = "sequence_identifier desc")
     @OneToMany(mappedBy = "advert")
-    private Set<Application> applications = Sets.newHashSet();
+    private Set<Application> applications = newHashSet();
 
     public Integer getId() {
         return id;
@@ -203,6 +220,14 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.project = project;
     }
 
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
     public OpportunityType getOpportunityType() {
         return opportunityType;
     }
@@ -219,12 +244,12 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.opportunityCategories = opportunityCategories;
     }
 
-    public String getTargetOpportunityTypes() {
-        return targetOpportunityTypes;
+    public String getStudyOptions() {
+        return studyOptions;
     }
 
-    public void setTargetOpportunityTypes(String targetOpportunityTypes) {
-        this.targetOpportunityTypes = targetOpportunityTypes;
+    public void setStudyOptions(String studyOptions) {
+        this.studyOptions = studyOptions;
     }
 
     public String getName() {
@@ -291,6 +316,22 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
         this.address = address;
     }
 
+    public Integer getDurationMinimum() {
+        return durationMinimum;
+    }
+
+    public void setDurationMinimum(Integer durationMinimum) {
+        this.durationMinimum = durationMinimum;
+    }
+
+    public Integer getDurationMaximum() {
+        return durationMaximum;
+    }
+
+    public void setDurationMaximum(Integer durationMaximum) {
+        this.durationMaximum = durationMaximum;
+    }
+
     public AdvertFinancialDetail getPay() {
         return pay;
     }
@@ -313,6 +354,22 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public void setGloballyVisible(Boolean globallyVisible) {
         this.globallyVisible = globallyVisible;
+    }
+
+    public Boolean getSubmitted() {
+        return submitted;
+    }
+
+    public void setSubmitted(Boolean submitted) {
+        this.submitted = submitted;
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
     }
 
     public String getSequenceIdentifier() {
@@ -341,11 +398,6 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
 
     public Set<Application> getApplications() {
         return applications;
-    }
-
-    public Advert withName(String name) {
-        this.name = name;
-        return this;
     }
 
     public ResourceParent getResource() {
@@ -377,6 +429,17 @@ public class Advert implements UniqueEntity, UserAssignment<AdvertReassignmentPr
                 if (parentResource != null) {
                     parentResources.add(parentResource);
                 }
+            }
+        }
+        return parentResources;
+    }
+
+    public List<ResourceParent> getEnclosingResources() {
+        List<ResourceParent> parentResources = Lists.newArrayList();
+        for (PrismScope advertScope : advertScopes) {
+            ResourceParent parentResource = (ResourceParent) getProperty(this, advertScope.getLowerCamelName());
+            if (parentResource != null) {
+                parentResources.add(parentResource);
             }
         }
         return parentResources;

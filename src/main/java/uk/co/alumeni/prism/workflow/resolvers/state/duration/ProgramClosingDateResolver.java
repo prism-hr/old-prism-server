@@ -11,7 +11,7 @@ public class ProgramClosingDateResolver implements StateDurationResolver<Program
 
     @Override
     public LocalDate resolve(Program resource, Comment comment) {
-        return resource.getAdvert().getClosingDate();
+        return comment.isRestoreComment() ? null : resource.getAdvert().getClosingDate();
     }
 
 }

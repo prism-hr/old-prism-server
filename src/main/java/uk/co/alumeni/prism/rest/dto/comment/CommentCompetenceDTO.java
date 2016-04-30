@@ -14,10 +14,9 @@ public class CommentCompetenceDTO {
     @Range(min = 1, max = 3)
     private Integer importance;
 
-    @NotNull
     private Integer rating;
 
-    @Size(max = 255)
+    @Size(max = 2000)
     private String remark;
 
     public Integer getCompetenceId() {

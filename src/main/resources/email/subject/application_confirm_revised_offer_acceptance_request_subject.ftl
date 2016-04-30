@@ -1,1 +1,1 @@
-Your Application ${APPLICATION_CODE} - Offer Acceptance Request
+Your Application ${APPLICATION_CODE} - Revised Offer Acceptance Request

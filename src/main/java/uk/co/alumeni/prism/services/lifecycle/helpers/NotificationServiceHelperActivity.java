@@ -32,7 +32,7 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
 
     @Override
     public void execute() throws Exception {
-        userService.getUsersForActivityRepresentation().forEach(this::sendUserActivityNotification);
+        userService.getUsersForActivityNotification().forEach(this::sendUserActivityNotification);
     }
 
     @Override
@@ -43,8 +43,10 @@ public class NotificationServiceHelperActivity extends PrismServiceHelperAbstrac
     private void sendUserActivityNotification(Integer user) {
         if (!isShuttingDown()) {
             UserActivityRepresentation userActivityRepresentation = userMapper.getUserActivityRepresentation(user);
-            AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user);
-            notificationService.sendUserActivityNotification(user, userActivityRepresentation, advertListRepresentation);
+            if (userActivityRepresentation != null) {
+                AdvertListRepresentation advertListRepresentation = advertMapper.getAdvertExtendedRepresentations(user);
+                notificationService.sendUserActivityNotification(user, userActivityRepresentation, advertListRepresentation);
+            }
         }
     }
 

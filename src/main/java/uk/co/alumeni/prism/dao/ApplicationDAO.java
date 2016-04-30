@@ -5,13 +5,12 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
-import static org.hibernate.sql.JoinType.INNER_JOIN;
+import static org.hibernate.sql.JoinType.LEFT_OUTER_JOIN;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.domain.definitions.PrismPerformanceIndicator.getColumns;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismAction.APPLICATION_PROVIDE_REFERENCE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup.APPLICATION_CONFIRMED_INTERVIEW_GROUP;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismState.APPLICATION_INTERVIEW_PENDING_INTERVIEW;
-import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Repository;
 
 import uk.co.alumeni.prism.domain.UniqueEntity;
 import uk.co.alumeni.prism.domain.advert.Advert;
-import uk.co.alumeni.prism.domain.advert.AdvertTarget;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.application.ApplicationEmploymentPosition;
 import uk.co.alumeni.prism.domain.application.ApplicationLocation;
@@ -49,7 +47,6 @@ import uk.co.alumeni.prism.domain.comment.Comment;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismRejectionReason;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceParent;
@@ -93,7 +90,8 @@ public class ApplicationDAO {
     public List<ApplicationReportListRowDTO> getApplicationReport(Collection<Integer> applicationIds, String columns) {
         return (List<ApplicationReportListRowDTO>) sessionFactory.getCurrentSession().createQuery( //
                 "select " + columns + " " //
-                        + "from Application as application " + "join application.user as user " //
+                        + "from Application as application "
+                        + "join application.user as user " //
                         + "left join user.userAccount as userAccount " //
                         + "left join userAccount.personalDetail as userPersonalDetail " //
                         + "left join application.personalDetail as applicationPersonalDetail " //
@@ -178,8 +176,8 @@ public class ApplicationDAO {
         return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
                 .setProjection(Projections.projectionList() //
                         .add(Projections.groupProperty(resourceReference), "resource") //
+                        .add(Projections.countDistinct("id"), "resourceCount") //
                         .add(Projections.sum("applicationRatingCount"), "ratingCount") //
-                        .add(Projections.countDistinct("id"), "ratingResources") //
                         .add(Projections.avg("applicationRatingAverage"), "ratingAverage")) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(Restrictions.isNotNull("applicationRatingCount")) //
@@ -279,28 +277,19 @@ public class ApplicationDAO {
                 .list();
     }
 
-    public List<Integer> getApplicationsForTargets() {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert.applications", "application", JoinType.INNER_JOIN) //
-                .list();
-    }
-
-    public List<Integer> getApplicationsForTargets(User user, PrismScope targeterScope, PrismScope targetScope, Collection<Integer> students) {
-        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(AdvertTarget.class) //
-                .setProjection(Projections.groupProperty("application.id")) //
-                .createAlias("advert", "advert", JoinType.INNER_JOIN) //
-                .createAlias("advert." + targeterScope.getLowerCamelName(), "targeterResource", INNER_JOIN,
-                        Restrictions.eqProperty("advert.id", "targeterResource.advert.id"))
-                .createAlias("targeterResource.applications", "application", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert", "targetAdvert", JoinType.INNER_JOIN) //
-                .createAlias("targetAdvert." + targetScope.getLowerCamelName(), "targetResource") //
-                .createAlias("targetResource.userRoles", "targetUserRole", JoinType.INNER_JOIN) //
-                .add(Restrictions.in("application.user.id", students)) //
-                .add(Restrictions.eq("targetUserRole.user", user)) //
-                .add(Restrictions.in("targetUserRole.role.id", values(PrismRole.class, targetScope, new String[] { "ADMINISTRATOR", "APPROVER" }))) //
-                .add(Restrictions.eq("application.shared", true)) //
+    public List<Integer> getApplications(Collection<Integer> adverts, Collection<Integer> users) {
+        return (List<Integer>) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.property("id")) //
+                .createAlias("institution", "institution", LEFT_OUTER_JOIN) //
+                .createAlias("department", "department", LEFT_OUTER_JOIN) //
+                .createAlias("program", "program", LEFT_OUTER_JOIN) //
+                .createAlias("project", "project", LEFT_OUTER_JOIN) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.in("institution.advert.id", adverts)) //
+                        .add(Restrictions.in("department.advert.id", adverts)) //
+                        .add(Restrictions.in("program.advert.id", adverts)) //
+                        .add(Restrictions.in("project.advert.id", adverts))) //
+                .add(Restrictions.in("user.id", users)) //
                 .list();
     }
 
@@ -393,6 +382,17 @@ public class ApplicationDAO {
                 .add(Restrictions.isNotNull("comment")) //
                 .add(Restrictions.eq("application." + parentResource.getResourceScope().getLowerCamelName(), parentResource)) //
                 .list();
+    }
+
+    public ResourceRatingSummaryDTO getApplicationRatingSummary(User user) {
+        return (ResourceRatingSummaryDTO) sessionFactory.getCurrentSession().createCriteria(Application.class) //
+                .setProjection(Projections.projectionList() //
+                        .add(Projections.count("id").as("resourceCount")) //
+                        .add(Projections.sum("applicationRatingCount").as("ratingCount")) //
+                        .add(Projections.avg("applicationRatingAverage").as("ratingAverage"))) //
+                .add(Restrictions.eq("user", user)) //
+                .setResultTransformer(Transformers.aliasToBean(ResourceRatingSummaryDTO.class)) //
+                .uniqueResult();
     }
 
     public void deleteApplicationHiringManagers(Application application) {

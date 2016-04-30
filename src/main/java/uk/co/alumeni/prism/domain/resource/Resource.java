@@ -1,17 +1,21 @@
 package uk.co.alumeni.prism.domain.resource;
 
+import static com.google.common.base.Objects.equal;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static uk.co.alumeni.prism.PrismConstants.HYPHEN;
 import static uk.co.alumeni.prism.PrismConstants.SPACE;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.SYSTEM;
+import static uk.co.alumeni.prism.utils.PrismReflectionUtils.getProperty;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
-import uk.co.alumeni.prism.domain.Activity;
 import uk.co.alumeni.prism.domain.UniqueEntity;
+import uk.co.alumeni.prism.domain.activity.ActivityEditable;
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.comment.Comment;
@@ -20,11 +24,11 @@ import uk.co.alumeni.prism.domain.user.User;
 import uk.co.alumeni.prism.domain.user.UserRole;
 import uk.co.alumeni.prism.domain.workflow.State;
 import uk.co.alumeni.prism.domain.workflow.StateActionPending;
-import uk.co.alumeni.prism.utils.PrismReflectionUtils;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
 
-public abstract class Resource implements Activity, UniqueEntity {
+public abstract class Resource implements ActivityEditable, UniqueEntity {
 
     @Override
     public abstract Integer getId();
@@ -90,9 +94,17 @@ public abstract class Resource implements Activity, UniqueEntity {
 
     public abstract void setCreatedTimestamp(DateTime createdTimestamp);
 
+    @Override
     public abstract DateTime getUpdatedTimestamp();
 
+    @Override
     public abstract void setUpdatedTimestamp(DateTime updatedTimestamp);
+
+    @Override
+    public abstract DateTime getActivityCachedTimestamp();
+
+    @Override
+    public abstract void setActivityCachedTimestamp(DateTime activityCachedTimestamp);
 
     @Override
     public abstract String getSequenceIdentifier();
@@ -163,20 +175,35 @@ public abstract class Resource implements Activity, UniqueEntity {
     }
 
     public Resource getEnclosingResource(PrismScope resourceScope) {
-        return (Resource) PrismReflectionUtils.getProperty(this, resourceScope.getLowerCamelName());
+        return (Resource) getProperty(this, resourceScope.getLowerCamelName());
     }
 
-    public boolean sameAs(Object object) {
+    public Map<PrismScope, Resource> getEnclosingResources() {
+        Map<PrismScope, Resource> enclosingResources = newLinkedHashMap();
+        for (PrismScope enclosingScope : getResourceScope().getEnclosingScopes()) {
+            Resource enclosingResource = getEnclosingResource(enclosingScope);
+            if (enclosingResource != null) {
+                enclosingResources.put(enclosingScope, enclosingResource);
+            }
+        }
+        return enclosingResources;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getResourceScope(), getId());
+    }
+
+    @Override
+    public boolean equals(Object object) {
         if (object == null) {
             return false;
         }
         if (getClass() != object.getClass()) {
             return false;
         }
-        final Resource other = (Resource) object;
-        Integer id = getId();
-        Integer otherId = other.getId();
-        return id != null && otherId != null && id.equals(otherId);
+        Resource other = (Resource) object;
+        return equal(getId(), other.getId());
     }
 
     public String getDisplayName() {
@@ -188,8 +215,9 @@ public abstract class Resource implements Activity, UniqueEntity {
             return application.getParentResource().getDisplayName() + SPACE + HYPHEN + SPACE + application.getUser().getFullName();
         }
 
-        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls().join(getResourceName(getInstitution()), getResourceName(getDepartment()), getResourceName(getProgram()),
-                getResourceName(getProject()));
+        return Joiner.on(SPACE + HYPHEN + SPACE).skipNulls()
+                .join(getResourceName(getInstitution()), getResourceName(getDepartment()), getResourceName(getProgram()),
+                        getResourceName(getProject()));
     }
 
     @Override

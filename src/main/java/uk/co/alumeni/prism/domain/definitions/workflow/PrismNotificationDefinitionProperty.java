@@ -5,11 +5,13 @@ import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationD
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_INTERVIEW_SCHEDULED;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.APPLICATION_REJECTED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.CANDIDATE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.COMMENT_TRANSITION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.DEPARTMENT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INSTITUTION_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.INVITATION_GLOBAL;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.MESSAGE_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROGRAM_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.PROJECT_GLOBAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismNotificationDefinitionPropertyCategory.SYSTEM_ACTIVITY;
@@ -39,13 +41,14 @@ import uk.co.alumeni.prism.workflow.notification.property.ApplicationInterviewTi
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationIntervieweeInstructionsBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationInterviewerInstructionsBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationManagerBuilder;
-import uk.co.alumeni.prism.workflow.notification.property.ApplicationOfferAcceptanceBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationOfferConditionBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationOpportunityTypeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationPositionDescriptionBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationPositionNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationRejectionReasonBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ApplicationStartDateBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.CandidateFullNameBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.CandidateProfileBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.CommentContentBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.CommentDateTimeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.CommentTransitionOutcomeBuilder;
@@ -56,6 +59,8 @@ import uk.co.alumeni.prism.workflow.notification.property.InstitutionCodeBuilder
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionNameBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.InstitutionUserContactBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.InvitationAcceptBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.MessageInitiatorFullNameBuilder;
+import uk.co.alumeni.prism.workflow.notification.property.MessageSubjectBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.NotificationPropertyBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramCodeBuilder;
 import uk.co.alumeni.prism.workflow.notification.property.ProgramNameBuilder;
@@ -124,6 +129,8 @@ public enum PrismNotificationDefinitionProperty {
     COMMENT_CONTENT(COMMENT_GLOBAL, true, CommentContentBuilder.class), //
     COMMENT_DATE_TIME(COMMENT_GLOBAL, true, CommentDateTimeBuilder.class), //
     COMMENT_TRANSITION_OUTCOME(COMMENT_TRANSITION, true, CommentTransitionOutcomeBuilder.class), //
+    MESSAGE_INITIATOR_FULL_NAME(MESSAGE_GLOBAL, true, MessageInitiatorFullNameBuilder.class), //
+    MESSAGE_SUBJECT(MESSAGE_GLOBAL, true, MessageSubjectBuilder.class), //
     TARGET_RESOURCE_OTHER_NAME(TARGET_GLOBAL, true, TargetResourceOtherNameBuilder.class), //
     TARGET_RESOURCE_ACCEPT_NAME(TARGET_GLOBAL, true, TargetResourceAcceptNameBuilder.class), //
     APPLICATION_CREATOR_EMAIL(APPLICATION_GLOBAL, true, ApplicationCreatorEmailBuilder.class), //
@@ -142,7 +149,6 @@ public enum PrismNotificationDefinitionProperty {
     APPLICATION_POSITION_DESCRIPTION(APPLICATION_APPROVED, true, ApplicationPositionDescriptionBuilder.class), //
     APPLICATION_START_DATE(APPLICATION_APPROVED, true, ApplicationStartDateBuilder.class), //
     APPLICATION_OFFER_CONDITION(APPLICATION_APPROVED, true, ApplicationOfferConditionBuilder.class), //
-    APPLICATION_OFFER_ACCEPTANCE(APPLICATION_APPROVED, true, ApplicationOfferAcceptanceBuilder.class), //
     APPLICATION_REJECTION_REASON(APPLICATION_REJECTED, true, ApplicationRejectionReasonBuilder.class), //
     PROJECT_NAME(PROJECT_GLOBAL, true, ProjectNameBuilder.class), //
     PROJECT_CODE(PROJECT_GLOBAL, true, ProjectCodeBuilder.class), //
@@ -166,32 +172,34 @@ public enum PrismNotificationDefinitionProperty {
     SYSTEM_USER_NEW_PASSWORD(SYSTEM_USER_PASSWORD, false, SystemUserNewPasswordBuilder.class), //
     SYSTEM_ACTIVITY_SUMMARY(SYSTEM_ACTIVITY, false, SystemActivitySummaryBuilder.class), //
     SYSTEM_ADVERT_RECOMMENDATION(SYSTEM_ACTIVITY, false, SystemAdvertRecommendationBuilder.class),
-    SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class);
+    SYSTEM_REMINDER_SUMMARY(SYSTEM_REMINDER, false, SystemReminderSummaryBuilder.class),
+    CANDIDATE_FULL_NAME(CANDIDATE_GLOBAL, true, CandidateFullNameBuilder.class),
+    CANDIDATE_PROFILE(CANDIDATE_GLOBAL, false, CandidateProfileBuilder.class);
 
-    private PrismNotificationDefinitionPropertyCategory category;
+    private PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory;
 
     private boolean escapeHtml;
 
     private Class<? extends NotificationPropertyBuilder> builder;
 
-    private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> categoryProperties = LinkedListMultimap
+    private static ListMultimap<PrismNotificationDefinitionPropertyCategory, PrismNotificationDefinitionProperty> propertiesByCategory = LinkedListMultimap
             .create();
 
     static {
         for (PrismNotificationDefinitionProperty property : PrismNotificationDefinitionProperty.values()) {
-            categoryProperties.put(property.getCategory(), property);
+            propertiesByCategory.put(property.getNotificationDefinitionCategory(), property);
         }
     }
 
-    private PrismNotificationDefinitionProperty(PrismNotificationDefinitionPropertyCategory category, boolean escapeHtml,
+    private PrismNotificationDefinitionProperty(PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory, boolean escapeHtml,
             Class<? extends NotificationPropertyBuilder> builder) {
-        this.category = category;
+        this.notificationDefinitionCategory = notificationDefinitionCategory;
         this.escapeHtml = escapeHtml;
         this.builder = builder;
     }
 
-    public PrismNotificationDefinitionPropertyCategory getCategory() {
-        return category;
+    public PrismNotificationDefinitionPropertyCategory getNotificationDefinitionCategory() {
+        return notificationDefinitionCategory;
     }
 
     public boolean isEscapeHtml() {
@@ -202,8 +210,8 @@ public enum PrismNotificationDefinitionProperty {
         return builder;
     }
 
-    public static List<PrismNotificationDefinitionProperty> getProperties(PrismNotificationDefinitionPropertyCategory category) {
-        return categoryProperties.get(category);
+    public static List<PrismNotificationDefinitionProperty> getProperties(PrismNotificationDefinitionPropertyCategory notificationDefinitionCategory) {
+        return propertiesByCategory.get(notificationDefinitionCategory);
     }
 
 }

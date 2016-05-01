@@ -333,17 +333,18 @@ public class UserDAO {
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ResourceState.class) //
                 .setProjection(projections) //
-                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN) //
-                .createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN);
+                .createAlias(resourceReference, resourceReference, JoinType.INNER_JOIN);
 
         if (isDepartment) {
             criteria.createAlias(resourceReference + ".institution", "institution", JoinType.INNER_JOIN);
         }
 
-        criteria.createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
-                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN);
+        criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
+                .createAlias("userRole.user", "user", JoinType.INNER_JOIN) //
+                .createAlias("user.userAccount", "userAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN);
 
-        criteria.add(getResourceParentManageableStateConstraint(resourceScope));
+        criteria.add(getResourceParentManageableStateConstraint("state"));
         if (isNotEmpty(resources)) {
             criteria.add(Restrictions.in(resourceReference + ".id", resources));
         }

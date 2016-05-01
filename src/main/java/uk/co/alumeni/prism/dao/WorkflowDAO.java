@@ -4,14 +4,11 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.co.alumeni.prism.PrismConstants.FULL_STOP;
 import static uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression.EQUAL;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_REVOKED;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROGRAM;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PROJECT;
-import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,12 +28,9 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
-import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceState;
-import uk.co.alumeni.prism.domain.user.User;
 
 import com.google.common.base.Joiner;
 
@@ -152,36 +146,6 @@ public class WorkflowDAO {
                 .add(Restrictions.like(alias + "email", searchTerm, MatchMode.START));
     }
 
-    public static Junction getResourceParentManageableConstraint(PrismScope resourceScope) {
-        return Restrictions.conjunction() //
-                .add(getResourceParentManageableStateConstraint(resourceScope))
-                .add(Restrictions.eq("userRole.role.id", PrismRole.valueOf(resourceScope.name() + "_ADMINISTRATOR")));
-    }
-
-    public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope) {
-        return getResourceParentManageableStateConstraint(resourceScope, "state.id");
-    }
-
-    public static Criterion getResourceParentManageableStateConstraint(PrismScope resourceScope, String stateIdReference) {
-        return Restrictions
-                .not(Restrictions.in(stateIdReference,
-                        values(PrismState.class, resourceScope, new String[] { "UNSUBMITTED", "WITHDRAWN", "REJECTED", "DISABLED_COMPLETED" })));
-    }
-
-    public static Junction getResourceParentManageableConstraint(PrismScope resourceScope, User user) {
-        return getResourceParentManageableConstraint(resourceScope)
-                .add(Restrictions.eq("userRole.user", user));
-    }
-
-    public static Junction getResourceParentConnectableConstraint(PrismScope resourceScope, User user) {
-        return Restrictions.conjunction() //
-                .add(getResourceParentManageableStateConstraint(resourceScope))
-                .add(Restrictions.disjunction() //
-                        .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
-                        .add(Restrictions.eq("role.roleCategory", RECRUITER))) //
-                .add(Restrictions.eq("userRole.user", user));
-    }
-
     public static Junction getResourceRecentlyActiveConstraint(DateTime baseline) {
         return Restrictions.disjunction() //
                 .add(Restrictions.eq("stateAction.raisesUrgentFlag", true)) //
@@ -245,6 +209,10 @@ public class WorkflowDAO {
 
     public static String getResolvedAliasReference(String aliasReference) {
         return isEmpty(aliasReference) ? aliasReference : aliasReference + ".";
+    }
+
+    public static Criterion getResourceParentManageableStateConstraint(String stateAlias) {
+        return Restrictions.eq(stateAlias + ".manageable", true);
     }
 
     private Criteria getWorkflowCriteriaListResource(PrismScope scope, Projection projection) {

@@ -1,9 +1,32 @@
 package uk.co.alumeni.prism.services;
 
+import static java.util.Collections.singletonList;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_CLOSING_DATE_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_LOCATION_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_NO_CLOSING_DATE;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_PAY_FROM;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_PAY_FROM_TO;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_PAY_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_PAY_TO;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_DURATION_FROM;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_DURATION_FROM_TO;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_OPPORTUNITIES_PROPERTY_STUDY_LABEL;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_CONTRACT;
+import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.SYSTEM_RESOURCE_PARENT_OPPORTUNITY_TYPE_PERMANENT;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.alumeni.prism.domain.advert.Advert;
 import uk.co.alumeni.prism.domain.advert.AdvertFinancialDetail;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
@@ -12,16 +35,6 @@ import uk.co.alumeni.prism.domain.resource.ResourceParent;
 import uk.co.alumeni.prism.exceptions.ResourceNotFoundException;
 import uk.co.alumeni.prism.services.helpers.PropertyLoader;
 import uk.co.alumeni.prism.utils.PrismTemplateUtils;
-
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.singletonList;
-import static uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition.*;
 
 @Service
 @Transactional
@@ -42,7 +55,7 @@ public class WidgetService {
     public String getAdvertBadge(Advert advert, Map<String, String> options) {
         if (advert.getResourceOpportunity() != null) {
             return getOpportunityBadge(advert, advert.getResourceOpportunity());
-        } else if(advert.getParentResources() != null) {
+        } else if (advert.getParentResources() != null) {
             return getParentResourceBadge(advert, advert.getResourceParent(), options);
         }
         throw new ResourceNotFoundException("Incorrect resource type");
@@ -103,12 +116,10 @@ public class WidgetService {
     }
 
     public String getParentResourceBadge(Advert advert, ResourceParent resource, Map<String, String> options) {
-        PropertyLoader propertyLoader = applicationContext.getBean(PropertyLoader.class).localizeLazy(resource);
-
-        if(options == null) {
+        if (options == null) {
             options = new HashMap<>();
         }
-        if(!options.containsKey("type")) {
+        if (!options.containsKey("type")) {
             options.put("type", "SIMPLE");
         }
 
@@ -119,6 +130,5 @@ public class WidgetService {
 
         return templateUtils.getContentFromLocation("resource_badge", "template/resource_parent_badge.ftl", model);
     }
-
 
 }

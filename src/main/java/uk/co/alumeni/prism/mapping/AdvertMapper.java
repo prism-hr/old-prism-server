@@ -762,7 +762,7 @@ public class AdvertMapper {
             Set<PrismResourceContext> targetAdvertContexts = getAdvertResourceContexts(targetAdvert);
             advertsAsStaff.stream().forEach(advertAsStaff -> {
                 Integer advertAsStaffId = advertAsStaff.getAdvert();
-                Set<PrismResourceContext> ownerContexts = getAdvertResourceContexts(advertAsStaff.getOpportunityCategories());
+                Set<PrismResourceContext> ownerContexts = getResourceContexts(advertAsStaff.getOpportunityCategories());
                 if (advertAsStaffId.equals(advertId) && matchAdvertResourceContexts(ownerContexts, targetAdvertContexts)) {
                     setAdvertConnectState(pendingForIndex, acceptedForIndex, target, advertId, targetAdvertId);
                 } else if (advertAsStaffId.equals(targetAdvertId) && matchAdvertResourceContexts(ownerContexts, advertContexts)) {
@@ -797,11 +797,7 @@ public class AdvertMapper {
     }
 
     private Set<PrismResourceContext> getAdvertResourceContexts(Advert advert) {
-        return getAdvertResourceContexts(advert.getOpportunityCategories());
-    }
-
-    private Set<PrismResourceContext> getAdvertResourceContexts(String opportunityCategories) {
-        return getResourceContexts(opportunityCategories);
+        return getResourceContexts(advert.getOpportunityCategories());
     }
 
     private boolean matchAdvertResourceContexts(Set<PrismResourceContext> ownerContexts, Set<PrismResourceContext> targetContexts) {

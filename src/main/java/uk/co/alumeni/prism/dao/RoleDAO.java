@@ -9,8 +9,6 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableSta
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getTargetActionConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.STUDENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleTransitionType.CREATE;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
-import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.OPPORTUNITY;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeCategory.ORGANIZATION;
 import static uk.co.alumeni.prism.utils.PrismEnumUtils.values;
@@ -330,15 +328,15 @@ public class RoleDAO {
     public List<UserRole> getUserRolesForWhichUserIsCandidate(User user) {
         return (List<UserRole>) sessionFactory.getCurrentSession().createCriteria(UserRole.class) //
                 .createAlias("department", "department", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("department.resourceStates", "departmentState", JoinType.LEFT_OUTER_JOIN,
-                        getResourceParentManageableStateConstraint(DEPARTMENT, "departmentState.state.id"))
+                .createAlias("department.resourceStates", "departmentResourceState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("departmentResourceState", "departmentState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("institution", "institution", JoinType.LEFT_OUTER_JOIN) //
-                .createAlias("institution.resourceStates", "institutionState", JoinType.LEFT_OUTER_JOIN, //
-                        getResourceParentManageableStateConstraint(INSTITUTION, "institutionState.state.id")) //
+                .createAlias("institution.resourceStates", "institutionResourceState", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("institutionResourceState", "institutionState", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("role", "role", JoinType.INNER_JOIN) //
                 .add(Restrictions.disjunction() //
-                        .add(Restrictions.isNotNull("departmentState.id")) //
-                        .add(Restrictions.isNotNull("institutionState.id"))) //
+                        .add(getResourceParentManageableStateConstraint("departmentState")) //
+                        .add(getResourceParentManageableStateConstraint("institutionState"))) //
                 .add(Restrictions.eq("user", user)) //
                 .add(Restrictions.eq("role.roleCategory", STUDENT)) //
                 .list();

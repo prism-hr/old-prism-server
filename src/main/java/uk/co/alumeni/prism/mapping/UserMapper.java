@@ -127,7 +127,7 @@ public class UserMapper {
 
         representation.setConnectedWithLinkedin(user.getUserAccount().getLinkedinId() != null);
         representation.setRequiredFeedbackRoleCategory(userFeedbackService.getRequiredFeedbackRoleCategory(user));
-        representation.setResourcesForWhichUserCanCreateConnections(getUserConnectionResourceRepresentations(user, null));
+        representation.setResourcesForWhichUserCanCreateConnections(getUserResourceConnectionRepresentations(user, null));
 
         return representation;
     }
@@ -254,7 +254,7 @@ public class UserMapper {
                 .collect(Collectors.toList());
     }
 
-    public List<ResourceRepresentationConnection> getUserConnectionResourceRepresentations(User user, String searchTerm) {
+    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(User user, String searchTerm) {
         List<ResourceRepresentationConnection> representations = Lists.newLinkedList();
         resourceService.getResourcesForWhichUserCanConnect(user, searchTerm).forEach(resource -> {
             representations.add(resourceMapper.getResourceRepresentationConnection(resource));

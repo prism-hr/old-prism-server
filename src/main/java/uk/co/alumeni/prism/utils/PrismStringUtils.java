@@ -2,6 +2,8 @@ package uk.co.alumeni.prism.utils;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static java.util.Arrays.stream;
+import static org.apache.commons.lang.ArrayUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static uk.co.alumeni.prism.PrismConstants.ASTERISK;
 import static uk.co.alumeni.prism.PrismConstants.AT;
 
@@ -46,7 +48,7 @@ public class PrismStringUtils {
     }
 
     public static boolean endsWith(String string, String... postfixes) {
-        return stream(postfixes).anyMatch(postFix -> string.endsWith(postFix));
+        return isEmpty(string) || isEmpty(postfixes) ? false : stream(postfixes).anyMatch(postFix -> string.endsWith(postFix));
     }
 
 }

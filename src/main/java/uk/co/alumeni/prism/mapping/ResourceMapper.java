@@ -52,6 +52,7 @@ import uk.co.alumeni.prism.domain.application.Application;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
 import uk.co.alumeni.prism.domain.definitions.PrismFilterEntity;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
+import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListConstraint;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
@@ -232,85 +233,85 @@ public class ResourceMapper {
         TreeMap<String, ResourceListRowRepresentation> rowIndex = newTreeMap();
         processRowDescriptors(orderedResources, onlyAsPartnerResourceIds, summaries);
         resourceService.getResourceList(user, scope, parentScopes, targeterEntities, orderedResources, filter, lastSequenceIdentifier,
-                RESOURCE_LIST_PAGE_ROW_COUNT, onlyAsPartnerResourceIds, true).forEach(row -> { //
-                    ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
-                    representation.setScope(scope);
-                    Integer resourceId = row.getResourceId();
-                    representation.setId(resourceId);
+                RESOURCE_LIST_PAGE_ROW_COUNT, onlyAsPartnerResourceIds, true).forEach(row -> {
+            ResourceListRowRepresentation representation = new ResourceListRowRepresentation();
+            representation.setScope(scope);
+            Integer resourceId = row.getResourceId();
+            representation.setId(resourceId);
 
-                    Integer institutionId = row.getInstitutionId();
-                    Integer departmentId = row.getDepartmentId();
-                    Integer programId = row.getProgramId();
-                    Integer projectId = row.getProjectId();
+            Integer institutionId = row.getInstitutionId();
+            Integer departmentId = row.getDepartmentId();
+            Integer programId = row.getProgramId();
+            Integer projectId = row.getProjectId();
 
-                    if (scope.equals(INSTITUTION)) {
-                        representation.setName(row.getInstitutionName());
-                        setInstitutionLogoImage(row, representation);
-                    } else {
-                        representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
-                                .withId(institutionId).withName(row.getInstitutionName()));
+            if (scope.equals(INSTITUTION)) {
+                representation.setName(row.getInstitutionName());
+                setInstitutionLogoImage(row, representation);
+            } else {
+                representation.setInstitution(new ResourceRepresentationSimple().withScope(INSTITUTION)
+                        .withId(institutionId).withName(row.getInstitutionName()));
 
-                        Integer logoImageId = row.getLogoImageId();
-                        if (logoImageId != null) {
-                            representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionId));
-                        }
-                    }
+                Integer logoImageId = row.getLogoImageId();
+                if (logoImageId != null) {
+                    representation.setLogoImage(documentMapper.getDocumentRepresentation(institutionId));
+                }
+            }
 
-                    if (scope.equals(DEPARTMENT)) {
-                        representation.setName(row.getDepartmentName());
-                    } else if (departmentId != null) {
-                        representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
-                                .withId(departmentId).withName(row.getDepartmentName()));
-                    }
+            if (scope.equals(DEPARTMENT)) {
+                representation.setName(row.getDepartmentName());
+            } else if (departmentId != null) {
+                representation.setDepartment(new ResourceRepresentationSimple().withScope(DEPARTMENT)
+                        .withId(departmentId).withName(row.getDepartmentName()));
+            }
 
-                    if (scope.equals(PROGRAM)) {
-                        representation.setName(row.getProgramName());
-                    } else if (programId != null) {
-                        representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
-                                .withId(programId).withName(row.getProgramName()));
-                    }
+            if (scope.equals(PROGRAM)) {
+                representation.setName(row.getProgramName());
+            } else if (programId != null) {
+                representation.setProgram(new ResourceRepresentationSimple().withScope(PROGRAM)
+                        .withId(programId).withName(row.getProgramName()));
+            }
 
-                    if (scope.equals(PROJECT)) {
-                        representation.setName(row.getProjectName());
-                    } else if (projectId != null) {
-                        representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
-                                .withId(projectId).withName(row.getProjectName()));
-                    }
+            if (scope.equals(PROJECT)) {
+                representation.setName(row.getProjectName());
+            } else if (projectId != null) {
+                representation.setProject(new ResourceRepresentationSimple().withScope(PROJECT)
+                        .withId(projectId).withName(row.getProjectName()));
+            }
 
-                    representation.setCode(row.getCode());
-                    representation.setUser(userMapper.getUserRepresentationSimple(row, user));
-                    representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
+            representation.setCode(row.getCode());
+            representation.setUser(userMapper.getUserRepresentationSimple(row, user));
+            representation.setApplicationRatingAverage(row.getApplicationRatingAverage());
 
-                    representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
-                    representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
+            representation.setState(stateMapper.getStateRepresentationSimple(row.getStateId()));
+            representation.setSecondaryStates(stateMapper.getStateRepresentations(row.getSecondaryStateIds()));
 
-                    List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
-                    DateTime updatedTimestamp = row.getUpdatedTimestamp();
+            List<ActionRepresentationSimple> actions = actionMapper.getActionRepresentations(row);
+            DateTime updatedTimestamp = row.getUpdatedTimestamp();
 
-                    representation.setCreatedTimestamp(row.getCreatedTimestamp());
-                    representation.setUpdatedTimestamp(updatedTimestamp);
+            representation.setCreatedTimestamp(row.getCreatedTimestamp());
+            representation.setUpdatedTimestamp(updatedTimestamp);
 
-                    setRaisesUrgentFlag(representation, actions);
+            setRaisesUrgentFlag(representation, actions);
 
-                    ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
+            ResourceOpportunityCategoryDTO indexResource = indexedResources.get(resourceId);
 
-                    Integer readMessageCount = indexResource.getReadMessageCount();
-                    Integer unreadMessageCount = indexResource.getUnreadMessageCount();
+            Integer readMessageCount = indexResource.getReadMessageCount();
+            Integer unreadMessageCount = indexResource.getUnreadMessageCount();
 
-                    representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
-                    representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
+            representation.setReadMessageCount(readMessageCount == null ? 0 : readMessageCount);
+            representation.setUnreadMessageCount(unreadMessageCount == null ? 0 : unreadMessageCount);
 
-                    setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
+            setRaisesUpdateFlag(representation, baseline, updatedTimestamp);
 
-                    String sequenceIdentifier = indexResource.toString();
-                    representation.setSequenceIdentifier(sequenceIdentifier);
+            String sequenceIdentifier = indexResource.toString();
+            representation.setSequenceIdentifier(sequenceIdentifier);
 
-                    representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
-                    representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
+            representation.setAdvertIncompleteSections(getResourceAdvertIncompleteSectionRepresentation(row.getAdvertIncompleteSection()));
+            representation.setStateActionPendingCount(row.getStateActionPendingCount().intValue());
 
-                    representation.setActions(actions);
-                    rowIndex.put(sequenceIdentifier, representation);
-                });
+            representation.setActions(actions);
+            rowIndex.put(sequenceIdentifier, representation);
+        });
 
         Map<String, Integer> urgentSummaries = Maps.newHashMap();
         Set<ResourceOpportunityCategoryDTO> urgentResources = resources.stream().filter(resource -> isTrue(resource.getRaisesUrgentFlag())).collect(toSet());
@@ -721,6 +722,15 @@ public class ResourceMapper {
         return representation;
     }
 
+    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(User user, ResourceParent targetResource,
+            PrismResourceContext motivation, String searchTerm) {
+        List<ResourceRepresentationConnection> representations = Lists.newLinkedList();
+        resourceService.getResourcesForWhichUserCanConnect(user, targetResource, motivation, searchTerm).forEach(resource -> {
+            representations.add(getResourceRepresentationConnection(resource));
+        });
+        return representations;
+    }
+
     private <T extends Resource, V extends ResourceRepresentationRelation> V getResourceRepresentationRelation(T resource, Class<V> returnType, User currentUser) {
         V representation = getResourceRepresentationSimple(resource, returnType);
 
@@ -864,12 +874,9 @@ public class ResourceMapper {
     }
 
     private List<ResourceSummaryPlotConstraintRepresentation> getResourceSummaryPlotConstraintRepresentation(ResourceReportFilterDTO filterDTO) {
-        return filterDTO
-                .getProperties()
-                .stream()
-                .map(propertyDTO -> new ResourceSummaryPlotConstraintRepresentation().withEntityId(propertyDTO.getEntityId()).withType(
-                        propertyDTO.getEntityType()))
-                .collect(Collectors.toList());
+        return filterDTO.getProperties().stream()
+                .map(propertyDTO -> new ResourceSummaryPlotConstraintRepresentation().withEntityId(propertyDTO.getEntityId())
+                        .withType(propertyDTO.getEntityType())).collect(Collectors.toList());
     }
 
     private void setRaisesUrgentFlag(ResourceRepresentationStandard representation, List<ActionRepresentationSimple> actions) {

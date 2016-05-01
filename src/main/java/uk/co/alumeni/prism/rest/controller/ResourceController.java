@@ -54,6 +54,7 @@ import uk.co.alumeni.prism.rest.representation.comment.CommentTimelineRepresenta
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadParticipantsRepresentationPotential;
 import uk.co.alumeni.prism.rest.representation.message.MessageThreadRepresentation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceListRepresentation;
+import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationConnection;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationCreation;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationExtended;
 import uk.co.alumeni.prism.rest.representation.resource.ResourceRepresentationIdentity;
@@ -370,6 +371,14 @@ public class ResourceController {
     @PreAuthorize("isAuthenticated()")
     public void viewMessageThread(@RequestBody Map<String, Integer> body) {
         messageService.viewMessageThread(body.get("latestUnreadMessageId"));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "{resourceId}/connections", method = RequestMethod.GET, params = "q")
+    public List<ResourceRepresentationConnection> getResourceConnectionRepresentations(@PathVariable Integer resourceId,
+            @ModelAttribute ResourceDescriptor resourceDescriptor, @RequestParam PrismResourceContext motivation, @RequestParam(required = false) String q) {
+        Resource resource = loadResource(resourceId, resourceDescriptor);
+        return resourceMapper.getUserResourceConnectionRepresentations(userService.getCurrentUser(), (ResourceParent) resource, motivation, q);
     }
 
     @ModelAttribute

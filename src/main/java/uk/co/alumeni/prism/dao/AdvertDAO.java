@@ -674,7 +674,7 @@ public class AdvertDAO {
                         .add(Restrictions.eq("advert.department", advert.getDepartment())) //
                         .add(Restrictions.eq("advert.program", advert.getProgram())) //
                         .add(Restrictions.eq("advert.project", advert.getProject()))) //
-                .add(WorkflowDAO.getResourceParentManageableStateConstraint(locationScope));
+                .add(getResourceParentManageableStateConstraint("state"));
 
         if (isNotEmpty(exclusions)) {
             criteria.add(Restrictions.not( //
@@ -966,8 +966,9 @@ public class AdvertDAO {
                 .createAlias("otherDepartment.advert", "otherDepartmentAdvert", JoinType.LEFT_OUTER_JOIN)
                 .createAlias(otherAdvertReference + "User", "otherUser", JoinType.LEFT_OUTER_JOIN) //
                 .createAlias("otherUser.userAccount", "otherUserAccount", JoinType.LEFT_OUTER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.neProperty("thisAdvert.id", "otherAdvert.id")) //
-                .add(getResourceParentManageableStateConstraint(resourceScope));
+                .add(getResourceParentManageableStateConstraint("state"));
     }
 
     private Junction getAdvertTargetAcceptUserConstraint(User user) {

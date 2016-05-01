@@ -83,6 +83,7 @@ import uk.co.alumeni.prism.domain.comment.CommentState;
 import uk.co.alumeni.prism.domain.comment.CommentStateDefinition;
 import uk.co.alumeni.prism.domain.comment.CommentTransitionState;
 import uk.co.alumeni.prism.domain.definitions.PrismDisplayPropertyDefinition;
+import uk.co.alumeni.prism.domain.definitions.PrismOpportunityCategory;
 import uk.co.alumeni.prism.domain.definitions.PrismOpportunityType;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceContext;
 import uk.co.alumeni.prism.domain.definitions.PrismResourceListFilterExpression;
@@ -93,11 +94,14 @@ import uk.co.alumeni.prism.domain.definitions.workflow.PrismAction;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRole;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismRoleGroup;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope;
+import uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.PrismScopeCreationDefault;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismScopeSectionDefinition;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismState;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateDurationEvaluation;
 import uk.co.alumeni.prism.domain.definitions.workflow.PrismStateGroup;
 import uk.co.alumeni.prism.domain.document.Document;
+import uk.co.alumeni.prism.domain.resource.Department;
+import uk.co.alumeni.prism.domain.resource.Institution;
 import uk.co.alumeni.prism.domain.resource.Resource;
 import uk.co.alumeni.prism.domain.resource.ResourceCondition;
 import uk.co.alumeni.prism.domain.resource.ResourceOpportunity;
@@ -121,6 +125,7 @@ import uk.co.alumeni.prism.domain.workflow.StateTransition;
 import uk.co.alumeni.prism.dto.ActionDTO;
 import uk.co.alumeni.prism.dto.ActionOutcomeDTO;
 import uk.co.alumeni.prism.dto.ActivityMessageCountDTO;
+import uk.co.alumeni.prism.dto.AdvertTargetDTO;
 import uk.co.alumeni.prism.dto.EntityOpportunityCategoryDTO;
 import uk.co.alumeni.prism.dto.ResourceAdvertDTO;
 import uk.co.alumeni.prism.dto.ResourceChildCreationDTO;
@@ -696,9 +701,57 @@ public class ResourceService {
     }
 
     public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, String searchTerm) {
-        Set<ResourceConnectionDTO> resources = Sets.newTreeSet();
+        Set<ResourceConnectionDTO> resources = newTreeSet();
         for (PrismScope resourceScope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
-            resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).forEach(resource -> resources.add(resource));
+            resourceDAO.getResourcesForWhichUserCanConnect(user, resourceScope, searchTerm).stream().forEach(resource -> resources.add(resource));
+        }
+        return new ArrayList<>(resources);
+    }
+
+    public List<ResourceConnectionDTO> getResourcesForWhichUserCanConnect(User user, Resource targetResource, PrismResourceContext motivation, String searchTerm) {
+        Department targetDepartment = targetResource.getDepartment();
+        Integer targetDepartmentId = targetDepartment == null ? null : targetDepartment.getId();
+
+        Institution targetInstitution = targetResource.getInstitution();
+        Integer targetInstitutionId = targetInstitution.getId();
+
+        Set<ResourceConnectionDTO> resources = newTreeSet();
+        List<AdvertTargetDTO> connections = advertService.getAdvertTargets(targetResource.getAdvert());
+        for (PrismScope scope : new PrismScope[] { INSTITUTION, DEPARTMENT }) {
+            PrismScopeCreationDefault scopeDefault = scope.getDefault(motivation);
+            PrismOpportunityCategory[] scopeOpportunityCategories = scopeDefault.getDefaultOpportunityCategories();
+            resourceDAO.getResourcesForWhichUserCanConnect(user, scope, searchTerm).stream().forEach(resource -> {
+                boolean matchedOpportunityCategory = false;
+                for (String opportunityCategoryName : resource.getOpportunityCategories().split("\\|")) {
+                    for (PrismOpportunityCategory scopeOpportunityCategory : scopeOpportunityCategories) {
+                        if (opportunityCategoryName.equals(scopeOpportunityCategory.name())) {
+                            matchedOpportunityCategory = true;
+                            break;
+                        }
+                    }
+
+                    if (matchedOpportunityCategory) {
+                        break;
+                    }
+                }
+
+                if (matchedOpportunityCategory) {
+                    Integer departmentId = resource.getDepartmentId();
+                    Integer institutionId = resource.getInstitutionId();
+                    if (!(equal(targetDepartmentId, departmentId) && equal(targetInstitutionId, institutionId))) {
+                        boolean notConnected = true;
+                        for (AdvertTargetDTO connection : connections) {
+                            if (equal(connection.getOtherDepartmentId(), departmentId) && equal(connection.getOtherInstitutionId(), institutionId)) {
+                                notConnected = false;
+                            }
+                        }
+
+                        if (notConnected) {
+                            resources.add(resource);
+                        }
+                    }
+                }
+            });
         }
         return new ArrayList<>(resources);
     }
@@ -716,47 +769,46 @@ public class ResourceService {
         if (currentUser == null && responseScope.equals(INSTITUTION) && context != null) {
             resources.addAll(institutionService.getPublishedInstitutions(context));
         } else {
-            stream(organizationScopes).filter(scope -> scope.ordinal() >= responseScope.ordinal()).forEach(
-                    scope -> {
-                        Map<String, Integer> summaries = newHashMap();
-                        Set<Integer> onlyAsPartnerResources = newHashSet();
-                        List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
-                        List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(currentUser, scope);
+            stream(organizationScopes).filter(scope -> scope.ordinal() >= responseScope.ordinal()).forEach(scope -> {
+                Map<String, Integer> summaries = newHashMap();
+                Set<Integer> onlyAsPartnerResources = newHashSet();
+                List<PrismScope> parentScopes = scopeService.getParentScopesDescending(scope, SYSTEM);
+                List<Integer> targeterEntities = advertService.getAdvertTargeterEntities(currentUser, scope);
 
-                        List<Integer> resourceIds = resourceDAO.getResourceIds(enclosingResource, responseScope, scope, searchTerm);
-                        if (resourceIds.size() > 0) {
-                            ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceIds);
-                            Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(currentUser, scope, parentScopes, targeterEntities, filter);
-                            processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
+                List<Integer> resourceIds = resourceDAO.getResourceIds(enclosingResource, responseScope, scope, searchTerm);
+                if (resourceIds.size() > 0) {
+                    ResourceListFilterDTO filter = new ResourceListFilterDTO().withResourceIds(resourceIds);
+                    Set<ResourceOpportunityCategoryDTO> scopedResources = getResources(currentUser, scope, parentScopes, targeterEntities, filter);
+                    processRowDescriptors(scopedResources, onlyAsPartnerResources, summaries);
 
-                            String responseScopeReference = responseScope.getLowerCamelName();
-                            Collection<ResourceListRowDTO> rows = getResourceList(currentUser, scope, parentScopes, targeterEntities, scopedResources, filter,
-                                    null, null,
-                                    onlyAsPartnerResources, false);
+                    String responseScopeReference = responseScope.getLowerCamelName();
+                    Collection<ResourceListRowDTO> rows = getResourceList(currentUser, scope, parentScopes, targeterEntities, scopedResources, filter,
+                            null, null,
+                            onlyAsPartnerResources, false);
 
-                            rows.stream().forEach(row -> {
-                                ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
-                                resource.setScope(responseScope);
+                    rows.stream().forEach(row -> {
+                        ResourceChildCreationDTO resource = new ResourceChildCreationDTO();
+                        resource.setScope(responseScope);
 
-                                resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
-                                resource.setName((String) getProperty(row, responseScopeReference + "Name"));
+                        resource.setId((Integer) getProperty(row, responseScopeReference + "Id"));
+                        resource.setName((String) getProperty(row, responseScopeReference + "Name"));
 
-                                if (scope.equals(INSTITUTION)) {
-                                    resource.setLogoImageId(row.getLogoImageId());
-                                }
-
-                                row.getActions().forEach(action -> {
-                                    PrismAction prismAction = action.getActionId();
-                                    if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
-                                        if (prismAction.getScope().equals(responseScope)) {
-                                            resource.setCreateDirectly(true);
-                                        }
-                                        resources.add(resource);
-                                    }
-                                });
-                            });
+                        if (scope.equals(INSTITUTION)) {
+                            resource.setLogoImageId(row.getLogoImageId());
                         }
+
+                        row.getActions().forEach(action -> {
+                            PrismAction prismAction = action.getActionId();
+                            if (prismAction.getActionCategory().equals(CREATE_RESOURCE) && prismAction.name().endsWith(creationScope.name())) {
+                                if (prismAction.getScope().equals(responseScope)) {
+                                    resource.setCreateDirectly(true);
+                                }
+                                resources.add(resource);
+                            }
+                        });
                     });
+                }
+            });
         }
 
         return newLinkedList(resources);

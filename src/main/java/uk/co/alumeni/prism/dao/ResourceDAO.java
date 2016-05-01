@@ -11,10 +11,12 @@ import static uk.co.alumeni.prism.dao.WorkflowDAO.getLikeConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchMode;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getMatchingUserConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getReadOrUnreadMessageConstraint;
-import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentConnectableConstraint;
+import static uk.co.alumeni.prism.dao.WorkflowDAO.getResourceParentManageableStateConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getUnreadMessageConstraint;
 import static uk.co.alumeni.prism.dao.WorkflowDAO.getVisibleMessageConstraint;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismPartnershipState.ENDORSEMENT_PROVIDED;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.ADMINISTRATOR;
+import static uk.co.alumeni.prism.domain.definitions.workflow.PrismRole.PrismRoleCategory.RECRUITER;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.APPLICATION;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.DEPARTMENT;
 import static uk.co.alumeni.prism.domain.definitions.workflow.PrismScope.INSTITUTION;
@@ -444,6 +446,7 @@ public class ResourceDAO {
                 .createAlias(resourceReference, "resource", JoinType.INNER_JOIN) //
                 .createAlias("resource.userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(Restrictions.eq(resourceReference, resource)) //
                 .add(getResourceParentConnectableConstraint(resourceScope, user)) //
                 .uniqueResult();
@@ -474,6 +477,7 @@ public class ResourceDAO {
 
         criteria.createAlias(resourceReference + ".userRoles", "userRole", JoinType.INNER_JOIN) //
                 .createAlias("userRole.role", "role", JoinType.INNER_JOIN) //
+                .createAlias("state", "state", JoinType.INNER_JOIN) //
                 .add(getResourceParentConnectableConstraint(resourceScope, user));
 
         if (!isNullOrEmpty(searchTerm)) {
@@ -877,6 +881,15 @@ public class ResourceDAO {
                 .add(getReadOrUnreadMessageConstraint(read)) //
                 .setResultTransformer(aliasToBean(ActivityMessageCountDTO.class)) //
                 .list();
+    }
+
+    private static Junction getResourceParentConnectableConstraint(PrismScope resourceScope, User user) {
+        return Restrictions.conjunction() //
+                .add(getResourceParentManageableStateConstraint("state")) //
+                .add(Restrictions.disjunction() //
+                        .add(Restrictions.eq("role.roleCategory", ADMINISTRATOR)) //
+                        .add(Restrictions.eq("role.roleCategory", RECRUITER))) //
+                .add(Restrictions.eq("userRole.user", user));
     }
 
 }

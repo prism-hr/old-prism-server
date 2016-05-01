@@ -241,8 +241,8 @@ public class UserController {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/connection/resource", method = RequestMethod.GET, params = "q")
-    public List<ResourceRepresentationConnection> getConnectionResourceRepresentations(@RequestParam(required = false) String q) {
-        return userMapper.getUserConnectionResourceRepresentations(userService.getCurrentUser(), q);
+    public List<ResourceRepresentationConnection> getUserResourceConnectionRepresentations(@RequestParam(required = false) String q) {
+        return userMapper.getUserResourceConnectionRepresentations(userService.getCurrentUser(), q);
     }
 
     @PreAuthorize("isAuthenticated()")

@@ -29,7 +29,7 @@
         <div class="prism-main static-list">
             <ul>
                 <li>
-                    <#include "/template/opportunity_partial.ftl">
+                    [#include "/template/opportunity_partial.ftl"]
                 </li>
             </ul>
         </div>
@@ -38,7 +38,7 @@
         <div class="prism-main slider-list">
             <ul>
                 <li>
-                    <#include "/template/opportunity_partial.ftl">
+                    [#include "/template/opportunity_partial.ftl"]
                 </li>
             </ul>
         </div>

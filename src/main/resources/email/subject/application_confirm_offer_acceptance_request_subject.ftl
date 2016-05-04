@@ -1,0 +1,1 @@
+Your Application ${APPLICATION_CODE} - Offer Acceptance Request
